@@ -50,10 +50,36 @@ export const authMiddleware =
         }
       ).catch(() => null);
 
-      const session = sessionRes?.ok
-        ? await sessionRes.json().catch(() => null)
-        : null;
+      // Três desfechos, não dois.
+      //
+      // "Não consegui perguntar" não é "não está logado". A versão anterior
+      // tratava qualquer resposta não-ok como sessão ausente, e o endereço
+      // consultado é `/api/auth/*` — que tem teto de requisição do próprio
+      // better-auth. Bastava o teto barrar UMA vez para uma pessoa com sessão
+      // válida ser mandada para o /sign-in, sem erro em lugar nenhum.
+      //
+      // Deslogar por falha transitória é o pior desfecho possível: quem estava
+      // trabalhando perde o contexto, e a explicação ("faça login") é falsa,
+      // porque a pessoa já estava logada.
+      //
+      // Seguir adiante aqui NÃO abre a rota. Este redirect é otimização — ele
+      // evita renderizar RSC para quem não tem sessão, e está documentado como
+      // tal acima. Quem guarda de fato é o layout de cada route group:
+      // `app/(cosmos)/layout.tsx` chama `requireTenantSession` direto;
+      // `app/(charter)/layout.tsx` chega ao mesmo ponto por `getShellData()`.
+      // Os dois redirecionam no `AuthError`. Sem conseguir
+      // verificar, o certo é deixar passar e cair na checagem que decide —
+      // não adivinhar a resposta mais severa.
+      if (!sessionRes) {
+        return (await callback(request)) ?? NextResponse.next();
+      }
+      if (!sessionRes.ok) {
+        return (await callback(request)) ?? NextResponse.next();
+      }
 
+      // Daqui para baixo a pergunta foi respondida: ausência de `user` é
+      // ausência de sessão de verdade, e o atalho vale.
+      const session = await sessionRes.json().catch(() => null);
       if (!session?.user) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
       }
