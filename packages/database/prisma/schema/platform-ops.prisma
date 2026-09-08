@@ -508,7 +508,7 @@ model IpAsset {
 
   nome      String
   slug      String
-  /// TEMPLATE | PLAYBOOK | COMPONENTE | DOCUMENTO
+  /// ACELERADOR | PLAYBOOK | TEMPLATE | EVAL_HARNESS | MODELO_BPMN | DOCUMENTO
   tipo      String  @default("DOCUMENTO")
   descricao String? @db.Text
 
