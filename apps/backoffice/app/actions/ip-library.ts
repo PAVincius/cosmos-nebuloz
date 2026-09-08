@@ -14,6 +14,8 @@ import {
   avaliarRegua,
   criteriosPendentes,
   LICENCAS,
+  MIN_DESCRICAO,
+  MIN_NOME,
   maturidadeDe,
   PROCEDENCIAS,
   TIPOS_DE_ATIVO,
@@ -178,14 +180,15 @@ export async function getIpAsset(id: string): Promise<Result<IpAssetDetail>> {
 }
 
 const CriarSchema = z.object({
-  nome: z.string().min(3).max(140),
+  nome: z.string().min(MIN_NOME).max(140),
   tipo: z.enum(TIPOS_DE_ATIVO).optional(),
-  descricao: z.string().min(40).max(500),
+  descricao: z.string().min(MIN_DESCRICAO).max(500),
   conteudo: z.string().min(1),
   link: z.string().max(300).optional(),
   viveAqui: z.boolean().optional(),
   donoPersonId: z.string().optional(),
-  servicoIds: z.array(z.string().min(1)).min(1).max(20),
+  // A IP-R4 já exige pelo menos um serviço — o mínimo mora só na régua.
+  servicoIds: z.array(z.string().min(1)).max(20),
   procedencia: z.enum(PROCEDENCIAS).optional(),
   origemEngagementId: z.string().optional(),
   reusoConfirmado: z.boolean().optional(),
