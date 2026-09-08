@@ -144,6 +144,38 @@ describe("createPersonAction", () => {
     expect(res.ok).toBe(false);
     expect(mocks.personCreate).not.toHaveBeenCalled();
   });
+
+  // A régua da janela é aplicada aqui, na fronteira — capacidade-janela.test.ts
+  // já prova que `erroDaJanela` calcula certo; falta provar que a action a
+  // consulta antes de escrever.
+  it("recusa saída sem data de entrada", async () => {
+    const res = await createPersonAction({
+      nome: "Ana",
+      email: "ana@nebuloz.com",
+      saiEm: "2026-12-01",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.personCreate).not.toHaveBeenCalled();
+  });
+
+  it("persiste entraEm, saiEm e observacao — a janela de contrato do terceiro", async () => {
+    mocks.personFindFirst.mockResolvedValue(null);
+    mocks.personCreate.mockResolvedValue({ id: "p-9", nome: "Ana" });
+
+    await createPersonAction({
+      nome: "Ana",
+      email: "ana@nebuloz.com",
+      entraEm: "2026-09-01",
+      saiEm: "2026-12-01",
+      observacao: "Terceiro via consultoria X",
+    });
+
+    const dados = mocks.personCreate.mock.calls[0][0].data;
+    expect(dados.entraEm).toEqual(new Date("2026-09-01"));
+    expect(dados.saiEm).toEqual(new Date("2026-12-01"));
+    expect(dados.observacao).toBe("Terceiro via consultoria X");
+  });
 });
 
 describe("allocatePersonAction — a soma no período", () => {
@@ -241,6 +273,48 @@ describe("allocatePersonAction — a soma no período", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.allocCreate).not.toHaveBeenCalled();
+  });
+
+  // A entrega inteira desta janela é aqui: capacidade-janela.test.ts prova que
+  // `erroDaAlocacao` calcula certo; falta provar que a action a consulta antes
+  // de alocar alguém fora do próprio contrato.
+  it("recusa alocação fora da janela de contrato da pessoa", async () => {
+    mocks.personFindFirst.mockResolvedValue({
+      id: "p-1",
+      nome: "Ana",
+      email: "ana@nebuloz.com",
+      horasSemana: 40,
+      entraEm: new Date("2026-09-01"),
+      saiEm: new Date("2026-12-01"),
+    });
+
+    const res = await allocatePersonAction({
+      ...BASE,
+      inicioEm: "2027-01-01",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.allocCreate).not.toHaveBeenCalled();
+  });
+
+  it("aloca dentro da janela de contrato da pessoa", async () => {
+    mocks.personFindFirst.mockResolvedValue({
+      id: "p-1",
+      nome: "Ana",
+      email: "ana@nebuloz.com",
+      horasSemana: 40,
+      entraEm: new Date("2026-09-01"),
+      saiEm: new Date("2026-12-01"),
+    });
+
+    const res = await allocatePersonAction({
+      ...BASE,
+      inicioEm: "2026-09-15",
+      fimEm: "2026-10-15",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.allocCreate).toHaveBeenCalled();
   });
 });
 
