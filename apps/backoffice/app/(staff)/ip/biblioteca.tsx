@@ -26,12 +26,12 @@ import {
   ROTULO_PROCEDENCIA,
 } from "./registrar";
 
-/** O que a action `registrarReusoAction` devolve, mais as horas que a linha
- *  soma localmente — a única aritmética que este arquivo faz por conta própria. */
+/** O que a action `registrarReusoAction` devolve — os três campos já vêm
+ *  prontos do servidor, nenhum é somado aqui. */
 type PatchDeReuso = {
   reusos: number;
+  horasPoupadas: number;
   maturidade: "RASCUNHO" | "COMPROVADO";
-  horas: number;
 };
 
 /** `ROTULO_*` são `Record<Procedencia|Licenca, string>`, mas o campo na linha
@@ -227,7 +227,7 @@ function BlocoDeReuso({
       return;
     }
     onRegistrado({
-      horas: horasNum,
+      horasPoupadas: res.data.horasPoupadas,
       maturidade: res.data.maturidade,
       reusos: res.data.reusos,
     });
@@ -448,9 +448,8 @@ export function Biblioteca({
     }
   }, [aberto, rascunho, nota]);
 
-  // `reusos` e `maturidade` vêm literalmente da action — nunca um contador
-  // incrementado aqui. As horas somam ao total local porque a action não
-  // devolve o agregado, só o evento que acabou de criar.
+  // `reusos`, `horasPoupadas` e `maturidade` vêm literalmente da action —
+  // nunca um contador incrementado ou uma soma feita aqui.
   const aoRegistrarReuso = useCallback(
     (assetId: string, patch: PatchDeReuso) => {
       setLista((atual) =>
@@ -458,7 +457,7 @@ export function Biblioteca({
           a.id === assetId
             ? {
                 ...a,
-                horasPoupadas: a.horasPoupadas + patch.horas,
+                horasPoupadas: patch.horasPoupadas,
                 maturidade: patch.maturidade,
                 reusos: patch.reusos,
               }

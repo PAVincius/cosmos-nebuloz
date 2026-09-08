@@ -405,11 +405,19 @@ const ReusoSchema = z.object({
  *
  * É o único caminho por onde reusos, horas poupadas e maturidade mudam — os
  * três são derivados desta tabela e não existem como campo em lugar nenhum.
+ * O agregado de horas volta aqui, e não só o evento recém-criado, porque o
+ * cliente não tem de onde somar: duas pessoas com a tela aberta ao mesmo
+ * tempo divergiriam se cada uma somasse a própria cópia local.
  */
 export async function registrarReusoAction(
   input: z.input<typeof ReusoSchema>
 ): Promise<
-  Result<{ id: string; reusos: number; maturidade: "RASCUNHO" | "COMPROVADO" }>
+  Result<{
+    id: string;
+    reusos: number;
+    horasPoupadas: number;
+    maturidade: "RASCUNHO" | "COMPROVADO";
+  }>
 > {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
@@ -466,6 +474,10 @@ export async function registrarReusoAction(
     const reusos = await database.ipAssetReuse.count({
       where: { assetId: ativo.id },
     });
+    const agregado = await database.ipAssetReuse.aggregate({
+      _sum: { horasPoupadas: true },
+      where: { assetId: ativo.id },
+    });
 
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,
@@ -479,6 +491,11 @@ export async function registrarReusoAction(
     });
 
     revalidatePath("/ip");
-    return { id: criado.id, reusos, maturidade: maturidadeDe(reusos) };
+    return {
+      id: criado.id,
+      reusos,
+      horasPoupadas: agregado._sum.horasPoupadas ?? 0,
+      maturidade: maturidadeDe(reusos),
+    };
   });
 }

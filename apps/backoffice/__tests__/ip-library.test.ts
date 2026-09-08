@@ -26,6 +26,7 @@ const mocks = vi.hoisted(() => ({
   reuseFindUnique: vi.fn(),
   reuseCreate: vi.fn(),
   reuseCount: vi.fn(),
+  reuseAggregate: vi.fn(),
 }));
 
 vi.mock("@/lib/guard", () => ({
@@ -68,6 +69,7 @@ vi.mock("@repo/database", () => ({
       findUnique: mocks.reuseFindUnique,
       create: mocks.reuseCreate,
       count: mocks.reuseCount,
+      aggregate: mocks.reuseAggregate,
     },
     $transaction: mocks.transaction,
   },
@@ -140,6 +142,7 @@ function resetar() {
   mocks.reuseFindUnique.mockResolvedValue(null);
   mocks.reuseCreate.mockResolvedValue({ id: "reuso-1" });
   mocks.reuseCount.mockResolvedValue(0);
+  mocks.reuseAggregate.mockResolvedValue({ _sum: { horasPoupadas: 0 } });
   mocks.transaction.mockImplementation(
     async (fn: (tx: unknown) => Promise<unknown>) =>
       await fn({
@@ -404,6 +407,7 @@ describe("registrarReusoAction", () => {
     mocks.reuseFindUnique.mockResolvedValue(null);
     mocks.reuseCreate.mockResolvedValue({ id: "reuso-1" });
     mocks.reuseCount.mockResolvedValue(1);
+    mocks.reuseAggregate.mockResolvedValue({ _sum: { horasPoupadas: 4 } });
 
     const res = await registrarReusoAction(entradaDeReuso());
 
@@ -412,6 +416,7 @@ describe("registrarReusoAction", () => {
       return;
     }
     expect(res.data.reusos).toBe(1);
+    expect(res.data.horasPoupadas).toBe(4);
     expect(res.data.maturidade).toBe("RASCUNHO");
   });
 
@@ -421,6 +426,7 @@ describe("registrarReusoAction", () => {
     mocks.reuseFindUnique.mockResolvedValue(null);
     mocks.reuseCreate.mockResolvedValue({ id: "reuso-2" });
     mocks.reuseCount.mockResolvedValue(2);
+    mocks.reuseAggregate.mockResolvedValue({ _sum: { horasPoupadas: 10 } });
 
     const res = await registrarReusoAction(entradaDeReuso());
 
@@ -429,7 +435,30 @@ describe("registrarReusoAction", () => {
       return;
     }
     expect(res.data.reusos).toBe(2);
+    expect(res.data.horasPoupadas).toBe(10);
     expect(res.data.maturidade).toBe("COMPROVADO");
+  });
+
+  it("horasPoupadas é o agregado do servidor, não a soma de um único evento", async () => {
+    // Duas pessoas com a tela aberta: A registra 10h (servidor soma 10), B
+    // registra 15h por cima (servidor soma 25). O agregado do banco é a
+    // única fonte — nunca `dados.horasPoupadas` do evento que acabou de criar.
+    mocks.findFirst.mockResolvedValue(ativo);
+    mocks.engagementFindFirst.mockResolvedValue(engajamento);
+    mocks.reuseFindUnique.mockResolvedValue(null);
+    mocks.reuseCreate.mockResolvedValue({ id: "reuso-2" });
+    mocks.reuseCount.mockResolvedValue(2);
+    mocks.reuseAggregate.mockResolvedValue({ _sum: { horasPoupadas: 25 } });
+
+    const res = await registrarReusoAction(
+      entradaDeReuso({ horasPoupadas: 15 })
+    );
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.horasPoupadas).toBe(25);
   });
 
   it("MEMBER não registra reuso", async () => {
