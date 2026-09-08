@@ -1,5 +1,29 @@
 # Scaffold — PRD do serviço
 
+> **Nota de 2026-09-02 — o escopo foi decidido em favor do produto.**
+>
+> Este documento defende que o Scaffold V1 é uma ligação
+> (`MeridianGapPromotion.targetEntityId` → `Engagement`) e que tratá-lo como
+> quarto produto no monorepo "seria o erro mais caro possível" (§1).
+>
+> O par PRD/SRD v1.0 anexado ao projeto de design descreve outra coisa: um
+> produto multi-tenant com gate engine bloqueante, biblioteca de templates
+> versionada e caso de negócio assinado. A decisão foi tomada em favor dessa
+> segunda leitura, e está registrada em
+> [`specs/002-scaffold-adoption/research.md`](../../specs/002-scaffold-adoption/research.md) §R1.
+>
+> **O que sobreviveu deste documento:** a §7 inteira. A promoção com destino é
+> S-01, a primeira fatia implementada, e o guard de revogação com trilha ativa
+> está em `apps/app/app/(meridian)/actions/gaps.ts` — exatamente como esta §7
+> pede.
+>
+> **O que continua valendo:** as pendências da §9. Preço (§6) e RACI (§5) não
+> foram resolvidos pela implementação, e nada no código os assume.
+>
+> **O que este documento diz e o produto não faz:** `Engagement` não é o
+> destino da promoção. O destino é `ScaffoldTrack`. A ligação comercial com
+> `platform-ops` continua aberta.
+
 **Onda 1 do lançamento comercial.** O checklist pede "MVP definido e documentado
 (PRD/SRD/ADR) para Meridian e Scaffold". O Meridian está entregue —
 `specs/001-meridian-diagnose/` completo, 27 modelos, migração aplicada, rotas no

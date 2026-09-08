@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_md",
+      "label": "po.md",
+      "file_type": "document",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_po_agent",
+      "label": "PO Agent",
+      "file_type": "document",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_objective",
+      "label": "Objective",
+      "file_type": "document",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_responsibilities",
+      "label": "Responsibilities",
+      "file_type": "document",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_guidelines",
+      "label": "Guidelines",
+      "file_type": "document",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L16"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_po_agent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_po_agent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_objective",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_po_agent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_responsibilities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_po_agent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_agents_po_guidelines",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/agents/po.md",
+      "source_location": "L16",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

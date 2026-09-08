@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_md",
+      "label": "claude-design-prompt.md",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "label": "Prompt para Claude Design (claude.ai)",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_design_system_atual",
+      "label": "Design System Atual",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_tokens",
+      "label": "Tokens",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "label": "Componentes que quero melhorar",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_1_page_header",
+      "label": "1. Page Header",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_2_kpi_card",
+      "label": "2. KPI Card",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_3_section_card",
+      "label": "3. Section Card",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_4_kanban_card",
+      "label": "4. Kanban Card",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_5_sidebar_nav_item_estado_ativo",
+      "label": "5. Sidebar Nav Item (estado ativo)",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L136"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_restri\u00e7\u00f5es",
+      "label": "Restri\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L144"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_output_esperado",
+      "label": "Output esperado",
+      "file_type": "document",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L155"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_design_system_atual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_design_system_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_tokens",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_1_page_header",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_2_kpi_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_3_section_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_4_kanban_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_componentes_que_quero_melhorar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_5_sidebar_nav_item_estado_ativo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_restri\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_prompt_para_claude_design_claude_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_claude_design_prompt_output_esperado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/claude-design-prompt.md",
+      "source_location": "L155",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

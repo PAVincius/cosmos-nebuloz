@@ -1,0 +1,287 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_md",
+      "label": "ANIMATION_HANDOFF.md",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "label": "Animation Handoff \u2014 Cosmos Site",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_implementation_brief",
+      "label": "Tier 2 Implementation Brief",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_estado_atual_tier_1_done",
+      "label": "Estado atual (Tier 1 \u2014 DONE)",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_componentes_de_anima\u00e7\u00e3o_em_components_cosmos",
+      "label": "Componentes de anima\u00e7\u00e3o em `/components/cosmos/`",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_anima\u00e7\u00f5es_no_hero_j\u00e1_funcionando",
+      "label": "Anima\u00e7\u00f5es no hero (j\u00e1 funcionando)",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_se\u00e7\u00f5es_com_anima\u00e7\u00f5es",
+      "label": "Se\u00e7\u00f5es com anima\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "label": "Tier 2 \u2014 Specs de implementa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_1_dependency_lines_draw_svg_pathlength",
+      "label": "T2.1 \u2014 Dependency Lines Draw (SVG pathLength)",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_2_chaos_order_scroll_scene",
+      "label": "T2.2 \u2014 \"Chaos \u2192 Order\" Scroll Scene",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_3_gradient_text_shimmer",
+      "label": "T2.3 \u2014 Gradient Text Shimmer",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_4_scroll_progress_bar",
+      "label": "T2.4 \u2014 Scroll Progress Bar",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_5_number_morph_no_hero_badge",
+      "label": "T2.5 \u2014 Number Morph no Hero Badge",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L210"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_depend\u00eancias_a_instalar_tier_2",
+      "label": "Depend\u00eancias a instalar (Tier 2)",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L225"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_ordem_de_implementa\u00e7\u00e3o_recomendada",
+      "label": "Ordem de implementa\u00e7\u00e3o recomendada",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_contexto_de_arquitetura_atual",
+      "label": "Contexto de arquitetura atual",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L249"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_regras_de_qualidade",
+      "label": "Regras de qualidade",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L278"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_design_reference",
+      "label": "Design reference",
+      "file_type": "document",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L289"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_implementation_brief",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_estado_atual_tier_1_done",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_estado_atual_tier_1_done",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_componentes_de_anima\u00e7\u00e3o_em_components_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_estado_atual_tier_1_done",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_anima\u00e7\u00f5es_no_hero_j\u00e1_funcionando",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_estado_atual_tier_1_done",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_se\u00e7\u00f5es_com_anima\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_1_dependency_lines_draw_svg_pathlength",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_2_chaos_order_scroll_scene",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_3_gradient_text_shimmer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_4_scroll_progress_bar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_tier_2_specs_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_t2_5_number_morph_no_hero_badge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_depend\u00eancias_a_instalar_tier_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L225",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_ordem_de_implementa\u00e7\u00e3o_recomendada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_contexto_de_arquitetura_atual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L249",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_regras_de_qualidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_animation_handoff_cosmos_site",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_web_animation_handoff_design_reference",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/web/ANIMATION_HANDOFF.md",
+      "source_location": "L289",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

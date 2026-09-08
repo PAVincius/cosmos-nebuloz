@@ -24,8 +24,11 @@
     "risk:score": "tsx scripts/risk-score.ts",
     "audit:runtime": "tsx scripts/audit-runtime.mts",
     "size:guard": "tsx scripts/file-size-guard.mts",
+    "legal:guard": "tsx scripts/legal-placeholders-guard.mts",
     "coverage:gaps": "tsx scripts/coverage-gaps.mts",
     "cosmos:graph": "tsx scripts/cosmos-graph.mts",
+    "knowledge:refresh": "tsx scripts/knowledge/exportar.mts",
+    "test:knowledge": "vitest run scripts/knowledge",
     "dark-matter": "tsx scripts/dark-matter.mts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
@@ -39,7 +42,7 @@
     "pre-push": "pnpm turbo test"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "*.{ts,mts,tsx,js,jsx}": [
       "biome check --write --no-errors-on-unmatched"
     ],
     "*.{json,jsonc}": [

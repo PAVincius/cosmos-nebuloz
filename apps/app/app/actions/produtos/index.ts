@@ -77,9 +77,23 @@ const CATALOGO: Record<
     resumo: "Diagnóstico de prontidão para IA — cinco eixos, gaps, plano.",
     href: "/meridian",
   },
+  SCAFFOLD: {
+    nome: "Scaffold",
+    resumo: "Adoção em trilhas guiadas — quatro fases, gates bloqueantes.",
+    href: "/scaffold",
+  },
 };
 
-const ORDEM: ProductModule[] = ["COSMOS", "CHARTER", "MERIDIAN", "SIGNAL"];
+// Ordem do funil: diagnosticar (Meridian) → adotar (Scaffold) → governar
+// (Charter) → operar (Cosmos) → medir (Signal). O Signal fica por último
+// porque é o único ainda sem rota neste app.
+const ORDEM: ProductModule[] = [
+  "COSMOS",
+  "CHARTER",
+  "MERIDIAN",
+  "SCAFFOLD",
+  "SIGNAL",
+];
 
 type LinhaDeModulo = {
   status: string;

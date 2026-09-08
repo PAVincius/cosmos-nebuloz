@@ -1,0 +1,335 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_md",
+      "label": "2026-05-22-nebuloz-open-tasks.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "label": "Nebuloz Open Tasks \u2014 M6 + LACE + M7 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "label": "PHASE A \u2014 NEB-18: C H\u00edbrido Dashboard (current branch)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_1_wire_staleness_props_in_page_tsx",
+      "label": "Task 1: Wire staleness props in page.tsx",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_2_c_h\u00edbrido_layout_staleness_badge_in_dashboard",
+      "label": "Task 2: C H\u00edbrido layout + staleness badge in dashboard",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_3_export_csv_button",
+      "label": "Task 3: Export CSV button",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_4_mark_neb_18_done_in_linear",
+      "label": "Task 4: Mark NEB-18 Done in Linear",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L280"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "label": "PHASE B \u2014 NEB-13: LACE Tool Use + RAG + WSJF",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L288"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_5_create_branch_audit_existing_lace_actions",
+      "label": "Task 5: Create branch + audit existing LACE actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L292"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_6_lace_tool_use_server_actions",
+      "label": "Task 6: LACE tool-use server actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L325"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_7_wire_tools_into_copilot_chat_route",
+      "label": "Task 7: Wire tools into copilot chat route",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L429"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_8_rag_with_pi_history",
+      "label": "Task 8: RAG with PI history",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L493"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "label": "PHASE C \u2014 M7: Linear \u2194 Cosmos Integration",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L584"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_9_neb_20_spike_document_findings_resolve",
+      "label": "Task 9: NEB-20 Spike \u2014 Document findings + resolve",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L588"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_10_neb_21_linearsync_schema",
+      "label": "Task 10: NEB-21 \u2014 LinearSync schema",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L655"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_11_extend_linear_connector_with_missing_fetchers",
+      "label": "Task 11: Extend linear connector with missing fetchers",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L757"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_12_neb_22_import_wizard_server_actions_6_steps",
+      "label": "Task 12: NEB-22 \u2014 Import Wizard server actions (6 steps)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L872"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_13_neb_22_import_wizard_ui_6_steps",
+      "label": "Task 13: NEB-22 \u2014 Import Wizard UI (6 steps)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1020"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_14_neb_23_webhook_linear_cosmos",
+      "label": "Task 14: NEB-23 \u2014 Webhook Linear \u2192 Cosmos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1260"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_self_review_checklist",
+      "label": "Self-Review Checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1416"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_known_gaps_to_resolve_during_implementation",
+      "label": "Known gaps to resolve during implementation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1428"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_1_wire_staleness_props_in_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_2_c_h\u00edbrido_layout_staleness_badge_in_dashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_3_export_csv_button",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_a_neb_18_c_h\u00edbrido_dashboard_current_branch",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_4_mark_neb_18_done_in_linear",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L280",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L288",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_5_create_branch_audit_existing_lace_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L292",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_6_lace_tool_use_server_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L325",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_7_wire_tools_into_copilot_chat_route",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L429",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_b_neb_13_lace_tool_use_rag_wsjf",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_8_rag_with_pi_history",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L493",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L584",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_9_neb_20_spike_document_findings_resolve",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L588",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_10_neb_21_linearsync_schema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L655",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_11_extend_linear_connector_with_missing_fetchers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L757",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_12_neb_22_import_wizard_server_actions_6_steps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L872",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_13_neb_22_import_wizard_ui_6_steps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1020",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_phase_c_m7_linear_cosmos_integration",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_task_14_neb_23_webhook_linear_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1260",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_self_review_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1416",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_nebuloz_open_tasks_m6_lace_m7_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_nebuloz_open_tasks_known_gaps_to_resolve_during_implementation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-nebuloz-open-tasks.md",
+      "source_location": "L1428",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

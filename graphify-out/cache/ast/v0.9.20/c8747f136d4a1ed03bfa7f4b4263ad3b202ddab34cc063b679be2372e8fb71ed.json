@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_md",
+      "label": "2026-07-27-epic-drilldown-story-task.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "label": "Epic Drill-down: Feature \u2192 Story \u2192 Task \u2014 Fechamento",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_o_que_foi_entregue",
+      "label": "O que foi entregue",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_as_4_diverg\u00eancias_deliberadas_do_handoff_original",
+      "label": "As 4 diverg\u00eancias deliberadas do handoff original",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_corre\u00e7\u00f5es_feitas_ao_plano_durante_a_execu\u00e7\u00e3o",
+      "label": "Corre\u00e7\u00f5es feitas ao plano durante a execu\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_corre\u00e7\u00f5es_feitas_na_revis\u00e3o_final_de_branch_commit_a933841",
+      "label": "Corre\u00e7\u00f5es feitas na revis\u00e3o final de branch (commit `a933841`)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_fora_de_escopo_expl\u00edcito_n\u00e3o_esquecido",
+      "label": "Fora de escopo (expl\u00edcito, n\u00e3o esquecido)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_su\u00edte_completa",
+      "label": "Su\u00edte completa",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_follow_ups_conhecidos",
+      "label": "Follow-ups conhecidos",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L91"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_o_que_foi_entregue",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_as_4_diverg\u00eancias_deliberadas_do_handoff_original",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_corre\u00e7\u00f5es_feitas_ao_plano_durante_a_execu\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_corre\u00e7\u00f5es_feitas_na_revis\u00e3o_final_de_branch_commit_a933841",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_fora_de_escopo_expl\u00edcito_n\u00e3o_esquecido",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_su\u00edte_completa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_epic_drill_down_feature_story_task_fechamento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_27_epic_drilldown_story_task_follow_ups_conhecidos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-27-epic-drilldown-story-task.md",
+      "source_location": "L91",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

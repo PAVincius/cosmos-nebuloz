@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "label": "ai-security.md",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_objetivo_da_trilha",
+      "label": "Objetivo da Trilha",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_mapeamento_ao_nist_ai_rmf_foco_measure_manage_e_ao_nist_cyber_ai_profile",
+      "label": "Mapeamento ao NIST AI RMF (foco Measure/Manage) e ao NIST Cyber AI Profile",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_fase_1_triagem_discovery",
+      "label": "Fase 1 \u2014 Triagem (Discovery)",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_fase_2_a\u00e7\u00f5es_concretas_por_camada_de_ataque",
+      "label": "Fase 2 \u2014 A\u00e7\u00f5es Concretas por Camada de Ataque",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_exemplos_de_software_e_integra\u00e7\u00f5es_de_mercado",
+      "label": "Exemplos de Software e Integra\u00e7\u00f5es de Mercado",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_pacote_setorial_ai_security_no_setor_financeiro",
+      "label": "Pacote Setorial: AI Security no Setor Financeiro",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_crit\u00e9rio_de_pronto",
+      "label": "Crit\u00e9rio de \"Pronto\"",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_references",
+      "label": "References",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L69"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_objetivo_da_trilha",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_mapeamento_ao_nist_ai_rmf_foco_measure_manage_e_ao_nist_cyber_ai_profile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_fase_1_triagem_discovery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_fase_2_a\u00e7\u00f5es_concretas_por_camada_de_ataque",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_exemplos_de_software_e_integra\u00e7\u00f5es_de_mercado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_pacote_setorial_ai_security_no_setor_financeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_crit\u00e9rio_de_pronto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_security_references",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-security.md",
+      "source_location": "L69",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

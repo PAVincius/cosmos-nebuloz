@@ -1,5 +1,5 @@
 import "./styles.css";
-import { AnalyticsProvider } from "@repo/analytics/provider";
+import { MarketingAnalyticsProvider } from "@repo/analytics/marketing-provider";
 import { DesignSystemProvider } from "@repo/design-system";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
@@ -40,9 +40,9 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
             component stays in components/cosmos for the older pages. */}
         <LenisProvider />
         <ScrollProgress />
-        <AnalyticsProvider>
+        <MarketingAnalyticsProvider>
           <DesignSystemProvider>{children}</DesignSystemProvider>
-        </AnalyticsProvider>
+        </MarketingAnalyticsProvider>
       </body>
     </html>
   );

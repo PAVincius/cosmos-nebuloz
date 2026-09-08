@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_md",
+      "label": "2026-09-02-scaffold-us5-templates.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "label": "Scaffold \u2014 US5: biblioteca de templates (T083\u2013T097)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_a_decis\u00e3o_que_define_a_fatia",
+      "label": "A decis\u00e3o que define a fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_tr\u00eas_regras_negativas_e_onde_cada_uma_mora",
+      "label": "Tr\u00eas regras negativas, e onde cada uma mora",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_dois_erros_meus_e_um_deles_\u00e9_repetido",
+      "label": "Dois erros meus, e um deles \u00e9 repetido",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "label": "O que fica para a pr\u00f3xima fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L88"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_a_decis\u00e3o_que_define_a_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_tr\u00eas_regras_negativas_e_onde_cada_uma_mora",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_dois_erros_meus_e_um_deles_\u00e9_repetido",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_scaffold_us5_biblioteca_de_templates_t083_t097",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us5_templates_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us5-templates.md",
+      "source_location": "L88",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

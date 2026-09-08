@@ -1,0 +1,225 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "label": "scaffold-prd.md",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "label": "Scaffold \u2014 PRD do servi\u00e7o",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_1_a_tese_n\u00e3o_falta_produto_falta_destino",
+      "label": "1. A tese: n\u00e3o falta produto, falta destino",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_2_o_que_o_meridian_entrega_como_insumo",
+      "label": "2. O que o Meridian entrega como insumo",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_3_escopo_v1",
+      "label": "3. Escopo V1",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_dentro",
+      "label": "Dentro",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_fora_do_v1_explicitamente",
+      "label": "Fora do V1, explicitamente",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L105"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_4_os_pacotes",
+      "label": "4. Os pacotes",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L118"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_5_sla_e_pap\u00e9is",
+      "label": "5. SLA e pap\u00e9is",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_6_pre\u00e7o_a_mesma_trava_do_meridian",
+      "label": "6. Pre\u00e7o \u2014 a mesma trava do Meridian",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L158"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_7_a_\u00fanica_engenharia_do_v1",
+      "label": "7. A \u00fanica engenharia do V1",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L181"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_8_crit\u00e9rios_de_sa\u00edda_do_v1",
+      "label": "8. Crit\u00e9rios de sa\u00edda do V1",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L204"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_9_pend\u00eancias_que_este_documento_n\u00e3o_fecha",
+      "label": "9. Pend\u00eancias que este documento n\u00e3o fecha",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L214"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_1_a_tese_n\u00e3o_falta_produto_falta_destino",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_2_o_que_o_meridian_entrega_como_insumo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_3_escopo_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_3_escopo_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_dentro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_3_escopo_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_fora_do_v1_explicitamente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_4_os_pacotes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_5_sla_e_pap\u00e9is",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_6_pre\u00e7o_a_mesma_trava_do_meridian",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_icp_e_precificacao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_7_a_\u00fanica_engenharia_do_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_8_crit\u00e9rios_de_sa\u00edda_do_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_scaffold_prd_do_servi\u00e7o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_9_pend\u00eancias_que_este_documento_n\u00e3o_fecha",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/scaffold-prd.md",
+      "source_location": "L214",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

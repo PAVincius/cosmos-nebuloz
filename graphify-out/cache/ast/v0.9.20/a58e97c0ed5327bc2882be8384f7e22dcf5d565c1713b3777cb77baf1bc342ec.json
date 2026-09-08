@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_md",
+      "label": "asset-producer.md",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "label": "Impeccable Asset Producer",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_core_rule",
+      "label": "Core Rule",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_decision_comps",
+      "label": "Decision Comps",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_input_contract",
+      "label": "Input Contract",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_workflow",
+      "label": "Workflow",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_prompt_pattern",
+      "label": "Prompt Pattern",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_output_contract",
+      "label": "Output Contract",
+      "file_type": "document",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L78"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_core_rule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_decision_comps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_input_contract",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_workflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_prompt_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_impeccable_asset_producer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_skills_impeccable_reference_degraded_asset_producer_output_contract",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/impeccable/reference/degraded/asset-producer.md",
+      "source_location": "L78",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

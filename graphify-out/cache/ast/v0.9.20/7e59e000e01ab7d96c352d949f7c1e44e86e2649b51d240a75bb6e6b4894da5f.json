@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_md",
+      "label": "2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "label": "Maestri \u2014 funda\u00e7\u00e3o de conhecimento por produto",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_1_por_que_este_\u00e9_o_primeiro",
+      "label": "1. Por que este \u00e9 o primeiro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_2_n\u00e3o_objetivos",
+      "label": "2. N\u00e3o-objetivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "label": "3. Componentes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_1_recorte_do_grafo_scripts_knowledge_recortar_grafo_ts",
+      "label": "3.1 Recorte do grafo \u2014 `scripts/knowledge/recortar-grafo.ts`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_2_roteador_de_mem\u00f3ria_scripts_knowledge_rotear_memoria_ts",
+      "label": "3.2 Roteador de mem\u00f3ria \u2014 `scripts/knowledge/rotear-memoria.ts`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_3_exportador_scripts_knowledge_exportar_ts",
+      "label": "3.3 Exportador \u2014 `scripts/knowledge/exportar.ts`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_4_notes_no_maestri_mem\u00f3ria_de_trabalho",
+      "label": "3.4 Notes no Maestri \u2014 mem\u00f3ria de trabalho",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_5_rotina_refresh_conhecimento",
+      "label": "3.5 Rotina \u2014 `refresh-conhecimento`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_4_fluxo_de_dados",
+      "label": "4. Fluxo de dados",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L154"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_5_erro_e_degrada\u00e7\u00e3o",
+      "label": "5. Erro e degrada\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L168"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_6_teste",
+      "label": "6. Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L179"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_7_decis\u00f5es_que_ficam_para_os_sub_projetos_seguintes",
+      "label": "7. Decis\u00f5es que ficam para os sub-projetos seguintes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L195"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_1_por_que_este_\u00e9_o_primeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_2_n\u00e3o_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_1_recorte_do_grafo_scripts_knowledge_recortar_grafo_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_2_roteador_de_mem\u00f3ria_scripts_knowledge_rotear_memoria_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_3_exportador_scripts_knowledge_exportar_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_4_notes_no_maestri_mem\u00f3ria_de_trabalho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_3_5_rotina_refresh_conhecimento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_4_fluxo_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_5_erro_e_degrada\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_6_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_maestri_funda\u00e7\u00e3o_de_conhecimento_por_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_7_decis\u00f5es_que_ficam_para_os_sub_projetos_seguintes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": "L195",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

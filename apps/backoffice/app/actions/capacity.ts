@@ -4,6 +4,7 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { erroDaAlocacao, erroDaJanela } from "@/lib/capacidade/janela";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -35,6 +36,11 @@ export type PessoaCapacidade = {
   habilidades: string[];
   horasSemana: number;
   ativo: boolean;
+  /** Início da janela de capacidade, ISO. Nulo = conta desde sempre. */
+  entraEm: string | null;
+  /** Fim da janela, ISO. Não-nulo é o que faz a pessoa ser terceiro. */
+  saiEm: string | null;
+  observacao: string | null;
   /** Soma das alocações em curso hoje. */
   ocupacaoAtual: number;
   alocacoes: {
@@ -71,6 +77,9 @@ export async function listCapacity(): Promise<Result<PessoaCapacidade[]>> {
         email: true,
         habilidades: true,
         horasSemana: true,
+        entraEm: true,
+        saiEm: true,
+        observacao: true,
         ativo: true,
         alocacoes: {
           orderBy: { inicioEm: "desc" },
@@ -92,6 +101,10 @@ export async function listCapacity(): Promise<Result<PessoaCapacidade[]>> {
       email: p.email,
       habilidades: p.habilidades,
       horasSemana: p.horasSemana,
+      // ISO na fronteira: `Date` não atravessa a serialização para o cliente.
+      entraEm: p.entraEm ? p.entraEm.toISOString() : null,
+      saiEm: p.saiEm ? p.saiEm.toISOString() : null,
+      observacao: p.observacao,
       ativo: p.ativo,
       // Só o que está em curso HOJE. Somar alocação encerrada mostraria alguém
       // ocupado por trabalho que já acabou.
@@ -113,6 +126,9 @@ const PessoaSchema = z.object({
   email: z.string().email(),
   habilidades: z.array(z.string().min(1).max(40)).max(20).optional(),
   horasSemana: z.number().int().min(1).max(80).optional(),
+  entraEm: z.iso.date().optional(),
+  saiEm: z.iso.date().optional(),
+  observacao: z.string().max(200).optional(),
 });
 
 export async function createPersonAction(
@@ -124,6 +140,13 @@ export async function createPersonAction(
 
     const dados = PessoaSchema.parse(input);
     const email = dados.email.trim().toLowerCase();
+
+    const entraEm = dados.entraEm ? new Date(dados.entraEm) : null;
+    const saiEm = dados.saiEm ? new Date(dados.saiEm) : null;
+    const erroJanela = erroDaJanela({ entraEm, saiEm });
+    if (erroJanela) {
+      throw new StaffAuthError("FORBIDDEN", erroJanela);
+    }
 
     const jaExiste = await database.staffPerson.findFirst({
       where: { tenantId: SYSTEM_TENANT_ID, email },
@@ -143,6 +166,9 @@ export async function createPersonAction(
         email,
         habilidades: dados.habilidades ?? [],
         horasSemana: dados.horasSemana ?? 40,
+        entraEm,
+        saiEm,
+        observacao: dados.observacao?.trim() || null,
       },
       select: { id: true, nome: true },
     });
@@ -154,7 +180,9 @@ export async function createPersonAction(
       action: "created",
       entityType: "staff_person",
       entityId: criada.id,
-      target: `${dados.nome} · ${email}`,
+      target: saiEm
+        ? `${dados.nome} · ${email} · terceiro até ${dados.saiEm}`
+        : `${dados.nome} · ${email}`,
     });
 
     revalidatePath("/capacidade");
@@ -191,10 +219,28 @@ export async function allocatePersonAction(
 
     const pessoa = await database.staffPerson.findFirst({
       where: { id: dados.personId, tenantId: SYSTEM_TENANT_ID },
-      select: { id: true, nome: true, email: true, horasSemana: true },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        horasSemana: true,
+        entraEm: true,
+        saiEm: true,
+      },
     });
     if (!pessoa) {
       throw new StaffAuthError("FORBIDDEN", "Pessoa não encontrada.");
+    }
+
+    // Alocar alguém fora da própria janela de contrato é o erro que a janela
+    // existe para pegar. Sem esta trava as datas seriam só enfeite na linha.
+    const erroFora = erroDaAlocacao(
+      pessoa.nome,
+      { inicioEm: inicio, fimEm: fim },
+      { entraEm: pessoa.entraEm, saiEm: pessoa.saiEm }
+    );
+    if (erroFora) {
+      throw new StaffAuthError("FORBIDDEN", erroFora);
     }
 
     const engajamento = await database.engagement.findFirst({

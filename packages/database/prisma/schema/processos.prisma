@@ -1,0 +1,51 @@
+/// Um processo da casa no mapa de processos. O tenant é sempre `system`: o
+/// processo é artefato da Nebuloz, não do cliente. O campo existe para a mesma
+/// trilha de auditoria e o mesmo escopo que o resto do painel usa.
+model StaffProcess {
+  id         String    @id @default(cuid())
+  tenantId   String
+  /// Código curto e estável, "PZ-01". É o identificador do nó no .canvas
+  /// exportado, então mudar isso quebra arquivo que alguém já salvou.
+  codigo     String
+  nome       String
+  descricao  String    @db.Text
+  /// COMERCIAL | DELIVERY | GOVERNANCA | PLATAFORMA | LAB | MEDICAO
+  dominio    String
+  /// 1 estratégico · 2 tático · 3 operacional. Decide o anel no layout polar.
+  nivel      Int
+  /// CORE | APOIO
+  tipo       String
+  donoNome   String?
+  revisadoEm DateTime?
+  tags       String[]
+  /// Modelo BPMN que descreve o processo. SetNull porque o processo sobrevive
+  /// ao diagrama — é conhecimento da casa, o diagrama é uma representação.
+  diagramId  String?
+  /// Onde o documento vive quando não há BPMN. Link, não integração.
+  docUrl     String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  diagram  StaffDiagram?      @relation(fields: [diagramId], references: [id], onDelete: SetNull)
+  saidas   StaffProcessEdge[] @relation("de")
+  entradas StaffProcessEdge[] @relation("para")
+
+  @@unique([tenantId, codigo])
+  @@index([tenantId, dominio])
+}
+
+/// "de → para: rótulo". Ex.: PZ-01 → PZ-02 "converte em".
+model StaffProcessEdge {
+  id       String @id @default(cuid())
+  tenantId String
+  deId     String
+  paraId   String
+  rotulo   String
+
+  de   StaffProcess @relation("de", fields: [deId], references: [id], onDelete: Cascade)
+  para StaffProcess @relation("para", fields: [paraId], references: [id], onDelete: Cascade)
+
+  @@unique([deId, paraId])
+  @@index([tenantId])
+}

@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_md",
+      "label": "story-061-tela-settings.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "label": "Story 061 \u2014 Tela Settings (workspace, RBAC, SSO, auditoria, SAFe e plano)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_001_abas_de_administra\u00e7\u00e3o_fecham_para_quem_n\u00e3o_\u00e9_admin_no_servidor_n\u00e3o_s\u00f3_na_ui",
+      "label": "AC-001: Abas de administra\u00e7\u00e3o fecham para quem n\u00e3o \u00e9 ADMIN \u2014 no servidor, n\u00e3o s\u00f3 na UI",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_002_sso_n\u00e3o_pode_ser_ligado_sem_idp_configurado",
+      "label": "AC-002: SSO n\u00e3o pode ser ligado sem IdP configurado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_003_nenhum_campo_sens\u00edvel_de_sso_\u00e9_lido_para_exibi\u00e7\u00e3o",
+      "label": "AC-003: Nenhum campo sens\u00edvel de SSO \u00e9 lido para exibi\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_004_trilha_de_auditoria_\u00e9_imut\u00e1vel_escopada_e_paginada",
+      "label": "AC-004: Trilha de auditoria \u00e9 imut\u00e1vel, escopada e paginada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_005_rbac_de_membros_n\u00e3o_permite_deixar_o_workspace_sem_dono",
+      "label": "AC-005: RBAC de membros n\u00e3o permite deixar o workspace sem dono",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_006_plano_\u00e9_leitura_e_a_aus\u00eancia_de_faturamento_\u00e9_dita_em_voz_alta",
+      "label": "AC-006: Plano \u00e9 leitura, e a aus\u00eancia de faturamento \u00e9 dita em voz alta",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L116"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_001_abas_de_administra\u00e7\u00e3o_fecham_para_quem_n\u00e3o_\u00e9_admin_no_servidor_n\u00e3o_s\u00f3_na_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_002_sso_n\u00e3o_pode_ser_ligado_sem_idp_configurado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_003_nenhum_campo_sens\u00edvel_de_sso_\u00e9_lido_para_exibi\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_004_trilha_de_auditoria_\u00e9_imut\u00e1vel_escopada_e_paginada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_005_rbac_de_membros_n\u00e3o_permite_deixar_o_workspace_sem_dono",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_ac_006_plano_\u00e9_leitura_e_a_aus\u00eancia_de_faturamento_\u00e9_dita_em_voz_alta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_story_061_tela_settings_workspace_rbac_sso_auditoria_safe_e_plano",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_061_tela_settings_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-061-tela-settings.md",
+      "source_location": "L116",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

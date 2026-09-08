@@ -1,0 +1,303 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_md",
+      "label": "03-access-control-policy.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "label": "Access Control Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_1_purpose",
+      "label": "1. Purpose",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_2_scope",
+      "label": "2. Scope",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_rbac_model",
+      "label": "3. RBAC Model",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_1_platform_roles_within_a_tenant",
+      "label": "3.1 Platform Roles (within a Tenant)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_2_internal_roles_cosmos_staff",
+      "label": "3.2 Internal Roles (Cosmos staff)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_3_privilege_escalation",
+      "label": "3.3 Privilege Escalation",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "label": "4. Access Lifecycle",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_1_provisioning_new_access",
+      "label": "4.1 Provisioning (New Access)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_2_access_changes",
+      "label": "4.2 Access Changes",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_3_deprovisioning_revoking_access",
+      "label": "4.3 Deprovisioning (Revoking Access)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_4_quarterly_access_reviews",
+      "label": "4.4 Quarterly Access Reviews",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_authentication_requirements",
+      "label": "5. Authentication Requirements",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L101"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_1_mfa_policy",
+      "label": "5.1 MFA Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_2_session_policy",
+      "label": "5.2 Session Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_3_password_policy",
+      "label": "5.3 Password Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L121"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_6_privileged_access_management",
+      "label": "6. Privileged Access Management",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_7_service_accounts_and_api_keys",
+      "label": "7. Service Accounts and API Keys",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L142"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_1_purpose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_2_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_rbac_model",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_rbac_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_1_platform_roles_within_a_tenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_rbac_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_2_internal_roles_cosmos_staff",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_rbac_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_3_3_privilege_escalation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_1_provisioning_new_access",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_2_access_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_3_deprovisioning_revoking_access",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_access_lifecycle",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_4_4_quarterly_access_reviews",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_authentication_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_authentication_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_1_mfa_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_authentication_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_2_session_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_authentication_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_5_3_password_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_6_privileged_access_management",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_access_control_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_7_service_accounts_and_api_keys",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/03-access-control-policy.md",
+      "source_location": "L142",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

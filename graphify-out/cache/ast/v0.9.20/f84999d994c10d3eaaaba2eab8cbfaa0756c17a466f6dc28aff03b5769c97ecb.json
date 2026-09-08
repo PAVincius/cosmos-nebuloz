@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_md",
+      "label": "2026-06-10-story-044-multiorg-health-fallback.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_story_044_onboarding_platform_health_multi_org",
+      "label": "Story-044: Onboarding + Platform Health + Multi-Org",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_implemented",
+      "label": "Implemented",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_005_switchorg_action",
+      "label": "AC-005 \u2014 switchOrg action",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_003_platform_health_api",
+      "label": "AC-003 \u2014 Platform health API",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_008_sendsafe_drainjobfallbackqueue",
+      "label": "AC-008 \u2014 sendSafe + drainJobFallbackQueue",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_notes",
+      "label": "Notes",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L26"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_story_044_onboarding_platform_health_multi_org",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_story_044_onboarding_platform_health_multi_org",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_implemented",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_implemented",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_005_switchorg_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_implemented",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_003_platform_health_api",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_implemented",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_ac_008_sendsafe_drainjobfallbackqueue",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_story_044_onboarding_platform_health_multi_org",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_044_multiorg_health_fallback_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-044-multiorg-health-fallback.md",
+      "source_location": "L26",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

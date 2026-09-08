@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_md",
+      "label": "constitution.md",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "label": "Cosmos/Nebuloz Constitution",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "label": "Core Principles",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_i_multi_tenant_safety_non_negotiable",
+      "label": "I. Multi-Tenant Safety (NON-NEGOTIABLE)",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_ii_result_t_n\u00e3o_throw",
+      "label": "II. Result<T>, n\u00e3o throw",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_iii_test_first_non_negotiable",
+      "label": "III. Test-First (NON-NEGOTIABLE)",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_iv_valida\u00e7\u00e3o_em_boundaries",
+      "label": "IV. Valida\u00e7\u00e3o em Boundaries",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_v_webhook_receiver_pattern",
+      "label": "V. Webhook Receiver Pattern",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_additional_constraints_stack_compliance",
+      "label": "Additional Constraints (Stack & Compliance)",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_quality_gates_ci_development_workflow",
+      "label": "Quality Gates (CI \u2014 Development Workflow)",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_governance",
+      "label": "Governance",
+      "file_type": "document",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L34"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_i_multi_tenant_safety_non_negotiable",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_ii_result_t_n\u00e3o_throw",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_iii_test_first_non_negotiable",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_iv_valida\u00e7\u00e3o_em_boundaries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_v_webhook_receiver_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_additional_constraints_stack_compliance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_quality_gates_ci_development_workflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_cosmos_nebuloz_constitution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_memory_constitution_governance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/memory/constitution.md",
+      "source_location": "L34",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

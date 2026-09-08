@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_md",
+      "label": "2026-05-26-t06-capability-planning-rename.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "label": "T06 \u2014 Capability Planning Reescopo (ex-Synergy Detection) \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_1_capability_schema_types",
+      "label": "Task 1: Capability schema + types",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_2_team_capability_profile_agregado_sem_indiv\u00edduos",
+      "label": "Task 2: Team capability profile (agregado, sem indiv\u00edduos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_3_initiative_demand_estimator",
+      "label": "Task 3: Initiative demand estimator",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L201"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_4_compute_capability_gaps_algoritmo_s_t_p",
+      "label": "Task 4: Compute capability gaps (algoritmo S(t,p))",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L255"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_5_capability_tab_ui_substitui_synergy_tab",
+      "label": "Task 5: Capability tab UI (substitui synergy-tab)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L317"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_6_deprecate_synergy_server_action",
+      "label": "Task 6: Deprecate synergy server action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L432"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_7_privacy_naming_policy_doc",
+      "label": "Task 7: Privacy + naming policy doc",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L455"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L477"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_1_capability_schema_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_2_team_capability_profile_agregado_sem_indiv\u00edduos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_3_initiative_demand_estimator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_4_compute_capability_gaps_algoritmo_s_t_p",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L255",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_5_capability_tab_ui_substitui_synergy_tab",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L317",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_6_deprecate_synergy_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L432",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_task_7_privacy_naming_policy_doc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L455",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_t06_capability_planning_reescopo_ex_synergy_detection_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t06_capability_planning_rename_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t06-capability-planning-rename.md",
+      "source_location": "L477",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

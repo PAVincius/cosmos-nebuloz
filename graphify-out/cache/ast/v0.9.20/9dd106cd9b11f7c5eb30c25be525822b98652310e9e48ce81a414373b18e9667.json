@@ -1,0 +1,347 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "label": "dpa-modelo.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "label": "Acordo de Tratamento de Dados Pessoais \u2014 modelo",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_1_pap\u00e9is",
+      "label": "1. Pap\u00e9is",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_2_objeto_e_finalidades",
+      "label": "2. Objeto e finalidades",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_3_instru\u00e7\u00f5es_e_limites",
+      "label": "3. Instru\u00e7\u00f5es e limites",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_4_confidencialidade_e_pessoas_autorizadas",
+      "label": "4. Confidencialidade e pessoas autorizadas",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_5_subprocessadores",
+      "label": "5. Subprocessadores",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_6_transfer\u00eancia_internacional",
+      "label": "6. Transfer\u00eancia internacional",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_7_seguran\u00e7a",
+      "label": "7. Seguran\u00e7a",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_8_incidentes_de_seguran\u00e7a",
+      "label": "8. Incidentes de seguran\u00e7a",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_9_direitos_dos_titulares",
+      "label": "9. Direitos dos titulares",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L165"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_10_reten\u00e7\u00e3o_e_elimina\u00e7\u00e3o_ao_fim_do_contrato",
+      "label": "10. Reten\u00e7\u00e3o e elimina\u00e7\u00e3o ao fim do contrato",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L183"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_11_auditoria",
+      "label": "11. Auditoria",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L194"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_12_vig\u00eancia_e_lei_aplic\u00e1vel",
+      "label": "12. Vig\u00eancia e lei aplic\u00e1vel",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L204"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_o_que_este_modelo_depende_e_de_quem",
+      "label": "O que este modelo depende, e de quem",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L212"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_raz\u00e3o_social_da_nebuloz_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_cnpj_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_endere\u00e7o_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_1_pap\u00e9is",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_2_objeto_e_finalidades",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_3_instru\u00e7\u00f5es_e_limites",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_consentimento_de_gravacao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_4_confidencialidade_e_pessoas_autorizadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_5_subprocessadores",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_prazo_usual_30_dias_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_dpa_e_cl\u00e1usula_de_zero_retention_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_dpa_e_consentimento_de_grava\u00e7\u00e3o_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_charter_nebuloz_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_6_transfer\u00eancia_internacional",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_7_seguran\u00e7a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_8_incidentes_de_seguran\u00e7a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_9_direitos_dos_titulares",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_10_reten\u00e7\u00e3o_e_elimina\u00e7\u00e3o_ao_fim_do_contrato",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_11_auditoria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_12_vig\u00eancia_e_lei_aplic\u00e1vel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dado_necess\u00e1rio_foro_eleito_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_acordo_de_tratamento_de_dados_pessoais_modelo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_dpa_modelo_o_que_este_modelo_depende_e_de_quem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": "L212",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

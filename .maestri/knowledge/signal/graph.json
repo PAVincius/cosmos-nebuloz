@@ -1,0 +1,217 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "cosmos_nebuloz_hyperedge_multitenant_security",
+        "label": "Multi-tenant security stack",
+        "nodes": [
+          "cosmos_nebuloz_security_rls",
+          "cosmos_nebuloz_security_better_auth",
+          "cosmos_nebuloz_security_rbac",
+          "cosmos_nebuloz_security_arcjet_waf",
+          "cosmos_nebuloz_security_upstash_rate_limit",
+          "cosmos_nebuloz_prompt_c1_liveblocks",
+          "cosmos_nebuloz_prompt_c6_rls"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/SECURITY.md"
+      },
+      {
+        "id": "cosmos_nebuloz_hyperedge_infra_stack",
+        "label": "Production infrastructure stack",
+        "nodes": [
+          "cosmos_nebuloz_docker_prod",
+          "cosmos_nebuloz_docker_prod_pgbouncer",
+          "cosmos_nebuloz_docker_prod_redis",
+          "cosmos_nebuloz_docker_prod_nginx",
+          "cosmos_nebuloz_claude_prisma_pg"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docker-compose.prod.yml"
+      },
+      {
+        "id": "cosmos_nebuloz_hyperedge_design_systems",
+        "label": "Dual design systems (marketing + app)",
+        "nodes": [
+          "cosmos_nebuloz_design_marketing",
+          "cosmos_nebuloz_design_app_document",
+          "cosmos_nebuloz_design_marketing_linear_brand",
+          "cosmos_nebuloz_design_app_accent"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/DESIGN.app.md"
+      },
+      {
+        "id": "cosmos_nebuloz_hyperedge_e2e_testing",
+        "label": "E2E test infrastructure",
+        "nodes": [
+          "cosmos_nebuloz_docker_e2e",
+          "cosmos_nebuloz_docker_e2e_pgvector",
+          "cosmos_nebuloz_docker_e2e_playwright"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docker-compose.e2e.yml"
+      },
+      {
+        "id": "cosmos_nebuloz_hyperedge_safe_domain",
+        "label": "SAFe domain concepts in the app",
+        "nodes": [
+          "cosmos_nebuloz_design_app_portfolio_kanban",
+          "cosmos_nebuloz_design_app_wsjf",
+          "cosmos_nebuloz_img_analytics_flow_metrics",
+          "cosmos_nebuloz_img_analytics_portfolio_cfd",
+          "cosmos_nebuloz_img_analytics_sidebar_sub",
+          "cosmos_nebuloz_img_dashboard_kpi_flow_efficiency"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/cosmos-analytics.png"
+      },
+      {
+        "id": "observability_stack",
+        "label": "Observability & Monitoring Stack",
+        "nodes": [
+          "docs_app_lang_home_components_features_sentry",
+          "docs_app_lang_home_components_features_posthog",
+          "docs_app_lang_home_components_features_better_stack"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/app/[lang]/(home)/components/features/sentry.svg"
+      },
+      {
+        "id": "ui_component_stack",
+        "label": "UI Component Stack",
+        "nodes": [
+          "docs_app_lang_home_components_features_react",
+          "docs_app_lang_home_components_features_radix",
+          "docs_app_lang_home_components_features_tailwind",
+          "docs_app_lang_home_components_features_lucide"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/app/[lang]/(home)/components/features/react.svg"
+      }
+    ]
+  },
+  "hyperedges": [
+    {
+      "id": "cosmos_nebuloz_hyperedge_multitenant_security",
+      "label": "Multi-tenant security stack",
+      "nodes": [
+        "cosmos_nebuloz_security_rls",
+        "cosmos_nebuloz_security_better_auth",
+        "cosmos_nebuloz_security_rbac",
+        "cosmos_nebuloz_security_arcjet_waf",
+        "cosmos_nebuloz_security_upstash_rate_limit",
+        "cosmos_nebuloz_prompt_c1_liveblocks",
+        "cosmos_nebuloz_prompt_c6_rls"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/SECURITY.md"
+    },
+    {
+      "id": "cosmos_nebuloz_hyperedge_infra_stack",
+      "label": "Production infrastructure stack",
+      "nodes": [
+        "cosmos_nebuloz_docker_prod",
+        "cosmos_nebuloz_docker_prod_pgbouncer",
+        "cosmos_nebuloz_docker_prod_redis",
+        "cosmos_nebuloz_docker_prod_nginx",
+        "cosmos_nebuloz_claude_prisma_pg"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docker-compose.prod.yml"
+    },
+    {
+      "id": "cosmos_nebuloz_hyperedge_design_systems",
+      "label": "Dual design systems (marketing + app)",
+      "nodes": [
+        "cosmos_nebuloz_design_marketing",
+        "cosmos_nebuloz_design_app_document",
+        "cosmos_nebuloz_design_marketing_linear_brand",
+        "cosmos_nebuloz_design_app_accent"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/DESIGN.app.md"
+    },
+    {
+      "id": "cosmos_nebuloz_hyperedge_e2e_testing",
+      "label": "E2E test infrastructure",
+      "nodes": [
+        "cosmos_nebuloz_docker_e2e",
+        "cosmos_nebuloz_docker_e2e_pgvector",
+        "cosmos_nebuloz_docker_e2e_playwright"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docker-compose.e2e.yml"
+    },
+    {
+      "id": "cosmos_nebuloz_hyperedge_safe_domain",
+      "label": "SAFe domain concepts in the app",
+      "nodes": [
+        "cosmos_nebuloz_design_app_portfolio_kanban",
+        "cosmos_nebuloz_design_app_wsjf",
+        "cosmos_nebuloz_img_analytics_flow_metrics",
+        "cosmos_nebuloz_img_analytics_portfolio_cfd",
+        "cosmos_nebuloz_img_analytics_sidebar_sub",
+        "cosmos_nebuloz_img_dashboard_kpi_flow_efficiency"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/cosmos-analytics.png"
+    },
+    {
+      "id": "observability_stack",
+      "label": "Observability & Monitoring Stack",
+      "nodes": [
+        "docs_app_lang_home_components_features_sentry",
+        "docs_app_lang_home_components_features_posthog",
+        "docs_app_lang_home_components_features_better_stack"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/app/[lang]/(home)/components/features/sentry.svg"
+    },
+    {
+      "id": "ui_component_stack",
+      "label": "UI Component Stack",
+      "nodes": [
+        "docs_app_lang_home_components_features_react",
+        "docs_app_lang_home_components_features_radix",
+        "docs_app_lang_home_components_features_tailwind",
+        "docs_app_lang_home_components_features_lucide"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/app/[lang]/(home)/components/features/react.svg"
+    }
+  ],
+  "built_at_commit": "10179adc57ebb3eeae7d07b1cb868c9c7e1f74da",
+  "nodes": [],
+  "links": []
+}

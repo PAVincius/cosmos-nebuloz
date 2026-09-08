@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_md",
+      "label": "2026-08-22-charter-geracao-politica-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "label": "Charter \u2014 gera\u00e7\u00e3o do rascunho de pol\u00edtica a partir do perfil real do tenant (NEB-156)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_1_por_que_este_trabalho_existe",
+      "label": "1. Por que este trabalho existe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_2_a_decis\u00e3o_central_o_perfil_do_cliente_n\u00e3o_\u00e9_um_formul\u00e1rio",
+      "label": "2. A decis\u00e3o central: o \"perfil do cliente\" n\u00e3o \u00e9 um formul\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_3_escopo",
+      "label": "3. Escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_arquitetura",
+      "label": "4. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_1_a_action",
+      "label": "4.1 A action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_2_o_grounding_devolvido_n\u00e3o_\u00e9_decorativo",
+      "label": "4.2 O grounding devolvido n\u00e3o \u00e9 decorativo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_3_a_tela",
+      "label": "4.3 A tela",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_5_erro",
+      "label": "5. Erro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_6_teste",
+      "label": "6. Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_7_o_que_este_spec_diz_sobre_as_irm\u00e3s",
+      "label": "7. O que este spec diz sobre as irm\u00e3s",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_8_lacunas_conhecidas",
+      "label": "8. Lacunas conhecidas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L149"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_1_por_que_este_trabalho_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_2_a_decis\u00e3o_central_o_perfil_do_cliente_n\u00e3o_\u00e9_um_formul\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_3_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_1_a_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_2_o_grounding_devolvido_n\u00e3o_\u00e9_decorativo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_4_3_a_tela",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_5_erro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_6_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_7_o_que_este_spec_diz_sobre_as_irm\u00e3s",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_charter_gera\u00e7\u00e3o_do_rascunho_de_pol\u00edtica_a_partir_do_perfil_real_do_tenant_neb_156",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_22_charter_geracao_politica_design_8_lacunas_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-22-charter-geracao-politica-design.md",
+      "source_location": "L149",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

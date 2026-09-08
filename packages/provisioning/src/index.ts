@@ -5,6 +5,12 @@ export {
   bootstrapCharter,
   POLICY_SECTIONS,
 } from "./charter";
+export {
+  CLAUSE_LABEL,
+  deriveVendorMaxClass,
+  type MaxClassDerivation,
+  type VendorPosture,
+} from "./charter-rules";
 export { ProvisioningError, type ProvisioningErrorCode } from "./errors";
 export {
   type BootstrapMeridianDeps,

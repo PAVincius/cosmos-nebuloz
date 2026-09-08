@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_md",
+      "label": "06-vendor-management-policy.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "label": "Vendor Management Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_1_purpose",
+      "label": "1. Purpose",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_2_scope",
+      "label": "2. Scope",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_3_vendor_risk_tiers",
+      "label": "3. Vendor Risk Tiers",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_vendor_assessment_process",
+      "label": "4. Vendor Assessment Process",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_1_new_vendor_onboarding",
+      "label": "4.1 New Vendor Onboarding",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_2_ongoing_vendor_review",
+      "label": "4.2 Ongoing Vendor Review",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_3_vendor_offboarding",
+      "label": "4.3 Vendor Offboarding",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_5_critical_vendor_registry",
+      "label": "5. Critical Vendor Registry",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_6_contractual_requirements",
+      "label": "6. Contractual Requirements",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_7_open_source_dependencies",
+      "label": "7. Open Source Dependencies",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L81"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_1_purpose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_2_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_3_vendor_risk_tiers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_vendor_assessment_process",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_vendor_assessment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_1_new_vendor_onboarding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_vendor_assessment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_2_ongoing_vendor_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_vendor_assessment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_4_3_vendor_offboarding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_5_critical_vendor_registry",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_6_contractual_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_vendor_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_7_open_source_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/06-vendor-management-policy.md",
+      "source_location": "L81",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

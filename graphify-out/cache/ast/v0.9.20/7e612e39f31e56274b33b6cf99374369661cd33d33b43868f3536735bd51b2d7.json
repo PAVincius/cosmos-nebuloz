@@ -1,0 +1,287 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_md",
+      "label": "quickstart.md",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "label": "Quickstart \u00b7 Meridian V1",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_pr\u00e9_requisitos",
+      "label": "Pr\u00e9-requisitos",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_setup",
+      "label": "Setup",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_rodar",
+      "label": "Rodar",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_testes",
+      "label": "Testes",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "label": "Cen\u00e1rios de valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_1_carteira_e_detalhe_us1",
+      "label": "1 \u00b7 Carteira e detalhe (US1)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_2_coleta_bloqueada_por_eixo_sem_dono_us2_fr_011",
+      "label": "2 \u00b7 Coleta bloqueada por eixo sem dono (US2, FR-011)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_3_link_seguro_do_respondente_us2_r_03",
+      "label": "3 \u00b7 Link seguro do respondente (US2, R-03)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_4_determinismo_do_scoring_us3_sc_002",
+      "label": "4 \u00b7 Determinismo do scoring (US3, SC-002)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_5_override_append_only_us3_fr_017_018",
+      "label": "5 \u00b7 Override append-only (US3, FR-017/018)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_6_ciclo_no_grafo_de_gaps_us4_fr_023",
+      "label": "6 \u00b7 Ciclo no grafo de gaps (US4, FR-023)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_7_plano_topol\u00f3gico_us4_sc_007",
+      "label": "7 \u00b7 Plano topol\u00f3gico (US4, SC-007)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_8_benchmark_retido_us5_us6_fr_033",
+      "label": "8 \u00b7 Benchmark retido (US5/US6, FR-033)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_9_diff_de_reavalia\u00e7\u00e3o_us5_fr_035",
+      "label": "9 \u00b7 Diff de reavalia\u00e7\u00e3o (US5, FR-035)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_10_trilha_de_auditoria_fr_037_sc_008",
+      "label": "10 \u00b7 Trilha de auditoria (FR-037, SC-008)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_como_saber_que_terminou",
+      "label": "Como saber que terminou",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L79"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_pr\u00e9_requisitos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_rodar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_1_carteira_e_detalhe_us1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_2_coleta_bloqueada_por_eixo_sem_dono_us2_fr_011",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_3_link_seguro_do_respondente_us2_r_03",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_4_determinismo_do_scoring_us3_sc_002",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_5_override_append_only_us3_fr_017_018",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_6_ciclo_no_grafo_de_gaps_us4_fr_023",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_7_plano_topol\u00f3gico_us4_sc_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_8_benchmark_retido_us5_us6_fr_033",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_9_diff_de_reavalia\u00e7\u00e3o_us5_fr_035",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_cen\u00e1rios_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_10_trilha_de_auditoria_fr_037_sc_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_quickstart_meridian_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_como_saber_que_terminou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/quickstart.md",
+      "source_location": "L79",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

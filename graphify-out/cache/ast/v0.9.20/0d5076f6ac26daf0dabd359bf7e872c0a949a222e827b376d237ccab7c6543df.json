@@ -1,0 +1,291 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "label": "spec.md",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "label": "Feature Specification: Scaffold \u2014 framework de ado\u00e7\u00e3o em trilhas guiadas",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_conflito_de_escopo_a_decidir_antes_de_codar",
+      "label": "\u26a0\ufe0f Conflito de escopo a decidir antes de codar",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_user_scenarios_testing",
+      "label": "User Scenarios & Testing",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_primary_user_story",
+      "label": "Primary User Story",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_acceptance_scenarios",
+      "label": "Acceptance Scenarios",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_edge_cases",
+      "label": "Edge Cases",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "label": "Requirements",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_funcionais_ids_do_prd_v1_0",
+      "label": "Funcionais (IDs do PRD v1.0)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_gate_engine_srd_4",
+      "label": "Gate engine (SRD \u00a74)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_templates_srd_5",
+      "label": "Templates (SRD \u00a75)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_n\u00e3o_funcionais_srd_7",
+      "label": "N\u00e3o-funcionais (SRD \u00a77)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_key_entities",
+      "label": "Key Entities",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_success_criteria",
+      "label": "Success Criteria",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_mapeamento_safe",
+      "label": "Mapeamento SAFe",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L183"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_open_questions",
+      "label": "Open Questions",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L190"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_conflito_de_escopo_a_decidir_antes_de_codar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_user_scenarios_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_user_scenarios_testing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_primary_user_story",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_user_scenarios_testing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_acceptance_scenarios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_user_scenarios_testing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_edge_cases",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_funcionais_ids_do_prd_v1_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_gate_engine_srd_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_templates_srd_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_n\u00e3o_funcionais_srd_7",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_key_entities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_success_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_mapeamento_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_feature_specification_scaffold_framework_de_ado\u00e7\u00e3o_em_trilhas_guiadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_open_questions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/spec.md",
+      "source_location": "L193",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

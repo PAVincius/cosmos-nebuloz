@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_md",
+      "label": "README-seed.md",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "label": "Seed scripts",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_which_script_do_i_run",
+      "label": "Which script do I run?",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_verify_seed_the_plan_s_actual_success_criterion",
+      "label": "`verify:seed` \u2014 the plan's actual success criterion",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_credentials",
+      "label": "Credentials",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_three_traps",
+      "label": "Three traps",
+      "file_type": "document",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L83"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_which_script_do_i_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_verify_seed_the_plan_s_actual_success_criterion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_credentials",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_seed_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_scripts_readme_seed_three_traps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/scripts/README-seed.md",
+      "source_location": "L83",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

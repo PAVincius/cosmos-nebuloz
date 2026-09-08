@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_md",
+      "label": "2026-05-26-t09-governance-decisionlog.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "label": "T09 \u2014 Governance de Epic + DecisionLog Audit\u00e1vel \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_1_state_machine_de_governance",
+      "label": "Task 1: State machine de governance",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_2_decisionlog_write_read_helpers",
+      "label": "Task 2: DecisionLog write/read helpers",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_3_transition_action_com_auditoria",
+      "label": "Task 3: Transition action com auditoria",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_4_audit_hooks_em_budget_theme",
+      "label": "Task 4: Audit hooks em budget/theme",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L287"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_5_governance_kanban_ui",
+      "label": "Task 5: Governance Kanban UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L332"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_6_transition_dialog_com_justificativa",
+      "label": "Task 6: Transition dialog com justificativa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L374"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_7_decisionlog_timeline_ui",
+      "label": "Task 7: DecisionLog Timeline UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L444"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_8_export_do_decisionlog_para_compliance",
+      "label": "Task 8: Export do DecisionLog para compliance",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L458"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L470"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_1_state_machine_de_governance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_2_decisionlog_write_read_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_3_transition_action_com_auditoria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_4_audit_hooks_em_budget_theme",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L287",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_5_governance_kanban_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L332",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_6_transition_dialog_com_justificativa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_7_decisionlog_timeline_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L444",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_task_8_export_do_decisionlog_para_compliance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L458",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_t09_governance_de_epic_decisionlog_audit\u00e1vel_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t09_governance_decisionlog_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t09-governance-decisionlog.md",
+      "source_location": "L470",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

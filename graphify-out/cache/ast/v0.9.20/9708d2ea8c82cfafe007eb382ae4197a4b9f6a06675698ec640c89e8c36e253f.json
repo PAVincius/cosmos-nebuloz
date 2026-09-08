@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_md",
+      "label": "create-prd.md",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_task_create_prd",
+      "label": "Task: Create PRD",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_instructions",
+      "label": "Instructions",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-prd.md",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_task_create_prd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/create-prd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_task_create_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_prd_instructions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/create-prd.md",
+      "source_location": "L6",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

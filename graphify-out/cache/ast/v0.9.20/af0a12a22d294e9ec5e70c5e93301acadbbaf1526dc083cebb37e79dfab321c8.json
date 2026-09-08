@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_md",
+      "label": "SECURITY.md",
+      "file_type": "document",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_security_policy",
+      "label": "Security Policy",
+      "file_type": "document",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_quick_reference",
+      "label": "Quick Reference",
+      "file_type": "document",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L10"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_security_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_security_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_security_quick_reference",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/SECURITY.md",
+      "source_location": "L10",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

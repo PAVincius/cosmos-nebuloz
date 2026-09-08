@@ -1,0 +1,255 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_md",
+      "label": "2026-08-19-charter-bloqueios.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "label": "Charter \u2014 os dois bloqueios do mapa de conformidade",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_1_seed_recusa_reescrever_exig\u00eancia_de_vers\u00e3o_j\u00e1_publicada",
+      "label": "Task 1: Seed recusa reescrever exig\u00eancia de vers\u00e3o j\u00e1 publicada",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_2_seed_cria_a_vers\u00e3o_nova_ligada_\u00e0_anterior",
+      "label": "Task 2: Seed cria a vers\u00e3o nova ligada \u00e0 anterior",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_3_extrair_o_transporte_de_cobertura_para_helper_compartilhado",
+      "label": "Task 3: Extrair o transporte de cobertura para helper compartilhado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_4_adoptsetversion_o_tenant_adota_a_vers\u00e3o_nova",
+      "label": "Task 4: `adoptSetVersion` \u2014 o tenant adota a vers\u00e3o nova",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L583"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_5_listrequirementsets_passa_a_saber_de_sucess\u00e3o",
+      "label": "Task 5: `listRequirementSets` passa a saber de sucess\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L869"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_6_policy_link_vira_cobertura_com_denominador",
+      "label": "Task 6: `POLICY_LINK` vira cobertura com denominador",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1082"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_7_o_mapa_mostra_a_fra\u00e7\u00e3o_e_as_lacunas",
+      "label": "Task 7: O mapa mostra a fra\u00e7\u00e3o e as lacunas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1263"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_8_teste_para_unlinkpolicy",
+      "label": "Task 8: Teste para `unlinkPolicy`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1420"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_9_getpolicyscope_quem_est\u00e1_sob_a_pol\u00edtica",
+      "label": "Task 9: `getPolicyScope` \u2014 quem est\u00e1 sob a pol\u00edtica",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1492"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_10_tela_de_alcance_da_pol\u00edtica",
+      "label": "Task 10: Tela de alcance da pol\u00edtica",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1690"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_11_aviso_e_bot\u00e3o_de_adotar_a_vers\u00e3o_nova",
+      "label": "Task 11: Aviso e bot\u00e3o de adotar a vers\u00e3o nova",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1989"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_12_import_como_nova_vers\u00e3o_de_um_conjunto_existente",
+      "label": "Task 12: Import como nova vers\u00e3o de um conjunto existente",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L2128"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_verifica\u00e7\u00e3o_de_que_os_bloqueios_fecharam",
+      "label": "Verifica\u00e7\u00e3o de que os bloqueios fecharam",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L2327"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_1_seed_recusa_reescrever_exig\u00eancia_de_vers\u00e3o_j\u00e1_publicada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_2_seed_cria_a_vers\u00e3o_nova_ligada_\u00e0_anterior",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_3_extrair_o_transporte_de_cobertura_para_helper_compartilhado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_4_adoptsetversion_o_tenant_adota_a_vers\u00e3o_nova",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L583",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_5_listrequirementsets_passa_a_saber_de_sucess\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L869",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_6_policy_link_vira_cobertura_com_denominador",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1082",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_7_o_mapa_mostra_a_fra\u00e7\u00e3o_e_as_lacunas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1263",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_8_teste_para_unlinkpolicy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1420",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_9_getpolicyscope_quem_est\u00e1_sob_a_pol\u00edtica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1492",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_10_tela_de_alcance_da_pol\u00edtica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1690",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_11_aviso_e_bot\u00e3o_de_adotar_a_vers\u00e3o_nova",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L1989",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_task_12_import_como_nova_vers\u00e3o_de_um_conjunto_existente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L2128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_19_charter_bloqueios_verifica\u00e7\u00e3o_de_que_os_bloqueios_fecharam",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-19-charter-bloqueios.md",
+      "source_location": "L2327",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

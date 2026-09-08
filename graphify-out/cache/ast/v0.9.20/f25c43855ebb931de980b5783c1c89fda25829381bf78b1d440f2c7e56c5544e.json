@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_md",
+      "label": "2026-07-28-isolamento-tenant.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "label": "Isolamento de tenant \u2014 Fechamento do plano de remedia\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_o_que_foi_entregue",
+      "label": "O que foi entregue",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_o_que_n\u00e3o_foi_alcan\u00e7ado_n\u00e3o_deixar_isso_passar_despercebido",
+      "label": "O que N\u00c3O foi alcan\u00e7ado \u2014 n\u00e3o deixar isso passar despercebido",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_rls_est\u00e1_pronto_n\u00e3o_est\u00e1_efetivo",
+      "label": "RLS est\u00e1 pronto, n\u00e3o est\u00e1 efetivo.",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_a_descoberta_que_reenquadrou_o_trabalho",
+      "label": "A descoberta que reenquadrou o trabalho",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_pr\u00e9_requisitos_antes_de_virar_a_chave_flip",
+      "label": "Pr\u00e9-requisitos antes de virar a chave (flip)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L68"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_trabalho_adiado_com_o_motivo_de_cada_adiamento",
+      "label": "Trabalho adiado, com o motivo de cada adiamento",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_su\u00edte_completa",
+      "label": "Su\u00edte completa",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_medi\u00e7\u00e3o_final_ao_vivo_2026_07_28",
+      "label": "Medi\u00e7\u00e3o final ao vivo (2026-07-28)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_autorrevis\u00e3o",
+      "label": "Autorrevis\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L161"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_o_que_foi_entregue",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_o_que_n\u00e3o_foi_alcan\u00e7ado_n\u00e3o_deixar_isso_passar_despercebido",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_o_que_n\u00e3o_foi_alcan\u00e7ado_n\u00e3o_deixar_isso_passar_despercebido",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_rls_est\u00e1_pronto_n\u00e3o_est\u00e1_efetivo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_a_descoberta_que_reenquadrou_o_trabalho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_pr\u00e9_requisitos_antes_de_virar_a_chave_flip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_trabalho_adiado_com_o_motivo_de_cada_adiamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_su\u00edte_completa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_medi\u00e7\u00e3o_final_ao_vivo_2026_07_28",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_isolamento_de_tenant_fechamento_do_plano_de_remedia\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_isolamento_tenant_autorrevis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-isolamento-tenant.md",
+      "source_location": "L161",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

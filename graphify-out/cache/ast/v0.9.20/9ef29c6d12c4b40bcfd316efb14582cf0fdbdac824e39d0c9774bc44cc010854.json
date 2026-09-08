@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_md",
+      "label": "2026-06-10-design-excellence.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "label": "Design Excellence Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_codebase_map",
+      "label": "Codebase Map",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_1_ai_tokens_blocked_pulse_keyframes_in_globals_css",
+      "label": "Task 1: AI Tokens + Blocked Pulse Keyframes in globals.css",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_2_kanbancard_blocked_pulse_state",
+      "label": "Task 2: KanbanCard \u2014 Blocked Pulse State",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_3_portfolio_sortablecard_redesign",
+      "label": "Task 3: Portfolio SortableCard Redesign",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_4_portfolio_loading_skeleton_kanban_layout",
+      "label": "Task 4: Portfolio Loading Skeleton \u2014 Kanban Layout",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L371"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_5_team_sprint_board_story_card_hover_states",
+      "label": "Task 5: Team Sprint Board Story Card Hover States",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L445"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_6_epic_drawer_spring_animation",
+      "label": "Task 6: Epic Drawer Spring Animation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L499"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_7_keyboard_navigation_system",
+      "label": "Task 7: Keyboard Navigation System",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L542"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_8_ai_confidence_explainability_in_epicdrawerinvest",
+      "label": "Task 8: AI Confidence + Explainability in EpicDrawerInvest",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L747"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_9_a11y_baseline_axe_core_in_e2e",
+      "label": "Task 9: A11y Baseline \u2014 axe-core in E2E",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L805"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_10_safe_6_0_microcopy_glossary",
+      "label": "Task 10: SAFe 6.0 Microcopy Glossary",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L870"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_self_review_checklist",
+      "label": "Self-Review Checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L948"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_codebase_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_1_ai_tokens_blocked_pulse_keyframes_in_globals_css",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_2_kanbancard_blocked_pulse_state",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_3_portfolio_sortablecard_redesign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_4_portfolio_loading_skeleton_kanban_layout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L371",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_5_team_sprint_board_story_card_hover_states",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L445",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_6_epic_drawer_spring_animation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L499",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_7_keyboard_navigation_system",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L542",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_8_ai_confidence_explainability_in_epicdrawerinvest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L747",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_9_a11y_baseline_axe_core_in_e2e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L805",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_task_10_safe_6_0_microcopy_glossary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L870",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_design_excellence_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_10_design_excellence_self_review_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-10-design-excellence.md",
+      "source_location": "L948",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

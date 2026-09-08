@@ -1,0 +1,367 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_md",
+      "label": "2026-05-25-kanban-portfolio-ai.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "label": "Portfolio Kanban AI \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_file_map",
+      "label": "File Map",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_new_files",
+      "label": "New files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_modified_files",
+      "label": "Modified files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_1_db_migration_add_invest_description_fields_to_epic",
+      "label": "Task 1: DB Migration \u2014 Add INVEST + Description Fields to Epic",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_why",
+      "label": "Why",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_2_extend_type_data_layer",
+      "label": "Task 2: Extend Type + Data Layer",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_3_epic_crud_server_actions_create_update",
+      "label": "Task 3: Epic CRUD Server Actions (Create + Update)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L295"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_4_kanban_card_hybrid_density_click_to_open_drawer",
+      "label": "Task 4: Kanban Card \u2014 Hybrid Density + Click to Open Drawer",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L489"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_5_full_width_drawer_shell_tabs",
+      "label": "Task 5: Full Width Drawer \u2014 Shell + Tabs",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L718"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_6_description_tab_tiptap_editor_with_auto_save",
+      "label": "Task 6: Description Tab \u2014 TipTap Editor with Auto-Save",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L913"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_7_ai_invest_scoring_server_action",
+      "label": "Task 7: AI INVEST Scoring Server Action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1035"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_8_ai_analysis_tab_invest_display_sub_tabs",
+      "label": "Task 8: AI Analysis Tab \u2014 INVEST Display + Sub-tabs",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1204"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_9_quick_add_modal_linear_style",
+      "label": "Task 9: Quick-Add Modal (Linear-style)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1415"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_10_wip_limits_soft_warning",
+      "label": "Task 10: WIP Limits (Soft Warning)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1583"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_11_rag_prompt_generation_multi_ide_delivery",
+      "label": "Task 11: RAG Prompt Generation + Multi-IDE Delivery",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1666"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_12_ai_playground_supabase_storage_crud",
+      "label": "Task 12: AI Playground \u2014 Supabase Storage + CRUD",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1964"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_final_integration_run",
+      "label": "Final: Integration Run",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2415"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_self_review",
+      "label": "Self-Review",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2455"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_spec_coverage",
+      "label": "Spec Coverage",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2457"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_placeholder_scan",
+      "label": "Placeholder Scan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2486"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_type_consistency",
+      "label": "Type Consistency",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2490"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_file_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_new_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_modified_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_1_db_migration_add_invest_description_fields_to_epic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_1_db_migration_add_invest_description_fields_to_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_why",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_2_extend_type_data_layer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_3_epic_crud_server_actions_create_update",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L295",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_4_kanban_card_hybrid_density_click_to_open_drawer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L489",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_5_full_width_drawer_shell_tabs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L718",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_6_description_tab_tiptap_editor_with_auto_save",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L913",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_7_ai_invest_scoring_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1035",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_8_ai_analysis_tab_invest_display_sub_tabs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_9_quick_add_modal_linear_style",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1415",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_10_wip_limits_soft_warning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1583",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_11_rag_prompt_generation_multi_ide_delivery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1666",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_task_12_ai_playground_supabase_storage_crud",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L1964",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_final_integration_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2415",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_portfolio_kanban_ai_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_self_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2455",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_self_review",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_spec_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2457",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_self_review",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_placeholder_scan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2486",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_self_review",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_kanban_portfolio_ai_type_consistency",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-kanban-portfolio-ai.md",
+      "source_location": "L2490",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

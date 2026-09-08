@@ -1,0 +1,497 @@
+/// Empresa — o que a Nebuloz controla sobre si mesma: contratos com
+/// fornecedores, consentimento de gravação, custo de aquisição e base
+/// financeira. Quatro telas do back-office (spec
+/// docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md).
+///
+/// Tudo aqui pertence ao tenant `system`, como platform-ops.prisma e
+/// comercial.prisma: é dado da casa, não do cliente. Dinheiro em centavos
+/// inteiros; percentual inteiro; célula de entrada é `Int?` porque a tela
+/// distingue "não preenchido" de zero.
+
+// ─────────────────────────── Fornecedores e DPA ───────────────────────────
+
+/// Estado do DPA por fonte primária (dpa-fornecedores.md §0).
+enum EstadoDpa {
+  /// Vale pelo contrato comercial; nada a assinar, só guardar o link.
+  EMBUTIDO
+  /// Existe documento; só produz efeito quando a Nebuloz aceita ou assina.
+  A_ASSINAR
+  /// Aceito no portal ou assinado. Exige `evidenciaUrl` (validado na action).
+  ASSINADO
+  /// Nenhum DPA público localizado. Não quer dizer que não exista sob NDA.
+  SEM_DOCUMENTO
+}
+
+/// Estado do acordo de tratamento de dados com cada fornecedor do Charter
+/// interno. Vínculo com `CharterVendor` (tenant nebuloz) pelo `codigo`, não
+/// por FK: são tenants diferentes (ADR-0013).
+model FornecedorDpa {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Mesmo código do `CharterVendor` no tenant nebuloz ("V-01").
+  codigo String
+  nome   String
+
+  estado                  EstadoDpa
+  /// O asterisco de dpa-fornecedores.md §1: documento existe mas o texto não
+  /// pôde ser lido (PDF sem camada de texto, portal dinâmico).
+  classificacaoProvisoria Boolean   @default(false)
+
+  regiao        String?
+  retencao      String?
+  /// Mecanismo de transferência declarado: "SCCs + DPF", "SCCs + UK IDTA".
+  transferencia String?
+
+  dpaUrl              String?
+  subprocessadoresUrl String?
+  /// Via assinada ou registro do aceite. Obrigatório quando `estado = ASSINADO`.
+  evidenciaUrl        String?
+
+  /// Data da última leitura da fonte primária.
+  verificadoEm DateTime
+
+  /// Texto da ação (dpa-fornecedores.md §3). Nulo = nada a fazer.
+  acaoPendente  String?
+  /// Papel do RACI do playbook, não pessoa — os nomes ainda estão em branco.
+  donoPapel     String?
+  bloqueiaVenda Boolean @default(false)
+
+  /// Quando se pediu o DPA ao fornecedor ("Registrar pedido").
+  pedidoEm             DateTime?
+  /// Quando foi aceito/assinado ("Marcar aceito", "Anexar assinado").
+  assinadoEm           DateTime?
+  /// Última exportação para o `CharterVendor` do tenant nebuloz. Nulo = nunca.
+  exportadoAoCharterEm DateTime?
+
+  notas String? @db.Text
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("FornecedorDpaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, codigo])
+  @@index([tenantId, estado])
+}
+
+// ─────────────────────────── Consentimento ───────────────────────────
+
+enum BaseLegal {
+  SEM_DECISAO
+  /// art. 7º, I — exige aviso inequívoco e cláusula destacada.
+  CONSENTIMENTO
+  /// art. 7º, IX — exige teste do art. 10 e relatório de impacto.
+  LEGITIMO_INTERESSE
+}
+
+enum StatusParecer {
+  PENDENTE
+  ENVIADO
+  RECEBIDO
+}
+
+/// Singleton do tenant system: o que faz o consentimento existir do lado da
+/// Nebuloz. Os textos do aviso ficam em código
+/// (apps/backoffice/lib/empresa/aviso.ts); aqui só o que os preenche.
+model DecisaoDeConsentimento {
+  id       String @id @default(cuid())
+  tenantId String @unique
+
+  /// `[ferramenta]` — ex. "Fireflies".
+  ferramenta     String?
+  /// `[prazo]` — resposta à pergunta 6; nulo enquanto o RoPA disser
+  /// "não definida".
+  prazoRetencao  String?
+  /// `[contato]` — canal do titular (operadora-controladora.md §4).
+  contatoTitular String?
+
+  baseLegal           BaseLegal @default(SEM_DECISAO)
+  /// Pergunta 4. Nulo = sem resposta; `false` mantém STANDING desabilitado.
+  standingHabilitavel Boolean?
+
+  parecer           StatusParecer @default(PENDENTE)
+  parecerEnviadoEm  DateTime?
+  parecerRecebidoEm DateTime?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("DecisaoDeConsentimentoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+/// Uma linha por pergunta de aviso-de-gravacao.md §4. Semeadas; a tela só
+/// responde.
+model PerguntaAoParecer {
+  id       String @id @default(cuid())
+  tenantId String
+
+  numero    Int
+  pergunta  String @db.Text
+  /// "responsável jurídico" | "Dono do SLA" — papel, pelo mesmo motivo de
+  /// `FornecedorDpa.donoPapel`.
+  donoPapel String
+
+  resposta     String?   @db.Text
+  respondidaEm DateTime?
+
+  tenant Tenant @relation("PerguntaAoParecerSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, numero])
+}
+
+// ─────────────────────────── Financeiro ───────────────────────────
+
+/// Um valor por conta do plano de contas por mês de competência. As linhas
+/// calculadas do DRE (totais, margens, EBITDA) não existem aqui.
+model LancamentoMensal {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "2026-09". String e não Date: competência é mês, e Date obrigaria a
+  /// convencionar "dia 1" em toda query.
+  competencia String
+  /// Código do plano de contas ("1.1" … "6.3"), validado contra
+  /// PLANO_DE_CONTAS em código. String porque conta nova é constante nova,
+  /// não migration.
+  conta       String
+
+  valorCentavos Int
+  nota          String?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("LancamentoMensalSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, competencia, conta])
+  @@index([tenantId, competencia])
+}
+
+/// Uma linha do livro-razão da Nebuloz. Substitui o valor único por conta e
+/// mês de `LancamentoMensal`: o DRE passa a somar estas linhas, e a pergunta
+/// "o que formou a conta 4.2 em setembro" passa a ter resposta.
+model Lancamento {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "2026-09". Mês de competência, que é o que o DRE agrupa. Não deriva de
+  /// `data`: uma nota de dezembro paga em janeiro é competência de dezembro.
+  competencia String
+  /// Data do fato. Alimenta o caixa, não o DRE.
+  data        DateTime @db.Date
+
+  /// Código do plano de contas ("1.1" … "6.3"), validado contra `ContaDoPlano`.
+  conta     String
+  descricao String
+  /// Positivo sempre. O sinal vem da estrutura do DRE, como já vem hoje.
+  valorCentavos Int
+
+  /// Contraparte, quando há. Texto livre: fornecedor da casa não é entidade
+  /// própria, e `FornecedorDpa` é sobre tratamento de dado, não sobre compra.
+  contraparte String?
+  documento   String?
+  nota        String?
+
+  /// Título que gerou esta linha, quando veio de uma baixa. SetNull: apagar o
+  /// título não apaga o fato contábil.
+  tituloId String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant  @relation("LancamentoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  titulo Titulo? @relation(fields: [tituloId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, competencia])
+  @@index([tenantId, conta])
+}
+
+/// Compromisso a pagar ou receber. O título é a promessa; o lançamento é o
+/// fato. Baixar o título gera a linha no livro-razão.
+model Titulo {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// PAGAR | RECEBER
+  tipo        String
+  descricao   String
+  contraparte String
+
+  /// Conta do plano em que a baixa vai lançar.
+  conta         String
+  valorCentavos Int
+
+  emissao    DateTime @db.Date
+  vencimento DateTime @db.Date
+
+  /// ABERTO | BAIXADO | CANCELADO. Sem "vencido": vencido é `vencimento` no
+  /// passado com status ABERTO, e status derivado não desatualiza sozinho.
+  status String @default("ABERTO")
+
+  baixadoEm          DateTime? @db.Date
+  /// Competência em que a baixa lançou. Guardada porque pode diferir do mês
+  /// da baixa quando se paga uma conta de mês anterior.
+  competenciaBaixa   String?
+  motivoCancelamento String?
+
+  /// Slug do tenant cliente, quando é um RECEBER de assinatura ou serviço.
+  clienteSlug String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant      Tenant       @relation("TituloSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  lancamentos Lancamento[]
+
+  @@index([tenantId, status, vencimento])
+  @@index([tenantId, tipo])
+}
+
+/// Orçado por conta e competência. O realizado não mora aqui: sai da soma dos
+/// lançamentos, para não haver dois números para a mesma pergunta.
+model OrcamentoDaConta {
+  id       String @id @default(cuid())
+  tenantId String
+
+  competencia   String
+  conta         String
+  valorCentavos Int
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("OrcamentoDaContaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, competencia, conta])
+  @@index([tenantId, competencia])
+}
+
+/// O que o cliente paga hoje. Não duplica a proposta: o catálogo diz o preço
+/// de tabela, a proposta diz o que foi vendido uma vez, e a assinatura diz o
+/// que é cobrado agora, depois de desconto, upgrade e downgrade.
+model AssinaturaDoTenant {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Slug do tenant cliente. Slug e não FK: a assinatura sobrevive ao tenant
+  /// ser removido, e a série histórica de MRR não pode ficar com buraco.
+  clienteSlug String
+  clienteNome String
+
+  /// Degrau vendido. Slug de `PlanoComercial`, congelado como a proposta faz.
+  planoSlug String
+  /// Preço realmente acordado. Preço de tabela ignora desconto, e desconto é
+  /// a regra e não a exceção nas primeiras vendas.
+  valorMensalCentavos Int
+
+  /// Franquia mensal de créditos de IA, agregada por conta: assentos vezes
+  /// créditos por assento do degrau, calculada na venda e congelada aqui.
+  /// Agregada e não por assento porque num portfólio poucos RTEs usam quase
+  /// toda a IA, e o uso pesado deve consumir a sobra dos leves. Reseta todo
+  /// mês e não acumula — é o que torna a receita da franquia recorrente.
+  creditosMesIncluidos Int @default(0)
+  /// Preço do crédito acima da franquia, por unidade. Cai conforme o degrau
+  /// sobe — é o desconto por volume que faz subir de tier valer a pena.
+  /// Acordado como o valor mensal, e não lido do catálogo, pelo mesmo motivo:
+  /// desconto é a regra nas primeiras vendas.
+  precoCreditoExtraCentavos Int
+  /// Orçamento mensal de excedente que o cliente aceitou. Nulo = excedente
+  /// não cobrado: o consumo acima da franquia é medido e aparece como sinal,
+  /// mas não vira fatura até o cliente definir um teto. É o padrão do GitHub
+  /// Copilot (orçamento zero) e é o que faz compras de empresa grande aceitar
+  /// um componente variável: a variação tem limite escrito.
+  tetoExcedenteCentavos Int?
+
+  iniciouEm  DateTime  @db.Date
+  /// Nulo = ativa. Preenchido = saiu, e sai da conta de MRR a partir daí.
+  encerradaEm DateTime? @db.Date
+  /// PRECO | ESCOPO | INSATISFACAO | FIM_DE_PROJETO | INADIMPLENCIA | OUTRO
+  motivoEncerramento String?
+
+  /// Proposta que originou. Sem FK por ser de outro domínio e poder sumir.
+  propostaId String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant   Tenant                @relation("AssinaturaDoTenantSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  mudancas MudancaDeAssinatura[]
+
+  @@index([tenantId, encerradaEm])
+  @@index([tenantId, clienteSlug])
+  // Índice único parcial não cabe na sintaxe do Prisma (`@@unique` não aceita
+  // `WHERE`): "AssinaturaDoTenant_ativa_por_cliente" — único em
+  // (tenantId, clienteSlug) WHERE encerradaEm IS NULL — mora só na migration
+  // 20260911000000_orcamento_e_recorrente. É o que impede duas assinaturas
+  // ativas do mesmo cliente ao mesmo tempo.
+}
+
+/// Append-only, no padrão de `MudancaDeEstagio`. Sem isto, MRR é um número
+/// sem explicação: não dá para abrir o mês em novo, expansão, contração e
+/// churn olhando só o estado atual.
+model MudancaDeAssinatura {
+  id           String @id @default(cuid())
+  tenantId     String
+  assinaturaId String
+
+  /// "2026-09". Competência em que a mudança passa a valer.
+  competencia String
+  /// NOVO | EXPANSAO | CONTRACAO | CHURN | REATIVACAO
+  tipo        String
+
+  deCentavos   Int
+  paraCentavos Int
+  motivo       String
+
+  autorId   String
+  autorNome String?
+  criadoEm  DateTime @default(now())
+
+  tenant     Tenant              @relation("MudancaDeAssinaturaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  assinatura AssinaturaDoTenant @relation(fields: [assinaturaId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, competencia])
+}
+
+/// Consumo de crédito por cliente e mês. Uma linha por competência, digitada
+/// enquanto não há telemetria. Quando houver medição por chamada, ela
+/// preenche `consumidos` e o resto do modelo não muda.
+model CreditoDoMes {
+  id       String @id @default(cuid())
+  tenantId String
+
+  clienteSlug String
+  competencia String
+
+  /// Franquia vigente no mês, copiada da assinatura. Copiada e não lida por
+  /// join: o degrau muda, e o histórico tem que continuar dizendo qual era a
+  /// franquia daquele mês.
+  franquia   Int
+  consumidos Int @default(0)
+
+  /// Taxa por crédito vigente no mês, copiada da assinatura pelo mesmo motivo
+  /// que a franquia: o degrau muda e o histórico tem que continuar explicável.
+  precoCreditoExtraCentavos Int
+  /// Cobrado pelo que passou da franquia: min((consumidos - franquia) x taxa,
+  /// teto), nunca negativo, e zero quando a assinatura não tem teto definido.
+  /// Guardado e não derivado na leitura porque taxa e teto do mês podem ter
+  /// mudado depois.
+  excedenteCentavos Int @default(0)
+  /// O que teria sido cobrado sem o teto. É o sinal de upgrade: excedente
+  /// reprimido todo mês é cliente pedindo um degrau acima.
+  excedenteReprimidoCentavos Int @default(0)
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("CreditoDoMesSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, clienteSlug, competencia])
+  @@index([tenantId, competencia])
+}
+
+// ─────────────────────────── CAC ───────────────────────────
+
+/// Das oito parcelas do CAC, seis são contas 4.1–4.6 de LancamentoMensal da
+/// mesma competência. Aqui fica só o que não é conta do DRE.
+model CacPeriodo {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Mesma chave de LancamentoMensal — é de lá que vêm as seis parcelas 4.x.
+  competencia String
+
+  /// Horas de entrega do diagnóstico vendido no período × custo-hora +
+  /// ferramentas da entrega. Não é a conta 3.1: aquela inclui acompanhamento
+  /// contínuo; esta é só a parcela que é custo de aquisição.
+  entregaDiagnosticoCentavos Int?
+  /// Denominador. Entrada manual em v1 — Proposal não tem `aceitaEm`.
+  clientesGanhos             Int?
+
+  /// Conversão do funil no período, percentual inteiro. Nulo = ainda à mão.
+  convLeadDiscoveryPercent       Int?
+  convDiscoveryEvaluationPercent Int?
+  convEvaluationPropostaPercent  Int?
+  convPropostaAceitaPercent      Int?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant    Tenant               @relation("CacPeriodoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  alocacoes CacAlocacaoProduto[]
+
+  @@unique([tenantId, competencia])
+}
+
+/// Peso de cada produto no rateio do CAC (cac-modelo.md §4). Tabela e não
+/// quatro colunas: Signal já está no enum e não na tela.
+model CacAlocacaoProduto {
+  id           String @id @default(cuid())
+  cacPeriodoId String
+
+  produto     ProductModule
+  pesoPercent Int
+
+  periodo CacPeriodo @relation(fields: [cacPeriodoId], references: [id], onDelete: Cascade)
+
+  @@unique([cacPeriodoId, produto])
+}
+
+// ─────────────────────────── Caixa ───────────────────────────
+
+/// Uma linha por semana de caixa. A janela de 13 é a leitura; a tabela guarda
+/// também as semanas que já saíram dela — histórico realizado.
+model SemanaDeCaixa {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Segunda-feira da semana. Date, não DateTime: semana não tem hora.
+  semanaInicio DateTime @db.Date
+
+  /// Só é lido na primeira semana da janela: saldo de extrato, realizado.
+  /// Nas demais, o saldo inicial é o final calculado da anterior.
+  saldoInicialCentavos Int?
+
+  recebiveisCentavos         Int?
+  contratosAssinadosCentavos Int?
+  /// Entrada manual em v1, com o total ponderado como referência — Proposal
+  /// não tem previsão de fechamento para alocar por semana sozinha.
+  pipelinePonderadoCentavos  Int?
+
+  saidasPessoalCentavos      Int?
+  saidasFornecedoresCentavos Int?
+  saidasComercialCentavos    Int?
+  saidasImpostosCentavos     Int?
+  saidasOutrasCentavos       Int?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("SemanaDeCaixaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, semanaInicio])
+}
+
+/// Plano de contas da Nebuloz (docs/financeiro/plano-de-contas.md). Era
+/// constante em código; virou tabela em 6 set porque a operação precisa
+/// abrir conta sem deploy. As 27 do documento entram por seed.
+model ContaDoPlano {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "1.1" … "6.3", ou o que o operador criar ("4.7"). Formato `^\d\.\d{1,2}$`.
+  conta         String
+  nome          String
+  /// 1 receita · 2 deduções · 3 custo de entrega · 4 comercial ·
+  /// 5 produto/engenharia · 6 G&A. Define onde a conta soma no DRE.
+  grupo         Int
+  /// comercial | produto-engenharia | entrega | ga; nulo nos grupos 1 e 2.
+  centroDeCusto String?
+  /// Desativada some da entrada e do DRE dos meses seguintes; os lançamentos
+  /// já feitos continuam somando onde estão. Não há exclusão.
+  ativa         Boolean @default(true)
+  ordem         Int     @default(0)
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("ContaDoPlanoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, conta])
+  @@index([tenantId, grupo])
+}

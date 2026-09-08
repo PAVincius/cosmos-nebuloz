@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_md",
+      "label": "story-059-tela-anomalias-de-custo.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "label": "Story 059 \u2014 Tela Anomalias de Custo (FinOps do portf\u00f3lio)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_001_voltar_a_sensibilidade_ao_padr\u00e3o_da_plataforma",
+      "label": "AC-001: Voltar a sensibilidade ao padr\u00e3o da plataforma",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_002_limiar_fora_dos_limites_da_plataforma_\u00e9_recusado_com_a_faixa_na_mensagem",
+      "label": "AC-002: Limiar fora dos limites da plataforma \u00e9 recusado, com a faixa na mensagem",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_003_reconhecer_\u00e9_escopado_por_tenant_e_auditado",
+      "label": "AC-003: Reconhecer \u00e9 escopado por tenant e auditado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_004_a_tela_nunca_fabrica_n\u00famero_de_custo",
+      "label": "AC-004: A tela nunca fabrica n\u00famero de custo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_005_vazio_distingue_sem_dado_de_custo_de_sem_anomalia_erro_n\u00e3o_renderiza_anomalia",
+      "label": "AC-005: Vazio distingue \"sem dado de custo\" de \"sem anomalia\"; erro n\u00e3o renderiza anomalia",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L141"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_001_voltar_a_sensibilidade_ao_padr\u00e3o_da_plataforma",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_002_limiar_fora_dos_limites_da_plataforma_\u00e9_recusado_com_a_faixa_na_mensagem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_003_reconhecer_\u00e9_escopado_por_tenant_e_auditado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_004_a_tela_nunca_fabrica_n\u00famero_de_custo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_ac_005_vazio_distingue_sem_dado_de_custo_de_sem_anomalia_erro_n\u00e3o_renderiza_anomalia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_story_059_tela_anomalias_de_custo_finops_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_anomalias_de_custo_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "source_location": "L141",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

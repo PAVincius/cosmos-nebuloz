@@ -1,0 +1,585 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_name",
+      "label": "name",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_version",
+      "label": "version",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_private",
+      "label": "private",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_type",
+      "label": "type",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_clean",
+      "label": "clean",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_typecheck",
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_test",
+      "label": "test",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_test_coverage",
+      "label": "test:coverage",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_arcjet_next",
+      "label": "@arcjet/next",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "arcjet_next",
+      "label": "@arcjet/next",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_nosecone_next",
+      "label": "@nosecone/next",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "nosecone_next",
+      "label": "@nosecone/next",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_repo_rbac",
+      "label": "@repo/rbac",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "repo_rbac",
+      "label": "@repo/rbac",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_t3_oss_env_nextjs",
+      "label": "@t3-oss/env-nextjs",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "t3_oss_env_nextjs",
+      "label": "@t3-oss/env-nextjs",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_zod",
+      "label": "zod",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "zod",
+      "label": "zod",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_auth",
+      "label": "@repo/auth",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "repo_auth",
+      "label": "@repo/auth",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_database",
+      "label": "@repo/database",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "repo_database",
+      "label": "@repo/database",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_typescript_config",
+      "label": "@repo/typescript-config",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "repo_typescript_config",
+      "label": "@repo/typescript-config",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_types_node",
+      "label": "@types/node",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "types_node",
+      "label": "@types/node",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest_coverage_v8",
+      "label": "@vitest/coverage-v8",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "vitest_coverage_v8",
+      "label": "@vitest/coverage-v8",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_typescript",
+      "label": "typescript",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "typescript",
+      "label": "typescript",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest",
+      "label": "vitest",
+      "file_type": "code",
+      "source_file": "packages/security/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "vitest",
+      "label": "vitest",
+      "file_type": "concept",
+      "source_file": "packages/security/package.json",
+      "source_location": "L26"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_name",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_version",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_private",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_type",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_clean",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_typecheck",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_test",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_scripts_test_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_arcjet_next",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_arcjet_next",
+      "target": "arcjet_next",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_nosecone_next",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_nosecone_next",
+      "target": "nosecone_next",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_repo_rbac",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_repo_rbac",
+      "target": "repo_rbac",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_t3_oss_env_nextjs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_t3_oss_env_nextjs",
+      "target": "t3_oss_env_nextjs",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_zod",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_dependencies_zod",
+      "target": "zod",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_auth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_auth",
+      "target": "repo_auth",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_database",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_database",
+      "target": "repo_database",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_typescript_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_repo_typescript_config",
+      "target": "repo_typescript_config",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_types_node",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_types_node",
+      "target": "types_node",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest_coverage_v8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest_coverage_v8",
+      "target": "vitest_coverage_v8",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_typescript",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_typescript",
+      "target": "typescript",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_security_package_devdependencies_vitest",
+      "target": "vitest",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/security/package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

@@ -216,21 +216,78 @@ model Tenant {
   meridianGapDependencies   MeridianGapDependency[]
   meridianPlanItems         MeridianPlanItem[]
   meridianGapPromotions     MeridianGapPromotion[]
+  // Signal — medição de adoção e valor de iniciativas de IA
+  signalMembers             SignalMember[]
+  signalSettings            SignalSettings?
+  signalSequences           SignalSequence[]
+  signalInitiatives         SignalInitiative[]
+  signalBaselines           SignalBaseline[]
+  signalBaselineDimensions  SignalBaselineDimension[]
+  signalConnections         SignalConnection[]
+  signalMetricMappings      SignalMetricMapping[]
+  signalObservations        SignalMetricObservation[]
+  signalRoiFormulas         SignalRoiFormula[]
+  signalRoiEntries          SignalRoiEntry[]
+  signalRoiAssumptions      SignalRoiAssumption[]
+  signalAdoptionSnapshots   SignalAdoptionSnapshot[]
+  signalOutcomeSnapshots    SignalOutcomeSnapshot[]
+  signalConfidenceRules     SignalConfidenceRule[]
+  signalConfidenceScores    SignalConfidenceScore[]
+  signalAlerts              SignalAlert[]
+  signalReports             SignalReportSnapshot[]
+
+  // Scaffold — framework de adoção. `ScaffoldTemplate` e suas versões ficam de
+  // fora: o template é o método da Nebuloz, global; o que é do cliente é o
+  // overlay, e a trilha.
+  scaffoldMemberships      ScaffoldMembership[]
+  scaffoldSequences        ScaffoldSequence[]
+  scaffoldSettings         ScaffoldSettings?
+  scaffoldTracks           ScaffoldTrack[]
+  scaffoldGateResults      ScaffoldGateResult[]
+  scaffoldGateOverrides    ScaffoldGateOverride[]
+  scaffoldBusinessCases    ScaffoldBusinessCase[]
+  scaffoldBcVersions       ScaffoldBusinessCaseVersion[]
+  scaffoldBcMetrics        ScaffoldBusinessCaseMetric[]
+  scaffoldBcContests       ScaffoldBusinessCaseContest[]
+  scaffoldOverlays         ScaffoldTemplateOverlay[]
+  scaffoldOverlayConflicts ScaffoldOverlayConflict[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
-  platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
-  staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
-  accessLogs                AccessLog[]                @relation("AccessLogSystemTenant")
-  ipAssets                  IpAsset[]                  @relation("IpAssetSystemTenant")
-  staffPeople               StaffPerson[]              @relation("StaffPersonSystemTenant")
-  engagements               Engagement[]               @relation("EngagementSystemTenant")
-  proposals                 Proposal[]                 @relation("ProposalSystemTenant")
-  leads                     Lead[]                     @relation("LeadSystemTenant")
-  services                  Service[]                  @relation("ServiceSystemTenant")
+  platformApprovals        PlatformApproval[]            @relation("PlatformApprovalSystemTenant")
+  staffDiagrams            StaffDiagram[]                @relation("StaffDiagramSystemTenant")
+  accessLogs               AccessLog[]                   @relation("AccessLogSystemTenant")
+  ipAssets                 IpAsset[]                     @relation("IpAssetSystemTenant")
+  staffPeople              StaffPerson[]                 @relation("StaffPersonSystemTenant")
+  engagements              Engagement[]                  @relation("EngagementSystemTenant")
+  proposals                Proposal[]                    @relation("ProposalSystemTenant")
+  leads                    Lead[]                        @relation("LeadSystemTenant")
+  services                 Service[]                     @relation("ServiceSystemTenant")
+  // Funil v2 — configuração de estágio, canal e histórico (também no tenant `system`)
+  estagiosDoFunil          EstagioDoFunil[]              @relation("EstagioDoFunilSystemTenant")
+  mudancasDeEstagio        MudancaDeEstagio[]            @relation("MudancaDeEstagioSystemTenant")
+  canaisDeLead             CanalDeLead[]                 @relation("CanalDeLeadSystemTenant")
+  historicosDeEstagio      HistoricoDeEstagio[]          @relation("HistoricoDeEstagioSystemTenant")
+  // Growth — diagnóstico de maturidade de IA (também no tenant `system`)
+  avaliacoesDeMaturidade   AvaliacaoDeMaturidade[]       @relation("AvaliacaoDeMaturidadeSystemTenant")
+  respostasDeMaturidade    RespostaDeMaturidade[]        @relation("RespostaDeMaturidadeSystemTenant")
   // Catálogo comercial — o que se cobra e quanto (também no tenant `system`)
-  planosComerciais          PlanoComercial[]           @relation("PlanoComercialSystemTenant")
-  precosDeModulo            PrecoDeModulo[]            @relation("PrecoDeModuloSystemTenant")
-  termosDeContrato          TermoDeContrato[]          @relation("TermoDeContratoSystemTenant")
-  addOnsComerciais          AddOnComercial[]           @relation("AddOnComercialSystemTenant")
+  planosComerciais         PlanoComercial[]              @relation("PlanoComercialSystemTenant")
+  precosDeModulo           PrecoDeModulo[]               @relation("PrecoDeModuloSystemTenant")
+  termosDeContrato         TermoDeContrato[]             @relation("TermoDeContratoSystemTenant")
+  addOnsComerciais         AddOnComercial[]              @relation("AddOnComercialSystemTenant")
+  // Empresa — o que a Nebuloz controla sobre si mesma (também no tenant `system`)
+  fornecedoresDpa          FornecedorDpa[]               @relation("FornecedorDpaSystemTenant")
+  decisaoDeConsentimento   DecisaoDeConsentimento?       @relation("DecisaoDeConsentimentoSystemTenant")
+  perguntasAoParecer       PerguntaAoParecer[]           @relation("PerguntaAoParecerSystemTenant")
+  lancamentosMensais       LancamentoMensal[]            @relation("LancamentoMensalSystemTenant")
+  lancamentos              Lancamento[]                  @relation("LancamentoSystemTenant")
+  titulos                  Titulo[]                      @relation("TituloSystemTenant")
+  orcamentos               OrcamentoDaConta[]            @relation("OrcamentoDaContaSystemTenant")
+  assinaturas              AssinaturaDoTenant[]          @relation("AssinaturaDoTenantSystemTenant")
+  mudancasDeAssinatura     MudancaDeAssinatura[]         @relation("MudancaDeAssinaturaSystemTenant")
+  creditosDoMes            CreditoDoMes[]                @relation("CreditoDoMesSystemTenant")
+  cacPeriodos              CacPeriodo[]                  @relation("CacPeriodoSystemTenant")
+  semanasDeCaixa           SemanaDeCaixa[]               @relation("SemanaDeCaixaSystemTenant")
+  contasDoPlano            ContaDoPlano[]                @relation("ContaDoPlanoSystemTenant")
 }
 
 model User {
@@ -243,16 +300,33 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  sessions            Session[]
-  accounts            Account[]
-  memberships         TenantMember[]
+  sessions                Session[]
+  accounts                Account[]
+  memberships             TenantMember[]
   // Lista, não opcional-único: o `userId` da TwoFactor deixou de ser `@unique`
   // porque o `enable` do better-auth sempre insere linha nova.
-  twoFactor           TwoFactor[]
+  twoFactor               TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
-  charterMemberships  CharterMembership[]
+  charterMemberships      CharterMembership[]
   // Meridian — papel de diagnóstico, ortogonal aos dois anteriores
-  meridianMemberships MeridianMembership[]
+  meridianMemberships     MeridianMembership[]
+  // Signal — papel de medição, ortogonal aos três anteriores.
+  // As relações nomeadas existem porque a mesma pessoa aparece em dois papéis
+  // distintos na mesma tabela (dona e encerradora da iniciativa; dona e
+  // resolvedora do alerta) — sem nome, o Prisma não sabe qual FK é qual.
+  signalMemberships       SignalMember[]
+  // Scaffold — papel de adoção, ortogonal aos anteriores
+  scaffoldMemberships     ScaffoldMembership[]
+  signalOwnedInitiatives  SignalInitiative[]        @relation("SignalInitiativeOwner")
+  signalClosedInitiatives SignalInitiative[]        @relation("SignalInitiativeCloser")
+  signalSignedBaselines   SignalBaseline[]
+  signalOwnedConnections  SignalConnection[]
+  signalChangedMappings   SignalMetricMapping[]
+  signalRecordedObs       SignalMetricObservation[]
+  signalChangedFormulas   SignalRoiFormula[]
+  signalOwnedAlerts       SignalAlert[]             @relation("SignalAlertOwner")
+  signalResolvedAlerts    SignalAlert[]             @relation("SignalAlertResolver")
+  signalGeneratedReports  SignalReportSnapshot[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,

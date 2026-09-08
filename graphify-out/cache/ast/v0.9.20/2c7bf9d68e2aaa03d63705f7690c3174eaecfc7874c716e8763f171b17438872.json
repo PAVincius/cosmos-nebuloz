@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "label": "ai-compliance.md",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_objetivo_da_trilha",
+      "label": "Objetivo da Trilha",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_mapeamento_ao_nist_ai_rmf_foco_govern_map_e_\u00e0_certifica\u00e7\u00e3o_iso_iec_42001",
+      "label": "Mapeamento ao NIST AI RMF (foco Govern/Map) e \u00e0 Certifica\u00e7\u00e3o ISO/IEC 42001",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_fase_1_triagem_discovery",
+      "label": "Fase 1 \u2014 Triagem (Discovery)",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_fase_2_a\u00e7\u00f5es_concretas_por_obriga\u00e7\u00e3o_regulat\u00f3ria",
+      "label": "Fase 2 \u2014 A\u00e7\u00f5es Concretas por Obriga\u00e7\u00e3o Regulat\u00f3ria",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_exemplos_de_software_e_integra\u00e7\u00f5es_de_mercado",
+      "label": "Exemplos de Software e Integra\u00e7\u00f5es de Mercado",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_pacote_setorial_ai_compliance_no_setor_financeiro",
+      "label": "Pacote Setorial: AI Compliance no Setor Financeiro",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_crit\u00e9rio_de_pronto",
+      "label": "Crit\u00e9rio de \"Pronto\"",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_references",
+      "label": "References",
+      "file_type": "document",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L70"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_objetivo_da_trilha",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_mapeamento_ao_nist_ai_rmf_foco_govern_map_e_\u00e0_certifica\u00e7\u00e3o_iso_iec_42001",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_fase_1_triagem_discovery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_fase_2_a\u00e7\u00f5es_concretas_por_obriga\u00e7\u00e3o_regulat\u00f3ria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_exemplos_de_software_e_integra\u00e7\u00f5es_de_mercado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_pacote_setorial_ai_compliance_no_setor_financeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_crit\u00e9rio_de_pronto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_trilhas_ai_compliance_references",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/trilhas/ai-compliance.md",
+      "source_location": "L70",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

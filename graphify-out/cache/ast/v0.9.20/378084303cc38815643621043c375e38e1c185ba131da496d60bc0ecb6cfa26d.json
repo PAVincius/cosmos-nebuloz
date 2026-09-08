@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_md",
+      "label": "0012-rls-anulada-por-conexao-superuser.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "label": "ADR-0012 \u2014 RLS anulada pela conex\u00e3o como superuser",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L73"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_adr_0012_rls_anulada_pela_conex\u00e3o_como_superuser",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0012-rls-anulada-por-conexao-superuser.md",
+      "source_location": "L73",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

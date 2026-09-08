@@ -1,0 +1,24 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_design_system_provider_mdx",
+      "label": "provider.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/design-system/provider.mdx",
+      "source_location": "L1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_design_system_provider_mdx",
+      "target": "packages_design_system_typography_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/design-system/provider.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

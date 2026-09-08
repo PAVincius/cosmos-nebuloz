@@ -85,9 +85,9 @@ ON CONFLICT ("tenantId", modulo) DO UPDATE SET
 -- ── Termos de contrato ──────────────────────────────────────────────────
 INSERT INTO "TermoDeContrato" (id, "tenantId", slug, nome, meses, "descontoPercent", ordem)
 VALUES
-  (gen_random_uuid()::text, 'system', 'monthly', 'Mensal', 1, 0, 0),
-  (gen_random_uuid()::text, 'system', 'annual', 'Anual', 12, 12, 1),
-  (gen_random_uuid()::text, 'system', 'biennial', 'Bienal', 24, 20, 2)
+  (gen_random_uuid()::text, 'system', 'MENSAL', 'Mensal', 1, 0, 0),
+  (gen_random_uuid()::text, 'system', 'ANUAL', 'Anual', 12, 12, 1),
+  (gen_random_uuid()::text, 'system', 'BIENAL', 'Bienal', 24, 20, 2)
 ON CONFLICT ("tenantId", slug) DO UPDATE SET
   nome = EXCLUDED.nome, meses = EXCLUDED.meses,
   "descontoPercent" = EXCLUDED."descontoPercent", ordem = EXCLUDED.ordem;

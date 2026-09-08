@@ -63,9 +63,12 @@ const Home = async ({ params }: HomeProps) => {
   return (
     <>
       <ReadinessApp copy={copy} logoLabel="Nebuloz — Home" />
-      {/* After the app, not before: PostHog injects its own <script> at the top
-          of the page body, and a raw <script> as the page's first child hydrates
-          against it and mismatches. */}
+      {/* Kept after the app rather than before it. The original reason was
+          PostHog injecting a <script> at the top of the body and this one
+          hydrating against it; PostHog no longer loads on the marketing site
+          (see packages/analytics/marketing-provider.tsx), but a raw <script> as
+          the first child is a hydration hazard for whatever comes next, and the
+          order costs nothing. */}
       <JsonLd code={organization} />
     </>
   );

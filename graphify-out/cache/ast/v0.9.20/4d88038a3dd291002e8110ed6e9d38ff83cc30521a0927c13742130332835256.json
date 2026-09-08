@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_md",
+      "label": "2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "label": "Scaffold \u2014 US4: caso de neg\u00f3cio (T065\u2013T082)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_as_duas_invariantes_e_onde_elas_moram",
+      "label": "As duas invariantes, e onde elas moram",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_decis\u00f5es_da_fatia",
+      "label": "Decis\u00f5es da fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_guard_de_seguran\u00e7a_me_pegou_de_novo",
+      "label": "O guard de seguran\u00e7a me pegou de novo",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "label": "O que fica para a pr\u00f3xima fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L92"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_as_duas_invariantes_e_onde_elas_moram",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_decis\u00f5es_da_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_guard_de_seguran\u00e7a_me_pegou_de_novo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_scaffold_us4_caso_de_neg\u00f3cio_t065_t082",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us4_caso_de_negocio_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us4-caso-de-negocio.md",
+      "source_location": "L92",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

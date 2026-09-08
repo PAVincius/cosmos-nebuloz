@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_md",
+      "label": "2026-06-09-meeting-intelligence-foundation.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "label": "Completion \u2014 Meeting Intelligence Foundation (epic-009)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_scope_entregue",
+      "label": "Scope entregue",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_metodologia_sdd_commit_8b8b7dd6",
+      "label": "Metodologia SDD (commit 8b8b7dd6)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_story_046_schema_commit_2cb20721",
+      "label": "story-046 \u2014 Schema (commit 2cb20721)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_story_047_webhook_receiver_commit_e79bb4cd",
+      "label": "story-047 \u2014 Webhook receiver (commit e79bb4cd)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_decis\u00f5es_chave",
+      "label": "Decis\u00f5es-chave",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_pr\u00f3ximo_pending",
+      "label": "Pr\u00f3ximo (pending)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_notas",
+      "label": "Notas",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L44"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_scope_entregue",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_scope_entregue",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_metodologia_sdd_commit_8b8b7dd6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_scope_entregue",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_story_046_schema_commit_2cb20721",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_scope_entregue",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_story_047_webhook_receiver_commit_e79bb4cd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_decis\u00f5es_chave",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_pr\u00f3ximo_pending",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_completion_meeting_intelligence_foundation_epic_009",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_09_meeting_intelligence_foundation_notas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-09-meeting-intelligence-foundation.md",
+      "source_location": "L44",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -3,6 +3,7 @@ import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { IntervaloExcedido } from "./empresa/periodo";
 import { assertDentroDoLimite } from "./rate-limit";
 
 /** O tenant interno da Nebuloz, criado pela migration 20260728020000 e marcado
@@ -193,5 +194,20 @@ export function assertCanWrite(staff: PlatformStaff): void {
       "FORBIDDEN",
       "Seu papel no back-office permite apenas leitura."
     );
+  }
+}
+
+/** Traduz o teto de `periodo.ts` (`IntervaloExcedido`) para o erro que a tela
+ *  de financeiro/cac mostra — mesmo padrão nas duas actions, um só lugar.
+ *  Mora aqui, e não num módulo `"use server"`, pelo mesmo motivo de
+ *  `assertCanWrite`: um arquivo de action só pode exportar função async. */
+export function semTeto<T>(fn: () => T): T {
+  try {
+    return fn();
+  } catch (e) {
+    if (e instanceof IntervaloExcedido) {
+      throw new StaffAuthError("FORBIDDEN", e.message);
+    }
+    throw e;
   }
 }

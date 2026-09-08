@@ -39,11 +39,18 @@ import { createHash, randomBytes } from "node:crypto";
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
+// Caminho profundo, não o índice do pacote, pelo mesmo motivo já documentado em
+// lib/charter/policy-generation.ts: o índice reexporta platform-db.ts, que
+// importa "server-only" — inofensivo dentro do Next, mas o pacote real lança
+// incondicionalmente fora da condição "react-server", e este script roda por
+// tsx. Importar do índice aqui fazia `pnpm seed:meridian` morrer antes da
+// primeira linha, com um erro que fala de Client Component e não diz nada sobre
+// o seed. meridian.ts não importa nada assim — só dados e tipos.
 import {
   MERIDIAN_BATTERY,
   MERIDIAN_TEMPLATE_NAME,
   MERIDIAN_TEMPLATE_VERSION,
-} from "@repo/provisioning";
+} from "@repo/provisioning/src/meridian";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";

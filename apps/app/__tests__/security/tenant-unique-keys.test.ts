@@ -56,6 +56,28 @@ const ALLOWED_UNSCOPED_UNIQUE_KEYS = new Set([
   "MeridianAxisScore:assessmentId,axis",
   "MeridianGapDependency:gapId,dependsOnGapId",
   "MeridianPlanItem:assessmentId,gapId",
+  // Growth · readiness (2026-09-06): mesma forma de `MeridianResponse` — uma
+  // resposta identificada pelo pai mais o item respondido. `avaliacaoId` é FK
+  // para `AvaliacaoDeMaturidade`, que carrega `tenantId`, então uma colisão
+  // entre tenants exigiria dois tenants dividindo a mesma avaliação, o que a
+  // FK impede.
+  //
+  // Aqui a chave estreita é a *mais* forte, e por isso ela fica: incluir
+  // `tenantId` passaria a permitir duas respostas para o mesmo
+  // (avaliacaoId, criterioId) sob tenants diferentes — exatamente a duplicata
+  // que a chave existe para impedir. `RespostaDeMaturidade` só tem a coluna
+  // `tenantId` porque a policy de RLS da casa é
+  // `"tenantId" = current_tenant_id()`, e tabela sem a coluna ficaria fora do
+  // isolamento; a coluna não é parte da identidade da linha.
+  "RespostaDeMaturidade:avaliacaoId,criterioId",
+  // Mapa de processos (2026-09-06): mesmo argumento de escopo transitivo.
+  // `deId` e `paraId` são FK para `StaffProcess`, que carrega `tenantId`, então
+  // uma colisão entre tenants exigiria que dois tenants compartilhassem a mesma
+  // linha de processo — a FK impede. Aqui o argumento é ainda mais forte que
+  // nas entradas acima: `criarLigacao` lê os dois extremos com o `where`
+  // escopado em `tenantId` e recusa antes de gravar, então nem um id vindo do
+  // cliente alcança o `create` sem passar pelo tenant.
+  "StaffProcessEdge:deId,paraId",
 ]);
 
 type ModelUniqueKey = { model: string; fields: string[]; file: string };

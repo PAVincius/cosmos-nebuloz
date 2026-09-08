@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_md",
+      "label": "TESTING_PLAN.md",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "label": "Plano de testes \u2014 COSMOS Nebuloz",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_vis\u00e3o_em_camadas",
+      "label": "Vis\u00e3o em camadas",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_1_funda\u00e7\u00e3o_esta_sess\u00e3o_alvo",
+      "label": "Fase 1 \u2014 Funda\u00e7\u00e3o (esta sess\u00e3o) \u2705 alvo",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_2_server_actions_cr\u00edticas_1_2_prs",
+      "label": "Fase 2 \u2014 Server actions cr\u00edticas (1\u20132 PRs)",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_3_rbac_parametrizado_paridade_cosmos",
+      "label": "Fase 3 \u2014 RBAC parametrizado (paridade `cosmos/`) \u2705",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_4_rls_integra\u00e7\u00e3o_db",
+      "label": "Fase 4 \u2014 RLS / integra\u00e7\u00e3o DB",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_5_ci_e_gate_de_qualidade",
+      "label": "Fase 5 \u2014 CI e gate de qualidade",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_6_e2e_e_swarm",
+      "label": "Fase 6 \u2014 E2E e Swarm",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L118"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_comandos_ap\u00f3s_fase_1",
+      "label": "Comandos (ap\u00f3s Fase 1)",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_m\u00e9tricas_e_roadmap_de_coverage",
+      "label": "M\u00e9tricas e roadmap de coverage",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L156"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_o_que_n\u00e3o_fazer",
+      "label": "O que N\u00c3O fazer",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L168"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_checklist_de_execu\u00e7\u00e3o_sess\u00e3o_atual",
+      "label": "Checklist de execu\u00e7\u00e3o (sess\u00e3o atual)",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_refactor_suporte_a_testes",
+      "label": "Refactor suporte a testes",
+      "file_type": "document",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L187"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_vis\u00e3o_em_camadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_1_funda\u00e7\u00e3o_esta_sess\u00e3o_alvo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_2_server_actions_cr\u00edticas_1_2_prs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_3_rbac_parametrizado_paridade_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_4_rls_integra\u00e7\u00e3o_db",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_5_ci_e_gate_de_qualidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_fase_6_e2e_e_swarm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_comandos_ap\u00f3s_fase_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_m\u00e9tricas_e_roadmap_de_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_o_que_n\u00e3o_fazer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_plano_de_testes_cosmos_nebuloz",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_checklist_de_execu\u00e7\u00e3o_sess\u00e3o_atual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_checklist_de_execu\u00e7\u00e3o_sess\u00e3o_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_testing_plan_refactor_suporte_a_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/TESTING_PLAN.md",
+      "source_location": "L187",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

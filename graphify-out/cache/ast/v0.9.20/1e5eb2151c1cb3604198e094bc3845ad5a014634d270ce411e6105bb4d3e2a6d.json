@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_md",
+      "label": "2026-08-05-charter-conformidade-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "label": "Charter \u2014 Mapa de conformidade sobre evid\u00eancia viva",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_1_por_que_este_trabalho_existe",
+      "label": "1. Por que este trabalho existe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_o_que_a_valida\u00e7\u00e3o_encontrou",
+      "label": "O que a valida\u00e7\u00e3o encontrou",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_2_decis\u00e3o_de_aposta",
+      "label": "2. Decis\u00e3o de aposta",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_3_escopo",
+      "label": "3. Escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "label": "4. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_1_modelos_novos",
+      "label": "4.1 Modelos novos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_2_a_ideia_central_cat\u00e1logo_de_capacidades_em_c\u00f3digo",
+      "label": "4.2 A ideia central: cat\u00e1logo de capacidades em c\u00f3digo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_3_regula\u00e7\u00e3o_\u00e9_um_conjunto_de_exig\u00eancias_n\u00e3o_um_corpus_para_rag",
+      "label": "4.3 Regula\u00e7\u00e3o \u00e9 um conjunto de exig\u00eancias, n\u00e3o um corpus para RAG",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L165"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_4_o_papel_do_modelo_delimitado",
+      "label": "4.4 O papel do modelo, delimitado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L204"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_5_onde_mora",
+      "label": "4.5 Onde mora",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L215"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_6_pdf",
+      "label": "4.6 PDF",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L228"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_5_fluxo",
+      "label": "5. Fluxo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L236"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_6_erro",
+      "label": "6. Erro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L249"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_7_teste",
+      "label": "7. Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L264"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_8_lacunas_conhecidas",
+      "label": "8. Lacunas conhecidas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L292"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_1_por_que_este_trabalho_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_1_por_que_este_trabalho_existe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_o_que_a_valida\u00e7\u00e3o_encontrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_2_decis\u00e3o_de_aposta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_3_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_1_modelos_novos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_2_a_ideia_central_cat\u00e1logo_de_capacidades_em_c\u00f3digo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_3_regula\u00e7\u00e3o_\u00e9_um_conjunto_de_exig\u00eancias_n\u00e3o_um_corpus_para_rag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_4_o_papel_do_modelo_delimitado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_5_onde_mora",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_4_6_pdf",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L228",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_5_fluxo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L236",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_6_erro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L249",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_7_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L264",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_charter_mapa_de_conformidade_sobre_evid\u00eancia_viva",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_05_charter_conformidade_design_8_lacunas_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-05-charter-conformidade-design.md",
+      "source_location": "L292",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

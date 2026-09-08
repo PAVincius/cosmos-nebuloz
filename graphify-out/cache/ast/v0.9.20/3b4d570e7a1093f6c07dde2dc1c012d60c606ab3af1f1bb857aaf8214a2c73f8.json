@@ -1,0 +1,303 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_md",
+      "label": "01-information-security-policy.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "label": "Information Security Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_1_purpose",
+      "label": "1. Purpose",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_2_scope",
+      "label": "2. Scope",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_3_security_roles_and_responsibilities",
+      "label": "3. Security Roles and Responsibilities",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "label": "4. Security Principles",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_1_least_privilege",
+      "label": "4.1 Least Privilege",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_2_defense_in_depth",
+      "label": "4.2 Defense in Depth",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_3_secure_by_default",
+      "label": "4.3 Secure by Default",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_4_zero_trust",
+      "label": "4.4 Zero Trust",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_5_internal_security_communication",
+      "label": "5. Internal Security Communication",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_risk_management",
+      "label": "6. Risk Management",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_1_risk_assessment_process",
+      "label": "6.1 Risk Assessment Process",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_2_risk_acceptance",
+      "label": "6.2 Risk Acceptance",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_7_acceptable_use",
+      "label": "7. Acceptable Use",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_8_password_and_credential_policy",
+      "label": "8. Password and Credential Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_9_security_training",
+      "label": "9. Security Training",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_10_compliance_and_audit",
+      "label": "10. Compliance and Audit",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_11_violations",
+      "label": "11. Violations",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L94"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_1_purpose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_2_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_3_security_roles_and_responsibilities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_1_least_privilege",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_2_defense_in_depth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_3_secure_by_default",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_security_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_4_4_zero_trust",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_5_internal_security_communication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_risk_management",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_risk_management",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_1_risk_assessment_process",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_risk_management",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_6_2_risk_acceptance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_7_acceptable_use",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_8_password_and_credential_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_9_security_training",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_10_compliance_and_audit",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_information_security_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_11_violations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/01-information-security-policy.md",
+      "source_location": "L94",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

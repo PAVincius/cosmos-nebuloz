@@ -1,0 +1,479 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_md",
+      "label": "2026-05-31-ux-lab-cosmos.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "label": "COSMOS \u2014 Laborat\u00f3rio de Usabilidade (Validado contra c\u00f3digo)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_1_metodologia",
+      "label": "1. Metodologia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_2_personas_resumo",
+      "label": "2. Personas (resumo)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "label": "3. Vereditos de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_retratados_afirma\u00e7\u00f5es_da_v1_0_que_o_c\u00f3digo_contradiz",
+      "label": "\u274c RETRATADOS \u2014 afirma\u00e7\u00f5es da v1.0 que o c\u00f3digo contradiz",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "label": "\u270f\ufe0f REFINADOS \u2014 atrito real existe, mas a causa raiz mudou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f1_hub_do_art_some_quando_n\u00e3o_h\u00e1_pi_plan_lucas",
+      "label": "F1 \u2014 Hub do ART some quando n\u00e3o h\u00e1 PI Plan \ud83d\udfe0 (Lucas)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f2_hub_do_art_n\u00e3o_\u00e9_descoberto_via_sidebar_lucas",
+      "label": "F2 \u2014 Hub do ART n\u00e3o \u00e9 descoberto via sidebar \ud83d\udfe1 (Lucas)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f3_standup_captura_blockers_como_texto_livre_n\u00e3o_cria_impedimento_rastre\u00e1vel_rafael",
+      "label": "F3 \u2014 Standup captura blockers como texto livre, n\u00e3o cria Impedimento rastre\u00e1vel \u270f\ufe0f\ud83d\udfe0 (Rafael)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f4_wsjf_mostra_tema_mas_n\u00e3o_filtra_por_tema_beatriz",
+      "label": "F4 \u2014 WSJF mostra tema mas n\u00e3o filtra por tema \u270f\ufe0f\ud83d\udfe0 (Beatriz)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "label": "\u2705 CONFIRMADOS \u2014 atrito real, causa raiz correta",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c1_sem_meu_trabalho_home_pessoal_ana_todos",
+      "label": "C1 \u2014 Sem \"Meu Trabalho\" / home pessoal \ud83d\udd34 (Ana, todos)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c2_kanban_do_time_sem_filtro_por_assignee_ana",
+      "label": "C2 \u2014 Kanban do time sem filtro por assignee \ud83d\udfe0 (Ana)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c3_anomalias_\u00e9_read_only_sem_fechamento_de_loop_beatriz",
+      "label": "C3 \u2014 Anomalias \u00e9 read-only, sem fechamento de loop \ud83d\udfe0 (Beatriz)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c4_search_\u00e9_lookup_n\u00e3o_command_palette_ana_lucas_beatriz",
+      "label": "C4 \u2014 Search \u00e9 lookup, n\u00e3o command palette \ud83d\udfe1 (Ana, Lucas, Beatriz)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c5_copilot_markdown_quebrado_sem_exporta\u00e7\u00e3o_lucas_beatriz",
+      "label": "C5 \u2014 Copilot markdown quebrado + sem exporta\u00e7\u00e3o \ud83d\udfe0 (Lucas, Beatriz)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_atritos_de_taxonomia_nomenclatura_confirmados_baixo_esfor\u00e7o",
+      "label": "\ud83d\udfe1 Atritos de taxonomia/nomenclatura (confirmados, baixo esfor\u00e7o)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "label": "4. Padr\u00f5es Confirmados",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_1_insight_sem_a\u00e7\u00e3o_dead_ends",
+      "label": "Padr\u00e3o 1 \u2014 \"Insight sem a\u00e7\u00e3o\" (dead ends)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L121"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_2_org_centric_n\u00e3o_user_centric",
+      "label": "Padr\u00e3o 2 \u2014 \"Org-centric, n\u00e3o user-centric\"",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_3_funciona_mas_n\u00e3o_\u00e9_descoberto",
+      "label": "Padr\u00e3o 3 \u2014 \"Funciona, mas n\u00e3o \u00e9 descoberto\"",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L127"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_4_standup_operacional_incompleto",
+      "label": "Padr\u00e3o 4 \u2014 \"Standup operacional incompleto\"",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_5_recomenda\u00e7\u00f5es_re_priorizadas_p\u00f3s_valida\u00e7\u00e3o",
+      "label": "5. Recomenda\u00e7\u00f5es Re-priorizadas (p\u00f3s-valida\u00e7\u00e3o)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cr\u00edtico",
+      "label": "\ud83d\udd34 Cr\u00edtico",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_alto",
+      "label": "\ud83d\udfe0 Alto",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_m\u00e9dio",
+      "label": "\ud83d\udfe1 M\u00e9dio",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_6_quick_wins_1_2_dias_validados",
+      "label": "6. Quick Wins (1-2 dias, validados)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L155"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_7_north_star",
+      "label": "7. North Star",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L166"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_anexo_perfis_detalhados_das_personas",
+      "label": "Anexo \u2014 Perfis detalhados das personas",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L172"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_1_metodologia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_2_personas_resumo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_retratados_afirma\u00e7\u00f5es_da_v1_0_que_o_c\u00f3digo_contradiz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f1_hub_do_art_some_quando_n\u00e3o_h\u00e1_pi_plan_lucas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f2_hub_do_art_n\u00e3o_\u00e9_descoberto_via_sidebar_lucas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f3_standup_captura_blockers_como_texto_livre_n\u00e3o_cria_impedimento_rastre\u00e1vel_rafael",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_refinados_atrito_real_existe_mas_a_causa_raiz_mudou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_f4_wsjf_mostra_tema_mas_n\u00e3o_filtra_por_tema_beatriz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c1_sem_meu_trabalho_home_pessoal_ana_todos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c2_kanban_do_time_sem_filtro_por_assignee_ana",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c3_anomalias_\u00e9_read_only_sem_fechamento_de_loop_beatriz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c4_search_\u00e9_lookup_n\u00e3o_command_palette_ana_lucas_beatriz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_confirmados_atrito_real_causa_raiz_correta",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_c5_copilot_markdown_quebrado_sem_exporta\u00e7\u00e3o_lucas_beatriz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_3_vereditos_de_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_atritos_de_taxonomia_nomenclatura_confirmados_baixo_esfor\u00e7o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_1_insight_sem_a\u00e7\u00e3o_dead_ends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_2_org_centric_n\u00e3o_user_centric",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_3_funciona_mas_n\u00e3o_\u00e9_descoberto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_4_padr\u00f5es_confirmados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_padr\u00e3o_4_standup_operacional_incompleto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_5_recomenda\u00e7\u00f5es_re_priorizadas_p\u00f3s_valida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_5_recomenda\u00e7\u00f5es_re_priorizadas_p\u00f3s_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cr\u00edtico",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_5_recomenda\u00e7\u00f5es_re_priorizadas_p\u00f3s_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_alto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_5_recomenda\u00e7\u00f5es_re_priorizadas_p\u00f3s_valida\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_m\u00e9dio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_6_quick_wins_1_2_dias_validados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_7_north_star",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_cosmos_laborat\u00f3rio_de_usabilidade_validado_contra_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_31_ux_lab_cosmos_anexo_perfis_detalhados_das_personas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-31-ux-lab-cosmos.md",
+      "source_location": "L172",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

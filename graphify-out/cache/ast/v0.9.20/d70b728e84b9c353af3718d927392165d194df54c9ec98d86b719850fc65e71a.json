@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_md",
+      "label": "signal-baseline-export.md",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "label": "Contract \u2014 Export do caso de neg\u00f3cio para o Signal",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_superf\u00edcie",
+      "label": "Superf\u00edcie",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_shape_v2_o_que_o_scaffold_emite",
+      "label": "Shape v2 \u2014 o que o Scaffold emite",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_regras",
+      "label": "Regras",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_shape_v1_compat_com_o_srd_6",
+      "label": "Shape v1 \u2014 compat com o SRD \u00a76",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_teste_de_aceite_sc_004",
+      "label": "Teste de aceite (SC-004)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L116"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_superf\u00edcie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_shape_v2_o_que_o_scaffold_emite",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_shape_v2_o_que_o_scaffold_emite",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_regras",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_shape_v1_compat_com_o_srd_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_contract_export_do_caso_de_neg\u00f3cio_para_o_signal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_teste_de_aceite_sc_004",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/contracts/signal-baseline-export.md",
+      "source_location": "L116",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

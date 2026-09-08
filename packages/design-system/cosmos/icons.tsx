@@ -16,6 +16,7 @@ import {
   Bell,
   BookOpen,
   Bot,
+  Box,
   Briefcase,
   Building2,
   Calendar,
@@ -30,11 +31,13 @@ import {
   Copy,
   Cpu,
   Crosshair,
+  createLucideIcon,
   Database,
   DollarSign,
   Download,
   ExternalLink,
   Eye,
+  EyeOff,
   FileCode2,
   FileText,
   Filter,
@@ -53,6 +56,8 @@ import {
   Layers,
   LayoutGrid,
   LineChart,
+  Link2,
+  List,
   Lock,
   LogOut,
   type LucideIcon,
@@ -65,12 +70,14 @@ import {
   PanelLeft,
   Paperclip,
   Pause,
+  Pencil,
   Play,
   Plug,
   Plus,
   Puzzle,
   RefreshCw,
   Route,
+  Ruler,
   Scale,
   Search,
   Send,
@@ -79,6 +86,7 @@ import {
   Shield,
   ShieldCheck,
   Shuffle,
+  SignalHigh,
   Slash,
   SlidersHorizontal,
   Sparkles,
@@ -99,6 +107,21 @@ import {
   Zap,
 } from "lucide-react";
 import type { CSSProperties } from "react";
+
+// Glifo do mapa de processos (spec §4): `createLucideIcon` reproduz os traços
+// exatos do design (backoffice-process-map.jsx, bloco `Object.assign(ICON_PATHS,
+// …)`) com o mesmo comportamento de prop das demais entradas deste arquivo —
+// nenhum ícone do lucide-react se pareceria com esse desenho específico.
+const Graph = createLucideIcon("Graph", [
+  ["circle", { cx: "6", cy: "6", r: "2.5" }],
+  ["circle", { cx: "18", cy: "8", r: "2.5" }],
+  ["circle", { cx: "9", cy: "18", r: "2.5" }],
+  ["circle", { cx: "19", cy: "17", r: "2" }],
+  [
+    "path",
+    { d: "m8.2 7.2 7.4 0.6M7.2 8.3l1.2 7.3M11.4 17.6l5.6-.4M16.3 10.2l2 4.9" },
+  ],
+]);
 
 const ICONS = {
   search: Search,
@@ -199,6 +222,21 @@ const ICONS = {
   crosshair: Crosshair,
   diff: GitCompareArrows,
   outbound: ExternalLink,
+  // Glifos exigidos pelo Signal (signal-data.jsx do handoff). Adição pura —
+  // nada existente muda de nome. `signal` usa SignalHigh (barras ascendentes),
+  // o glifo mais próximo do path do handoff; `flag2` não entra porque `flag` já
+  // cobre o mesmo significado.
+  signal: SignalHigh,
+  ruler: Ruler,
+  database: Database,
+  eyeOff: EyeOff,
+  edit: Pencil,
+  link2: Link2,
+  list: List,
+  box: Box,
+  // Glifo exigido pelo mapa de processos (backoffice-process-map.jsx do
+  // handoff). Adição pura — nada existente muda de nome.
+  graph: Graph,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

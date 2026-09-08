@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_md",
+      "label": "checklist-avaliacao-engenharia.md",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "label": "Checklist de avalia\u00e7\u00e3o interna de engenharia \u2014 Cosmos e back office",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "label": "A \u2014 Transversal",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_1_arquitetura_e_fronteiras",
+      "label": "A.1 Arquitetura e fronteiras",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_2_segredos_e_depend\u00eancias",
+      "label": "A.2 Segredos e depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_3_ci_cd",
+      "label": "A.3 CI/CD",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_4_observabilidade",
+      "label": "A.4 Observabilidade",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_5_qa_e_processo",
+      "label": "A.5 QA e processo",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "label": "B \u2014 Cosmos (`apps/app`)",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_1_seguran\u00e7a_e_multi_tenancy",
+      "label": "B.1 Seguran\u00e7a e multi-tenancy",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_2_ia_entrada_sa\u00edda_e_ag\u00eancia",
+      "label": "B.2 IA \u2014 entrada, sa\u00edda e ag\u00eancia",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_3_ia_dados_custo_e_rag",
+      "label": "B.3 IA \u2014 dados, custo e RAG",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_4_testes",
+      "label": "B.4 Testes",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L122"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_5_cobertura",
+      "label": "B.5 Cobertura",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "label": "C \u2014 Back office (`apps/backoffice`)",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L146"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_1_acesso_e_superf\u00edcie",
+      "label": "C.1 Acesso e superf\u00edcie",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_2_opera\u00e7\u00f5es_de_alto_impacto",
+      "label": "C.2 Opera\u00e7\u00f5es de alto impacto",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L166"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_3_isolamento_de_dados_de_cliente",
+      "label": "C.3 Isolamento de dados de cliente",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_4_testes",
+      "label": "C.4 Testes",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L191"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_5_cobertura_e_monitora\u00e7\u00e3o",
+      "label": "C.5 Cobertura e monitora\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_6_go_no_go",
+      "label": "C.6 Go / no-go",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_como_usar_o_resultado",
+      "label": "Como usar o resultado",
+      "file_type": "document",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L225"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_1_arquitetura_e_fronteiras",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_2_segredos_e_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_3_ci_cd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_4_observabilidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_transversal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_a_5_qa_e_processo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_1_seguran\u00e7a_e_multi_tenancy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_2_ia_entrada_sa\u00edda_e_ag\u00eancia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_3_ia_dados_custo_e_rag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_4_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_cosmos_apps_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_b_5_cobertura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_1_acesso_e_superf\u00edcie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_2_opera\u00e7\u00f5es_de_alto_impacto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_3_isolamento_de_dados_de_cliente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_4_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_5_cobertura_e_monitora\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_c_6_go_no_go",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_checklist_de_avalia\u00e7\u00e3o_interna_de_engenharia_cosmos_e_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_checklist_avaliacao_engenharia_como_usar_o_resultado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/checklist-avaliacao-engenharia.md",
+      "source_location": "L225",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

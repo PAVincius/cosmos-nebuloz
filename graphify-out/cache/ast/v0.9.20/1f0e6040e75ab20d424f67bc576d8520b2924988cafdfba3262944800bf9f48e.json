@@ -1,0 +1,930 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "label": "kanban.json",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_schema",
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_id",
+      "label": "id",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_kind",
+      "label": "kind",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_titulo",
+      "label": "titulo",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_rota",
+      "label": "rota",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_componente",
+      "label": "componente",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_registro",
+      "label": "registro",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_balde",
+      "label": "balde",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_profundidade",
+      "label": "profundidade",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_trilha",
+      "label": "trilha",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_dono",
+      "label": "dono",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_estado",
+      "label": "estado",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_actions",
+      "label": "actions",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "label": "models",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_epic",
+      "label": "Epic",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_governedepic",
+      "label": "GovernedEpic",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_strategictheme",
+      "label": "StrategicTheme",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_statetransitionhistory",
+      "label": "StateTransitionHistory",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "label": "safe",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_pratica",
+      "label": "pratica",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_nivel",
+      "label": "nivel",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_faz",
+      "label": "faz",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "label": "invariantes",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_o_estado_gravado_de_um_\u00e9pico_precisa_ser_alcan\u00e7\u00e1vel_pela_m\u00e1quina_com_os_dados_da_pr\u00f3pria_linha_transitionepicstatus_n\u00e3o_hidrata_o_ator_no_estado_persistido_reproduz_o_caminho_can\u00f4nico_passando_pelos_mesmos_guards_\u00e9pico_em_estado_inalcan\u00e7\u00e1vel_faz_todo_arraste_a_partir_dele_falhar",
+      "label": "o estado gravado de um \u00e9pico precisa ser ALCAN\u00c7\u00c1VEL pela m\u00e1quina com os dados da pr\u00f3pria linha: transitionEpicStatus n\u00e3o hidrata o ator no estado persistido, reproduz o caminho can\u00f4nico passando pelos mesmos guards \u2014 \u00e9pico em estado inalcan\u00e7\u00e1vel faz todo arraste a partir dele falhar",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_analyzing_ou_al\u00e9m_exige_investscore_40_e_hypothesis_com_pelo_menos_50_caracteres_cantransitiontobacklog",
+      "label": "ANALYZING ou al\u00e9m exige investScore >= 40 e hypothesis com pelo menos 50 caracteres (canTransitionToBacklog)",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_implementing_ou_al\u00e9m_exige_al\u00e9m_disso_leanbudgetallocation_0_e_governedepic_com_governancestatus_approved_cantransitiontoimplementing",
+      "label": "IMPLEMENTING ou al\u00e9m exige, al\u00e9m disso, leanBudgetAllocation > 0 e GovernedEpic com governanceStatus 'approved' (canTransitionToImplementing)",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_mudan\u00e7a_de_coluna_passa_por_transitionepicstatus_e_nunca_grava_lifecyclestatus_direto_gravar_direto_faria_do_board_uma_segunda_fonte_de_verdade_discordante_da_m\u00e1quina_e_do_trigger_epic_lifecycle_guard_no_banco",
+      "label": "mudan\u00e7a de coluna passa por transitionEpicStatus e nunca grava lifecycleStatus direto \u2014 gravar direto faria do board uma segunda fonte de verdade discordante da m\u00e1quina e do trigger epic_lifecycle_guard no banco",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_a_recusa_da_m\u00e1quina_\u00e9_traduzida_para_a_frase_que_nomeia_o_pr\u00e9_requisito_da_coluna_de_destino_o_c\u00f3digo_cru_guard_failed_terminal_state_invalid_transition_n\u00e3o_chega_ao_usu\u00e1rio_e_falha_que_n\u00e3o_\u00e9_da_m\u00e1quina_\u00e9_repassada_como_veio_sem_motivo_inventado",
+      "label": "a recusa da m\u00e1quina \u00e9 traduzida para a frase que nomeia o pr\u00e9-requisito da coluna de destino; o c\u00f3digo cru (GUARD_FAILED, TERMINAL_STATE, INVALID_TRANSITION) n\u00e3o chega ao usu\u00e1rio, e falha que n\u00e3o \u00e9 da m\u00e1quina \u00e9 repassada como veio, sem motivo inventado",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_a_tradu\u00e7\u00e3o_mora_na_action_do_board_n\u00e3o_em_transitionepicstatus_o_c\u00f3digo_daquela_action_\u00e9_contrato_de_api_e_quem_consome_a_api_continua_vendo_o_c\u00f3digo",
+      "label": "a tradu\u00e7\u00e3o mora na action do board, n\u00e3o em transitionEpicStatus: o c\u00f3digo daquela action \u00e9 contrato de API e quem consome a API continua vendo o c\u00f3digo",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_voltar_um_card_para_o_funil_\u00e9_recusado_antes_de_chamar_a_m\u00e1quina_nenhum_evento_tem_funnel_como_destino_o_funil_\u00e9_de_m\u00e3o_\u00fanica",
+      "label": "voltar um card para o Funil \u00e9 recusado antes de chamar a m\u00e1quina \u2014 nenhum evento tem FUNNEL como destino, o funil \u00e9 de m\u00e3o \u00fanica",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_reordenar_dentro_da_mesma_coluna_grava_s\u00f3_lifecycleorder_e_n\u00e3o_aciona_a_m\u00e1quina",
+      "label": "reordenar dentro da mesma coluna grava s\u00f3 lifecycleOrder e n\u00e3o aciona a m\u00e1quina",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_escrita_passa_por_requirerole_admin_rte_po_a_m\u00e1quina_ainda_exige_po_sm_rte_ste_admin_nos_eventos_elevados_e_o_audit_do_board_registra_quem_arrastou_para_onde_e_em_que_posi\u00e7\u00e3o",
+      "label": "escrita passa por requireRole(ADMIN|RTE|PO); a m\u00e1quina ainda exige PO|SM|RTE|STE|ADMIN nos eventos elevados, e o audit do board registra quem arrastou, para onde e em que posi\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_wsjf_de_cria\u00e7\u00e3o_\u00e9_sempre_recomputado_no_servidor_e_\u00e9_null_quando_falta_qualquer_um_dos_quatro_componentes_score_parcial_n\u00e3o_\u00e9_score",
+      "label": "wsjf de cria\u00e7\u00e3o \u00e9 sempre recomputado no servidor e \u00e9 null quando falta qualquer um dos quatro componentes \u2014 score parcial n\u00e3o \u00e9 score",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "ref_erro_de_leitura_\u00e9_distinto_do_vazio_e_nenhum_\u00e9pico_de_mock_\u00e9_renderizado_em_nenhum_dos_dois",
+      "label": "erro de leitura \u00e9 distinto do vazio e nenhum \u00e9pico de mock \u00e9 renderizado em nenhum dos dois",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "label": "fonte",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "ref_docs_stories_epic_006_story_063_tela_kanban_coerencia_de_ciclo_de_vida_md",
+      "label": "docs/stories/epic-006/story-063-tela-kanban-coerencia-de-ciclo-de-vida.md",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "ref_docs_stories_epic_006_story_011_md",
+      "label": "docs/stories/epic-006/story-011.md",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "ref_docs_stories_epic_006_story_012_md",
+      "label": "docs/stories/epic-006/story-012.md",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "ref_packages_safe_engine_src_machines_epic_lifecycle_ts",
+      "label": "packages/safe-engine/src/machines/epic-lifecycle.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "ref_safe_6_0_portfolio_kanban_lean_portfolio_management",
+      "label": "SAFe 6.0 \u2014 Portfolio Kanban (Lean Portfolio Management)",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_codigo",
+      "label": "codigo",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64"
+    },
+    {
+      "id": "ref_apps_app_app_cosmos_actions_kanban_ts",
+      "label": "apps/app/app/(cosmos)/actions/kanban.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64"
+    },
+    {
+      "id": "ref_apps_app_app_actions_epics_transition_status_ts",
+      "label": "apps/app/app/actions/epics/transition-status.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_lacunas",
+      "label": "lacunas",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_depende_de",
+      "label": "depende_de",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L122"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_seed",
+      "label": "seed",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L123"
+    },
+    {
+      "id": "ref_packages_database_scripts_seed_cosmos_mts",
+      "label": "packages/database/scripts/seed-cosmos.mts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L123"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_verifica",
+      "label": "verifica",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124"
+    },
+    {
+      "id": "ref_apps_app_tests_actions_kanban_test_ts",
+      "label": "apps/app/__tests__/actions/kanban.test.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124"
+    },
+    {
+      "id": "ref_apps_app_tests_actions_epic_lifecycle_reachability_test_ts",
+      "label": "apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124"
+    },
+    {
+      "id": "ref_apps_app_tests_screens_kanban_test_tsx",
+      "label": "apps/app/__tests__/screens/kanban.test.tsx",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_commits",
+      "label": "commits",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L129"
+    },
+    {
+      "id": "ref_c86907e6",
+      "label": "c86907e6",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_notas",
+      "label": "notas",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_atualizado_em",
+      "label": "atualizado_em",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L131"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_schema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_kind",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_titulo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_rota",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_componente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_registro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_balde",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_profundidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_trilha",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_dono",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_estado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "target": "ref_epic",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "target": "ref_governedepic",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "target": "ref_strategictheme",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_models",
+      "target": "ref_statetransitionhistory",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_pratica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_nivel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_faz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_o_estado_gravado_de_um_\u00e9pico_precisa_ser_alcan\u00e7\u00e1vel_pela_m\u00e1quina_com_os_dados_da_pr\u00f3pria_linha_transitionepicstatus_n\u00e3o_hidrata_o_ator_no_estado_persistido_reproduz_o_caminho_can\u00f4nico_passando_pelos_mesmos_guards_\u00e9pico_em_estado_inalcan\u00e7\u00e1vel_faz_todo_arraste_a_partir_dele_falhar",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_analyzing_ou_al\u00e9m_exige_investscore_40_e_hypothesis_com_pelo_menos_50_caracteres_cantransitiontobacklog",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_implementing_ou_al\u00e9m_exige_al\u00e9m_disso_leanbudgetallocation_0_e_governedepic_com_governancestatus_approved_cantransitiontoimplementing",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_mudan\u00e7a_de_coluna_passa_por_transitionepicstatus_e_nunca_grava_lifecyclestatus_direto_gravar_direto_faria_do_board_uma_segunda_fonte_de_verdade_discordante_da_m\u00e1quina_e_do_trigger_epic_lifecycle_guard_no_banco",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_a_recusa_da_m\u00e1quina_\u00e9_traduzida_para_a_frase_que_nomeia_o_pr\u00e9_requisito_da_coluna_de_destino_o_c\u00f3digo_cru_guard_failed_terminal_state_invalid_transition_n\u00e3o_chega_ao_usu\u00e1rio_e_falha_que_n\u00e3o_\u00e9_da_m\u00e1quina_\u00e9_repassada_como_veio_sem_motivo_inventado",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_a_tradu\u00e7\u00e3o_mora_na_action_do_board_n\u00e3o_em_transitionepicstatus_o_c\u00f3digo_daquela_action_\u00e9_contrato_de_api_e_quem_consome_a_api_continua_vendo_o_c\u00f3digo",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_voltar_um_card_para_o_funil_\u00e9_recusado_antes_de_chamar_a_m\u00e1quina_nenhum_evento_tem_funnel_como_destino_o_funil_\u00e9_de_m\u00e3o_\u00fanica",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_reordenar_dentro_da_mesma_coluna_grava_s\u00f3_lifecycleorder_e_n\u00e3o_aciona_a_m\u00e1quina",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_escrita_passa_por_requirerole_admin_rte_po_a_m\u00e1quina_ainda_exige_po_sm_rte_ste_admin_nos_eventos_elevados_e_o_audit_do_board_registra_quem_arrastou_para_onde_e_em_que_posi\u00e7\u00e3o",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_wsjf_de_cria\u00e7\u00e3o_\u00e9_sempre_recomputado_no_servidor_e_\u00e9_null_quando_falta_qualquer_um_dos_quatro_componentes_score_parcial_n\u00e3o_\u00e9_score",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_invariantes",
+      "target": "ref_erro_de_leitura_\u00e9_distinto_do_vazio_e_nenhum_\u00e9pico_de_mock_\u00e9_renderizado_em_nenhum_dos_dois",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "target": "ref_docs_stories_epic_006_story_063_tela_kanban_coerencia_de_ciclo_de_vida_md",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "target": "ref_docs_stories_epic_006_story_011_md",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "target": "ref_docs_stories_epic_006_story_012_md",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "target": "ref_packages_safe_engine_src_machines_epic_lifecycle_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_fonte",
+      "target": "ref_safe_6_0_portfolio_kanban_lean_portfolio_management",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_codigo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_codigo",
+      "target": "ref_apps_app_app_cosmos_actions_kanban_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_codigo",
+      "target": "ref_apps_app_app_actions_epics_transition_status_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_safe_codigo",
+      "target": "ref_packages_safe_engine_src_machines_epic_lifecycle_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_lacunas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_depende_de",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_seed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_seed",
+      "target": "ref_packages_database_scripts_seed_cosmos_mts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L123",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_verifica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_verifica",
+      "target": "ref_apps_app_tests_actions_kanban_test_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_verifica",
+      "target": "ref_apps_app_tests_actions_epic_lifecycle_reachability_test_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_verifica",
+      "target": "ref_apps_app_tests_screens_kanban_test_tsx",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L124",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_commits",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_commits",
+      "target": "ref_c86907e6",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L129",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_notas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_kanban_atualizado_em",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/kanban.json",
+      "source_location": "L131",
+      "weight": 1.0
+    }
+  ]
+}

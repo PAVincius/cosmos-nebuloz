@@ -1,0 +1,337 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_md",
+      "label": "2026-07-31-backoffice-clientes-contratacao-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "label": "Back-office de clientes e contrata\u00e7\u00e3o \u2014 design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_o_que_j\u00e1_existe",
+      "label": "O que j\u00e1 existe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "label": "Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_app",
+      "label": "App",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_guard",
+      "label": "Guard",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_a_fronteira_cross_tenant",
+      "label": "A fronteira cross-tenant",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_rela\u00e7\u00e3o_com_o_adr_0012",
+      "label": "Rela\u00e7\u00e3o com o ADR-0012",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "label": "`packages/provisioning`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_provisiontenant_name_owneremail_modules",
+      "label": "`provisionTenant({ name, ownerEmail, modules })`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_contractmodule_tenantid_module_status_seats_expiresat",
+      "label": "`contractModule(tenantId, module, { status, seats, expiresAt })`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_setmodulestatus_tenantid_module_status",
+      "label": "`setModuleStatus(tenantId, module, status)`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_bootstrapcharter_tenantid_complianceemail",
+      "label": "`bootstrapCharter(tenantId, { complianceEmail })`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L118"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_corre\u00e7\u00e3o_de_lambuja",
+      "label": "Corre\u00e7\u00e3o de lambuja",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_telas",
+      "label": "Telas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L136"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_erros_e_estados",
+      "label": "Erros e estados",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L150"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_testes",
+      "label": "Testes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_fora_de_escopo",
+      "label": "Fora de escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L179"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_riscos",
+      "label": "Riscos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L188"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_charter_em_producao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_o_que_j\u00e1_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_guard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_a_fronteira_cross_tenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_rela\u00e7\u00e3o_com_o_adr_0012",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_provisiontenant_name_owneremail_modules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_contractmodule_tenantid_module_status_seats_expiresat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_setmodulestatus_tenantid_module_status",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_bootstrapcharter_tenantid_complianceemail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_packages_provisioning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_corre\u00e7\u00e3o_de_lambuja",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_telas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_erros_e_estados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L150",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_fora_de_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_back_office_de_clientes_e_contrata\u00e7\u00e3o_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_riscos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-backoffice-clientes-contratacao-design.md",
+      "source_location": "L188",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

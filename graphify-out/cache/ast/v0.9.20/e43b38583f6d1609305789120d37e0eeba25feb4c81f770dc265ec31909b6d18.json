@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_md",
+      "label": "data-model.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_data_model_est\u00e1gio_de_intent",
+      "label": "Data Model: Est\u00e1gio de Intent",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_intent_md",
+      "label": "intent.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_feature_directory",
+      "label": "Feature directory",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L36"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_data_model_est\u00e1gio_de_intent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_data_model_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_intent_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_data_model_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_data_model_feature_directory",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/data-model.md",
+      "source_location": "L36",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

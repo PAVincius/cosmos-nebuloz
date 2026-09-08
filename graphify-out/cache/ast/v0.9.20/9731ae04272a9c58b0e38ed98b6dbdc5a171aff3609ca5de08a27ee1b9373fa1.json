@@ -1,0 +1,383 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_md",
+      "label": "tasks.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "label": "Tasks: Est\u00e1gio de Intent (idea \u2192 intent.md aprovado)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_format_id_p_story_description",
+      "label": "Format: `[ID] [P?] [Story] Description`",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_path_conventions",
+      "label": "Path Conventions",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_1_setup",
+      "label": "Phase 1: Setup",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_2_foundational_blocking_prerequisites",
+      "label": "Phase 2: Foundational (Blocking Prerequisites)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_3_user_story_1_capturar_ideia_como_intent_md_priority_p1_mvp",
+      "label": "Phase 3: User Story 1 - Capturar ideia como intent.md (Priority: P1) \ud83c\udfaf MVP",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_1",
+      "label": "Implementation for User Story 1",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_4_user_story_2_roast_me_antes_de_fechar_priority_p1",
+      "label": "Phase 4: User Story 2 - Roast me antes de fechar (Priority: P1)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_2",
+      "label": "Implementation for User Story 2",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_5_user_story_3_aprova\u00e7\u00e3o_expl\u00edcita_priority_p1",
+      "label": "Phase 5: User Story 3 - Aprova\u00e7\u00e3o expl\u00edcita (Priority: P1)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_3",
+      "label": "Implementation for User Story 3",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_6_user_story_4_bloquear_speckit_specify_sem_intent_aprovado_priority_p2",
+      "label": "Phase 6: User Story 4 - Bloquear /speckit-specify sem intent aprovado (Priority: P2)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_4",
+      "label": "Implementation for User Story 4",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_7_polish_cross_cutting_concerns",
+      "label": "Phase 7: Polish & Cross-Cutting Concerns",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_dependencies_execution_order",
+      "label": "Dependencies & Execution Order",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_dependencies",
+      "label": "Phase Dependencies",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_within_us4",
+      "label": "Within US4",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_parallel_opportunities",
+      "label": "Parallel Opportunities",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_parallel_example_user_story_4",
+      "label": "Parallel Example: User Story 4",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_strategy",
+      "label": "Implementation Strategy",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_mvp_first_user_stories_1_2_3",
+      "label": "MVP First (User Stories 1+2+3)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_incremental_delivery",
+      "label": "Incremental Delivery",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L156"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_notes",
+      "label": "Notes",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L165"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_format_id_p_story_description",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_path_conventions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_1_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_2_foundational_blocking_prerequisites",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_3_user_story_1_capturar_ideia_como_intent_md_priority_p1_mvp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_3_user_story_1_capturar_ideia_como_intent_md_priority_p1_mvp",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_4_user_story_2_roast_me_antes_de_fechar_priority_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_4_user_story_2_roast_me_antes_de_fechar_priority_p1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_5_user_story_3_aprova\u00e7\u00e3o_expl\u00edcita_priority_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_5_user_story_3_aprova\u00e7\u00e3o_expl\u00edcita_priority_p1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_6_user_story_4_bloquear_speckit_specify_sem_intent_aprovado_priority_p2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_6_user_story_4_bloquear_speckit_specify_sem_intent_aprovado_priority_p2",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_for_user_story_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_7_polish_cross_cutting_concerns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_dependencies_execution_order",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_dependencies_execution_order",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_phase_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_dependencies_execution_order",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_within_us4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_dependencies_execution_order",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_parallel_opportunities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_parallel_example_user_story_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_strategy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_strategy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_mvp_first_user_stories_1_2_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_implementation_strategy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_incremental_delivery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_tasks_est\u00e1gio_de_intent_idea_intent_md_aprovado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_tasks_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/tasks.md",
+      "source_location": "L165",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

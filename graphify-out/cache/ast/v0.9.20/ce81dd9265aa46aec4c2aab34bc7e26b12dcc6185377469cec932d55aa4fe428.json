@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_md",
+      "label": "2026-05-18-quality-gates-phase3.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_quality_gates_phase_3_ai_fix_loop_implementation_plan",
+      "label": "Quality Gates Phase 3 \u2014 AI Fix Loop Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "label": "File Map",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_1_error_parser_tests",
+      "label": "Task 1: Error parser + tests",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_2_fix_generator_haiku_sonnet_escalation",
+      "label": "Task 2: Fix generator (Haiku \u2192 Sonnet escalation)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L241"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_3_fix_validator",
+      "label": "Task 3: Fix validator",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L369"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_4_issue_creator",
+      "label": "Task 4: Issue creator",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L454"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_5_main_orchestrator",
+      "label": "Task 5: Main orchestrator",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L528"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_6_github_actions_integration",
+      "label": "Task 6: GitHub Actions integration",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L733"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_7_smoke_test_all_new_modules",
+      "label": "Task 7: Smoke test all new modules",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L801"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_success_checklist",
+      "label": "Success Checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L855"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_quality_gates_phase_3_ai_fix_loop_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_quality_gates_phase_3_ai_fix_loop_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_1_error_parser_tests",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_2_fix_generator_haiku_sonnet_escalation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_3_fix_validator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L369",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_4_issue_creator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L454",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_5_main_orchestrator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L528",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_6_github_actions_integration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L733",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_task_7_smoke_test_all_new_modules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L801",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_quality_gates_phase_3_ai_fix_loop_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_18_quality_gates_phase3_success_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-18-quality-gates-phase3.md",
+      "source_location": "L855",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -20,6 +20,17 @@
 export const LIMITE_DESCONTO_SEM_APROVACAO = 15;
 
 /**
+ * Base do gerador de identificador de documento: prefixo + timestamp em
+ * base36. Não exportada — `gerarNumeroProposta` e `gerarCodigoEngajamento` são
+ * a mesma lógica com prefixo diferente, e duas rotinas gerando número por
+ * lógicas diferentes seria dois jeitos de quebrar um identificador que precisa
+ * ser exato.
+ */
+function gerarCodigoDocumento(prefixo: string): string {
+  return `${prefixo}-${Date.now().toString(36).toUpperCase()}`;
+}
+
+/**
  * Número da proposta.
  *
  * Mora aqui, e não em `app/actions/proposals.ts`, pelo motivo no topo deste
@@ -32,5 +43,16 @@ export const LIMITE_DESCONTO_SEM_APROVACAO = 15;
  * seria dois jeitos de quebrar um identificador que precisa ser exato.
  */
 export function gerarNumeroProposta(): string {
-  return `P-${Date.now().toString(36).toUpperCase()}`;
+  return gerarCodigoDocumento("P");
+}
+
+/**
+ * Código do engajamento que `materializarEngajamento`
+ * (`app/actions/scaffold.ts`) cria ao aterrissar uma promoção de Scaffold.
+ * Mesmo espírito de `gerarNumeroProposta`: `createEngagementAction` aceita
+ * código digitado à mão, mas aqui não há humano decidindo o código — a
+ * materialização parte de uma lacuna do Meridian, não de um formulário livre.
+ */
+export function gerarCodigoEngajamento(): string {
+  return gerarCodigoDocumento("ENG");
 }

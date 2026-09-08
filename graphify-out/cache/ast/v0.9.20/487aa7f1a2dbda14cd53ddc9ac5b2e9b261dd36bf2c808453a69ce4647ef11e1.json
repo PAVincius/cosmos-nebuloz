@@ -1,0 +1,195 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "label": "playbook-de-vendas.md",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "label": "Playbook de vendas",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_1_o_roteiro_de_discovery_j\u00e1_est\u00e1_escrito",
+      "label": "1. O roteiro de discovery j\u00e1 est\u00e1 escrito",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_o_que_ouvir",
+      "label": "O que ouvir",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_sinal_de_desqualifica\u00e7\u00e3o",
+      "label": "Sinal de desqualifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_2_tratamento_de_obje\u00e7\u00f5es",
+      "label": "2. Tratamento de obje\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_3_prova_social_o_que_existe_e_o_que_n\u00e3o",
+      "label": "3. Prova social \u2014 o que existe e o que n\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_4_raci_por_produto",
+      "label": "4. RACI por produto",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_5_contratar_ou_fazer_parceria",
+      "label": "5. Contratar ou fazer parceria",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_6_antes_da_primeira_call",
+      "label": "6. Antes da primeira call",
+      "file_type": "document",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L154"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_icp_e_precificacao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_1_o_roteiro_de_discovery_j\u00e1_est\u00e1_escrito",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_1_o_roteiro_de_discovery_j\u00e1_est\u00e1_escrito",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_o_que_ouvir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_1_o_roteiro_de_discovery_j\u00e1_est\u00e1_escrito",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_sinal_de_desqualifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_2_tratamento_de_obje\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_3_prova_social_o_que_existe_e_o_que_n\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_charter_nebuloz_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_4_raci_por_produto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_index_mestre_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_5_contratar_ou_fazer_parceria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_playbook_de_vendas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_comercial_playbook_de_vendas_6_antes_da_primeira_call",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/comercial/playbook-de-vendas.md",
+      "source_location": "L154",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

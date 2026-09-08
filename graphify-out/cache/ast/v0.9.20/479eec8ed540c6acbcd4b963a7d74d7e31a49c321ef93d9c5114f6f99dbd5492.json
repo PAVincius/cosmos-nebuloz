@@ -1,0 +1,383 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_md",
+      "label": "2026-05-26-kanban-card-review.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "label": "Code Review: Kanban Card \u2014 Hybrid Density + INVEST Badge + Drawer Wiring",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "label": "STRENGTHS",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_1_drag_to_click_conflict_resolution",
+      "label": "1. Drag-to-Click Conflict Resolution \u2713",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_2_react_hooks_implementation",
+      "label": "2. React Hooks Implementation \u2713",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_3_drag_interaction_architecture",
+      "label": "3. Drag Interaction Architecture \u2713",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_4_invest_color_scoring_logic",
+      "label": "4. INVEST Color Scoring Logic \u2713",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_5_component_structure_refactor",
+      "label": "5. Component Structure Refactor \u2713",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_6_test_coverage",
+      "label": "6. Test Coverage",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_7_drawer_wiring",
+      "label": "7. Drawer Wiring",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_issues",
+      "label": "ISSUES",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_important",
+      "label": "IMPORTANT",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_1_missing_accessibility_no_aria_label_on_title_button",
+      "label": "1. Missing Accessibility: No aria-label on Title Button",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_2_mouse_only_hover_expansion_for_wsjf_breakdown",
+      "label": "2. Mouse-Only Hover Expansion for WSJF Breakdown",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L99"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_minor",
+      "label": "MINOR",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_3_test_coverage_gap_drag_behavior_not_tested",
+      "label": "3. Test Coverage Gap: Drag Behavior Not Tested",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_4_type_safety_optional_props_without_defaults",
+      "label": "4. Type Safety: Optional Props Without Defaults",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L154"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_5_governance_status_display_not_fully_verified",
+      "label": "5. Governance Status Display Not Fully Verified",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L181"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "label": "ASSESSMENT",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L201"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_overall_quality_good_70_100",
+      "label": "Overall Quality: **GOOD** (70/100)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_risk_level_low",
+      "label": "Risk Level: **LOW**",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L211"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_blockers_for_merge_none",
+      "label": "Blockers for Merge: **NONE**",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L216"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_recommended_next_steps",
+      "label": "Recommended Next Steps:",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L219"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_quality_checklist",
+      "label": "Code Quality Checklist",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L227"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_1_drag_to_click_conflict_resolution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_2_react_hooks_implementation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_3_drag_interaction_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_4_invest_color_scoring_logic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_5_component_structure_refactor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_6_test_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_strengths",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_7_drawer_wiring",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_issues",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_issues",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_important",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_important",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_1_missing_accessibility_no_aria_label_on_title_button",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_important",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_2_mouse_only_hover_expansion_for_wsjf_breakdown",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_issues",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_minor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_minor",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_3_test_coverage_gap_drag_behavior_not_tested",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_minor",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_4_type_safety_optional_props_without_defaults",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_minor",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_5_governance_status_display_not_fully_verified",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_overall_quality_good_70_100",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_risk_level_low",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_blockers_for_merge_none",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_assessment",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_recommended_next_steps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L219",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_review_kanban_card_hybrid_density_invest_badge_drawer_wiring",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_05_26_kanban_card_review_code_quality_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-05-26-kanban-card-review.md",
+      "source_location": "L227",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
