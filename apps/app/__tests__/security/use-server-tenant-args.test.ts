@@ -56,16 +56,21 @@ function isUseServerModule(src: string): boolean {
   return /^["']use server["'];?$/.test(first.trim());
 }
 
-// Balances parentheses starting at `openParenIndex` (which must point at "(")
-// and returns the index of the matching close paren. Signatures in this repo
-// routinely break across multiple lines.
-function findMatchingParen(src: string, openParenIndex: number): number {
+// Balances a delimiter pair starting at `openIndex` (which must point at
+// `open`) and returns the index of the matching closer. Signatures and type
+// bodies in this repo routinely break across multiple lines.
+function findMatchingDelimiter(
+  src: string,
+  openIndex: number,
+  open = "(",
+  close = ")"
+): number {
   let depth = 0;
-  let end = openParenIndex;
+  let end = openIndex;
   for (; end < src.length; end += 1) {
-    if (src[end] === "(") {
+    if (src[end] === open) {
       depth += 1;
-    } else if (src[end] === ")") {
+    } else if (src[end] === close) {
       depth -= 1;
       if (depth === 0) {
         break;
@@ -85,7 +90,7 @@ function exportedSignatures(src: string): { name: string; sig: string }[] {
   const fnRe = /export\s+async\s+function\s+([A-Za-z0-9_]+)\s*\(/g;
   let m: RegExpExecArray | null = fnRe.exec(src);
   while (m !== null) {
-    const end = findMatchingParen(src, fnRe.lastIndex - 1);
+    const end = findMatchingDelimiter(src, fnRe.lastIndex - 1);
     out.push({ name: m[1], sig: src.slice(m.index, end + 1) });
     m = fnRe.exec(src);
   }
@@ -94,7 +99,7 @@ function exportedSignatures(src: string): { name: string; sig: string }[] {
   let cm: RegExpExecArray | null = constRe.exec(src);
   while (cm !== null) {
     const openParen = constRe.lastIndex - 1;
-    const end = findMatchingParen(src, openParen);
+    const end = findMatchingDelimiter(src, openParen);
     out.push({ name: cm[1], sig: src.slice(cm.index, end + 1) });
     cm = constRe.exec(src);
   }
@@ -152,6 +157,137 @@ function reExportStatements(
   return out;
 }
 
+const srcCache = new Map<string, string>();
+function readSrc(file: string): string {
+  const cached = srcCache.get(file);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const src = readFileSync(file, "utf8");
+  srcCache.set(file, src);
+  return src;
+}
+
+// Returns the declaration body of a same-file `type X = ...` / `interface X`,
+// or null when `name` isn't declared here. Object-literal bodies come back as
+// the balanced `{ ... }`; everything else (unions, `Pick<...>`, aliases of
+// aliases) comes back as the raw right-hand side so the caller can keep
+// following the identifiers inside it.
+function typeDeclarationBody(src: string, name: string): string | null {
+  const typeMatch = new RegExp(`\\btype\\s+${name}\\s*=`).exec(src);
+  if (typeMatch) {
+    const brace = src.indexOf("{", typeMatch.index);
+    const semi = src.indexOf(";", typeMatch.index);
+    // A `;` before the first `{` means this alias has no object literal body.
+    if (brace === -1 || (semi !== -1 && semi < brace)) {
+      return src.slice(typeMatch.index, semi === -1 ? src.length : semi);
+    }
+    return src.slice(brace, findMatchingDelimiter(src, brace, "{", "}") + 1);
+  }
+
+  const ifaceMatch = new RegExp(`\\binterface\\s+${name}\\b`).exec(src);
+  if (ifaceMatch) {
+    const brace = src.indexOf("{", ifaceMatch.index);
+    if (brace === -1) {
+      return null;
+    }
+    return src.slice(brace, findMatchingDelimiter(src, brace, "{", "}") + 1);
+  }
+
+  return null;
+}
+
+// Maps a locally-bound type name back to the module it was imported from,
+// following `import type { A } from "./x"` and `import { A as B } from "./x"`.
+function importedTypeSource(
+  src: string,
+  file: string,
+  localName: string
+): { file: string; name: string } | null {
+  const importRe =
+    /import\s+(?:type\s+)?\{([^}]+)\}\s*from\s*["']([^"']+)["']/g;
+  let m: RegExpExecArray | null = importRe.exec(src);
+  while (m !== null) {
+    for (const raw of m[1].split(",")) {
+      const part = raw.replace(/^\s*type\s+/, "").trim();
+      if (!part) {
+        continue;
+      }
+      const [original, alias] = part.split(/\s+as\s+/).map((s) => s.trim());
+      if ((alias ?? original) !== localName) {
+        continue;
+      }
+      const target = resolveModule(file, m[2]);
+      if (target) {
+        return { file: target, name: original };
+      }
+    }
+    m = importRe.exec(src);
+  }
+  return null;
+}
+
+// Type names are PascalCase by convention here, which keeps us from trying to
+// resolve parameter names and primitives as if they were aliases.
+const TYPE_TOKEN_RE = /\b[A-Z][A-Za-z0-9_]*\b/g;
+
+// Returns the alias chain through which `text` reaches a `tenantId` member, or
+// null if it never does. An empty array means the token was right there in the
+// text; ["ImportInput"] means it was reached through that alias.
+//
+// This is what catches indirection: `linearDryRun(input: ImportInput)` has no
+// literal "tenantId" in its signature, but ImportInput declares one.
+function tenantIdPath(
+  text: string,
+  file: string,
+  seen: Set<string>
+): string[] | null {
+  if (/\btenantId\b/.test(text)) {
+    return [];
+  }
+
+  for (const token of text.match(TYPE_TOKEN_RE) ?? []) {
+    const key = `${file}#${token}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+
+    const src = readSrc(file);
+
+    const localBody = typeDeclarationBody(src, token);
+    if (localBody !== null) {
+      const nested = tenantIdPath(localBody, file, seen);
+      if (nested) {
+        return [token, ...nested];
+      }
+      continue;
+    }
+
+    const imported = importedTypeSource(src, file, token);
+    if (!imported) {
+      continue;
+    }
+    const importedBody = typeDeclarationBody(
+      readSrc(imported.file),
+      imported.name
+    );
+    if (importedBody === null) {
+      continue;
+    }
+    const nested = tenantIdPath(importedBody, imported.file, seen);
+    if (nested) {
+      return [token, ...nested];
+    }
+  }
+
+  return null;
+}
+
+function viaSuffix(path: string[]): string {
+  return path.length > 0 ? ` (via ${path.join(" → ")})` : "";
+}
+
 describe("server actions never accept tenantId from the caller", () => {
   it("has no exported action in a 'use server' module taking a tenantId argument, directly or via re-export", () => {
     const offenders: string[] = [];
@@ -159,15 +295,18 @@ describe("server actions never accept tenantId from the caller", () => {
     const allFiles = roots.flatMap((r) => walk(r));
 
     for (const file of allFiles) {
-      const src = readFileSync(file, "utf8");
+      const src = readSrc(file);
       if (!isUseServerModule(src)) {
         continue;
       }
 
       // Direct exports (function declarations and const-arrow exports).
       for (const { name, sig } of exportedSignatures(src)) {
-        if (/\btenantId\b/.test(sig)) {
-          offenders.push(`${file.replace(REPO_ROOT, "")} → ${name}`);
+        const path = tenantIdPath(sig, file, new Set());
+        if (path) {
+          offenders.push(
+            `${file.replace(REPO_ROOT, "")} → ${name}${viaSuffix(path)}`
+          );
         }
       }
 
@@ -179,21 +318,22 @@ describe("server actions never accept tenantId from the caller", () => {
         if (!targetFile) {
           continue;
         }
-        const targetSrc = readFileSync(targetFile, "utf8");
+        const targetSrc = readSrc(targetFile);
         const targetSigs = exportedSignatures(targetSrc);
         for (const { name, sig } of targetSigs) {
-          if (!/\btenantId\b/.test(sig)) {
+          const path = tenantIdPath(sig, targetFile, new Set());
+          if (!path) {
             continue;
           }
           if (names === "*" || names.includes(name)) {
             offenders.push(
-              `${file.replace(REPO_ROOT, "")} → re-export of ${name} from ${targetFile.replace(REPO_ROOT, "")}`
+              `${file.replace(REPO_ROOT, "")} → re-export of ${name}${viaSuffix(path)} from ${targetFile.replace(REPO_ROOT, "")}`
             );
           }
         }
       }
     }
 
-    expect(offenders).toEqual([]);
+    expect(offenders, `\n${offenders.join("\n")}\n`).toEqual([]);
   });
 });
