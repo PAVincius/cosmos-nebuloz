@@ -183,7 +183,10 @@ export const BO_NAV: NavSection[] = [
   },
   {
     section: "Operações",
-    items: [{ href: "/clientes/novo", icon: "plus", label: "Criar tenant" }],
+    items: [
+      { href: "/clientes/novo", icon: "plus", label: "Criar tenant" },
+      { href: "/versao", icon: "gitBranch", label: "Versão e schema" },
+    ],
   },
 ];
 
