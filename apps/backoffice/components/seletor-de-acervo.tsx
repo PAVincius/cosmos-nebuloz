@@ -1,7 +1,7 @@
 "use client";
 
 import { SectionCard } from "@repo/design-system/cosmos/kit";
-import { type ComponentProps, type ReactNode, useState } from "react";
+import { type ComponentProps, Fragment, type ReactNode, useState } from "react";
 
 /**
  * Lista de acervo acima do conteúdo, em vez de barra lateral.
@@ -229,7 +229,11 @@ export function SeletorDeAcervo({
               Trocar
             </button>
           </div>
-          {selecionado ? renderExtra?.(selecionado.id) : null}
+          {selecionado ? (
+            <Fragment key={selecionado.id}>
+              {renderExtra?.(selecionado.id)}
+            </Fragment>
+          ) : null}
         </div>
       )}
     </SectionCard>

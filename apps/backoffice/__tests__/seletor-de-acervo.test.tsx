@@ -132,4 +132,53 @@ describe("SeletorDeAcervo", () => {
     expect(screen.queryByText("extra de a")).toBeNull();
     expect(screen.getByText("extra de b")).toBeTruthy();
   });
+
+  it("na view recolhida, o extra do ativo anterior não vaza estado para o novo", () => {
+    // `renderExtra` aqui é um campo com estado PRÓPRIO (useState), não um
+    // <span> estático — um span não tem o que vazar. O troque de item é
+    // direto (como um seletor rápido futuro faria), sem passar pelo botão
+    // "Trocar": é isso que mantém a view recolhida montada nos dois ativos e
+    // expõe a falta de `key` no slot de `renderExtra?.(selecionado.id)`.
+    function CampoComEstado({ id }: { id: string }) {
+      const [valor, setValor] = useState("");
+      return (
+        <input
+          aria-label={`campo de ${id}`}
+          onChange={(e) => setValor(e.target.value)}
+          value={valor}
+        />
+      );
+    }
+
+    function PalcoComTrocaDireta() {
+      const [sel, setSel] = useState<string>("a");
+      return (
+        <div>
+          <button onClick={() => setSel("b")} type="button">
+            Ir direto para b
+          </button>
+          <SeletorDeAcervo
+            icone="book"
+            itens={ITENS}
+            onSelecionar={setSel}
+            renderExtra={(id) => <CampoComEstado id={id} />}
+            selecionadoId={sel}
+            titulo="Acervo"
+            vazio="Acervo vazio."
+          />
+        </div>
+      );
+    }
+
+    render(<PalcoComTrocaDireta />);
+
+    const campoA = screen.getByLabelText("campo de a") as HTMLInputElement;
+    fireEvent.change(campoA, { target: { value: "digitado para a" } });
+    expect(campoA.value).toBe("digitado para a");
+
+    clicar(screen.getByRole("button", { name: "Ir direto para b" }));
+
+    const campoB = screen.getByLabelText("campo de b") as HTMLInputElement;
+    expect(campoB.value).toBe("");
+  });
 });
