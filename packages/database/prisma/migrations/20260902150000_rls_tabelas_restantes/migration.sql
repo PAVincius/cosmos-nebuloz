@@ -1,8 +1,10 @@
--- RLS nas 22 tabelas de tenant que ainda não tinham (NFR-1.1).
+-- RLS nas 18 tabelas de tenant que ainda não tinham (NFR-1.1).
 --
 -- Fecha a conta que 20260902130000 (Meridian) começou: das 167 tabelas com
 -- `tenantId` no schema, 131 já declaravam RLS, 14 entraram com o Meridian, e
--- estas 22 eram o que sobrava.
+-- 22 eram o que sobrava — destas, 18 estão aqui e as 4 do catálogo comercial
+-- ficaram para 20260902190000_rls_catalogo_comercial, porque nesta altura da
+-- cadeia elas ainda não existem. O porquê está no lugar onde estavam, abaixo.
 --
 -- Vale o aviso da anterior, e é o mais importante daqui: ADR-0012 registra que
 -- `DATABASE_URL` conecta como `postgres`, que tem `rolbypassrls`. Enquanto isso
@@ -56,7 +58,7 @@ CREATE OR REPLACE FUNCTION current_tenant_id() RETURNS TEXT AS $$
 $$ LANGUAGE SQL STABLE SECURITY DEFINER;
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- FORMA 1 — `tenantId` obrigatório, dono é o cliente (19 tabelas).
+-- FORMA 1 — `tenantId` obrigatório, dono é o cliente (15 tabelas).
 --
 -- Boa parte destas é lida pelo back-office, cross-tenant, via `platformDb`.
 -- Isso está certo e é o que a ADR-0013 desenha: a policy aqui descreve o que o
@@ -131,33 +133,27 @@ CREATE POLICY "tenant_isolation" ON copilot_messages
 ALTER TABLE copilot_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE copilot_messages FORCE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "PlanoComercial";
-CREATE POLICY "tenant_isolation" ON "PlanoComercial"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
-ALTER TABLE "PlanoComercial" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "PlanoComercial" FORCE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "tenant_isolation" ON "PrecoDeModulo";
-CREATE POLICY "tenant_isolation" ON "PrecoDeModulo"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
-ALTER TABLE "PrecoDeModulo" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "PrecoDeModulo" FORCE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "tenant_isolation" ON "AddOnComercial";
-CREATE POLICY "tenant_isolation" ON "AddOnComercial"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
-ALTER TABLE "AddOnComercial" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "AddOnComercial" FORCE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "tenant_isolation" ON "TermoDeContrato";
-CREATE POLICY "tenant_isolation" ON "TermoDeContrato"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
-ALTER TABLE "TermoDeContrato" ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "TermoDeContrato" FORCE ROW LEVEL SECURITY;
+-- PlanoComercial, PrecoDeModulo, AddOnComercial e TermoDeContrato NÃO estão
+-- aqui, e a ausência é o conserto.
+--
+-- Elas só ganham CREATE TABLE em 20260902170000_catalogo_comercial_e_meeting —
+-- vinte minutos à frente na ordem de aplicação. Estavam nesta migration porque
+-- em produção já existiam por script manual (2026-08-comercial.sql) antes de
+-- qualquer migration as criar: aqui passou, e em banco NOVO morria com
+--
+--     42P01: relation "PlanoComercial" does not exist
+--
+-- Isso quebrava tudo que nasce do zero — o Postgres efêmero do Tests, o banco
+-- vazio do Schema Drift Check e o branch Neon de cada PR. Na prática, não dava
+-- para criar ambiente novo a partir da cadeia.
+--
+-- Quem aplica RLS nas quatro é 20260902190000_rls_catalogo_comercial, que roda
+-- depois da criação e é idempotente. Em produção, onde esta migration já as
+-- tinha coberto, a 190000 reafirma o mesmo estado — nada muda.
+--
+-- Guarda de existência resolveria também, mas exigiria um bloco `DO` por
+-- tabela, e o cabeçalho acima explica por que este arquivo evita bloco `DO`.
+-- Remover é mais simples e não reintroduz aquele risco.
 
 DROP POLICY IF EXISTS "tenant_isolation" ON "Service";
 CREATE POLICY "tenant_isolation" ON "Service"
