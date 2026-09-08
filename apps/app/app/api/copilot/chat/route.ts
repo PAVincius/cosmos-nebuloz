@@ -130,9 +130,20 @@ export async function POST(req: Request) {
           anthropic: { thinking: { type: "enabled", budgetTokens: 1024 } },
         },
       }),
-      onFinish: ({ usage, text }) => {
+      onFinish: ({ usage, text, providerMetadata }) => {
         const totalTokens =
           (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
+
+        // Cache: leituras chegam em `usage.cachedInputTokens`, escritas em
+        // `providerMetadata.anthropic.cacheCreationInputTokens`. Sem os dois no
+        // trace não há como saber se o `cacheControl` está de fato pegando —
+        // quando ele falha (prefixo abaixo do mínimo do modelo, ou instável),
+        // a Anthropic não devolve erro nenhum, só para de cachear.
+        const cacheRead = usage.cachedInputTokens ?? 0;
+        const cacheWrite = Number(
+          (providerMetadata?.anthropic as Record<string, unknown> | undefined)
+            ?.cacheCreationInputTokens ?? 0
+        );
 
         gen?.end({
           output: text,
@@ -145,8 +156,12 @@ export async function POST(req: Request) {
         });
 
         trace?.score({ name: "copilot_tokens", value: totalTokens });
+        trace?.score({ name: "copilot_cache_read_tokens", value: cacheRead });
+        trace?.score({ name: "copilot_cache_write_tokens", value: cacheWrite });
         trace?.score({ name: "copilot_mode", value: 1, comment: mode });
-        trace?.update({ metadata: { mode, surface, totalTokens } });
+        trace?.update({
+          metadata: { mode, surface, totalTokens, cacheRead, cacheWrite },
+        });
 
         incrementCopilotUsage(ctx.tenantId).catch(() => null);
 
