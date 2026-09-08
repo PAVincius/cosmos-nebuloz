@@ -31,7 +31,9 @@ import {
  * listas, e a divergente seria justamente a que ela leu antes de clicar.
  */
 
-const ROTULO_MATURIDADE: Record<"RASCUNHO" | "COMPROVADO", string> = {
+// Exportados porque `biblioteca.tsx` precisa dos mesmos rótulos nas badges da
+// linha do ativo — uma segunda cópia divergiria no primeiro ajuste de texto.
+export const ROTULO_MATURIDADE: Record<"RASCUNHO" | "COMPROVADO", string> = {
   RASCUNHO: "Rascunho",
   COMPROVADO: "Comprovado",
 };
@@ -45,7 +47,7 @@ const ROTULO_TIPO: Record<TipoDeAtivo, string> = {
   DOCUMENTO: "Documento",
 };
 
-const ROTULO_PROCEDENCIA: Record<Procedencia, string> = {
+export const ROTULO_PROCEDENCIA: Record<Procedencia, string> = {
   INTERNO: "Investimento interno",
   ENGAJAMENTO: "Engajamento de cliente",
   LAB: "LAB",
@@ -59,7 +61,7 @@ const NOTA_PROCEDENCIA: Record<Procedencia, string> = {
   TERCEIRO: "Adaptação de material de fora. A licença manda.",
 };
 
-const ROTULO_LICENCA: Record<Licenca, string> = {
+export const ROTULO_LICENCA: Record<Licenca, string> = {
   NENHUMA: "Nenhuma",
   PERMISSIVA: "Permissiva",
   COPYLEFT: "Copyleft",
