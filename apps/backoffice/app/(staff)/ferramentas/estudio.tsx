@@ -13,6 +13,7 @@ import {
 import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
+import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 
 /**
  * Estúdio de diagramas: lista à esquerda, editor à direita, histórico embaixo.
@@ -221,199 +222,138 @@ export function Estudio({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "260px minmax(0,1fr)",
-          gap: 14,
-          alignItems: "start",
-        }}
-      >
-        <SectionCard
-          action={
-            podeEscrever ? (
-              <BotaoPrimario
-                full={false}
-                onClick={() => setCriando((v) => !v)}
-                type="button"
-              >
-                {criando ? "Cancelar" : "Novo"}
-              </BotaoPrimario>
-            ) : null
-          }
-          icon={kind === "BPMN" ? "fileCode" : "server"}
-          subtitle={`${lista.length} diagrama(s)`}
-          title="Diagramas"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {criando ? (
-              <FormularioNovo
-                enviado={enviado}
-                kind={kind}
-                nome={nome}
-                onArquivo={receberArquivo}
-                onCriar={criar}
-                onNome={setNome}
-              />
-            ) : null}
+      <SeletorDeAcervo
+        acao={
+          podeEscrever ? (
+            <BotaoPrimario
+              full={false}
+              onClick={() => setCriando((v) => !v)}
+              type="button"
+            >
+              {criando ? "Cancelar" : "Novo"}
+            </BotaoPrimario>
+          ) : null
+        }
+        formulario={
+          criando ? (
+            <FormularioNovo
+              enviado={enviado}
+              kind={kind}
+              nome={nome}
+              onArquivo={receberArquivo}
+              onCriar={criar}
+              onNome={setNome}
+            />
+          ) : null
+        }
+        icone={kind === "BPMN" ? "fileCode" : "server"}
+        itens={lista.map((d) => ({
+          id: d.id,
+          titulo: d.name,
+          detalhe: `${d.slug} · v${d.versoes}`,
+        }))}
+        onSelecionar={abrir}
+        selecionadoId={aberto?.id ?? null}
+        subtitulo={`${lista.length} diagrama(s)`}
+        titulo="Diagramas"
+        vazio={`Nenhum diagrama ainda. ${podeEscrever ? "Crie o primeiro em Novo." : "Criar exige papel ADMIN."}`}
+      />
 
-            {lista.length === 0 ? (
-              <p
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {aberto ? (
+          <>
+            <SectionCard
+              icon={kind === "BPMN" ? "fileCode" : "server"}
+              subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
+              title={aberto.name}
+            >
+              {kind === "BPMN" ? (
+                <BpmnModeler
+                  onSalvar={salvar}
+                  podeEscrever={podeEscrever}
+                  sourceInicial={aberto.source}
+                />
+              ) : (
+                <MermaidEditor
+                  onSalvar={salvar}
+                  podeEscrever={podeEscrever}
+                  sourceInicial={aberto.source}
+                />
+              )}
+            </SectionCard>
+
+            <SectionCard
+              icon="history"
+              subtitle="append-only — editar cria revisão, nunca sobrescreve"
+              title="Histórico"
+            >
+              <ul
                 style={{
+                  listStyle: "none",
                   margin: 0,
-                  padding: "18px 4px",
-                  fontSize: "var(--fs-base)",
-                  lineHeight: 1.6,
-                  color: "var(--ink-muted)",
+                  padding: 0,
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                Nenhum diagrama ainda.{" "}
-                {podeEscrever
-                  ? "Crie o primeiro em Novo."
-                  : "Criar exige papel ADMIN."}
-              </p>
-            ) : (
-              lista.map((d) => {
-                const on = aberto?.id === d.id;
-                return (
-                  <button
-                    className="btn navitem"
-                    key={d.id}
-                    onClick={() => abrir(d.id)}
+                {aberto.historico.map((h, i) => (
+                  <li
+                    key={h.versao}
                     style={{
                       display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      gap: 4,
-                      textAlign: "left",
-                      padding: "9px 11px",
-                      borderRadius: "var(--r-md)",
-                      border: `1px solid ${on ? "rgba(var(--accent-rgb),.45)" : "var(--hairline)"}`,
-                      background: on
-                        ? "var(--accent-soft)"
-                        : "var(--surface-2)",
-                      color: "var(--ink)",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "9px 2px",
+                      borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
                     }}
-                    type="button"
                   >
+                    <Badge tone={i === 0 ? "green" : "neutral"}>
+                      v{h.versao}
+                    </Badge>
                     <span
-                      style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        fontSize: "var(--fs-base)",
+                      }}
                     >
-                      {d.name}
+                      {h.nota ?? (
+                        <span style={{ color: "var(--ink-faint)" }}>
+                          sem nota
+                        </span>
+                      )}
                     </span>
                     <span
                       className="mono"
                       style={{
-                        fontSize: "var(--fs-micro)",
+                        fontSize: "var(--fs-nota)",
                         color: "var(--ink-faint)",
                       }}
                     >
-                      {d.slug} · v{d.versoes}
+                      {h.autorNome ?? "—"} ·{" "}
+                      {new Date(h.criadoEm).toLocaleString("pt-BR")}
                     </span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </SectionCard>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {aberto ? (
-            <>
-              <SectionCard
-                icon={kind === "BPMN" ? "fileCode" : "server"}
-                subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
-                title={aberto.name}
-              >
-                {kind === "BPMN" ? (
-                  <BpmnModeler
-                    onSalvar={salvar}
-                    podeEscrever={podeEscrever}
-                    sourceInicial={aberto.source}
-                  />
-                ) : (
-                  <MermaidEditor
-                    onSalvar={salvar}
-                    podeEscrever={podeEscrever}
-                    sourceInicial={aberto.source}
-                  />
-                )}
-              </SectionCard>
-
-              <SectionCard
-                icon="history"
-                subtitle="append-only — editar cria revisão, nunca sobrescreve"
-                title="Histórico"
-              >
-                <ul
-                  style={{
-                    listStyle: "none",
-                    margin: 0,
-                    padding: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {aberto.historico.map((h, i) => (
-                    <li
-                      key={h.versao}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "9px 2px",
-                        borderTop:
-                          i === 0 ? "none" : "1px solid var(--hairline)",
-                      }}
-                    >
-                      <Badge tone={i === 0 ? "green" : "neutral"}>
-                        v{h.versao}
-                      </Badge>
-                      <span
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          fontSize: "var(--fs-base)",
-                        }}
-                      >
-                        {h.nota ?? (
-                          <span style={{ color: "var(--ink-faint)" }}>
-                            sem nota
-                          </span>
-                        )}
-                      </span>
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: "var(--fs-nota)",
-                          color: "var(--ink-faint)",
-                        }}
-                      >
-                        {h.autorNome ?? "—"} ·{" "}
-                        {new Date(h.criadoEm).toLocaleString("pt-BR")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </SectionCard>
-            </>
-          ) : (
-            <SectionCard title="Nenhum diagrama aberto">
-              <p
-                style={{
-                  margin: 0,
-                  padding: 24,
-                  textAlign: "center",
-                  fontSize: "var(--fs-base)",
-                  lineHeight: 1.6,
-                  color: "var(--ink-muted)",
-                }}
-              >
-                Escolha um diagrama na lista para editar.
-              </p>
+                  </li>
+                ))}
+              </ul>
             </SectionCard>
-          )}
-        </div>
+          </>
+        ) : (
+          <SectionCard title="Nenhum diagrama aberto">
+            <p
+              style={{
+                margin: 0,
+                padding: 24,
+                textAlign: "center",
+                fontSize: "var(--fs-base)",
+                lineHeight: 1.6,
+                color: "var(--ink-muted)",
+              }}
+            >
+              Escolha um diagrama na lista para editar.
+            </p>
+          </SectionCard>
+        )}
       </div>
     </div>
   );

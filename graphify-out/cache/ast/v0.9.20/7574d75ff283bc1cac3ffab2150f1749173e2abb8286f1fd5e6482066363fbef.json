@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_md",
+      "label": "DESIGN.backoffice.md",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "label": "Big Bang \u2014 design do back-office",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_overview",
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_colors",
+      "label": "Colors",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_typography",
+      "label": "Typography",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_layout",
+      "label": "Layout",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_elevation_depth",
+      "label": "Elevation & Depth",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L162"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_shapes",
+      "label": "Shapes",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L173"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_components",
+      "label": "Components",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L179"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_do_s_and_don_ts",
+      "label": "Do's and Don'ts",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_lacunas_conhecidas",
+      "label": "Lacunas conhecidas",
+      "file_type": "document",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L218"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_colors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_typography",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_layout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_elevation_depth",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_shapes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_do_s_and_don_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_big_bang_design_do_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_backoffice_lacunas_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.backoffice.md",
+      "source_location": "L218",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

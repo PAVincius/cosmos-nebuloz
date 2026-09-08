@@ -1,0 +1,767 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "label": "measure.json",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_schema",
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_id",
+      "label": "id",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_kind",
+      "label": "kind",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_titulo",
+      "label": "titulo",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_rota",
+      "label": "rota",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_componente",
+      "label": "componente",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_registro",
+      "label": "registro",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_balde",
+      "label": "balde",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_profundidade",
+      "label": "profundidade",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_trilha",
+      "label": "trilha",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_dono",
+      "label": "dono",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_estado",
+      "label": "estado",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_actions",
+      "label": "actions",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_models",
+      "label": "models",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "ref_competencyassessment",
+      "label": "CompetencyAssessment",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "ref_improvementaction",
+      "label": "ImprovementAction",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "ref_team",
+      "label": "Team",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "label": "safe",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_pratica",
+      "label": "pratica",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_nivel",
+      "label": "nivel",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_faz",
+      "label": "faz",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "label": "invariantes",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_compet\u00eancia_\u00e9_fechada_nas_7_do_safe_e_a_nota_\u00e9_fechada_na_escala_1_5_nota_de_outra_escala_n\u00e3o_\u00e9_dado_ruim_\u00e9_dado_de_outra_medi\u00e7\u00e3o_e_o_radar_da_tela_desenha_sobre_5_fixo",
+      "label": "compet\u00eancia \u00e9 fechada nas 7 do SAFe e a nota \u00e9 fechada na escala 1\u20135: nota de outra escala n\u00e3o \u00e9 dado ruim, \u00e9 dado de outra medi\u00e7\u00e3o, e o radar da tela desenha sobre 5 fixo",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_ciclo_anterior_s\u00f3_existe_dentro_do_mesmo_escopo_scope_scopeid_a_avalia\u00e7\u00e3o_de_um_time_e_a_de_outro_s\u00e3o_medi\u00e7\u00f5es_distintas_e_subtrair_uma_da_outra_produziria_um_delta_que_n\u00e3o_descreve_a_evolu\u00e7\u00e3o_de_ningu\u00e9m",
+      "label": "ciclo anterior' s\u00f3 existe dentro do mesmo escopo (scope + scopeId): a avalia\u00e7\u00e3o de um time e a de outro s\u00e3o medi\u00e7\u00f5es distintas, e subtrair uma da outra produziria um delta que n\u00e3o descreve a evolu\u00e7\u00e3o de ningu\u00e9m",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_compet\u00eancia_nunca_avaliada_fica_fora_dos_eixos_do_radar_em_vez_de_ser_plotada_em_0_e_a_sobreposi\u00e7\u00e3o_do_ciclo_anterior_s\u00f3_desenha_quando_todas_as_compet\u00eancias_plotadas_t\u00eam_ciclo_anterior_real",
+      "label": "compet\u00eancia nunca avaliada fica fora dos eixos do radar em vez de ser plotada em 0, e a sobreposi\u00e7\u00e3o do ciclo anterior s\u00f3 desenha quando todas as compet\u00eancias plotadas t\u00eam ciclo anterior real",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_taxa_de_conclus\u00e3o_de_a\u00e7\u00f5es_\u00e9_null_nunca_0_sem_a\u00e7\u00e3o_viva_e_a\u00e7\u00e3o_cancelled_sai_do_denominador_a\u00e7\u00e3o_abandonada_n\u00e3o_\u00e9_pendente_nem_conclu\u00edda_e_mant\u00ea_la_faria_abandonar_derrubar_a_taxa_como_se_fosse_atraso",
+      "label": "taxa de conclus\u00e3o de a\u00e7\u00f5es \u00e9 null (nunca 0%) sem a\u00e7\u00e3o viva, e a\u00e7\u00e3o CANCELLED sai do denominador \u2014 a\u00e7\u00e3o abandonada n\u00e3o \u00e9 pendente nem conclu\u00edda, e mant\u00ea-la faria abandonar derrubar a taxa como se fosse atraso",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_o_avaliador_vem_da_sess\u00e3o_nunca_do_cliente_a_autoria_do_ciclo_anterior_\u00e9_o_que_faz_a_avalia\u00e7\u00e3o_valer_como_evid\u00eancia",
+      "label": "o avaliador vem da sess\u00e3o, nunca do cliente: a autoria do ciclo anterior \u00e9 o que faz a avalia\u00e7\u00e3o valer como evid\u00eancia",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_toda_escrita_passa_por_requirerole_admin_rte_sm_reconfere_a_avalia\u00e7\u00e3o_vinculada_dentro_do_tenant_antes_de_gravar_a_a\u00e7\u00e3o_e_registra_logaudit",
+      "label": "toda escrita passa por requireRole(['ADMIN','RTE','SM']), reconfere a avalia\u00e7\u00e3o vinculada dentro do tenant antes de gravar a a\u00e7\u00e3o, e registra logAudit",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "ref_toda_leitura_filtra_por_tenantid_vindo_da_sess\u00e3o",
+      "label": "toda leitura filtra por tenantId vindo da sess\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_fonte",
+      "label": "fonte",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "ref_docs_srd_epic_007_md_149",
+      "label": "docs/srd-epic-007.md:149",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "ref_docs_stories_epic_007_story_032_md",
+      "label": "docs/stories/epic-007/story-032.md",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "ref_safe_6_0_measure_and_grow_core_competency_assessments",
+      "label": "SAFe 6.0 \u2014 Measure and Grow (Core Competency Assessments)",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_codigo",
+      "label": "codigo",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L59"
+    },
+    {
+      "id": "ref_apps_app_app_cosmos_actions_measure_ts",
+      "label": "apps/app/app/(cosmos)/actions/measure.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_lacunas",
+      "label": "lacunas",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_depende_de",
+      "label": "depende_de",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_seed",
+      "label": "seed",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L141"
+    },
+    {
+      "id": "ref_packages_database_scripts_seed_cosmos_mts",
+      "label": "packages/database/scripts/seed-cosmos.mts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L141"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_verifica",
+      "label": "verifica",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142"
+    },
+    {
+      "id": "ref_apps_app_tests_actions_measure_test_ts",
+      "label": "apps/app/__tests__/actions/measure.test.ts",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142"
+    },
+    {
+      "id": "ref_apps_app_tests_screens_measure_test_tsx",
+      "label": "apps/app/__tests__/screens/measure.test.tsx",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_commits",
+      "label": "commits",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L146"
+    },
+    {
+      "id": "ref_7d58649",
+      "label": "7d58649",
+      "file_type": "concept",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L146"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_notas",
+      "label": "notas",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_atualizado_em",
+      "label": "atualizado_em",
+      "file_type": "code",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L148"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_schema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_kind",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_titulo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_rota",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_componente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_registro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_balde",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_profundidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_trilha",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_dono",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_estado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_models",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_models",
+      "target": "ref_competencyassessment",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_models",
+      "target": "ref_improvementaction",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_models",
+      "target": "ref_team",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_pratica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_nivel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_faz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_compet\u00eancia_\u00e9_fechada_nas_7_do_safe_e_a_nota_\u00e9_fechada_na_escala_1_5_nota_de_outra_escala_n\u00e3o_\u00e9_dado_ruim_\u00e9_dado_de_outra_medi\u00e7\u00e3o_e_o_radar_da_tela_desenha_sobre_5_fixo",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_ciclo_anterior_s\u00f3_existe_dentro_do_mesmo_escopo_scope_scopeid_a_avalia\u00e7\u00e3o_de_um_time_e_a_de_outro_s\u00e3o_medi\u00e7\u00f5es_distintas_e_subtrair_uma_da_outra_produziria_um_delta_que_n\u00e3o_descreve_a_evolu\u00e7\u00e3o_de_ningu\u00e9m",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_compet\u00eancia_nunca_avaliada_fica_fora_dos_eixos_do_radar_em_vez_de_ser_plotada_em_0_e_a_sobreposi\u00e7\u00e3o_do_ciclo_anterior_s\u00f3_desenha_quando_todas_as_compet\u00eancias_plotadas_t\u00eam_ciclo_anterior_real",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_taxa_de_conclus\u00e3o_de_a\u00e7\u00f5es_\u00e9_null_nunca_0_sem_a\u00e7\u00e3o_viva_e_a\u00e7\u00e3o_cancelled_sai_do_denominador_a\u00e7\u00e3o_abandonada_n\u00e3o_\u00e9_pendente_nem_conclu\u00edda_e_mant\u00ea_la_faria_abandonar_derrubar_a_taxa_como_se_fosse_atraso",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_o_avaliador_vem_da_sess\u00e3o_nunca_do_cliente_a_autoria_do_ciclo_anterior_\u00e9_o_que_faz_a_avalia\u00e7\u00e3o_valer_como_evid\u00eancia",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_toda_escrita_passa_por_requirerole_admin_rte_sm_reconfere_a_avalia\u00e7\u00e3o_vinculada_dentro_do_tenant_antes_de_gravar_a_a\u00e7\u00e3o_e_registra_logaudit",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_invariantes",
+      "target": "ref_toda_leitura_filtra_por_tenantid_vindo_da_sess\u00e3o",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_fonte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_fonte",
+      "target": "ref_docs_srd_epic_007_md_149",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_fonte",
+      "target": "ref_docs_stories_epic_007_story_032_md",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_fonte",
+      "target": "ref_safe_6_0_measure_and_grow_core_competency_assessments",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_codigo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_safe_codigo",
+      "target": "ref_apps_app_app_cosmos_actions_measure_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L59",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_lacunas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_depende_de",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_seed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_seed",
+      "target": "ref_packages_database_scripts_seed_cosmos_mts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L141",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_verifica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_verifica",
+      "target": "ref_apps_app_tests_actions_measure_test_ts",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_verifica",
+      "target": "ref_apps_app_tests_screens_measure_test_tsx",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L142",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_commits",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_commits",
+      "target": "ref_7d58649",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L146",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_notas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_cosmos_nodes_measure_atualizado_em",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/cosmos/nodes/measure.json",
+      "source_location": "L148",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_md",
+      "label": "2026-07-19-cosmos-t0-foundation.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_cosmos_tier_0_foundation_completion_implementation_plan",
+      "label": "Cosmos Tier 0 \u2014 Foundation Completion Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_1_real_dev_session_seed_dev_user_retire_dev_scaffolds",
+      "label": "Task 1: Real dev session \u2014 seed dev user + retire `*Dev` scaffolds",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_2_epic_detail_screen_cosmos_epic_id",
+      "label": "Task 2: Epic Detail screen (`/cosmos/epic/:id`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_3_feature_detail_screen_cosmos_feature_id",
+      "label": "Task 3: Feature Detail screen (`/cosmos/feature/:id`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L235"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_4_design_token_pass_on_new_screens",
+      "label": "Task 4: Design-token pass on new screens",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L307"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_self_review",
+      "label": "Self-Review",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L326"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_cosmos_tier_0_foundation_completion_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_cosmos_tier_0_foundation_completion_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_1_real_dev_session_seed_dev_user_retire_dev_scaffolds",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_2_epic_detail_screen_cosmos_epic_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_3_feature_detail_screen_cosmos_feature_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_task_4_design_token_pass_on_new_screens",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L307",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_cosmos_tier_0_foundation_completion_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_19_cosmos_t0_foundation_self_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-19-cosmos-t0-foundation.md",
+      "source_location": "L326",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

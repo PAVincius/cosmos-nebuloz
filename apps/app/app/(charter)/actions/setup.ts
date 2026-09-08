@@ -2,7 +2,11 @@
 
 import type { CharterRole } from "@repo/database";
 import { withTenantDb } from "@repo/database";
-import { POLICY_SECTIONS } from "@repo/provisioning";
+// Import de "@repo/provisioning/src/charter" (não do índice público do
+// pacote): o índice reexporta platform-db.ts, que importa "server-only" e
+// puxa `platformDb` — proibido em apps/app pelo ADR-0013. charter.ts não
+// importa nenhum dos dois.
+import { POLICY_SECTIONS } from "@repo/provisioning/src/charter";
 import {
   CHARTER_ROLE_LABEL,
   type CharterPermission,

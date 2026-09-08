@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_md",
+      "label": "QUICK_REFERENCE.md",
+      "file_type": "document",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_quick_reference",
+      "label": "Quick Reference",
+      "file_type": "document",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_session_start_checklist",
+      "label": "Session Start Checklist",
+      "file_type": "document",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_common_commands",
+      "label": "Common Commands",
+      "file_type": "document",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L14"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_quick_reference",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_quick_reference",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_session_start_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_quick_reference",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_quick_reference_common_commands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/QUICK_REFERENCE.md",
+      "source_location": "L14",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

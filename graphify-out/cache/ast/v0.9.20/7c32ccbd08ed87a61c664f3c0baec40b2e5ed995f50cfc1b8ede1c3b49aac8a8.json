@@ -1,0 +1,257 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_md",
+      "label": "cosmos-prd.md",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "label": "Cosmos \u2014 Product Requirements Document",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_1_problema",
+      "label": "1. Problema",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_evid\u00eancia",
+      "label": "Evid\u00eancia",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_2_usu\u00e1rios",
+      "label": "2. Usu\u00e1rios",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_3_objetivos_e_n\u00e3o_objetivos",
+      "label": "3. Objetivos e n\u00e3o-objetivos",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_objetivos",
+      "label": "Objetivos",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_n\u00e3o_objetivos",
+      "label": "N\u00e3o-objetivos",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_4_as_\u00e1reas",
+      "label": "4. As \u00e1reas",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_o_que_uma_tela_de_decis\u00e3o_carrega",
+      "label": "O que uma tela de decis\u00e3o carrega",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_5_requisitos",
+      "label": "5. Requisitos",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L144"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_6_crit\u00e9rios_de_sucesso",
+      "label": "6. Crit\u00e9rios de sucesso",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L176"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_7_riscos",
+      "label": "7. Riscos",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L191"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_8_depend\u00eancias",
+      "label": "8. Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_9_quest\u00f5es_em_aberto",
+      "label": "9. Quest\u00f5es em aberto",
+      "file_type": "document",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L224"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_srd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_1_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_1_problema",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_evid\u00eancia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_2_usu\u00e1rios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_3_objetivos_e_n\u00e3o_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_3_objetivos_e_n\u00e3o_objetivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_3_objetivos_e_n\u00e3o_objetivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_n\u00e3o_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_4_as_\u00e1reas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_4_as_\u00e1reas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_o_que_uma_tela_de_decis\u00e3o_carrega",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_5_requisitos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_6_crit\u00e9rios_de_sucesso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_7_riscos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_8_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_cosmos_product_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_cosmos_prd_9_quest\u00f5es_em_aberto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/cosmos-prd.md",
+      "source_location": "L224",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

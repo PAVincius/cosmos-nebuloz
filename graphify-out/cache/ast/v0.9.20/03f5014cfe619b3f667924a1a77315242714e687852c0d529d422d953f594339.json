@@ -1,0 +1,318 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "label": "SOC2 Type I \u2014 Compliance Tracker",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "label": "Trust Service Criteria (TSC) Status",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc1_control_environment",
+      "label": "CC1 \u2014 Control Environment",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc2_communication_and_information",
+      "label": "CC2 \u2014 Communication and Information",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc3_risk_assessment",
+      "label": "CC3 \u2014 Risk Assessment",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc4_monitoring_activities",
+      "label": "CC4 \u2014 Monitoring Activities",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc5_control_activities",
+      "label": "CC5 \u2014 Control Activities",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc6_logical_and_physical_access_controls",
+      "label": "CC6 \u2014 Logical and Physical Access Controls",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc7_system_operations",
+      "label": "CC7 \u2014 System Operations",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc8_change_management",
+      "label": "CC8 \u2014 Change Management",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc9_risk_mitigation",
+      "label": "CC9 \u2014 Risk Mitigation",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_availability",
+      "label": "Availability",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_policy_documents",
+      "label": "Policy Documents",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_open_items",
+      "label": "Open Items (\u26a0\ufe0f)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L118"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_audit_readiness_checklist",
+      "label": "Audit Readiness Checklist",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L131"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc1_control_environment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc2_communication_and_information",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc3_risk_assessment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc4_monitoring_activities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc5_control_activities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc6_logical_and_physical_access_controls",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc7_system_operations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc8_change_management",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_cc9_risk_mitigation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_trust_service_criteria_tsc_status",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_availability",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_policy_documents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_01_information_security_policy_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_02_incident_response_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_03_access_control_policy_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_05_data_classification_policy_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_06_vendor_management_policy_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_07_business_continuity_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_open_items",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_soc2_type_i_compliance_tracker",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_readme_audit_readiness_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/README.md",
+      "source_location": "L131",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,152 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "label": "rate-limiting.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_setting_up",
+      "label": "Setting up",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_adding_rate_limiting",
+      "label": "Adding rate limiting",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_configuration",
+      "label": "Configuration",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_usage",
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_analytics",
+      "label": "Analytics",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_dashboard",
+      "label": "Dashboard",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_best_practices",
+      "label": "Best Practices",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_further_information",
+      "label": "Further Information",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L143"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_setting_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "docs_setup_env_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_adding_rate_limiting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_analytics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_analytics",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_dashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_security_rate_limiting_further_information",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/security/rate-limiting.mdx",
+      "source_location": "L143",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

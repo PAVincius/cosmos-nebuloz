@@ -29,6 +29,18 @@ export default defineConfig({
       // Espelha o "@/*": ["./*"] do tsconfig.json — sem isso o vitest não
       // resolve os imports "@/lib/..." usados pelas actions.
       "@": path.resolve(__dirname, "./"),
+      // `@repo/design-system` faz auto-referência a si mesmo dentro de
+      // `kit.tsx` (`import { Icon } from "@repo/design-system/cosmos/icons"`).
+      // Sem alias direto, o Vite resolve esse self-import subindo diretórios a
+      // partir do arquivo importador — e quando o importador de entrada mora
+      // sob um segmento de rota entre parênteses (`app/(staff)/...`), essa
+      // subida quebra ("Failed to resolve import… Does the file exist?"),
+      // mesmo com o arquivo existindo. Apontar direto pro pacote real evita a
+      // resolução por diretório inteiramente.
+      "@repo/design-system": path.resolve(
+        __dirname,
+        "../../packages/design-system"
+      ),
       // O pacote real lança em qualquer import fora do bundler do Next (que
       // troca "server-only" por um módulo vazio em build de servidor). Sob
       // vitest não há esse bundler, então precisa do mesmo stub que

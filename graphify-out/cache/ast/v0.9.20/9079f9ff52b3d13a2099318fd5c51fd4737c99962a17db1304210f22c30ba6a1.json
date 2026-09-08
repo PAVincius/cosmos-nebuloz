@@ -1,0 +1,344 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "label": "content-collections.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_1_swap_out_the_required_dependencies",
+      "label": "1. Swap out the required dependencies",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_2_update_the_gitignore_file",
+      "label": "2. Update the `.gitignore` file",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_3_modify_the_cms_package_scripts",
+      "label": "3. Modify the CMS package scripts",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "label": "4. Modify the relevant CMS package files",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_next_js_config_cms_package",
+      "label": "Next.js Config (CMS Package)",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_collections",
+      "label": "Collections",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_components",
+      "label": "Components",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_typescript_config",
+      "label": "TypeScript Config",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_toolbar",
+      "label": "Toolbar",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L127"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_table_of_contents",
+      "label": "Table of Contents",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_5_update_the_sitemap_ts_file",
+      "label": "5. Update the `sitemap.ts` file",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_6_create_your_collections",
+      "label": "6. Create your collections",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L193"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_cms_package",
+      "label": "CMS Package",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L199"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_web_app",
+      "label": "Web App",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L259"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_7_create_your_content",
+      "label": "7. Create your content",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L271"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_8_remove_the_environment_variables",
+      "label": "8. Remove the environment variables",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L290"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_9_bonus_features",
+      "label": "9. Bonus features",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L294"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_fumadocs_mdx_plugins",
+      "label": "Fumadocs MDX Plugins",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_reading_time",
+      "label": "Reading Time",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L331"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_low_quality_image_placeholder_lqip",
+      "label": "Low-Quality Image Placeholder (LQIP)",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L351"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_1_swap_out_the_required_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_2_update_the_gitignore_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_3_modify_the_cms_package_scripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_next_js_config_cms_package",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_collections",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_typescript_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_toolbar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_4_modify_the_relevant_cms_package_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_table_of_contents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_5_update_the_sitemap_ts_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_6_create_your_collections",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_6_create_your_collections",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_cms_package",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L199",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_6_create_your_collections",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_web_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L259",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_7_create_your_content",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L271",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_8_remove_the_environment_variables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_9_bonus_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L294",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_9_bonus_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_fumadocs_mdx_plugins",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_mdx",
+      "target": "migrations_documentation_fumadocs_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L298",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_9_bonus_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_reading_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L331",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_9_bonus_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_cms_content_collections_low_quality_image_placeholder_lqip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/cms/content-collections.mdx",
+      "source_location": "L351",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

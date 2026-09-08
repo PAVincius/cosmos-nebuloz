@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_md",
+      "label": "2026-09-03-maestri-fundacao-conhecimento.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "label": "Maestri \u2014 Funda\u00e7\u00e3o de Conhecimento \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_fatos_verificados_antes_deste_plano",
+      "label": "Fatos verificados antes deste plano",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "label": "Estrutura de arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_1_reconstruir_o_grafo_mestre",
+      "label": "Task 1: Reconstruir o grafo mestre",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_2_tipos_e_tabelas_de_produto",
+      "label": "Task 2: Tipos e tabelas de produto",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L113"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_3_recorte_do_grafo_por_prefixo_com_hops",
+      "label": "Task 3: Recorte do grafo por prefixo com hops",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L331"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_4_roteador_de_mem\u00f3ria",
+      "label": "Task 4: Roteador de mem\u00f3ria",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L548"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_5_preservar_as_se\u00e7\u00f5es_do_especialista_na_note",
+      "label": "Task 5: Preservar as se\u00e7\u00f5es do especialista na note",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L684"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_6_exportador",
+      "label": "Task 6: Exportador",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L881"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_7_runbook_dos_comandos_maestri_e_a_rotina",
+      "label": "Task 7: Runbook dos comandos Maestri e a rotina",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_self_review",
+      "label": "Self-review",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1255"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_fatos_verificados_antes_deste_plano",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_1_reconstruir_o_grafo_mestre",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_2_tipos_e_tabelas_de_produto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_3_recorte_do_grafo_por_prefixo_com_hops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L331",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_4_roteador_de_mem\u00f3ria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L548",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_5_preservar_as_se\u00e7\u00f5es_do_especialista_na_note",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L684",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_6_exportador",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L881",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_estrutura_de_arquivos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_task_7_runbook_dos_comandos_maestri_e_a_rotina",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_maestri_funda\u00e7\u00e3o_de_conhecimento_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_09_03_maestri_fundacao_conhecimento_self_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-09-03-maestri-fundacao-conhecimento.md",
+      "source_location": "L1255",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

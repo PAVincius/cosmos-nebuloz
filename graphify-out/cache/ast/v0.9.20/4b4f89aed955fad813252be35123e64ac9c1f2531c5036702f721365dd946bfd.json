@@ -1,0 +1,303 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_md",
+      "label": "story-025.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "label": "Story 025 \u2014 Strategic Themes, Lean Budget & Portfolio Health Report",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_user_story",
+      "label": "User Story",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_001_strategic_theme_concentration_alert_60_default",
+      "label": "AC-001: Strategic theme concentration alert (60% default)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_002_capex_opex_100_validation",
+      "label": "AC-002: CapEx + OpEx = 100% validation",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_003_leanbudgetreallocation_is_immutable",
+      "label": "AC-003: LeanBudgetReallocation is immutable",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_004_over_allocation_warning_soft",
+      "label": "AC-004: Over-allocation warning (soft)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_005_closed_pi_plan_budget_is_read_only",
+      "label": "AC-005: CLOSED PI Plan budget is read-only",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L58"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_006_portfolioanalysisreport_batch_job_http_202_jobid",
+      "label": "AC-006: PortfolioAnalysisReport batch job \u2014 HTTP 202 + jobId",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_007_batch_analysis_per_art_upstash_lock",
+      "label": "AC-007: Batch analysis per-ART Upstash lock",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_008_partial_success_handling",
+      "label": "AC-008: PARTIAL_SUCCESS handling",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_009_weekly_cron_with_change_diff_section",
+      "label": "AC-009: Weekly cron with change-diff section",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_leanbudgetreallocation_immutability",
+      "label": "LeanBudgetReallocation Immutability",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_batch_analysis_inngest_job",
+      "label": "Batch Analysis Inngest Job",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_upstash_distributed_lock",
+      "label": "Upstash Distributed Lock",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L155"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_dependencies",
+      "label": "Dependencies",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L168"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_definition_of_done",
+      "label": "Definition of Done",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L178"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_user_story",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_001_strategic_theme_concentration_alert_60_default",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_002_capex_opex_100_validation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_003_leanbudgetreallocation_is_immutable",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_004_over_allocation_warning_soft",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_005_closed_pi_plan_budget_is_read_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_006_portfolioanalysisreport_batch_job_http_202_jobid",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_007_batch_analysis_per_art_upstash_lock",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_008_partial_success_handling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_ac_009_weekly_cron_with_change_diff_section",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_technical_notes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_leanbudgetreallocation_immutability",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_technical_notes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_batch_analysis_inngest_job",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_technical_notes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_upstash_distributed_lock",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_story_025_strategic_themes_lean_budget_portfolio_health_report",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_definition_of_done",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-025.md",
+      "source_location": "L178",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -36,7 +36,9 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("@repo/provisioning", () => ({
+// Mocka o caminho profundo, não o barrel: onboarding.ts importa de
+// "@repo/provisioning/src/tenant" (ADR-0013 — ver adr-0013-boundary.test.ts).
+vi.mock("@repo/provisioning/src/tenant", () => ({
   provisionTenant: mocks.provisionTenant,
 }));
 vi.mock("@repo/rbac", () => ({

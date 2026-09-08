@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_md",
+      "label": "app-db-role.md",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "label": "Runbook: role de aplica\u00e7\u00e3o sem `BYPASSRLS`",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_leia_isto_primeiro",
+      "label": "Leia isto primeiro",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_1_criar_o_role",
+      "label": "1. Criar o role",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_2_grants_m\u00ednimos",
+      "label": "2. Grants m\u00ednimos",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_2_5_checklist_de_pr\u00e9_requisitos_antes_do_flip",
+      "label": "2.5. Checklist de pr\u00e9-requisitos antes do flip",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_3_trocar_database_url_por_ambiente",
+      "label": "3. Trocar `DATABASE_URL` por ambiente",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L211"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_4_como_verificar_depois",
+      "label": "4. Como verificar depois",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L230"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_5_rollback",
+      "label": "5. Rollback",
+      "file_type": "document",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L273"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_leia_isto_primeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_1_criar_o_role",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_2_grants_m\u00ednimos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_2_5_checklist_de_pr\u00e9_requisitos_antes_do_flip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_3_trocar_database_url_por_ambiente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_4_como_verificar_depois",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L230",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_runbook_role_de_aplica\u00e7\u00e3o_sem_bypassrls",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_app_db_role_5_rollback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/runbooks/app-db-role.md",
+      "source_location": "L273",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

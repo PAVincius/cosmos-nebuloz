@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_mdx",
+      "label": "collaboration.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_how_it_works",
+      "label": "How it works",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_multiplayer_documents",
+      "label": "Multiplayer documents",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_commenting",
+      "label": "Commenting",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_collaborative_editing",
+      "label": "Collaborative editing",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_notifications",
+      "label": "Notifications",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_infrastructure",
+      "label": "Infrastructure",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L147"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_how_it_works",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_multiplayer_documents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_commenting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_collaborative_editing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_notifications",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_usage",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_collaboration_infrastructure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/collaboration.mdx",
+      "source_location": "L147",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

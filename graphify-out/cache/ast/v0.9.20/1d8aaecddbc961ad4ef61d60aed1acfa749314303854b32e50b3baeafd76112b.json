@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_md",
+      "label": "2026-05-26-t10-large-solution-level.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "label": "T10 \u2014 Large Solution Level (LST) \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_1_feature_flag_action",
+      "label": "Task 1: Feature flag action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_2_capability_crud_actions",
+      "label": "Task 2: Capability CRUD actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_3_capability_kanban_ui",
+      "label": "Task 3: Capability Kanban UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L303"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_4_solutiontrain_list_detail_pages",
+      "label": "Task 4: SolutionTrain list + detail pages",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L478"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_5_lace_page",
+      "label": "Task 5: LACE page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L645"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_6_feature_flag_ui_in_settings",
+      "label": "Task 6: Feature flag UI in settings",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L731"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L795"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_1_feature_flag_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_2_capability_crud_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_3_capability_kanban_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L303",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_4_solutiontrain_list_detail_pages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L478",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_5_lace_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L645",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_task_6_feature_flag_ui_in_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L731",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_t10_large_solution_level_lst_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t10_large_solution_level_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t10-large-solution-level.md",
+      "source_location": "L795",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

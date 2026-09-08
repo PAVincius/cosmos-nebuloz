@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_md",
+      "label": "2026-05-26-t03-rag-pi-planning.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "label": "T03 \u2014 RAG Contextual na PI Planning \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_1_embedding_provider_abstraction",
+      "label": "Task 1: Embedding provider abstraction",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_2_chunking_utility",
+      "label": "Task 2: Chunking utility",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L105"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_3_indexer_expand_cobrir_todas_as_fontes",
+      "label": "Task 3: Indexer expand cobrir todas as fontes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L158"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_4_trigger_reindex_em_mutations",
+      "label": "Task 4: Trigger reindex em mutations",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L216"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_5_knowledge_search_tool",
+      "label": "Task 5: Knowledge search tool",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L241"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_6_pi_planning_context_builder",
+      "label": "Task 6: PI Planning context builder",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L290"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_7_citation_formatter_ui_component",
+      "label": "Task 7: Citation formatter + UI component",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L328"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_8_copilot_pi_panel_embedded",
+      "label": "Task 8: Copilot PI Panel embedded",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L373"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_9_full_reindex_cron",
+      "label": "Task 9: Full reindex cron",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L385"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L396"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_1_embedding_provider_abstraction",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_2_chunking_utility",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_3_indexer_expand_cobrir_todas_as_fontes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_4_trigger_reindex_em_mutations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_5_knowledge_search_tool",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L241",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_6_pi_planning_context_builder",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_7_citation_formatter_ui_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_8_copilot_pi_panel_embedded",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L373",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_task_9_full_reindex_cron",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_t03_rag_contextual_na_pi_planning_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t03_rag_pi_planning_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t03-rag-pi-planning.md",
+      "source_location": "L396",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

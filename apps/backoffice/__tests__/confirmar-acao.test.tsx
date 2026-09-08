@@ -85,4 +85,29 @@ describe("ConfirmarAcao", () => {
     // Duplo clique em provisionar cria dois tenants.
     expect(onConfirmar).not.toHaveBeenCalled();
   });
+
+  // fix-wave C1: `desabilitado` (formulário incompleto) e `executando` (ação
+  // em andamento) são estados diferentes — misturá-los mostrava "Executando…"
+  // sem nada rodando sempre que o formulário ficava inválido de novo depois
+  // de já ter aberto a confirmação.
+  it("desabilitado desliga o botão sem trocar o rótulo para 'Executando…'", () => {
+    const onConfirmar = vi.fn();
+    const props = {
+      alvo: "vanta-saude",
+      consequencia: "O cliente perde acesso ao módulo imediatamente.",
+      onConfirmar,
+      rotulo: "Cancelar COSMOS",
+    };
+    const { rerender } = render(<ConfirmarAcao {...props} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Cancelar COSMOS/ }));
+    expect(screen.getByRole("button", { name: "Confirmar" })).toBeTruthy();
+
+    rerender(<ConfirmarAcao {...props} desabilitado />);
+
+    const confirmar = screen.getByRole("button", { name: "Confirmar" });
+    expect(confirmar.hasAttribute("disabled")).toBe(true);
+    fireEvent.click(confirmar);
+    expect(onConfirmar).not.toHaveBeenCalled();
+  });
 });

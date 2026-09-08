@@ -1,0 +1,879 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_md",
+      "label": "2026-05-25-finops-lean-budget-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "label": "FinOps Lean Budget \u2014 Design Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_1_strategic_context",
+      "label": "1. Strategic Context",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_problem",
+      "label": "Problem",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_strategic_positioning",
+      "label": "Strategic Positioning",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_scope_v1",
+      "label": "Scope (v1)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_2_architecture",
+      "label": "2. Architecture",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_approach_hybrid_billing_plugin_in_existing_integration_system_dedicated_finops_models",
+      "label": "Approach: Hybrid \u2014 billing plugin in existing Integration system + dedicated FinOps models",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_new_modules",
+      "label": "New Modules",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "label": "3. Data Model",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_1_billingentry_raw_cost_row_focus_v1_1_aligned",
+      "label": "3.1 BillingEntry \u2014 raw cost row (FOCUS v1.1 aligned)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_2_billingentryallocation_split_a_line_across_multiple_themes_arts_epics",
+      "label": "3.2 BillingEntryAllocation \u2014 split a line across multiple themes/ARTs/epics",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_3_costsnapshot_daily_monthly_aggregate_the_read_model",
+      "label": "3.3 CostSnapshot \u2014 daily/monthly aggregate (the read model)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L209"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_4_tagrule_cloud_tag_safe_entity_mapping",
+      "label": "3.4 TagRule \u2014 cloud tag \u2192 SAFe entity mapping",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L251"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_5_unmappedcostbucket_catch_all_for_untagged_spend",
+      "label": "3.5 UnmappedCostBucket \u2014 catch-all for untagged spend",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L290"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_6_billingsynccursor_rolling_window_state",
+      "label": "3.6 BillingSyncCursor \u2014 rolling window state",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L309"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_7_billingsyncrun_per_run_progress_and_dlq",
+      "label": "3.7 BillingSyncRun \u2014 per-run progress and DLQ",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L327"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_8_costanomaly_detected_spending_deviations",
+      "label": "3.8 CostAnomaly \u2014 detected spending deviations",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L347"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_9_supporting_models",
+      "label": "3.9 Supporting Models",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L383"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_10_leanbudget_migration",
+      "label": "3.10 LeanBudget migration",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L479"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "label": "4. Sync Pipeline",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L501"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_1_vercel_cron_inngest_fan_out",
+      "label": "4.1 Vercel Cron \u2192 Inngest fan-out",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L503"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_2_inngest_job_billing_sync_run",
+      "label": "4.2 Inngest Job: `billing/sync.run`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L523"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_3_provider_adapters",
+      "label": "4.3 Provider Adapters",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L577"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_aws_cost_explorer",
+      "label": "AWS Cost Explorer",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L579"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_gcp_bigquery_billing",
+      "label": "GCP BigQuery Billing",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L605"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_azure_cost_management",
+      "label": "Azure Cost Management",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L625"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_4_tagrule_engine",
+      "label": "4.4 TagRule Engine",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L639"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_5_snapshot_aggregation",
+      "label": "4.5 Snapshot Aggregation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L653"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_6_anomaly_detection_separate_inngest_job",
+      "label": "4.6 Anomaly Detection (separate Inngest job)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L679"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "label": "5. UI/UX",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L706"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_1_navigation_sidebar",
+      "label": "5.1 Navigation (sidebar)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L708"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_2_budget_dashboard_portfolio_budgets_upgraded",
+      "label": "5.2 Budget Dashboard (`/portfolio/budgets`) \u2014 upgraded",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L721"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_3_budget_detail_portfolio_budgets_id",
+      "label": "5.3 Budget Detail (`/portfolio/budgets/[id]`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L731"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_4_integration_upgrade_billing_category",
+      "label": "5.4 Integration upgrade (Billing category)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L760"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_5_tag_rules_manager_portfolio_budgets_tag_rules",
+      "label": "5.5 Tag Rules Manager (`/portfolio/budgets/tag-rules`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L773"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_6_anomaly_feed_portfolio_budgets_anomalies",
+      "label": "5.6 Anomaly Feed (`/portfolio/budgets/anomalies`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L786"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_6_1_epic_cost_table_edge_cases",
+      "label": "5.6.1 Epic cost table edge cases",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L804"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_7_safe_cost_surfaces_cross_cutting_differentiator",
+      "label": "5.7 SAFe cost surfaces (cross-cutting differentiator)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L814"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_8_onboarding_flow_empty_state_first_data",
+      "label": "5.8 Onboarding flow (empty state \u2192 first data)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L824"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_6_security",
+      "label": "6. Security",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L847"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_7_error_handling",
+      "label": "7. Error Handling",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L857"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_8_testing_strategy",
+      "label": "8. Testing Strategy",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L871"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_9_phased_delivery",
+      "label": "9. Phased Delivery",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L880"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_foundation_3_sprints",
+      "label": "v1 \u2014 Foundation (3 sprints)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L882"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v2_full_cloud_differentiator",
+      "label": "v2 \u2014 Full Cloud + Differentiator",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L903"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v3_advanced_finops",
+      "label": "v3 \u2014 Advanced FinOps",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L912"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "label": "10. Files to create/modify",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L922"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_new_files_sprint_1_3_only",
+      "label": "v1 \u2014 New files (Sprint 1-3 only)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L924"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_modified_files",
+      "label": "v1 \u2014 Modified files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L942"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v2_deferred_files_not_in_v1",
+      "label": "v2 \u2014 Deferred files (NOT in v1)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L957"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v3_deferred_files",
+      "label": "v3 \u2014 Deferred files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L978"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_11_dependencies",
+      "label": "11. Dependencies",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L985"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_new_dependencies_verify_against_apps_app_package_json",
+      "label": "v1 new dependencies (verify against `apps/app/package.json`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L987"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_not_required_defer_to_v2_v3",
+      "label": "v1 NOT required (defer to v2/v3)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L992"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_1_strategic_context",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_1_strategic_context",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_problem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_1_strategic_context",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_strategic_positioning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_1_strategic_context",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_scope_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_2_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_2_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_approach_hybrid_billing_plugin_in_existing_integration_system_dedicated_finops_models",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_2_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_new_modules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_1_billingentry_raw_cost_row_focus_v1_1_aligned",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_2_billingentryallocation_split_a_line_across_multiple_themes_arts_epics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_3_costsnapshot_daily_monthly_aggregate_the_read_model",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_4_tagrule_cloud_tag_safe_entity_mapping",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L251",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_5_unmappedcostbucket_catch_all_for_untagged_spend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_6_billingsynccursor_rolling_window_state",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L309",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_7_billingsyncrun_per_run_progress_and_dlq",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L327",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_8_costanomaly_detected_spending_deviations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L347",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_9_supporting_models",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L383",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_data_model",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_3_10_leanbudget_migration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L479",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L501",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_1_vercel_cron_inngest_fan_out",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L503",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_2_inngest_job_billing_sync_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L523",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_3_provider_adapters",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L577",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_3_provider_adapters",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_aws_cost_explorer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L579",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_3_provider_adapters",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_gcp_bigquery_billing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L605",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_3_provider_adapters",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_azure_cost_management",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L625",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_4_tagrule_engine",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L639",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_5_snapshot_aggregation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L653",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_sync_pipeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_4_6_anomaly_detection_separate_inngest_job",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L679",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L706",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_1_navigation_sidebar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L708",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_2_budget_dashboard_portfolio_budgets_upgraded",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L721",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_3_budget_detail_portfolio_budgets_id",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L731",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_4_integration_upgrade_billing_category",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L760",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_5_tag_rules_manager_portfolio_budgets_tag_rules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L773",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_6_anomaly_feed_portfolio_budgets_anomalies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L786",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_6_1_epic_cost_table_edge_cases",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L804",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_7_safe_cost_surfaces_cross_cutting_differentiator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L814",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_ui_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_5_8_onboarding_flow_empty_state_first_data",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L824",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_6_security",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L847",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_7_error_handling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L857",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_8_testing_strategy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L871",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_9_phased_delivery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L880",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_9_phased_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_foundation_3_sprints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L882",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_9_phased_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v2_full_cloud_differentiator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L903",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_9_phased_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v3_advanced_finops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L912",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L922",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_new_files_sprint_1_3_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L924",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_modified_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L942",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v2_deferred_files_not_in_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L957",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_10_files_to_create_modify",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v3_deferred_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L978",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_finops_lean_budget_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_11_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L985",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_11_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_new_dependencies_verify_against_apps_app_package_json",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L987",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_11_dependencies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_05_25_finops_lean_budget_design_v1_not_required_defer_to_v2_v3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-05-25-finops-lean-budget-design.md",
+      "source_location": "L992",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "label": "eslint.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_1_swap_out_the_required_dependencies",
+      "label": "1. Swap out the required dependencies",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_2_configure_eslint",
+      "label": "2. Configure ESLint",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_3_install_the_eslint_vscode_extension",
+      "label": "3. Install the ESLint VSCode extension",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_4_update_your_vscode_settings_json_file",
+      "label": "4. Update your `.vscode/settings.json` file",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_5_re_enable_the_lint_script",
+      "label": "5. Re-enable the `lint` script",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L83"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_1_swap_out_the_required_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_2_configure_eslint",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_3_install_the_eslint_vscode_extension",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_4_update_your_vscode_settings_json_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_formatting_eslint_5_re_enable_the_lint_script",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/formatting/eslint.mdx",
+      "source_location": "L83",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_md",
+      "label": "story-002-prisma-schema.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "label": "Story: Prisma Schema & Banco de Dados",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_description",
+      "label": "Description",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L17"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_description",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_story_prisma_schema_banco_de_dados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_001_story_002_prisma_schema_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-001/story-002-prisma-schema.md",
+      "source_location": "L17",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

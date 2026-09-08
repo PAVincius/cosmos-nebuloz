@@ -1,0 +1,335 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_md",
+      "label": "2026-07-31-documentos-comerciais-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "label": "Documentos comerciais \u2014 proposta, contrato e assinatura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_material_de_refer\u00eancia",
+      "label": "O material de refer\u00eancia",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_onde_mora",
+      "label": "Onde mora",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "label": "Fase 1 \u2014 proposta e contrato",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_proposta",
+      "label": "Proposta",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_contrato_biblioteca_de_cl\u00e1usulas_versionada",
+      "label": "Contrato: biblioteca de cl\u00e1usulas versionada",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_renderiza\u00e7\u00e3o",
+      "label": "Renderiza\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_numera\u00e7\u00e3o",
+      "label": "Numera\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L184"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_telas",
+      "label": "Telas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L189"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "label": "Fase 2 \u2014 assinatura via Clicksign",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_fluxo_na_api_v3",
+      "label": "O fluxo na API v3",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L202"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_que_guardamos",
+      "label": "O que guardamos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L218"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_webhook",
+      "label": "Webhook",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L233"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_credenciais",
+      "label": "Credenciais",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L248"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_erros_e_estados",
+      "label": "Erros e estados",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L254"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_testes",
+      "label": "Testes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L265"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fora_de_escopo",
+      "label": "Fora de escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L285"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_texto_do_contrato_o_que_j\u00e1_existe_e_o_que_falta",
+      "label": "O texto do contrato \u2014 o que j\u00e1 existe e o que falta",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L294"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fontes",
+      "label": "Fontes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L353"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_material_de_refer\u00eancia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_onde_mora",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_proposta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_contrato_biblioteca_de_cl\u00e1usulas_versionada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_renderiza\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_numera\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L184",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_1_proposta_e_contrato",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_telas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_fluxo_na_api_v3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_que_guardamos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_webhook",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fase_2_assinatura_via_clicksign",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_credenciais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_erros_e_estados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L265",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fora_de_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L285",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_o_texto_do_contrato_o_que_j\u00e1_existe_e_o_que_falta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L294",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_documentos_comerciais_proposta_contrato_e_assinatura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_documentos_comerciais_design_fontes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-07-31-documentos-comerciais-design.md",
+      "source_location": "L353",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

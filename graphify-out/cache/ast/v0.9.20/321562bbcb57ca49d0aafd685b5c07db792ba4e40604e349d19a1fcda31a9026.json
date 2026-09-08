@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_md",
+      "label": "DESIGN.app.md",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "label": "COSMOS \u2014 Design system (aplica\u00e7\u00e3o autenticada)",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_princ\u00edpios",
+      "label": "Princ\u00edpios",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_tokens_refer\u00eancia",
+      "label": "Tokens (refer\u00eancia)",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_tipografia_tailwind",
+      "label": "Tipografia (Tailwind)",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_layout",
+      "label": "Layout",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_componentes_piloto_2025",
+      "label": "Componentes piloto (2025)",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_sem\u00e2ntica_safe_cores_utilit\u00e1rias_existentes",
+      "label": "Sem\u00e2ntica SAFe (cores utilit\u00e1rias existentes)",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_n\u00e3o_fazer_na_app",
+      "label": "N\u00e3o fazer na app",
+      "file_type": "document",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L55"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_princ\u00edpios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_tokens_refer\u00eancia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_tipografia_tailwind",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_layout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_componentes_piloto_2025",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_sem\u00e2ntica_safe_cores_utilit\u00e1rias_existentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_cosmos_design_system_aplica\u00e7\u00e3o_autenticada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_app_n\u00e3o_fazer_na_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.app.md",
+      "source_location": "L55",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

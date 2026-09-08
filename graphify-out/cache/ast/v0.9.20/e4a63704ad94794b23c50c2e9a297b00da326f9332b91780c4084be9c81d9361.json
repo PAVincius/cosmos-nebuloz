@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_md",
+      "label": "2026-06-11-story-028.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_story_028_bpmn_workflow_modeling_xstate_runtime",
+      "label": "Story-028: BPMN Workflow Modeling & XState Runtime",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "label": "Delivered",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_001_bpmndefinition_schema",
+      "label": "AC-001 BpmnDefinition schema",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_002_story_feature_workflow_runtime_fields",
+      "label": "AC-002 Story/Feature workflow runtime fields",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_003_liveblocks_co_editing_presence",
+      "label": "AC-003 Liveblocks co-editing presence",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_004_diff_panel",
+      "label": "AC-004 Diff panel",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_005_bpmn_xstate_compiler",
+      "label": "AC-005 BPMN\u2192XState compiler",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_006_guarded_transitions",
+      "label": "AC-006 Guarded transitions",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_007_wait_state_webhook_release_redis_setnx",
+      "label": "AC-007 Wait-state webhook release + Redis SETNX",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_008_sla_breach_escalation",
+      "label": "AC-008 SLA breach escalation",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_routes",
+      "label": "Routes",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_collateral_fix",
+      "label": "Collateral fix",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_test_results",
+      "label": "Test results",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L55"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_story_028_bpmn_workflow_modeling_xstate_runtime",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_story_028_bpmn_workflow_modeling_xstate_runtime",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_001_bpmndefinition_schema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_002_story_feature_workflow_runtime_fields",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_003_liveblocks_co_editing_presence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_004_diff_panel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_005_bpmn_xstate_compiler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_006_guarded_transitions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_007_wait_state_webhook_release_redis_setnx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_ac_008_sla_breach_escalation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_routes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_delivered",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_collateral_fix",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_story_028_bpmn_workflow_modeling_xstate_runtime",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_11_story_028_test_results",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-11-story-028.md",
+      "source_location": "L55",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

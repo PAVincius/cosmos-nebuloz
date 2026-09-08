@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_md",
+      "label": "intent-gate-check.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_contract_check_intent_approved_sh_extens\u00e3o_intent_gate",
+      "label": "Contract: `check-intent-approved.sh` (extens\u00e3o `intent-gate`)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_input",
+      "label": "Input",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_output_exit_codes",
+      "label": "Output / exit codes",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_degrada\u00e7\u00e3o_edge_case_aceito_no_spec_md",
+      "label": "Degrada\u00e7\u00e3o (edge case aceito no spec.md)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L24"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_contract_check_intent_approved_sh_extens\u00e3o_intent_gate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_contract_check_intent_approved_sh_extens\u00e3o_intent_gate",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_input",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_contract_check_intent_approved_sh_extens\u00e3o_intent_gate",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_output_exit_codes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_contract_check_intent_approved_sh_extens\u00e3o_intent_gate",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_contracts_intent_gate_check_degrada\u00e7\u00e3o_edge_case_aceito_no_spec_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/contracts/intent-gate-check.md",
+      "source_location": "L24",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

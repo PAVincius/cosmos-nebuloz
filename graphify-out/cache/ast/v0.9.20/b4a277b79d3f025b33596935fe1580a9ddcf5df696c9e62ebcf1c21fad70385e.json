@@ -1,0 +1,319 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "label": "nextjs-server-components.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_core_expertise",
+      "label": "Core Expertise",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_when_invoked",
+      "label": "When Invoked",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_components_default",
+      "label": "Server Components (Default)",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_client_components",
+      "label": "Client Components",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_composition_patterns",
+      "label": "Composition Patterns",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_component_with_client_component_children",
+      "label": "Server Component with Client Component Children",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_passing_server_components_as_props",
+      "label": "Passing Server Components as Props",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_rules_and_constraints",
+      "label": "Rules and Constraints",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L101"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_what_can_be_in_server_components",
+      "label": "What CAN be in Server Components",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_what_cannot_be_in_server_components",
+      "label": "What CANNOT be in Server Components",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_serialization_rules",
+      "label": "Serialization Rules",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_patterns",
+      "label": "Common Patterns",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_data_fetching",
+      "label": "Data Fetching",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L132"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_only_code",
+      "label": "Server-Only Code",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_hydration_issues_and_solutions",
+      "label": "Hydration Issues and Solutions",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L162"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_hydration_errors",
+      "label": "Common Hydration Errors",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L164"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_debugging_hydration",
+      "label": "Debugging Hydration",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L170"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_performance_best_practices",
+      "label": "Performance Best Practices",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L191"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_migration_tips",
+      "label": "Migration Tips",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L200"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_core_expertise",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_when_invoked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_components_default",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_client_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_composition_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_composition_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_component_with_client_component_children",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_composition_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_passing_server_components_as_props",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_rules_and_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_rules_and_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_what_can_be_in_server_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_rules_and_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_what_cannot_be_in_server_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_rules_and_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_serialization_rules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_data_fetching",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_server_only_code",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_hydration_issues_and_solutions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_hydration_issues_and_solutions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_common_hydration_errors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_hydration_issues_and_solutions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_debugging_hydration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_performance_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_server_components_migration_tips",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-server-components.md",
+      "source_location": "L200",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

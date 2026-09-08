@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_md",
+      "label": "2026-05-17-onboarding-migration-setup.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "label": "Onboarding \u2013 migration_setup Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_file_map",
+      "label": "File Map",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_new_files",
+      "label": "New files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_1_shared_migration_types_csv_parser",
+      "label": "Task 1: Shared migration types + CSV parser",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_2_source_api_client_helpers_jira_azure_trello",
+      "label": "Task 2: Source API client helpers (Jira, Azure, Trello)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_3_migration_server_actions",
+      "label": "Task 3: Migration server actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L381"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_4_api_routes_connect_discover_dry_run_import",
+      "label": "Task 4: API Routes \u2013 connect, discover, dry-run, import",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L460"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_5_migration_wizard_steps_ui",
+      "label": "Task 5: Migration wizard steps (UI)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L735"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_6_migration_wizard_orchestrator_pages",
+      "label": "Task 6: Migration wizard orchestrator + pages",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1250"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_7_end_to_end_smoke_test_migration",
+      "label": "Task 7: End-to-end smoke test (migration)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1462"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_spec_coverage_checklist",
+      "label": "Spec Coverage Checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1495"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_file_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_new_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_1_shared_migration_types_csv_parser",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_2_source_api_client_helpers_jira_azure_trello",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_3_migration_server_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L381",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_4_api_routes_connect_discover_dry_run_import",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L460",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_5_migration_wizard_steps_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L735",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_6_migration_wizard_orchestrator_pages",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_task_7_end_to_end_smoke_test_migration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1462",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_onboarding_migration_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_migration_setup_spec_coverage_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-migration-setup.md",
+      "source_location": "L1495",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

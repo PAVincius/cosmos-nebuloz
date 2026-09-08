@@ -1,40 +1,76 @@
-import { PageHeader } from "@repo/design-system/cosmos/kit";
-import { listarLeads } from "@/app/actions/leads";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import { listarFunil } from "@/app/actions/leads";
+import { Erro } from "@/components/campo";
+import { estagnado, paraLeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Funil } from "./funil";
 
 /**
- * Funil comercial (LEAD → DISCOVERY → EVALUATION).
- *
- * A metade que Proposal não cobre: os dois estágios seguintes já são
- * `Proposal.status`. Um lead sai daqui de dois jeitos — convertido, apontando
- * para a proposta que nasceu dele, ou perdido, com o motivo registrado. Sem
- * KPI de funil aqui de propósito: previsão de receita e métrica de conversão
- * ficam para quando houver volume real para dizer algo.
+ * Funil comercial v2 — quatro estágios com peso e teto, porta de entrada na
+ * Escada, board de arrastar-e-soltar (spec
+ * docs/superpowers/specs/2026-09-06-funil-v2-design.md §4).
  */
 export const dynamic = "force-dynamic";
 
 export default async function FunilPage() {
-  const [staff, leads] = await Promise.all([
+  const [staff, res] = await Promise.all([
     requirePlatformStaff(),
-    listarLeads(),
+    listarFunil(),
   ]);
+
+  if (!res.ok) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <PageHeader
+          eyebrow="Comercial · funil"
+          subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
+          title="Funil"
+          tone="amber"
+        />
+        <Erro>{res.error}</Erro>
+      </div>
+    );
+  }
+
+  const { leads, estagios, hoje } = res.data;
+  const hojeData = new Date(hoje);
+  const ativos = leads.filter((l) => l.situacao === "ATIVO");
+  const estagnados = ativos.filter((l) =>
+    estagnado(paraLeadFunil(l), estagios, hojeData)
+  ).length;
+  const comEntrada = leads.filter((l) => l.entrada !== null);
+  const pelaEscada =
+    comEntrada.length === 0
+      ? null
+      : Math.round(
+          (comEntrada.filter((l) => l.entrada === "MERIDIAN").length /
+            comEntrada.length) *
+            100
+        );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow="Comercial · funil"
-        subtitle="Lead, descoberta, avaliação. Converte em proposta ou sai marcado como perdido — nenhum lead fica sem desfecho registrado."
+        meta={
+          <>
+            <Badge tone="neutral">{ativos.length} ativos</Badge>
+            {estagnados > 0 ? (
+              <Badge dot tone="red">
+                {estagnados} estagnados
+              </Badge>
+            ) : null}
+            {pelaEscada === null ? null : (
+              <Badge tone="blue">{pelaEscada}% entram pelo assessment</Badge>
+            )}
+          </>
+        }
+        subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
         title="Funil"
+        tone="amber"
       />
 
-      {leads.ok ? (
-        <Funil iniciais={leads.data} podeEscrever={staff.canWrite} />
-      ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {leads.error}
-        </p>
-      )}
+      <Funil inicial={res.data} podeEscrever={staff.canWrite} />
     </div>
   );
 }

@@ -1,0 +1,216 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_architecture_decision_records",
+      "label": "Architecture Decision Records",
+      "file_type": "document",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_formato",
+      "label": "Formato",
+      "file_type": "document",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_\u00edndice",
+      "label": "\u00cdndice",
+      "file_type": "document",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L30"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_architecture_decision_records",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_architecture_decision_records",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_formato",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_architecture_decision_records",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_\u00edndice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0001_contratacao_modular_tenant_module_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0003_derivacao_classe_maxima_fornecedor_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0005_congelamento_caminho_aprovacao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0007_versionamento_politica_minor_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0009_auditoria_reusa_auditlog_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0010_tema_proprio_reusando_kit_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0012_rls_anulada_por_conexao_superuser_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0013_porta_unica_de_acesso_cross_tenant_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0015_caso_de_negocio_versionado_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0016_residencia_de_dado_fora_do_v1_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0017_scaffold_supervisao_no_backoffice_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/README.md",
+      "source_location": "L50",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

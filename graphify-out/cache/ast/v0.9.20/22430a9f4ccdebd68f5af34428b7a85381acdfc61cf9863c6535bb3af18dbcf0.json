@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_md",
+      "label": "PRD.md",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "label": "PRD \u2014 Meeting Intelligence (Phase 0)",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_1_problema",
+      "label": "1. Problema",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_2_persona_jtbd",
+      "label": "2. Persona & JTBD",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_3_solu\u00e7\u00e3o_estrat\u00e9gia",
+      "label": "3. Solu\u00e7\u00e3o (estrat\u00e9gia)",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_4_use_case_principal",
+      "label": "4. Use Case Principal",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_5_escopo_frs_ver_srd",
+      "label": "5. Escopo (FRs \u2014 ver SRD)",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_6_fora_de_escopo",
+      "label": "6. Fora de Escopo",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_7_m\u00e9trica_de_sucesso",
+      "label": "7. M\u00e9trica de Sucesso",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_8_riscos",
+      "label": "8. Riscos",
+      "file_type": "document",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L65"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_1_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_2_persona_jtbd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_3_solu\u00e7\u00e3o_estrat\u00e9gia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_4_use_case_principal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_5_escopo_frs_ver_srd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_6_fora_de_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_7_m\u00e9trica_de_sucesso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_prd_meeting_intelligence_phase_0",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_meeting_prd_8_riscos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/meeting/PRD.md",
+      "source_location": "L65",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

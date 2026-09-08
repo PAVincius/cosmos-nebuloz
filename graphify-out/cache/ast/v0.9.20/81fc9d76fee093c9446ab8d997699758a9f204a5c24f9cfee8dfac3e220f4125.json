@@ -1,0 +1,591 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_md",
+      "label": "PRD.md",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "label": "PRD \u2013 Feature: Lean Budget & Guardrails",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_vis\u00e3o_geral",
+      "label": "1. Vis\u00e3o Geral",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_1_resumo",
+      "label": "1.1. Resumo",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_2_contexto_safe",
+      "label": "1.2. Contexto SAFe",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_problema_oportunidade",
+      "label": "2. Problema / Oportunidade",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_1_problema",
+      "label": "2.1. Problema",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_2_oportunidade",
+      "label": "2.2. Oportunidade",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_objetivos_e_m\u00e9tricas_de_sucesso",
+      "label": "3. Objetivos e M\u00e9tricas de Sucesso",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_1_objetivos",
+      "label": "3.1. Objetivos",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_2_m\u00e9tricas",
+      "label": "3.2. M\u00e9tricas",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_escopo",
+      "label": "4. Escopo",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_1_in_vers\u00e3o_inicial",
+      "label": "4.1. IN (vers\u00e3o inicial)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_2_out_futuro",
+      "label": "4.2. OUT (futuro)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_personas_e_casos_de_uso",
+      "label": "5. Personas e Casos de Uso",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_1_personas",
+      "label": "5.1. Personas",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_2_casos_de_uso",
+      "label": "5.2. Casos de Uso",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "label": "6. Fluxos (alto n\u00edvel)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_1_configura\u00e7\u00e3o_inicial",
+      "label": "6.1. Configura\u00e7\u00e3o inicial",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_2_importa\u00e7\u00e3o_e_aloca\u00e7\u00e3o_autom\u00e1tica",
+      "label": "6.2. Importa\u00e7\u00e3o e aloca\u00e7\u00e3o autom\u00e1tica",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_3_valida\u00e7\u00e3o_e_guardrails",
+      "label": "6.3. Valida\u00e7\u00e3o e guardrails",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_4_relat\u00f3rios",
+      "label": "6.4. Relat\u00f3rios",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L113"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_7_requisitos_funcionais",
+      "label": "7. Requisitos Funcionais",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_8_requisitos_n\u00e3o_funcionais",
+      "label": "8. Requisitos N\u00e3o Funcionais",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_9_depend\u00eancias",
+      "label": "9. Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_10_riscos_e_mitiga\u00e7\u00f5es",
+      "label": "10. Riscos e Mitiga\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_11_crit\u00e9rios_de_aceita\u00e7\u00e3o",
+      "label": "11. Crit\u00e9rios de Aceita\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L161"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "label": "12. Especifica\u00e7\u00f5es de Frontend",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_1_telas_e_componentes",
+      "label": "12.1. Telas e componentes",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L173"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_dashboard_de_lean_budget_portfolio_id_lean_budget",
+      "label": "Dashboard de Lean Budget (`/portfolio/[id]/lean-budget`)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L175"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_tabela_de_invoices_portfolio_id_lean_budget_invoices",
+      "label": "Tabela de Invoices (`/portfolio/[id]/lean-budget/invoices`)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L186"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_configura\u00e7\u00f5es_portfolio_id_lean_budget_settings",
+      "label": "Configura\u00e7\u00f5es (`/portfolio/[id]/lean-budget/settings`)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_2_padr\u00f5es_de_estado",
+      "label": "12.2. Padr\u00f5es de estado",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_3_fluxo_de_edi\u00e7\u00e3o_de_aloca\u00e7\u00e3o",
+      "label": "12.3. Fluxo de edi\u00e7\u00e3o de aloca\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L218"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_4_guardrailstatusbadge",
+      "label": "12.4. GuardrailStatusBadge",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L231"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_5_tratamento_de_erros",
+      "label": "12.5. Tratamento de erros",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L243"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_6_acessibilidade_wcag_2_1_aa",
+      "label": "12.6. Acessibilidade (WCAG 2.1 AA)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L249"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_vis\u00e3o_geral",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_vis\u00e3o_geral",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_1_resumo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_vis\u00e3o_geral",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_1_2_contexto_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_problema_oportunidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_problema_oportunidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_1_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_problema_oportunidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_2_2_oportunidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_objetivos_e_m\u00e9tricas_de_sucesso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_objetivos_e_m\u00e9tricas_de_sucesso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_1_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_objetivos_e_m\u00e9tricas_de_sucesso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_3_2_m\u00e9tricas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_escopo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_1_in_vers\u00e3o_inicial",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_escopo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_4_2_out_futuro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_personas_e_casos_de_uso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_personas_e_casos_de_uso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_1_personas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_personas_e_casos_de_uso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_5_2_casos_de_uso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_1_configura\u00e7\u00e3o_inicial",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_2_importa\u00e7\u00e3o_e_aloca\u00e7\u00e3o_autom\u00e1tica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_3_valida\u00e7\u00e3o_e_guardrails",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_fluxos_alto_n\u00edvel",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_6_4_relat\u00f3rios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_7_requisitos_funcionais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_8_requisitos_n\u00e3o_funcionais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_9_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_10_riscos_e_mitiga\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_11_crit\u00e9rios_de_aceita\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_prd_feature_lean_budget_guardrails",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_1_telas_e_componentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_1_telas_e_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_dashboard_de_lean_budget_portfolio_id_lean_budget",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_1_telas_e_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_tabela_de_invoices_portfolio_id_lean_budget_invoices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_1_telas_e_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_configura\u00e7\u00f5es_portfolio_id_lean_budget_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_2_padr\u00f5es_de_estado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_3_fluxo_de_edi\u00e7\u00e3o_de_aloca\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_4_guardrailstatusbadge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_5_tratamento_de_erros",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_especifica\u00e7\u00f5es_de_frontend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_prd_12_6_acessibilidade_wcag_2_1_aa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/PRD.md",
+      "source_location": "L249",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

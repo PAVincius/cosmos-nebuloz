@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_md",
+      "label": "2026-05-26-t11-yjs-crdt-epic.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "label": "T11 \u2014 Colabora\u00e7\u00e3o Real-Time em Epic (Yjs CRDT) \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_1_update_description_server_action",
+      "label": "Task 1: Update description Server Action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_2_install_yjs_tiptap_collaboration_deps",
+      "label": "Task 2: Install Yjs / TipTap collaboration deps",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_3_liveblocks_room_config",
+      "label": "Task 3: Liveblocks room config",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L166"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_4_presence_awareness_avatars",
+      "label": "Task 4: Presence (awareness) avatars",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L197"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_5_collab_editor_client_component",
+      "label": "Task 5: Collab editor Client Component",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L268"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_6_wrap_editor_in_liveblocks_roomprovider_wire_into_page",
+      "label": "Task 6: Wrap editor in Liveblocks RoomProvider + wire into page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L368"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L430"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_1_update_description_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_2_install_yjs_tiptap_collaboration_deps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_3_liveblocks_room_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_4_presence_awareness_avatars",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_5_collab_editor_client_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L268",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_task_6_wrap_editor_in_liveblocks_roomprovider_wire_into_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L368",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t11_yjs_crdt_epic_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t11-yjs-crdt-epic.md",
+      "source_location": "L430",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

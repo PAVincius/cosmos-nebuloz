@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_mdx",
+      "label": "product.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_usage",
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_webhooks",
+      "label": "Webhooks",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_reverse_proxy",
+      "label": "Reverse Proxy",
+      "file_type": "document",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L55"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_usage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_webhooks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_packages_analytics_product_reverse_proxy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/packages/analytics/product.mdx",
+      "source_location": "L55",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

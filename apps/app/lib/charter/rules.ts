@@ -4,7 +4,6 @@ import type {
   CharterExposure,
   CharterHitl,
   CharterSectionStatus,
-  CharterVendorTier,
 } from "@repo/database";
 
 // Charter — as quatro regras que são o produto.
@@ -355,82 +354,39 @@ export const CRITICAL_CLAUSE_CODES = [
   "CL-08",
 ] as const;
 
-export const CLAUSE_LABEL: Record<string, string> = {
-  "CL-01": "Proibição de treinamento com dados do cliente",
-  "CL-02": "Retenção zero de prompt e resposta",
-  "CL-03": "Notificação de incidente em 24h",
-  "CL-04": "Lista de sub-processadores e direito de objeção",
-  "CL-05": "Localidade de processamento definida contratualmente",
-  "CL-06": "Direito de auditoria anual",
-  "CL-07": "Indenização por violação de PI",
-  "CL-08": "BAA / adendo de dado de saúde",
-};
-
-export type VendorPosture = {
-  tier: CharterVendorTier;
-  dpa: boolean;
-  clauseCodes: string[];
-};
-
-export type MaxClassDerivation = {
-  maxClass: CharterDataClass | null;
-  /** Um degrau por linha, na ordem em que foi avaliado. Alimenta o painel de
-   *  postura contratual — o CISO precisa ver por que o teto é aquele. */
-  reasoning: string[];
-};
-
-export function deriveVendorMaxClass(
-  vendor: VendorPosture
-): MaxClassDerivation {
-  const has = (code: string) => vendor.clauseCodes.includes(code);
-  const reasoning: string[] = [];
-
-  if (vendor.tier === "BLOCKED") {
-    return {
-      maxClass: null,
-      reasoning: [
-        "Bloqueado por decisão de governança — nenhum dado permitido.",
-      ],
-    };
-  }
-
-  if (!(vendor.dpa && has("CL-01"))) {
-    reasoning.push(
-      vendor.dpa
-        ? "Teto Público: falta CL-01 (proibição de treinamento com dados do cliente)."
-        : "Teto Público: DPA não assinado."
-    );
-    return { maxClass: "PUBLIC", reasoning };
-  }
-  reasoning.push("DPA assinado e CL-01 presente → permite dado Interno.");
-
-  const confidentialGaps = ["CL-02", "CL-03", "CL-04"].filter((c) => !has(c));
-  if (confidentialGaps.length > 0) {
-    reasoning.push(
-      `Teto Interno: falta ${confidentialGaps
-        .map((c) => `${c} (${CLAUSE_LABEL[c]})`)
-        .join(", ")}.`
-    );
-    return { maxClass: "INTERNAL", reasoning };
-  }
-  reasoning.push("CL-02, CL-03 e CL-04 presentes → permite dado Confidencial.");
-
-  if (!has("CL-08")) {
-    reasoning.push(
-      `Teto Confidencial: falta CL-08 (${CLAUSE_LABEL["CL-08"]}), exigida para PII/PHI.`
-    );
-    return { maxClass: "CONFIDENTIAL", reasoning };
-  }
-  reasoning.push("CL-08 presente → permite dado Restrito (PII/PHI).");
-
-  return { maxClass: "RESTRICTED", reasoning };
-}
+// Movidos para packages/provisioning/src/charter-rules.ts — ver o cabeçalho
+// de lá. Reexportados para que intake, vendors.ts e os testes não mudem.
+// biome-ignore lint/performance/noBarrelFile: reexport intencional (shim de compatibilidade), não barrel de módulo
+export {
+  CLAUSE_LABEL,
+  deriveVendorMaxClass,
+  type MaxClassDerivation,
+  type VendorPosture,
+} from "@repo/provisioning/src/charter-rules";
 
 // ── SLA em dias úteis ─────────────────────────────────────────────────────────
 
-/** Dias úteis decorridos entre duas datas (exclui sábado e domingo). Feriado
- *  não entra: exigiria calendário por geografia do tenant, que o V1 não modela. */
-function businessDaysBetween(from: Date, to: Date): number {
+/** Conjunto vazio compartilhado: o padrão de "não sei os feriados", que faz o
+ *  cálculo cair no comportamento anterior em vez de falhar. */
+const EMPTY_HOLIDAYS: ReadonlySet<string> = new Set<string>();
+
+/** Dias úteis decorridos entre duas datas (exclui sábado, domingo e feriado).
+ *
+ *  `holidays` é um conjunto de `YYYY-MM-DD` em UTC, montado por
+ *  `lib/feriados`. Fica como parâmetro, e não como import, para esta função
+ *  continuar pura: ela é o núcleo do SLA e precisa ser testável sem rede.
+ *
+ *  O padrão vazio preserva o comportamento antigo — só fim de semana. Quem não
+ *  passar feriado nenhum calcula exatamente o que calculava antes, o que
+ *  importa porque a API que alimenta o conjunto pode falhar e devolver vazio.
+ *
+ *  Feriado municipal e estadual continuam de fora: exigiriam calendário por
+ *  geografia do tenant, que o schema não modela. */
+function businessDaysBetween(
+  from: Date,
+  to: Date,
+  holidays: ReadonlySet<string> = EMPTY_HOLIDAYS
+): number {
   if (to <= from) {
     return 0;
   }
@@ -443,7 +399,8 @@ function businessDaysBetween(from: Date, to: Date): number {
   while (cursor < end) {
     cursor.setUTCDate(cursor.getUTCDate() + 1);
     const weekday = cursor.getUTCDay();
-    if (weekday !== 0 && weekday !== 6) {
+    const feriado = holidays.has(cursor.toISOString().slice(0, 10));
+    if (weekday !== 0 && weekday !== 6 && !feriado) {
       days += 1;
     }
   }
@@ -459,12 +416,13 @@ function businessDaysBetween(from: Date, to: Date): number {
 export function slaRemaining(
   submittedAt: Date | null,
   slaTotal: number | null,
-  now: Date = new Date()
+  now: Date = new Date(),
+  holidays: ReadonlySet<string> = EMPTY_HOLIDAYS
 ): number | null {
   if (!(submittedAt && slaTotal)) {
     return null;
   }
-  return slaTotal - businessDaysBetween(submittedAt, now);
+  return slaTotal - businessDaysBetween(submittedAt, now, holidays);
 }
 
 /** Tom do SLA por proximidade do vencimento (FR-3.3). */

@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_md",
+      "label": "PRD-phase3-monetization.md",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "label": "PRD \u2014 Phase 3: MRR Engine",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_1_objetivo",
+      "label": "1. Objetivo",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_2_m\u00e9trica_de_sucesso",
+      "label": "2. M\u00e9trica de Sucesso",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_3_escopo",
+      "label": "3. Escopo",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_4_cap\u00edtulos_a_detalhar_na_ativa\u00e7\u00e3o",
+      "label": "4. Cap\u00edtulos a detalhar (na ativa\u00e7\u00e3o)",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_5_gates",
+      "label": "5. Gates",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_6_riscos_preliminar",
+      "label": "6. Riscos (preliminar)",
+      "file_type": "document",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L41"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_1_objetivo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_2_m\u00e9trica_de_sucesso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_3_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_4_cap\u00edtulos_a_detalhar_na_ativa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_5_gates",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_prd_phase_3_mrr_engine",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_phase3_monetization_6_riscos_preliminar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/PRD-phase3-monetization.md",
+      "source_location": "L41",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

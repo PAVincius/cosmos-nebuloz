@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_md",
+      "label": "0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "label": "ADR-0011 \u2014 Notifica\u00e7\u00f5es e job de SLA fora do V1",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L60"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_adr_0011_notifica\u00e7\u00f5es_e_job_de_sla_fora_do_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0011-notificacoes-e-job-sla-fora-do-v1.md",
+      "source_location": "L60",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

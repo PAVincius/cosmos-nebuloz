@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_md",
+      "label": "2026-06-10-story-034-lgpd-audit-isolation.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "label": "Story-034 \u2014 LGPD + Audit + Tenant Isolation (Complete)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_entregues",
+      "label": "Entregues",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_mudan\u00e7as",
+      "label": "Mudan\u00e7as",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_cursor_pagination_ac_008",
+      "label": "Cursor pagination (AC-008)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_lgpd_server_actions",
+      "label": "LGPD server actions",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_monthly_isolation_audit_ac_007",
+      "label": "Monthly isolation audit (AC-007)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_testes_25_total_todos_passando",
+      "label": "Testes (25 total \u2014 todos passando)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_decis\u00f5es_chave",
+      "label": "Decis\u00f5es-chave",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L52"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_entregues",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_mudan\u00e7as",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_mudan\u00e7as",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_cursor_pagination_ac_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_mudan\u00e7as",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_lgpd_server_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_mudan\u00e7as",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_monthly_isolation_audit_ac_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_testes_25_total_todos_passando",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_story_034_lgpd_audit_tenant_isolation_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_034_lgpd_audit_isolation_decis\u00f5es_chave",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-034-lgpd-audit-isolation.md",
+      "source_location": "L52",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

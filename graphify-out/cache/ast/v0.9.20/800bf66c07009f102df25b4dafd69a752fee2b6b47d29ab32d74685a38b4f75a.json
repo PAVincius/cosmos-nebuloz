@@ -1,0 +1,152 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_md",
+      "label": "2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "label": "Scaffold \u2014 US7: Charter, observa\u00e7\u00e3o e export (T112\u2013T123)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_a_us2_j\u00e1_tinha_deixado_pronto",
+      "label": "O que a US2 j\u00e1 tinha deixado pronto",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_tr\u00eas_decis\u00f5es_da_fatia",
+      "label": "Tr\u00eas decis\u00f5es da fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_teste_de_arquitetura_me_pegou_duas_vezes_seguidas",
+      "label": "O teste de arquitetura me pegou duas vezes seguidas",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_um_erro_de_runtime_que_o_tipo_pegou",
+      "label": "Um erro de runtime que o tipo pegou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_fica",
+      "label": "O que fica",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L82"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_a_us2_j\u00e1_tinha_deixado_pronto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_tr\u00eas_decis\u00f5es_da_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_teste_de_arquitetura_me_pegou_duas_vezes_seguidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_um_erro_de_runtime_que_o_tipo_pegou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_scaffold_us7_charter_observa\u00e7\u00e3o_e_export_t112_t123",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us7_charter_observacao_export_o_que_fica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md",
+      "source_location": "L82",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

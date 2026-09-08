@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_md",
+      "label": "2026-05-26-t05-anomaly-detection-llm.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "label": "T05 \u2014 Anomaly Detection com Narrativa LLM \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_1_suppression_filter_evita_ru\u00eddo",
+      "label": "Task 1: Suppression filter (evita ru\u00eddo)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_2_anomaly_prompts_por_rule",
+      "label": "Task 2: Anomaly prompts por rule",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_3_narrative_generator_claude",
+      "label": "Task 3: Narrative generator (Claude)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L196"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_4_wire_narrative_no_analyze_flow",
+      "label": "Task 4: Wire narrative no analyze-flow",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L256"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_5_notify_anomaly_via_copilot_email",
+      "label": "Task 5: Notify anomaly via Copilot + email",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_6_anomaly_feed_ui",
+      "label": "Task 6: Anomaly feed UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L358"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_7_anomaly_context_para_copilot",
+      "label": "Task 7: Anomaly context para Copilot",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L410"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_8_anomaly_scheduler_cron",
+      "label": "Task 8: Anomaly scheduler cron",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L449"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L461"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_1_suppression_filter_evita_ru\u00eddo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_2_anomaly_prompts_por_rule",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_3_narrative_generator_claude",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L196",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_4_wire_narrative_no_analyze_flow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_5_notify_anomaly_via_copilot_email",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_6_anomaly_feed_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L358",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_7_anomaly_context_para_copilot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L410",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_task_8_anomaly_scheduler_cron",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L449",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_t05_anomaly_detection_com_narrativa_llm_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t05_anomaly_detection_llm_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t05-anomaly-detection-llm.md",
+      "source_location": "L461",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

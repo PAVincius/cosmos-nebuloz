@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_md",
+      "label": "2026-07-19-cosmos-kanban-vertical.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "label": "COSMOS \u2014 Session Handoff (2026-07-19)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_done_verified_this_session",
+      "label": "DONE + verified this session",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_dev_scaffolds_retire_together_when_real_dev_auth_lands",
+      "label": "DEV SCAFFOLDS \u2014 retire together when real dev auth lands",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_how_to_run",
+      "label": "How to run",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_remaining_ordered_each_its_own_session_increment",
+      "label": "REMAINING (ordered; each its own session/increment)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_gotchas_learned_save_debugging_time",
+      "label": "Gotchas learned (save debugging time)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L80"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_done_verified_this_session",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_dev_scaffolds_retire_together_when_real_dev_auth_lands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_how_to_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_remaining_ordered_each_its_own_session_increment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_cosmos_session_handoff_2026_07_19",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_19_cosmos_kanban_vertical_gotchas_learned_save_debugging_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-19-cosmos-kanban-vertical.md",
+      "source_location": "L80",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

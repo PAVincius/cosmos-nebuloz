@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_md",
+      "label": "story-060-tela-integracoes.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "label": "Story 060 \u2014 Tela Integra\u00e7\u00f5es (ciclo de vida e sa\u00fade dos conectores)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_001_pausar_e_retomar_escrevem_o_estado_do_ciclo_de_vida",
+      "label": "AC-001: Pausar e retomar escrevem o estado do ciclo de vida",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_002_testar_conex\u00e3o_usa_a_credencial_guardada_a_tela_nunca_pede_segredo",
+      "label": "AC-002: Testar conex\u00e3o usa a credencial guardada \u2014 a tela nunca pede segredo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_003_toda_escrita_\u00e9_privilegiada_guardada_por_tenant_e_auditada",
+      "label": "AC-003: Toda escrita \u00e9 privilegiada, guardada por tenant e auditada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_004_sa\u00fade_de_sincroniza\u00e7\u00e3o_vem_de_synclog_nunca_\u00e9_estimada",
+      "label": "AC-004: Sa\u00fade de sincroniza\u00e7\u00e3o vem de `SyncLog`, nunca \u00e9 estimada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_005_nem_a_listagem_nem_a_tela_exp\u00f5em_credencial_ou_mapeamento",
+      "label": "AC-005: Nem a listagem nem a tela exp\u00f5em credencial ou mapeamento",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_006_estado_vazio_e_estado_de_erro_sem_conex\u00e3o_fabricada",
+      "label": "AC-006: Estado vazio e estado de erro sem conex\u00e3o fabricada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L142"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_001_pausar_e_retomar_escrevem_o_estado_do_ciclo_de_vida",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_002_testar_conex\u00e3o_usa_a_credencial_guardada_a_tela_nunca_pede_segredo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_003_toda_escrita_\u00e9_privilegiada_guardada_por_tenant_e_auditada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_004_sa\u00fade_de_sincroniza\u00e7\u00e3o_vem_de_synclog_nunca_\u00e9_estimada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_005_nem_a_listagem_nem_a_tela_exp\u00f5em_credencial_ou_mapeamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_ac_006_estado_vazio_e_estado_de_erro_sem_conex\u00e3o_fabricada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_story_060_tela_integra\u00e7\u00f5es_ciclo_de_vida_e_sa\u00fade_dos_conectores",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_060_tela_integracoes_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-060-tela-integracoes.md",
+      "source_location": "L142",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "label": "nextjs-typescript.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_core_expertise",
+      "label": "Core Expertise",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_when_invoked",
+      "label": "When Invoked",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "label": "Next.js 15 Specific Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_page_component_types",
+      "label": "Page Component Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_layout_types",
+      "label": "Layout Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_server_action_types",
+      "label": "Server Action Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_api_route_types",
+      "label": "API Route Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_metadata_types",
+      "label": "Metadata Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_utility_types",
+      "label": "Utility Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_async_component_props",
+      "label": "Async Component Props",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_type_guards",
+      "label": "Type Guards",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_generic_data_fetching",
+      "label": "Generic Data Fetching",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_form_types_with_zod",
+      "label": "Form Types with Zod",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_database_types_with_prisma",
+      "label": "Database Types with Prisma",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_configuration_types",
+      "label": "Configuration Types",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L232"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_typescript_config",
+      "label": "TypeScript Config",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L256"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_common_type_fixes",
+      "label": "Common Type Fixes",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L289"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_async_params_error",
+      "label": "Async Params Error",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L291"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_children_props",
+      "label": "Children Props",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L305"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_event_handlers",
+      "label": "Event Handlers",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L314"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_best_practices",
+      "label": "Best Practices",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L327"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_core_expertise",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_when_invoked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_page_component_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_layout_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_server_action_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_next_js_15_specific_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_api_route_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_metadata_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_utility_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_utility_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_async_component_props",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_utility_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_type_guards",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_utility_types",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_generic_data_fetching",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_form_types_with_zod",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_database_types_with_prisma",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_configuration_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L232",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_typescript_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_common_type_fixes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L289",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_common_type_fixes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_async_params_error",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L291",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_common_type_fixes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_children_props",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L305",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_common_type_fixes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_event_handlers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_typescript_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-typescript.md",
+      "source_location": "L327",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

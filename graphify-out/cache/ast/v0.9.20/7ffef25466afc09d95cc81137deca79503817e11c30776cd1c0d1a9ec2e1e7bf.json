@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_md",
+      "label": "2026-07-30-charter-case-detail-risk-screens.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "label": "Charter \u2014 CaseDetail e Risk portados contra o prot\u00f3tipo \u2014 Complete",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_scope",
+      "label": "Scope",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_mudan\u00e7as",
+      "label": "Mudan\u00e7as",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_outstanding",
+      "label": "Outstanding",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L41"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_mudan\u00e7as",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_charter_casedetail_e_risk_portados_contra_o_prot\u00f3tipo_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_30_charter_case_detail_risk_screens_outstanding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-30-charter-case-detail-risk-screens.md",
+      "source_location": "L41",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_md",
+      "label": "2026-09-02-scaffold-us2-gate-engine.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "label": "Scaffold \u2014 US2: gate engine (T031\u2013T048)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_tr\u00eas_decis\u00f5es_que_divergem_do_plano",
+      "label": "Tr\u00eas decis\u00f5es que divergem do plano",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_dois_erros_meus_que_os_testes_pegaram",
+      "label": "Dois erros meus que os testes pegaram",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_cobertura_do_contrato_de_bloqueio",
+      "label": "Cobertura do contrato de bloqueio",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "label": "O que fica para a pr\u00f3xima fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L90"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_tr\u00eas_decis\u00f5es_que_divergem_do_plano",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_dois_erros_meus_que_os_testes_pegaram",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_cobertura_do_contrato_de_bloqueio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_scaffold_us2_gate_engine_t031_t048",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us2_gate_engine_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us2-gate-engine.md",
+      "source_location": "L90",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

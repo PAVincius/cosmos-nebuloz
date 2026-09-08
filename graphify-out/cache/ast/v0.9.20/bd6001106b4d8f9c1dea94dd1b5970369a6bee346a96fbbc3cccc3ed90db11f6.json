@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_md",
+      "label": "2026-05-17-onboarding-company-setup.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "label": "Onboarding \u2013 company_setup Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_file_map",
+      "label": "File Map",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_new_files",
+      "label": "New files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_modified_files",
+      "label": "Modified files",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_1_db_schema_onboardingprogress_migrationconnection",
+      "label": "Task 1: DB Schema \u2013 OnboardingProgress + MigrationConnection",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_2_onboarding_server_actions",
+      "label": "Task 2: Onboarding Server Actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_3_company_ts_safe_entity_creation_actions",
+      "label": "Task 3: company.ts \u2013 SAFe entity creation actions",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L428"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_4_layout_auto_redirect_for_new_tenants",
+      "label": "Task 4: Layout \u2013 auto-redirect for new tenants",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L577"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_5_onboarding_layout_landing_page",
+      "label": "Task 5: Onboarding layout + landing page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L660"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_6_onboardingwizardshell_component",
+      "label": "Task 6: OnboardingWizardShell component",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L792"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_7_step_1_company_profile",
+      "label": "Task 7: Step 1 \u2013 Company Profile",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L925"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_8_step_2_safe_structure",
+      "label": "Task 8: Step 2 \u2013 SAFe Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1074"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_9_steps_3_6_sectors_orgchart_users_teams_pis_sprints",
+      "label": "Task 9: Steps 3\u20136 (Sectors, OrgChart, Users/Teams, PIs/Sprints)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1266"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_10_step_7_health_check_company_page_tsx_wizard_orchestrator",
+      "label": "Task 10: Step 7 \u2013 Health Check + company/page.tsx (wizard orchestrator)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1734"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_11_end_to_end_smoke_test",
+      "label": "Task 11: End-to-end smoke test",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L2078"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_checklist_spec_coverage",
+      "label": "Checklist \u2013 Spec Coverage",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L2119"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_file_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_new_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_file_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_modified_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_1_db_schema_onboardingprogress_migrationconnection",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_2_onboarding_server_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_3_company_ts_safe_entity_creation_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L428",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_4_layout_auto_redirect_for_new_tenants",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L577",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_5_onboarding_layout_landing_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L660",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_6_onboardingwizardshell_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L792",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_7_step_1_company_profile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L925",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_8_step_2_safe_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1074",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_9_steps_3_6_sectors_orgchart_users_teams_pis_sprints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1266",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_10_step_7_health_check_company_page_tsx_wizard_orchestrator",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L1734",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_task_11_end_to_end_smoke_test",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L2078",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_onboarding_company_setup_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_17_onboarding_company_setup_checklist_spec_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-17-onboarding-company-setup.md",
+      "source_location": "L2119",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

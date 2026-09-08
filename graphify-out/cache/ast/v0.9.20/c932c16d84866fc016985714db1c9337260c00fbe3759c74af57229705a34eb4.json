@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_md",
+      "label": "0014-promocao-scaffold-materializa-no-backoffice.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "label": "ADR-0014 \u2014 Promo\u00e7\u00e3o para Scaffold materializa no back-office",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_uma_lacuna_encontrada_no_caminho",
+      "label": "Uma lacuna encontrada no caminho",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_por_que_a_assimetria_com_os_outros_alvos_\u00e9_correta",
+      "label": "Por que a assimetria com os outros alvos \u00e9 correta",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L112"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_contexto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_uma_lacuna_encontrada_no_caminho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_decis\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_por_que_a_assimetria_com_os_outros_alvos_\u00e9_correta",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_adr_0014_promo\u00e7\u00e3o_para_scaffold_materializa_no_back_office",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0014_promocao_scaffold_materializa_no_backoffice_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md",
+      "source_location": "L112",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

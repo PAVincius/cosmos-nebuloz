@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_md",
+      "label": "2026-06-16-executive-confidence-index.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "label": "Executive Confidence Index Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_1_pure_module_types_sprintstodate",
+      "label": "Task 1: Pure module \u2014 types + `sprintsToDate`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_2_pure_module_ragfromdates_epicconfidence",
+      "label": "Task 2: Pure module \u2014 `ragFromDates` + `epicConfidence`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L122"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_3_server_action_getepicconfidence",
+      "label": "Task 3: Server action \u2014 `getEpicConfidence`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L315"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_4_server_action_getportfolioconfidence",
+      "label": "Task 4: Server action \u2014 `getPortfolioConfidence`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L524"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_5_confidencebadge_component",
+      "label": "Task 5: `ConfidenceBadge` component",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L660"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_6_deliveryconfidencewidget_component",
+      "label": "Task 6: `DeliveryConfidenceWidget` component",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L781"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_7_mount_widget_on_executive_dashboard_badge_on_epic_detail",
+      "label": "Task 7: Mount widget on Executive Dashboard + badge on Epic detail",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L890"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_final_verification",
+      "label": "Final Verification",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L971"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_spec_coverage_check",
+      "label": "Spec Coverage Check",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L979"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_1_pure_module_types_sprintstodate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_2_pure_module_ragfromdates_epicconfidence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_3_server_action_getepicconfidence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L315",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_4_server_action_getportfolioconfidence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L524",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_5_confidencebadge_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L660",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_6_deliveryconfidencewidget_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L781",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_task_7_mount_widget_on_executive_dashboard_badge_on_epic_detail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L890",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_final_verification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L971",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_executive_confidence_index_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_executive_confidence_index_spec_coverage_check",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-executive-confidence-index.md",
+      "source_location": "L979",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

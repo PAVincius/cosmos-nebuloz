@@ -1,0 +1,216 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "label": "upload-thing.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_1_swap_out_the_required_dependencies",
+      "label": "1. Swap out the required dependencies",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_2_update_the_environment_variables",
+      "label": "2. Update the environment variables",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_3_update_the_existing_storage_files",
+      "label": "3. Update the existing storage files",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_storage",
+      "label": "Storage",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_client",
+      "label": "Client",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_4_create_new_ssr_file",
+      "label": "4. Create new SSR file",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_5_create_a_file_router_in_your_app",
+      "label": "5. Create a file router in your app",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_6_create_a_route_handler",
+      "label": "6. Create a route handler",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_7_update_your_root_layout",
+      "label": "7. Update your root layout",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_8_update_your_tailwind_css",
+      "label": "8. Update your Tailwind CSS",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_9_create_your_upload_button",
+      "label": "9. Create your upload button",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_10_advanced_configuration",
+      "label": "10. Advanced configuration",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L172"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_1_swap_out_the_required_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_2_update_the_environment_variables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_3_update_the_existing_storage_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_3_update_the_existing_storage_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_storage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_3_update_the_existing_storage_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_client",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_4_create_new_ssr_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_5_create_a_file_router_in_your_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "packages_authentication_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_6_create_a_route_handler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_7_update_your_root_layout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_8_update_your_tailwind_css",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_9_create_your_upload_button",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_storage_upload_thing_10_advanced_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/storage/upload-thing.mdx",
+      "source_location": "L172",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

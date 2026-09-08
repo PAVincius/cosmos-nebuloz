@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_md",
+      "label": "execute-story.md",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/execute-story.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_task_execute_story",
+      "label": "Task: Execute Story",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/execute-story.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_the_ralph_loop",
+      "label": "The Ralph Loop",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/execute-story.md",
+      "source_location": "L7"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_task_execute_story",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/execute-story.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_task_execute_story",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_execute_story_the_ralph_loop",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/execute-story.md",
+      "source_location": "L7",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

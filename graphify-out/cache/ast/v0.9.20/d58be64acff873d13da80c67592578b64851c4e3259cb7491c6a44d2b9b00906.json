@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_md",
+      "label": "story-054-tela-decision-log.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "label": "Story 054 \u2014 Tela Decision Log (artefato de auditoria do portf\u00f3lio)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_001_leitura_restrita",
+      "label": "AC-001: Leitura restrita",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_002_superf\u00edcie_append_only",
+      "label": "AC-002: Superf\u00edcie append-only",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_003_export_em_json_cronol\u00f3gico_e_completo",
+      "label": "AC-003: Export em JSON, cronol\u00f3gico e completo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_004_o_export_\u00e9_auditado",
+      "label": "AC-004: O export \u00e9 auditado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_005_a_tela_distingue_vazio_erro_e_lista",
+      "label": "AC-005: A tela distingue vazio, erro e lista",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L116"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_001_leitura_restrita",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_002_superf\u00edcie_append_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_003_export_em_json_cronol\u00f3gico_e_completo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_004_o_export_\u00e9_auditado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_ac_005_a_tela_distingue_vazio_erro_e_lista",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_story_054_tela_decision_log_artefato_de_auditoria_do_portf\u00f3lio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_054_tela_decision_log_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "source_location": "L116",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

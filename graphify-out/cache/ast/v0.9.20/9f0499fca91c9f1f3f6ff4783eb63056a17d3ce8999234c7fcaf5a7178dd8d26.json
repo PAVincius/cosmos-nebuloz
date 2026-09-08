@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_md",
+      "label": "ARCHITECTURE_MAP.md",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "label": "Architecture Map",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_monorepo_structure",
+      "label": "Monorepo Structure",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_file_locations",
+      "label": "Key File Locations",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_patterns",
+      "label": "Key Patterns",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_server_action_pattern",
+      "label": "Server Action pattern",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_result_type_usage_client",
+      "label": "Result type usage (client)",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L68"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_test_pattern",
+      "label": "Test pattern",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_domain_routes_authenticated",
+      "label": "Domain Routes (authenticated)",
+      "file_type": "document",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L84"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_monorepo_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_file_locations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_server_action_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_result_type_usage_client",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_key_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_test_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_architecture_map",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_architecture_map_domain_routes_authenticated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": "L84",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

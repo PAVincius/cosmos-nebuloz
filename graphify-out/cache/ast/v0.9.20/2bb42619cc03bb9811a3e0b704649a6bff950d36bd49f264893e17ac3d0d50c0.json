@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_md",
+      "label": "2026-08-23-charter-geracao-rascunho.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_gera\u00e7\u00e3o_de_rascunho_de_pol\u00edtica_neb_156_implementation_plan",
+      "label": "Gera\u00e7\u00e3o de rascunho de pol\u00edtica (NEB-156) \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_corre\u00e7\u00f5es_ao_spec_o_c\u00f3digo_real_manda",
+      "label": "Corre\u00e7\u00f5es ao spec (o c\u00f3digo real manda)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_1_contexto_e_prompt_puros_policy_generation_ts",
+      "label": "Task 1: Contexto e prompt puros (`policy-generation.ts`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_2_action_generatepolicydraft",
+      "label": "Task 2: Action `generatePolicyDraft`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_3_pr\u00e9via_inline_na_tela_morte_do_modal_fake",
+      "label": "Task 3: Pr\u00e9via inline na tela + morte do modal fake",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_4_verifica\u00e7\u00e3o_integral",
+      "label": "Task 4: Verifica\u00e7\u00e3o integral",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L242"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_self_review_feito_na_escrita",
+      "label": "Self-review (feito na escrita)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L251"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_gera\u00e7\u00e3o_de_rascunho_de_pol\u00edtica_neb_156_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_gera\u00e7\u00e3o_de_rascunho_de_pol\u00edtica_neb_156_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_corre\u00e7\u00f5es_ao_spec_o_c\u00f3digo_real_manda",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_1_contexto_e_prompt_puros_policy_generation_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_2_action_generatepolicydraft",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_3_pr\u00e9via_inline_na_tela_morte_do_modal_fake",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_global_constraints",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_task_4_verifica\u00e7\u00e3o_integral",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L242",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_gera\u00e7\u00e3o_de_rascunho_de_pol\u00edtica_neb_156_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_23_charter_geracao_rascunho_self_review_feito_na_escrita",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-23-charter-geracao-rascunho.md",
+      "source_location": "L251",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_session_files",
+      "label": "Session Files",
+      "file_type": "document",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_active_sessions",
+      "label": "Active Sessions",
+      "file_type": "document",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_archive",
+      "label": "Archive",
+      "file_type": "document",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_never_auto_load",
+      "label": "Never Auto-Load",
+      "file_type": "document",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L13"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_session_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_session_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_active_sessions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_session_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_archive",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_session_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_sessions_readme_never_auto_load",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/sessions/README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

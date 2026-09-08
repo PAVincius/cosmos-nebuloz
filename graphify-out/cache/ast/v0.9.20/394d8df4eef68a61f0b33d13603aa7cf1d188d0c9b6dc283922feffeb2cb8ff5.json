@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_md",
+      "label": "story-049-ai-insight-mapper.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "label": "Story 049 \u2014 AI Mapper: Insights \u2192 Task / Risk / DecisionLog",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_user_story",
+      "label": "User Story",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_001_action_items_meetinginsight_action",
+      "label": "AC-001: Action items \u2192 MeetingInsight ACTION",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_002_riscos_meetinginsight_risk",
+      "label": "AC-002: Riscos \u2192 MeetingInsight RISK",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_003_decis\u00f5es_meetinginsight_decision",
+      "label": "AC-003: Decis\u00f5es \u2192 MeetingInsight DECISION",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_004_pi_n\u00e3o_resolv\u00edvel_unlinked",
+      "label": "AC-004: PI n\u00e3o resolv\u00edvel \u2192 unlinked",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_005_tenant_correto",
+      "label": "AC-005: Tenant correto",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L45"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_user_story",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_001_action_items_meetinginsight_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_002_riscos_meetinginsight_risk",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_003_decis\u00f5es_meetinginsight_decision",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_004_pi_n\u00e3o_resolv\u00edvel_unlinked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_ac_005_tenant_correto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_story_049_ai_mapper_insights_task_risk_decisionlog",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_009_story_049_ai_insight_mapper_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-009/story-049-ai-insight-mapper.md",
+      "source_location": "L45",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

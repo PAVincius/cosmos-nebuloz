@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_md",
+      "label": "2026-05-26-t07-finops-ui.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "label": "T07 \u2014 FinOps Integrado UI Completa \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_1_cost_summary_server_action",
+      "label": "Task 1: Cost summary server action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_2_epic_cost_action",
+      "label": "Task 2: Epic cost action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_3_cost_treemap_trend_chart",
+      "label": "Task 3: Cost Treemap + Trend Chart",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_4_monthly_trend_server_action",
+      "label": "Task 4: Monthly trend server action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L405"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_5_cost_allocation_table_unmapped_alert",
+      "label": "Task 5: Cost Allocation Table + Unmapped Alert",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L449"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_6_finops_portfolio_page",
+      "label": "Task 6: FinOps portfolio page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L560"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_7_epic_cost_badge",
+      "label": "Task 7: Epic cost badge",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L668"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L725"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_1_cost_summary_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_2_epic_cost_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_3_cost_treemap_trend_chart",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_4_monthly_trend_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L405",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_5_cost_allocation_table_unmapped_alert",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L449",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_6_finops_portfolio_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L560",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_task_7_epic_cost_badge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L668",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_t07_finops_integrado_ui_completa_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t07_finops_ui_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t07-finops-ui.md",
+      "source_location": "L725",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
