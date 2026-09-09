@@ -120,6 +120,12 @@ jobs:
         # grande o bastante para precisar disto; o runner tem folga.
         env:
           NODE_OPTIONS: --max-old-space-size=6144
+          # `typecheck` depende de `@repo/database#build` pelo grafo do turbo, e
+          # o passo acima que já traz este placeholder não cobre este: env de
+          # step não atravessa steps. Sem isto o job morre antes de checar tipo
+          # algum, em "Invalid environment variables" com `Failed:
+          # @repo/database#build` — que parece erro de tipo e não é.
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
         run: pnpm turbo typecheck
 
   cosmos-graph:

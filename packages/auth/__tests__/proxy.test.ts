@@ -32,9 +32,17 @@ function respondeGetSession(status: number, corpo: unknown) {
 
 /** O middleware embrulhando um callback que marca que chegou ao fim. */
 function middleware(aoPassar = vi.fn()) {
-  return authMiddleware((req) => {
+  // O `: undefined` é o que fazia o Type Check falhar quando não estava aqui.
+  // `MiddlewareFn` pede `undefined`, e um callback sem anotação que termina sem
+  // retornar tem tipo inferido `void` — que o tsc não aceita no lugar de
+  // `undefined`. Anotar resolve sem `return` nenhum: desde o TS 5.1 uma função
+  // declarada como `undefined` pode simplesmente não retornar.
+  //
+  // As duas saídas óbvias esbarram no biome: ele apaga `return undefined`
+  // explícito (noUselessUndefined) e recusa `| void` no tipo
+  // (noConfusingVoidType).
+  return authMiddleware((req): undefined => {
     aoPassar(req.nextUrl.pathname);
-    return;
   });
 }
 
