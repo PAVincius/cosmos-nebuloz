@@ -288,6 +288,8 @@ model Tenant {
   cacPeriodos              CacPeriodo[]                  @relation("CacPeriodoSystemTenant")
   semanasDeCaixa           SemanaDeCaixa[]               @relation("SemanaDeCaixaSystemTenant")
   contasDoPlano            ContaDoPlano[]                @relation("ContaDoPlanoSystemTenant")
+  // AI Law Watch — leis/PLs de IA no Brasil já vistas pelo cron (também no tenant `system`)
+  aiLawWatchRecords        AiLawWatchRecord[]            @relation("AiLawWatchRecordSystemTenant")
 }
 
 model User {
