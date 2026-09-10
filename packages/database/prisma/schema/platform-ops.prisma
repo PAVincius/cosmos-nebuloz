@@ -748,3 +748,33 @@ model RespostaDeMaturidade {
   @@unique([avaliacaoId, criterioId])
   @@index([tenantId])
 }
+
+// ─────────────────── AI Law Watch ───────────────────
+
+/// Uma lei/PL de IA brasileira já vista pelo cron diário que monitora a API
+/// AI Law Tracker. Guarda o suficiente para reportar "o que é novo desde a
+/// última rodada" — não é um espelho completo do registro do provedor.
+///
+/// `identifier` é a chave estável do provedor (ex: "br-lei-15123-2025"), não
+/// `id` deles: aquele é um uuid interno que pode mudar sem aviso, e dedupar
+/// por ele faria o mesmo PL reaparecer como "novo" a cada rotação.
+model AiLawWatchRecord {
+  id           String @id @default(cuid())
+  tenantId     String
+  source       String // "ai-law-tracker"
+  jurisdiction String // "brazil"
+  identifier   String // campo estável do provedor — NÃO o uuid interno deles
+
+  title       String  @db.Text
+  recordType  String?
+  inForce     Boolean
+  officialUrl String
+
+  firstSeenAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation("AiLawWatchRecordSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, source, jurisdiction, identifier])
+  @@index([tenantId, source, jurisdiction])
+}
