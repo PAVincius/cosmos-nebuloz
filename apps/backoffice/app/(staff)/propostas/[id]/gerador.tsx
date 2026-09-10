@@ -12,6 +12,7 @@ import {
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { formatarBRL } from "@/lib/comercial/formato";
+import { planoPadrao } from "@/lib/comercial/plano-padrao";
 import {
   precificarProposta,
   type UnidadeDeCobranca,
@@ -73,12 +74,11 @@ export function Gerador({
   const [cliente, setCliente] = useState(proposta?.clienteNome ?? "");
   const [contato, setContato] = useState(proposta?.contatoEmail ?? "");
   const [planoSlug, setPlanoSlug] = useState(
-    proposta?.planoSlug ??
-      catalogo.planos[1]?.slug ??
-      catalogo.planos[0]?.slug ??
-      ""
+    proposta?.planoSlug ?? planoPadrao(catalogo.planos)
   );
-  const [assentos, setAssentos] = useState(proposta?.assentos || 40);
+  // `??` e não `||`: zero assentos é valor legítimo — é o que uma proposta de
+  // diagnóstico tem. Com `||` ela reabria com 40 e virava contrato de assentos.
+  const [assentos, setAssentos] = useState(proposta?.assentos ?? 40);
   const [modulos, setModulos] = useState<string[]>(
     proposta?.modulos ?? ["COSMOS"]
   );
