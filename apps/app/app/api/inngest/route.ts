@@ -1,4 +1,5 @@
 import { serve } from "inngest/next";
+import { aiLawWatchFunction } from "@/lib/inngest/ai-law-watch";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
 import { inngest } from "@/lib/inngest/client";
 import { runExport } from "@/lib/inngest/export-runner";
@@ -24,6 +25,7 @@ export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
     billingSyncFunction,
+    aiLawWatchFunction,
     processErasureRequest,
     deliverWebhookEvent,
     checkGovernanceSLA,
