@@ -23,6 +23,7 @@ const mocks = vi.hoisted(() => ({
   versionAggregate: vi.fn(),
   transaction: vi.fn(),
   revalidatePath: vi.fn(),
+  tenantFindUnique: vi.fn(),
 }));
 
 vi.mock("@/lib/guard", () => ({
@@ -60,12 +61,14 @@ vi.mock("@repo/database", () => ({
       create: mocks.versionCreate,
       aggregate: mocks.versionAggregate,
     },
+    tenant: { findUnique: mocks.tenantFindUnique },
     $transaction: mocks.transaction,
   },
 }));
 
 import {
   createDiagramAction,
+  definirClienteDoDiagramaAction,
   listDiagrams,
   updateDiagramAction,
 } from "../app/actions/diagrams";
@@ -259,6 +262,69 @@ describe("updateDiagramAction", () => {
     });
 
     const res = await updateDiagramAction({ id: "d-1", source: "x" });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+});
+
+// O `sobreTenantId` existia no schema com índice e comentário, e nada o
+// escrevia — o handoff do Claude Design listou isso como a única lacuna do
+// estúdio que muda o produto. Estes testes prendem as três decisões da action:
+// trocar de cliente não cria revisão, string vazia desassocia, e o id vindo do
+// cliente é conferido antes de virar coluna.
+describe("definirClienteDoDiagramaAction", () => {
+  beforeEach(resetar);
+
+  it("associa ao cliente e não cria revisão — trocar de dono não muda o desenho", async () => {
+    mocks.findFirst.mockResolvedValue({ id: "d-1", name: "Onboarding" });
+    mocks.tenantFindUnique.mockResolvedValue({ name: "TOTVS" });
+
+    const res = await definirClienteDoDiagramaAction({
+      id: "d-1",
+      sobreTenantId: "t-9",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.update.mock.calls[0][0].data.sobreTenantId).toBe("t-9");
+    expect(mocks.versionCreate).not.toHaveBeenCalled();
+  });
+
+  it("string vazia desassocia, sem ir procurar tenant nenhum", async () => {
+    mocks.findFirst.mockResolvedValue({ id: "d-1", name: "Onboarding" });
+
+    const res = await definirClienteDoDiagramaAction({
+      id: "d-1",
+      sobreTenantId: "",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.update.mock.calls[0][0].data.sobreTenantId).toBeNull();
+    expect(mocks.tenantFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("recusa tenant inexistente — o id vem do cliente", async () => {
+    mocks.findFirst.mockResolvedValue({ id: "d-1", name: "Onboarding" });
+    mocks.tenantFindUnique.mockResolvedValue(null);
+
+    const res = await definirClienteDoDiagramaAction({
+      id: "d-1",
+      sobreTenantId: "inventado",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não troca o cliente", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+
+    const res = await definirClienteDoDiagramaAction({
+      id: "d-1",
+      sobreTenantId: "t-9",
+    });
 
     expect(res.ok).toBe(false);
     expect(mocks.update).not.toHaveBeenCalled();

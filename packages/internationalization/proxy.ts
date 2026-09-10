@@ -5,7 +5,14 @@ import { createI18nMiddleware } from "next-international/middleware";
 import languine from "./languine.json" with { type: "json" };
 
 const locales = [languine.locale.source, ...languine.locale.targets];
-const DEFAULT_LOCALE = "en";
+
+/** The locale served without a prefix, and the fallback for a request whose
+ *  `Accept-Language` matches nothing. Hardcoded to `en` until the ICP made it
+ *  wrong: the source locale is the one we author in, so it is the one an
+ *  unnegotiated request — curl, uptime monitor, every AI crawler that sends no
+ *  header — should get. `index.ts` derives its own copy from the same field; it
+ *  cannot import this module, and this module cannot import it (`server-only`). */
+const DEFAULT_LOCALE = languine.locale.source;
 
 /** True only for tags `Intl` will canonicalise; everything else throws. */
 const isWellFormedTag = (tag: string): boolean => {

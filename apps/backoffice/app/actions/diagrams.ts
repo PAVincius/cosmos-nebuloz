@@ -77,6 +77,10 @@ export async function listDiagrams(
 
 export type DiagramDetail = DiagramRow & {
   source: string;
+  /** Cliente que o diagrama descreve, quando descreve algum. */
+  sobreTenantId: string | null;
+  /** Nome do cliente, resolvido aqui para a tela não precisar cruzar a lista. */
+  sobreTenantNome: string | null;
   historico: {
     versao: number;
     nota: string | null;
@@ -101,6 +105,16 @@ export async function getDiagram(id: string): Promise<Result<DiagramDetail>> {
       throw new StaffAuthError("FORBIDDEN", "Diagrama não encontrado.");
     }
 
+    // Consulta separada porque `sobreTenantId` é escalar sem relação declarada
+    // — o diagrama sobrevive à saída do cliente, e uma FK com cascade o levaria
+    // junto. O preço é este segundo `select`, de uma coluna.
+    const sobre = d.sobreTenantId
+      ? await database.tenant.findUnique({
+          where: { id: d.sobreTenantId },
+          select: { name: true },
+        })
+      : null;
+
     return {
       id: d.id,
       kind: d.kind,
@@ -108,6 +122,8 @@ export async function getDiagram(id: string): Promise<Result<DiagramDetail>> {
       slug: d.slug,
       descricao: d.descricao,
       source: d.source,
+      sobreTenantId: d.sobreTenantId,
+      sobreTenantNome: sobre?.name ?? null,
       versoes: d._count.versions,
       atualizadoEm: d.atualizadoEm.toISOString(),
       criadoPorNome: d.criadoPorNome,
@@ -202,6 +218,73 @@ export async function createDiagramAction(
     revalidatePath("/ferramentas/bpmn");
     revalidatePath("/ferramentas/diagramas");
     return criado;
+  });
+}
+
+const ClienteSchema = z.object({
+  id: z.string().min(1),
+  /** String vazia desassocia. Nulo pelo `<select>` não chega até aqui. */
+  sobreTenantId: z.string(),
+});
+
+/**
+ * Associa (ou desassocia) o diagrama ao cliente que ele descreve.
+ *
+ * Fora de `updateDiagramAction` de propósito: aquela cria revisão, e trocar de
+ * cliente não muda o desenho. Uma versão nova sem uma linha de diferença no
+ * `source` faria o histórico responder "o que mudou" com "nada".
+ */
+export async function definirClienteDoDiagramaAction(
+  input: z.input<typeof ClienteSchema>
+): Promise<Result<{ id: string; sobreTenantId: string | null }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+
+    const dados = ClienteSchema.parse(input);
+    const alvo = dados.sobreTenantId.trim() || null;
+
+    const atual = await database.staffDiagram.findFirst({
+      where: { id: dados.id, tenantId: SYSTEM_TENANT_ID },
+      select: { id: true, name: true },
+    });
+    if (!atual) {
+      throw new StaffAuthError("FORBIDDEN", "Diagrama não encontrado.");
+    }
+
+    // O id vem do cliente, então confere-se que o tenant existe antes de
+    // gravar. Sem isto o campo aceita qualquer string e a tela passa a mostrar
+    // "—" para um id que parece válido no banco.
+    let nomeAlvo: string | null = null;
+    if (alvo) {
+      const tenant = await database.tenant.findUnique({
+        where: { id: alvo },
+        select: { name: true },
+      });
+      if (!tenant) {
+        throw new StaffAuthError("FORBIDDEN", "Cliente não encontrado.");
+      }
+      nomeAlvo = tenant.name;
+    }
+
+    await database.staffDiagram.update({
+      where: { id: atual.id },
+      data: { sobreTenantId: alvo },
+    });
+
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "updated",
+      entityType: "staff_diagram",
+      entityId: atual.id,
+      target: `${atual.name} · cliente ${nomeAlvo ?? "removido"}`,
+    });
+
+    revalidatePath("/ferramentas/bpmn");
+    revalidatePath("/ferramentas/diagramas");
+    return { id: atual.id, sobreTenantId: alvo };
   });
 }
 

@@ -87,10 +87,13 @@ async function renderizar(id: string, source: string): Promise<string> {
 export function MermaidEditor({
   sourceInicial,
   podeEscrever,
+  nomeArquivo = "diagrama",
   onSalvar,
 }: {
   sourceInicial: string;
   podeEscrever: boolean;
+  /** Slug do diagrama; vira o nome do arquivo exportado. */
+  nomeArquivo?: string;
   onSalvar: (source: string, nota: string) => Promise<string | null>;
 }) {
   const [source, setSource] = useState(sourceInicial);
@@ -131,6 +134,25 @@ export function MermaidEditor({
   }, [source]);
 
   const podeSalvar = podeEscrever && sujo && !salvando;
+  const podeExportar = Boolean(svg) && !erroRender;
+
+  /**
+   * Baixa a prévia como `.svg`.
+   *
+   * O texto do SVG já está em memória — é o mesmo que a prévia renderiza — então
+   * exportar é um Blob e um clique sintético, sem ida ao servidor. `revokeObjectURL`
+   * logo em seguida porque a URL segura o Blob vivo até o fim da aba.
+   */
+  const exportar = useCallback(() => {
+    const url = URL.createObjectURL(
+      new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${nomeArquivo}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [svg, nomeArquivo]);
 
   const salvar = useCallback(async () => {
     setSalvando(true);
@@ -278,6 +300,29 @@ export function MermaidEditor({
             >
               +
             </BotaoZoom>
+            <button
+              className="btn mono"
+              disabled={!podeExportar}
+              onClick={exportar}
+              style={{
+                background: "none",
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-sm)",
+                padding: "3px 8px",
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+                color: podeExportar ? "var(--ink-muted)" : "var(--ink-faint)",
+                cursor: podeExportar ? "pointer" : "not-allowed",
+              }}
+              title={
+                podeExportar
+                  ? "Baixar a prévia como .svg"
+                  : "Exporta quando a prévia renderizar"
+              }
+              type="button"
+            >
+              SVG
+            </button>
           </div>
           <div
             className="scroll"

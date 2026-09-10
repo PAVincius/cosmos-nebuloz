@@ -7,6 +7,7 @@ import {
   type DiagramDetail,
   type DiagramKind,
   type DiagramRow,
+  definirClienteDoDiagramaAction,
   getDiagram,
   updateDiagramAction,
 } from "@/app/actions/diagrams";
@@ -119,13 +120,65 @@ function FormularioNovo({
   );
 }
 
+/** Só o que o seletor de cliente precisa. */
+export type ClienteOpcao = { id: string; name: string };
+
+/**
+ * Seletor do cliente que o diagrama descreve (`StaffDiagram.sobreTenantId`).
+ *
+ * Fica no cabeçalho do diagrama aberto, e não no formulário de criação, porque
+ * a pergunta "sobre quem é isto" costuma se responder depois de desenhar.
+ */
+function SeletorDeCliente({
+  clientes,
+  valor,
+  podeEscrever,
+  onTrocar,
+}: {
+  clientes: ClienteOpcao[];
+  valor: string | null;
+  podeEscrever: boolean;
+  onTrocar: (id: string) => void;
+}) {
+  return (
+    <select
+      aria-label="Cliente que este diagrama descreve"
+      disabled={!podeEscrever}
+      onChange={(e) => onTrocar(e.target.value)}
+      style={{
+        ...INPUT,
+        width: "auto",
+        minWidth: 190,
+        padding: "6px 9px",
+        fontSize: "var(--fs-nota)",
+        cursor: podeEscrever ? "pointer" : "not-allowed",
+      }}
+      title={
+        podeEscrever
+          ? "Cliente que este diagrama descreve"
+          : "Trocar o cliente exige papel ADMIN"
+      }
+      value={valor ?? ""}
+    >
+      <option value="">Sem cliente — conhecimento da casa</option>
+      {clientes.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 export function Estudio({
   kind,
   iniciais,
+  clientes,
   podeEscrever,
 }: {
   kind: DiagramKind;
   iniciais: DiagramRow[];
+  clientes: ClienteOpcao[];
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
@@ -200,6 +253,28 @@ export function Estudio({
     }
   }, [kind, nome, emBranco, enviado]);
 
+  const trocarCliente = useCallback(
+    async (sobreTenantId: string) => {
+      if (!aberto) {
+        return;
+      }
+      setErro(null);
+      const res = await definirClienteDoDiagramaAction({
+        id: aberto.id,
+        sobreTenantId,
+      });
+      if (!res.ok) {
+        setErro(res.error);
+        return;
+      }
+      const det = await getDiagram(aberto.id);
+      if (det.ok) {
+        setAberto(det.data);
+      }
+    },
+    [aberto]
+  );
+
   const salvar = useCallback(
     async (source: string, nota: string): Promise<string | null> => {
       if (!aberto) {
@@ -263,8 +338,16 @@ export function Estudio({
         {aberto ? (
           <>
             <SectionCard
+              action={
+                <SeletorDeCliente
+                  clientes={clientes}
+                  onTrocar={trocarCliente}
+                  podeEscrever={podeEscrever}
+                  valor={aberto.sobreTenantId}
+                />
+              }
               icon={kind === "BPMN" ? "fileCode" : "server"}
-              subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
+              subtitle={`${aberto.slug} · versão atual v${aberto.versoes} · ${aberto.sobreTenantNome ?? "sem cliente"}`}
               title={aberto.name}
             >
               {kind === "BPMN" ? (

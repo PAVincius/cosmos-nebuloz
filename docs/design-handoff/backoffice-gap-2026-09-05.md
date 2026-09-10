@@ -53,11 +53,11 @@ dimensão o código está à frente, e recriar o canvas do protótipo seria regr
 | T3 | Paleta lateral (`start`/`task`/`gateway`/`end`) com botões de inserir | Paleta nativa do bpmn-js | Equivalente funcional, visual diferente | S se quiser o visual do design |
 | T4 | Painel "Propriedades" à direita (nome, tipo, posição, ID) | Properties panel do bpmn-js | Equivalente no BPMN; **ausente no Mermaid** (lá não faz sentido — não há nó selecionável) | — |
 | T5 | Card "Versões" com `v4/v3/v2`, autor, nota, `current` | `SectionCard` "Histórico", append-only, lê `StaffDiagramVersion` | Código à frente: o design é lista estática, o código tem entidade e nota obrigatória | — |
-| T6 | `<select>` de tenant no header do BPMN (`TENANTS`) | `sobreTenantId` **existe no schema, nunca é escrito nem lido** pela action nem pela tela | **Lacuna real.** O campo está lá com comentário explicando por que existe, e nada o preenche | M |
+| T6 | `<select>` de tenant no header do BPMN (`TENANTS`) | ✅ 2026-09-07: `definirClienteDoDiagramaAction` escreve, `getDiagram` lê, seletor no cabeçalho do diagrama aberto | Fechado. O campo saiu de schema morto | ~~M~~ |
 | T7 | Botão "Publicar versão" (`WriteButton`, toast "v5 publicada · diff por elemento no audit") | Salvar cria revisão; `logPlatformAudit` na action | Convergente. O design promete "diff por elemento"; o código guarda o texto inteiro por versão, sem diff em tela | M para o diff |
-| T8 | Botão "Exportar SVG" no `DiagramScreen` | **Não existe** | Lacuna | S |
+| T8 | Botão "Exportar SVG" no `DiagramScreen` | ✅ 2026-09-07: botão `SVG` ao lado do zoom, Blob da prévia já em memória | Fechado | ~~S~~ |
 | T9 | Toggle segmentado Canvas / Código no `DiagramScreen` | Editor + prévia lado a lado, sempre visíveis | Diverge por escolha, e a do código é melhor para Mermaid | — |
-| T10 | Badge `self-hosted` no header, tom `purple` (BPMN) e `blue` (diagramas) | `PageHeader` sem badge, sem `tone` | Cosmético | S |
+| T10 | Badge `self-hosted` no header, tom `purple` (BPMN) e `blue` (diagramas) | ✅ 2026-09-07: `meta={<Badge/>}` e `tone` nas duas páginas — o `PageHeader` já aceitava os dois | Fechado | ~~S~~ |
 | T11 | `WriteButton` desabilitando escrita para MEMBER com motivo no `title` | `podeEscrever` desce de `requirePlatformStaff().canWrite`; `components/write-button.tsx` existe | Convergente | — |
 | T12 | Nada sobre importar arquivo | `FormularioNovo` aceita upload `.bpmn/.xml/.mmd`, teto de 2 MB | Código à frente | — |
 | T13 | Legenda de tipos de nó (App / Serviço / Dado / Externo) | Não há tipagem de nó — Mermaid não tem esse conceito | Não portável. Era um artefato da DSL fictícia | — |
@@ -287,7 +287,19 @@ O `README.md` do bundle pede que se pergunte antes de construir.
 
 ## 8. Ordem sugerida de implementação
 
-Por dependência, não por valor. Nada começou.
+Por dependência, não por valor.
+
+> **Estado em 2026-09-07.** Já não é "nada começou".
+> **Bloco 2 (funil)** e **bloco 3 (mapa de processos)** foram entregues —
+> `StaffProcess`/`StaffProcessEdge` no schema, `ferramentas/processos/` na
+> árvore, e os registros em `.claude/completions/2026-09-06-funil-v2.md` e
+> `2026-09-06-mapa-de-processos.md`. **Bloco 1 (ferramentas)** foi fechado hoje:
+> T6, T8 e T10 abaixo. As quatro superfícies da §5 viraram tela pelo plano
+> `2026-09-05-telas-empresa-modelo.md` (`empresa/fornecedores`,
+> `empresa/consentimento`, `empresa/cac`, `empresa/financeiro`) — sem desenho do
+> Claude Design, construídas sobre as primitivas do kit, que era a saída
+> prevista na §5.
+> **Continua aberto**: bloco 0, bloco 4 e o bloco 5 (LAB, bloqueado por decisão).
 
 **Bloco 0 — barato e desbloqueia o resto**
 1. Ícones faltantes (`graph`, `drive`, `mic`, `layers2`) em `cosmos/icons.tsx`. S.
@@ -295,9 +307,16 @@ Por dependência, não por valor. Nada começou.
    `StatusDot`, `TableHead`/`TableRow` para o pacote se forem usados fora daqui. S.
    `ToastStack` no kit junto, se a pergunta 10 for "adotar". S.
 
-**Bloco 1 — ferramentas, o foco mais barato**
-3. `sobreTenantId` na tela e na action do estúdio (T6). M.
-4. Exportar SVG no Mermaid (T8) e badge/tom no `PageHeader` (T10). S.
+**Bloco 1 — ferramentas, o foco mais barato** — ✅ feito em 2026-09-07
+3. ~~`sobreTenantId` na tela e na action do estúdio (T6)~~. `definirClienteDoDiagramaAction`
+   grava o campo, `getDiagram` devolve id e nome, e o seletor fica no cabeçalho
+   do diagrama aberto. Fora do `updateDiagramAction` de propósito: trocar de
+   cliente não muda o desenho, e uma revisão sem diferença no `source` faria o
+   histórico responder "o que mudou" com "nada".
+4. ~~Exportar SVG no Mermaid (T8) e badge/tom no `PageHeader` (T10)~~. O botão
+   `SVG` baixa a prévia que já está em memória, sem ida ao servidor; o
+   `PageHeader` ganhou `tone` e o selo `self-hosted` — `purple` no BPMN, `blue`
+   nos diagramas, como o design pedia.
 
 **Bloco 2 — funil, porque o mapa depende do vocabulário dele**
 5. Decidir a pergunta 6; se forem quatro estágios, migration do enum. M.
