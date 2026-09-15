@@ -50,7 +50,22 @@ export default function AssessmentDetailScreen({ param }: ScreenProps) {
   const [tab, setTab] = useState<string | null>(null);
 
   if (error) {
-    return <ScreenError message={error} onRetry={reload} />;
+    // O erro da action chega cru ("id: Invalid cuid") — vocabulário do Zod,
+    // não do produto. Quem cai aqui digitou um link incompleto ou abriu um
+    // assessment que já não existe, e precisa de um caminho de volta, não de
+    // um nome de validador.
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <BackLink
+          label="Assessments"
+          onClick={() => router.push("/meridian")}
+        />
+        <ScreenError
+          message="Este assessment não foi encontrado. O link pode estar incompleto, ou o diagnóstico foi removido."
+          onRetry={reload}
+        />
+      </div>
+    );
   }
   if (loading || !data) {
     return <SkeletonCard />;

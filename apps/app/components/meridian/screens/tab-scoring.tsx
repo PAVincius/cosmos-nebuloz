@@ -452,11 +452,15 @@ export default function ScoringTab({
                   boxShadow: `0 0 9px 1px rgba(var(--${tone}-rgb),.5)`,
                 }}
               />
+              {/* O nome do eixo é a identidade do card e nunca pode virar
+                  "Infrastru…". Quando nome e selo não cabem na mesma linha,
+                  o selo desce — `flexWrap` — em vez de o nome ser cortado. */}
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
+                  flexWrap: "wrap",
+                  gap: "4px 8px",
                   minHeight: 22,
                 }}
               >
@@ -469,10 +473,7 @@ export default function ScoringTab({
                   style={{
                     fontSize: 12.5,
                     fontWeight: 800,
-                    flex: 1,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    flex: "1 0 auto",
                   }}
                 >
                   {AXES[x].label}

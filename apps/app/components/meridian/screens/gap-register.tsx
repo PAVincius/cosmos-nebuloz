@@ -439,176 +439,192 @@ function GapRegisterBody() {
         />
       </div>
 
+      {/* As cinco colunas fixas somam 570px. Abaixo de ~900px de conteúdo a
+          coluna "Lacuna" — a única que carrega o texto — ficava com dezenas de
+          pixels e cada gap virava doze linhas de uma palavra. Rolagem
+          horizontal dentro do card mantém a medida legível; a tela inteira
+          nunca rola de lado. */}
       <Card pad={false}>
-        <TableHead
-          cols={COLS}
-          labels={[
-            "Gap",
-            "Lacuna",
-            "Custo de atraso",
-            "Confiança",
-            "Esforço",
-            "Estado",
-          ]}
-        />
-        {loading ? (
-          <div style={{ padding: 16 }}>
-            <SkeletonCard />
-          </div>
-        ) : rows.length === 0 ? (
-          <div style={{ padding: 24 }}>
-            <SmartEmptyState
-              icon="crosshair"
-              onPrimary={() => {
-                setAxis("all");
-                setSeverity("all");
-                setState("all");
-              }}
-              primaryIcon="minus"
-              primaryLabel="Limpar filtros"
-              subtitle="Ajuste os filtros. Registro vazio de verdade só acontece depois de uma reavaliação que fecha tudo."
-              title="Nenhum gap neste recorte"
-              tone="accent"
-            />
-          </div>
-        ) : (
-          rows.map((g, i) => (
-            <TableRow
+        <div className="scroll" style={{ overflowX: "auto" }}>
+          <div style={{ minWidth: 900 }}>
+            <TableHead
               cols={COLS}
-              key={g.id}
-              label={`Abrir gap ${g.code}`}
-              last={i === rows.length - 1}
-              onClick={() =>
-                modal.open(<GapDetail gap={g} onClose={modal.close} />)
-              }
-            >
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                  minWidth: 0,
-                }}
-              >
-                <span
-                  className="mono"
-                  style={{ fontSize: 12, fontWeight: 800, color: "var(--ink)" }}
-                >
-                  {g.code}
-                </span>
-                <span
-                  className="mono"
-                  style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
-                >
-                  {g.assessmentCode}
-                </span>
-              </span>
-
-              <span style={{ minWidth: 0 }}>
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--ink)",
-                    lineHeight: 1.45,
+              labels={[
+                "Gap",
+                "Lacuna",
+                "Custo de atraso",
+                "Confiança",
+                "Esforço",
+                "Estado",
+              ]}
+            />
+            {loading ? (
+              <div style={{ padding: 16 }}>
+                <SkeletonCard />
+              </div>
+            ) : rows.length === 0 ? (
+              <div style={{ padding: 24 }}>
+                <SmartEmptyState
+                  icon="crosshair"
+                  onPrimary={() => {
+                    setAxis("all");
+                    setSeverity("all");
+                    setState("all");
                   }}
-                >
-                  {g.statement}
-                </span>
-                <span
-                  style={{
-                    display: "flex",
-                    gap: 7,
-                    marginTop: 5,
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <Badge tone={SEVERITY[g.severity].tone}>
-                    {AXES[g.axis].label}
-                  </Badge>
-                  <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-                    {g.orgName} · {g.ownerLabel}
-                  </span>
-                </span>
-              </span>
-
-              <span style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                <span
-                  style={{
-                    flex: 1,
-                    minWidth: 40,
-                    height: 5,
-                    borderRadius: 99,
-                    background: "var(--surface-3)",
-                    overflow: "hidden",
-                  }}
+                  primaryIcon="minus"
+                  primaryLabel="Limpar filtros"
+                  subtitle="Ajuste os filtros. Registro vazio de verdade só acontece depois de uma reavaliação que fecha tudo."
+                  title="Nenhum gap neste recorte"
+                  tone="accent"
+                />
+              </div>
+            ) : (
+              rows.map((g, i) => (
+                <TableRow
+                  cols={COLS}
+                  key={g.id}
+                  label={`Abrir gap ${g.code}`}
+                  last={i === rows.length - 1}
+                  onClick={() =>
+                    modal.open(<GapDetail gap={g} onClose={modal.close} />)
+                  }
                 >
                   <span
                     style={{
-                      display: "block",
-                      height: "100%",
-                      width: `${(g.costOfDelay / maxCod) * 100}%`,
-                      borderRadius: 99,
-                      background: `var(--${SEVERITY[g.severity].tone})`,
-                    }}
-                  />
-                </span>
-                <span
-                  className="mono"
-                  style={{
-                    fontSize: 12.5,
-                    fontWeight: 800,
-                    color: `var(--${SEVERITY[g.severity].tone}-text)`,
-                  }}
-                >
-                  {g.costOfDelay}
-                </span>
-              </span>
-
-              <span>
-                <ConfPill conf={g.confidence} size="sm" />
-              </span>
-
-              <span
-                className="mono"
-                style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
-              >
-                {EFFORT[g.effort] ?? g.effort}
-              </span>
-
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 3,
-                  alignItems: "flex-start",
-                  minWidth: 0,
-                }}
-              >
-                <Badge tone={GAP_STATE[g.state].tone}>
-                  {GAP_STATE[g.state].label}
-                </Badge>
-                {g.promotion && (
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 10,
-                      color: "var(--ink-faint)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      maxWidth: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                      minWidth: 0,
                     }}
                   >
-                    → {g.promotion.product} {g.promotion.entityId ?? "pendente"}
+                    <span
+                      className="mono"
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      {g.code}
+                    </span>
+                    <span
+                      className="mono"
+                      style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                    >
+                      {g.assessmentCode}
+                    </span>
                   </span>
-                )}
-              </span>
-            </TableRow>
-          ))
-        )}
+
+                  <span style={{ minWidth: 0 }}>
+                    <span
+                      style={{
+                        display: "block",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      {g.statement}
+                    </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        gap: 7,
+                        marginTop: 5,
+                        flexWrap: "wrap",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Badge tone={SEVERITY[g.severity].tone}>
+                        {AXES[g.axis].label}
+                      </Badge>
+                      <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                        {g.orgName} · {g.ownerLabel}
+                      </span>
+                    </span>
+                  </span>
+
+                  <span
+                    style={{ display: "flex", alignItems: "center", gap: 9 }}
+                  >
+                    <span
+                      style={{
+                        flex: 1,
+                        minWidth: 40,
+                        height: 5,
+                        borderRadius: 99,
+                        background: "var(--surface-3)",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "block",
+                          height: "100%",
+                          width: `${(g.costOfDelay / maxCod) * 100}%`,
+                          borderRadius: 99,
+                          background: `var(--${SEVERITY[g.severity].tone})`,
+                        }}
+                      />
+                    </span>
+                    <span
+                      className="mono"
+                      style={{
+                        fontSize: 12.5,
+                        fontWeight: 800,
+                        color: `var(--${SEVERITY[g.severity].tone}-text)`,
+                      }}
+                    >
+                      {g.costOfDelay}
+                    </span>
+                  </span>
+
+                  <span>
+                    <ConfPill conf={g.confidence} size="sm" />
+                  </span>
+
+                  <span
+                    className="mono"
+                    style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
+                  >
+                    {EFFORT[g.effort] ?? g.effort}
+                  </span>
+
+                  <span
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 3,
+                      alignItems: "flex-start",
+                      minWidth: 0,
+                    }}
+                  >
+                    <Badge tone={GAP_STATE[g.state].tone}>
+                      {GAP_STATE[g.state].label}
+                    </Badge>
+                    {g.promotion && (
+                      <span
+                        className="mono"
+                        style={{
+                          fontSize: 10,
+                          color: "var(--ink-faint)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        → {g.promotion.product}{" "}
+                        {g.promotion.entityId ?? "pendente"}
+                      </span>
+                    )}
+                  </span>
+                </TableRow>
+              ))
+            )}
+          </div>
+        </div>
       </Card>
 
       <SectionCard

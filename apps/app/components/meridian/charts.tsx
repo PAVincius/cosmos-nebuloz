@@ -86,28 +86,45 @@ export function Radar({
   bands?: Record<MeridianAxis, Band> | null;
   size?: number;
 }) {
+  // Os rótulos ficam FORA do pentágono, então o SVG precisa ser mais largo que
+  // alto: "Infrastructure 42" com âncora no meio, a 19px da borda, saía
+  // cortado como "astructure 42" em qualquer largura de tela. A margem
+  // lateral dá espaço ao rótulo mais longo, e a âncora segue o lado — quem
+  // está à esquerda do centro termina no ponto, quem está à direita começa
+  // nele — para o texto crescer para fora, nunca por cima do gráfico.
+  const LABEL_MARGIN = 56;
   const c = size / 2;
+  const cx = c + LABEL_MARGIN;
   const R = c - 40;
   const byAxis = new Map(scores.map((s) => [s.axis, s.score]));
   const mine = AXIS_IDS.map((a) => byAxis.get(a) ?? 0);
   const median = bands ? AXIS_IDS.map((a) => bands[a].p50) : null;
 
+  const angle = (i: number) =>
+    -Math.PI / 2 + (i * 2 * Math.PI) / AXIS_IDS.length;
   const pt = (i: number, v: number): [number, number] => {
-    const ang = -Math.PI / 2 + (i * 2 * Math.PI) / AXIS_IDS.length;
+    const ang = angle(i);
     return [
-      c + R * (v / 100) * Math.cos(ang),
+      cx + R * (v / 100) * Math.cos(ang),
       c + R * (v / 100) * Math.sin(ang),
     ];
   };
   const poly = (vals: number[]) =>
     vals.map((v, i) => pt(i, v).join(",")).join(" ");
+  const anchorFor = (i: number): "start" | "middle" | "end" => {
+    const cos = Math.cos(angle(i));
+    if (Math.abs(cos) < 0.2) {
+      return "middle";
+    }
+    return cos < 0 ? "end" : "start";
+  };
 
   return (
     <svg
       aria-label={`Radar de prontidão: ${AXIS_IDS.map((a, i) => `${AXES[a].label} ${mine[i]}`).join(", ")}`}
       height={size}
       role="img"
-      width={size}
+      width={size + LABEL_MARGIN * 2}
     >
       {[25, 50, 75, 100].map((ring) => (
         <polygon
@@ -125,7 +142,7 @@ export function Radar({
             key={a}
             stroke="var(--hairline)"
             strokeWidth="1"
-            x1={c}
+            x1={cx}
             x2={px}
             y1={c}
             y2={py}
@@ -164,15 +181,15 @@ export function Radar({
       })}
       {AXIS_IDS.map((a, i) => {
         const [px, py] = pt(i, 100);
-        const lx = c + (px - c) * 1.22;
-        const ly = c + (py - c) * 1.22;
+        const lx = cx + (px - cx) * 1.14;
+        const ly = c + (py - c) * 1.18;
         return (
           <text
             dy=".34em"
             fill="var(--ink-muted)"
             key={a}
             style={{ fontSize: 10.5, fontWeight: 700 }}
-            textAnchor="middle"
+            textAnchor={anchorFor(i)}
             x={lx}
             y={ly}
           >

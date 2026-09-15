@@ -156,12 +156,15 @@ export default function BenchmarkScreen() {
                     agregado existe, leitura bloqueada
                   </span>
                 ) : (
+                  // Barra com o número embaixo. Só a barra, em 24px de altura,
+                  // punha medianas de 47 e 64 a 4px uma da outra — cinco
+                  // quadrados iguais que não diziam nada. O número é a
+                  // leitura; a barra é o relance.
                   <span
                     style={{
                       display: "flex",
-                      gap: 4,
+                      gap: 8,
                       alignItems: "flex-end",
-                      height: 24,
                     }}
                   >
                     {AXIS_IDS.map((x) => (
@@ -169,14 +172,35 @@ export default function BenchmarkScreen() {
                         className="chart-hit"
                         key={x}
                         style={{
-                          width: 12,
-                          height: Math.max(4, (c.bands[x].p50 / 100) * 24),
-                          borderRadius: 2,
-                          background: "var(--accent)",
-                          opacity: 0.75,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: 3,
+                          width: 22,
                         }}
                         title={`${AXES[x].label}: p50 ${c.bands[x].p50}`}
-                      />
+                      >
+                        <span
+                          style={{
+                            width: 12,
+                            height: Math.max(3, (c.bands[x].p50 / 100) * 28),
+                            borderRadius: 2,
+                            background: "var(--accent)",
+                            opacity: 0.75,
+                          }}
+                        />
+                        <span
+                          className="mono"
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 700,
+                            color: "var(--ink-muted)",
+                            fontVariantNumeric: "tabular-nums",
+                          }}
+                        >
+                          {c.bands[x].p50}
+                        </span>
+                      </span>
                     ))}
                   </span>
                 )}
