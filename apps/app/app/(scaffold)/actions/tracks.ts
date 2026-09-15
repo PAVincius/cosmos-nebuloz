@@ -57,6 +57,18 @@ export type OverrideRate = {
   rate: number;
 };
 
+/** Lacuna do Meridian promovida para o Scaffold e ainda sem trilha — S-01. É
+ *  a fila de entrada do portfólio: promoção sem trilha é promessa sem dono. */
+export type PendingPromotion = {
+  id: string;
+  gapId: string;
+  gapCode: string;
+  statement: string;
+  promotedAt: Date;
+};
+
+export type ScaffoldMember = { id: string; name: string; role: string };
+
 /**
  * O portfólio inteiro numa chamada.
  *
@@ -66,6 +78,9 @@ export type OverrideRate = {
  */
 export type PortfolioSummary = {
   tracks: TrackSummary[];
+  pendingPromotions: PendingPromotion[];
+  /** Quem pode ser dono ou consultor de uma trilha nova. */
+  members: ScaffoldMember[];
   embeddedCount: number;
   stalledCount: number;
   gateReadyCount: number;
@@ -342,53 +357,82 @@ export async function listTracks(
     const input = ListTracksSchema.parse(raw);
 
     return withTenantDb(ctx.tenantId, async (db) => {
-      const [rows, settings, gateResults] = await Promise.all([
-        db.scaffoldTrack.findMany({
-          where: {
-            tenantId: ctx.tenantId,
-            ...(input.status ? { status: input.status } : {}),
-            ...(input.phase ? { currentPhase: input.phase } : {}),
-            ...(input.archetype ? { archetype: input.archetype } : {}),
-            ...(input.ownerId ? { ownerId: input.ownerId } : {}),
-          },
-          orderBy: [{ lastGateAt: "asc" }, { startedAt: "asc" }],
-          select: {
-            id: true,
-            code: true,
-            processName: true,
-            archetype: true,
-            currentPhase: true,
-            status: true,
-            ownerId: true,
-            consultantId: true,
-            sourceGapId: true,
-            startedAt: true,
-            lastGateAt: true,
-            templateVersion: { select: { label: true } },
-            phases: { select: { phase: true, state: true } },
-            businessCase: { select: { signedVersionId: true } },
-          },
-        }),
-        db.scaffoldSettings.findUnique({
-          where: { tenantId: ctx.tenantId },
-          select: { stallThresholdDays: true },
-        }),
-        // SG-08: a taxa sai dos resultados de gate, não de um contador na
-        // trilha — contador desincronizaria do registro append-only, e o
-        // registro é a evidência.
-        db.scaffoldGateResult.groupBy({
-          by: ["outcome"],
-          where: { tenantId: ctx.tenantId },
-          _count: { _all: true },
-        }),
-      ]);
+      const [rows, settings, gateResults, promotions, memberships] =
+        await Promise.all([
+          db.scaffoldTrack.findMany({
+            where: {
+              tenantId: ctx.tenantId,
+              ...(input.status ? { status: input.status } : {}),
+              ...(input.phase ? { currentPhase: input.phase } : {}),
+              ...(input.archetype ? { archetype: input.archetype } : {}),
+              ...(input.ownerId ? { ownerId: input.ownerId } : {}),
+            },
+            orderBy: [{ lastGateAt: "asc" }, { startedAt: "asc" }],
+            select: {
+              id: true,
+              code: true,
+              processName: true,
+              archetype: true,
+              currentPhase: true,
+              status: true,
+              ownerId: true,
+              consultantId: true,
+              sourceGapId: true,
+              startedAt: true,
+              lastGateAt: true,
+              templateVersion: { select: { label: true } },
+              phases: { select: { phase: true, state: true } },
+              businessCase: { select: { signedVersionId: true } },
+            },
+          }),
+          db.scaffoldSettings.findUnique({
+            where: { tenantId: ctx.tenantId },
+            select: { stallThresholdDays: true },
+          }),
+          // SG-08: a taxa sai dos resultados de gate, não de um contador na
+          // trilha — contador desincronizaria do registro append-only, e o
+          // registro é a evidência.
+          db.scaffoldGateResult.groupBy({
+            by: ["outcome"],
+            where: { tenantId: ctx.tenantId },
+            _count: { _all: true },
+          }),
+          // S-01: promoção do Meridian que ainda não virou trilha. Lida daqui, e
+          // não de uma action do Meridian, porque é o Scaffold que a consome —
+          // mesma tabela, mesmo tenant, sem travessia.
+          db.meridianGapPromotion.findMany({
+            where: {
+              tenantId: ctx.tenantId,
+              targetProduct: "SCAFFOLD",
+              targetEntityId: null,
+              revokedAt: null,
+            },
+            orderBy: { promotedAt: "asc" },
+            select: {
+              id: true,
+              gapId: true,
+              promotedAt: true,
+              gap: { select: { code: true, statement: true } },
+            },
+          }),
+          db.scaffoldMembership.findMany({
+            where: { tenantId: ctx.tenantId },
+            select: { userId: true, role: true },
+          }),
+        ]);
 
       // `ownerId` não tem FK (o dono é usuário da plataforma, a trilha é do
-      // tenant), então o nome vem numa segunda consulta em vez de join.
-      const ownerIds = [...new Set(rows.map((t) => t.ownerId))];
-      const owners = ownerIds.length
+      // tenant), então o nome vem numa segunda consulta em vez de join. A
+      // mesma consulta resolve os membros: quem pode ser dono de trilha nova.
+      const userIds = [
+        ...new Set([
+          ...rows.map((t) => t.ownerId),
+          ...memberships.map((m) => m.userId),
+        ]),
+      ];
+      const owners = userIds.length
         ? await db.user.findMany({
-            where: { id: { in: ownerIds } },
+            where: { id: { in: userIds } },
             select: { id: true, name: true, email: true },
           })
         : [];
@@ -428,6 +472,18 @@ export async function listTracks(
 
       return {
         tracks,
+        pendingPromotions: promotions.map((p) => ({
+          id: p.id,
+          gapId: p.gapId,
+          gapCode: p.gap.code,
+          statement: p.gap.statement,
+          promotedAt: p.promotedAt,
+        })),
+        members: memberships.map((m) => ({
+          id: m.userId,
+          name: ownerName.get(m.userId) ?? m.userId,
+          role: m.role,
+        })),
         embeddedCount: tracks.filter((t) => t.status === "EMBEDDED").length,
         stalledCount: tracks.filter((t) => isStalled(t.stalledDays, threshold))
           .length,
