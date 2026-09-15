@@ -505,6 +505,8 @@ export type TrackDetail = {
   startedAt: Date;
   templateLabel: string;
   templateName: string;
+  /** Quem assina o gate por default — ver `closeGate` na tela. */
+  ownerId: string;
   ownerName: string | null;
   consultantName: string | null;
   sourceGap: { code: string; statement: string } | null;
@@ -638,6 +640,7 @@ export async function getTrack(
         startedAt: track.startedAt,
         templateLabel: track.templateVersion.label,
         templateName: track.templateVersion.template.name,
+        ownerId: track.ownerId,
         ownerName: nameOf(track.ownerId),
         consultantName: nameOf(track.consultantId),
         sourceGap: gap,

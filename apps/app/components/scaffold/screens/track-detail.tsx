@@ -19,7 +19,12 @@ import {
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { exportHandoverPack } from "@/app/(scaffold)/actions/export";
-import { acknowledgeCharterPolicy } from "@/app/(scaffold)/actions/gates";
+import {
+  acknowledgeCharterPolicy,
+  closePhase,
+  overridePhase,
+  reopenPhase,
+} from "@/app/(scaffold)/actions/gates";
 import { setStepState } from "@/app/(scaffold)/actions/steps";
 import {
   getTrack,
@@ -33,11 +38,14 @@ import {
 import { PHASE, PHASE_ORDER, PHASE_STATE } from "@/lib/scaffold/phases";
 import {
   Eyebrow,
+  Field,
   MetaCell,
+  ModalShell,
   ScreenError,
   SkeletonCard,
   SmartEmptyState,
   StatusDot,
+  Textarea,
 } from "../base";
 
 const GATE_VIS = {
@@ -454,8 +462,46 @@ function StepList({
  *  decidiu, o SNAPSHOT congelado — não os critérios de hoje. Mostrar o template
  *  atual sobre uma decisão passada reescreveria a história do gate na tela,
  *  mesmo com o banco correto (SG-07). */
-function GatePanel({ phase }: { phase: TrackDetailPhase }) {
-  const decided = phase.result;
+type CriterionFacts = Record<string, { met: boolean }>;
+
+/** Recusa do gate vinda do servidor. Fica dentro do painel: derrubar a tela
+ *  inteira por "falta um critério" esconderia a trilha que a pessoa precisa
+ *  ver para resolver exatamente isso. */
+type GateNotice = { message: string; blockers: string[] };
+
+/**
+ * O gate engine na tela. É onde `closePhase` — a única porta para CLOSED —
+ * vira um botão.
+ *
+ * Quem avalia marca critério por critério e fecha. Se algum não foi atendido,
+ * o servidor recusa com SG-02, a fase vai a BLOCKED, e só a partir daí o
+ * override aparece: não há como dispensar critério sem antes ter tentado
+ * fechar com ele. Reabrir só existe para fase fechada, e pede justificativa
+ * como qualquer decisão que rescreve o histórico.
+ */
+function GatePanel({
+  phase,
+  busy,
+  notice,
+  onClose,
+  onOverride,
+  onReopen,
+}: {
+  phase: TrackDetailPhase;
+  busy: boolean;
+  notice: GateNotice | null;
+  onClose: (facts: CriterionFacts) => void;
+  onOverride: (unmet: string[]) => void;
+  onReopen: () => void;
+}) {
+  // `result` é o topo de uma pilha append-only (SG-07): depois de reabrir ele
+  // continua lá, mas a fase não está mais decidida. Quem manda é o estado.
+  const closed = phase.state === "CLOSED" || phase.state === "OBSERVING";
+  const decided = closed ? phase.result : null;
+  const decidable =
+    !closed && (phase.state === "GATE_READY" || phase.state === "BLOCKED");
+  const [facts, setFacts] = useState<CriterionFacts>({});
+
   const snapshot = decided?.criteriaSnapshot as
     | { key: string; statement: string; met: boolean; note: string | null }[]
     | undefined;
@@ -463,10 +509,15 @@ function GatePanel({ phase }: { phase: TrackDetailPhase }) {
     snapshot ??
     phase.criteria.map((c) => ({
       ...c,
-      met: false,
+      met: facts[c.key]?.met ?? false,
       note: null as string | null,
     }));
   const met = criteria.filter((c) => c.met).length;
+  const statementOf = (key: string) =>
+    phase.criteria.find((c) => c.key === key)?.statement ?? key;
+
+  const toggle = (key: string) =>
+    setFacts((f) => ({ ...f, [key]: { met: !(f[key]?.met ?? false) } }));
 
   return (
     <SectionCard
@@ -501,16 +552,33 @@ function GatePanel({ phase }: { phase: TrackDetailPhase }) {
               key={c.key}
               style={{ display: "flex", gap: 10, alignItems: "baseline" }}
             >
-              <Icon
-                name={c.met ? "check" : "x"}
-                size={13}
-                strokeWidth={2.6}
-                style={{
-                  color: c.met ? "var(--green-text)" : "var(--red-text)",
-                  flexShrink: 0,
-                  transform: "translateY(2px)",
-                }}
-              />
+              {decidable ? (
+                <input
+                  aria-label={c.statement}
+                  checked={c.met}
+                  disabled={busy}
+                  onChange={() => toggle(c.key)}
+                  style={{
+                    flexShrink: 0,
+                    margin: 0,
+                    transform: "translateY(2px)",
+                    accentColor: "var(--green)",
+                    cursor: busy ? "default" : "pointer",
+                  }}
+                  type="checkbox"
+                />
+              ) : (
+                <Icon
+                  name={c.met ? "check" : "x"}
+                  size={13}
+                  strokeWidth={2.6}
+                  style={{
+                    color: c.met ? "var(--green-text)" : "var(--red-text)",
+                    flexShrink: 0,
+                    transform: "translateY(2px)",
+                  }}
+                />
+              )}
               <span
                 style={{
                   fontSize: 12.5,
@@ -564,6 +632,97 @@ function GatePanel({ phase }: { phase: TrackDetailPhase }) {
           {met}/{criteria.length} atendidos
         </span>
       </div>
+
+      {notice ? (
+        <div
+          role="alert"
+          style={{
+            marginTop: 12,
+            padding: "11px 12px",
+            borderRadius: "var(--r-sm)",
+            background: "var(--red-soft)",
+            border: "1px solid rgba(var(--red-rgb),.28)",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12.5,
+              lineHeight: 1.6,
+              color: "var(--ink)",
+            }}
+          >
+            {notice.message}
+          </p>
+          {notice.blockers.length > 0 ? (
+            <ul
+              style={{
+                margin: "8px 0 0",
+                paddingLeft: 18,
+                fontSize: 12,
+                lineHeight: 1.6,
+                color: "var(--ink-muted)",
+              }}
+            >
+              {notice.blockers.map((k) => (
+                <li key={k}>{statementOf(k)}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+
+      {decidable ? (
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            marginTop: 12,
+            justifyContent: "flex-end",
+            flexWrap: "wrap",
+          }}
+        >
+          {phase.state === "BLOCKED" && notice && notice.blockers.length > 0 ? (
+            <Button
+              disabled={busy}
+              icon="shield"
+              onClick={() => onOverride(notice.blockers)}
+              size="sm"
+              variant="secondary"
+            >
+              Registrar override
+            </Button>
+          ) : null}
+          <Button
+            disabled={busy}
+            icon="check"
+            onClick={() => onClose(facts)}
+            size="sm"
+          >
+            Fechar gate
+          </Button>
+        </div>
+      ) : null}
+
+      {closed ? (
+        <div
+          style={{
+            display: "flex",
+            marginTop: 12,
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            disabled={busy}
+            icon="refresh"
+            onClick={onReopen}
+            size="sm"
+            variant="secondary"
+          >
+            Reabrir fase
+          </Button>
+        </div>
+      ) : null}
 
       {decided?.override && (
         <div
@@ -827,6 +986,14 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [gateNotice, setGateNotice] = useState<GateNotice | null>(null);
+  // Um modal por vez: override pede a lista do que foi dispensado; reabrir
+  // pede só a justificativa. Os dois escrevem no histórico do gate.
+  const [modal, setModal] = useState<
+    { kind: "override"; unmet: string[] } | { kind: "reopen" } | null
+  >(null);
+  const [rationale, setRationale] = useState("");
+  const [modalError, setModalError] = useState<string | null>(null);
   // A fase ativa muda com o clique no stepper; o callback de aceite é criado
   // antes dela ser resolvida, então o id viaja por ref.
   const activePhaseId = useRef<string | null>(null);
@@ -894,6 +1061,86 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     },
     [load]
   );
+
+  // Recusa de regra (tem `code`) fica no painel do gate; falha de servidor
+  // derruba a tela como qualquer outra.
+  const gateRefused = useCallback(
+    (res: { error: string; code?: string; blockers?: string[] }) => {
+      if (res.code) {
+        setGateNotice({ message: res.error, blockers: res.blockers ?? [] });
+        return true;
+      }
+      setError(res.error);
+      return false;
+    },
+    []
+  );
+
+  const closeGate = useCallback(
+    async (facts: CriterionFacts) => {
+      if (!(activePhaseId.current && track)) {
+        return;
+      }
+      setBusy(true);
+      const res = await closePhase({
+        phaseInstanceId: activePhaseId.current,
+        // Quem assina o gate é o dono do processo — é a posse nomeada que o
+        // override precisa para valer alguma coisa. Um seletor de aprovador
+        // entra quando houver caso real de outra pessoa assinar.
+        approverId: track.ownerId,
+        criteriaFacts: facts,
+      });
+      setBusy(false);
+      if (res.ok) {
+        setGateNotice(null);
+      } else {
+        gateRefused(res);
+      }
+      // Recarrega nos dois casos: SG-02 move a fase para BLOCKED mesmo
+      // recusando, e o painel precisa refletir isso para oferecer o override.
+      await load();
+    },
+    [load, track, gateRefused]
+  );
+
+  const openModal = useCallback((m: NonNullable<typeof modal>) => {
+    setRationale("");
+    setModalError(null);
+    setModal(m);
+  }, []);
+
+  const submitModal = useCallback(async () => {
+    if (!(activePhaseId.current && modal)) {
+      return;
+    }
+    setBusy(true);
+    const res =
+      modal.kind === "override"
+        ? await overridePhase({
+            phaseInstanceId: activePhaseId.current,
+            unmetCriteria: modal.unmet,
+            rationale,
+          })
+        : await reopenPhase({
+            phaseInstanceId: activePhaseId.current,
+            rationale,
+          });
+    setBusy(false);
+    if (res.ok) {
+      setModal(null);
+      setGateNotice(null);
+      await load();
+      return;
+    }
+    // Recusa fica no modal: a pessoa está no meio de escrever a justificativa
+    // e fechar o modal por cima dela jogaria o texto fora.
+    setModalError(res.error);
+  }, [load, modal, rationale]);
+
+  const selectPhase = useCallback((p: string) => {
+    setGateNotice(null);
+    setPhase(p);
+  }, []);
 
   if (!param) {
     return (
@@ -966,7 +1213,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
 
       <PhaseStepper
         activePhase={activePhase.phase}
-        onSelect={setPhase}
+        onSelect={selectPhase}
         track={track}
       />
 
@@ -1005,7 +1252,16 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
             gap: "var(--gap)",
           }}
         >
-          <GatePanel phase={activePhase} />
+          <GatePanel
+            busy={busy}
+            // Trocar de fase zera o que foi marcado: os critérios são outros.
+            key={activePhase.id}
+            notice={gateNotice}
+            onClose={closeGate}
+            onOverride={(unmet) => openModal({ kind: "override", unmet })}
+            onReopen={() => openModal({ kind: "reopen" })}
+            phase={activePhase}
+          />
           <CharterPolicyCard
             busy={busy}
             onAck={ackPolicy}
@@ -1043,6 +1299,92 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           </SectionCard>
         </div>
       </div>
+
+      {modal ? (
+        <ModalShell
+          actions={
+            <>
+              <Button
+                disabled={busy}
+                onClick={() => setModal(null)}
+                variant="secondary"
+              >
+                Cancelar
+              </Button>
+              <Button
+                disabled={busy || rationale.trim().length < 20}
+                icon={modal.kind === "override" ? "shield" : "refresh"}
+                onClick={submitModal}
+              >
+                {modal.kind === "override"
+                  ? "Registrar override e fechar"
+                  : "Reabrir fase"}
+              </Button>
+            </>
+          }
+          icon={modal.kind === "override" ? "shield" : "refresh"}
+          onClose={() => setModal(null)}
+          subtitle={
+            modal.kind === "override"
+              ? "SG-03 · fica no histórico do gate, com nome e justificativa, para sempre"
+              : "SG-06 · reabrir zera a janela de observação e invalida a entrega"
+          }
+          title={
+            modal.kind === "override"
+              ? `Override do gate — ${PHASE[activePhase.phase].label}`
+              : `Reabrir ${PHASE[activePhase.phase].label}`
+          }
+          tone={modal.kind === "override" ? "amber" : "red"}
+          width={560}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {modal.kind === "override" ? (
+              <div>
+                <Eyebrow style={{ marginBottom: 6 }}>
+                  Critérios que serão dispensados
+                </Eyebrow>
+                <ul
+                  style={{
+                    margin: 0,
+                    paddingLeft: 18,
+                    fontSize: 12.5,
+                    lineHeight: 1.6,
+                    color: "var(--ink)",
+                  }}
+                >
+                  {modal.unmet.map((k) => (
+                    <li key={k}>
+                      {activePhase.criteria.find((c) => c.key === k)
+                        ?.statement ?? k}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <Field
+              error={modalError ?? undefined}
+              hint="Mínimo de 20 caracteres. “ok” e “urgente” não são justificativa — são gate desligado."
+              htmlFor="gate-rationale"
+              label="Justificativa"
+              required
+            >
+              <Textarea
+                autoFocus
+                disabled={busy}
+                id="gate-rationale"
+                invalid={Boolean(modalError)}
+                onChange={(e) => setRationale(e.target.value)}
+                placeholder={
+                  modal.kind === "override"
+                    ? "Por que o critério pode ser dispensado nesta trilha, e o que cobre o risco que ele media."
+                    : "O que voltou a não valer, e o que precisa ser refeito antes de fechar de novo."
+                }
+                value={rationale}
+              />
+            </Field>
+          </div>
+        </ModalShell>
+      ) : null}
     </div>
   );
 }
