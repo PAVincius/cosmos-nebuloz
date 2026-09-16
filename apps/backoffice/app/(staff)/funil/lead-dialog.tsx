@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -185,13 +186,15 @@ function Conteudo({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>{lead.nome}</DialogTitle>
-        <span
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          {lead.nome}
+        </DialogTitle>
+        <DialogDescription
           className="mono"
           style={{ fontSize: 11.5, color: "var(--ink-faint)" }}
         >
           {lead.id.slice(0, 8)} · {contato}
-        </span>
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

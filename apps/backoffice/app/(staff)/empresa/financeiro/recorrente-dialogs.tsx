@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -135,7 +136,13 @@ function FormularioAlterar({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Alterar valor — {assinatura.clienteNome}</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Alterar valor — {assinatura.clienteNome}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Grava um novo valor mensal para a assinatura a partir de uma
+          competência, com o motivo da mudança.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
@@ -265,9 +272,13 @@ function FormularioEncerrar({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
           Encerrar assinatura — {assinatura.clienteNome}
         </DialogTitle>
+        <DialogDescription className="sr-only">
+          Encerra a assinatura numa data, com o motivo. A partir dali ela deixa
+          de contar na receita recorrente.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
@@ -390,7 +401,13 @@ function FormularioCredito({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Consumo do mês — {assinatura.clienteNome}</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Consumo do mês — {assinatura.clienteNome}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Registra os créditos consumidos na competência; o que passar da
+          franquia vira excedente cobrado.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

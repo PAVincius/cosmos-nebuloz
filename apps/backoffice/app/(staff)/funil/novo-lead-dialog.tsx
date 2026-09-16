@@ -4,6 +4,7 @@ import type { ProductModule } from "@repo/database";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -208,10 +209,12 @@ function Formulario({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Novo lead</DialogTitle>
-        <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Novo lead
+        </DialogTitle>
+        <DialogDescription style={{ fontSize: 12, color: "var(--ink-faint)" }}>
           Nasce em Lead, com dono, porta de entrada e um próximo passo datado.
-        </span>
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
