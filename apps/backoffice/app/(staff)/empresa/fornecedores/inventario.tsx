@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import {
   aplicarAcaoDpa,
   exportarAoCharter,
@@ -213,10 +213,15 @@ export function Inventario({
   const [filtro, setFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  // Exportar cria no Charter do cliente e duplicata não se desfaz: o
+  // `pendente` trava o Confirmar da barreira no mesmo render em que o envio
+  // começa, para o segundo clique não exportar duas vezes.
+  const [exportando, iniciarExportacao] = useTransition();
 
   const kpis = useMemo(() => contadores(linhas), [linhas]);
 
   const visiveis = linhas.filter((l) => linhaVisivel(l, filtro));
+  const algumaProvisoria = linhas.some((l) => l.classificacaoProvisoria);
 
   const agir = useCallback(
     async (
@@ -241,23 +246,26 @@ export function Inventario({
     []
   );
 
-  const exportar = useCallback(async () => {
+  const exportar = useCallback(() => {
     setErro(null);
     setAviso(null);
-    const res = await exportarAoCharter({
-      codigos: linhas.map((l) => l.codigo),
+    iniciarExportacao(async () => {
+      const res = await exportarAoCharter({
+        codigos: linhas.map((l) => l.codigo),
+      });
+      if (!res.ok) {
+        setErro(res.error);
+        return;
+      }
+      const n = res.data.exportados.length;
+      setAviso(
+        `${n} ${n === 1 ? "exportado" : "exportados"} ao Charter${
+          res.data.semCorrespondente.length
+            ? `; sem correspondente: ${res.data.semCorrespondente.join(", ")}`
+            : ""
+        }.`
+      );
     });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
-    setAviso(
-      `${res.data.exportados.length} exportados ao Charter${
-        res.data.semCorrespondente.length
-          ? `; sem correspondente: ${res.data.semCorrespondente.join(", ")}`
-          : ""
-      }.`
-    );
   }, [linhas]);
 
   return (
@@ -305,8 +313,9 @@ export function Inventario({
               alvo={`${linhas.length} fornecedores do inventário`}
               consequencia={`Cria ${linhas.length} fornecedores no Charter do cliente; duplicatas não são desfeitas.`}
               desabilitado={linhas.length === 0}
+              executando={exportando}
               onConfirmar={exportar}
-              rotulo="Exportar para o Charter"
+              rotulo={exportando ? "Exportando…" : "Exportar para o Charter"}
               tom="accent"
             />
           ) : (
@@ -327,41 +336,89 @@ export function Inventario({
           />
           {erro ? <Erro>{erro}</Erro> : null}
           {aviso ? (
+            <output
+              style={{
+                display: "block",
+                padding: "9px 11px",
+                borderRadius: "var(--r-md)",
+                background: "var(--green-soft)",
+                border: "1px solid rgba(var(--green-rgb),.3)",
+                color: "var(--green-text)",
+                fontSize: "var(--fs-base)",
+                fontWeight: 600,
+              }}
+            >
+              {aviso}
+            </output>
+          ) : null}
+          {visiveis.length === 0 && filtro !== "all" ? (
+            <p
+              style={{
+                margin: 0,
+                padding: 28,
+                textAlign: "center",
+                fontSize: "var(--fs-base)",
+                lineHeight: 1.6,
+                color: "var(--ink-muted)",
+              }}
+            >
+              Nenhum fornecedor com este filtro.{" "}
+              <button
+                className="btn"
+                onClick={() => setFiltro("all")}
+                style={{
+                  padding: 0,
+                  border: "none",
+                  background: "none",
+                  font: "inherit",
+                  fontWeight: 700,
+                  color: "var(--accent-text)",
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                Limpar filtro
+              </button>
+            </p>
+          ) : (
+            <Tabela larguras={LARGURAS}>
+              <TableHead
+                labels={[
+                  "Cód.",
+                  "Fornecedor",
+                  "DPA",
+                  "Região",
+                  "Retenção",
+                  "Transferência",
+                  "Ação pendente",
+                  "Dono",
+                  "Venda",
+                ]}
+              />
+              <tbody>
+                {visiveis.map((f) => (
+                  <LinhaFornecedor
+                    f={f}
+                    key={f.codigo}
+                    onAgir={agir}
+                    podeEscrever={podeEscrever}
+                  />
+                ))}
+              </tbody>
+            </Tabela>
+          )}
+          {algumaProvisoria ? (
             <p
               style={{
                 margin: 0,
                 fontSize: "var(--fs-nota)",
-                color: "var(--ink-muted)",
+                color: "var(--ink-faint)",
               }}
             >
-              {aviso}
+              * classificação provisória — o documento existe, mas o texto não
+              pôde ser lido (PDF sem camada de texto ou portal dinâmico).
             </p>
           ) : null}
-          <Tabela larguras={LARGURAS}>
-            <TableHead
-              labels={[
-                "Cód.",
-                "Fornecedor",
-                "DPA",
-                "Região",
-                "Retenção",
-                "Transferência",
-                "Ação pendente",
-                "Dono",
-                "Venda",
-              ]}
-            />
-            <tbody>
-              {visiveis.map((f) => (
-                <LinhaFornecedor
-                  f={f}
-                  key={f.codigo}
-                  onAgir={agir}
-                  podeEscrever={podeEscrever}
-                />
-              ))}
-            </tbody>
-          </Tabela>
         </div>
       </SectionCard>
     </>

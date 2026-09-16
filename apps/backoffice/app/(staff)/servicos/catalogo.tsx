@@ -2,7 +2,7 @@
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { type FormEvent, useCallback, useState, useTransition } from "react";
 import {
   createServiceAction,
   type ServiceRow,
@@ -26,6 +26,14 @@ const MODALIDADES = [
   { valor: "RETAINER", rotulo: "Retainer" },
   { valor: "LICENCA", rotulo: "Licença" },
 ];
+
+const FORM_VAZIO = {
+  codigo: "",
+  nome: "",
+  modalidade: "PROJETO",
+  preco: "",
+  unidade: "projeto",
+};
 
 /** Tirar do catálogo some da lista de escolha de quem monta proposta no
  *  mesmo instante — passa pela barreira. Devolver tem volta e continua um
@@ -65,6 +73,12 @@ function acaoDaLinha(
       Devolver
     </button>
   );
+}
+
+/** Quem só lê vê "Ativo" no lugar da ação; o inativo já tem a palavra na
+ *  própria linha, então aqui não repete. */
+function badgeDeLeitura(s: ServiceRow) {
+  return s.ativo ? <Badge tone="green">Ativo</Badge> : null;
 }
 
 /** Uma linha do catálogo. Extraída porque a linha carrega toda a decisão
@@ -125,6 +139,10 @@ function LinhaServico({
           {MODALIDADES.find((m) => m.valor === s.modalidade)?.rotulo ??
             s.modalidade}
         </Badge>
+        {/* A palavra além da opacidade — nos dois papéis: quem só lê via
+            "Fora" à direita, quem escreve via só o "Devolver" e tinha de
+            deduzir o estado do esmaecimento. */}
+        {s.ativo ? null : <Badge tone="neutral">Inativo</Badge>}
         <span
           className="mono"
           style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
@@ -133,13 +151,7 @@ function LinhaServico({
           <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
         </span>
       </Link>
-      {podeEscrever ? (
-        acaoDaLinha(s, onAlternar)
-      ) : (
-        <Badge tone={s.ativo ? "green" : "neutral"}>
-          {s.ativo ? "Ativo" : "Fora"}
-        </Badge>
-      )}
+      {podeEscrever ? acaoDaLinha(s, onAlternar) : badgeDeLeitura(s)}
     </li>
   );
 }
@@ -154,61 +166,58 @@ export function Catalogo({
   const [lista, setLista] = useState(iniciais);
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    codigo: "",
-    nome: "",
-    modalidade: "PROJETO",
-    preco: "",
-    unidade: "projeto",
-  });
+  const [form, setForm] = useState(FORM_VAZIO);
+  // O `pendente` desabilita o botão no mesmo render em que o envio começa —
+  // é o que faz o segundo clique não cadastrar um segundo serviço.
+  const [pendente, iniciar] = useTransition();
 
-  const criar = useCallback(async () => {
-    setErro(null);
-    const res = await createServiceAction({
-      codigo: form.codigo,
-      nome: form.nome,
-      modalidade: form.modalidade as "PROJETO",
-      precoBaseCentavos: paraCentavos(form.preco),
-      unidade: form.unidade,
-    });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
-    setLista((atual) => [
-      {
-        id: res.data.id,
-        codigo: res.data.codigo,
-        nome: form.nome,
-        descricao: null,
-        modalidade: form.modalidade,
-        precoBaseCentavos: paraCentavos(form.preco),
-        unidade: form.unidade,
-        ativo: true,
-        // Espelha os defaults que a action grava. Divergir aqui faria a linha
-        // recém-criada aparecer diferente do que ficou no banco até o próximo
-        // carregamento.
-        trilha: "readiness",
-        unidadeDeCobranca:
-          form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
-        duracao: null,
-        entregaveis: [],
-        papeis: [],
-        preRequisitos: [],
-        moduloVinculado: null,
-        exigeLab: false,
-      },
-      ...atual,
-    ]);
-    setCriando(false);
-    setForm({
-      codigo: "",
-      nome: "",
-      modalidade: "PROJETO",
-      preco: "",
-      unidade: "projeto",
-    });
-  }, [form]);
+  const criar = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      setErro(null);
+      iniciar(async () => {
+        const res = await createServiceAction({
+          codigo: form.codigo,
+          nome: form.nome,
+          modalidade: form.modalidade as "PROJETO",
+          precoBaseCentavos: paraCentavos(form.preco),
+          unidade: form.unidade,
+        });
+        if (!res.ok) {
+          setErro(res.error);
+          return;
+        }
+        setLista((atual) => [
+          {
+            id: res.data.id,
+            codigo: res.data.codigo,
+            nome: form.nome,
+            descricao: null,
+            modalidade: form.modalidade,
+            precoBaseCentavos: paraCentavos(form.preco),
+            unidade: form.unidade,
+            ativo: true,
+            // Espelha os defaults que a action grava. Divergir aqui faria a
+            // linha recém-criada aparecer diferente do que ficou no banco até
+            // o próximo carregamento.
+            trilha: "readiness",
+            unidadeDeCobranca:
+              form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
+            duracao: null,
+            entregaveis: [],
+            papeis: [],
+            preRequisitos: [],
+            moduloVinculado: null,
+            exigeLab: false,
+          },
+          ...atual,
+        ]);
+        setCriando(false);
+        setForm(FORM_VAZIO);
+      });
+    },
+    [form]
+  );
 
   const alternar = useCallback(async (id: string, ativo: boolean) => {
     setErro(null);
@@ -221,6 +230,10 @@ export function Catalogo({
       setErro(res.error);
     }
   }, []);
+
+  const podeCriar =
+    form.codigo.trim().length >= 2 && form.nome.trim().length >= 2 && !pendente;
+  const ativos = lista.filter((s) => s.ativo).length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -239,11 +252,14 @@ export function Catalogo({
           ) : null
         }
         icon="briefcase"
-        subtitle={`${lista.filter((s) => s.ativo).length} ativo(s) de ${lista.length}`}
+        subtitle={`${ativos === 1 ? "1 ativo" : `${ativos} ativos`} de ${lista.length}`}
         title="Catálogo"
       >
         {criando ? (
-          <div
+          // `<form>` e não `<div>`: é o que faz Enter num campo submeter.
+          <form
+            aria-label="Novo serviço"
+            onSubmit={criar}
             style={{
               display: "grid",
               gap: 10,
@@ -318,17 +334,11 @@ export function Catalogo({
               />
             </Campo>
             <div style={{ display: "flex", alignItems: "flex-end" }}>
-              <BotaoPrimario
-                disabled={
-                  form.codigo.trim().length < 2 || form.nome.trim().length < 2
-                }
-                onClick={criar}
-                type="button"
-              >
-                Cadastrar
+              <BotaoPrimario disabled={!podeCriar} type="submit">
+                {pendente ? "Cadastrando…" : "Cadastrar"}
               </BotaoPrimario>
             </div>
-          </div>
+          </form>
         ) : null}
 
         {lista.length === 0 ? (

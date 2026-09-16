@@ -1,7 +1,14 @@
 "use client";
 
-import { Badge, KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
-import { type ReactNode, useCallback, useEffect, useId, useState } from "react";
+import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useState,
+  useTransition,
+} from "react";
 import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import {
@@ -17,6 +24,7 @@ import {
   BotaoSecundario,
   Erro,
   INPUT,
+  rotuloSalvar,
 } from "@/components/campo";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
@@ -27,6 +35,7 @@ import {
   ROTULO_MATURIDADE,
   ROTULO_PROCEDENCIA,
 } from "./registrar";
+import { KpisDoAcervo, LacunasDeIp } from "./resumo";
 
 /** O que a action `registrarReusoAction` devolve — os três campos já vêm
  *  prontos do servidor, nenhum é somado aqui. */
@@ -44,122 +53,6 @@ function rotuloOuBruto<T extends string>(
   chave: string
 ): string {
   return (mapa as Record<string, string>)[chave] ?? chave;
-}
-
-function KpisDoAcervo({ lista }: { lista: IpAssetRow[] }) {
-  const comprovados = lista.filter((a) => a.maturidade === "COMPROVADO").length;
-  const reusos = lista.reduce((soma, a) => soma + a.reusos, 0);
-  const horas = lista.reduce((soma, a) => soma + a.horasPoupadas, 0);
-
-  return (
-    <div
-      style={{
-        display: "grid",
-        gap: 12,
-        gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
-      }}
-    >
-      <KpiCard
-        hint={`${comprovados} comprovado(s) em campo`}
-        icon="book"
-        label="Ativos no catálogo"
-        tone="blue"
-        value={lista.length}
-      />
-      <KpiCard
-        hint="em engajamentos entregues"
-        icon="refresh"
-        label="Reusos acumulados"
-        tone="green"
-        value={reusos}
-      />
-      <KpiCard
-        hint="versus fazer do zero"
-        icon="clock"
-        label="Horas poupadas"
-        tone="accent"
-        value={horas}
-      />
-    </div>
-  );
-}
-
-function LacunasDeIp({
-  lista,
-  servicos,
-}: {
-  lista: IpAssetRow[];
-  servicos: ServiceRow[];
-}) {
-  const comAtivo = new Set(lista.flatMap((a) => a.servicos.map((s) => s.id)));
-  const lacunas = servicos.filter((s) => s.ativo && !comAtivo.has(s.id));
-
-  return (
-    <SectionCard
-      icon="alert"
-      subtitle={`${lacunas.length} serviço(s) sem ativo vinculado`}
-      title="Lacunas de IP"
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {lacunas.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              fontSize: "var(--fs-base)",
-              color: "var(--ink-muted)",
-            }}
-          >
-            Todo serviço ativo tem ao menos um ativo vinculado.
-          </p>
-        ) : (
-          <ul
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            {lacunas.map((s) => (
-              <li
-                key={s.id}
-                style={{
-                  alignItems: "baseline",
-                  display: "flex",
-                  fontSize: "var(--fs-base)",
-                  gap: 8,
-                }}
-              >
-                <span
-                  className="mono"
-                  style={{
-                    color: "var(--ink-faint)",
-                    fontSize: "var(--fs-nota)",
-                  }}
-                >
-                  {s.codigo}
-                </span>
-                <span>{s.nome}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <p
-          style={{
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-nota)",
-            lineHeight: 1.5,
-            margin: 0,
-          }}
-        >
-          Serviço vendido várias vezes sem IP registrado é margem deixada na
-          mesa — e sinal de que alguém está reescrevendo o mesmo material.
-        </p>
-      </div>
-    </SectionCard>
-  );
 }
 
 function BadgesDoAtivo({ ativo }: { ativo: IpAssetRow }) {
@@ -435,7 +328,15 @@ function ExtraDoAtivo({
           {ativo.servicos.map((s) => s.codigo).join(", ") || "sem serviço"}
         </span>
         {ativo.link ? (
-          <span className="mono">{ativo.link}</span>
+          <a
+            className="mono"
+            href={ativo.link}
+            rel="noreferrer"
+            style={{ color: "var(--accent-text)" }}
+            target="_blank"
+          >
+            {ativo.link}
+          </a>
         ) : (
           <span>vive aqui</span>
         )}
@@ -468,6 +369,10 @@ export function Biblioteca({
   const [nota, setNota] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
+  // O `pendente` trava o botão no mesmo render em que o envio começa — o
+  // segundo clique não cria uma segunda revisão.
+  const [salvando, iniciarSalvar] = useTransition();
 
   const abertoId = aberto?.id ?? null;
   useEffect(() => {
@@ -529,25 +434,35 @@ export function Biblioteca({
     [setAtivoId]
   );
 
-  const salvar = useCallback(async () => {
+  const salvar = useCallback(() => {
     if (!aberto) {
       return;
     }
     setErro(null);
-    const res = await updateIpAssetAction({
-      id: aberto.id,
-      conteudo: rascunho,
-      nota: nota || undefined,
+    setConfirmacao(null);
+    iniciarSalvar(async () => {
+      const res = await updateIpAssetAction({
+        id: aberto.id,
+        conteudo: rascunho,
+        nota: nota || undefined,
+      });
+      if (!res.ok) {
+        setErro(res.error);
+        return;
+      }
+      const det = await getIpAsset(aberto.id);
+      if (det.ok) {
+        setAberto(det.data);
+        setNota("");
+      }
+      // A action devolve `versao: null` quando o conteúdo é idêntico — não
+      // virou revisão, e dizer "salvo" aí seria mentir sobre o histórico.
+      setConfirmacao(
+        res.data.versao === null
+          ? "Nada mudou — nenhuma revisão criada."
+          : `Revisão v${res.data.versao} salva.`
+      );
     });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
-    const det = await getIpAsset(aberto.id);
-    if (det.ok) {
-      setAberto(det.data);
-      setNota("");
-    }
   }, [aberto, rascunho, nota]);
 
   // `reusos`, `horasPoupadas` e `maturidade` vêm literalmente da action —
@@ -590,11 +505,27 @@ export function Biblioteca({
     [lista, engajamentos, podeEscrever, aoRegistrarReuso]
   );
 
-  const podeSalvar = podeEscrever && sujo;
+  const podeSalvar = podeEscrever && sujo && !salvando;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? (
+        <output
+          style={{
+            display: "block",
+            padding: "9px 11px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            border: "1px solid rgba(var(--green-rgb),.3)",
+            color: "var(--green-text)",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
+          {confirmacao}
+        </output>
+      ) : null}
 
       <KpisDoAcervo lista={lista} />
 
@@ -676,7 +607,7 @@ export function Biblioteca({
                     onClick={salvar}
                     type="button"
                   >
-                    {sujo ? "Salvar revisão" : "Sem alterações"}
+                    {rotuloSalvar(salvando, sujo)}
                   </BotaoPrimario>
                 </div>
 
@@ -695,7 +626,6 @@ export function Biblioteca({
                     fontSize: "var(--fs-base)",
                     lineHeight: 1.65,
                     color: "var(--ink)",
-                    outline: "none",
                   }}
                   value={rascunho}
                 />

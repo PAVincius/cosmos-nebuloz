@@ -6,7 +6,7 @@ import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import { slugify } from "@repo/provisioning/src/slug";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { type FormEvent, useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
@@ -50,6 +50,9 @@ export function NewClientForm({
     slug: string;
     email: string;
   } | null>(null);
+  // A barreira abre pelo submit do `<form>` — clique no botão ou Enter num
+  // campo chegam ao mesmo lugar, e nenhum dos dois pula a confirmação.
+  const [perguntando, setPerguntando] = useState(false);
 
   // Ativo → Trial → fora, como no desenho. Um clique só percorre os três
   // estados; um checkbox não teria como expressar o do meio.
@@ -101,8 +104,17 @@ export function NewClientForm({
       setError(result.error);
     });
 
+  const pedirConfirmacao = (event: FormEvent) => {
+    event.preventDefault();
+    if (podeEnviar) {
+      setPerguntando(true);
+    }
+  };
+
   return (
-    <div
+    <form
+      aria-label="Provisionar cliente"
+      onSubmit={pedirConfirmacao}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -312,22 +324,33 @@ export function NewClientForm({
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           {/* Provisionar chega ao cliente em segundos e não tem desfazer — é
               o caso que `ConfirmarAcao` cita no próprio comentário. O alvo é
-              o slug ao vivo: se o nome saiu errado, é aqui que se vê. */}
-          {canWrite ? (
+              o slug ao vivo: se o nome saiu errado, é aqui que se vê.
+
+              O gatilho é o submit do formulário, não o botão interno da
+              barreira: assim Enter num campo também chega aqui. A barreira
+              monta já aberta (`aberto`) e some no Voltar. */}
+          {perguntando ? (
             <ConfirmarAcao
+              aberto
               alvo={slug || "—"}
               consequencia="O cliente ganha acesso em segundos; módulos marcados nascem ativos."
-              desabilitado={!podeEnviar}
               executando={pending}
               onConfirmar={submit}
+              onVoltar={() => setPerguntando(false)}
               rotulo={pending ? "Provisionando…" : "Provisionar tenant"}
               tom="accent"
             />
           ) : (
-            <WriteButton canWrite={false}>Provisionar tenant</WriteButton>
+            <WriteButton
+              canWrite={canWrite}
+              disabled={!podeEnviar}
+              type="submit"
+            >
+              Provisionar tenant
+            </WriteButton>
           )}
         </div>
       </SectionCard>
-    </div>
+    </form>
   );
 }
