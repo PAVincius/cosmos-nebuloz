@@ -80,6 +80,10 @@ vi.mock("@/app/(staff)/empresa/financeiro/titulos", () => ({
   Titulos: stub,
 }));
 
+// Importar uma página puxa o painel dela inteiro — é o import, não o render,
+// que pesa; com a suíte em paralelo isso passa dos 5s padrão.
+vi.setConfig({ testTimeout: 20_000 });
+
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.requirePlatformStaff.mockResolvedValue({ canWrite: false });

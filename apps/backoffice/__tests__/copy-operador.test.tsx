@@ -64,6 +64,10 @@ vi.mock("next/navigation", () => ({
 const VAZAMENTO =
   /listClients|listStaffActivity|listAuditEvents|listPlatformApprovals|assertCanWrite|requirePlatformStaff|rode o seed|ondas 3|NFR-|FR-30|SG-06/;
 
+// Importar uma página puxa o painel dela inteiro — é o import, não o render,
+// que pesa; com a suíte em paralelo isso passa dos 5s padrão.
+vi.setConfig({ testTimeout: 20_000 });
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
