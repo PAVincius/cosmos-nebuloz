@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { DadosMapa } from "@/app/(staff)/ferramentas/processos/mapa";
 import { Mapa } from "@/app/(staff)/ferramentas/processos/mapa";
 import type { ProcessoRow } from "@/app/actions/processos";
+import { zerarRoteador } from "../vitest-mocks/next-navigation";
 
 const { listarProcessosMock, excluirProcessoMock, excluirLigacaoMock } =
   vi.hoisted(() => ({
@@ -18,6 +19,10 @@ const { listarProcessosMock, excluirProcessoMock, excluirLigacaoMock } =
     excluirProcessoMock: vi.fn(),
     listarProcessosMock: vi.fn(),
   }));
+
+// O processo selecionado mora na URL (`?processo=`); o roteador de mentira
+// faz o clique no nó chegar ao painel como no navegador.
+vi.mock("next/navigation", () => import("../vitest-mocks/next-navigation"));
 
 vi.mock("@/app/actions/processos", () => ({
   excluirLigacao: excluirLigacaoMock,
@@ -80,6 +85,7 @@ const DADOS: DadosMapa = {
 };
 
 beforeEach(() => {
+  zerarRoteador("/ferramentas/processos");
   listarProcessosMock.mockReset().mockResolvedValue({ data: DADOS, ok: true });
   excluirProcessoMock
     .mockReset()

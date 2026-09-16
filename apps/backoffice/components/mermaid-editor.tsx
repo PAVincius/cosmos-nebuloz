@@ -89,12 +89,16 @@ export function MermaidEditor({
   podeEscrever,
   nomeArquivo = "diagrama",
   onSalvar,
+  onSujo,
 }: {
   sourceInicial: string;
   podeEscrever: boolean;
   /** Slug do diagrama; vira o nome do arquivo exportado. */
   nomeArquivo?: string;
   onSalvar: (source: string, nota: string) => Promise<string | null>;
+  /** Avisa a tela quando há edição não salva — é ela quem segura a troca de
+   *  diagrama e o fechar da aba; o editor só sabe do próprio texto. */
+  onSujo?: (sujo: boolean) => void;
 }) {
   const [source, setSource] = useState(sourceInicial);
   const [svg, setSvg] = useState<string>("");
@@ -106,6 +110,10 @@ export function MermaidEditor({
   const seq = useRef(0);
 
   const sujo = source !== sourceInicial;
+
+  useEffect(() => {
+    onSujo?.(sujo);
+  }, [sujo, onSujo]);
 
   useEffect(() => {
     // Debounce: renderizar a cada tecla faz o parser rodar em texto sempre

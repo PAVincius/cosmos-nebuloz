@@ -31,6 +31,7 @@ import {
   type Transicao,
   taxaLeadParaProposta,
 } from "@/lib/comercial/funil";
+import { useParamState } from "@/lib/url-state";
 import { Barras, type LinhaBarra } from "./barras";
 import { Board } from "./board";
 import { EstagioDialog } from "./estagio-dialog";
@@ -44,6 +45,10 @@ import { TabelaLeads } from "./tabela-leads";
  * remendar o item localmente: `estagio`, `situacao` e histórico interagem
  * demais entre si para reconstruir no cliente sem arriscar divergir do que a
  * action decidiu (mesmo raciocínio que já valia no funil anterior).
+ *
+ * Lead aberto e filtro de estágio moram em `?lead=` e `?estagio=` (chip
+ * "Todos" = sem param): F5 devolve o mesmo diálogo, e "olha esse lead" vira
+ * um link. Id ou estágio que não existe cai no estado padrão, sem erro.
  */
 
 export type DadosFunil = {
@@ -139,9 +144,14 @@ export function Funil({
   podeEscrever: boolean;
 }) {
   const [dados, setDados] = useState(inicial);
-  const [filtro, setFiltro] = useState("all");
+  const [filtroParam, setFiltro] = useParamState("estagio", "all");
+  // Estágio que não existe no param vale como Todos — link velho não pode
+  // deixar a tabela vazia sem explicação.
+  const filtro = FILTROS.some((f) => f.id === filtroParam)
+    ? filtroParam
+    : "all";
   const [erro, setErro] = useState<string | null>(null);
-  const [leadAbertoId, setLeadAbertoId] = useState<string | null>(null);
+  const [leadAbertoId, setLeadAbertoId] = useParamState("lead");
   const [leadAbertoModo, setLeadAbertoModo] = useState<"perda" | null>(null);
   const [estagioAbertoId, setEstagioAbertoId] = useState<Estagio | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
@@ -226,23 +236,29 @@ export function Funil({
     [recarregar]
   );
 
-  const abrirLead = useCallback((id: string) => {
-    setLeadAbertoId(id);
-    setLeadAbertoModo(null);
-  }, []);
+  const abrirLead = useCallback(
+    (id: string) => {
+      setLeadAbertoId(id);
+      setLeadAbertoModo(null);
+    },
+    [setLeadAbertoId]
+  );
 
   // Soltar no alvo Perdido do board (Ruling 8) abre o mesmo diálogo do lead,
   // mas já em modo perda — quem arrastou até ali já decidiu que o lead
   // morreu; só falta motivo e nota, não mais um clique para "achar" o botão.
-  const abrirLeadEmModoPerda = useCallback((id: string) => {
-    setLeadAbertoId(id);
-    setLeadAbertoModo("perda");
-  }, []);
+  const abrirLeadEmModoPerda = useCallback(
+    (id: string) => {
+      setLeadAbertoId(id);
+      setLeadAbertoModo("perda");
+    },
+    [setLeadAbertoId]
+  );
 
   const fecharLead = useCallback(() => {
-    setLeadAbertoId(null);
+    setLeadAbertoId("");
     setLeadAbertoModo(null);
-  }, []);
+  }, [setLeadAbertoId]);
 
   const abrirEstagio = useCallback((codigo: Estagio) => {
     setEstagioAbertoId(codigo);

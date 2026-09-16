@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
-import { type ReactNode, useCallback, useId, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useId, useState } from "react";
 import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import {
@@ -19,6 +19,8 @@ import {
   INPUT,
 } from "@/components/campo";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
+import { useParamState } from "@/lib/url-state";
 import {
   RegistrarAtivo,
   ROTULO_LICENCA,
@@ -305,6 +307,72 @@ function BlocoDeReuso({
   );
 }
 
+const BOTAO_PERGUNTA = {
+  padding: "6px 12px",
+  borderRadius: "var(--r-sm)",
+  border: "1px solid var(--hairline)",
+  background: "none",
+  fontSize: "var(--fs-nota)",
+  fontWeight: 600,
+  cursor: "pointer",
+} as const;
+
+/**
+ * Pergunta inline antes de trocar de ativo com edição pendente. Mesma prosa
+ * e mesma ordem de `components/confirmar-acao.tsx` (o alvo escrito, "Voltar"
+ * antes de "Descartar"); local porque aquele componente está mudando em PR
+ * aberto — pode migrar para lá depois (é a mesma peça de `estudio.tsx`).
+ */
+function PerguntaDescartar({
+  nome,
+  onVoltar,
+  onDescartar,
+}: {
+  nome: string;
+  onVoltar: () => void;
+  onDescartar: () => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        padding: "10px 12px",
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--red-border, var(--hairline-strong))",
+        background: "var(--red-soft, var(--surface-2))",
+      }}
+    >
+      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+        Descartar alterações em «{nome}»?
+      </span>
+      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
+        O que você editou e ainda não salvou some. Para manter, volte e salve
+        uma revisão antes de trocar.
+      </span>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          className="btn"
+          onClick={onVoltar}
+          style={{ ...BOTAO_PERGUNTA, color: "var(--ink-muted)" }}
+          type="button"
+        >
+          Voltar
+        </button>
+        <button
+          className="btn"
+          onClick={onDescartar}
+          style={{ ...BOTAO_PERGUNTA, color: "var(--red-text)" }}
+          type="button"
+        >
+          Descartar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** Conteúdo por item do `SeletorDeAcervo`: badges, dono, serviços, link e a
  *  ação de registrar reuso — o nome do ativo já é o título do próprio botão
  *  do seletor, então não se repete aqui. */
@@ -391,41 +459,75 @@ export function Biblioteca({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  // O ativo aberto mora em `?ativo=<id>`: F5 reabre o mesmo e o link cola num
+  // ticket. A URL é a fonte — clicar na lista escreve o param, e é o param
+  // que dispara a leitura. Id fora da lista cai no estado vazio, sem erro.
+  const [ativoId, setAtivoId] = useParamState("ativo");
   const [aberto, setAberto] = useState<IpAssetDetail | null>(null);
   const [rascunho, setRascunho] = useState("");
   const [nota, setNota] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const abrir = useCallback(async (id: string) => {
-    setErro(null);
-    const res = await getIpAsset(id);
-    if (res.ok) {
-      setAberto(res.data);
-      setRascunho(res.data.conteudo);
-      setNota("");
-    } else {
-      setErro(res.error);
+  const abertoId = aberto?.id ?? null;
+  useEffect(() => {
+    if (!(ativoId && lista.some((a) => a.id === ativoId))) {
+      setAberto(null);
+      return;
     }
-  }, []);
+    if (abertoId === ativoId) {
+      return;
+    }
+    let vivo = true;
+    setErro(null);
+    getIpAsset(ativoId).then((res) => {
+      if (!vivo) {
+        return;
+      }
+      if (res.ok) {
+        setAberto(res.data);
+        setRascunho(res.data.conteudo);
+        setNota("");
+      } else {
+        setErro(res.error);
+      }
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [ativoId, lista, abertoId]);
+
+  const abrirDeFato = useCallback(
+    (id: string) => {
+      setErro(null);
+      setAtivoId(id);
+    },
+    [setAtivoId]
+  );
+
+  const sujo = Boolean(aberto) && rascunho !== aberto?.conteudo;
+
+  // Trocar de ativo com edição pendente pergunta antes — e enquanto está
+  // sujo, fechar a aba passa pelo aviso do navegador.
+  const guarda = useGuardaDeRascunho({
+    abertoId: aberto?.id,
+    abrirDeFato,
+    sujo,
+  });
 
   // A linha nova vem inteira da action: montá-la aqui daria uma segunda fonte
   // para `reusos` e `maturidade`, que são derivados e não campos. Criar leva
-  // direto ao editor, como antes — uma segunda ida ao servidor busca o
+  // direto ao editor, como antes — pela URL, e o efeito acima busca o
   // `IpAssetDetail` que a lista sozinha não tem.
-  const aoCriar = useCallback(async (novo: IpAssetRow) => {
-    setErro(null);
-    setLista((atual) => [novo, ...atual]);
-    setCriando(false);
-    const det = await getIpAsset(novo.id);
-    if (det.ok) {
-      setAberto(det.data);
-      setRascunho(det.data.conteudo);
-      setNota("");
-    } else {
-      setErro(det.error);
-    }
-  }, []);
+  const aoCriar = useCallback(
+    (novo: IpAssetRow) => {
+      setErro(null);
+      setLista((atual) => [novo, ...atual]);
+      setCriando(false);
+      setAtivoId(novo.id);
+    },
+    [setAtivoId]
+  );
 
   const salvar = useCallback(async () => {
     if (!aberto) {
@@ -488,7 +590,6 @@ export function Biblioteca({
     [lista, engajamentos, podeEscrever, aoRegistrarReuso]
   );
 
-  const sujo = Boolean(aberto) && rascunho !== aberto?.conteudo;
   const podeSalvar = podeEscrever && sujo;
 
   return (
@@ -528,7 +629,7 @@ export function Biblioteca({
           titulo: a.nome,
           detalhe: `${a.tipo} · v${a.versoes}${a.origem ? ` · ${a.origem}` : ""}`,
         }))}
-        onSelecionar={abrir}
+        onSelecionar={guarda.abrir}
         renderExtra={renderExtraDoAtivo}
         selecionadoId={aberto?.id ?? null}
         titulo="Acervo"
@@ -538,6 +639,13 @@ export function Biblioteca({
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {aberto ? (
           <>
+            {guarda.pendente ? (
+              <PerguntaDescartar
+                nome={aberto.nome}
+                onDescartar={guarda.descartar}
+                onVoltar={guarda.voltar}
+              />
+            ) : null}
             <SectionCard
               icon="book"
               subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
