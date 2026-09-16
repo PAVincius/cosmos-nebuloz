@@ -10,7 +10,7 @@ import { useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
-import { WriteButton } from "@/components/write-button";
+import { MOTIVO_SOMENTE_LEITURA, WriteButton } from "@/components/write-button";
 
 /**
  * Formulário de provisionamento.
@@ -133,8 +133,7 @@ export function NewClientForm({
               fontWeight: 600,
             }}
           >
-            Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa
-            fazer esta ação.
+            {MOTIVO_SOMENTE_LEITURA}
           </span>
         </div>
       )}
