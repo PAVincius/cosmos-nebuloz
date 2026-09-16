@@ -258,7 +258,7 @@ export function PublishTrackModal({
                 value={audience}
               />
             </FormField>
-            <FormField label="Re-certificação" required>
+            <FormField label="Re-certificação" required variant="group">
               <Segmented
                 full
                 onChange={setRecert}

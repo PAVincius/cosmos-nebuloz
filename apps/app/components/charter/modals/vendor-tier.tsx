@@ -119,7 +119,7 @@ export function VendorTierModal({
           padding: 22,
         }}
       >
-        <FormField label="Situação" required>
+        <FormField label="Situação" required variant="group">
           <RadioCards
             cols={2}
             onChange={(v) => setTier(v as VendorTier)}

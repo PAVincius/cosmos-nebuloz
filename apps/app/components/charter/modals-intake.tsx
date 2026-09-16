@@ -389,6 +389,7 @@ export function IntakeModal({
             hint="Determina fornecedores elegíveis e nível mínimo de revisão humana"
             label="Classe de dado envolvida"
             required
+            variant="group"
           >
             <Segmented
               full
@@ -404,6 +405,7 @@ export function IntakeModal({
               hint="Externo = visível a cliente ou paciente"
               label="Exposição"
               required
+              variant="group"
             >
               <Segmented
                 full
@@ -416,6 +418,7 @@ export function IntakeModal({
               hint="Efeito de um erro sobre pessoa ou contrato"
               label="Criticidade da decisão"
               required
+              variant="group"
             >
               <Segmented
                 full
