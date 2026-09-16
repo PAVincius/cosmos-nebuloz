@@ -163,13 +163,6 @@ function CasesInner() {
         title="Casos de Uso de IA"
         tone="accent"
       >
-        <Button
-          icon="download"
-          onClick={() => router.push("/charter/audit")}
-          variant="secondary"
-        >
-          Exportar fila
-        </Button>
         <Button icon="plus" onClick={openIntake}>
           Novo caso de uso
         </Button>

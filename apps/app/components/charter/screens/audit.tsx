@@ -208,7 +208,7 @@ function AuditInner() {
               hint="cada pacote entra na própria trilha"
               icon="download"
               label="Exportações registradas"
-              tone="green"
+              tone="accent"
               value={counts.export}
             />
           </>
