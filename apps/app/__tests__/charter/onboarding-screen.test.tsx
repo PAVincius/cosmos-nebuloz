@@ -80,6 +80,7 @@ describe("OnboardingScreen — aceite em nome de terceiro", () => {
     toastMocks.success.mockReset();
     toastMocks.error.mockReset();
     toastMocks.loading.mockReturnValue("toast-1");
+    window.localStorage.clear();
     getOnboardingMock.mockResolvedValue(baseOnboarding());
     getPolicyMock.mockResolvedValue({ ok: true, data: null });
   });
@@ -134,5 +135,14 @@ describe("OnboardingScreen — aceite em nome de terceiro", () => {
           "Fulano está de licença e me pediu para registrar por ele.",
       })
     );
+  });
+
+  it("painel 'O que o aceite registra' começa colapsado (onda 5a)", async () => {
+    render(<OnboardingScreen />);
+
+    const toggle = await screen.findByRole("button", {
+      name: /o que o aceite registra/i,
+    });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 });

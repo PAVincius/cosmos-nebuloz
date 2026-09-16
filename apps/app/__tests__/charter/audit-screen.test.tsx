@@ -29,6 +29,7 @@ describe("AuditScreen", () => {
     listAuditMock.mockReset();
     exportEvidenceMock.mockReset();
     getSettingsMock.mockReset();
+    window.localStorage.clear();
 
     listAuditMock.mockResolvedValue({
       ok: true,
@@ -54,5 +55,15 @@ describe("AuditScreen", () => {
     expect(
       screen.getByRole("button", { name: /exportar pacote/i })
     ).toBeTruthy();
+  });
+
+  it("painel 'Pacote de evidência' começa colapsado (onda 5a)", async () => {
+    render(<AuditScreen />);
+
+    await screen.findByText("Histórico de Auditoria");
+    const toggle = screen.getByRole("button", {
+      name: /pacote de evidência/i,
+    });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 });

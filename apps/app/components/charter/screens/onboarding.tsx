@@ -36,8 +36,9 @@ import {
   Textarea,
   useFieldId,
 } from "../base";
+import { DisclosurePanel } from "../disclosure-panel";
 import { ModalProvider, ModalShell, useModal } from "../modal";
-import { PublishTrackModal } from "../modals";
+import { PublishTrackModal } from "../modals/publish-track";
 import { useCharterData } from "../use-charter-data";
 
 const PENDING_COLS = "minmax(0,1fr) 78px 48px 92px";
@@ -587,8 +588,9 @@ function OnboardingInner() {
             )}
           </SectionCard>
 
-          <SectionCard
+          <DisclosurePanel
             icon="scale"
+            id="onboarding-o-que-o-aceite-registra"
             subtitle="Por que isso vale em auditoria"
             title="O que o aceite registra"
             tone="accent"
@@ -618,7 +620,7 @@ function OnboardingInner() {
                 </div>
               ))}
             </div>
-          </SectionCard>
+          </DisclosurePanel>
         </div>
       </div>
     </div>
