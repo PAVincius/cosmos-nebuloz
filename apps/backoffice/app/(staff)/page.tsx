@@ -118,7 +118,7 @@ export default async function ClientsPage() {
 
       <SectionCard
         icon="building"
-        subtitle="listClients() — clique para abrir o detalhe"
+        subtitle="Todos os clientes da plataforma. O nome abre o detalhe."
         title="Clientes"
       >
         {clientes.length === 0 ? (

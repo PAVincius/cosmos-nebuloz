@@ -18,7 +18,7 @@ export default async function ActivityPage() {
 
       <SectionCard
         icon="userCheck"
-        subtitle="listStaffActivity() — mais recentes primeiro"
+        subtitle="Mais recentes primeiro"
         title="Trilha"
       >
         {renderTrilha(result)}

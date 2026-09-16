@@ -156,7 +156,7 @@ export default async function AuditPage({
         subtitle={
           pagina.ok
             ? `${pagina.data.total} evento(s) no filtro atual`
-            : "listAuditEvents()"
+            : "Não foi possível carregar"
         }
         title="Eventos"
       >

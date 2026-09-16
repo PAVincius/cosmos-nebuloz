@@ -229,7 +229,7 @@ describe("NovoLeadDialog", () => {
     );
 
     expect(
-      screen.getByText("Nenhum canal cadastrado — rode o seed de canais.")
+      screen.getByText("Nenhum canal cadastrado — peça a um ADMIN.")
     ).toBeTruthy();
 
     fireEvent.change(screen.getByLabelText("Organização"), {

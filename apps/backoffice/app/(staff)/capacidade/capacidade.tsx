@@ -570,13 +570,16 @@ export function Capacidade({
   // Fora do JSX: o `&&` inline vira valor vazando para o render aos olhos do
   // lint, e nomear a condição diz o que ela significa.
   const podeAlocar = Boolean(aloc.engagementId && aloc.inicioEm);
+  // O formulário abre abaixo da lista, longe da linha clicada: o título
+  // precisa dizer quem está sendo alocado.
+  const nomeDeQuemAloca = lista.find((p) => p.id === alocando)?.nome ?? "";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
       {alocando ? (
-        <SectionCard icon="users" title="Nova alocação">
+        <SectionCard icon="users" title={`Nova alocação — ${nomeDeQuemAloca}`}>
           <div
             style={{
               display: "grid",

@@ -56,7 +56,8 @@ const GROUPS: {
   {
     kind: "observing",
     title: "Em observação",
-    subtitle: "Janela de 30 dias correndo; reabrir zera a contagem (SG-06)",
+    // SG-06 é a regra que zera a contagem ao reabrir.
+    subtitle: "Janela de 30 dias correndo; reabrir zera a contagem",
     icon: "clock",
     tone: "blue",
   },
