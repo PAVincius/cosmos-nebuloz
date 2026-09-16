@@ -85,10 +85,14 @@ export function BpmnModeler({
   sourceInicial,
   podeEscrever,
   onSalvar,
+  onSujo,
 }: {
   sourceInicial: string;
   podeEscrever: boolean;
   onSalvar: (xml: string, nota: string) => Promise<string | null>;
+  /** Avisa a tela quando há edição não salva — é ela quem segura a troca de
+   *  diagrama e o fechar da aba; o modeler só sabe do próprio XML. */
+  onSujo?: (sujo: boolean) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const painelRef = useRef<HTMLDivElement>(null);
@@ -99,6 +103,10 @@ export function BpmnModeler({
   const [sujo, setSujo] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [nota, setNota] = useState("");
+
+  useEffect(() => {
+    onSujo?.(sujo);
+  }, [sujo, onSujo]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

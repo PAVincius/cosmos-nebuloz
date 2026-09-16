@@ -6,6 +6,10 @@
  * estado inteiro, no mesmo padrão do funil v2 (`app/(staff)/funil/funil.tsx`):
  * processo, ligações e status derivado interagem demais entre si para
  * remendar o item localmente sem arriscar divergir do que a action decidiu.
+ *
+ * Processo selecionado e filtro de domínio moram em `?processo=` e
+ * `?dominio=` (chip "Todos" = sem param): F5 devolve o mesmo painel, e "olha
+ * o PZ-07" vira um link. Id ou domínio que não existe cai no estado padrão.
  */
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -34,6 +38,7 @@ import {
   statusDe,
 } from "@/lib/ferramentas/processos";
 import { paraJsonCanvas } from "@/lib/ferramentas/processos-canvas";
+import { useParamState } from "@/lib/url-state";
 import { Grafo } from "./grafo";
 import { Painel } from "./painel";
 import { ProcessoDialog, type ProcessoFormInput } from "./processo-dialog";
@@ -135,10 +140,18 @@ export function Mapa({
   const [dados, setDados] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [dominio, setDominio] = useState("all");
+  const [dominioParam, setDominio] = useParamState("dominio", "all");
+  // Domínio que não existe no param vale como Todos — link velho não pode
+  // deixar o mapa vazio sem explicação.
+  const dominio = dominioParam in DOMINIOS ? dominioParam : "all";
   const [nivel, setNivel] = useState("all");
   const [status, setStatus] = useState("all");
-  const [selecionado, setSelecionado] = useState<string | null>(null);
+  const [processoParam, setProcessoParam] = useParamState("processo");
+  const selecionado = processoParam || null;
+  const setSelecionado = useCallback(
+    (id: string | null) => setProcessoParam(id ?? ""),
+    [setProcessoParam]
+  );
   const [excluindo, setExcluindo] = useState(false);
   const [dialogoAberto, setDialogoAberto] = useState(false);
   const [processoEmEdicao, setProcessoEmEdicao] = useState<ProcessoRow | null>(
@@ -175,7 +188,7 @@ export function Mapa({
     setDominio("all");
     setNivel("all");
     setStatus("all");
-  }, []);
+  }, [setDominio]);
 
   const abrirCriacao = useCallback(() => {
     setProcessoEmEdicao(null);
@@ -236,7 +249,7 @@ export function Mapa({
         setExcluindo(false);
       }
     },
-    [recarregar]
+    [recarregar, setSelecionado]
   );
 
   const removerLigacao = useCallback(

@@ -48,10 +48,22 @@ function eyebrowDoProcesso(p: ProcessoRow): string {
   return `${p.codigo} · ${DOMINIOS[p.dominio].rotulo} · nível ${p.nivel} ${NIVEIS[p.nivel].rotulo.toLowerCase()} · ${tipo}`;
 }
 
-/** Sem diagrama, o link convida a começar; com diagrama, a abrir o que já
- *  existe — dois rótulos para o mesmo destino (spec §4). */
-function rotuloDoLinkModelador(temDiagrama: boolean): string {
-  return temDiagrama ? "Abrir no modelador" : "Modelar agora";
+/** Com diagrama, o link abre exatamente ele (`?diagrama=<id>`, o param que o
+ *  Estúdio lê); sem diagrama, convida a criar já com o nome do processo
+ *  (`?novo=<nome>`, que o Estúdio usa para pré-preencher o formulário). Antes
+ *  os dois rótulos levavam ao Estúdio genérico, e a pessoa tinha de achar o
+ *  diagrama na lista de novo (spec §4; crítica, heurística 7). */
+function linkDoModelador(p: ProcessoRow): { href: string; rotulo: string } {
+  if (p.diagram) {
+    return {
+      href: `/ferramentas/bpmn?diagrama=${encodeURIComponent(p.diagram.id)}`,
+      rotulo: "Abrir no modelador",
+    };
+  }
+  return {
+    href: `/ferramentas/bpmn?novo=${encodeURIComponent(p.nome)}`,
+    rotulo: `Criar diagrama para ${p.nome}`,
+  };
 }
 
 /** `undefined` (não uma função vazia) esconde o × de `LinhaLigacao` sem
@@ -101,6 +113,7 @@ export function Painel({
   const candidatosLigacao = processos
     .filter((p) => p.id !== processo.id)
     .map((p) => ({ codigo: p.codigo, id: p.id, nome: p.nome }));
+  const modelador = linkDoModelador(processo);
 
   return (
     <aside
@@ -259,8 +272,8 @@ export function Painel({
           paddingTop: 12,
         }}
       >
-        <Link href="/ferramentas/bpmn" style={BOTAO_SECUNDARIO_LINK}>
-          {rotuloDoLinkModelador(processo.diagram !== null)}
+        <Link href={modelador.href} style={BOTAO_SECUNDARIO_LINK}>
+          {modelador.rotulo}
         </Link>
         {podeEscrever ? (
           <BotaoSecundario onClick={onEditar}>Editar</BotaoSecundario>

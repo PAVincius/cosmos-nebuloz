@@ -1,13 +1,14 @@
 "use client";
 
 import { Tabs } from "@repo/design-system/cosmos/kit";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import type { TenantMemberRow } from "@/app/actions/tenant-members";
 import type {
   AuditRow,
   IntegracaoRow,
 } from "@/app/actions/tenant-observability";
 import { Erro } from "@/components/campo";
+import { useParamState } from "@/lib/url-state";
 import { AbaResumo } from "./abas/resumo";
 import { AbaUsuarios } from "./abas/usuarios";
 import { AuditTimeline, Integracoes } from "./observabilidade";
@@ -24,6 +25,10 @@ import { SecaoSimples } from "./secao";
  * Cliente porque a aba é estado. Os dados chegam prontos do servidor: nenhuma
  * aba busca nada ao ser aberta, então trocar de aba é instantâneo e não
  * multiplica consulta.
+ *
+ * A aba mora em `?aba=` (padrão Resumo, sem param): F5 devolve a mesma aba, e
+ * "aba Usuários do cliente X" vira um link que cabe num ticket. Aba que não
+ * existe no param — ou que o contrato não dá mais — cai em Resumo.
  *
  * A contagem vai no rótulo (`Usuários · 4`) porque o `Tabs` do kit não tem slot
  * de contador como o do protótipo. Estender o kit por isso mexeria no Cosmos
@@ -72,7 +77,7 @@ export function DetalheDoTenant({
    *  cliente não comprou é rota morta no meio da navegação. */
   contratados: Set<string>;
 }) {
-  const [aba, setAba] = useState("resumo");
+  const [aba, setAba] = useParamState("aba", "resumo");
 
   const listaDeMembros = membros.ok ? membros.data : [];
   const listaDeIntegracoes = integracoes.ok ? integracoes.data : [];
@@ -157,7 +162,7 @@ export function DetalheDoTenant({
           Não mexo no kit: ele é do Cosmos também, e lá as abas são poucas. */}
       <div className="scroll" style={{ overflowX: "auto", marginBottom: 16 }}>
         <Tabs
-          active={aba}
+          active={atual.id}
           onChange={setAba}
           tabs={abas.map(({ id, label }) => ({ id, label }))}
         />
