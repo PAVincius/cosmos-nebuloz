@@ -94,9 +94,12 @@ describe("Provisionar tenant", () => {
   it("sem permissão, usa a frase única do painel para somente leitura", () => {
     render(<NewClientForm canWrite={false} modulos={["COSMOS"]} />);
 
+    // O `WriteButton` repete a mesma frase em `sr-only` para o leitor de tela;
+    // aqui o que importa é o aviso visível do formulário.
     expect(
       screen.getByText(
-        "Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa fazer esta ação."
+        "Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa fazer esta ação.",
+        { selector: "span:not(.sr-only)" }
       )
     ).toBeTruthy();
     expect(
