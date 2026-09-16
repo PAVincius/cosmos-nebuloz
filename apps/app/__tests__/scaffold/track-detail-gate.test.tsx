@@ -10,21 +10,31 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   getTrack: vi.fn(),
+  cancelTrack: vi.fn(),
   closePhase: vi.fn(),
   overridePhase: vi.fn(),
   reopenPhase: vi.fn(),
+  attachArtefact: vi.fn(),
+  readArtefact: vi.fn(),
   push: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
-vi.mock("@/app/(scaffold)/actions/tracks", () => ({ getTrack: h.getTrack }));
+vi.mock("@/app/(scaffold)/actions/tracks", () => ({
+  getTrack: h.getTrack,
+  cancelTrack: h.cancelTrack,
+}));
 vi.mock("@/app/(scaffold)/actions/gates", () => ({
   acknowledgeCharterPolicy: vi.fn(),
   closePhase: h.closePhase,
   overridePhase: h.overridePhase,
   reopenPhase: h.reopenPhase,
 }));
-vi.mock("@/app/(scaffold)/actions/steps", () => ({ setStepState: vi.fn() }));
+vi.mock("@/app/(scaffold)/actions/steps", () => ({
+  setStepState: vi.fn(),
+  attachArtefact: h.attachArtefact,
+  readArtefact: h.readArtefact,
+}));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
 }));
@@ -212,5 +222,160 @@ describe("GatePanel — reabrir", () => {
     render(<TrackDetailScreen param="trk1" />);
     await screen.findByText("Gate da fase");
     expect(screen.queryByText(/^fechado/)).toBeNull();
+  });
+});
+
+describe("cancelar trilha", () => {
+  it("com caso assinado, manda a decisão do Signal junto da justificativa", async () => {
+    h.getTrack.mockResolvedValue({
+      ok: true,
+      data: {
+        ...trackWith("OPEN"),
+        businessCase: {
+          id: "bc1",
+          code: "BC-104",
+          state: "SIGNED",
+          signed: true,
+        },
+      },
+    });
+    h.cancelTrack.mockResolvedValue({ ok: true, data: undefined });
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /cancelar trilha/i })
+    );
+    fireEvent.change(screen.getByLabelText(/apuração do signal/i), {
+      target: { value: "keep_reading" },
+    });
+    fireEvent.change(screen.getByLabelText(/justificativa/i), {
+      target: { value: "O processo foi absorvido por outra área em setembro." },
+    });
+    fireEvent.click(
+      screen
+        .getAllByRole("button", { name: /cancelar trilha/i })
+        .at(-1) as HTMLElement
+    );
+
+    await waitFor(() => expect(h.cancelTrack).toHaveBeenCalledTimes(1));
+    expect(h.cancelTrack.mock.calls[0][0]).toMatchObject({
+      trackId: "trk1",
+      signalDecision: "keep_reading",
+    });
+    await waitFor(() =>
+      expect(h.push).toHaveBeenCalledWith("/scaffold/portfolio")
+    );
+  });
+
+  it("sem caso assinado, não pergunta pelo Signal nem manda decisão", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.cancelTrack.mockResolvedValue({ ok: true, data: undefined });
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /cancelar trilha/i })
+    );
+    expect(screen.queryByLabelText(/apuração do signal/i)).toBeNull();
+    fireEvent.change(screen.getByLabelText(/justificativa/i), {
+      target: { value: "O processo foi absorvido por outra área em setembro." },
+    });
+    fireEvent.click(
+      screen
+        .getAllByRole("button", { name: /cancelar trilha/i })
+        .at(-1) as HTMLElement
+    );
+
+    await waitFor(() => expect(h.cancelTrack).toHaveBeenCalledTimes(1));
+    expect(h.cancelTrack.mock.calls[0][0].signalDecision).toBeUndefined();
+  });
+});
+
+describe("artefato do passo", () => {
+  it("anexar pede a URL assinada e faz o PUT direto no storage", async () => {
+    const withStep = trackWith("OPEN");
+    withStep.phases[0].steps = [
+      {
+        id: "step-1",
+        seq: 1,
+        statement: "Medir o baseline",
+        expectedArtefact: "planilha.xlsx",
+        required: true,
+        state: "TODO",
+        note: null,
+        completedAt: null,
+        artefacts: [],
+      },
+    ] as never;
+    h.getTrack.mockResolvedValue({ ok: true, data: withStep });
+    h.attachArtefact.mockResolvedValue({
+      ok: true,
+      data: {
+        uploadUrl: "https://storage.test/signed-put",
+        artefactId: "art-1",
+        objectKey: "k",
+      },
+    });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue({ ok: true, status: 200 } as Response);
+    render(<TrackDetailScreen param="trk1" />);
+
+    const input = (await screen.findByLabelText(
+      /anexar artefato: medir o baseline/i
+    )) as HTMLInputElement;
+    const file = new File(["abc"], "baseline.xlsx", {
+      type: "application/vnd.ms-excel",
+    });
+    fireEvent.change(input, { target: { files: [file] } });
+
+    await waitFor(() => expect(h.attachArtefact).toHaveBeenCalledTimes(1));
+    expect(h.attachArtefact.mock.calls[0][0]).toEqual({
+      stepInstanceId: "step-1",
+      filename: "baseline.xlsx",
+      contentType: "application/vnd.ms-excel",
+      sizeBytes: 3,
+    });
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://storage.test/signed-put");
+    expect((fetchSpy.mock.calls[0][1] as RequestInit).method).toBe("PUT");
+    fetchSpy.mockRestore();
+  });
+
+  it("abrir artefato pede a URL de leitura e abre em aba nova", async () => {
+    const withArt = trackWith("OPEN");
+    withArt.phases[0].steps = [
+      {
+        id: "step-1",
+        seq: 1,
+        statement: "Medir o baseline",
+        expectedArtefact: "planilha.xlsx",
+        required: true,
+        state: "DONE",
+        note: null,
+        completedAt: new Date(),
+        artefacts: [{ id: "art-1", filename: "baseline.xlsx", sizeBytes: 3 }],
+      },
+    ] as never;
+    h.getTrack.mockResolvedValue({ ok: true, data: withArt });
+    h.readArtefact.mockResolvedValue({
+      ok: true,
+      data: { url: "https://storage.test/signed-get", expiresIn: 60 },
+    });
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "baseline.xlsx" })
+    );
+    await waitFor(() => expect(h.readArtefact).toHaveBeenCalledTimes(1));
+    expect(h.readArtefact.mock.calls[0][0]).toEqual({ artefactId: "art-1" });
+    await waitFor(() =>
+      expect(openSpy).toHaveBeenCalledWith(
+        "https://storage.test/signed-get",
+        "_blank",
+        "noopener,noreferrer"
+      )
+    );
+    openSpy.mockRestore();
   });
 });

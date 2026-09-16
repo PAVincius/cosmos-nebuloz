@@ -25,8 +25,13 @@ import {
   overridePhase,
   reopenPhase,
 } from "@/app/(scaffold)/actions/gates";
-import { setStepState } from "@/app/(scaffold)/actions/steps";
 import {
+  attachArtefact,
+  readArtefact,
+  setStepState,
+} from "@/app/(scaffold)/actions/steps";
+import {
+  cancelTrack,
   getTrack,
   type TrackDetail,
   type TrackDetailPhase,
@@ -42,6 +47,7 @@ import {
   MetaCell,
   ModalShell,
   ScreenError,
+  Select,
   SkeletonCard,
   SmartEmptyState,
   StatusDot,
@@ -56,6 +62,42 @@ const GATE_VIS = {
 } as const;
 
 type GateVisual = keyof typeof GATE_VIS;
+
+/** Os três atos que rescrevem o histórico de uma trilha, e por isso pedem
+ *  justificativa. O texto mora aqui, e não em ternários no JSX, para que os
+ *  três se leiam lado a lado. */
+const MODAL_COPY = {
+  override: {
+    icon: "shield",
+    tone: "amber",
+    title: "Override do gate",
+    subtitle:
+      "SG-03 · fica no histórico do gate, com nome e justificativa, para sempre",
+    cta: "Registrar override e fechar",
+    placeholder:
+      "Por que o critério pode ser dispensado nesta trilha, e o que cobre o risco que ele media.",
+  },
+  reopen: {
+    icon: "refresh",
+    tone: "red",
+    title: "Reabrir",
+    subtitle:
+      "SG-06 · reabrir zera a janela de observação e invalida a entrega",
+    cta: "Reabrir fase",
+    placeholder:
+      "O que voltou a não valer, e o que precisa ser refeito antes de fechar de novo.",
+  },
+  cancel: {
+    icon: "x",
+    tone: "red",
+    title: "Cancelar trilha",
+    subtitle:
+      "A trilha sai do portfólio. O que já foi registrado — gates, overrides, artefatos — fica.",
+    cta: "Cancelar trilha",
+    placeholder:
+      "Por que este processo não segue. Quem lê a auditoria daqui a um ano precisa entender sem perguntar.",
+  },
+} as const;
 
 function gateVisualFor(phase: TrackDetailPhase): GateVisual {
   if (phase.state === "CLOSED" || phase.state === "OBSERVING") {
@@ -341,10 +383,14 @@ function StepList({
   phase,
   editable,
   onToggle,
+  onAttach,
+  onOpen,
 }: {
   phase: TrackDetailPhase;
   editable: boolean;
   onToggle: (stepId: string, next: "DONE" | "TODO") => void;
+  onAttach: (stepId: string, file: File) => void;
+  onOpen: (artefactId: string) => void;
 }) {
   if (phase.steps.length === 0) {
     return (
@@ -435,20 +481,60 @@ function StepList({
                 size={11}
                 style={{ color: "var(--ink-faint)" }}
               />
-              <span
-                className="mono"
-                style={{
-                  fontSize: 11,
-                  color:
-                    s.artefacts.length > 0
-                      ? "var(--accent-text)"
-                      : "var(--ink-faint)",
-                }}
-              >
-                {s.artefacts.length > 0
-                  ? s.artefacts.map((a) => a.filename).join(", ")
-                  : s.expectedArtefact}
-              </span>
+              {s.artefacts.length > 0 ? (
+                s.artefacts.map((a) => (
+                  // A URL de leitura é assinada e curta, emitida por artefato
+                  // com auditoria antes (SN-02) — por isso é botão, não link.
+                  <button
+                    className="mono"
+                    key={a.id}
+                    onClick={() => onOpen(a.id)}
+                    style={{
+                      all: "unset",
+                      cursor: "pointer",
+                      fontSize: 11,
+                      color: "var(--accent-text)",
+                      textDecoration: "underline",
+                      textUnderlineOffset: 2,
+                    }}
+                    type="button"
+                  >
+                    {a.filename}
+                  </button>
+                ))
+              ) : (
+                <span
+                  className="mono"
+                  style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                >
+                  {s.expectedArtefact}
+                </span>
+              )}
+              {editable ? (
+                <label
+                  style={{
+                    marginLeft: "auto",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: "var(--ink-muted)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    aria-label={`Anexar artefato: ${s.statement}`}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) {
+                        onAttach(s.id, f);
+                      }
+                      e.target.value = "";
+                    }}
+                    style={{ display: "none" }}
+                    type="file"
+                  />
+                  + anexar
+                </label>
+              ) : null}
               {s.state === "DONE" && <Badge tone="green">entregue</Badge>}
             </div>
           </div>
@@ -990,10 +1076,18 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   // Um modal por vez: override pede a lista do que foi dispensado; reabrir
   // pede só a justificativa. Os dois escrevem no histórico do gate.
   const [modal, setModal] = useState<
-    { kind: "override"; unmet: string[] } | { kind: "reopen" } | null
+    | { kind: "override"; unmet: string[] }
+    | { kind: "reopen" }
+    | { kind: "cancel" }
+    | null
   >(null);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
+  // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
+  // apuração — sem decisão, o servidor recusa (TRACK_HAS_SIGNED_BUSINESS_CASE).
+  const [signalDecision, setSignalDecision] = useState<
+    "keep_reading" | "stop_reading"
+  >("stop_reading");
   // A fase ativa muda com o clique no stepper; o callback de aceite é criado
   // antes dela ser resolvida, então o id viaja por ref.
   const activePhaseId = useRef<string | null>(null);
@@ -1110,32 +1204,88 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   }, []);
 
   const submitModal = useCallback(async () => {
-    if (!(activePhaseId.current && modal)) {
+    if (!(activePhaseId.current && modal && param)) {
       return;
     }
     setBusy(true);
-    const res =
-      modal.kind === "override"
-        ? await overridePhase({
-            phaseInstanceId: activePhaseId.current,
-            unmetCriteria: modal.unmet,
-            rationale,
-          })
-        : await reopenPhase({
-            phaseInstanceId: activePhaseId.current,
-            rationale,
-          });
+    let res: { ok: boolean; error?: string };
+    if (modal.kind === "override") {
+      res = await overridePhase({
+        phaseInstanceId: activePhaseId.current,
+        unmetCriteria: modal.unmet,
+        rationale,
+      });
+    } else if (modal.kind === "reopen") {
+      res = await reopenPhase({
+        phaseInstanceId: activePhaseId.current,
+        rationale,
+      });
+    } else {
+      res = await cancelTrack({
+        trackId: param,
+        rationale,
+        signalDecision: track?.businessCase?.signed
+          ? signalDecision
+          : undefined,
+      });
+    }
     setBusy(false);
     if (res.ok) {
       setModal(null);
       setGateNotice(null);
+      if (modal.kind === "cancel") {
+        router.push("/scaffold/portfolio");
+        return;
+      }
       await load();
       return;
     }
     // Recusa fica no modal: a pessoa está no meio de escrever a justificativa
     // e fechar o modal por cima dela jogaria o texto fora.
-    setModalError(res.error);
-  }, [load, modal, rationale]);
+    setModalError(res.error ?? "Erro inesperado");
+  }, [load, modal, rationale, param, track, signalDecision, router]);
+
+  const attach = useCallback(
+    async (stepId: string, file: File) => {
+      setBusy(true);
+      const res = await attachArtefact({
+        stepInstanceId: stepId,
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
+        sizeBytes: file.size,
+      });
+      if (!res.ok) {
+        setBusy(false);
+        setError(res.error);
+        return;
+      }
+      // A URL é assinada para PUT direto no storage: o byte não passa pelo
+      // servidor da aplicação.
+      const put = await fetch(res.data.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+      });
+      setBusy(false);
+      if (!put.ok) {
+        setError(
+          `Upload falhou (${put.status}). O registro do artefato existe; tente anexar de novo.`
+        );
+        return;
+      }
+      await load();
+    },
+    [load]
+  );
+
+  const open = useCallback(async (artefactId: string) => {
+    const res = await readArtefact({ artefactId });
+    if (res.ok) {
+      window.open(res.data.url, "_blank", "noopener,noreferrer");
+    } else {
+      setError(res.error);
+    }
+  }, []);
 
   const selectPhase = useCallback((p: string) => {
     setGateNotice(null);
@@ -1209,6 +1359,16 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           Portfólio
         </Button>
+        {track.status === "ACTIVE" || track.status === "STALLED" ? (
+          <Button
+            disabled={busy}
+            icon="x"
+            onClick={() => openModal({ kind: "cancel" })}
+            variant="secondary"
+          >
+            Cancelar trilha
+          </Button>
+        ) : null}
       </PageHeader>
 
       <PhaseStepper
@@ -1240,6 +1400,8 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           >
             <StepList
               editable={editable}
+              onAttach={attach}
+              onOpen={open}
               onToggle={toggleStep}
               phase={activePhase}
             />
@@ -1309,35 +1471,53 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
                 onClick={() => setModal(null)}
                 variant="secondary"
               >
-                Cancelar
+                Voltar
               </Button>
               <Button
                 disabled={busy || rationale.trim().length < 20}
-                icon={modal.kind === "override" ? "shield" : "refresh"}
+                icon={MODAL_COPY[modal.kind].icon}
                 onClick={submitModal}
               >
-                {modal.kind === "override"
-                  ? "Registrar override e fechar"
-                  : "Reabrir fase"}
+                {MODAL_COPY[modal.kind].cta}
               </Button>
             </>
           }
-          icon={modal.kind === "override" ? "shield" : "refresh"}
+          icon={MODAL_COPY[modal.kind].icon}
           onClose={() => setModal(null)}
-          subtitle={
-            modal.kind === "override"
-              ? "SG-03 · fica no histórico do gate, com nome e justificativa, para sempre"
-              : "SG-06 · reabrir zera a janela de observação e invalida a entrega"
-          }
-          title={
-            modal.kind === "override"
-              ? `Override do gate — ${PHASE[activePhase.phase].label}`
-              : `Reabrir ${PHASE[activePhase.phase].label}`
-          }
-          tone={modal.kind === "override" ? "amber" : "red"}
+          subtitle={MODAL_COPY[modal.kind].subtitle}
+          title={`${MODAL_COPY[modal.kind].title} — ${
+            modal.kind === "cancel"
+              ? track.code
+              : PHASE[activePhase.phase].label
+          }`}
+          tone={MODAL_COPY[modal.kind].tone}
           width={560}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {modal.kind === "cancel" && track.businessCase?.signed ? (
+              <Field
+                hint="Há caso de negócio assinado. O Signal precisa saber se continua apurando contra ele."
+                htmlFor="cancel-signal"
+                label="Apuração do Signal"
+                required
+              >
+                <Select
+                  id="cancel-signal"
+                  onChange={setSignalDecision}
+                  options={[
+                    {
+                      value: "stop_reading",
+                      label: "Parar de apurar — a promessa morre com a trilha",
+                    },
+                    {
+                      value: "keep_reading",
+                      label: "Seguir apurando — a promessa sobrevive à trilha",
+                    },
+                  ]}
+                  value={signalDecision}
+                />
+              </Field>
+            ) : null}
             {modal.kind === "override" ? (
               <div>
                 <Eyebrow style={{ marginBottom: 6 }}>
@@ -1374,11 +1554,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
                 id="gate-rationale"
                 invalid={Boolean(modalError)}
                 onChange={(e) => setRationale(e.target.value)}
-                placeholder={
-                  modal.kind === "override"
-                    ? "Por que o critério pode ser dispensado nesta trilha, e o que cobre o risco que ele media."
-                    : "O que voltou a não valer, e o que precisa ser refeito antes de fechar de novo."
-                }
+                placeholder={MODAL_COPY[modal.kind].placeholder}
                 value={rationale}
               />
             </Field>
