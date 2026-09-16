@@ -8,6 +8,7 @@ import {
   type FornecedorDpaRow,
 } from "@/app/actions/empresa/fornecedores";
 import { Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { WriteButton } from "@/components/write-button";
@@ -296,9 +297,21 @@ export function Inventario({
 
       <SectionCard
         action={
-          <WriteButton canWrite={podeEscrever} onClick={exportar} type="button">
-            Exportar para o Charter
-          </WriteButton>
+          // A única escrita fora do tenant system — e duplicata no Charter
+          // do cliente não se desfaz daqui. Passa pela barreira, com a
+          // contagem escrita.
+          podeEscrever ? (
+            <ConfirmarAcao
+              alvo={`${linhas.length} fornecedores do inventário`}
+              consequencia={`Cria ${linhas.length} fornecedores no Charter do cliente; duplicatas não são desfeitas.`}
+              desabilitado={linhas.length === 0}
+              onConfirmar={exportar}
+              rotulo="Exportar para o Charter"
+              tom="accent"
+            />
+          ) : (
+            <WriteButton canWrite={false}>Exportar para o Charter</WriteButton>
+          )
         }
         subtitle={`${linhas.length} fornecedores · verificado em ${formatarData(
           linhas[0]?.verificadoEm ?? null

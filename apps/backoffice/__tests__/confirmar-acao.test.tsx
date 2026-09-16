@@ -110,4 +110,69 @@ describe("ConfirmarAcao", () => {
     fireEvent.click(confirmar);
     expect(onConfirmar).not.toHaveBeenCalled();
   });
+
+  // Onda P0/P1: a barreira passa a valer também para ações sem volta que não
+  // são destrutivas (enviar proposta, provisionar tenant). Vermelho é a cor do
+  // que apaga; o resto usa o accent — e o `--red-border` que a moldura pedia
+  // não existia no tema.
+  describe("tom", () => {
+    it("tom=red pinta gatilho e moldura com os tokens de vermelho do tema", () => {
+      montar({ tom: "red" });
+
+      const gatilho = screen.getByRole("button", { name: /Cancelar COSMOS/ });
+      expect(gatilho.style.color).toBe("var(--red-text)");
+
+      fireEvent.click(gatilho);
+      const moldura = screen.getByText(/perde acesso ao módulo/)
+        .parentElement as HTMLElement;
+      expect(moldura.style.border).toContain("var(--red-rgb)");
+      expect(moldura.style.border).not.toContain("--red-border");
+      expect(moldura.style.background).toBe("var(--red-soft)");
+    });
+
+    it("tom=accent usa o accent, e é a ação primária da tela", () => {
+      montar({ tom: "accent" });
+
+      const gatilho = screen.getByRole("button", { name: /Cancelar COSMOS/ });
+      expect(gatilho.style.background).toBe("var(--accent)");
+      expect(gatilho.style.color).toBe("var(--accent-fg)");
+
+      fireEvent.click(gatilho);
+      const moldura = screen.getByText(/perde acesso ao módulo/)
+        .parentElement as HTMLElement;
+      expect(moldura.style.border).toContain("var(--accent-rgb)");
+      expect(moldura.style.background).toBe("var(--accent-soft)");
+    });
+
+    it("sem tom, continua vermelho — os cinco usos existentes são destrutivos", () => {
+      montar();
+
+      const gatilho = screen.getByRole("button", { name: /Cancelar COSMOS/ });
+      expect(gatilho.style.color).toBe("var(--red-text)");
+    });
+  });
+
+  // `aberto`: quando o gatilho já aconteceu fora do componente (um <select>
+  // que mudou, um chip que foi clicado), a pergunta aparece de saída — sem um
+  // segundo botão só para chegar nela. `onVoltar` devolve o controle a quem
+  // precisa restaurar o valor anterior.
+  describe("aberto / onVoltar", () => {
+    it("aberto mostra o alvo e a consequência sem clique no gatilho", () => {
+      const { onConfirmar } = montar({ aberto: true });
+
+      expect(screen.getByText(/vanta-saude/)).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Confirmar" })).toBeTruthy();
+      expect(onConfirmar).not.toHaveBeenCalled();
+    });
+
+    it("Voltar avisa quem montou, para restaurar o valor anterior", () => {
+      const onVoltar = vi.fn();
+      const { onConfirmar } = montar({ aberto: true, onVoltar });
+
+      fireEvent.click(screen.getByRole("button", { name: /Voltar/ }));
+
+      expect(onVoltar).toHaveBeenCalledTimes(1);
+      expect(onConfirmar).not.toHaveBeenCalled();
+    });
+  });
 });

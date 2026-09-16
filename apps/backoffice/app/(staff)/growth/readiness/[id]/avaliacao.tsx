@@ -6,6 +6,7 @@ import { useMemo, useState, useTransition } from "react";
 import type { AvaliacaoDetalhe } from "@/app/actions/maturidade";
 import { concluirAvaliacao, responder } from "@/app/actions/maturidade";
 import { Erro, INPUT, mensagemDeErro } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 import { PORTAS } from "@/lib/comercial/funil";
 import {
@@ -170,6 +171,42 @@ function LinhaDoCriterio({
   );
 }
 
+/** A ação do cartão de resultado: selo quando fechada, barreira quando
+ *  aberta. Fora do JSX para o ternário não virar valor vazando no render. */
+function concluirOuSelo({
+  concluida,
+  podeEscrever,
+  salvando,
+  pronta,
+  organizacao,
+  onConcluir,
+}: {
+  concluida: boolean;
+  podeEscrever: boolean;
+  salvando: boolean;
+  pronta: boolean;
+  organizacao: string;
+  onConcluir: () => void;
+}) {
+  if (concluida) {
+    return <Badge tone="green">Fechada</Badge>;
+  }
+  if (!podeEscrever) {
+    return <WriteButton canWrite={false}>Concluir avaliação</WriteButton>;
+  }
+  return (
+    <ConfirmarAcao
+      alvo={organizacao}
+      consequencia="O score fica congelado; critérios não podem mais ser editados."
+      desabilitado={!pronta}
+      executando={salvando}
+      onConfirmar={onConcluir}
+      rotulo={salvando ? "Fechando…" : "Concluir avaliação"}
+      tom="accent"
+    />
+  );
+}
+
 /**
  * Score, nível e as seis barras.
  *
@@ -203,21 +240,20 @@ function PainelDeResultado({
   const degrau = concluida ? null : resultado.proximoDegrau;
   const faltam = resultado.total - resultado.respondidos;
 
+  // Concluir congela o score e tranca os critérios — sem volta. Passa pela
+  // barreira; sem permissão, o botão desabilitado com motivo de sempre.
+  const acaoDeConcluir = concluirOuSelo({
+    concluida,
+    podeEscrever,
+    salvando,
+    pronta: resultado.scoreGeral !== null,
+    organizacao: inicial.organizacao,
+    onConcluir,
+  });
+
   return (
     <SectionCard
-      action={
-        concluida ? (
-          <Badge tone="green">Fechada</Badge>
-        ) : (
-          <WriteButton
-            canWrite={podeEscrever}
-            disabled={salvando || resultado.scoreGeral === null}
-            onClick={onConcluir}
-          >
-            {salvando ? "Fechando…" : "Concluir avaliação"}
-          </WriteButton>
-        )
-      }
+      action={acaoDeConcluir}
       subtitle={
         faltam === 0
           ? "Todos os critérios respondidos."

@@ -10,7 +10,7 @@ import {
   salvarEscopoAction,
 } from "@/app/actions/proposta-escopo";
 import type { ServiceRow } from "@/app/actions/services";
-import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Campo, Erro, INPUT } from "@/components/campo";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { planoPadrao } from "@/lib/comercial/plano-padrao";
 import {
@@ -18,6 +18,12 @@ import {
   type UnidadeDeCobranca,
 } from "@/lib/comercial/precificar";
 import { validarProposta } from "@/lib/comercial/validacoes";
+import { PreviewDaProposta } from "./gerador-documento";
+import {
+  assinaturaDoEscopo,
+  PainelDeEnvio,
+  podeEnviarProposta,
+} from "./gerador-envio";
 
 /**
  * Gerador de proposta — configuração à esquerda, documento à direita.
@@ -37,6 +43,18 @@ const ROTULO_DE_STATUS: Record<string, string> = {
   RECUSADA: "recusada",
 };
 
+/** Cor do texto de um aviso de validação, pelo tom que `validarProposta`
+ *  atribui. Sem ternário aninhado: cada tom é um `if`. */
+function corDoAviso(tom: "amber" | "red" | "blue"): string {
+  if (tom === "red") {
+    return "var(--red-text)";
+  }
+  if (tom === "blue") {
+    return "var(--blue-text)";
+  }
+  return "var(--amber-text)";
+}
+
 function botaoDeEscolha(ativo: boolean) {
   return {
     flex: 1,
@@ -51,6 +69,7 @@ function botaoDeEscolha(ativo: boolean) {
   };
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: 32 com o preview e o painel de envio já fora; o que resta é a coluna de campos (plano, assentos, módulos, add-ons, termo, desconto, serviços), que só desce de 15 num refactor próprio
 export function Gerador({
   catalogo,
   servicos,
@@ -96,8 +115,32 @@ export function Gerador({
   );
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [salvo, setSalvo] = useState<{ id: string; numero: string } | null>(
-    proposta ? { id: proposta.id, numero: proposta.numero } : null
+  // `assinatura` é o escopo como foi gravado. Sem isso, "Enviar" mandava o
+  // que estava no banco e a tela mostrava o que estava sendo editado — o
+  // cliente recebia a versão antiga.
+  const [salvo, setSalvo] = useState<{
+    id: string;
+    numero: string;
+    assinatura: string;
+  } | null>(
+    proposta
+      ? {
+          id: proposta.id,
+          numero: proposta.numero,
+          assinatura: assinaturaDoEscopo({
+            titulo: proposta.titulo,
+            clienteNome: proposta.clienteNome ?? undefined,
+            contatoEmail: proposta.contatoEmail ?? undefined,
+            planoSlug: proposta.planoSlug ?? "",
+            assentos: proposta.assentos,
+            modulos: proposta.modulos,
+            addOnSlugs: proposta.addOnSlugs,
+            termoSlug: proposta.termoSlug ?? "",
+            descontoPercent: proposta.descontoPercent,
+            servicoIds: proposta.servicoIds,
+          }),
+        }
+      : null
   );
 
   const alterna = (lista: string[], valor: string) =>
@@ -174,9 +217,39 @@ export function Gerador({
     : [];
 
   const precisaAprovacao = avisos.some((a) => a.bloqueiaEnvio);
-  const emailValido = /.+@.+\..+/.test(contato);
-  const podeEnviar =
-    titulo.trim().length >= 2 && emailValido && modulos.length > 0;
+  const podeEnviar = podeEnviarProposta(titulo, contato, modulos);
+
+  const escopoAtual = {
+    titulo: titulo.trim(),
+    clienteNome: cliente.trim() || undefined,
+    contatoEmail: contato.trim() || undefined,
+    planoSlug,
+    assentos,
+    modulos,
+    addOnSlugs,
+    termoSlug,
+    descontoPercent: desconto,
+    servicoIds,
+  };
+  /** A tela está à frente do que foi gravado. */
+  const sujo =
+    salvo !== null && assinaturaDoEscopo(escopoAtual) !== salvo.assinatura;
+
+  /** Grava o escopo e devolve o id — `null` quando o servidor recusou (o erro
+   *  já foi para a tela). Compartilhado entre o submit do formulário e o
+   *  "Salvar e enviar". */
+  const gravar = async (): Promise<string | null> => {
+    const res = await salvarEscopoAction({
+      ...(salvo ? { id: salvo.id } : {}),
+      ...escopoAtual,
+    });
+    if (!res.ok) {
+      setErro(res.error);
+      return null;
+    }
+    setSalvo({ ...res.data, assinatura: assinaturaDoEscopo(escopoAtual) });
+    return res.data.id;
+  };
 
   const salvar = async (event: FormEvent) => {
     event.preventDefault();
@@ -186,27 +259,12 @@ export function Gerador({
     setSalvando(true);
     setErro(null);
 
-    const res = await salvarEscopoAction({
-      ...(salvo ? { id: salvo.id } : {}),
-      titulo: titulo.trim(),
-      clienteNome: cliente.trim() || undefined,
-      contatoEmail: contato.trim() || undefined,
-      planoSlug,
-      assentos,
-      modulos,
-      addOnSlugs,
-      termoSlug,
-      descontoPercent: desconto,
-      servicoIds,
-    });
+    const id = await gravar();
 
     setSalvando(false);
-    if (res.ok) {
-      setSalvo(res.data);
+    if (id) {
       router.refresh();
-      return;
     }
-    setErro(res.error);
   };
 
   const enviar = async () => {
@@ -216,14 +274,32 @@ export function Gerador({
     setSalvando(true);
     setErro(null);
 
-    const res = await submitProposalAction({ id: salvo.id });
+    // Com edição pendente, grava primeiro — e só envia se gravou. Enviar o
+    // que está no banco enquanto a tela mostra outra coisa é o bug que esta
+    // função existia para não ter.
+    const id = sujo ? await gravar() : salvo.id;
+    if (!id) {
+      setSalvando(false);
+      return;
+    }
+
+    const res = await submitProposalAction({ id });
     setSalvando(false);
     if (res.ok) {
-      router.push("/propostas");
+      // O destino nomeia o que aconteceu: a lista lê `?enviada` e confirma
+      // por título, em vez de trocar de tela em silêncio.
+      router.push(`/propostas?enviada=${encodeURIComponent(id)}`);
       return;
     }
     setErro(res.error);
   };
+
+  const dicaDeAssentos = plano
+    ? `mínimo faturável: ${plano.minimoAssentos} · faturando ${preco?.assentosFaturados ?? assentos}`
+    : undefined;
+  const dicaDoTermo = termo
+    ? `desconto de prazo: ${termo.descontoPercent}%`
+    : undefined;
 
   return (
     <form
@@ -321,21 +397,15 @@ export function Gerador({
               </div>
             </Campo>
 
-            <Campo
-              hint={
-                plano
-                  ? `mínimo faturável: ${plano.minimoAssentos} · faturando ${preco?.assentosFaturados ?? assentos}`
-                  : undefined
-              }
-              htmlFor="g-assentos"
-              label="Assentos"
-            >
+            <Campo hint={dicaDeAssentos} htmlFor="g-assentos" label="Assentos">
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <input
                   disabled={!editavel}
                   id="g-assentos"
                   max="500"
-                  min="5"
+                  // 0 é legítimo (proposta de diagnóstico, ver `assentos`
+                  // acima); `precificarProposta` aplica o mínimo do plano.
+                  min="0"
                   onChange={(e) => setAssentos(Number(e.target.value))}
                   step="5"
                   style={{ flex: 1, accentColor: "var(--accent)" }}
@@ -434,7 +504,7 @@ export function Gerador({
                           >
                             {a.nome}
                           </span>
-                          {a.nota && (
+                          {a.nota ? (
                             <span
                               style={{
                                 display: "block",
@@ -444,7 +514,7 @@ export function Gerador({
                             >
                               {a.nota}
                             </span>
-                          )}
+                          ) : null}
                         </span>
                         <span
                           className="mono"
@@ -502,7 +572,7 @@ export function Gerador({
                         }}
                       >
                         {s.nome}
-                        {s.exigeLab && <Badge tone="blue">LAB</Badge>}
+                        {s.exigeLab ? <Badge tone="blue">LAB</Badge> : null}
                       </span>
                       <span
                         className="mono"
@@ -537,11 +607,7 @@ export function Gerador({
         <SectionCard bodyStyle={{ padding: 14 }} icon="tag" title="Comercial">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
-              hint={
-                termo
-                  ? `desconto de prazo: ${termo.descontoPercent}%`
-                  : undefined
-              }
+              hint={dicaDoTermo}
               htmlFor="g-termo"
               label="Prazo de contrato"
             >
@@ -613,134 +679,17 @@ export function Gerador({
           top: 0,
         }}
       >
-        <SectionCard
-          bodyStyle={{ padding: 14 }}
-          icon="fileCode"
-          subtitle="Preview do documento que o cliente recebe"
-          title="Proposta"
-        >
-          <div
-            style={{
-              paddingBottom: 12,
-              borderBottom: "1px solid var(--hairline)",
-            }}
-          >
-            <div style={{ fontSize: "var(--fs-titulo)", fontWeight: 700 }}>
-              {cliente || "— nome do prospect —"}
-            </div>
-            <div
-              className="mono"
-              style={{
-                fontSize: "var(--fs-nota)",
-                color: "var(--ink-faint)",
-                marginTop: 3,
-              }}
-            >
-              {contato || "contato@cliente"} · {plano?.nome ?? "—"} ·{" "}
-              {termo?.nome ?? "—"}
-            </div>
-          </div>
-
-          {preco && plano && (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <LinhaDoDocumento
-                detalhe={
-                  preco.minimoAplicado
-                    ? `mínimo de ${plano.minimoAssentos} assentos aplicado`
-                    : `${formatarBRL(plano.precoAssentoCentavos)}/assento/mês`
-                }
-                rotulo={`${plano.nome} · ${preco.assentosFaturados} assentos`}
-                valor={formatarBRL(preco.assentosCentavos)}
-              />
-              {preco.modulosCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe="adicional mensal"
-                  rotulo={`Módulos: ${modulos.join(", ")}`}
-                  valor={formatarBRL(preco.modulosCentavos)}
-                />
-              )}
-              {preco.addOnsRecorrentesCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe={addOnsEscolhidos
-                    .filter((a) => a.recorrente)
-                    .map((a) => a.nome)
-                    .join(" · ")}
-                  rotulo="Add-ons recorrentes"
-                  valor={formatarBRL(preco.addOnsRecorrentesCentavos)}
-                />
-              )}
-              {preco.servicosRecorrentesCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe={escolhidos
-                    .filter((s) => s.unidadeDeCobranca === "RETAINER")
-                    .map((s) => s.nome)
-                    .join(" · ")}
-                  rotulo="Serviços em retainer"
-                  valor={formatarBRL(preco.servicosRecorrentesCentavos)}
-                />
-              )}
-              {preco.descontoDePrazoCentavos > 0 && (
-                <LinhaDoDocumento
-                  rotulo={`Desconto ${termo?.nome.toLowerCase()}`}
-                  tom="var(--green-text)"
-                  valor={`−${formatarBRL(preco.descontoDePrazoCentavos)}`}
-                />
-              )}
-              {preco.descontoComercialCentavos > 0 && (
-                <LinhaDoDocumento
-                  rotulo={`Desconto comercial ${desconto}%`}
-                  tom="var(--green-text)"
-                  valor={`−${formatarBRL(preco.descontoComercialCentavos)}`}
-                />
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  padding: "12px 14px",
-                  marginTop: 8,
-                  borderRadius: "var(--r-md)",
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--hairline)",
-                }}
-              >
-                <span style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
-                  Mensal recorrente
-                </span>
-                <span
-                  style={{ fontSize: "var(--fs-display)", fontWeight: 700 }}
-                >
-                  {formatarBRL(preco.liquidoMensalCentavos)}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: 10,
-                  marginTop: 12,
-                }}
-              >
-                <Celula rotulo="ACV" valor={formatarBRL(preco.acvCentavos)} />
-                <Celula
-                  rotulo={`TCV (${preco.meses}m)`}
-                  valor={formatarBRL(preco.tcvCentavos)}
-                />
-                <Celula
-                  rotulo="Setup + projetos"
-                  valor={
-                    preco.umaVezCentavos
-                      ? formatarBRL(preco.umaVezCentavos)
-                      : "—"
-                  }
-                />
-              </div>
-            </div>
-          )}
-        </SectionCard>
+        <PreviewDaProposta
+          addOnsEscolhidos={addOnsEscolhidos}
+          cliente={cliente}
+          contato={contato}
+          desconto={desconto}
+          escolhidos={escolhidos}
+          modulos={modulos}
+          plano={plano}
+          preco={preco}
+          termo={termo}
+        />
 
         {avisos.length > 0 && (
           <SectionCard
@@ -756,12 +705,7 @@ export function Gerador({
                     fontSize: "var(--fs-nota)",
                     fontWeight: 600,
                     lineHeight: 1.5,
-                    color:
-                      a.tom === "red"
-                        ? "var(--red-text)"
-                        : a.tom === "blue"
-                          ? "var(--blue-text)"
-                          : "var(--amber-text)",
+                    color: corDoAviso(a.tom),
                   }}
                 >
                   · {a.texto}
@@ -771,9 +715,9 @@ export function Gerador({
           </SectionCard>
         )}
 
-        {erro && <Erro>{erro}</Erro>}
+        {erro ? <Erro>{erro}</Erro> : null}
 
-        {somenteLeitura && (
+        {somenteLeitura ? (
           <SectionCard
             bodyStyle={{ padding: 14 }}
             icon="lock"
@@ -791,130 +735,21 @@ export function Gerador({
               preço ou escopo, monte uma proposta nova.
             </span>
           </SectionCard>
-        )}
+        ) : null}
 
-        {editavel ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <BotaoPrimario disabled={salvando || !podeEnviar}>
-              {salvo ? "Salvar alterações" : "Criar rascunho"}
-            </BotaoPrimario>
-            {salvo && (
-              <BotaoPrimario
-                disabled={salvando || !podeEnviar}
-                onClick={enviar}
-                type="button"
-              >
-                {precisaAprovacao ? "Enviar para aprovação" : "Enviar proposta"}
-              </BotaoPrimario>
-            )}
-            {!podeEnviar && (
-              <span
-                style={{
-                  fontSize: "var(--fs-nota)",
-                  color: "var(--ink-faint)",
-                }}
-              >
-                Para enviar: título, contato com e-mail válido e ao menos um
-                módulo.
-              </span>
-            )}
-          </div>
-        ) : (
-          !somenteLeitura && (
-            <span
-              style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
-            >
-              Somente leitura — seu papel no back-office é MEMBER.
-            </span>
-          )
-        )}
+        <PainelDeEnvio
+          cliente={cliente}
+          editavel={editavel}
+          onEnviar={enviar}
+          podeEnviar={podeEnviar}
+          precisaAprovacao={precisaAprovacao}
+          salvando={salvando}
+          somenteLeitura={somenteLeitura}
+          sujo={sujo}
+          temRascunho={salvo !== null}
+          titulo={titulo}
+        />
       </div>
     </form>
-  );
-}
-
-function LinhaDoDocumento({
-  rotulo,
-  valor,
-  detalhe,
-  tom,
-}: {
-  rotulo: string;
-  valor: string;
-  detalhe?: string;
-  tom?: string;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "baseline",
-        gap: 12,
-        padding: "8px 0",
-        borderBottom: "1px dashed var(--hairline)",
-      }}
-    >
-      <span style={{ minWidth: 0 }}>
-        <span
-          style={{
-            display: "block",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-            color: tom,
-          }}
-        >
-          {rotulo}
-        </span>
-        {detalhe && (
-          <span
-            style={{
-              display: "block",
-              fontSize: "var(--fs-nota)",
-              color: "var(--ink-faint)",
-            }}
-          >
-            {detalhe}
-          </span>
-        )}
-      </span>
-      <span
-        className="mono"
-        style={{ fontSize: "var(--fs-base)", fontWeight: 700, color: tom }}
-      >
-        {valor}
-      </span>
-    </div>
-  );
-}
-
-function Celula({ rotulo, valor }: { rotulo: string; valor: string }) {
-  return (
-    <div
-      style={{
-        padding: "9px 11px",
-        borderRadius: "var(--r-md)",
-        background: "var(--surface-2)",
-        border: "1px solid var(--hairline)",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "var(--fs-micro)",
-          fontWeight: 700,
-          letterSpacing: ".05em",
-          textTransform: "uppercase",
-          color: "var(--ink-faint)",
-        }}
-      >
-        {rotulo}
-      </div>
-      <div
-        className="mono"
-        style={{ fontSize: "var(--fs-base)", fontWeight: 700, marginTop: 3 }}
-      >
-        {valor}
-      </div>
-    </div>
   );
 }
