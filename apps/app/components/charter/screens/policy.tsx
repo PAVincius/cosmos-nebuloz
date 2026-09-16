@@ -25,11 +25,19 @@ import {
 } from "@/app/(charter)/actions/policy";
 import { SECTION_STATUS_LABEL, SECTION_STATUS_TONE } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
-import { ScreenError, SmartEmptyState, Tabs, Textarea } from "../base";
+import {
+  ScreenError,
+  SkeletonCard,
+  SmartEmptyState,
+  Tabs,
+  Textarea,
+} from "../base";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DiffModal, PublishVersionModal } from "../modals";
 import { useCharterData } from "../use-charter-data";
+import { GatedFooterAction } from "./gated-footer-action";
+import { ReopenSectionModal } from "./policy-confirm-reopen";
 import { PolicyDraftPreview } from "./policy-draft-preview";
 import PolicyScope from "./policy-scope";
 
@@ -70,6 +78,10 @@ const VERSION_DISCIPLINE = [
 
 const VERSION_PATTERN = /^v?(\d+)\.(\d+)$/;
 
+// Teto de altura do corpo: sem isto, seção longa empurra os botões de ação
+// para fora da dobra (sem token de espaçamento em rem no charter.css).
+const SECTION_BODY_MAX_HEIGHT = "20rem";
+
 function bumpPreview(current: string | null): string {
   if (!current) {
     return "v1.0";
@@ -99,7 +111,7 @@ function PolicyInner() {
   if (loading) {
     return (
       <div className="fade-in">
-        <div className="skeleton" style={{ height: 108, borderRadius: 14 }} />
+        <SkeletonCard />
       </div>
     );
   }
@@ -196,6 +208,18 @@ function PolicyInner() {
       }
     });
 
+  const openReopenConfirm = (sectionId: string, sectionName: string) =>
+    open(
+      <ReopenSectionModal
+        onClose={close}
+        onConfirm={() => {
+          close();
+          setStatus(sectionId, "REVIEW");
+        }}
+        sectionName={sectionName}
+      />
+    );
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -219,21 +243,14 @@ function PolicyInner() {
         title={data.name}
         tone="accent"
       >
-        <span
-          style={{
-            opacity: data.can.publish ? 1 : 0.45,
-            pointerEvents: data.can.publish ? "auto" : "none",
-          }}
-          title={
-            data.can.publish
-              ? undefined
-              : "Somente o papel Compliance publica versão"
-          }
+        <GatedFooterAction
+          allowed={data.can.publish}
+          icon="upload"
+          onClick={openPublish}
+          reason="Somente o papel Compliance publica versão"
         >
-          <Button icon="upload" onClick={openPublish}>
-            Publicar versão
-          </Button>
-        </span>
+          Publicar versão
+        </GatedFooterAction>
       </PageHeader>
 
       <Tabs
@@ -424,6 +441,8 @@ function PolicyInner() {
                         color: "var(--ink)",
                         padding: "4px 2px",
                         textWrap: "pretty",
+                        maxHeight: SECTION_BODY_MAX_HEIGHT,
+                        overflow: "auto",
                       }}
                     >
                       {sel.body}
@@ -459,59 +478,38 @@ function PolicyInner() {
                         flexWrap: "wrap",
                       }}
                     >
-                      <span
-                        style={{
-                          opacity: data.can.edit ? 1 : 0.45,
-                          pointerEvents: data.can.edit ? "auto" : "none",
+                      <GatedFooterAction
+                        allowed={data.can.edit}
+                        icon="sliders"
+                        onClick={() => {
+                          setDraft(sel.body);
+                          setEditing(true);
                         }}
-                        title={
-                          data.can.edit
-                            ? undefined
-                            : "Somente Legal ou Compliance edita seção"
-                        }
+                        reason="Somente Legal ou Compliance edita seção"
+                        variant="secondary"
                       >
-                        <Button
-                          icon="sliders"
-                          onClick={() => {
-                            setDraft(sel.body);
-                            setEditing(true);
-                          }}
-                          size="md"
-                          variant="secondary"
-                        >
-                          Editar texto
-                        </Button>
-                      </span>
+                        Editar texto
+                      </GatedFooterAction>
                       {sel.status === "DRAFT" && (
-                        <Button
+                        <GatedFooterAction
+                          allowed={sel.body.trim().length > 0}
                           icon="send"
                           onClick={() => setStatus(sel.id, "REVIEW")}
-                          size="md"
+                          reason="Escreva o texto da seção antes de solicitar revisão"
                         >
                           Solicitar revisão
-                        </Button>
+                        </GatedFooterAction>
                       )}
                       {sel.status === "REVIEW" && (
                         <>
-                          <span
-                            style={{
-                              opacity: data.can.edit ? 1 : 0.45,
-                              pointerEvents: data.can.edit ? "auto" : "none",
-                            }}
-                            title={
-                              data.can.edit
-                                ? undefined
-                                : "Somente Legal ou Compliance aprova seção"
-                            }
+                          <GatedFooterAction
+                            allowed={data.can.edit}
+                            icon="check"
+                            onClick={() => setStatus(sel.id, "PUBLISHED")}
+                            reason="Somente Legal ou Compliance aprova seção"
                           >
-                            <Button
-                              icon="check"
-                              onClick={() => setStatus(sel.id, "PUBLISHED")}
-                              size="md"
-                            >
-                              Aprovar seção
-                            </Button>
-                          </span>
+                            Aprovar seção
+                          </GatedFooterAction>
                           <Button
                             icon="arrowLeft"
                             onClick={() => setStatus(sel.id, "DRAFT")}
@@ -525,7 +523,7 @@ function PolicyInner() {
                       {sel.status === "PUBLISHED" && (
                         <Button
                           icon="fileText"
-                          onClick={() => setStatus(sel.id, "REVIEW")}
+                          onClick={() => openReopenConfirm(sel.id, sel.name)}
                           size="md"
                           variant="secondary"
                         >

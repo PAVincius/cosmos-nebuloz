@@ -5,8 +5,8 @@
 // Extraído de modals.tsx, que está na baseline do file-size-guard e não pode
 // crescer: qualquer mudança no intake passa a acontecer aqui. Anatomia
 // preservada 1:1 — ModalSplit com trilho de avaliação ao vivo, e Callout
-// carregando a razão na tela em vez de tooltip. `GatedAction` e `DataClass`
-// continuam em modals.tsx porque os outros modais também os usam.
+// carregando a razão na tela em vez de tooltip. `DataClass` continua em
+// modals.tsx porque os outros modais também o usam.
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, Button } from "@repo/design-system/cosmos/kit";
@@ -19,22 +19,24 @@ import {
   DATA_CLASS_RULE,
   DATA_CLASS_TONE,
   HITL_LABEL,
+  INTAKE_DEPARTMENTS,
   recommendPath,
   type Tone,
   vendorEligibility,
 } from "@/lib/charter/rules";
-import { Eyebrow, MetaCell } from "./base";
+import { Eyebrow, GatedButton, MetaCell } from "./base";
 import {
   Callout,
   FooterHint,
   FormField,
+  Kbd,
   Segmented,
   Select,
   TextArea,
   TextInput,
 } from "./form-kit";
 import { ModalShell, ModalSplit } from "./modal";
-import { type DataClass, GatedAction } from "./modals";
+import type { DataClass } from "./modals";
 
 type Exposure = "INTERNAL" | "EXTERNAL";
 type Criticality = "LOW" | "MEDIUM" | "HIGH";
@@ -65,19 +67,11 @@ export type IntakeSubmit = {
   dataClass: DataClass;
   exposure: Exposure;
   criticality: Criticality;
+  /** `YYYY-MM-DD` do "Início pretendido"; ausente quando não informado. Vai
+   *  para `CharterUseCase.launchTarget` via `submitCase`. */
+  launchTarget?: string;
   asDraft: boolean;
 };
-
-const DEPARTMENTS = [
-  "Operações",
-  "CX",
-  "Engenharia",
-  "Clínico",
-  "Growth",
-  "Financeiro",
-  "Legal",
-  "Marketing",
-];
 
 /**
  * Avalia ANTES de submeter. O trilho da direita recalcula a cada mudança:
@@ -101,13 +95,12 @@ export function IntakeModal({
   const selectable = vendors.filter((v) => v.tier !== "BLOCKED");
   const [title, setTitle] = useState("");
   const [objective, setObjective] = useState("");
-  const [department, setDepartment] = useState(DEPARTMENTS[0]);
+  const [department, setDepartment] = useState<string>(INTAKE_DEPARTMENTS[0]);
   const [ownerName, setOwnerName] = useState("");
   const [vendorId, setVendorId] = useState(selectable[0]?.id ?? "");
   const [dataClass, setDataClass] = useState<DataClass>("INTERNAL");
   const [exposure, setExposure] = useState<Exposure>("INTERNAL");
   const [criticality, setCriticality] = useState<Criticality>("MEDIUM");
-  const [hitl, setHitl] = useState("");
   const [launch, setLaunch] = useState("");
 
   // Mesma função pura que o servidor usa para validar.
@@ -124,8 +117,17 @@ export function IntakeModal({
       )
     : null;
   const eligible = gate?.eligible ?? false;
-  const ready =
-    title.trim().length > 5 && objective.trim().length > 15 && eligible;
+  // Responsável é obrigatório no formulário e no gate. Motivo do gate como
+  // texto no rodapé; null quando está pronto.
+  const filled =
+    title.trim().length > 5 &&
+    objective.trim().length > 15 &&
+    ownerName.trim() !== "";
+  const gateReason = eligible
+    ? filled
+      ? null
+      : "Preencha título, objetivo e responsável"
+    : "Fornecedor não elegível à classe de dado escolhida";
 
   const submit = (asDraft: boolean) =>
     onSubmit({
@@ -137,6 +139,7 @@ export function IntakeModal({
       dataClass,
       exposure,
       criticality,
+      launchTarget: launch || undefined,
       asDraft,
     });
 
@@ -145,25 +148,22 @@ export function IntakeModal({
       footer={
         <>
           <FooterHint>
-            <Icon name="lock" size={12} />
-            Submissão cria registro de risco e marca o SLA de revisão
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ??
+              "Submissão cria registro de risco e marca o SLA de revisão"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={() => submit(true)} size="md" variant="secondary">
               Salvar rascunho
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason={
-                eligible
-                  ? "Preencha título e objetivo"
-                  : "Fornecedor não elegível à classe de dado escolhida"
-              }
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="send"
+              onClick={() => submit(false)}
+              reason={gateReason ?? ""}
             >
-              <Button icon="send" onClick={() => submit(false)} size="md">
-                {pending ? "Submetendo…" : "Submeter para revisão"}
-              </Button>
-            </GatedAction>
+              {pending ? "Submetendo…" : "Submeter para revisão"}
+            </GatedButton>
           </div>
         </>
       }
@@ -373,7 +373,7 @@ export function IntakeModal({
             <FormField label="Área solicitante" required>
               <Select
                 onChange={(e) => setDepartment(e.target.value)}
-                options={DEPARTMENTS}
+                options={[...INTAKE_DEPARTMENTS]}
                 value={department}
               />
             </FormField>
@@ -439,23 +439,13 @@ export function IntakeModal({
               value={vendorId}
             />
           </FormField>
+          {/* "Plano de revisão humana" ficava aqui e era descartado no submit:
+              CharterUseCase não tem coluna para o plano textual. Sem migration
+              nesta onda — decisão de produto pendente. O mínimo pela política
+              continua no trilho ("Revisão mínima"). */}
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
-            <FormField
-              hint={`Mínimo pela política: ${HITL_LABEL[rec.hitl]}`}
-              label="Plano de revisão humana"
-            >
-              <Select
-                onChange={(e) => setHitl(e.target.value)}
-                options={[
-                  "Supervisão passiva",
-                  "Revisão por amostragem",
-                  "Revisão integral",
-                ]}
-                value={hitl || HITL_LABEL[rec.hitl]}
-              />
-            </FormField>
             <FormField label="Início pretendido">
               <TextInput
                 onChange={(e) => setLaunch(e.target.value)}

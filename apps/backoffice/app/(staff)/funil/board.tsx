@@ -526,7 +526,7 @@ export function Board({
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {mensagem ? <Erro>{mensagem}</Erro> : null}
       {estagios.length === 0 ? (
-        <Erro>Estágios não configurados — rode o seed.</Erro>
+        <Erro>Nenhum estágio configurado — peça a um ADMIN.</Erro>
       ) : null}
       <div
         style={{

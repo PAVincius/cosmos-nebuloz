@@ -542,8 +542,7 @@ export function TableRow({
   children: ReactNode;
   onClick?: () => void;
   last?: boolean;
-  /** Obrigatório quando `onClick` existe: leitor de tela precisa saber para
-   *  onde a linha leva, já que o conteúdo dela são células soltas. */
+  /** Obrigatório quando `onClick` existe: prefixo `.sr-only` ("Abrir X") do botão. */
   label?: string;
 }) {
   const layout: CSSProperties = {
@@ -557,11 +556,11 @@ export function TableRow({
   };
 
   // Linha clicável é um <button>, não um <div> com role="button": foco,
-  // Enter/Espaço e anúncio vêm do navegador.
+  // Enter/Espaço e anúncio vêm do navegador. `label` some do aria-label (que
+  // substituiria o conteúdo anunciado) e vira prefixo `.sr-only` do botão.
   if (onClick) {
     return (
       <button
-        aria-label={label}
         className="navitem btn"
         onClick={onClick}
         style={{
@@ -575,6 +574,7 @@ export function TableRow({
         }}
         type="button"
       >
+        {label && <span className="sr-only">{label}</span>}
         {children}
       </button>
     );

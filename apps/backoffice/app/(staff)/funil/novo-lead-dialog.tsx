@@ -279,7 +279,7 @@ function Formulario({
       </GrupoChips>
 
       {canais.length === 0 ? (
-        <Erro>Nenhum canal cadastrado — rode o seed de canais.</Erro>
+        <Erro>Nenhum canal cadastrado — peça a um ADMIN.</Erro>
       ) : (
         <GrupoChips
           dica="Cada canal carrega seu custo médio — é isso que vira CAC."

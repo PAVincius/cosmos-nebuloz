@@ -1,5 +1,6 @@
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { listPlatformApprovals } from "@/app/actions/approvals";
+import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Decisao } from "./decisao";
 import { Pedido } from "./pedido";
@@ -56,13 +57,16 @@ export default async function AprovacoesPage() {
         icon="approve"
         subtitle={
           pedidos.length === 0
-            ? "listPlatformApprovals()"
-            : `${pendentes.length} pendente(s) de ${pedidos.length}`
+            ? "Nada pendente"
+            : `${pendentes.length} ${pendentes.length === 1 ? "pendente" : "pendentes"} de ${pedidos.length}`
         }
         title="Fila"
       >
         {pedidos.length === 0 ? (
-          // Empty com saída, não beco: diz o que faz a fila encher.
+          // Empty com saída, não beco: diz o que faz a fila encher — e o que
+          // faz hoje, de verdade. A única action que chama
+          // `requestPlatformApproval` é o envio de proposta (proposals.ts);
+          // as outras quatro operações do PRD §6.3 ainda não passam por aqui.
           <p
             style={{
               margin: 0,
@@ -73,9 +77,10 @@ export default async function AprovacoesPage() {
               lineHeight: 1.6,
             }}
           >
-            Nenhum pedido de aprovação. A fila enche sozinha quando alguém pede
-            uma das operações sensíveis — nenhuma delas está implementada ainda,
-            elas chegam nas ondas 3 a 5.
+            Nenhum pedido de aprovação. Hoje, o que entra nesta fila é o envio
+            de proposta com desconto acima de {LIMITE_DESCONTO_SEM_APROVACAO}% —
+            a proposta fica aguardando até alguém decidir aqui. As demais
+            operações sensíveis ainda não passam pela fila.
           </p>
         ) : (
           <ul

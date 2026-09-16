@@ -65,6 +65,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Focáveis para o trap de Tab — mesmo critério do foco inicial do ModalShell.
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 function ModalHost({
   content,
   onClose,
@@ -74,6 +78,7 @@ function ModalHost({
 }) {
   const [dirty, setDirty] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const tryClose = useCallback(() => {
     if (dirty) {
@@ -93,6 +98,27 @@ function ModalHost({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         tryClose();
+        return;
+      }
+      // Trap de Tab: sem isso o foco escapa do dialog para a página atrás.
+      if (e.key === "Tab") {
+        const dialog =
+          wrapperRef.current?.querySelector<HTMLElement>('[role="dialog"]');
+        const focusables = Array.from(
+          dialog?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? []
+        );
+        if (focusables.length === 0) {
+          return;
+        }
+        const first = focusables[0];
+        const last = focusables.at(-1) as HTMLElement;
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
@@ -112,6 +138,7 @@ function ModalHost({
   return createPortal(
     <DirtyCtx.Provider value={{ markDirty: () => setDirty(true) }}>
       <div
+        ref={wrapperRef}
         style={{
           position: "fixed",
           inset: 0,
@@ -133,7 +160,7 @@ function ModalHost({
             zIndex: -1,
             border: "none",
             padding: 0,
-            background: "rgba(4,5,7,.66)",
+            background: "var(--scrim)",
             backdropFilter: "blur(6px)",
             cursor: "default",
           }}

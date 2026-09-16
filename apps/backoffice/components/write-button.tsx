@@ -7,7 +7,8 @@ import { type ButtonHTMLAttributes, type ReactNode, useId } from "react";
  *
  * O botão desabilita **com o motivo visível**, não em silêncio: um controle
  * apagado sem explicação faz a pessoa achar que a tela quebrou. O texto nomeia
- * o papel e a função que recusa, para o operador saber o que pedir a quem.
+ * o papel que a pessoa tem e o que precisa agir, para o operador saber o que
+ * pedir a quem — sem citar a função do servidor, que não diz nada a quem lê.
  *
  * Isto é conveniência de UI, **não** é a autorização. `assertCanWrite` recusa
  * de novo no servidor, em toda action — default deny. Se esta camada falhar ou
@@ -21,8 +22,9 @@ import { type ButtonHTMLAttributes, type ReactNode, useId } from "react";
  * era o único controle do painel pintado por outra régua.
  */
 
+/** A mesma frase que as outras telas de default-deny usam — uma só, combinada. */
 export const MOTIVO_SOMENTE_LEITURA =
-  "Somente leitura — seu papel no tenant system é MEMBER. assertCanWrite recusa esta ação no servidor.";
+  "Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa fazer esta ação.";
 
 const BASE = {
   display: "inline-flex",

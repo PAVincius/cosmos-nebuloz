@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerCac } from "@/app/actions/empresa/cac";
+import { secaoDaRota } from "@/components/nav";
 import {
   intervaloPadraoCompetencia,
   lerIntervaloDaUrl,
@@ -26,7 +27,7 @@ export default async function CacPage({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Comercial · Custo de aquisição"
+        eyebrow={`${secaoDaRota("/empresa/cac")} · custo de aquisição`}
         subtitle="Cada parcela com a sua fonte. O resultado só aparece quando todas as linhas do período estiverem preenchidas — sem número, sem chute."
         title="CAC totalmente carregado"
       />

@@ -37,6 +37,7 @@ vi.mock("@repo/database", () => ({
     fn({
       meridianGapPromotion: {
         findFirst: h.promotionFindFirst,
+        findMany: vi.fn().mockResolvedValue([]),
         update: h.promotionUpdate,
       },
       scaffoldTemplateVersion: { findFirst: h.versionFindFirst },
@@ -49,6 +50,7 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
       scaffoldSettings: { findUnique: h.settingsFindUnique },
+      scaffoldMembership: { findMany: vi.fn().mockResolvedValue([]) },
       user: { findMany: h.userFindMany },
       auditLog: { create: h.auditCreate },
     }),

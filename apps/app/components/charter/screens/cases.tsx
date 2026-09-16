@@ -119,6 +119,7 @@ function CasesInner() {
                   dataClass: input.dataClass,
                   exposure: input.exposure,
                   criticality: input.criticality,
+                  launchTarget: input.launchTarget,
                   asDraft: input.asDraft,
                 }),
               {

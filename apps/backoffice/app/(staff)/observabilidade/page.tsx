@@ -149,20 +149,23 @@ export default async function ObservabilidadePage() {
 
       {res.ok ? (
         <>
+          {/* NFR-1.7: a credencial é write-only — a query não a seleciona, e a
+              tela diz isso na língua do operador, não do SQL. */}
           <SectionCard
             icon="eye"
-            subtitle="credencial não passa por aqui: o select não a seleciona (NFR-1.7)"
+            subtitle="Nome, fonte e erro de cada integração — a credencial não chega a esta tela."
             title="Integrações com falha"
           >
             <Integracoes linhas={res.data.integracoes} />
           </SectionCard>
 
+          {/* FR-30: registro de acesso ao painel. */}
           <SectionCard
             icon="userCheck"
             subtitle={
               res.data.recusas > 0
-                ? `${res.data.recusas} tentativa(s) recusada(s) nas últimas 50`
-                : "FR-30 · quem entrou, quando, de onde"
+                ? `${res.data.recusas} ${res.data.recusas === 1 ? "tentativa recusada" : "tentativas recusadas"} nas últimas 50`
+                : "Quem entrou, quando e de onde"
             }
             title="Acessos ao Big Bang"
           >

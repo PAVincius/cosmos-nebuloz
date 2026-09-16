@@ -8,6 +8,18 @@ import { ConfirmarAcao } from "@/components/confirmar-acao";
 
 const STATUSES = ["ACTIVE", "TRIAL", "SUSPENDED", "CANCELED"] as const;
 
+/** O enum vai para a action; a pessoa lê o rótulo — o mesmo de `abas/resumo.tsx`. */
+const ROTULO_STATUS: Record<(typeof STATUSES)[number], string> = {
+  ACTIVE: "Ativo",
+  TRIAL: "Trial",
+  SUSPENDED: "Suspenso",
+  CANCELED: "Cancelado",
+};
+
+function rotuloDe(status: string): string {
+  return ROTULO_STATUS[status as (typeof STATUSES)[number]] ?? status;
+}
+
 /** Liberar acesso é reversível e barato de errar: segue como clique direto.
  *  Cortar acesso chega ao cliente em segundos e não tem desfazer. */
 const CORTAM_O_CLIENTE = new Set(["SUSPENDED", "CANCELED"]);
@@ -67,7 +79,7 @@ export function ModuleForm({
                     color: "var(--ink-faint)",
                   }}
                 >
-                  {current?.status ?? "não contratado"}
+                  {current ? rotuloDe(current.status) : "não contratado"}
                 </td>
                 <td style={{ ...CELULA, textAlign: "right" }}>
                   <span
@@ -86,16 +98,16 @@ export function ModuleForm({
                           executando={pending}
                           key={status}
                           onConfirmar={() => apply(module, status)}
-                          rotulo={status}
+                          rotulo={ROTULO_STATUS[status]}
                         />
                       ) : (
                         <BotaoSecundario
                           disabled={pending || current?.status === status}
                           key={status}
                           onClick={() => apply(module, status)}
-                          rotulo={`Definir ${module} para ${status}`}
+                          rotulo={`Definir ${module} como ${ROTULO_STATUS[status]}`}
                         >
-                          {status}
+                          {ROTULO_STATUS[status]}
                         </BotaoSecundario>
                       )
                     )}
