@@ -97,6 +97,10 @@ export type SettingsView = {
   roles: { id: CharterRole; label: string }[];
   permissions: PermissionMatrixRow[];
   activeRole: CharterRole;
+  /** userId de quem está vendo a tela — usada para detectar quando a pessoa
+   *  está trocando o próprio papel de governança (settings.tsx exige aviso
+   *  explícito nesse caso antes de confirmar). */
+  activeUserId: string;
   notifications: NotificationTrigger[];
   members: { userId: string; name: string; email: string; role: CharterRole }[];
   /** Gente do tenant sem CharterMembership — candidatos ao passo 3 da
@@ -165,6 +169,7 @@ export async function getSettings(): Promise<Result<SettingsView>> {
           ),
         })),
         activeRole: ctx.charterRole,
+        activeUserId: ctx.userId,
         notifications: TRIGGER_CATALOG.map((t) => ({
           ...t,
           on: stored?.[t.id] ?? TRIGGER_DEFAULTS[t.id],

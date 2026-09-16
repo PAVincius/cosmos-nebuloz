@@ -14,7 +14,7 @@ import {
   SkeletonKpi,
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import {
   acknowledge,
   getOnboarding,
@@ -25,14 +25,18 @@ import { getPolicy } from "@/app/(charter)/actions/policy";
 import { SECTION_STATUS_LABEL, type Tone } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
+  Field,
+  GatedButton,
   Legend,
   ScreenError,
   SkeletonCard,
   SkeletonRows,
   SmartEmptyState,
   TableRow,
+  Textarea,
+  useFieldId,
 } from "../base";
-import { ModalProvider, useModal } from "../modal";
+import { ModalProvider, ModalShell, useModal } from "../modal";
 import { PublishTrackModal } from "../modals";
 import { useCharterData } from "../use-charter-data";
 
@@ -138,6 +142,127 @@ function TrackCard({ track, last }: { track: TrackRow; last: boolean }) {
         <Progress height={6} tone={tone} value={track.coverage} />
       </div>
     </div>
+  );
+}
+
+const JUSTIFICATIVA_MIN = 10;
+
+/** "Registrar" nesta lista é sempre em nome de outra pessoa — a lista de
+ *  pendências não tem uma linha de "meu próprio aceite", só nomes livres
+ *  atribuídos por quem publicou a trilha. Sem isto, um clique fabricava
+ *  evidência de que {personName} leu a política sem dizer quem de fato
+ *  registrou nem por quê. */
+function AckThirdPartyModal({
+  ackId,
+  personName,
+  policyVersion,
+  onChanged,
+}: {
+  ackId: string;
+  personName: string;
+  policyVersion: string | null;
+  onChanged: () => void;
+}) {
+  const { close } = useModal();
+  const [justificativa, setJustificativa] = useState("");
+  const [saving, setSaving] = useState(false);
+  const podeConfirmar = justificativa.trim().length >= JUSTIFICATIVA_MIN;
+  const fieldId = useFieldId("ack-justificativa");
+
+  const confirmar = async () => {
+    if (!podeConfirmar || saving) {
+      return;
+    }
+    setSaving(true);
+    const res = await runWithToast(
+      () => acknowledge({ id: ackId, justificativa: justificativa.trim() }),
+      { loading: "Registrando aceite…", success: "Aceite registrado" }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onChanged();
+    }
+  };
+
+  return (
+    <ModalShell
+      footer={
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            width: "100%",
+          }}
+        >
+          {!podeConfirmar && (
+            <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+              Descreva em pelo menos {JUSTIFICATIVA_MIN} caracteres por que você
+              está registrando por {personName}.
+            </span>
+          )}
+          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <Button onClick={close} size="md" variant="secondary">
+              Cancelar
+            </Button>
+            <GatedButton
+              allowed={podeConfirmar && !saving}
+              icon="check"
+              onClick={confirmar}
+              reason={`Descreva em pelo menos ${JUSTIFICATIVA_MIN} caracteres por que você está registrando por ${personName}.`}
+            >
+              {saving ? "Registrando…" : "Registrar aceite"}
+            </GatedButton>
+          </div>
+        </div>
+      }
+      icon="alert"
+      onClose={close}
+      subtitle={
+        policyVersion
+          ? `Política versão ${policyVersion}`
+          : "Política vigente da trilha"
+      }
+      title={`Registrar aceite em nome de ${personName}?`}
+      tone="amber"
+      width={480}
+    >
+      <div
+        style={{
+          padding: 20,
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+        }}
+      >
+        <p
+          style={{
+            fontSize: 13,
+            color: "var(--ink-muted)",
+            margin: 0,
+            lineHeight: 1.6,
+          }}
+        >
+          Isto cria evidência de que {personName} aceitou a política
+          {policyVersion ? ` versão ${policyVersion}` : ""}. Você está
+          registrando o aceite em nome de {personName} — não é {personName}
+          quem está confirmando agora.
+        </p>
+        <Field
+          hint={`Mínimo de ${JUSTIFICATIVA_MIN} caracteres — vira parte da trilha de auditoria`}
+          htmlFor={fieldId}
+          label="Justificativa"
+        >
+          <Textarea
+            id={fieldId}
+            onChange={(e) => setJustificativa(e.target.value)}
+            placeholder="Ex.: Fulano está de licença médica e me pediu para registrar após ler o material impresso."
+            value={justificativa}
+          />
+        </Field>
+      </div>
+    </ModalShell>
   );
 }
 
@@ -432,22 +557,25 @@ function OnboardingInner() {
                     {p.daysLate}d
                   </span>
                   {/* O protótipo tem "reenviar pedido"; aqui o que existe de
-                      verdade é registrar o aceite (FR-10.3). */}
+                      verdade é registrar o aceite (FR-10.3). Toda linha
+                      desta lista é em nome de outra pessoa — não há aceite
+                      próprio aqui —, então "Registrar" sempre confirma
+                      antes, com justificativa (Bloco 2 da crítica de
+                      design: evidência fabricada com um clique). */}
                   <Button
                     icon="check"
                     onClick={() =>
-                      startTransition(async () => {
-                        const res = await runWithToast(
-                          () => acknowledge({ id: p.id }),
-                          {
-                            loading: "Registrando aceite…",
-                            success: "Aceite registrado",
+                      open(
+                        <AckThirdPartyModal
+                          ackId={p.id}
+                          onChanged={reload}
+                          personName={p.personName}
+                          policyVersion={
+                            tracks.find((t) => t.code === p.trackCode)
+                              ?.policyVersion ?? null
                           }
-                        );
-                        if (res.ok) {
-                          reload();
-                        }
-                      })
+                        />
+                      )
                     }
                     size="sm"
                     variant="soft"

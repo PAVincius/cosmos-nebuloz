@@ -11,14 +11,18 @@ import { useState, useTransition } from "react";
 import { saveGeneratedDraft } from "@/app/(charter)/actions/policy";
 import { generatePolicyDraft } from "@/app/(charter)/actions/policy-generate";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
-import { Textarea } from "../base";
-import { Callout } from "../form-kit";
+import { GatedButton, Textarea } from "../base";
+import { Callout, FooterHint } from "../form-kit";
 
 type Estado = "idle" | "gerando" | "pronto" | "erro";
 type Grounded = { id: string; codigo: string; citacao: string };
 type Fontes = { casos: number; fornecedores: number; exigencias: number };
 
 const FONTES_VAZIAS: Fontes = { casos: 0, fornecedores: 0, exigencias: 0 };
+
+const GERAR_DESABILITADO_MOTIVO = "Somente Legal ou Compliance edita seção";
+const ACEITAR_DESABILITADO_MOTIVO =
+  "Sem exigência para fundamentar — cadastre cobertura";
 
 export function PolicyDraftPreview({
   sectionId,
@@ -147,25 +151,23 @@ export function PolicyDraftPreview({
             Cadastre-os para um rascunho ancorado na realidade da empresa.
           </Callout>
         )}
-        <div style={{ display: "flex", gap: 8 }}>
-          <span
-            style={{
-              opacity: grounded.length > 0 ? 1 : 0.45,
-              pointerEvents: grounded.length > 0 ? "auto" : "none",
-            }}
-            title={
-              grounded.length > 0
-                ? undefined
-                : "Sem exigência para fundamentar — cadastre cobertura"
-            }
-          >
-            <Button icon="check" onClick={aceitar} size="md">
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <GatedButton
+              allowed={grounded.length > 0}
+              icon="check"
+              onClick={aceitar}
+              reason={ACEITAR_DESABILITADO_MOTIVO}
+            >
               Aceitar rascunho
+            </GatedButton>
+            <Button onClick={descartar} size="md" variant="ghost">
+              Descartar
             </Button>
-          </span>
-          <Button onClick={descartar} size="md" variant="ghost">
-            Descartar
-          </Button>
+          </div>
+          {grounded.length === 0 && (
+            <FooterHint>{ACEITAR_DESABILITADO_MOTIVO}</FooterHint>
+          )}
         </div>
       </div>
     );
@@ -174,23 +176,30 @@ export function PolicyDraftPreview({
   // idle | gerando
   const gerando = estado === "gerando";
   const habilitado = canEdit && !gerando;
+  const motivoDesabilitado = canEdit ? "" : GERAR_DESABILITADO_MOTIVO;
   return (
-    <div style={{ marginTop: 16 }}>
-      <span
-        style={{
-          opacity: habilitado ? 1 : 0.45,
-          pointerEvents: habilitado ? "auto" : "none",
-        }}
-        title={canEdit ? undefined : "Somente Legal ou Compliance edita seção"}
+    <div
+      style={{
+        marginTop: 16,
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+      }}
+    >
+      <GatedButton
+        allowed={habilitado}
+        icon="sparkles"
+        onClick={gerar}
+        reason={motivoDesabilitado}
+        variant="secondary"
       >
-        <Button icon="sparkles" onClick={gerar} size="md" variant="secondary">
-          {gerando
-            ? "Gerando rascunho… ~10s"
-            : confirmandoSobrescrita
-              ? "Gerar por cima do texto atual?"
-              : "Gerar rascunho"}
-        </Button>
-      </span>
+        {gerando
+          ? "Gerando rascunho… ~10s"
+          : confirmandoSobrescrita
+            ? "Gerar por cima do texto atual?"
+            : "Gerar rascunho"}
+      </GatedButton>
+      {!canEdit && <FooterHint>{motivoDesabilitado}</FooterHint>}
     </div>
   );
 }
