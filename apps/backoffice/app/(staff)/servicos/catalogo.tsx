@@ -80,7 +80,10 @@ function LinhaServico({
         <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
           {s.nome}
         </span>
-        <Badge tone="neutral">{s.modalidade}</Badge>
+        <Badge tone="neutral">
+          {MODALIDADES.find((m) => m.valor === s.modalidade)?.rotulo ??
+            s.modalidade}
+        </Badge>
         <span
           className="mono"
           style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
