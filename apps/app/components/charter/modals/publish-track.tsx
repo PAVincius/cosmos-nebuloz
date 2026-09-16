@@ -7,11 +7,13 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
+import { TRACK_AUDIENCES } from "@/lib/charter/rules";
 import { Eyebrow, GatedButton, MetaCell } from "../base";
 import {
   CheckRow,
   FooterHint,
   FormField,
+  Kbd,
   Segmented,
   Select,
   TextArea,
@@ -20,14 +22,6 @@ import {
 import { ModalShell, ModalSplit } from "../modal";
 
 // ── 10. PublishTrackModal (FR-10.4) ───────────────────────────────────────────
-
-const AUDIENCES = [
-  "Todos os colaboradores",
-  "Clínico · Operações",
-  "Engenharia",
-  "CX · Marketing",
-  "Gestores · Diretoria",
-];
 
 export function PublishTrackModal({
   sections,
@@ -58,7 +52,7 @@ export function PublishTrackModal({
   pending: boolean;
 }) {
   const [name, setName] = useState("");
-  const [audience, setAudience] = useState(AUDIENCES[0]);
+  const [audience, setAudience] = useState<string>(TRACK_AUDIENCES[0]);
   const [recert, setRecert] = useState("Anual");
   const [picked, setPicked] = useState<string[]>([]);
   const [quiz, setQuiz] = useState(true);
@@ -87,12 +81,8 @@ export function PublishTrackModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="lock" size={12} />
-                Aceite registra a versão {policyVersion ?? "—"}
-              </>
-            )}
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ?? `Aceite registra a versão ${policyVersion ?? "—"}`}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
@@ -264,7 +254,7 @@ export function PublishTrackModal({
             <FormField label="Público" required>
               <Select
                 onChange={(e) => setAudience(e.target.value)}
-                options={AUDIENCES}
+                options={[...TRACK_AUDIENCES]}
                 value={audience}
               />
             </FormField>

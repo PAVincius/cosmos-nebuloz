@@ -3,16 +3,16 @@
 // modals/new-vendor.tsx — NewVendorModal (FR-8.4). Movido de modals.tsx no
 // split em um arquivo por modal; anatomia preservada 1:1.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useMemo, useState } from "react";
-import { DATA_CLASS_LABEL } from "@/lib/charter/rules";
+import { DATA_CLASS_LABEL, VENDOR_CATEGORIES } from "@/lib/charter/rules";
 import { Eyebrow, GatedButton } from "../base";
 import {
   Callout,
   CheckRow,
   FooterHint,
   FormField,
+  Kbd,
   Select,
   TextArea,
   TextInput,
@@ -22,24 +22,26 @@ import type { DataClass } from "./_shared";
 
 // ── 8. NewVendorModal (FR-8.4) ────────────────────────────────────────────────
 
+// Região e retenção nascem "Não declarada" (valor vazio → undefined → null
+// no banco). Um registro contratual não pode nascer com a melhor postura
+// — "UE (Frankfurt)", retenção "Zero" — sem ninguém declarar.
+const UNDECLARED = { value: "", label: "Não declarada" };
 const REGIONS = [
+  UNDECLARED,
   "UE (Frankfurt)",
   "UE (Dublin)",
   "UE (Amsterdã)",
   "BR (São Paulo)",
   "EUA (Virgínia)",
   "EUA (Oregon)",
-  "Não declarada",
 ];
-const RETENTIONS = ["Zero", "14 dias", "30 dias", "90 dias", "Indefinida"];
-const CATEGORIES = [
-  "Assistente de texto",
-  "Assistente de código",
-  "Modelos de decisão",
-  "IA clínica",
-  "Enriquecimento de dados",
-  "Análise contratual",
-  "Síntese de voz",
+const RETENTIONS = [
+  UNDECLARED,
+  "Zero",
+  "14 dias",
+  "30 dias",
+  "90 dias",
+  "Indefinida",
 ];
 
 export function NewVendorModal({
@@ -53,8 +55,9 @@ export function NewVendorModal({
   onSubmit: (input: {
     name: string;
     category: string;
-    region: string;
-    retention: string;
+    /** Vazio no formulário vira `undefined`, que a action grava como null. */
+    region?: string;
+    retention?: string;
     dpa: boolean;
     notes: string;
     clauseCodes: string[];
@@ -62,9 +65,9 @@ export function NewVendorModal({
   pending: boolean;
 }) {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [region, setRegion] = useState(REGIONS[0]);
-  const [retention, setRetention] = useState(RETENTIONS[0]);
+  const [category, setCategory] = useState<string>(VENDOR_CATEGORIES[0]);
+  const [region, setRegion] = useState("");
+  const [retention, setRetention] = useState("");
   const [dpa, setDpa] = useState(false);
   const [notes, setNotes] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
@@ -87,12 +90,8 @@ export function NewVendorModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="lock" size={12} />
-                Entra como Em revisão até a avaliação de Segurança
-              </>
-            )}
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ?? "Entra como Em revisão até a avaliação de Segurança"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
@@ -105,8 +104,8 @@ export function NewVendorModal({
                 onSubmit({
                   name: name.trim(),
                   category,
-                  region,
-                  retention,
+                  region: region || undefined,
+                  retention: retention || undefined,
                   dpa,
                   notes: notes.trim(),
                   clauseCodes: selected,
@@ -147,7 +146,7 @@ export function NewVendorModal({
           <FormField label="Categoria" required>
             <Select
               onChange={(e) => setCategory(e.target.value)}
-              options={CATEGORIES}
+              options={[...VENDOR_CATEGORIES]}
               value={category}
             />
           </FormField>

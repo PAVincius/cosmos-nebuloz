@@ -1050,7 +1050,6 @@ export function GatedButton({
   variant = "primary",
   icon,
   type = "button",
-  style,
 }: {
   allowed: boolean;
   reason: string;
@@ -1059,8 +1058,6 @@ export function GatedButton({
   variant?: "primary" | "secondary" | "danger";
   icon?: IconName;
   type?: "button" | "submit";
-  /** Sobrescreve a paleta — o botão de decisão leva a cor do veredito. */
-  style?: CSSProperties;
 }) {
   const palette =
     variant === "primary"
@@ -1097,7 +1094,6 @@ export function GatedButton({
         cursor: allowed ? "pointer" : "not-allowed",
         opacity: allowed ? 1 : 0.5,
         ...palette,
-        ...style,
       }}
       title={allowed ? undefined : reason}
       type={type}

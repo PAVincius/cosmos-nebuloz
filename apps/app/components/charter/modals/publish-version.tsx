@@ -45,8 +45,6 @@ export function PublishVersionModal({
   pending: boolean;
 }) {
   const [summary, setSummary] = useState("");
-  const [notify, setNotify] = useState(true);
-  const [recert, setRecert] = useState(true);
   const blocked = blockers.length > 0;
   // Motivo do gate como texto no rodapé; null quando está pronto.
   const gateReason = blocked
@@ -133,20 +131,20 @@ export function PublishVersionModal({
 
         <div style={{ borderTop: "1px solid var(--hairline)", paddingTop: 14 }}>
           <Eyebrow style={{ marginBottom: 8 }}>Efeitos ao publicar</Eyebrow>
-          <CheckRow
-            checked={notify}
-            hint="E-mail e Slack com o resumo de mudança"
-            label="Notificar todos os colaboradores"
-            onToggle={() => setNotify((v) => !v)}
-            tone="accent"
-          />
-          <CheckRow
-            checked={recert}
-            hint={`${trackCount} trilhas · ${peopleCount.toLocaleString("pt-BR")} pessoas`}
-            label="Exigir re-aceite nas trilhas vinculadas"
-            onToggle={() => setRecert((v) => !v)}
-            tone="accent"
-          />
+          {/* Efeito, não controle: o re-aceite é automático por schema —
+              publicar nova versão invalida o aceite — e a action só leva o
+              resumo. Os checkboxes que ficavam aqui não entravam no submit. */}
+          <div
+            style={{
+              fontSize: 12.5,
+              color: "var(--ink)",
+              lineHeight: 1.5,
+            }}
+          >
+            Aceites das trilhas vinculadas serão invalidados de imediato —{" "}
+            {trackCount} trilhas · {peopleCount.toLocaleString("pt-BR")}{" "}
+            pessoas.
+          </div>
           {/* Honestidade sobre o V1: a invalidação acontece; o envio não (ADR-0011). */}
           <div
             style={{
@@ -156,8 +154,7 @@ export function PublishVersionModal({
               lineHeight: 1.5,
             }}
           >
-            A invalidação dos aceites acontece de imediato. O envio de
-            notificação ainda não está ligado nesta versão.
+            O envio de notificação ainda não está ligado nesta versão.
           </div>
         </div>
       </div>

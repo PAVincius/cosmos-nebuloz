@@ -438,3 +438,40 @@ export function slaTone(remaining: number | null): Tone {
   }
   return "green";
 }
+
+// ── Listas de formulário ──────────────────────────────────────────────────────
+//
+// Saíram dos modais (intake, fornecedor, trilha) porque carregavam resíduo do
+// protótipo healthtech num produto genérico — "Clínico", "IA clínica". Rótulos
+// genéricos; configuração por tenant fica para outra onda.
+
+/** Áreas solicitantes no intake (FR-4). */
+export const INTAKE_DEPARTMENTS = [
+  "Operações",
+  "Atendimento",
+  "Engenharia",
+  "Produto",
+  "Financeiro",
+  "Jurídico",
+  "RH",
+  "Marketing",
+] as const;
+
+/** Categorias de fornecedor de IA (FR-8.4). */
+export const VENDOR_CATEGORIES = [
+  "Assistente de texto",
+  "Assistente de código",
+  "Modelos de decisão",
+  "Enriquecimento de dados",
+  "Análise contratual",
+  "Síntese de voz",
+] as const;
+
+/** Públicos de uma trilha de onboarding (FR-10.4). */
+export const TRACK_AUDIENCES = [
+  "Todos os colaboradores",
+  "Operações · Atendimento",
+  "Engenharia · Produto",
+  "Marketing",
+  "Gestores · Diretoria",
+] as const;

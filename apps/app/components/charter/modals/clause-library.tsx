@@ -6,7 +6,7 @@
 import { Badge, Button } from "@repo/design-system/cosmos/kit";
 import type { ClauseLibraryRow } from "@/app/(charter)/actions/vendors";
 import { TableHead, TableRow } from "../base";
-import { Callout, FooterHint } from "../form-kit";
+import { Callout, FooterHint, Kbd } from "../form-kit";
 import { ModalShell } from "../modal";
 
 // ── 9. ClauseLibraryModal (FR-9.5) ────────────────────────────────────────────
@@ -25,7 +25,7 @@ export function ClauseLibraryModal({
       footer={
         <>
           <FooterHint>
-            {critical} de {rows.length} são críticas
+            <Kbd>esc</Kbd> fechar · {critical} de {rows.length} são críticas
           </FooterHint>
           <Button onClick={onClose} size="md" variant="secondary">
             Fechar

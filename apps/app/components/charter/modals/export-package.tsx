@@ -3,7 +3,6 @@
 // modals/export-package.tsx — ExportPackageModal (FR-11.5, FR-11.6). Movido
 // de modals.tsx no split em um arquivo por modal; anatomia preservada 1:1.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import { Eyebrow, GatedButton } from "../base";
@@ -12,6 +11,7 @@ import {
   CheckRow,
   FooterHint,
   FormField,
+  Kbd,
   Select,
   TextInput,
 } from "../form-kit";
@@ -27,6 +27,22 @@ const ARTIFACTS = [
   { id: "onboarding", label: "Onboarding e aceites" },
   { id: "export", label: "Exportações anteriores" },
 ];
+
+/** Período padrão: os últimos 90 dias a partir de hoje. Um período fixo no
+ *  código era um default que mentia — nascia velho no dia seguinte. */
+const DEFAULT_RANGE_DAYS = 90;
+
+/** `YYYY-MM-DD` na data local — é o que `<input type="date">` lê. */
+function localIso(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function daysAgo(n: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d;
+}
 
 export function ExportPackageModal({
   onClose,
@@ -44,8 +60,8 @@ export function ExportPackageModal({
   pending: boolean;
   result: string | null;
 }) {
-  const [from, setFrom] = useState("2026-04-01");
-  const [to, setTo] = useState("2026-06-30");
+  const [from, setFrom] = useState(() => localIso(daysAgo(DEFAULT_RANGE_DAYS)));
+  const [to, setTo] = useState(() => localIso(new Date()));
   const [format, setFormat] = useState<"csv" | "json">("csv");
   const [arts, setArts] = useState<string[]>([
     "policy",
@@ -66,12 +82,10 @@ export function ExportPackageModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="lock" size={12} />
-                {result ?? "Referências imutáveis aos registros de origem"}
-              </>
-            )}
+            <Kbd>esc</Kbd> fechar ·{" "}
+            {gateReason ??
+              result ??
+              "Referências imutáveis aos registros de origem"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">

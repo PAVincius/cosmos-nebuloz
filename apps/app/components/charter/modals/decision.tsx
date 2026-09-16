@@ -4,9 +4,8 @@
 // em um arquivo por modal; anatomia preservada 1:1 (RadioCards na decisão,
 // CheckRow nas condições, Callout carregando a razão na tela).
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button, IconButton } from "@repo/design-system/cosmos/kit";
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
 import {
   DATA_CLASS_LABEL,
   DATA_CLASS_TONE,
@@ -18,6 +17,7 @@ import {
   CheckRow,
   FooterHint,
   FormField,
+  Kbd,
   RadioCards,
   TextArea,
   TextInput,
@@ -102,20 +102,28 @@ export function DecisionModal({
   onSubmit: (input: DecisionSubmit) => void;
   pending: boolean;
 }) {
-  const [decision, setDecision] =
-    useState<DecisionSubmit["outcome"]>("RESTRICTED");
+  // Sem veredito pré-selecionado: pré-marcar "Aprovar com restrições" fazia
+  // o revisor confirmar um veredito que não escolheu.
+  const [decision, setDecision] = useState<DecisionSubmit["outcome"] | null>(
+    null
+  );
   const [note, setNote] = useState("");
   const [conds, setConds] = useState<string[]>([]);
   const [draft, setDraft] = useState("");
-  const sel = DECISIONS.find((d) => d.value === decision) ?? DECISIONS[0];
+  const sel = DECISIONS.find((d) => d.value === decision) ?? null;
   const needsCond = decision === "RESTRICTED";
   // Motivo do gate como texto no rodapé; null quando está pronto.
   const gateReason =
-    needsCond && conds.length === 0
-      ? "Aprovação com restrições exige ao menos uma condição"
-      : note.trim().length < 12
-        ? "Escreva a justificativa"
-        : null;
+    decision === null
+      ? "Escolha o veredito"
+      : needsCond && conds.length === 0
+        ? "Aprovação com restrições exige ao menos uma condição"
+        : note.trim().length < 12
+          ? "Escreva a justificativa"
+          : null;
+  // O detalhe do caso passa "—" quando getSettings falhou; sem papel, o rodapé
+  // mostra só o nome, sem o separador.
+  const role = deciderRole && deciderRole !== "—" ? deciderRole : null;
 
   const cells = [
     {
@@ -150,38 +158,42 @@ export function DecisionModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="userCheck" size={12} />
-                {deciderName} · {deciderRole}
-              </>
-            )}
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ?? `${deciderName}${role ? ` · ${role}` : ""}`}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedButton
-              allowed={gateReason === null && !pending}
-              icon={sel.icon}
-              onClick={() =>
-                onSubmit({
-                  outcome: decision,
-                  rationale: note.trim(),
-                  conditions: needsCond ? conds : [],
-                  changeRequest:
-                    decision === "CHANGES" ? note.trim() : undefined,
-                  blockReason: decision === "BLOCKED" ? note.trim() : undefined,
-                })
+            {/* O botão leva a cor do veredito: GatedButton pinta com
+                `--accent`, então basta redefinir a variável no escopo dele. */}
+            <span
+              style={
+                sel
+                  ? ({ "--accent": `var(--${sel.tone})` } as CSSProperties)
+                  : undefined
               }
-              reason={gateReason ?? ""}
-              style={{
-                background: `var(--${sel.tone})`,
-                borderColor: `var(--${sel.tone})`,
-              }}
             >
-              {pending ? "Registrando…" : sel.label}
-            </GatedButton>
+              <GatedButton
+                allowed={gateReason === null && !pending}
+                icon={sel?.icon}
+                onClick={() =>
+                  decision &&
+                  onSubmit({
+                    outcome: decision,
+                    rationale: note.trim(),
+                    conditions: needsCond ? conds : [],
+                    changeRequest:
+                      decision === "CHANGES" ? note.trim() : undefined,
+                    blockReason:
+                      decision === "BLOCKED" ? note.trim() : undefined,
+                  })
+                }
+                reason={gateReason ?? ""}
+              >
+                {pending ? "Registrando…" : (sel?.label ?? "Registrar decisão")}
+              </GatedButton>
+            </span>
           </div>
         </>
       }
@@ -189,7 +201,7 @@ export function DecisionModal({
       onClose={onClose}
       subtitle={`${caseTitle}${approvalPath ? ` · ${approvalPath}` : ""}`}
       title={`Decisão · ${caseCode}`}
-      tone={sel.tone}
+      tone={sel?.tone ?? "accent"}
       width={760}
     >
       <div
@@ -226,7 +238,7 @@ export function DecisionModal({
           <RadioCards
             onChange={(v) => setDecision(v as DecisionSubmit["outcome"])}
             options={DECISIONS}
-            value={decision}
+            value={decision ?? ""}
           />
         </FormField>
 

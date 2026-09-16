@@ -6,7 +6,7 @@
 import { Button } from "@repo/design-system/cosmos/kit";
 import type { VersionDiff } from "@/app/(charter)/actions/policy";
 import { TableHead } from "../base";
-import { Callout, FooterHint } from "../form-kit";
+import { Callout, FooterHint, Kbd } from "../form-kit";
 import { ModalShell } from "../modal";
 
 // ── 6. DiffModal (FR-2.6) ─────────────────────────────────────────────────────
@@ -28,7 +28,9 @@ export function DiffModal({
     <ModalShell
       footer={
         <>
-          <FooterHint>Referência imutável ao registro de origem</FooterHint>
+          <FooterHint>
+            <Kbd>esc</Kbd> fechar · Referência imutável ao registro de origem
+          </FooterHint>
           <Button onClick={onClose} size="md" variant="secondary">
             Fechar
           </Button>

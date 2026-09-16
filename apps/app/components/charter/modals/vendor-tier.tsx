@@ -3,7 +3,6 @@
 // modals/vendor-tier.tsx — VendorTierModal (FR-8.5). Movido de modals.tsx no
 // split em um arquivo por modal; anatomia preservada 1:1.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import { DATA_CLASS_LABEL, type Tone } from "@/lib/charter/rules";
@@ -12,6 +11,7 @@ import {
   Callout,
   FooterHint,
   FormField,
+  Kbd,
   RadioCards,
   TextArea,
 } from "../form-kit";
@@ -86,12 +86,8 @@ export function VendorTierModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="history" size={12} />
-                Alteração entra na trilha de auditoria
-              </>
-            )}
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ?? "Alteração entra na trilha de auditoria"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">

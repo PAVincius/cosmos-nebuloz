@@ -19,6 +19,7 @@ import {
   DATA_CLASS_RULE,
   DATA_CLASS_TONE,
   HITL_LABEL,
+  INTAKE_DEPARTMENTS,
   recommendPath,
   type Tone,
   vendorEligibility,
@@ -28,6 +29,7 @@ import {
   Callout,
   FooterHint,
   FormField,
+  Kbd,
   Segmented,
   Select,
   TextArea,
@@ -65,19 +67,11 @@ export type IntakeSubmit = {
   dataClass: DataClass;
   exposure: Exposure;
   criticality: Criticality;
+  /** `YYYY-MM-DD` do "Início pretendido"; ausente quando não informado. Vai
+   *  para `CharterUseCase.launchTarget` via `submitCase`. */
+  launchTarget?: string;
   asDraft: boolean;
 };
-
-const DEPARTMENTS = [
-  "Operações",
-  "CX",
-  "Engenharia",
-  "Clínico",
-  "Growth",
-  "Financeiro",
-  "Legal",
-  "Marketing",
-];
 
 /**
  * Avalia ANTES de submeter. O trilho da direita recalcula a cada mudança:
@@ -101,13 +95,12 @@ export function IntakeModal({
   const selectable = vendors.filter((v) => v.tier !== "BLOCKED");
   const [title, setTitle] = useState("");
   const [objective, setObjective] = useState("");
-  const [department, setDepartment] = useState(DEPARTMENTS[0]);
+  const [department, setDepartment] = useState<string>(INTAKE_DEPARTMENTS[0]);
   const [ownerName, setOwnerName] = useState("");
   const [vendorId, setVendorId] = useState(selectable[0]?.id ?? "");
   const [dataClass, setDataClass] = useState<DataClass>("INTERNAL");
   const [exposure, setExposure] = useState<Exposure>("INTERNAL");
   const [criticality, setCriticality] = useState<Criticality>("MEDIUM");
-  const [hitl, setHitl] = useState("");
   const [launch, setLaunch] = useState("");
 
   // Mesma função pura que o servidor usa para validar.
@@ -146,6 +139,7 @@ export function IntakeModal({
       dataClass,
       exposure,
       criticality,
+      launchTarget: launch || undefined,
       asDraft,
     });
 
@@ -154,12 +148,9 @@ export function IntakeModal({
       footer={
         <>
           <FooterHint>
-            {gateReason ?? (
-              <>
-                <Icon name="lock" size={12} />
-                Submissão cria registro de risco e marca o SLA de revisão
-              </>
-            )}
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ??
+              "Submissão cria registro de risco e marca o SLA de revisão"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={() => submit(true)} size="md" variant="secondary">
@@ -382,7 +373,7 @@ export function IntakeModal({
             <FormField label="Área solicitante" required>
               <Select
                 onChange={(e) => setDepartment(e.target.value)}
-                options={DEPARTMENTS}
+                options={[...INTAKE_DEPARTMENTS]}
                 value={department}
               />
             </FormField>
@@ -448,23 +439,13 @@ export function IntakeModal({
               value={vendorId}
             />
           </FormField>
+          {/* "Plano de revisão humana" ficava aqui e era descartado no submit:
+              CharterUseCase não tem coluna para o plano textual. Sem migration
+              nesta onda — decisão de produto pendente. O mínimo pela política
+              continua no trilho ("Revisão mínima"). */}
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
-            <FormField
-              hint={`Mínimo pela política: ${HITL_LABEL[rec.hitl]}`}
-              label="Plano de revisão humana"
-            >
-              <Select
-                onChange={(e) => setHitl(e.target.value)}
-                options={[
-                  "Supervisão passiva",
-                  "Revisão por amostragem",
-                  "Revisão integral",
-                ]}
-                value={hitl || HITL_LABEL[rec.hitl]}
-              />
-            </FormField>
             <FormField label="Início pretendido">
               <TextInput
                 onChange={(e) => setLaunch(e.target.value)}
