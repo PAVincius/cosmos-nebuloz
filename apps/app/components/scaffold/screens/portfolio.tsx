@@ -19,11 +19,13 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   listTracks,
+  type PendingPromotion,
   type PortfolioSummary,
 } from "@/app/(scaffold)/actions/tracks";
 import { PHASE, PHASE_ORDER, PHASE_STATE } from "@/lib/scaffold/phases";
 import {
   BarRow,
+  Eyebrow,
   FilterChips,
   Legend,
   ScreenError,
@@ -33,6 +35,7 @@ import {
   TableHead,
   TableRow,
 } from "../base";
+import { NewTrackModal } from "../new-track-modal";
 
 const ARCHETYPE_LABEL: Record<string, string> = {
   TRIAGE: "Triagem de suporte",
@@ -247,6 +250,10 @@ export default function PortfolioScreen() {
   const [error, setError] = useState<string | null>(null);
   const [archetype, setArchetype] = useState("all");
   const [phase, setPhase] = useState("all");
+  // `null` fechado; `{ promotion: null }` trilha sem lacuna; com promoção, S-01.
+  const [creating, setCreating] = useState<{
+    promotion: PendingPromotion | null;
+  } | null>(null);
 
   const load = useCallback(async () => {
     setError(null);
@@ -310,7 +317,63 @@ export default function PortfolioScreen() {
         >
           Templates
         </Button>
+        <Button
+          disabled={loading}
+          icon="plus"
+          onClick={() => setCreating({ promotion: null })}
+        >
+          Nova trilha
+        </Button>
       </PageHeader>
+
+      {data && data.pendingPromotions.length > 0 ? (
+        <SectionCard
+          icon="outbound"
+          subtitle="S-01 · lacunas que o Meridian promoveu e ainda não viraram trilha"
+          title="Aguardando trilha"
+          tone="amber"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {data.pendingPromotions.map((p) => (
+              <div
+                key={p.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "8px 0",
+                  borderBottom: "1px solid var(--hairline)",
+                }}
+              >
+                <Eyebrow>{p.gapCode}</Eyebrow>
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: 12.5,
+                    color: "var(--ink)",
+                    minWidth: 0,
+                  }}
+                >
+                  {p.statement}
+                </span>
+                <span
+                  className="mono"
+                  style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                >
+                  promovida {p.promotedAt.toLocaleDateString("pt-BR")}
+                </span>
+                <Button
+                  icon="layers"
+                  onClick={() => setCreating({ promotion: p })}
+                  size="sm"
+                >
+                  Criar trilha
+                </Button>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+      ) : null}
 
       <div
         style={{
@@ -534,6 +597,15 @@ export default function PortfolioScreen() {
           )}
         </div>
       </SectionCard>
+
+      {creating && data ? (
+        <NewTrackModal
+          members={data.members}
+          onClose={() => setCreating(null)}
+          onCreated={(id) => router.push(`/scaffold/track/${id}`)}
+          promotion={creating.promotion}
+        />
+      ) : null}
     </div>
   );
 }

@@ -22,16 +22,23 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   type BusinessCaseDetail,
+  contestBusinessCase,
   getBusinessCase,
   newVersionFromSigned,
+  signBusinessCase,
   submitForSignature,
 } from "@/app/(scaffold)/actions/business-case";
+import { exportBusinessCase } from "@/app/(scaffold)/actions/export";
 import {
   Eyebrow,
+  Field,
+  Input,
   MetaCell,
+  ModalShell,
   ScreenError,
   SkeletonCard,
   StatusDot,
+  Textarea,
 } from "../base";
 import { BC_STATE } from "./baselines";
 
@@ -193,7 +200,15 @@ function MetricRow({ m, last }: { m: Metric; last: boolean }) {
  *  A distinção "vigente" versus "em edição" é o motivo de `signedVersionId` e
  *  `currentVersionId` serem colunas separadas: o Signal continua apurando
  *  contra a assinada enquanto um rascunho existe por cima. */
-function SignalContractCard({ bc }: { bc: BusinessCaseDetail }) {
+function SignalContractCard({
+  bc,
+  busy,
+  onExport,
+}: {
+  bc: BusinessCaseDetail;
+  busy: boolean;
+  onExport: () => void;
+}) {
   const signed = bc.versions.find((v) => v.id === bc.signedVersionId);
   const editing =
     bc.currentVersionId && bc.currentVersionId !== bc.signedVersionId
@@ -202,6 +217,19 @@ function SignalContractCard({ bc }: { bc: BusinessCaseDetail }) {
 
   return (
     <SectionCard
+      action={
+        signed ? (
+          <Button
+            disabled={busy}
+            icon="download"
+            onClick={onExport}
+            size="sm"
+            variant="secondary"
+          >
+            Exportar v2
+          </Button>
+        ) : null
+      }
       icon="pulse"
       subtitle={
         signed
@@ -453,6 +481,17 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
   const [bc, setBc] = useState<BusinessCaseDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Assinar e contestar são as duas saídas de AWAITING. Cada uma é um ato com
+  // nome — o modal existe para a pessoa escrever o dela antes de decidir.
+  const [modal, setModal] = useState<"sign" | "contest" | null>(null);
+  const [form, setForm] = useState({
+    signer: "",
+    by: "",
+    role: "",
+    objection: "",
+    asks: "",
+  });
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!param) {
@@ -485,6 +524,69 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
     [load]
   );
 
+  // O contrato v2 sai como arquivo: é o que o Signal importa sem transformação
+  // (SC-004), e é o que o patrocinador leva para a reunião.
+  const exportContract = useCallback(async () => {
+    if (!bc) {
+      return;
+    }
+    setBusy(true);
+    const res = await exportBusinessCase({
+      businessCaseId: bc.id,
+      shape: "v2",
+    });
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    const blob = new Blob([JSON.stringify(res.data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${bc.code}-signal-v2.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [bc]);
+
+  const openModal = useCallback((kind: "sign" | "contest") => {
+    setForm({ signer: "", by: "", role: "", objection: "", asks: "" });
+    setModalError(null);
+    setModal(kind);
+  }, []);
+
+  const submitModal = useCallback(async () => {
+    if (!(bc?.currentVersionId && modal)) {
+      return;
+    }
+    setBusy(true);
+    const res =
+      modal === "sign"
+        ? await signBusinessCase({
+            businessCaseId: bc.id,
+            versionId: bc.currentVersionId,
+            signedByLabel: form.signer,
+          })
+        : await contestBusinessCase({
+            businessCaseId: bc.id,
+            versionId: bc.currentVersionId,
+            byLabel: form.by,
+            roleLabel: form.role,
+            objection: form.objection,
+            asks: form.asks,
+          });
+    setBusy(false);
+    if (res.ok) {
+      setModal(null);
+      await load();
+      return;
+    }
+    // A recusa fica no modal: a pessoa está no meio de escrever a objeção.
+    setModalError(res.error);
+  }, [bc, modal, form, load]);
+
   if (error) {
     return <ScreenError message={error} onRetry={load} />;
   }
@@ -494,6 +596,12 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
 
   const s = BC_STATE[bc.state] ?? BC_STATE.DRAFT;
   const current = bc.versions.find((v) => v.id === bc.currentVersionId);
+  const canSign = form.signer.trim().length >= 4;
+  const canContest =
+    form.by.trim().length > 0 &&
+    form.role.trim().length > 0 &&
+    form.objection.trim().length >= 20 &&
+    form.asks.trim().length >= 4;
 
   return (
     <div
@@ -548,6 +656,26 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
           >
             Enviar para assinatura
           </Button>
+        )}
+        {bc.state === "AWAITING" && (
+          <>
+            <Button
+              disabled={busy}
+              icon="x"
+              onClick={() => openModal("contest")}
+              variant="secondary"
+            >
+              Contestar
+            </Button>
+            <Button
+              disabled={busy}
+              icon="check"
+              onClick={() => openModal("sign")}
+              variant="primary"
+            >
+              Assinar
+            </Button>
+          </>
         )}
         {(bc.state === "SIGNED" || bc.state === "CONTESTED") && (
           <Button
@@ -796,7 +924,7 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
             gap: "var(--gap)",
           }}
         >
-          <SignalContractCard bc={bc} />
+          <SignalContractCard bc={bc} busy={busy} onExport={exportContract} />
           <VersionTrail bc={bc} />
           <SectionCard
             icon="clock"
@@ -830,6 +958,179 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
           </SectionCard>
         </div>
       </div>
+
+      {modal === "sign" ? (
+        <ModalShell
+          actions={
+            <>
+              <Button
+                disabled={busy}
+                onClick={() => setModal(null)}
+                variant="secondary"
+              >
+                Cancelar
+              </Button>
+              <Button
+                disabled={busy || !canSign}
+                icon="check"
+                onClick={submitModal}
+              >
+                Assinar {current?.label ?? ""}
+              </Button>
+            </>
+          }
+          icon="check"
+          onClose={() => setModal(null)}
+          subtitle="S-06 · a versão assinada é imutável; o Signal apura contra ela até outra ser assinada"
+          title={`Assinar o caso de negócio ${bc.code}`}
+          tone="green"
+          width={520}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: 12,
+              }}
+            >
+              <MetaCell label="Métricas" value={String(bc.metrics.length)} />
+              <MetaCell
+                label="Janela"
+                value={bc.windowMonths ? `${bc.windowMonths} meses` : "—"}
+              />
+              <MetaCell
+                label="Benefício"
+                value={
+                  bc.benefitAnnualCents === null
+                    ? "—"
+                    : (bc.benefitAnnualCents / 100).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                        maximumFractionDigits: 0,
+                      })
+                }
+              />
+            </div>
+            <Field
+              error={modalError ?? undefined}
+              hint="O nome fica no registro da versão. Não é login — é quem responde pela promessa."
+              htmlFor="bc-signer"
+              label="Quem assina"
+              required
+            >
+              <Input
+                autoFocus
+                disabled={busy}
+                id="bc-signer"
+                invalid={Boolean(modalError)}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, signer: e.target.value }))
+                }
+                placeholder="Nome completo"
+                value={form.signer}
+              />
+            </Field>
+          </div>
+        </ModalShell>
+      ) : null}
+
+      {modal === "contest" ? (
+        <ModalShell
+          actions={
+            <>
+              <Button
+                disabled={busy}
+                onClick={() => setModal(null)}
+                variant="secondary"
+              >
+                Cancelar
+              </Button>
+              <Button
+                disabled={busy || !canContest}
+                icon="x"
+                onClick={submitModal}
+              >
+                Registrar objeção
+              </Button>
+            </>
+          }
+          icon="x"
+          onClose={() => setModal(null)}
+          subtitle="Devolve o caso para revisão. A objeção fica no histórico junto da versão que a recebeu."
+          title={`Contestar ${bc.code} · ${current?.label ?? ""}`}
+          tone="amber"
+          width={560}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 12,
+              }}
+            >
+              <Field htmlFor="bc-by" label="Quem contesta" required>
+                <Input
+                  autoFocus
+                  disabled={busy}
+                  id="bc-by"
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, by: e.target.value }))
+                  }
+                  placeholder="Nome"
+                  value={form.by}
+                />
+              </Field>
+              <Field htmlFor="bc-role" label="Papel" required>
+                <Input
+                  disabled={busy}
+                  id="bc-role"
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, role: e.target.value }))
+                  }
+                  placeholder="Ex.: Diretor médico"
+                  value={form.role}
+                />
+              </Field>
+            </div>
+            <Field
+              hint="Mínimo de 20 caracteres. Devolver sem explicar não é objeção — é silêncio com botão."
+              htmlFor="bc-objection"
+              label="Objeção"
+              required
+            >
+              <Textarea
+                disabled={busy}
+                id="bc-objection"
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, objection: e.target.value }))
+                }
+                placeholder="O que na promessa não se sustenta, e por quê."
+                value={form.objection}
+              />
+            </Field>
+            <Field
+              error={modalError ?? undefined}
+              htmlFor="bc-asks"
+              label="O que precisa mudar"
+              required
+            >
+              <Textarea
+                disabled={busy}
+                id="bc-asks"
+                invalid={Boolean(modalError)}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, asks: e.target.value }))
+                }
+                placeholder="Qual métrica, meta ou base de cálculo precisa ser revista."
+                style={{ minHeight: 60 }}
+                value={form.asks}
+              />
+            </Field>
+          </div>
+        </ModalShell>
+      ) : null}
     </div>
   );
 }
