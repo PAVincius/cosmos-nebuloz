@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
-import { type ReactNode, useCallback, useId, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useId, useState } from "react";
 import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import {
@@ -19,6 +19,7 @@ import {
   INPUT,
 } from "@/components/campo";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { useParamState } from "@/lib/url-state";
 import {
   RegistrarAtivo,
   ROTULO_LICENCA,
@@ -391,41 +392,65 @@ export function Biblioteca({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  // O ativo aberto mora em `?ativo=<id>`: F5 reabre o mesmo e o link cola num
+  // ticket. A URL é a fonte — clicar na lista escreve o param, e é o param
+  // que dispara a leitura. Id fora da lista cai no estado vazio, sem erro.
+  const [ativoId, setAtivoId] = useParamState("ativo");
   const [aberto, setAberto] = useState<IpAssetDetail | null>(null);
   const [rascunho, setRascunho] = useState("");
   const [nota, setNota] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const abrir = useCallback(async (id: string) => {
-    setErro(null);
-    const res = await getIpAsset(id);
-    if (res.ok) {
-      setAberto(res.data);
-      setRascunho(res.data.conteudo);
-      setNota("");
-    } else {
-      setErro(res.error);
+  const abertoId = aberto?.id ?? null;
+  useEffect(() => {
+    if (!(ativoId && lista.some((a) => a.id === ativoId))) {
+      setAberto(null);
+      return;
     }
-  }, []);
+    if (abertoId === ativoId) {
+      return;
+    }
+    let vivo = true;
+    setErro(null);
+    getIpAsset(ativoId).then((res) => {
+      if (!vivo) {
+        return;
+      }
+      if (res.ok) {
+        setAberto(res.data);
+        setRascunho(res.data.conteudo);
+        setNota("");
+      } else {
+        setErro(res.error);
+      }
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [ativoId, lista, abertoId]);
+
+  const abrir = useCallback(
+    (id: string) => {
+      setErro(null);
+      setAtivoId(id);
+    },
+    [setAtivoId]
+  );
 
   // A linha nova vem inteira da action: montá-la aqui daria uma segunda fonte
   // para `reusos` e `maturidade`, que são derivados e não campos. Criar leva
-  // direto ao editor, como antes — uma segunda ida ao servidor busca o
+  // direto ao editor, como antes — pela URL, e o efeito acima busca o
   // `IpAssetDetail` que a lista sozinha não tem.
-  const aoCriar = useCallback(async (novo: IpAssetRow) => {
-    setErro(null);
-    setLista((atual) => [novo, ...atual]);
-    setCriando(false);
-    const det = await getIpAsset(novo.id);
-    if (det.ok) {
-      setAberto(det.data);
-      setRascunho(det.data.conteudo);
-      setNota("");
-    } else {
-      setErro(det.error);
-    }
-  }, []);
+  const aoCriar = useCallback(
+    (novo: IpAssetRow) => {
+      setErro(null);
+      setLista((atual) => [novo, ...atual]);
+      setCriando(false);
+      setAtivoId(novo.id);
+    },
+    [setAtivoId]
+  );
 
   const salvar = useCallback(async () => {
     if (!aberto) {

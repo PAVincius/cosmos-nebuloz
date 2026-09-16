@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   createDiagramAction,
   type DiagramDetail,
@@ -15,6 +15,7 @@ import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { useParamState } from "@/lib/url-state";
 
 /**
  * Estúdio de diagramas: lista à esquerda, editor à direita, histórico embaixo.
@@ -22,6 +23,12 @@ import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
  * Um componente para BPMN e Mermaid porque tudo em volta do canvas é idêntico —
  * listar, criar, salvar revisão, ver histórico. Só o editor troca, e ele entra
  * por `kind`. Duas cópias divergiriam no primeiro ajuste de fluxo.
+ *
+ * O diagrama aberto mora em `?diagrama=<id>`, não em `useState`: F5 reabre o
+ * mesmo, e o mapa de processos linka direto no diagrama do processo. A URL é a
+ * fonte — clicar na lista escreve o param, e é o param que dispara a leitura.
+ * Id que não está na lista cai no estado vazio, sem erro: link velho não é
+ * culpa de quem abriu.
  */
 
 /** Teto do arquivo enviado. Um BPMN de processo real fica na casa das dezenas
@@ -170,6 +177,52 @@ function SeletorDeCliente({
   );
 }
 
+/**
+ * A URL manda: `?diagrama=` muda (clique, F5, link colado) e o detalhe é lido.
+ * Só busca id que está na lista — link para diagrama apagado ou de outro tipo
+ * cai no estado vazio em vez de virar um erro na cara de quem colou. Fora do
+ * `Estudio` para o efeito ter nome e o componente caber na conta de
+ * complexidade do lint.
+ */
+function useDiagramaDaUrl({
+  diagramaId,
+  lista,
+  abertoId,
+  setAberto,
+  setErro,
+}: {
+  diagramaId: string;
+  lista: DiagramRow[];
+  abertoId: string | undefined;
+  setAberto: (d: DiagramDetail | null) => void;
+  setErro: (e: string | null) => void;
+}) {
+  useEffect(() => {
+    if (!(diagramaId && lista.some((d) => d.id === diagramaId))) {
+      setAberto(null);
+      return;
+    }
+    if (abertoId === diagramaId) {
+      return;
+    }
+    let vivo = true;
+    setErro(null);
+    getDiagram(diagramaId).then((res) => {
+      if (!vivo) {
+        return;
+      }
+      if (res.ok) {
+        setAberto(res.data);
+      } else {
+        setErro(res.error);
+      }
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [diagramaId, lista, abertoId, setAberto, setErro]);
+}
+
 export function Estudio({
   kind,
   iniciais,
@@ -182,6 +235,7 @@ export function Estudio({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  const [diagramaId, setDiagramaId] = useParamState("diagrama");
   const [aberto, setAberto] = useState<DiagramDetail | null>(null);
   const [criando, setCriando] = useState(false);
   const [nome, setNome] = useState("");
@@ -189,6 +243,14 @@ export function Estudio({
   const [erro, setErro] = useState<string | null>(null);
 
   const emBranco = kind === "BPMN" ? BPMN_EM_BRANCO : MERMAID_EXEMPLO;
+
+  useDiagramaDaUrl({
+    abertoId: aberto?.id,
+    diagramaId,
+    lista,
+    setAberto,
+    setErro,
+  });
 
   const receberArquivo = useCallback(async (arquivo: File | undefined) => {
     if (!arquivo) {
@@ -208,15 +270,13 @@ export function Estudio({
     setNome((atual) => atual || arquivo.name.replace(EXTENSAO_FINAL, ""));
   }, []);
 
-  const abrir = useCallback(async (id: string) => {
-    setErro(null);
-    const res = await getDiagram(id);
-    if (res.ok) {
-      setAberto(res.data);
-    } else {
-      setErro(res.error);
-    }
-  }, []);
+  const abrir = useCallback(
+    (id: string) => {
+      setErro(null);
+      setDiagramaId(id);
+    },
+    [setDiagramaId]
+  );
 
   const criar = useCallback(async () => {
     setErro(null);
@@ -236,7 +296,6 @@ export function Estudio({
     // passa a ser o que o banco gravou, e não a minha suposição do que gravou.
     const det = await getDiagram(res.data.id);
     if (det.ok) {
-      setAberto(det.data);
       setLista((atual) => [
         {
           id: det.data.id,
@@ -250,8 +309,10 @@ export function Estudio({
         },
         ...atual,
       ]);
+      // Abre pela URL, como qualquer outro item da lista.
+      setDiagramaId(det.data.id);
     }
-  }, [kind, nome, emBranco, enviado]);
+  }, [kind, nome, emBranco, enviado, setDiagramaId]);
 
   const trocarCliente = useCallback(
     async (sobreTenantId: string) => {
