@@ -4,7 +4,7 @@
 // split que deu folga ao size:guard (a tela estava na baseline de 1025
 // linhas). Anatomia preservada 1:1; só muda export/imports.
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import {
   importRequirementSet,
   publishSetVersion,
@@ -16,16 +16,25 @@ import { Field, GatedButton, Input, Select, Textarea } from "../base";
 type ParsedRequisito = { codigo: string; citacao: string; resumo: string };
 
 const REQUISITOS_PLACEHOLDER =
-  "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
-  "4.2.2 | RFP §4.2.2 | Criptografia em repouso obrigatória";
+  "4.2.1\tRetenção de dados por 5 anos\tRFP §4.2.1\n" +
+  "4.2.2\tCriptografia em repouso obrigatória\tRFP §4.2.2";
 
 /**
- * Spec §5.1: "colar exigências, uma por linha". Pipe (`|`) separa os três
- * campos — raro em citação/resumo em prosa jurídica, ao contrário de vírgula
- * ou ponto-e-vírgula — e só os dois primeiros pipes de cada linha contam:
- * qualquer `|` a mais dentro do resumo (o único campo de texto livre)
- * permanece ali, em vez de espalhar a linha em pedaços a mais. Formato
- * documentado no hint do campo — ninguém adivinha um delimitador.
+ * Spec §5.1: "colar exigências, uma por linha". Tab separa as três colunas —
+ * é o que sai de colar do Excel/Sheets, que é como a compliance lead tem
+ * essa lista, e não colide com citação em prosa jurídica ("§ 4 | 5" antes
+ * quebrava a linha no pipe do meio). `|` continua funcionando como
+ * fallback, só quando a linha não tem tab nenhum — cola manual ou de um
+ * lugar que não preserva tab também não perde a função. Nos dois formatos
+ * só os dois primeiros delimitadores de cada linha contam: qualquer um a
+ * mais no último campo permanece ali, em vez de espalhar a linha em
+ * pedaços a mais.
+ *
+ * A ordem das colunas muda entre os dois formatos: colado do Excel é
+ * código, título (resumo), citação — a ordem natural de uma planilha, com a
+ * citação por último, que é o campo mais livre para conter qualquer coisa;
+ * o fallback por pipe mantém código | citação | resumo, a ordem que o
+ * formato já tinha antes de tab existir aqui.
  *
  * Linha em branco é ruído de colagem, não erro. Linha sem os dois
  * separadores, ou com algum campo vazio, é recusada nomeando a linha — a
@@ -44,17 +53,24 @@ function parseRequisitosPaste(text: string): {
     if (line.trim() === "") {
       continue;
     }
-    const first = line.indexOf("|");
-    const second = first === -1 ? -1 : line.indexOf("|", first + 1);
+    const delimiter = line.includes("\t") ? "\t" : "|";
+    const first = line.indexOf(delimiter);
+    const second = first === -1 ? -1 : line.indexOf(delimiter, first + 1);
     if (second === -1) {
       return {
         requisitos: [],
-        error: `Linha ${i + 1}: formato inválido — use "código | citação | resumo".`,
+        error: `Linha ${i + 1}: formato inválido — cole do Excel (colunas separadas por tab) ou use "código | citação | resumo".`,
       };
     }
     const codigo = line.slice(0, first).trim();
-    const citacao = line.slice(first + 1, second).trim();
-    const resumo = line.slice(second + 1).trim();
+    const segundaColuna = line.slice(first + 1, second).trim();
+    const terceiraColuna = line.slice(second + 1).trim();
+    // Tab: código, título (resumo), citação — ordem de planilha. Pipe:
+    // código, citação, resumo — ordem original, preservada no fallback.
+    const [citacao, resumo] =
+      delimiter === "\t"
+        ? [terceiraColuna, segundaColuna]
+        : [segundaColuna, terceiraColuna];
     if (!(codigo && citacao && resumo)) {
       return {
         requisitos: [],
@@ -84,6 +100,19 @@ export function ImportQuickAddForm({
   const [requisitosText, setRequisitosText] = useState("");
   const [supersedesId, setSupersedesId] = useState("");
   const [versao, setVersao] = useState("");
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // O formulário nasce abaixo de todo o mapa — sem rolar até ele e focar o
+    // primeiro campo, clicar em "Importar exigências" não muda nada visível
+    // na tela. Mesmo padrão de foco do ModalShell (modal.tsx); scrollIntoView
+    // é opcional porque jsdom (e navegador antigo) pode não implementar.
+    formRef.current?.scrollIntoView?.({ block: "start" });
+    const first = formRef.current?.querySelector<HTMLElement>(
+      'input:not([type="hidden"]), select, textarea, button, [tabindex]:not([tabindex="-1"])'
+    );
+    first?.focus();
+  }, []);
 
   const parsed = parseRequisitosPaste(requisitosText);
   // Só entra em jogo quando a pessoa escolheu um conjunto pra substituir —
@@ -141,6 +170,7 @@ export function ImportQuickAddForm({
 
   return (
     <div
+      ref={formRef}
       style={{
         maxWidth: 460,
         margin: "18px auto 4px",
@@ -167,7 +197,7 @@ export function ImportQuickAddForm({
       </Field>
       <Field
         error={parsed.error ?? undefined}
-        hint='Uma exigência por linha, no formato "código | citação | resumo".'
+        hint="Cole do Excel: código, título e citação em colunas."
         htmlFor="conformidade-import-requisitos"
         label="Exigências"
         required

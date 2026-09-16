@@ -520,7 +520,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Banco Aurora 2026" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: {
         value:
           "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
@@ -565,7 +565,7 @@ describe("ComplianceScreen", () => {
     });
     // Segunda linha não tem os dois separadores "|" — igual a colar uma
     // linha da RFP que não seguiu o formato pedido no hint do campo.
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: {
         value:
           "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
@@ -633,7 +633,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Cliente" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: { value: "A-1 | §1 | Resumo" },
     });
     fireEvent.change(screen.getByLabelText("Substitui um conjunto existente"), {
@@ -670,7 +670,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Nova" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: { value: "A-1 | §1 | Resumo" },
     });
 
