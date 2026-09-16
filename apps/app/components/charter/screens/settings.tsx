@@ -339,8 +339,12 @@ function SettingsScreenInner() {
                       {ROLE_ORDER.map((r) => {
                         const granted = p.grants.includes(r);
                         const active = data.activeRole === r;
+                        const roleLabel =
+                          data.roles.find((x) => x.id === r)?.label ?? r;
+                        const statusLabel = granted ? "Permitido" : "Negado";
                         return (
                           <td
+                            aria-label={`${roleLabel}: ${p.label} — ${granted ? "permitido" : "negado"}`}
                             key={r}
                             style={{
                               textAlign: "center",
@@ -369,13 +373,14 @@ function SettingsScreenInner() {
                                   ? "var(--green-text)"
                                   : "var(--ink-faint)",
                               }}
-                              title={granted ? "Permitido" : "Negado"}
+                              title={statusLabel}
                             >
                               <Icon
                                 name={granted ? "check" : "slash"}
                                 size={granted ? 12 : 11}
                                 strokeWidth={2.4}
                               />
+                              <span className="sr-only">{statusLabel}</span>
                             </span>
                           </td>
                         );

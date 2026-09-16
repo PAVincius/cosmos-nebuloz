@@ -17,6 +17,7 @@ import {
   createContext,
   type ReactNode,
   useContext,
+  useId,
 } from "react";
 
 export const DirtyCtx = createContext<{ markDirty: () => void }>({
@@ -367,6 +368,10 @@ export function CheckRow({
   disabled?: boolean;
   right?: ReactNode;
 }) {
+  // `label` pode ser ReactNode (ex.: trecho em negrito) — aria-label só
+  // aceita string, então o nome acessível vem de aria-labelledby apontando
+  // pro elemento que já renderiza `label` visivelmente, seja qual for o tipo.
+  const labelId = useId();
   return (
     <div
       style={{
@@ -376,11 +381,13 @@ export function CheckRow({
         padding: "9px 4px",
       }}
     >
+      {/* biome-ignore lint/a11y/useSemanticElements: <input type="checkbox"> não dá pro visual (ícone de check + borda por tone) que o resto do form-kit usa em <button> — mesmo padrão de Segmented/RadioCards */}
       <button
-        aria-label={typeof label === "string" ? label : undefined}
-        aria-pressed={checked}
+        aria-checked={checked}
+        aria-labelledby={labelId}
         disabled={disabled}
         onClick={() => !disabled && onToggle?.()}
+        role="checkbox"
         style={{
           width: 18,
           height: 18,
@@ -408,6 +415,7 @@ export function CheckRow({
       </button>
       <div style={{ minWidth: 0, flex: 1 }}>
         <div
+          id={labelId}
           style={{
             fontSize: 12.5,
             fontWeight: 600,

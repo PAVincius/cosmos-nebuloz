@@ -538,26 +538,26 @@
 
 /* Editor de blocos da nota nativa: o botão remover só aparece no hover ou
    quando o próprio botão recebe foco por teclado. */
-.block-remove {
+.charter-root .block-remove {
   opacity: 0;
   transition: opacity 0.12s ease;
 }
-.block-hover:hover .block-remove,
-.block-remove:focus-visible {
+.charter-root .block-hover:hover .block-remove,
+.charter-root .block-remove:focus-visible {
   opacity: 1;
 }
 @media (prefers-reduced-motion: reduce) {
-  .block-remove {
+  .charter-root .block-remove {
     transition: none;
   }
 }
 
 /* Chevron das linhas expansíveis da árvore do épico. */
-.tree-chevron {
+.charter-root .tree-chevron {
   transition: transform 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
-  .tree-chevron {
+  .charter-root .tree-chevron {
     transition: none;
   }
 }
