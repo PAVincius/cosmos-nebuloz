@@ -163,7 +163,10 @@ function ListaDeTitulos({
   onCancelar: (t: TituloRow) => void;
 }) {
   return (
-    <SectionCard subtitle={`${titulos.length} título(s)`} title={titulo}>
+    <SectionCard
+      subtitle={`${titulos.length} ${titulos.length === 1 ? "título" : "títulos"}`}
+      title={titulo}
+    >
       <Tabela larguras={LARGURAS}>
         <TableHead
           labels={[

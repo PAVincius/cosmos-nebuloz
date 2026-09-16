@@ -547,7 +547,7 @@ export function Estudio({
         }))}
         onSelecionar={guarda.abrir}
         selecionadoId={aberto?.id ?? null}
-        subtitulo={`${lista.length} diagrama(s)`}
+        subtitulo={`${lista.length} ${lista.length === 1 ? "diagrama" : "diagramas"}`}
         titulo="Diagramas"
         vazio={`Nenhum diagrama ainda. ${podeEscrever ? "Crie o primeiro em Novo." : "Criar exige papel ADMIN."}`}
       />

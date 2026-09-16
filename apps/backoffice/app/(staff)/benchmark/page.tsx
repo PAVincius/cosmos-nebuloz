@@ -3,6 +3,8 @@ import {
   PageHeader,
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
+import type { ReactNode } from "react";
 import {
   type Benchmark,
   type ClienteBenchmark,
@@ -12,6 +14,8 @@ import {
 import { formatarBRL } from "@/lib/comercial/formato";
 
 export const dynamic = "force-dynamic";
+
+const LINK = { color: "var(--accent-text)", fontWeight: 700 } as const;
 
 const CABECALHO = {
   padding: "0 10px 7px",
@@ -28,6 +32,25 @@ const CELULA = {
   borderTop: "1px solid var(--hairline)",
   fontSize: "var(--fs-base)",
 };
+
+/** Vazio que ensina, no tom do catálogo: diz o que alimenta a tabela e o que
+ *  fazer — um <thead> sem linha não dizia se era falta de dado ou falha. */
+function Vazio({ children }: { children: ReactNode }) {
+  return (
+    <p
+      style={{
+        margin: 0,
+        padding: 28,
+        textAlign: "center",
+        fontSize: "var(--fs-base)",
+        lineHeight: 1.6,
+        color: "var(--ink-muted)",
+      }}
+    >
+      {children}
+    </p>
+  );
+}
 
 /**
  * Barra proporcional ao maior valor da coluna.
@@ -177,32 +200,43 @@ function Conteudo({ dados }: { dados: Benchmark }) {
         subtitle="maior receita primeiro · cancelado não entra na conta"
         title="Por cliente"
       >
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th className="mono" style={CABECALHO}>
-                Cliente
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Engaj.
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Receita
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Ticket médio
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Desconto médio
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {dados.clientes.map((c) => (
-              <LinhaCliente c={c} key={c.slug} maximo={maxCliente} />
-            ))}
-          </tbody>
-        </table>
+        {dados.clientes.length === 0 ? (
+          <Vazio>
+            Nenhum cliente para comparar. O benchmark lê os engajamentos de{" "}
+            <Link href="/delivery" style={LINK}>
+              Delivery
+            </Link>{" "}
+            por cliente da carteira — sem cliente provisionado não há linha;
+            cliente sem engajamento aparece com zero, para o achado não sumir.
+          </Vazio>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th className="mono" style={CABECALHO}>
+                  Cliente
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Engaj.
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Receita
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Ticket médio
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Desconto médio
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {dados.clientes.map((c) => (
+                <LinhaCliente c={c} key={c.slug} maximo={maxCliente} />
+              ))}
+            </tbody>
+          </table>
+        )}
       </SectionCard>
 
       <SectionCard
@@ -210,26 +244,37 @@ function Conteudo({ dados }: { dados: Benchmark }) {
         subtitle="o que o catálogo realmente vendeu"
         title="Por serviço"
       >
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th className="mono" style={CABECALHO}>
-                Serviço
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Engaj.
-              </th>
-              <th className="mono" style={CABECALHO}>
-                Receita
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {dados.servicos.map((s) => (
-              <LinhaServico key={s.codigo} maximo={maxServico} s={s} />
-            ))}
-          </tbody>
-        </table>
+        {dados.servicos.length === 0 ? (
+          <Vazio>
+            Nenhum serviço no catálogo. Esta tabela cruza os engajamentos com o{" "}
+            <Link href="/servicos" style={LINK}>
+              catálogo de Serviços
+            </Link>
+            : cadastre o serviço lá e vincule-o ao criar o engajamento em
+            Delivery — serviço sem venda aparece com zero.
+          </Vazio>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th className="mono" style={CABECALHO}>
+                  Serviço
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Engaj.
+                </th>
+                <th className="mono" style={CABECALHO}>
+                  Receita
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {dados.servicos.map((s) => (
+                <LinhaServico key={s.codigo} maximo={maxServico} s={s} />
+              ))}
+            </tbody>
+          </table>
+        )}
       </SectionCard>
     </div>
   );

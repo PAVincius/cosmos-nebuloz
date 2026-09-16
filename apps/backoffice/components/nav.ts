@@ -133,7 +133,7 @@ export const BO_NAV: NavSection[] = [
         icon: "briefcase",
         label: "Serviços",
       },
-      { href: "/contas", icon: "heart", label: "Health e renovação" },
+      { href: "/contas", icon: "heart", label: "Saúde e renovação" },
       {
         href: "/benchmark",
         icon: "chart",
@@ -188,7 +188,9 @@ export const BO_NAV: NavSection[] = [
   {
     section: "Operações",
     items: [
-      { href: "/clientes/novo", icon: "plus", label: "Criar tenant" },
+      // "Provisionar cliente", o mesmo nome do botão da carteira: é a mesma
+      // ação, e dois nomes para ela faziam parecer duas telas.
+      { href: "/clientes/novo", icon: "plus", label: "Provisionar cliente" },
       { href: "/versao", icon: "gitBranch", label: "Versão e schema" },
     ],
   },

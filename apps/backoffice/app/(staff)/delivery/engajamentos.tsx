@@ -1,11 +1,12 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
-import { useCallback, useState } from "react";
+import { type FormEvent, useCallback, useState, useTransition } from "react";
 import type { TenantOpcao } from "@/app/actions/audit";
 import {
   createEngagementAction,
   type EngagementRow,
+  listEngagements,
   setEngagementStatusAction,
 } from "@/app/actions/engagements";
 import type { ServiceRow } from "@/app/actions/services";
@@ -24,6 +25,17 @@ const TOM: Record<string, Tone> = {
 
 const NAO_DIGITO = /[^\d]/g;
 
+const FORM_VAZIO = {
+  nome: "",
+  codigo: "",
+  clienteTenantId: "",
+  serviceId: "",
+  valor: "",
+  inicioEm: "",
+  fimEm: "",
+  escopo: "",
+};
+
 function paraCentavos(texto: string): number {
   const so = texto.replace(NAO_DIGITO, "");
   return so ? Number.parseInt(so, 10) : 0;
@@ -38,18 +50,59 @@ function periodo(inicio: string | null, fim: string | null): string {
   return `${d(inicio)} → ${d(fim)}`;
 }
 
+/** Botão de uma transição da linha. Fora de `LinhaEngajamento` porque, com o
+ *  pendente, o ternário dentro do `.map` passava o teto de complexidade. */
+function BotaoDeTransicao({
+  para,
+  travada,
+  pendente,
+  onClick,
+}: {
+  para: StatusEngajamento;
+  travada: boolean;
+  pendente: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className="btn"
+      disabled={travada}
+      onClick={onClick}
+      style={{
+        padding: "4px 9px",
+        borderRadius: "var(--r-sm)",
+        border: "1px solid var(--hairline)",
+        background: "none",
+        color: "var(--ink-muted)",
+        fontSize: "var(--fs-nota)",
+        fontWeight: 600,
+        opacity: travada ? 0.5 : 1,
+        cursor: travada ? "not-allowed" : "pointer",
+      }}
+      type="button"
+    >
+      {pendente ? "Mudando…" : `→ ${ROTULO_STATUS[para] ?? para}`}
+    </button>
+  );
+}
+
 function LinhaEngajamento({
   e,
   primeira,
   podeEscrever,
+  mudando,
   onStatus,
 }: {
   e: EngagementRow;
   primeira: boolean;
   podeEscrever: boolean;
+  /** Transição em curso nesta linha, se houver — os outros botões da linha
+   *  travam junto, só o clicado diz "Mudando…". */
+  mudando: StatusEngajamento | null;
   onStatus: (id: string, status: StatusEngajamento) => void;
 }) {
   const terminal = e.proximos.length === 0;
+  const travada = mudando !== null;
 
   return (
     <li
@@ -95,6 +148,9 @@ function LinhaEngajamento({
       <Badge dot tone={TOM[e.status] ?? "neutral"}>
         {ROTULO_STATUS[e.status as StatusEngajamento] ?? e.status}
       </Badge>
+      {/* Terminal fica esmaecido — e com a palavra: opacidade sozinha não diz
+          que a linha não tem mais para onde ir. */}
+      {terminal ? <Badge tone="neutral">Encerrado</Badge> : null}
 
       {/* Só as transições que a action aceita. Oferecer uma que ela recusa é
           pior que não oferecer nada. */}
@@ -106,30 +162,21 @@ function LinhaEngajamento({
               <ConfirmarAcao
                 alvo={`${e.codigo} · ${e.nome}`}
                 consequencia="O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro."
+                desabilitado={travada}
+                executando={mudando === "CANCELADO"}
                 key={p}
                 onConfirmar={() => onStatus(e.id, "CANCELADO")}
                 rotulo="→ Cancelado"
                 tom="red"
               />
             ) : (
-              <button
-                className="btn"
+              <BotaoDeTransicao
                 key={p}
                 onClick={() => onStatus(e.id, p as StatusEngajamento)}
-                style={{
-                  padding: "4px 9px",
-                  borderRadius: "var(--r-sm)",
-                  border: "1px solid var(--hairline)",
-                  background: "none",
-                  color: "var(--ink-muted)",
-                  fontSize: "var(--fs-nota)",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-                type="button"
-              >
-                → {ROTULO_STATUS[p as StatusEngajamento] ?? p}
-              </button>
+                para={p as StatusEngajamento}
+                pendente={mudando === p}
+                travada={travada}
+              />
             )
           )
         : null}
@@ -151,86 +198,121 @@ export function Engajamentos({
   const [lista, setLista] = useState(iniciais);
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    nome: "",
-    codigo: "",
-    clienteTenantId: "",
-    serviceId: "",
-    valor: "",
-    inicioEm: "",
-    fimEm: "",
-    escopo: "",
-  });
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
+  const [form, setForm] = useState(FORM_VAZIO);
+  // Duas transições separadas: criar e mudar status são escritas diferentes,
+  // e o pendente de uma não pode travar a outra. `mudando` guarda id e alvo
+  // para só a linha (e o botão) clicada dizer "Mudando…".
+  const [criandoPendente, iniciarCriacao] = useTransition();
+  const [, iniciarMudanca] = useTransition();
+  const [mudando, setMudando] = useState<{
+    id: string;
+    status: StatusEngajamento;
+  } | null>(null);
 
-  const criar = useCallback(async () => {
-    setErro(null);
-    const res = await createEngagementAction({
-      nome: form.nome,
-      codigo: form.codigo,
-      clienteTenantId: form.clienteTenantId,
-      serviceId: form.serviceId || undefined,
-      escopo: form.escopo || undefined,
-      valorCentavos: paraCentavos(form.valor),
-      inicioEm: form.inicioEm || undefined,
-      fimEm: form.fimEm || undefined,
-    });
+  // Relê a lista pela action em vez de `window.location.reload()`: as
+  // transições possíveis vêm do mapa do servidor (recalculá-las aqui
+  // duplicaria o que já existe lá), e a tela não perde o scroll.
+  const recarregar = useCallback(async () => {
+    const res = await listEngagements();
     if (!res.ok) {
       setErro(res.error);
       return;
     }
-    const cliente = clientes.find((c) => c.id === form.clienteTenantId);
-    setLista((atual) => [
-      {
-        id: res.data.id,
-        codigo: res.data.codigo,
-        nome: form.nome,
-        clienteNome: cliente?.name ?? "—",
-        clienteSlug: cliente?.slug ?? "—",
-        status: "PROPOSTO",
-        valorCentavos: paraCentavos(form.valor),
-        inicioEm: form.inicioEm || null,
-        fimEm: form.fimEm || null,
-        proximos: ["ATIVO", "CANCELADO"],
-      },
-      ...atual,
-    ]);
-    setCriando(false);
-    setForm({
-      nome: "",
-      codigo: "",
-      clienteTenantId: "",
-      serviceId: "",
-      valor: "",
-      inicioEm: "",
-      fimEm: "",
-      escopo: "",
-    });
-  }, [form, clientes]);
+    setLista(res.data);
+  }, []);
+
+  const criar = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      setErro(null);
+      setConfirmacao(null);
+      iniciarCriacao(async () => {
+        const res = await createEngagementAction({
+          nome: form.nome,
+          codigo: form.codigo,
+          clienteTenantId: form.clienteTenantId,
+          serviceId: form.serviceId || undefined,
+          escopo: form.escopo || undefined,
+          valorCentavos: paraCentavos(form.valor),
+          inicioEm: form.inicioEm || undefined,
+          fimEm: form.fimEm || undefined,
+        });
+        if (!res.ok) {
+          setErro(res.error);
+          return;
+        }
+        const cliente = clientes.find((c) => c.id === form.clienteTenantId);
+        setLista((atual) => [
+          {
+            id: res.data.id,
+            codigo: res.data.codigo,
+            nome: form.nome,
+            clienteNome: cliente?.name ?? "—",
+            clienteSlug: cliente?.slug ?? "—",
+            status: "PROPOSTO",
+            valorCentavos: paraCentavos(form.valor),
+            inicioEm: form.inicioEm || null,
+            fimEm: form.fimEm || null,
+            proximos: ["ATIVO", "CANCELADO"],
+          },
+          ...atual,
+        ]);
+        setConfirmacao(`Engajamento ${res.data.codigo} criado como proposto.`);
+        setCriando(false);
+        setForm(FORM_VAZIO);
+      });
+    },
+    [form, clientes]
+  );
 
   const mudarStatus = useCallback(
-    async (id: string, status: StatusEngajamento) => {
+    (id: string, status: StatusEngajamento) => {
       setErro(null);
-      const res = await setEngagementStatusAction({ id, status });
-      if (!res.ok) {
-        setErro(res.error);
-        return;
-      }
-      // Recarrega a página para a lista refletir as novas transições
-      // possíveis — recalculá-las aqui duplicaria o mapa que já existe no
-      // servidor, e duas cópias divergem.
-      window.location.reload();
+      setConfirmacao(null);
+      setMudando({ id, status });
+      iniciarMudanca(async () => {
+        const res = await setEngagementStatusAction({ id, status });
+        if (res.ok) {
+          await recarregar();
+          const codigo = lista.find((e) => e.id === id)?.codigo ?? id;
+          setConfirmacao(`${codigo} agora está ${ROTULO_STATUS[status]}.`);
+        } else {
+          setErro(res.error);
+        }
+        setMudando(null);
+      });
     },
-    []
+    [lista, recarregar]
   );
 
   const podeCriar =
     form.nome.trim().length >= 2 &&
     form.codigo.trim().length >= 2 &&
-    form.clienteTenantId !== "";
+    form.clienteTenantId !== "" &&
+    !criandoPendente;
+  const total =
+    lista.length === 1 ? "1 engajamento" : `${lista.length} engajamentos`;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? (
+        <output
+          style={{
+            display: "block",
+            padding: "9px 11px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            border: "1px solid rgba(var(--green-rgb),.3)",
+            color: "var(--green-text)",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
+          {confirmacao}
+        </output>
+      ) : null}
 
       <SectionCard
         action={
@@ -245,11 +327,14 @@ export function Engajamentos({
           ) : null
         }
         icon="handshake"
-        subtitle={`${lista.length} engajamento(s) · escopo fechado`}
+        subtitle={`${total} · escopo fechado`}
         title="Engajamentos"
       >
         {criando ? (
-          <div
+          // `<form>` e não `<div>`: é o que faz Enter num campo submeter.
+          <form
+            aria-label="Novo engajamento"
+            onSubmit={criar}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -323,10 +408,13 @@ export function Engajamentos({
                     ))}
                 </select>
               </Campo>
+              {/* A unidade vai no rótulo e o placeholder tem centavos: sem
+                  isso "5000" grava R$ 50,00 e a pessoa só descobre na dica —
+                  que agora fica colada no campo, não no rodapé. */}
               <Campo
-                hint={`grava ${formatarBRL(paraCentavos(form.valor))}`}
+                hint={`grava ${formatarBRL(paraCentavos(form.valor))} — digite com centavos`}
                 htmlFor="e-valor"
-                label="Valor fechado"
+                label="Valor fechado (R$)"
               >
                 <input
                   id="e-valor"
@@ -334,7 +422,7 @@ export function Engajamentos({
                   onChange={(ev) =>
                     setForm((f) => ({ ...f, valor: ev.target.value }))
                   }
-                  placeholder="5.000,00"
+                  placeholder="12.000,00"
                   style={INPUT}
                   value={form.valor}
                 />
@@ -378,15 +466,10 @@ export function Engajamentos({
               />
             </Campo>
 
-            <BotaoPrimario
-              disabled={!podeCriar}
-              full={false}
-              onClick={criar}
-              type="button"
-            >
-              Criar como proposto
+            <BotaoPrimario disabled={!podeCriar} full={false} type="submit">
+              {criandoPendente ? "Criando…" : "Criar como proposto"}
             </BotaoPrimario>
-          </div>
+          </form>
         ) : null}
 
         {lista.length === 0 ? (
@@ -410,6 +493,7 @@ export function Engajamentos({
               <LinhaEngajamento
                 e={e}
                 key={e.id}
+                mudando={mudando?.id === e.id ? mudando.status : null}
                 onStatus={mudarStatus}
                 podeEscrever={podeEscrever}
                 primeira={i === 0}

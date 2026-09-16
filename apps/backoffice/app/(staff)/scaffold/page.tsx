@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listGateQueue } from "@/app/actions/scaffold-supervision";
+import { secaoDaRota } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { FilaDeGates } from "./fila-de-gates";
 
@@ -21,7 +22,7 @@ export default async function ScaffoldSupervisionPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Scaffold · supervisão"
+        eyebrow={`${secaoDaRota("/scaffold")} · supervisão`}
         subtitle="Gates de toda a carteira num lugar só. A fila mostra metadado — trilha, cliente, fase, idade e critérios — e nunca os artefatos por trás deles: ver o conteúdo exige entrar no tenant do cliente, e essa entrada fica registrada."
         title="Fila de gates"
       />

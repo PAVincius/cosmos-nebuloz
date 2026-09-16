@@ -129,7 +129,7 @@ describe("Funil — lead e estágio na URL", () => {
     zerarRoteador("/funil", "estagio=PERDIDOS");
     montar();
 
-    expect(screen.getByText("1 de 2 lead(s)")).toBeTruthy();
+    expect(screen.getByText("1 de 2 leads")).toBeTruthy();
     expect(
       screen
         .getByRole("button", { name: "Perdidos" })
@@ -146,7 +146,7 @@ describe("Funil — lead e estágio na URL", () => {
     zerarRoteador("/funil", "estagio=nao-existe");
     montar();
 
-    expect(screen.getByText("2 de 2 lead(s)")).toBeTruthy();
+    expect(screen.getByText("2 de 2 leads")).toBeTruthy();
     expect(
       screen.getByRole("button", { name: "Todos" }).getAttribute("aria-pressed")
     ).toBe("true");
@@ -162,7 +162,7 @@ describe("Funil — lead e estágio na URL", () => {
       "/funil?q=meridian&estagio=GANHOS",
       { scroll: false }
     );
-    expect(screen.getByText("0 de 2 lead(s)")).toBeTruthy();
+    expect(screen.getByText("0 de 2 leads")).toBeTruthy();
   });
 
   it("chip Todos remove o param", () => {

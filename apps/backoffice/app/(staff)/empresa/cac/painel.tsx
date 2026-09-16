@@ -3,7 +3,7 @@
 import { SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import {
   type CacView,
   salvarAlocacao,
@@ -128,6 +128,150 @@ function valorInicial(v: number | null, dinheiro: boolean): string {
   return dinheiro ? centavosParaCampo(v) : String(v);
 }
 
+/** O que o formulário gravaria agora. Uma função só, usada tanto no envio
+ *  quanto no `sujo`: comparar o payload com o que está carregado é o que faz
+ *  "Sem alterações" ser verdade — comparar o texto digitado não seria
+ *  ("1.000,00" e "1000,00" são o mesmo valor). */
+function parcelasDoForm(form: Record<string, string>) {
+  return {
+    entregaDiagnosticoCentavos:
+      form.entregaDiagnosticoCentavos.trim() === ""
+        ? null
+        : paraCentavos(form.entregaDiagnosticoCentavos),
+    clientesGanhos:
+      form.clientesGanhos.trim() === ""
+        ? null
+        : Number.parseInt(form.clientesGanhos, 10),
+  };
+}
+
+/** Sujo de verdade: o que o formulário gravaria difere do que está carregado.
+ *  Antes era `true` fixo, e "Salvar revisão" prometia revisão sem nada para
+ *  versionar. */
+function haAlteracao(
+  form: Record<string, string>,
+  parcelas: CacView["parcelas"]
+): boolean {
+  const digitado = parcelasDoForm(form);
+  return (
+    digitado.entregaDiagnosticoCentavos !==
+      parcelas.entregaDiagnosticoCentavos ||
+    digitado.clientesGanhos !== parcelas.clientesGanhos
+  );
+}
+
+/** Campo em modo leitura: fundo de superfície e sem moldura — lê-se como
+ *  valor, não como algo a preencher. O `aria-readonly` é o que o leitor de
+ *  tela anuncia; o estilo é o que o olho vê. */
+const LEITURA = {
+  ...INPUT,
+  border: "1px solid transparent",
+  cursor: "default",
+} as const;
+
+/** O que a tela deixa fazer agora. Fora da árvore JSX (nursery/noLeakedRender)
+ *  e fora do componente (teto de complexidade): com mais de um mês no
+ *  intervalo as escritas ficam indisponíveis mesmo para quem pode escrever, e
+ *  "Salvar revisão" só vale com algo a versionar e nada em curso. */
+function modoDeEdicao({
+  editavel,
+  podeEscrever,
+  salvando,
+  sujo,
+}: {
+  editavel: boolean;
+  podeEscrever: boolean;
+  salvando: boolean;
+  sujo: boolean;
+}) {
+  const podeEditar = podeEscrever && editavel;
+  return {
+    podeEditar,
+    podeSalvar: editavel && sujo && !salvando,
+    estiloDoCampo: podeEditar ? INPUT : LEITURA,
+  };
+}
+
+/** O resultado — o número que a tela existe para dar. Quando incompleto, o
+ *  mesmo lugar diz quantas parcelas faltam. Tamanhos na escala do painel
+ *  (`--fs-display`, `--fs-titulo`), não px literal. */
+function ResultadoDoCac({
+  r,
+  mensalidadeReferenciaCentavos,
+}: {
+  r: CacView["resultado"];
+  mensalidadeReferenciaCentavos: number | null;
+}) {
+  const faltam = r.total - r.preenchidas;
+  return (
+    <SectionCard
+      title="CAC totalmente carregado"
+      tone={r.cacCentavos === null ? "amber" : "green"}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          gap: 16,
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <div
+            className="mono"
+            style={{ fontSize: "var(--fs-display)", fontWeight: 700 }}
+          >
+            {r.cacCentavos === null ? "R$ —" : formatarBRL(r.cacCentavos)}
+          </div>
+          <div
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
+          >
+            {r.cacCentavos === null ? (
+              <>
+                <strong style={{ color: "var(--amber-text)" }}>
+                  faltam {faltam} de {r.total} parcelas
+                </strong>{" "}
+                — sem número não há resultado
+              </>
+            ) : (
+              "por cliente ganho no período"
+            )}
+          </div>
+        </div>
+        <div>
+          <div
+            className="mono"
+            style={{ fontSize: "var(--fs-titulo)", fontWeight: 700 }}
+          >
+            {r.paybackMeses === null
+              ? "— meses"
+              : `${String(r.paybackMeses).replace(".", ",")} meses`}
+          </div>
+          <div
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
+          >
+            Payback contra a mensalidade de referência
+            {mensalidadeReferenciaCentavos === null
+              ? " (plano scale/anual ausente no catálogo)"
+              : `: ${formatarBRL(mensalidadeReferenciaCentavos)}/mês`}
+          </div>
+        </div>
+      </div>
+      <p
+        style={{
+          margin: "12px 0 0",
+          fontSize: "var(--fs-nota)",
+          color: "var(--ink-muted)",
+        }}
+      >
+        O ticket do diagnóstico e o preço do pacote S do Scaffold esperam este
+        resultado. Preencher as parcelas é a decisão; o cálculo é automático.
+      </p>
+    </SectionCard>
+  );
+}
+
 export function Painel({
   inicial,
   podeEscrever,
@@ -165,8 +309,13 @@ export function Painel({
       ])
     )
   );
-  const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // Três transições, uma por escrita: o pendente de cada uma trava o próprio
+  // botão no mesmo render em que o envio começa (segundo clique não grava
+  // duas vezes) sem travar as outras duas.
+  const [salvando, iniciarSalvar] = useTransition();
+  const [salvandoConv, iniciarSalvarConv] = useTransition();
+  const [salvandoPesos, iniciarSalvarPesos] = useTransition();
 
   const aplicar = useCallback(
     (res: Awaited<ReturnType<typeof salvarParcelas>>) => {
@@ -179,69 +328,79 @@ export function Painel({
     []
   );
 
-  const salvar = useCallback(async () => {
-    setSalvando(true);
+  const salvar = useCallback(() => {
     setErro(null);
-    aplicar(
-      await salvarParcelas({
-        competencia: view.competenciaEditavel,
-        entregaDiagnosticoCentavos:
-          form.entregaDiagnosticoCentavos.trim() === ""
-            ? null
-            : paraCentavos(form.entregaDiagnosticoCentavos),
-        clientesGanhos:
-          form.clientesGanhos.trim() === ""
-            ? null
-            : Number.parseInt(form.clientesGanhos, 10),
-        de: view.intervalo.de,
-        ate: view.intervalo.ate,
-      })
-    );
-    setSalvando(false);
+    iniciarSalvar(async () => {
+      aplicar(
+        await salvarParcelas({
+          competencia: view.competenciaEditavel,
+          ...parcelasDoForm(form),
+          de: view.intervalo.de,
+          ate: view.intervalo.ate,
+        })
+      );
+    });
   }, [form, view.competenciaEditavel, view.intervalo, aplicar]);
 
-  const salvarConv = useCallback(async () => {
+  const salvarConv = useCallback(() => {
     setErro(null);
-    aplicar(
-      await salvarConversao({
-        competencia: view.competenciaEditavel,
-        ...Object.fromEntries(
-          CONVERSOES.map((c) => [
-            c.chave,
-            conv[c.chave].trim() === ""
-              ? null
-              : Number.parseInt(conv[c.chave], 10),
-          ])
-        ),
-        de: view.intervalo.de,
-        ate: view.intervalo.ate,
-      })
-    );
+    iniciarSalvarConv(async () => {
+      aplicar(
+        await salvarConversao({
+          competencia: view.competenciaEditavel,
+          ...Object.fromEntries(
+            CONVERSOES.map((c) => [
+              c.chave,
+              conv[c.chave].trim() === ""
+                ? null
+                : Number.parseInt(conv[c.chave], 10),
+            ])
+          ),
+          de: view.intervalo.de,
+          ate: view.intervalo.ate,
+        })
+      );
+    });
   }, [conv, view.competenciaEditavel, view.intervalo, aplicar]);
 
-  const salvarPesos = useCallback(async () => {
+  const salvarPesos = useCallback(() => {
     setErro(null);
-    aplicar(
-      await salvarAlocacao({
-        competencia: view.competenciaEditavel,
-        alocacoes: PRODUTOS.filter((p) => pesos[p].trim() !== "").map((p) => ({
-          produto: p,
-          pesoPercent: Number.parseInt(pesos[p], 10),
-        })),
-        de: view.intervalo.de,
-        ate: view.intervalo.ate,
-      })
-    );
+    iniciarSalvarPesos(async () => {
+      aplicar(
+        await salvarAlocacao({
+          competencia: view.competenciaEditavel,
+          alocacoes: PRODUTOS.filter((p) => pesos[p].trim() !== "").map(
+            (p) => ({
+              produto: p,
+              pesoPercent: Number.parseInt(pesos[p], 10),
+            })
+          ),
+          de: view.intervalo.de,
+          ate: view.intervalo.ate,
+        })
+      );
+    });
   }, [pesos, view.competenciaEditavel, view.intervalo, aplicar]);
 
   const r = view.resultado;
-  const faltam = r.total - r.preenchidas;
-  // Fora da árvore JSX (nursery/noLeakedRender): com mais de um mês no
-  // intervalo as escritas ficam indisponíveis mesmo para quem pode escrever.
-  const podeEditar = podeEscrever && view.editavel;
+  const sujo = haAlteracao(form, view.parcelas);
+  const { podeEditar, podeSalvar, estiloDoCampo } = modoDeEdicao({
+    editavel: view.editavel,
+    podeEscrever,
+    salvando,
+    sujo,
+  });
 
   return (
     <>
+      {/* O resultado — o número que a tela existe para dar — vem primeiro.
+          Quando incompleto, o mesmo lugar diz quantas parcelas faltam, para a
+          pessoa não rolar até o fim para descobrir que ainda não há número. */}
+      <ResultadoDoCac
+        mensalidadeReferenciaCentavos={view.mensalidadeReferenciaCentavos}
+        r={r}
+      />
+
       <div
         style={{
           display: "flex",
@@ -261,12 +420,12 @@ export function Painel({
         />
         {podeEscrever ? (
           <BotaoPrimario
-            disabled={salvando || !view.editavel}
+            disabled={!podeSalvar}
             full={false}
             onClick={salvar}
             type="button"
           >
-            {rotuloSalvar(salvando, true)}
+            {rotuloSalvar(salvando, sujo)}
           </BotaoPrimario>
         ) : null}
       </div>
@@ -327,6 +486,7 @@ export function Painel({
                   ) : (
                     <input
                       aria-label={p.rotulo}
+                      aria-readonly={!podeEditar}
                       inputMode={p.dinheiro ? "decimal" : "numeric"}
                       onChange={(e) =>
                         setForm({ ...form, [p.chave]: e.target.value })
@@ -337,7 +497,7 @@ export function Painel({
                           : "R$ —"
                       }
                       readOnly={!podeEditar}
-                      style={{ ...INPUT, textAlign: "right" }}
+                      style={{ ...estiloDoCampo, textAlign: "right" }}
                       value={form[p.chave]}
                     />
                   )}
@@ -376,13 +536,18 @@ export function Painel({
                     <Celula>
                       <input
                         aria-label={`Peso ${p}`}
+                        aria-readonly={!podeEditar}
                         inputMode="numeric"
                         onChange={(e) =>
                           setPesos({ ...pesos, [p]: e.target.value })
                         }
                         placeholder="— %"
                         readOnly={!podeEditar}
-                        style={{ ...INPUT, width: 90, textAlign: "right" }}
+                        style={{
+                          ...estiloDoCampo,
+                          width: 90,
+                          textAlign: "right",
+                        }}
                         value={pesos[p]}
                       />
                     </Celula>
@@ -399,12 +564,12 @@ export function Painel({
           {podeEscrever ? (
             <div style={{ marginTop: 10 }}>
               <BotaoPrimario
-                disabled={!view.editavel}
+                disabled={salvandoPesos || !view.editavel}
                 full={false}
                 onClick={salvarPesos}
                 type="button"
               >
-                Salvar pesos
+                {salvandoPesos ? "Salvando pesos…" : "Salvar pesos"}
               </BotaoPrimario>
             </div>
           ) : null}
@@ -433,13 +598,14 @@ export function Painel({
               <span className="mono">{c.rotulo}</span>
               <input
                 aria-label={c.rotulo}
+                aria-readonly={!podeEditar}
                 inputMode="numeric"
                 onChange={(e) =>
                   setConv({ ...conv, [c.chave]: e.target.value })
                 }
                 placeholder="— %"
                 readOnly={!podeEditar}
-                style={{ ...INPUT, width: 90, textAlign: "right" }}
+                style={{ ...estiloDoCampo, width: 90, textAlign: "right" }}
                 value={conv[c.chave]}
               />
             </div>
@@ -447,70 +613,17 @@ export function Painel({
           {podeEscrever ? (
             <div style={{ marginTop: 10 }}>
               <BotaoPrimario
-                disabled={!view.editavel}
+                disabled={salvandoConv || !view.editavel}
                 full={false}
                 onClick={salvarConv}
                 type="button"
               >
-                Salvar conversão
+                {salvandoConv ? "Salvando conversão…" : "Salvar conversão"}
               </BotaoPrimario>
             </div>
           ) : null}
         </SectionCard>
       </div>
-
-      <SectionCard
-        title="CAC totalmente carregado"
-        tone={r.cacCentavos === null ? "amber" : "green"}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            gap: 16,
-            flexWrap: "wrap",
-          }}
-        >
-          <div>
-            <div className="mono" style={{ fontSize: 32, fontWeight: 700 }}>
-              {r.cacCentavos === null ? "R$ —" : formatarBRL(r.cacCentavos)}
-            </div>
-            <div
-              style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
-            >
-              {r.cacCentavos === null
-                ? `Faltam ${faltam} parcelas · sem número não há resultado`
-                : "por cliente ganho no período"}
-            </div>
-          </div>
-          <div>
-            <div className="mono" style={{ fontSize: 24, fontWeight: 700 }}>
-              {r.paybackMeses === null
-                ? "— meses"
-                : `${String(r.paybackMeses).replace(".", ",")} meses`}
-            </div>
-            <div
-              style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
-            >
-              Payback contra a mensalidade de referência
-              {view.mensalidadeReferenciaCentavos === null
-                ? " (plano scale/anual ausente no catálogo)"
-                : `: ${formatarBRL(view.mensalidadeReferenciaCentavos)}/mês`}
-            </div>
-          </div>
-        </div>
-        <p
-          style={{
-            margin: "12px 0 0",
-            fontSize: "var(--fs-nota)",
-            color: "var(--ink-muted)",
-          }}
-        >
-          O ticket do diagnóstico e o preço do pacote S do Scaffold esperam este
-          resultado. Preencher as parcelas é a decisão; o cálculo é automático.
-        </p>
-      </SectionCard>
     </>
   );
 }

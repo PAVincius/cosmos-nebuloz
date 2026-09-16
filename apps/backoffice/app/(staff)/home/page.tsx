@@ -10,8 +10,61 @@ import {
   type SaudeDaPlataforma,
 } from "@/app/actions/access";
 import { listPlatformApprovals } from "@/app/actions/approvals";
+import { Erro } from "@/components/campo";
 
 export const dynamic = "force-dynamic";
+
+/** Pendentes na fila, ou o motivo de não saber. Uma falha aqui não pode virar
+ *  zero: "Nada exige atenção" sobre dado que não veio é mentira. */
+type FilaDeAprovacoes = { pendentes: number } | { erro: string };
+
+/** "1 acesso recusado" / "3 acessos recusados" — plural real, não entre parênteses. */
+function plural(n: number, um: string, varios: string): string {
+  return `${n} ${n === 1 ? um : varios}`;
+}
+
+/** Sem o número não há como dizer verde: o "não sei" fica âmbar. */
+function tomDasAprovacoes(pendentes: number | null): "amber" | "green" {
+  if (pendentes === null || pendentes > 0) {
+    return "amber";
+  }
+  return "green";
+}
+
+/** O item de aprovações na lista do que exige atenção: o aviso de falha (com
+ *  o erro, `role=alert`) ou a contagem — nunca os dois, nunca nada quando
+ *  não se sabe. */
+function ItemDeAprovacoes({ aprovacoes }: { aprovacoes: FilaDeAprovacoes }) {
+  if ("erro" in aprovacoes) {
+    return (
+      <li>
+        <Erro>
+          {`Não foi possível carregar aprovações: ${aprovacoes.erro}`}
+        </Erro>
+        <Link href="/aprovacoes" style={ATALHO}>
+          Abrir a fila →
+        </Link>
+      </li>
+    );
+  }
+  if (aprovacoes.pendentes === 0) {
+    return null;
+  }
+  return (
+    <li>
+      <Badge dot tone="amber">
+        {plural(
+          aprovacoes.pendentes,
+          "aprovação pendente",
+          "aprovações pendentes"
+        )}
+      </Badge>
+      <Link href="/aprovacoes" style={ATALHO}>
+        Abrir a fila →
+      </Link>
+    </li>
+  );
+}
 
 const ATALHO = {
   display: "inline-block",
@@ -31,12 +84,13 @@ const ATALHO = {
  */
 function Conteudo({
   saude,
-  pendentes,
+  aprovacoes,
 }: {
   saude: SaudeDaPlataforma;
-  pendentes: number;
+  aprovacoes: FilaDeAprovacoes;
 }) {
   const quebradas = saude.integracoes.length;
+  const pendentes = "pendentes" in aprovacoes ? aprovacoes.pendentes : null;
   const tudoCalmo = quebradas === 0 && pendentes === 0 && saude.recusas === 0;
 
   return (
@@ -56,11 +110,11 @@ function Conteudo({
           value={saude.tenants}
         />
         <KpiCard
-          hint="esperando decisão"
+          hint={pendentes === null ? "não carregou" : "esperando decisão"}
           icon="approve"
           label="Aprovações pendentes"
-          tone={pendentes > 0 ? "amber" : "green"}
-          value={pendentes}
+          tone={tomDasAprovacoes(pendentes)}
+          value={pendentes ?? "—"}
         />
         <KpiCard
           hint="em todos os clientes"
@@ -112,20 +166,11 @@ function Conteudo({
               gap: 10,
             }}
           >
-            {pendentes > 0 ? (
-              <li>
-                <Badge dot tone="amber">
-                  {pendentes} aprovação(ões) pendente(s)
-                </Badge>
-                <Link href="/aprovacoes" style={ATALHO}>
-                  Abrir a fila →
-                </Link>
-              </li>
-            ) : null}
+            <ItemDeAprovacoes aprovacoes={aprovacoes} />
             {quebradas > 0 ? (
               <li>
                 <Badge dot tone="red">
-                  {quebradas} integração(ões) com erro
+                  {plural(quebradas, "integração", "integrações")} com erro
                 </Badge>
                 <Link href="/observabilidade" style={ATALHO}>
                   Ver quais →
@@ -135,7 +180,11 @@ function Conteudo({
             {saude.recusas > 0 ? (
               <li>
                 <Badge dot tone="amber">
-                  {saude.recusas} acesso(s) recusado(s)
+                  {plural(
+                    saude.recusas,
+                    "acesso recusado",
+                    "acessos recusados"
+                  )}
                 </Badge>
                 <Link href="/observabilidade" style={ATALHO}>
                   Ver a trilha →
@@ -215,19 +264,25 @@ export default async function HomePage() {
     listPlatformApprovals(),
   ]);
 
-  const pendentes = aprovacoes.ok
-    ? aprovacoes.data.filter((a) => a.status === "PENDING_APPROVAL").length
-    : 0;
+  // A falha de aprovações não derruba a Home nem vira zero: desce como erro
+  // e a tela mostra o aviso no lugar do número.
+  const filaDeAprovacoes = aprovacoes.ok
+    ? {
+        pendentes: aprovacoes.data.filter(
+          (a) => a.status === "PENDING_APPROVAL"
+        ).length,
+      }
+    : { erro: aprovacoes.error };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow="Plataforma · visão geral"
-        subtitle="O que exige atenção agora. A carteira de clientes fica em Tenants — esta tela responde se você precisa fazer alguma coisa hoje."
+        subtitle="O que exige atenção agora. A carteira de clientes fica em Clientes — esta tela responde se você precisa fazer alguma coisa hoje."
         title="Home"
       />
       {saude.ok ? (
-        <Conteudo pendentes={pendentes} saude={saude.data} />
+        <Conteudo aprovacoes={filaDeAprovacoes} saude={saude.data} />
       ) : (
         <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {saude.error}

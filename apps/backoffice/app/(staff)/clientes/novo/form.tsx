@@ -6,7 +6,7 @@ import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import { slugify } from "@repo/provisioning/src/slug";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { type FormEvent, useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
@@ -27,6 +27,13 @@ const ROTULO_STATUS: Record<StatusInicial, string> = {
   ACTIVE: "Ativo",
   TRIAL: "Trial",
 };
+
+/** As três escolhas por módulo. "" é fora: o módulo não entra no payload. */
+const OPCOES_DE_STATUS: { valor: StatusInicial | ""; rotulo: string }[] = [
+  { valor: "ACTIVE", rotulo: ROTULO_STATUS.ACTIVE },
+  { valor: "TRIAL", rotulo: ROTULO_STATUS.TRIAL },
+  { valor: "", rotulo: "Fora" },
+];
 
 export function NewClientForm({
   modulos,
@@ -50,21 +57,22 @@ export function NewClientForm({
     slug: string;
     email: string;
   } | null>(null);
+  // A barreira abre pelo submit do `<form>` — clique no botão ou Enter num
+  // campo chegam ao mesmo lugar, e nenhum dos dois pula a confirmação.
+  const [perguntando, setPerguntando] = useState(false);
 
-  // Ativo → Trial → fora, como no desenho. Um clique só percorre os três
-  // estados; um checkbox não teria como expressar o do meio.
-  const alternar = (module: string) =>
+  // Três estados, três rádios — não um botão que percorre Ativo → Trial →
+  // fora a cada clique: `aria-pressed` só sabe dizer ligado/desligado, e o
+  // do meio ficava sem nome para quem não vê a cor do badge. Escolher "fora"
+  // tira o módulo do payload, como antes.
+  const definir = (module: string, valor: StatusInicial | "") =>
     setStatus((prev) => {
-      const atual = prev[module];
-      if (atual === undefined) {
-        return { ...prev, [module]: "ACTIVE" };
+      if (valor === "") {
+        return Object.fromEntries(
+          Object.entries(prev).filter(([m]) => m !== module)
+        );
       }
-      if (atual === "ACTIVE") {
-        return { ...prev, [module]: "TRIAL" };
-      }
-      return Object.fromEntries(
-        Object.entries(prev).filter(([m]) => m !== module)
-      );
+      return { ...prev, [module]: valor };
     });
 
   const escolhidos = Object.entries(status);
@@ -101,8 +109,17 @@ export function NewClientForm({
       setError(result.error);
     });
 
+  const pedirConfirmacao = (event: FormEvent) => {
+    event.preventDefault();
+    if (podeEnviar) {
+      setPerguntando(true);
+    }
+  };
+
   return (
-    <div
+    <form
+      aria-label="Provisionar cliente"
+      onSubmit={pedirConfirmacao}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -258,53 +275,73 @@ export function NewClientForm({
               fontWeight: 500,
             }}
           >
-            O clique alterna: Ativo → Trial → fora. Entram já com o status
-            escolhido.
+            Escolha o status inicial de cada módulo. Fora = não contratado; os
+            outros entram já com o status escolhido.
           </p>
           {modulos.map((module) => {
             const atual = status[module];
             return (
-              <button
-                aria-pressed={atual !== undefined}
-                className="btn"
-                disabled={!canWrite}
+              <div
+                aria-label={`Status inicial de ${module}`}
                 key={module}
-                onClick={() => alternar(module)}
+                role="radiogroup"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
-                  textAlign: "left",
+                  flexWrap: "wrap",
                   padding: "10px 12px",
                   borderRadius: "var(--r-md)",
                   border: `1px solid ${atual ? "rgba(var(--accent-rgb),.4)" : "var(--hairline)"}`,
                   background: atual ? "var(--accent-soft)" : "var(--surface-2)",
-                  color: "var(--ink)",
-                  fontFamily: "inherit",
-                  fontSize: "var(--fs-base)",
-                  fontWeight: 700,
                   opacity: canWrite ? 1 : 0.6,
-                  cursor: canWrite ? "pointer" : "not-allowed",
                 }}
-                type="button"
               >
-                <span style={{ flex: 1 }}>{module}</span>
+                <span
+                  style={{
+                    flex: 1,
+                    minWidth: 90,
+                    fontSize: "var(--fs-base)",
+                    fontWeight: 700,
+                  }}
+                >
+                  {module}
+                </span>
+                {/* O estado atual em palavra, além da cor do badge. */}
                 {atual ? (
                   <Badge dot tone={atual === "ACTIVE" ? "green" : "blue"}>
                     {ROTULO_STATUS[atual]}
                   </Badge>
                 ) : (
-                  <span
-                    style={{
-                      fontSize: "var(--fs-nota)",
-                      color: "var(--ink-faint)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    fora
-                  </span>
+                  <Badge tone="neutral">Fora</Badge>
                 )}
-              </button>
+                <span style={{ display: "inline-flex", gap: 12 }}>
+                  {OPCOES_DE_STATUS.map((opcao) => (
+                    <label
+                      key={opcao.valor}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontSize: "var(--fs-nota)",
+                        fontWeight: 600,
+                        color: "var(--ink-muted)",
+                        cursor: canWrite ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      <input
+                        checked={(atual ?? "") === opcao.valor}
+                        disabled={!canWrite}
+                        name={`status-${module}`}
+                        onChange={() => definir(module, opcao.valor)}
+                        type="radio"
+                        value={opcao.valor}
+                      />
+                      {opcao.rotulo}
+                    </label>
+                  ))}
+                </span>
+              </div>
             );
           })}
         </fieldset>
@@ -312,22 +349,33 @@ export function NewClientForm({
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           {/* Provisionar chega ao cliente em segundos e não tem desfazer — é
               o caso que `ConfirmarAcao` cita no próprio comentário. O alvo é
-              o slug ao vivo: se o nome saiu errado, é aqui que se vê. */}
-          {canWrite ? (
+              o slug ao vivo: se o nome saiu errado, é aqui que se vê.
+
+              O gatilho é o submit do formulário, não o botão interno da
+              barreira: assim Enter num campo também chega aqui. A barreira
+              monta já aberta (`aberto`) e some no Voltar. */}
+          {perguntando ? (
             <ConfirmarAcao
+              aberto
               alvo={slug || "—"}
               consequencia="O cliente ganha acesso em segundos; módulos marcados nascem ativos."
-              desabilitado={!podeEnviar}
               executando={pending}
               onConfirmar={submit}
+              onVoltar={() => setPerguntando(false)}
               rotulo={pending ? "Provisionando…" : "Provisionar tenant"}
               tom="accent"
             />
           ) : (
-            <WriteButton canWrite={false}>Provisionar tenant</WriteButton>
+            <WriteButton
+              canWrite={canWrite}
+              disabled={!podeEnviar}
+              type="submit"
+            >
+              Provisionar tenant
+            </WriteButton>
           )}
         </div>
       </SectionCard>
-    </div>
+    </form>
   );
 }
