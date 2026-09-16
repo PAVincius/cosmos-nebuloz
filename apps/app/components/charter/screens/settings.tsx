@@ -3,6 +3,7 @@
 // Configurações — FR-12. Workspace, matriz de permissões (leitura) e
 // notificações.
 
+import type { CharterRole } from "@repo/database";
 import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   Badge,
@@ -14,7 +15,6 @@ import {
 import { useCallback, useState, useTransition } from "react";
 import {
   getSettings,
-  setMemberCharterRole,
   setNotificationTrigger,
   updateWorkspace,
 } from "@/app/(charter)/actions/settings";
@@ -28,7 +28,9 @@ import {
   Select,
   Tabs,
 } from "../base";
+import { ModalProvider, useModal } from "../modal";
 import { useCharterData } from "../use-charter-data";
+import { RoleChangeModal } from "./settings-confirm-role";
 
 const ROLE_ORDER = [
   "COMPLIANCE",
@@ -40,9 +42,10 @@ const ROLE_ORDER = [
   "AUDITOR",
 ] as const;
 
-export default function SettingsScreen() {
+function SettingsScreenInner() {
   const [tab, setTab] = useState("workspace");
   const [pending, startTransition] = useTransition();
+  const { open } = useModal();
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getSettings(), [])
   );
@@ -436,24 +439,35 @@ export default function SettingsScreen() {
                 </Badge>
                 <Select
                   ariaLabel={`Papel de ${m.name}`}
-                  onChange={(role) =>
-                    startTransition(async () => {
-                      const res = await runWithToast(
-                        () =>
-                          setMemberCharterRole({
-                            userId: m.userId,
-                            role: role as never,
-                          }),
-                        {
-                          loading: "Atribuindo papel…",
-                          success: "Papel atribuído",
+                  onChange={(role) => {
+                    // Confirmação antes de trocar — um clique errado aqui
+                    // revoga acesso de alguém (ou do próprio ator, se ele
+                    // for o único Compliance trocando a si mesmo). O
+                    // <select> continua controlado por m.role (do fetch),
+                    // então cancelar ou o servidor recusar já o devolve ao
+                    // valor anterior sem nenhum código extra.
+                    if (role === m.role) {
+                      return;
+                    }
+                    open(
+                      <RoleChangeModal
+                        isSelf={m.userId === data.activeUserId}
+                        memberName={m.name}
+                        newRole={role as CharterRole}
+                        newRoleLabel={
+                          data.roles.find((r) => r.id === role)?.label ?? role
                         }
-                      );
-                      if (res.ok) {
-                        reload();
-                      }
-                    })
-                  }
+                        oldRole={m.role}
+                        oldRoleLabel={
+                          data.roles.find((r) => r.id === m.role)?.label ??
+                          m.role
+                        }
+                        onChanged={reload}
+                        permissions={data.permissions}
+                        userId={m.userId}
+                      />
+                    );
+                  }}
                   options={data.roles.map((r) => ({
                     value: r.id,
                     label: r.label,
@@ -514,22 +528,21 @@ export default function SettingsScreen() {
                       if (!role) {
                         return;
                       }
-                      startTransition(async () => {
-                        const res = await runWithToast(
-                          () =>
-                            setMemberCharterRole({
-                              userId: m.userId,
-                              role: role as never,
-                            }),
-                          {
-                            loading: "Atribuindo papel…",
-                            success: "Papel atribuído",
+                      open(
+                        <RoleChangeModal
+                          isSelf={m.userId === data.activeUserId}
+                          memberName={m.name}
+                          newRole={role as CharterRole}
+                          newRoleLabel={
+                            data.roles.find((r) => r.id === role)?.label ?? role
                           }
-                        );
-                        if (res.ok) {
-                          reload();
-                        }
-                      });
+                          oldRole={null}
+                          oldRoleLabel="Sem papel"
+                          onChanged={reload}
+                          permissions={data.permissions}
+                          userId={m.userId}
+                        />
+                      );
                     }}
                     options={[
                       { value: "", label: "Atribuir papel…", disabled: true },
@@ -644,5 +657,13 @@ export default function SettingsScreen() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SettingsScreen() {
+  return (
+    <ModalProvider>
+      <SettingsScreenInner />
+    </ModalProvider>
   );
 }
