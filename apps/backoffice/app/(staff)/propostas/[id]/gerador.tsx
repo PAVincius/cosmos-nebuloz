@@ -10,8 +10,7 @@ import {
   salvarEscopoAction,
 } from "@/app/actions/proposta-escopo";
 import type { ServiceRow } from "@/app/actions/services";
-import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
-import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Campo, Erro, INPUT } from "@/components/campo";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { planoPadrao } from "@/lib/comercial/plano-padrao";
 import {
@@ -19,6 +18,12 @@ import {
   type UnidadeDeCobranca,
 } from "@/lib/comercial/precificar";
 import { validarProposta } from "@/lib/comercial/validacoes";
+import { PreviewDaProposta } from "./gerador-documento";
+import {
+  assinaturaDoEscopo,
+  PainelDeEnvio,
+  podeEnviarProposta,
+} from "./gerador-envio";
 
 /**
  * Gerador de proposta — configuração à esquerda, documento à direita.
@@ -31,48 +36,12 @@ import { validarProposta } from "@/lib/comercial/validacoes";
 
 const TROCA = { display: "flex", gap: 8, flexWrap: "wrap" } as const;
 
-/** FR-13.7: enviar exige contato com e-mail — o servidor valida de novo. */
-const EMAIL = /.+@.+\..+/;
-
 const ROTULO_DE_STATUS: Record<string, string> = {
   AGUARDANDO_APROVACAO: "na fila de aprovação",
   ENVIADA: "enviada",
   ACEITA: "aceita",
   RECUSADA: "recusada",
 };
-
-/** O escopo como `salvarEscopoAction` o recebe, em texto e com as listas
- *  ordenadas — é o que se compara com a última gravação para saber se a tela
- *  está à frente do banco. Ordenar porque marcar COSMOS e depois CHARTER é o
- *  mesmo escopo que marcar na ordem inversa. */
-function assinaturaDoEscopo(escopo: {
-  titulo: string;
-  clienteNome: string | undefined;
-  contatoEmail: string | undefined;
-  planoSlug: string;
-  assentos: number;
-  modulos: string[];
-  addOnSlugs: string[];
-  termoSlug: string;
-  descontoPercent: number;
-  servicoIds: string[];
-}): string {
-  return JSON.stringify({
-    ...escopo,
-    modulos: [...escopo.modulos].sort(),
-    addOnSlugs: [...escopo.addOnSlugs].sort(),
-    servicoIds: [...escopo.servicoIds].sort(),
-  });
-}
-
-/** O que o botão de envio diz. "Salvar e enviar" vence os outros dois: com
- *  edição pendente, o nome precisa avisar que vai gravar antes. */
-function rotuloDeEnvio(sujo: boolean, precisaAprovacao: boolean): string {
-  if (sujo) {
-    return "Salvar e enviar";
-  }
-  return precisaAprovacao ? "Enviar para aprovação" : "Enviar proposta";
-}
 
 /** Cor do texto de um aviso de validação, pelo tom que `validarProposta`
  *  atribui. Sem ternário aninhado: cada tom é um `if`. */
@@ -100,7 +69,7 @@ function botaoDeEscolha(ativo: boolean) {
   };
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: componente de ~900 linhas herdado inteiro; a onda P0 muda só o envio, e o refactor em partes é assunto de outra onda
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: 32 com o preview e o painel de envio já fora; o que resta é a coluna de campos (plano, assentos, módulos, add-ons, termo, desconto, serviços), que só desce de 15 num refactor próprio
 export function Gerador({
   catalogo,
   servicos,
@@ -248,9 +217,7 @@ export function Gerador({
     : [];
 
   const precisaAprovacao = avisos.some((a) => a.bloqueiaEnvio);
-  const emailValido = EMAIL.test(contato);
-  const podeEnviar =
-    titulo.trim().length >= 2 && emailValido && modulos.length > 0;
+  const podeEnviar = podeEnviarProposta(titulo, contato, modulos);
 
   const escopoAtual = {
     titulo: titulo.trim(),
@@ -327,15 +294,6 @@ export function Gerador({
     setErro(res.error);
   };
 
-  // Rótulo e consequência do envio — fora do JSX para o lint não ler o
-  // ternário como valor vazando para o render.
-  const rotuloDoEnvio = rotuloDeEnvio(sujo, precisaAprovacao);
-  const consequenciaDoEnvio = precisaAprovacao
-    ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
-    : "O cliente recebe esta versão; não há como editar depois de enviada.";
-  const alvoDoEnvio = cliente.trim()
-    ? `${titulo.trim()} · ${cliente.trim()}`
-    : titulo.trim();
   const dicaDeAssentos = plano
     ? `mínimo faturável: ${plano.minimoAssentos} · faturando ${preco?.assentosFaturados ?? assentos}`
     : undefined;
@@ -721,134 +679,17 @@ export function Gerador({
           top: 0,
         }}
       >
-        <SectionCard
-          bodyStyle={{ padding: 14 }}
-          icon="fileCode"
-          subtitle="Preview do documento que o cliente recebe"
-          title="Proposta"
-        >
-          <div
-            style={{
-              paddingBottom: 12,
-              borderBottom: "1px solid var(--hairline)",
-            }}
-          >
-            <div style={{ fontSize: "var(--fs-titulo)", fontWeight: 700 }}>
-              {cliente || "— nome do prospect —"}
-            </div>
-            <div
-              className="mono"
-              style={{
-                fontSize: "var(--fs-nota)",
-                color: "var(--ink-faint)",
-                marginTop: 3,
-              }}
-            >
-              {contato || "contato@cliente"} · {plano?.nome ?? "—"} ·{" "}
-              {termo?.nome ?? "—"}
-            </div>
-          </div>
-
-          {preco !== null && plano !== undefined ? (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <LinhaDoDocumento
-                detalhe={
-                  preco.minimoAplicado
-                    ? `mínimo de ${plano.minimoAssentos} assentos aplicado`
-                    : `${formatarBRL(plano.precoAssentoCentavos)}/assento/mês`
-                }
-                rotulo={`${plano.nome} · ${preco.assentosFaturados} assentos`}
-                valor={formatarBRL(preco.assentosCentavos)}
-              />
-              {preco.modulosCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe="adicional mensal"
-                  rotulo={`Módulos: ${modulos.join(", ")}`}
-                  valor={formatarBRL(preco.modulosCentavos)}
-                />
-              )}
-              {preco.addOnsRecorrentesCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe={addOnsEscolhidos
-                    .filter((a) => a.recorrente)
-                    .map((a) => a.nome)
-                    .join(" · ")}
-                  rotulo="Add-ons recorrentes"
-                  valor={formatarBRL(preco.addOnsRecorrentesCentavos)}
-                />
-              )}
-              {preco.servicosRecorrentesCentavos > 0 && (
-                <LinhaDoDocumento
-                  detalhe={escolhidos
-                    .filter((s) => s.unidadeDeCobranca === "RETAINER")
-                    .map((s) => s.nome)
-                    .join(" · ")}
-                  rotulo="Serviços em retainer"
-                  valor={formatarBRL(preco.servicosRecorrentesCentavos)}
-                />
-              )}
-              {preco.descontoDePrazoCentavos > 0 && (
-                <LinhaDoDocumento
-                  rotulo={`Desconto ${termo?.nome.toLowerCase()}`}
-                  tom="var(--green-text)"
-                  valor={`−${formatarBRL(preco.descontoDePrazoCentavos)}`}
-                />
-              )}
-              {preco.descontoComercialCentavos > 0 && (
-                <LinhaDoDocumento
-                  rotulo={`Desconto comercial ${desconto}%`}
-                  tom="var(--green-text)"
-                  valor={`−${formatarBRL(preco.descontoComercialCentavos)}`}
-                />
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  padding: "12px 14px",
-                  marginTop: 8,
-                  borderRadius: "var(--r-md)",
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--hairline)",
-                }}
-              >
-                <span style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
-                  Mensal recorrente
-                </span>
-                <span
-                  style={{ fontSize: "var(--fs-display)", fontWeight: 700 }}
-                >
-                  {formatarBRL(preco.liquidoMensalCentavos)}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: 10,
-                  marginTop: 12,
-                }}
-              >
-                <Celula rotulo="ACV" valor={formatarBRL(preco.acvCentavos)} />
-                <Celula
-                  rotulo={`TCV (${preco.meses}m)`}
-                  valor={formatarBRL(preco.tcvCentavos)}
-                />
-                <Celula
-                  rotulo="Setup + projetos"
-                  valor={
-                    preco.umaVezCentavos
-                      ? formatarBRL(preco.umaVezCentavos)
-                      : "—"
-                  }
-                />
-              </div>
-            </div>
-          ) : null}
-        </SectionCard>
+        <PreviewDaProposta
+          addOnsEscolhidos={addOnsEscolhidos}
+          cliente={cliente}
+          contato={contato}
+          desconto={desconto}
+          escolhidos={escolhidos}
+          modulos={modulos}
+          plano={plano}
+          preco={preco}
+          termo={termo}
+        />
 
         {avisos.length > 0 && (
           <SectionCard
@@ -896,135 +737,19 @@ export function Gerador({
           </SectionCard>
         ) : null}
 
-        {editavel ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <BotaoPrimario disabled={salvando || !podeEnviar}>
-              {salvo ? "Salvar alterações" : "Criar rascunho"}
-            </BotaoPrimario>
-            {salvo ? (
-              // Enviar é sem volta — o servidor não deixa editar depois. O
-              // grid faz o gatilho ocupar a largura do botão de cima.
-              <div style={{ display: "grid" }}>
-                <ConfirmarAcao
-                  alvo={alvoDoEnvio}
-                  consequencia={consequenciaDoEnvio}
-                  desabilitado={!podeEnviar}
-                  executando={salvando}
-                  onConfirmar={enviar}
-                  rotulo={rotuloDoEnvio}
-                  tom="accent"
-                />
-              </div>
-            ) : null}
-            {podeEnviar ? null : (
-              <span
-                style={{
-                  fontSize: "var(--fs-nota)",
-                  color: "var(--ink-faint)",
-                }}
-              >
-                Para enviar: título, contato com e-mail válido e ao menos um
-                módulo.
-              </span>
-            )}
-          </div>
-        ) : (
-          !somenteLeitura && (
-            <span
-              style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
-            >
-              Somente leitura: seu papel no back-office é MEMBER. Um ADMIN
-              precisa fazer esta ação.
-            </span>
-          )
-        )}
+        <PainelDeEnvio
+          cliente={cliente}
+          editavel={editavel}
+          onEnviar={enviar}
+          podeEnviar={podeEnviar}
+          precisaAprovacao={precisaAprovacao}
+          salvando={salvando}
+          somenteLeitura={somenteLeitura}
+          sujo={sujo}
+          temRascunho={salvo !== null}
+          titulo={titulo}
+        />
       </div>
     </form>
-  );
-}
-
-function LinhaDoDocumento({
-  rotulo,
-  valor,
-  detalhe,
-  tom,
-}: {
-  rotulo: string;
-  valor: string;
-  detalhe?: string;
-  tom?: string;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "baseline",
-        gap: 12,
-        padding: "8px 0",
-        borderBottom: "1px dashed var(--hairline)",
-      }}
-    >
-      <span style={{ minWidth: 0 }}>
-        <span
-          style={{
-            display: "block",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-            color: tom,
-          }}
-        >
-          {rotulo}
-        </span>
-        {detalhe ? (
-          <span
-            style={{
-              display: "block",
-              fontSize: "var(--fs-nota)",
-              color: "var(--ink-faint)",
-            }}
-          >
-            {detalhe}
-          </span>
-        ) : null}
-      </span>
-      <span
-        className="mono"
-        style={{ fontSize: "var(--fs-base)", fontWeight: 700, color: tom }}
-      >
-        {valor}
-      </span>
-    </div>
-  );
-}
-
-function Celula({ rotulo, valor }: { rotulo: string; valor: string }) {
-  return (
-    <div
-      style={{
-        padding: "9px 11px",
-        borderRadius: "var(--r-md)",
-        background: "var(--surface-2)",
-        border: "1px solid var(--hairline)",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "var(--fs-micro)",
-          fontWeight: 700,
-          letterSpacing: ".05em",
-          textTransform: "uppercase",
-          color: "var(--ink-faint)",
-        }}
-      >
-        {rotulo}
-      </div>
-      <div
-        className="mono"
-        style={{ fontSize: "var(--fs-base)", fontWeight: 700, marginTop: 3 }}
-      >
-        {valor}
-      </div>
-    </div>
   );
 }
