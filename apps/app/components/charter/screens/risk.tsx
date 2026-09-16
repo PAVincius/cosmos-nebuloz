@@ -94,7 +94,7 @@ function RiskInner() {
   return (
     <div className="fade-in">
       <PageHeader
-        eyebrow={`${cases.length} casos ativos · 7 categorias de risco`}
+        eyebrow={`${cases.length} casos ativos · ${Object.keys(RISK_CATEGORY_LABEL).length} categorias de risco`}
         meta={
           <>
             <Badge dot tone="red">
@@ -102,7 +102,10 @@ function RiskInner() {
             </Badge>
             <Badge tone="amber">{elevated.length} elevados</Badge>
             <Badge tone={overdue.length ? "red" : "green"}>
-              {overdue.length} mitigação atrasada
+              {overdue.length}{" "}
+              {overdue.length === 1
+                ? "mitigação atrasada"
+                : "mitigações atrasadas"}
             </Badge>
           </>
         }
@@ -110,9 +113,6 @@ function RiskInner() {
         title="Matriz de Risco de IA"
         tone="red"
       >
-        <Button icon="download" variant="secondary">
-          Exportar matriz
-        </Button>
         <Button icon="plus" onClick={openMitigation}>
           Nova mitigação
         </Button>
@@ -199,6 +199,16 @@ function RiskInner() {
             <div
               className="skeleton"
               style={{ height: 220, borderRadius: 10 }}
+            />
+          ) : cases.length === 0 ? (
+            <SmartEmptyState
+              icon="inbox"
+              onPrimary={() => router.push("/charter/cases")}
+              primaryIcon="arrowRight"
+              primaryLabel="Ver casos de uso"
+              subtitle="Sem caso de uso ativo, não há risco para posicionar no mapa de calor."
+              title="Nenhum caso de uso ainda"
+              tone="accent"
             />
           ) : (
             <Heatmap cells={data.heatmap} onSelect={setCell} selected={cell} />
@@ -332,6 +342,28 @@ function RiskInner() {
             <SkeletonCard />
             <SkeletonCard />
           </div>
+        ) : mitigations.length === 0 ? (
+          cases.length === 0 ? (
+            <SmartEmptyState
+              icon="inbox"
+              onPrimary={() => router.push("/charter/cases")}
+              primaryIcon="arrowRight"
+              primaryLabel="Ver casos de uso"
+              subtitle="Sem caso de uso ativo, ainda não há risco para mitigar."
+              title="Nenhum caso de uso ainda"
+              tone="accent"
+            />
+          ) : (
+            <SmartEmptyState
+              icon="shield"
+              onPrimary={openMitigation}
+              primaryIcon="plus"
+              primaryLabel="Nova mitigação"
+              subtitle="Casos ativos existem, mas nenhuma mitigação foi registrada ainda."
+              title="Nenhuma mitigação registrada"
+              tone="accent"
+            />
+          )
         ) : (
           <MitigationTable
             onOpen={(useCaseCode) =>
