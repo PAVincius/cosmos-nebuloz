@@ -94,17 +94,47 @@ const BAR_FIELDS: {
   },
 ];
 
+/** Campos de texto do formulário: número vira string para a pessoa poder
+ *  apagar e redigitar sem a tela mostrar "NaN" no meio do caminho. */
+type BarsDraft = Record<keyof SignalSettingsRow, string>;
+
+const toDraft = (s: SignalSettingsRow): BarsDraft => ({
+  adoptionBar: String(s.adoptionBar),
+  valueBar: String(s.valueBar),
+  lowAdoptionPct: String(s.lowAdoptionPct),
+  lowAdoptionWeeks: String(s.lowAdoptionWeeks),
+  weakRoi: String(s.weakRoi),
+  staleHours: String(s.staleHours),
+  currency: s.currency,
+  fiscalYearLabel: s.fiscalYearLabel ?? "",
+});
+
 function BarsForm({ initial }: { initial: SignalSettingsRow }) {
-  const [form, setForm] = useState(initial);
+  const [form, setForm] = useState<BarsDraft>(() => toDraft(initial));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const set = useCallback((key: keyof SignalSettingsRow, value: string) => {
+    setSaved(false);
+    setForm((p) => ({ ...p, [key]: value }));
+  }, []);
 
   const submit = useCallback(async () => {
     setBusy(true);
     setError(null);
     setSaved(false);
-    const res = await updateSettings(form);
+    // O schema da action é quem valida (0–100, > 0.1…). Aqui só se converte.
+    const res = await updateSettings({
+      adoptionBar: Number(form.adoptionBar),
+      valueBar: Number(form.valueBar),
+      lowAdoptionPct: Number(form.lowAdoptionPct),
+      lowAdoptionWeeks: Number(form.lowAdoptionWeeks),
+      weakRoi: Number(form.weakRoi),
+      staleHours: Number(form.staleHours),
+      currency: form.currency,
+      fiscalYearLabel: form.fiscalYearLabel.trim() || null,
+    });
     setBusy(false);
     if (res.ok) {
       setSaved(true);
@@ -134,12 +164,11 @@ function BarsForm({ initial }: { initial: SignalSettingsRow }) {
           >
             <Input
               id={`set-${f.key}`}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, [f.key]: Number(e.target.value) }))
-              }
+              inputMode="decimal"
+              onChange={(e) => set(f.key, e.target.value)}
               step={f.step}
               type="number"
-              value={String(form[f.key])}
+              value={form[f.key]}
             />
           </Field>
         ))}
@@ -151,9 +180,7 @@ function BarsForm({ initial }: { initial: SignalSettingsRow }) {
         >
           <Input
             id="set-currency"
-            onChange={(e) =>
-              setForm((p) => ({ ...p, currency: e.target.value }))
-            }
+            onChange={(e) => set("currency", e.target.value)}
             value={form.currency}
           />
         </Field>
@@ -165,10 +192,8 @@ function BarsForm({ initial }: { initial: SignalSettingsRow }) {
         >
           <Input
             id="set-fy"
-            onChange={(e) =>
-              setForm((p) => ({ ...p, fiscalYearLabel: e.target.value }))
-            }
-            value={form.fiscalYearLabel ?? ""}
+            onChange={(e) => set("fiscalYearLabel", e.target.value)}
+            value={form.fiscalYearLabel}
           />
         </Field>
       </div>
@@ -211,9 +236,11 @@ function FactorsForm({ initial }: { initial: ConfidenceRuleRow[] }) {
   const [rules, setRules] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
   const sum = rules.reduce((a, r) => a + r.weight, 0);
 
   const setWeight = useCallback((key: string, weight: number) => {
+    setSaved(false);
     setRules((prev) => prev.map((r) => (r.key === key ? { ...r, weight } : r)));
   }, []);
 
@@ -222,9 +249,11 @@ function FactorsForm({ initial }: { initial: ConfidenceRuleRow[] }) {
     setError(null);
     const res = await setConfidenceRules({ rules });
     setBusy(false);
-    if (!res.ok) {
-      setError(res.error);
+    if (res.ok) {
+      setSaved(true);
+      return;
     }
+    setError(res.error);
   }, [rules]);
 
   return (
@@ -277,10 +306,22 @@ function FactorsForm({ initial }: { initial: ConfidenceRuleRow[] }) {
         </p>
       ) : null}
 
-      <div style={{ marginTop: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginTop: 12,
+        }}
+      >
         <Button disabled={busy || sum !== 100} onClick={submit}>
           {busy ? "Salvando…" : "Salvar fatores"}
         </Button>
+        {saved ? (
+          <span style={{ fontSize: 11.5, color: "var(--green-text)" }}>
+            Salvo. Vale para a próxima avaliação de confiança.
+          </span>
+        ) : null}
       </div>
     </SectionCard>
   );

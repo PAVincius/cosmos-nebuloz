@@ -201,6 +201,8 @@ describe("freezeReport — fonte caída trava o fechamento", () => {
 
     const data = db.signalReportSnapshot.update.mock.calls[0][0].data;
     expect(data.blockedReason).toContain("fora do ar");
+    // Com a lista: amanhã ninguém precisa tentar de novo para saber qual.
+    expect(data.blockedReason).toContain("CN-02");
     expect(data.state).toBeUndefined();
   });
 

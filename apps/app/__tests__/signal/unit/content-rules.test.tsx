@@ -82,6 +82,23 @@ describe("estado sem lastro", () => {
     expect(screen.queryByText(/fórmula v/)).toBeNull();
   });
 
+  it("sem lastro não há veredito — o badge diz o que falta", () => {
+    // "Candidata a parada" para um rascunho que ainda nem lançou a primeira
+    // linha da conta é acusação, não leitura.
+    render(
+      <ValueReading
+        {...PROVEN}
+        formulaVersion={null}
+        verdictAction="Escalar"
+        verdictLabel="Candidata a parada"
+        verdictTone="neutral"
+      />
+    );
+    expect(screen.getByText("Sem veredito")).toBeDefined();
+    expect(screen.queryByText("Candidata a parada")).toBeNull();
+    expect(screen.getByText(/assinar o baseline/i)).toBeDefined();
+  });
+
   it("múltiplo nulo vira travessão, nunca 0,0×", () => {
     render(<ValueReading {...PROVEN} formulaVersion={null} multiple={null} />);
     expect(screen.getByText("—")).toBeDefined();

@@ -14,6 +14,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import { type AuditRow, listAudit } from "@/app/(signal)/actions/audit";
+import { fmtWhen } from "@/lib/signal/dates";
 import {
   type ChipOption,
   FilterChips,
@@ -23,12 +24,20 @@ import {
   useSignalData,
 } from "../base";
 
+// Um chip por tipo de registro que a trilha grava. Faltar um aqui não esconde
+// a entrada em "todos" — mas esconde a possibilidade de filtrar por ela, e a
+// pergunta "quem mudou a régua?" é exatamente do tipo que se filtra.
 const ENTITY_FILTERS: ChipOption[] = [
   { id: "signal.initiative", label: "Iniciativas", tone: "accent" },
   { id: "signal.roiformula", label: "Fórmulas", tone: "green" },
   { id: "signal.baseline", label: "Baselines", tone: "blue" },
+  { id: "signal.observation", label: "Evidências", tone: "blue" },
   { id: "signal.connection", label: "Fontes", tone: "amber" },
+  { id: "signal.mapping", label: "Mapeamentos", tone: "amber" },
+  { id: "signal.alert", label: "Alertas", tone: "red" },
   { id: "signal.report", label: "Relatórios", tone: "purple" },
+  { id: "signal.settings", label: "Configuração", tone: "neutral" },
+  { id: "signal.member", label: "Pessoas", tone: "neutral" },
 ];
 
 const ENTITY_ICON: Record<string, string> = {
@@ -44,14 +53,6 @@ const ENTITY_ICON: Record<string, string> = {
   "signal.settings": "settings",
   "signal.member": "users",
 };
-
-const fmtWhen = (d: Date) =>
-  new Date(d).toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
 function AuditItem({ r }: { r: AuditRow }) {
   return (

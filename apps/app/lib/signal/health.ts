@@ -10,6 +10,8 @@
 // caída é um OAuth revogado. Colapsar as duas em "com problema" faria metade
 // dos casos ir para a pessoa errada.
 
+import type { IconName } from "@repo/design-system/cosmos/icons";
+
 export type ConnHealth = "HEALTHY" | "STALE" | "DOWN";
 
 export type HealthInput = {
@@ -60,7 +62,7 @@ export type SignalTone = "green" | "amber" | "red";
 
 export const HEALTH_META: Record<
   ConnHealth,
-  { label: string; tone: SignalTone; icon: string; hint: string }
+  { label: string; tone: SignalTone; icon: IconName; hint: string }
 > = {
   HEALTHY: {
     label: "Saudável",

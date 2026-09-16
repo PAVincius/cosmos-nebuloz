@@ -17,7 +17,7 @@
 // Carrega packages/database/.env — o tsx não lê .env sozinho, e sem isso o
 // `pg` recebe senha undefined e morre em "client password must be a string".
 import "dotenv/config";
-import { PrismaClient } from "./generated/client";
+import { Prisma, PrismaClient } from "./generated/client";
 
 // Prisma 7 exige driver adapter explícito — mesma construção do seed-admin.
 // Não dá para importar o `database` de `index.ts`: aquele módulo carrega
@@ -1641,6 +1641,145 @@ const MAPPINGS = [
   },
 ];
 
+// Observações — a prova por trás dos números. Sem elas a tela de evidências
+// fica vazia, o congelamento nunca trava (não há fonte citada) e a confiança
+// não tem lastro. As de Zendesk carregam a ressalva de fonte caída: é o que
+// faz o rascunho RP-119 recusar o congelamento com a lista do que reconectar.
+const OBSERVATIONS = [
+  {
+    code: "EV-8834",
+    initiative: "IN-014",
+    mapping: "MP-01",
+    conn: "Jira",
+    metricLabel: "Horas economizadas",
+    value: "1.240",
+    numericValue: 1240,
+    unit: "horas",
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 3812,
+    transform: "sum(time_in_status) ÷ 60",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T03:10:00Z",
+  },
+  {
+    code: "EV-8835",
+    initiative: "IN-014",
+    mapping: "MP-02",
+    conn: "Zendesk",
+    metricLabel: "Retrabalho evitado",
+    value: "R$ 38 mil",
+    numericValue: 38_000,
+    unit: null,
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 912,
+    transform: "count(reopened) × custo_retrabalho",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T03:12:00Z",
+    flag: "Congelada — fonte Zendesk desconectada em 30/06/2026",
+    frozenAt: "2026-06-30T23:58:00Z",
+  },
+  {
+    code: "EV-8836",
+    initiative: "IN-021",
+    mapping: "MP-03",
+    conn: "Zendesk",
+    metricLabel: "Tempo de 1ª resposta",
+    value: "11 min",
+    numericValue: 11,
+    unit: "min",
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 14_206,
+    transform: "média(first_reply_seconds) ÷ 60",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T03:12:00Z",
+    flag: "Congelada — fonte Zendesk desconectada em 30/06/2026",
+    frozenAt: "2026-06-30T23:58:00Z",
+  },
+  {
+    code: "EV-8837",
+    initiative: "IN-031",
+    mapping: "MP-04",
+    conn: "Data warehouse",
+    metricLabel: "Perda evitada",
+    value: "R$ 142 mil",
+    numericValue: 142_000,
+    unit: null,
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 57,
+    transform: "sum(claim_value) where flagged and confirmed",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T04:00:00Z",
+  },
+  {
+    code: "EV-8838",
+    initiative: "IN-035",
+    mapping: "MP-05",
+    conn: "Data warehouse",
+    metricLabel: "Receita incremental",
+    value: "R$ 96 mil",
+    numericValue: 96_000,
+    unit: null,
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 23,
+    transform: "sum(deal_value) where assisted = true − baseline",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T04:02:00Z",
+  },
+  {
+    code: "EV-8839",
+    initiative: "IN-009",
+    mapping: null,
+    conn: null,
+    metricLabel: "Horas de revisão poupadas",
+    value: "310",
+    numericValue: 310,
+    unit: "horas",
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: null,
+    transform: "contratos revisados × (tempo médio antes − tempo médio agora)",
+    source: "MANUAL" as const,
+    observedAt: "2026-07-03T14:20:00Z",
+  },
+  {
+    code: "EV-8840",
+    initiative: "IN-027",
+    mapping: null,
+    conn: null,
+    metricLabel: "Laudos sumarizados",
+    value: "412",
+    numericValue: 412,
+    unit: "laudos",
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: null,
+    transform: "count(laudos com resumo aceito)",
+    source: "MANUAL" as const,
+    observedAt: "2026-07-03T15:05:00Z",
+  },
+  {
+    code: "EV-8841",
+    initiative: "IN-035",
+    mapping: "MP-08",
+    conn: "Jira",
+    metricLabel: "Tempo até proposta",
+    value: "2,4 dias",
+    numericValue: 2.4,
+    unit: "dias",
+    windowStart: "2026-06-01",
+    windowEnd: "2026-06-30",
+    rowCount: 188,
+    transform: "média(resolved_at − created_at) em dias",
+    source: "SYNC" as const,
+    observedAt: "2026-07-01T03:15:00Z",
+  },
+];
+
 const ALERTS = [
   {
     code: "AL-31",
@@ -1735,7 +1874,7 @@ const REPORTS = [
     generatedAt: null,
     note: null,
     blockedReason:
-      "Bloqueado: 2 fontes fora do ar deixariam 3 números sem lastro.",
+      "1 fonte citada está fora do ar. Congelar agora fecharia o período com número velho apresentado como fechamento. CN-02 · Zendesk — reconectar antes de fechar o período.",
   },
 ];
 
@@ -2018,12 +2157,13 @@ async function main() {
     }
   }
 
+  const mappingIds = new Map<string, string>();
   for (const m of MAPPINGS) {
     const connectionId = connectionIds.get(m.conn);
     if (!connectionId) {
       continue;
     }
-    await db.signalMetricMapping.upsert({
+    const mapping = await db.signalMetricMapping.upsert({
       where: {
         tenantId_code_version: { tenantId, code: m.code, version: m.version },
       },
@@ -2043,6 +2183,38 @@ async function main() {
         changedById: userId,
       },
       update: { state: m.state },
+    });
+    mappingIds.set(m.code, mapping.id);
+  }
+
+  for (const o of OBSERVATIONS) {
+    const initiativeId = initiativeIds.get(o.initiative);
+    if (!initiativeId) {
+      continue;
+    }
+    const data = {
+      tenantId,
+      initiativeId,
+      mappingId: o.mapping ? (mappingIds.get(o.mapping) ?? null) : null,
+      connectionLabel: o.conn,
+      metricLabel: o.metricLabel,
+      value: o.value,
+      numericValue: o.numericValue,
+      unit: o.unit,
+      windowStart: new Date(o.windowStart),
+      windowEnd: new Date(o.windowEnd),
+      rowCount: o.rowCount,
+      transform: o.transform,
+      source: o.source,
+      observedAt: new Date(o.observedAt),
+      recordedById: o.source === "MANUAL" ? userId : null,
+      flag: "flag" in o ? o.flag : null,
+      frozenAt: "frozenAt" in o && o.frozenAt ? new Date(o.frozenAt) : null,
+    };
+    await db.signalMetricObservation.upsert({
+      where: { tenantId_code: { tenantId, code: o.code } },
+      create: { code: o.code, ...data },
+      update: data,
     });
   }
 
@@ -2090,7 +2262,20 @@ async function main() {
         payload:
           r.state === "FINAL" ? { seeded: true, initiatives: [] } : undefined,
       },
-      update: { state: r.state },
+      // Volta ao estado semeado: um E2E que congelou o rascunho não pode
+      // deixar o próximo sem rascunho para congelar.
+      update: {
+        state: r.state,
+        blockedReason: (r as { blockedReason?: string }).blockedReason ?? null,
+        ...(r.state === "DRAFT"
+          ? {
+              payload: Prisma.DbNull,
+              pageCount: null,
+              generatedById: null,
+              generatedAt: null,
+            }
+          : {}),
+      },
     });
   }
 
@@ -2116,6 +2301,9 @@ async function main() {
     iniciativas: await db.signalInitiative.count({ where: { tenantId } }),
     conexões: await db.signalConnection.count({ where: { tenantId } }),
     mapeamentos: await db.signalMetricMapping.count({ where: { tenantId } }),
+    observações: await db.signalMetricObservation.count({
+      where: { tenantId },
+    }),
     alertas: await db.signalAlert.count({ where: { tenantId } }),
     relatórios: await db.signalReportSnapshot.count({ where: { tenantId } }),
   };

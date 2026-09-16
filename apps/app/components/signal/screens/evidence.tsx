@@ -10,13 +10,13 @@
 // observação congelada porque a fonte caiu continua contando para o ROI, e quem
 // lê precisa saber disso ANTES de usar o número.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import {
   type EvidenceRow,
   listEvidence,
 } from "@/app/(signal)/actions/evidence";
+import { fmtDay } from "@/lib/signal/dates";
 import {
   type ChipOption,
   FilterChips,
@@ -25,6 +25,7 @@ import {
   SmartEmptyState,
   useSignalData,
 } from "../base";
+import { CodeBlock, ListCard, ListCardHead, Note } from "../list-card";
 
 const SOURCE_LABEL: Record<string, string> = {
   SYNC: "sync automático",
@@ -38,95 +39,35 @@ const FILTERS: ChipOption[] = [
   { id: "SYNC", label: "Sync automático", tone: "green" },
 ];
 
-const fmtDate = (d: Date) =>
-  new Date(d).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-
 /** Uma observação com a cadeia inteira: valor, janela, fonte, conta, autor. */
 function EvidenceCard({ r }: { r: EvidenceRow }) {
+  const cardTone = r.flag ? "amber" : undefined;
   return (
-    <div
-      style={{
-        padding: "12px 14px",
-        borderRadius: "var(--r-md)",
-        border: `1px solid ${r.flag ? "rgba(var(--amber-rgb),.35)" : "var(--hairline)"}`,
-        background: r.flag ? "var(--amber-soft)" : "var(--surface-2)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          gap: 9,
-          flexWrap: "wrap",
-        }}
+    <ListCard tone={cardTone}>
+      <ListCardHead
+        code={r.code}
+        context={r.initiativeCode}
+        title={r.metricLabel}
       >
         <span
-          className="mono"
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: "var(--ink-faint)",
-          }}
-        >
-          {r.code}
-        </span>
-        <span
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: "var(--ink)",
-          }}
-        >
-          {r.metricLabel}
-        </span>
-        <span
           className="display"
-          style={{
-            fontSize: 16,
-            fontWeight: 800,
-            color: "var(--ink)",
-          }}
+          style={{ fontSize: 16, fontWeight: 800, color: "var(--ink)" }}
         >
           {r.value}
           {r.unit ? (
-            <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-              {" "}
+            <span
+              style={{ marginLeft: 4, fontSize: 11, color: "var(--ink-faint)" }}
+            >
               {r.unit}
             </span>
           ) : null}
         </span>
-        <span
-          className="mono"
-          style={{
-            marginLeft: "auto",
-            fontSize: 10.5,
-            color: "var(--ink-faint)",
-          }}
-        >
-          {r.initiativeCode}
-        </span>
-      </div>
+      </ListCardHead>
 
       {/* A cadeia. Cada elo é o que torna o número defensável. */}
-      <div
-        className="mono"
-        style={{
-          marginTop: 8,
-          padding: "8px 10px",
-          borderRadius: "var(--r-sm)",
-          background: "var(--surface-3)",
-          fontSize: 11,
-          lineHeight: 1.6,
-          color: "var(--ink-muted)",
-          overflowX: "auto",
-        }}
-      >
+      <CodeBlock>
         <div>
-          janela {fmtDate(r.windowStart)} – {fmtDate(r.windowEnd)}
+          janela {fmtDay(r.windowStart)} – {fmtDay(r.windowEnd)}
           {r.rowCount === null
             ? ""
             : ` · ${r.rowCount.toLocaleString("pt-BR")} linhas`}
@@ -138,27 +79,16 @@ function EvidenceCard({ r }: { r: EvidenceRow }) {
           {r.recordedBy ? ` · ${r.recordedBy}` : ""}
         </div>
         <div style={{ color: "var(--ink)" }}>↳ {r.transform}</div>
-      </div>
+      </CodeBlock>
 
-      {/* Ressalva em destaque: a observação congelada continua
-            contando para o ROI, e quem lê precisa saber ANTES. */}
+      {/* Ressalva em destaque: a observação congelada continua contando para
+          o ROI, e quem lê precisa saber ANTES. */}
       {r.flag ? (
-        <p
-          style={{
-            margin: "9px 0 0",
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 7,
-            fontSize: 12,
-            lineHeight: 1.5,
-            color: "var(--amber-text)",
-          }}
-        >
-          <Icon name="alert" size={13} style={{ marginTop: 2 }} />
+        <Note emphasis label="Ressalva" tone="amber">
           {r.flag}
-        </p>
+        </Note>
       ) : null}
-    </div>
+    </ListCard>
   );
 }
 

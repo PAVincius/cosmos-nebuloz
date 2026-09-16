@@ -132,57 +132,77 @@ export function AdoptionValueMatrix({
               ...q.style,
               padding: "9px 12px",
               maxWidth: "45%",
+              pointerEvents: "none",
             }}
           >
             <Eyebrow tone={q.tone}>{q.label}</Eyebrow>
-            <div style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+            {/* A dica some em tela estreita: o quadro fica com 40% da largura
+                e o rótulo de duas linhas passaria a cobrir as bolhas. */}
+            <div
+              className="signal-quadrant-hint"
+              style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            >
               {q.hint}
             </div>
           </div>
         ))}
 
-        {points.map((p) => {
-          const r = MIN_R + p.weight * (MAX_R - MIN_R);
-          return (
-            <button
-              className="btn bubble"
-              key={p.code}
-              onClick={() => onSelect(p.code)}
-              style={{
-                position: "absolute",
-                left: `${p.x}%`,
-                bottom: `${p.y}%`,
-                // O translate faz o CENTRO da bolha cair na coordenada, não o
-                // canto. `signal.css` repete o mesmo translate no keyframe de
-                // entrada — sem isso a bolha salta de lugar ao terminar.
-                transform: "translate(-50%, 50%)",
-                width: r * 2,
-                height: r * 2,
-                borderRadius: 99,
-                border: `1.5px solid rgba(var(--${p.tone}-rgb),.55)`,
-                background: `var(--${p.tone}-soft)`,
-                color: `var(--${p.tone}-text)`,
-                fontSize: 9.5,
-                fontWeight: 700,
-                fontFamily: "var(--font-jetbrains-mono), monospace",
-                display: "grid",
-                placeItems: "center",
-                cursor: "pointer",
-              }}
-              title={`${p.code} · ${p.name} — ${p.label}. Adoção ${fmtAdoption(p.adoptionPct)}, retorno ${fmtMultiple(p.multiple)}, investido ${fmtBRL(p.invested)}.`}
-              type="button"
-            >
-              {/* O código dentro da bolha só cabe nas maiores; nas pequenas o
+        {/* As bolhas vivem numa camada recuada em MAX_R: sem isto, uma
+            iniciativa com 100% de adoção ou retorno no teto fica com metade
+            da bolha fora do gráfico — exatamente a que mais interessa ver. As
+            réguas continuam no quadro inteiro; a diferença de alguns pixels
+            entre a régua e o ponto é menor do que o raio da bolha. */}
+        <div
+          style={{
+            position: "absolute",
+            inset: MAX_R,
+            pointerEvents: "none",
+          }}
+        >
+          {points.map((p) => {
+            const r = MIN_R + p.weight * (MAX_R - MIN_R);
+            return (
+              <button
+                className="btn bubble"
+                key={p.code}
+                onClick={() => onSelect(p.code)}
+                style={{
+                  position: "absolute",
+                  left: `${p.x}%`,
+                  bottom: `${p.y}%`,
+                  // O translate faz o CENTRO da bolha cair na coordenada, não o
+                  // canto. `signal.css` repete o mesmo translate no keyframe de
+                  // entrada — sem isso a bolha salta de lugar ao terminar.
+                  transform: "translate(-50%, 50%)",
+                  width: r * 2,
+                  height: r * 2,
+                  borderRadius: 99,
+                  border: `1.5px solid rgba(var(--${p.tone}-rgb),.55)`,
+                  background: `var(--${p.tone}-soft)`,
+                  color: `var(--${p.tone}-text)`,
+                  fontSize: 9.5,
+                  fontWeight: 700,
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  display: "grid",
+                  placeItems: "center",
+                  cursor: "pointer",
+                  pointerEvents: "auto",
+                }}
+                title={`${p.code} · ${p.name} — ${p.label}. Adoção ${fmtAdoption(p.adoptionPct)}, retorno ${fmtMultiple(p.multiple)}, investido ${fmtBRL(p.invested)}.`}
+                type="button"
+              >
+                {/* O código dentro da bolha só cabe nas maiores; nas pequenas o
                   título e a legenda abaixo carregam a identificação. */}
-              {r > 13 ? p.code.replace("IN-", "") : ""}
-              <span className="sr-only">
-                {p.code} {p.name}: {p.label}. Adoção{" "}
-                {fmtAdoption(p.adoptionPct)}, retorno {fmtMultiple(p.multiple)},
-                investido {fmtBRL(p.invested)}.
-              </span>
-            </button>
-          );
-        })}
+                {r > 13 ? p.code.replace("IN-", "") : ""}
+                <span className="sr-only">
+                  {p.code} {p.name}: {p.label}. Adoção{" "}
+                  {fmtAdoption(p.adoptionPct)}, retorno{" "}
+                  {fmtMultiple(p.multiple)}, investido {fmtBRL(p.invested)}.
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div

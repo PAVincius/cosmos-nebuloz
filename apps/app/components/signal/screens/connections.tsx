@@ -12,7 +12,7 @@
 // Sem as duas, "Zendesk desconectado" é uma notificação que ninguém age.
 
 import { Icon } from "@repo/design-system/cosmos/icons";
-import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback } from "react";
 import {
   type ConnectionRow,
@@ -20,12 +20,12 @@ import {
 } from "@/app/(signal)/actions/connections";
 import { HEALTH_META } from "@/lib/signal/health";
 import {
-  Eyebrow,
   ScreenError,
   SkeletonRows,
   SmartEmptyState,
   useSignalData,
 } from "../base";
+import { ListCard, ListCardHead, MetaRow, Note } from "../list-card";
 
 function sinceLabel(date: Date | null): string {
   if (!date) {
@@ -53,76 +53,35 @@ function freqLabel(minutes: number | null): string {
 function ConnectionCard({ c }: { c: ConnectionRow }) {
   const meta = HEALTH_META[c.health];
   const bad = c.health !== "HEALTHY";
+  const cardTone = bad ? meta.tone : undefined;
+  const metaItems = [
+    `último sync ${sinceLabel(c.lastSyncAt)}`,
+    freqLabel(c.expectedFreqMinutes),
+    c.rowsLabel,
+    `${c.mappingCount} ${c.mappingCount === 1 ? "métrica" : "métricas"}`,
+    c.owner ? `dono: ${c.owner}` : null,
+  ];
 
   return (
-    <div
-      style={{
-        padding: "13px 15px",
-        borderRadius: "var(--r-md)",
-        border: `1px solid ${bad ? `rgba(var(--${meta.tone}-rgb),.35)` : "var(--hairline)"}`,
-        background: bad ? `var(--${meta.tone}-soft)` : "var(--surface-2)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          flexWrap: "wrap",
-        }}
+    <ListCard tone={cardTone}>
+      <ListCardHead
+        code={c.code}
+        context={c.kind}
+        title={
+          <span
+            style={{ display: "inline-flex", alignItems: "center", gap: 7 }}
+          >
+            {c.icon ? <Icon name={c.icon} size={14} /> : null}
+            {c.name}
+          </span>
+        }
       >
-        {c.icon ? <Icon name={c.icon} size={15} /> : null}
-        <span
-          className="mono"
-          style={{ fontSize: 11, color: "var(--ink-faint)" }}
-        >
-          {c.code}
-        </span>
-        <span style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ink)" }}>
-          {c.name}
-        </span>
-        <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-          {c.kind}
-        </span>
-        <span
-          className="mono"
-          style={{
-            marginLeft: "auto",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 10.5,
-            fontWeight: 700,
-            padding: "2px 9px",
-            borderRadius: 99,
-            background: `var(--${meta.tone}-soft)`,
-            color: `var(--${meta.tone}-text)`,
-          }}
-        >
-          <Icon name={meta.icon} size={11} />
+        <Badge icon={meta.icon} tone={meta.tone}>
           {meta.label}
-        </span>
-      </div>
+        </Badge>
+      </ListCardHead>
 
-      <div
-        className="mono"
-        style={{
-          display: "flex",
-          gap: 14,
-          flexWrap: "wrap",
-          marginTop: 7,
-          fontSize: 10.5,
-          color: "var(--ink-faint)",
-        }}
-      >
-        <span>último sync {sinceLabel(c.lastSyncAt)}</span>
-        <span>{freqLabel(c.expectedFreqMinutes)}</span>
-        {c.rowsLabel ? <span>{c.rowsLabel}</span> : null}
-        <span>
-          {c.mappingCount} {c.mappingCount === 1 ? "métrica" : "métricas"}
-        </span>
-        {c.owner ? <span>dono: {c.owner}</span> : null}
-      </div>
+      <MetaRow items={metaItems} />
 
       {c.feeds.length > 0 ? (
         <div style={{ marginTop: 7, fontSize: 11, color: "var(--ink-subtle)" }}>
@@ -132,44 +91,18 @@ function ConnectionCard({ c }: { c: ConnectionRow }) {
 
       {/* O conserto. Não é o erro técnico — é o que fazer com ele. */}
       {c.errorMessage ? (
-        <div
-          style={{
-            marginTop: 10,
-            paddingTop: 10,
-            borderTop: "1px dashed var(--hairline)",
-          }}
-        >
-          <Eyebrow tone={meta.tone}>Como consertar</Eyebrow>
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 12,
-              lineHeight: 1.55,
-              color: "var(--ink)",
-            }}
-          >
-            {c.errorMessage}
-          </p>
-        </div>
+        <Note emphasis label="Como consertar" tone={meta.tone}>
+          {c.errorMessage}
+        </Note>
       ) : null}
 
       {/* O estrago. Sem isto, quem lê não sabe o tamanho da urgência. */}
       {c.impactNote ? (
-        <div style={{ marginTop: 8 }}>
-          <Eyebrow tone="red">Impacto</Eyebrow>
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 12,
-              lineHeight: 1.55,
-              color: "var(--ink-muted)",
-            }}
-          >
-            {c.impactNote}
-          </p>
-        </div>
+        <Note label="Impacto" tone="red">
+          {c.impactNote}
+        </Note>
       ) : null}
-    </div>
+    </ListCard>
   );
 }
 

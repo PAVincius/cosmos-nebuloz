@@ -31,8 +31,10 @@ test.describe("Signal — jornadas @auth", () => {
       if (!/\d+,\d×/.test(text)) {
         continue;
       }
+      // Ou a versão da fórmula, ou o carimbo "sem lastro" no lugar dela —
+      // nunca o múltiplo sozinho.
       expect(text, `linha ${i}: múltiplo sem versão de fórmula`).toMatch(
-        /v\d+/
+        /fórmula v\d+|sem lastro/
       );
       expect(text, `linha ${i}: múltiplo sem confiança`).toMatch(
         /confian|\d+\s*\/\s*100|\b\d{1,3}\b/i
@@ -44,6 +46,7 @@ test.describe("Signal — jornadas @auth", () => {
     page,
   }) => {
     await page.goto("/signal/initiatives");
+    await page.waitForLoadState("networkidle");
     const first = page.locator("button", { hasText: /^IN-\d+/ }).first();
     test.skip((await first.count()) === 0, "sem iniciativa semeada");
 
@@ -79,6 +82,7 @@ test.describe("Signal — jornadas @auth", () => {
     page,
   }) => {
     await page.goto("/signal/connections");
+    await page.waitForLoadState("networkidle");
     const broken = page.getByText(/desconectada/i).first();
     test.skip((await broken.count()) === 0, "nenhuma fonte caída no banco");
 
@@ -103,8 +107,11 @@ test.describe("Signal — jornadas @auth", () => {
 
     // Um congelado não oferece o botão de congelar de novo: a UI diz a mesma
     // coisa que a action recusaria, antes de a pessoa tentar.
+    // O cartão é o div mais fundo que contém o estado E os botões — o badge
+    // sozinho também está num div, e seria o errado.
     const card = page
       .locator("div", { has: page.getByText("Congelado") })
+      .filter({ has: page.getByRole("button", { name: /baixar/i }) })
       .last();
     await expect(card.getByRole("button", { name: /congelar/i })).toHaveCount(
       0
@@ -116,15 +123,16 @@ test.describe("Signal — jornadas @auth", () => {
     page,
   }) => {
     await page.goto("/signal/reports");
-    const blocked = page.getByText(/ainda não dá para congelar/i).first();
-    test.skip(
-      (await blocked.count()) === 0,
-      "nenhum rascunho travado no banco semeado"
-    );
+    await page.waitForLoadState("networkidle");
+    const freeze = page.getByRole("button", { name: /congelar período/i });
+    test.skip((await freeze.count()) === 0, "nenhum rascunho no banco semeado");
 
-    // A razão aparece por extenso, com a lista das fontes. A UI lista; não
-    // manda a pessoa procurar.
-    await expect(blocked).toBeVisible();
+    // Tentar congelar com fonte caída: o 409 vem com a lista das fontes, e a
+    // UI lista — não manda a pessoa procurar.
+    await freeze.first().click();
+    await expect(
+      page.getByText(/ainda não dá para congelar/i).first()
+    ).toBeVisible();
     await expect(page.getByText(/CN-\d+/).first()).toBeVisible();
   });
 });

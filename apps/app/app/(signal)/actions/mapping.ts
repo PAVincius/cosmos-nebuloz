@@ -9,6 +9,7 @@ import {
   deriveMappingState,
   MAPPING_STATE_META,
   type MappingState,
+  type SignalTone,
 } from "@/lib/signal/health";
 import { nnStr, optStr } from "../../actions/_base";
 import {
@@ -60,7 +61,7 @@ export type MappingRow = {
   unit: string;
   state: MappingState;
   stateLabel: string;
-  stateTone: string;
+  stateTone: SignalTone;
   changedBy: string | null;
   changedAt: Date;
   observationCount: number;

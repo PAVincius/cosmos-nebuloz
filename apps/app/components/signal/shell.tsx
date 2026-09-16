@@ -25,7 +25,13 @@ import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { type ReactNode, useCallback, useMemo } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { fmtBRL, fmtMultiple } from "@/lib/signal/roi";
 import { Eyebrow, ModalProvider } from "./base";
 import { SignalPalette } from "./palette";
@@ -188,7 +194,7 @@ function Brand() {
         SIGNAL
       </span>
       <span
-        className="mono"
+        className="mono signal-version"
         style={{
           fontSize: 9.5,
           fontWeight: 700,
@@ -198,6 +204,7 @@ function Brand() {
           background: "var(--chip-bg)",
           border: "1px solid var(--hairline)",
           color: "var(--ink-subtle)",
+          whiteSpace: "nowrap",
         }}
       >
         V1 · MEDIÇÃO
@@ -451,9 +458,17 @@ function SourcesChip({ broken }: { broken: number }) {
           color: bad ? "var(--red-text)" : "var(--ink-muted)",
         }}
       >
-        {bad
-          ? `${broken} fonte${broken > 1 ? "s" : ""} com problema`
-          : "Fontes ok"}
+        {/* Em tela estreita só o número sobrevive; o ponto já diz o tom. */}
+        {bad ? (
+          <>
+            {broken}
+            <span className="signal-chip-text">
+              {` fonte${broken > 1 ? "s" : ""} com problema`}
+            </span>
+          </>
+        ) : (
+          <span className="signal-chip-text">Fontes ok</span>
+        )}
       </span>
     </Link>
   );
@@ -517,13 +532,34 @@ export function SignalShell({
     (id: string) => !screenIdSet.has(id),
     [screenIdSet]
   );
+  // Abaixo de 960px a sidebar vira gaveta (ver `signal.css`). O estado mora
+  // aqui, não em CSS puro, porque fechar ao navegar e no Esc é comportamento
+  // de teclado que um :checked não entrega.
+  const [navOpen, setNavOpen] = useState(false);
+  useEffect(() => {
+    if (!navOpen) {
+      return;
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setNavOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navOpen]);
+
   const navigate = useCallback(
-    (id: string, param?: string) =>
-      router.push(param ? `${href(id)}/${param}` : href(id)),
+    (id: string, param?: string) => {
+      setNavOpen(false);
+      router.push(param ? `${href(id)}/${param}` : href(id));
+    },
     [router]
   );
 
   const [title, parent] = TITLES[activeId] ?? ["Signal", "Nebuloz"];
+
+  const navState = navOpen ? "open" : undefined;
 
   return (
     <NavCtx.Provider value={{ navigate, isComingSoon }}>
@@ -532,15 +568,29 @@ export function SignalShell({
           tempo se o usuário navegasse com um aberto. */}
       <ModalProvider>
         <SignalPrefs />
-        <div className="signal-root grain" style={{ display: "flex" }}>
+        <div
+          className="signal-root grain"
+          data-nav={navState}
+          style={{ display: "flex" }}
+        >
           {/* WCAG 2.4.1 — o primeiro Tab da página pula a navegação inteira. */}
           <a className="skip" href="#signal-main">
             Pular para o conteúdo
           </a>
 
+          {/* Só existe na gaveta: fecha ao tocar fora. */}
+          <button
+            aria-label="Fechar navegação"
+            className="signal-backdrop"
+            onClick={() => setNavOpen(false)}
+            tabIndex={navOpen ? 0 : -1}
+            type="button"
+          />
+
           <nav
             aria-label="Navegação do Signal"
-            className="scroll"
+            className="scroll signal-sidebar"
+            id="signal-nav"
             style={{
               width: 232,
               flexShrink: 0,
@@ -594,6 +644,7 @@ export function SignalShell({
             }}
           >
             <header
+              className="signal-topbar"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -605,23 +656,37 @@ export function SignalShell({
                 background: "var(--sidebar)",
               }}
             >
+              <span className="signal-menu">
+                <IconButton
+                  active={navOpen}
+                  name={navOpen ? "x" : "panelLeft"}
+                  onClick={() => setNavOpen((v) => !v)}
+                  title={navOpen ? "Fechar navegação" : "Abrir navegação"}
+                />
+              </span>
               <Brand />
               <span
-                className="mono"
+                className="mono signal-crumb"
                 style={{
                   fontSize: 11,
                   color: "var(--ink-faint)",
                   fontWeight: 600,
+                  minWidth: 0,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                 }}
               >
-                {parent} <span style={{ opacity: 0.5 }}>›</span>{" "}
+                <span className="signal-crumb-parent">
+                  {parent} <span style={{ opacity: 0.5 }}>›</span>{" "}
+                </span>
                 <span style={{ color: "var(--ink-muted)" }}>{title}</span>
               </span>
               <div style={{ flex: 1 }} />
               <SourcesChip broken={brokenConnections} />
               <AppSwitcher modules={modules} />
               <span
-                className="mono"
+                className="mono signal-who"
                 style={{
                   fontSize: 11,
                   color: "var(--ink-subtle)",
@@ -640,14 +705,18 @@ export function SignalShell({
             </header>
 
             <main
-              className="scroll bg-grid"
+              className="scroll signal-main bg-grid"
               id="signal-main"
               style={{
                 flex: 1,
                 overflowY: "auto",
                 padding: "24px 28px 48px",
               }}
-              tabIndex={-1}
+              // 0, não -1: a região rola, e numa tela sem nenhum botão (a de
+              // conexões, quando está tudo bem) o teclado não teria como
+              // rolá-la. O skip link continua pousando aqui.
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: axe scrollable-region-focusable exige container focável
+              tabIndex={0}
             >
               <div style={{ maxWidth: 1280, margin: "0 auto" }}>{children}</div>
             </main>

@@ -258,65 +258,85 @@ function GroupTable({
   return (
     <SectionCard subtitle={subtitle} title={title}>
       {groups.map((g) => (
+        // Duas metades que quebram juntas: nome + contagem à esquerda, os
+        // números à direita. Em tela estreita a segunda metade desce inteira
+        // em vez de cada número cair numa linha.
         <div
           key={g.key}
           style={{
             display: "flex",
             alignItems: "baseline",
-            gap: 12,
+            flexWrap: "wrap",
+            gap: "4px 12px",
             padding: "8px 0",
             borderBottom: "1px dashed var(--hairline)",
           }}
         >
           <span
-            style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "baseline",
+              gap: 8,
+              minWidth: 0,
+            }}
           >
-            {translate ? translate(g.key) : g.key}
-          </span>
-          <span
-            className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
-          >
-            {g.count} {g.count === 1 ? "iniciativa" : "iniciativas"}
+            <span
+              style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}
+            >
+              {translate ? translate(g.key) : g.key}
+            </span>
+            <span
+              className="mono"
+              style={{
+                fontSize: 10.5,
+                color: "var(--ink-faint)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {g.count} {g.count === 1 ? "iniciativa" : "iniciativas"}
+            </span>
           </span>
           <span
             className="mono"
             style={{
               marginLeft: "auto",
-              fontSize: 12,
-              fontWeight: 700,
-              color: "var(--ink)",
+              display: "inline-flex",
+              alignItems: "baseline",
+              gap: 12,
+              whiteSpace: "nowrap",
             }}
           >
-            {fmtMultiple(g.multiple)}
-          </span>
-          <span
-            className="mono"
-            style={{
-              fontSize: 11,
-              color: "var(--ink-faint)",
-              minWidth: 90,
-              textAlign: "right",
-            }}
-          >
-            {fmtBRL(g.invested)}
-          </span>
-          {g.atRisk > 0 ? (
             <span
-              className="mono"
+              style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)" }}
+            >
+              {fmtMultiple(g.multiple)}
+            </span>
+            <span
               style={{
                 fontSize: 11,
-                color: "var(--red-text)",
+                color: "var(--ink-faint)",
                 minWidth: 90,
                 textAlign: "right",
               }}
-              title="Investido em iniciativas sem prova de valor"
             >
-              {fmtBRL(g.atRisk)} em risco
+              {fmtBRL(g.invested)}
             </span>
-          ) : (
-            <span style={{ minWidth: 90 }} />
-          )}
+            {g.atRisk > 0 ? (
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "var(--red-text)",
+                  minWidth: 90,
+                  textAlign: "right",
+                }}
+                title="Investido em iniciativas sem prova de valor"
+              >
+                {fmtBRL(g.atRisk)} em risco
+              </span>
+            ) : (
+              <span style={{ minWidth: 90 }} />
+            )}
+          </span>
         </div>
       ))}
     </SectionCard>

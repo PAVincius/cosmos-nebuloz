@@ -1,6 +1,7 @@
 "use server";
 
 import { withTenantDb } from "@repo/database";
+import type { IconName } from "@repo/design-system/cosmos/icons";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { adoptionPct } from "@/lib/signal/adoption";
@@ -45,7 +46,7 @@ export type AlertRow = {
   kind: AlertKind;
   kindLabel: string;
   tone: "red" | "amber";
-  icon: string;
+  icon: IconName;
   question: string;
   state: "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
   initiativeCode: string;

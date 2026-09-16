@@ -11,8 +11,8 @@
 // decisão, os outros dois pedem atenção. Alerta novo de baixa severidade não
 // pode empurrar uma decisão pendente para o fim da página.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import {
+  Badge,
   Button,
   PageHeader,
   SectionCard,
@@ -25,9 +25,9 @@ import {
   listAlerts,
   setAlertState,
 } from "@/app/(signal)/actions/alerts";
+import { fmtWhen } from "@/lib/signal/dates";
 import {
   type ChipOption,
-  Eyebrow,
   FilterChips,
   ScreenError,
   SkeletonRows,
@@ -35,6 +35,13 @@ import {
   useModal,
   useSignalData,
 } from "../base";
+import {
+  InlineError,
+  ListCard,
+  ListCardHead,
+  MetaRow,
+  Note,
+} from "../list-card";
 import { ResolveAlertForm } from "../modal";
 
 const STATE_FILTERS: ChipOption[] = [
@@ -43,24 +50,27 @@ const STATE_FILTERS: ChipOption[] = [
   { id: "RESOLVED", label: "Resolvidos", tone: "green" },
 ];
 
-const fmtDate = (d: Date) =>
-  new Date(d).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-  });
-
 function AlertCard({ a, onAct }: { a: AlertRow; onAct: () => void }) {
   const router = useRouter();
   const { open } = useModal();
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const done = a.state === "RESOLVED";
   const resolvedNote = done ? a.note : null;
+  const cardTone = done ? undefined : a.tone;
+  const meta = [fmtWhen(a.raisedAt), a.owner ? `dono: ${a.owner}` : null];
 
   const acknowledge = useCallback(async () => {
     setBusy(true);
-    await setAlertState({ code: a.code, state: "ACKNOWLEDGED" });
+    setError(null);
+    const res = await setAlertState({ code: a.code, state: "ACKNOWLEDGED" });
     setBusy(false);
-    onAct();
+    if (res.ok) {
+      onAct();
+      return;
+    }
+    // Sem isto o botão volta ao normal e a pessoa acha que reconheceu.
+    setError(res.error);
   }, [a.code, onAct]);
 
   const resolve = useCallback(() => {
@@ -84,75 +94,20 @@ function AlertCard({ a, onAct }: { a: AlertRow; onAct: () => void }) {
   }, [a.code, a.question, onAct, open]);
 
   return (
-    <div
-      style={{
-        padding: "14px 16px",
-        borderRadius: "var(--r-md)",
-        border: `1px solid ${done ? "var(--hairline)" : `rgba(var(--${a.tone}-rgb),.35)`}`,
-        background: done ? "var(--surface-2)" : `var(--${a.tone}-soft)`,
-        opacity: done ? 0.72 : 1,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 9,
-          flexWrap: "wrap",
-        }}
+    <ListCard muted={done} tone={cardTone}>
+      <ListCardHead
+        code={a.code}
+        onTitleClick={() =>
+          router.push(`/signal/initiative/${a.initiativeCode}`)
+        }
+        title={`${a.initiativeCode} · ${a.initiativeName}`}
       >
-        <span
-          className="mono"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 10.5,
-            fontWeight: 700,
-            padding: "2px 9px",
-            borderRadius: 99,
-            background: `var(--${a.tone}-soft)`,
-            color: `var(--${a.tone}-text)`,
-          }}
-        >
-          <Icon name={a.icon} size={11} />
+        <Badge icon={a.icon} tone={a.tone}>
           {a.kindLabel}
-        </span>
-        <span
-          className="mono"
-          style={{ fontSize: 11, color: "var(--ink-faint)" }}
-        >
-          {a.code}
-        </span>
-        <button
-          className="lift"
-          onClick={() => router.push(`/signal/initiative/${a.initiativeCode}`)}
-          style={{
-            border: 0,
-            background: "none",
-            padding: 0,
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 700,
-            color: "var(--ink)",
-            textAlign: "left",
-          }}
-          type="button"
-        >
-          {a.initiativeCode} · {a.initiativeName}
-        </button>
-        <span
-          className="mono"
-          style={{
-            marginLeft: "auto",
-            fontSize: 10.5,
-            color: "var(--ink-faint)",
-          }}
-        >
-          {fmtDate(a.raisedAt)}
-          {a.owner ? ` · ${a.owner}` : ""}
-        </span>
-      </div>
+        </Badge>
+      </ListCardHead>
+
+      <MetaRow items={meta} />
 
       {/* A pergunta que o alerta faz. É ela que decide se alguém abre isto. */}
       <p
@@ -179,36 +134,17 @@ function AlertCard({ a, onAct }: { a: AlertRow; onAct: () => void }) {
       </p>
 
       {/* O próximo passo. Sem ele o cartão é só uma notícia ruim. */}
-      <div style={{ marginTop: 10 }}>
-        <Eyebrow tone={a.tone}>Próximo passo</Eyebrow>
-        <p
-          style={{
-            margin: "4px 0 0",
-            fontSize: 12,
-            lineHeight: 1.55,
-            color: "var(--ink)",
-          }}
-        >
-          {a.nextStep}
-        </p>
-      </div>
+      <Note emphasis label="Próximo passo" tone={a.tone}>
+        {a.nextStep}
+      </Note>
 
       {resolvedNote ? (
-        <div style={{ marginTop: 10 }}>
-          <Eyebrow tone="green">
-            Resolvido{a.resolvedBy ? ` por ${a.resolvedBy}` : " pelo sistema"}
-          </Eyebrow>
-          <p
-            style={{
-              margin: "4px 0 0",
-              fontSize: 12,
-              lineHeight: 1.55,
-              color: "var(--ink-muted)",
-            }}
-          >
-            {resolvedNote}
-          </p>
-        </div>
+        <Note
+          label={`Resolvido${a.resolvedBy ? ` por ${a.resolvedBy}` : " pelo sistema"}`}
+          tone="green"
+        >
+          {resolvedNote}
+        </Note>
       ) : null}
 
       {done ? null : (
@@ -226,20 +162,12 @@ function AlertCard({ a, onAct }: { a: AlertRow; onAct: () => void }) {
               {busy ? "Marcando…" : "Estou olhando"}
             </Button>
           ) : (
-            <span
-              className="mono"
-              style={{
-                alignSelf: "center",
-                fontSize: 10.5,
-                color: "var(--ink-faint)",
-              }}
-            >
-              reconhecido
-            </span>
+            <Badge tone="neutral">reconhecido</Badge>
           )}
         </div>
       )}
-    </div>
+      <InlineError error={error} />
+    </ListCard>
   );
 }
 

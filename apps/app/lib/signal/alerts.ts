@@ -10,6 +10,8 @@
 // que algo está ruim transfere a ansiedade sem transferir a ação — e a fila
 // vira um mural que as pessoas aprendem a ignorar.
 
+import type { IconName } from "@repo/design-system/cosmos/icons";
+
 export type AlertKind = "LOW" | "WEAK" | "STALE";
 
 export type AlertThresholds = {
@@ -52,7 +54,7 @@ export type AlertFinding = {
 
 export const ALERT_META: Record<
   AlertKind,
-  { label: string; tone: "red" | "amber"; icon: string; question: string }
+  { label: string; tone: "red" | "amber"; icon: IconName; question: string }
 > = {
   WEAK: {
     label: "Usam e não rende",

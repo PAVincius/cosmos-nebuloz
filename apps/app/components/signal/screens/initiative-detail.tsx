@@ -42,6 +42,7 @@ import {
   useSignalData,
 } from "../base";
 import { AdoptionSparkline, OutcomeSparkline } from "../charts";
+import { Note } from "../list-card";
 import { BaselineForm, CloseInitiativeForm, ObservationForm } from "../modal";
 import { ValueReading } from "../verdict-badge";
 
@@ -225,17 +226,9 @@ function AdoptionCard({
         </Row>
       )}
       {adoption.depthNote ? (
-        <p
-          style={{
-            margin: "10px 0 0",
-            fontSize: 12,
-            lineHeight: 1.55,
-            color: "var(--ink-subtle)",
-          }}
-        >
-          <Eyebrow>Profundidade de uso</Eyebrow>
-          {adoption.depthNote}
-        </p>
+        // `Eyebrow` é um <div>: dentro de <p> o React reabre o parágrafo e o
+        // HTML hidrata diferente do servidor. Bloco rotulado é o `Note`.
+        <Note label="Profundidade de uso">{adoption.depthNote}</Note>
       ) : null}
     </SectionCard>
   );

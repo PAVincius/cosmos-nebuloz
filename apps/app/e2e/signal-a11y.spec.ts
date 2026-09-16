@@ -66,6 +66,7 @@ test.describe("Signal a11y @auth", () => {
 
   test("o detalhe de iniciativa também passa", async ({ page }) => {
     await page.goto("/signal/initiatives");
+    await page.waitForLoadState("networkidle");
     const first = page.locator("button", { hasText: /^IN-\d+/ }).first();
     if ((await first.count()) === 0) {
       test.skip(true, "sem iniciativa semeada neste banco");

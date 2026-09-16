@@ -116,6 +116,9 @@ describe("formatação", () => {
     expect(fmtBRL(764_400)).toBe("R$ 764 mil");
     expect(fmtBRL(1_204_000)).toBe("R$ 1,20 mi");
     expect(fmtBRL(840)).toBe("R$ 840");
+    // Líquido negativo: o sinal antes do símbolo, e é o menos de verdade.
+    expect(fmtBRL(-24_000)).toBe("−R$ 24 mil");
+    expect(fmtBRL(-1_204_000)).toBe("−R$ 1,20 mi");
   });
 
   it("usa vírgula decimal no múltiplo", () => {

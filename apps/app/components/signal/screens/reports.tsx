@@ -11,61 +11,41 @@
 // texto da tela que diz o que fazer, e escondê-lo transformaria o botão
 // desabilitado num mistério.
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import {
+  Badge,
   Button,
   PageHeader,
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import {
+  draftReport,
   exportReport,
   freezeReport,
   listReports,
   type ReportRow,
 } from "@/app/(signal)/actions/reports";
+import { fmtDay } from "@/lib/signal/dates";
 import {
-  Eyebrow,
   ScreenError,
   SkeletonRows,
   SmartEmptyState,
+  useModal,
   useSignalData,
 } from "../base";
+import {
+  InlineError,
+  ListCard,
+  ListCardHead,
+  MetaRow,
+  Note,
+} from "../list-card";
+import { DraftReportForm } from "../modal";
 
 const KIND_LABEL: Record<string, string> = {
   EXECUTIVE: "Executivo",
   PORTFOLIO: "Portfólio",
 };
-
-const fmtDate = (d: Date) =>
-  new Date(d).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-
-function MetaRow({ r }: { r: ReportRow }) {
-  return (
-    <div
-      className="mono"
-      style={{
-        display: "flex",
-        gap: 14,
-        flexWrap: "wrap",
-        marginTop: 7,
-        fontSize: 10.5,
-        color: "var(--ink-faint)",
-      }}
-    >
-      <span>
-        {fmtDate(r.periodStart)} – {fmtDate(r.periodEnd)}
-      </span>
-      {r.pageCount === null ? null : <span>{r.pageCount} páginas</span>}
-      {r.generatedBy ? <span>por {r.generatedBy}</span> : null}
-      {r.generatedAt ? <span>em {fmtDate(r.generatedAt)}</span> : null}
-    </div>
-  );
-}
 
 /**
  * O bloqueio por extenso.
@@ -84,18 +64,8 @@ function BlockNote({
     return null;
   }
   return (
-    <div style={{ marginTop: 10 }}>
-      <Eyebrow tone="amber">Ainda não dá para congelar</Eyebrow>
-      <p
-        style={{
-          margin: "4px 0 0",
-          fontSize: 12,
-          lineHeight: 1.55,
-          color: "var(--ink)",
-        }}
-      >
-        {reason}
-      </p>
+    <Note emphasis label="Ainda não dá para congelar" tone="amber">
+      {reason}
       {blockers.length > 0 ? (
         <ul
           className="mono"
@@ -112,8 +82,31 @@ function BlockNote({
           ))}
         </ul>
       ) : null}
-    </div>
+    </Note>
   );
+}
+
+/** Baixa o payload congelado como arquivo. Sai do payload, nunca da tela. */
+function saveAsJson(code: string, payload: unknown) {
+  const url = URL.createObjectURL(
+    new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${code}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function reportMeta(r: ReportRow): (string | null)[] {
+  return [
+    `${fmtDay(r.periodStart)} – ${fmtDay(r.periodEnd)}`,
+    r.pageCount === null ? null : `${r.pageCount} páginas`,
+    r.generatedBy ? `por ${r.generatedBy}` : null,
+    r.generatedAt
+      ? `em ${new Date(r.generatedAt).toLocaleDateString("pt-BR")}`
+      : null,
+  ];
 }
 
 function ReportCard({ r, onChanged }: { r: ReportRow; onChanged: () => void }) {
@@ -137,77 +130,36 @@ function ReportCard({ r, onChanged }: { r: ReportRow; onChanged: () => void }) {
   }, [r.code, onChanged]);
 
   const download = useCallback(async () => {
+    setError(null);
     const res = await exportReport({ code: r.code });
-    if (!res.ok) {
-      setError(res.error);
+    if (res.ok) {
+      saveAsJson(r.code, res.data);
       return;
     }
-    // O arquivo sai do payload congelado, igual ao que o comitê leu.
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(res.data, null, 2)], {
-        type: "application/json",
-      })
-    );
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${r.code}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    setError(res.error);
   }, [r.code]);
 
   const hasBlock = Boolean(r.blockedReason) || blockers.length > 0;
   const blockReason = final || !hasBlock ? null : (r.blockedReason ?? error);
+  // Erro de ação que NÃO é bloqueio (rede, permissão) aparece abaixo dos botões.
+  const actionError = blockReason ? null : error;
+  const cardTone = blockReason ? "amber" : undefined;
+  const stateTone = final ? "green" : "neutral";
+  const stateIcon = final ? "lock" : "edit";
 
   return (
-    <div
-      style={{
-        padding: "14px 16px",
-        borderRadius: "var(--r-md)",
-        border: `1px solid ${blockReason ? "rgba(var(--amber-rgb),.35)" : "var(--hairline)"}`,
-        background: blockReason ? "var(--amber-soft)" : "var(--surface-2)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 9,
-          flexWrap: "wrap",
-        }}
+    <ListCard tone={cardTone}>
+      <ListCardHead
+        code={r.code}
+        context={`${KIND_LABEL[r.kind] ?? r.kind} · ${r.periodLabel}`}
+        title={r.name}
       >
-        <span
-          className="mono"
-          style={{ fontSize: 11, color: "var(--ink-faint)" }}
-        >
-          {r.code}
-        </span>
-        <span style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ink)" }}>
-          {r.name}
-        </span>
-        <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-          {KIND_LABEL[r.kind] ?? r.kind} · {r.periodLabel}
-        </span>
-        <span
-          className="mono"
-          style={{
-            marginLeft: "auto",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 10.5,
-            fontWeight: 700,
-            padding: "2px 9px",
-            borderRadius: 99,
-            background: final ? "var(--green-soft)" : "var(--surface-3)",
-            color: final ? "var(--green-text)" : "var(--ink-muted)",
-          }}
-        >
-          <Icon name={final ? "lock" : "edit"} size={11} />
+        <Badge icon={stateIcon} tone={stateTone}>
           {final ? "Congelado" : "Rascunho"}
-        </span>
-      </div>
+        </Badge>
+      </ListCardHead>
 
-      <MetaRow r={r} />
+      <MetaRow items={reportMeta(r)} />
 
       {r.note ? (
         <p
@@ -226,20 +178,22 @@ function ReportCard({ r, onChanged }: { r: ReportRow; onChanged: () => void }) {
 
       <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
         {final ? (
-          <Button onClick={download} size="sm" variant="ghost">
+          <Button icon="download" onClick={download} size="sm" variant="ghost">
             Baixar dados
           </Button>
         ) : (
-          <Button disabled={busy} onClick={freeze} size="sm">
+          <Button disabled={busy} icon="lock" onClick={freeze} size="sm">
             {busy ? "Congelando…" : "Congelar período"}
           </Button>
         )}
       </div>
-    </div>
+      <InlineError error={actionError} />
+    </ListCard>
   );
 }
 
 export default function ReportsScreen() {
+  const { open } = useModal();
   const fetcher = useCallback(() => listReports(), []);
   const { data, loading, error, reload } = useSignalData<ReportRow[]>(fetcher);
 
@@ -250,6 +204,20 @@ export default function ReportsScreen() {
       finals: all.filter((r) => r.state === "FINAL"),
     };
   }, [data]);
+
+  const openNew = useCallback(() => {
+    open(
+      <DraftReportForm
+        onDrafted={async (input) => {
+          const res = await draftReport(input);
+          if (res.ok) {
+            reload();
+          }
+          return res.ok ? { ok: true } : { ok: false, error: res.error };
+        }}
+      />
+    );
+  }, [open, reload]);
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -265,13 +233,20 @@ export default function ReportsScreen() {
         subtitle="Congelar um período grava o que os números diziam naquele dia. Depois disso o relatório para no tempo — é o que permite conferir uma decisão velha sem discutir qual versão da conta valia."
         title="Relatórios"
         tone="accent"
-      />
+      >
+        <Button icon="plus" onClick={openNew}>
+          Novo relatório
+        </Button>
+      </PageHeader>
 
       {loading ? <SkeletonRows cols="1fr" rows={3} /> : null}
 
       {!loading && (data ?? []).length === 0 ? (
         <SmartEmptyState
           icon="fileText"
+          onPrimary={openNew}
+          primaryIcon="plus"
+          primaryLabel="Criar o primeiro"
           subtitle="Um relatório congelado é a única cópia que não muda quando a fórmula muda. Sem nenhum, toda conferência de decisão passada vira arqueologia no banco."
           title="Nenhum relatório"
           tone="accent"

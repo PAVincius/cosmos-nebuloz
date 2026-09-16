@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { adoptionPct, fmtAdoption } from "@/lib/signal/adoption";
 import { computeConfidence } from "@/lib/signal/confidence";
+import { fmtDayShort } from "@/lib/signal/dates";
 import { SignalRuleError, SignalStateConflictError } from "@/lib/signal/errors";
 import { requireSignalPermissionContext } from "@/lib/signal/guards";
 import { computeOutcome, fmtDelta } from "@/lib/signal/outcome";
@@ -154,7 +155,7 @@ function lineOf(
       metricLabel: o.metricLabel,
       value: o.value,
       unit: o.unit,
-      windowLabel: `${o.windowStart.toLocaleDateString("pt-BR")} – ${o.windowEnd.toLocaleDateString("pt-BR")}`,
+      windowLabel: `${fmtDayShort(o.windowStart)} – ${fmtDayShort(o.windowEnd)}`,
       sourceLabel: o.connectionLabel ?? "entrada manual",
       transform: o.transform,
       flag: o.flag,
@@ -334,11 +335,12 @@ export async function freezeReport(raw: {
 
       if (blockers.length > 0) {
         const reason = `${blockers.length} ${blockers.length === 1 ? "fonte citada está" : "fontes citadas estão"} fora do ar. Congelar agora fecharia o período com número velho apresentado como fechamento.`;
-        // A razão fica gravada: quem abrir o rascunho amanhã vê por que ele
-        // não fechou, sem precisar tentar de novo para descobrir.
+        // A razão fica gravada COM a lista: quem abrir o rascunho amanhã vê
+        // por que ele não fechou e o que reconectar, sem precisar tentar de
+        // novo para descobrir.
         await db.signalReportSnapshot.update({
           where: { id: report.id },
-          data: { blockedReason: reason },
+          data: { blockedReason: `${reason} ${blockers.join(" ")}` },
         });
         throw new SignalStateConflictError(
           "report.sources.down",

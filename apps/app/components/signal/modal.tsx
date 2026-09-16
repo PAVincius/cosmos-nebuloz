@@ -741,3 +741,148 @@ export function ResolveAlertForm({
     </ModalShell>
   );
 }
+
+/**
+ * Rascunho de relatório — US6.
+ *
+ * Só o que identifica o período. O conteúdo não é escolhido aqui: ele é
+ * montado no congelamento, a partir do que estiver no banco naquele instante.
+ * Um formulário que deixasse escolher "quais iniciativas entram" abriria a
+ * porta para um relatório que omite a iniciativa ruim — e a pergunta do comitê
+ * seguinte seria "por que essa não estava?".
+ */
+export function DraftReportForm({
+  onDrafted,
+}: {
+  onDrafted: (input: {
+    name: string;
+    kind: "EXECUTIVE" | "PORTFOLIO";
+    periodLabel: string;
+    periodStart: string;
+    periodEnd: string;
+  }) => Promise<{ ok: boolean; error?: string }>;
+}) {
+  const { close } = useModal();
+  const ids = useId();
+  const [name, setName] = useState("");
+  const [kind, setKind] = useState<"EXECUTIVE" | "PORTFOLIO">("EXECUTIVE");
+  const [periodLabel, setPeriodLabel] = useState("");
+  const [periodStart, setPeriodStart] = useState("");
+  const [periodEnd, setPeriodEnd] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const inverted =
+    periodStart.length > 0 && periodEnd.length > 0 && periodEnd < periodStart;
+  const endError = inverted ? "Termina antes de começar." : undefined;
+  const canSubmit =
+    name.trim().length > 0 &&
+    periodLabel.trim().length > 0 &&
+    periodStart.length > 0 &&
+    periodEnd.length > 0 &&
+    !inverted;
+
+  const submit = useCallback(async () => {
+    setBusy(true);
+    setError(null);
+    const res = await onDrafted({
+      name: name.trim(),
+      kind,
+      periodLabel: periodLabel.trim(),
+      periodStart,
+      periodEnd,
+    });
+    setBusy(false);
+    if (res.ok) {
+      close();
+      return;
+    }
+    setError(res.error ?? "Não foi possível criar o rascunho.");
+  }, [name, kind, periodLabel, periodStart, periodEnd, onDrafted, close]);
+
+  return (
+    <ModalShell
+      actions={
+        <>
+          <Button onClick={close} variant="ghost">
+            Cancelar
+          </Button>
+          <Button disabled={!canSubmit || busy} onClick={submit}>
+            {busy ? "Criando…" : "Criar rascunho"}
+          </Button>
+        </>
+      }
+      icon="fileText"
+      onClose={close}
+      subtitle="O rascunho acompanha o banco até ser congelado. Os números que entram são os do momento do congelamento — não os de agora."
+      title="Novo relatório"
+      tone="accent"
+      width={560}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <ErrorNote error={error} />
+        <Field htmlFor={`${ids}-name`} label="Nome" required>
+          <Input
+            id={`${ids}-name`}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Fechamento do 2º semestre"
+            value={name}
+          />
+        </Field>
+        <Field
+          hint="Executivo lê de cima; portfólio abre cada iniciativa."
+          htmlFor={`${ids}-kind`}
+          label="Tipo"
+        >
+          <Select
+            id={`${ids}-kind`}
+            onChange={setKind}
+            options={[
+              { value: "EXECUTIVE", label: "Executivo" },
+              { value: "PORTFOLIO", label: "Portfólio" },
+            ]}
+            value={kind}
+          />
+        </Field>
+        <Field
+          hint="Como o financeiro chama o período: “H2 2026”, “FY26 Q3”."
+          htmlFor={`${ids}-label`}
+          label="Período"
+          required
+        >
+          <Input
+            id={`${ids}-label`}
+            onChange={(e) => setPeriodLabel(e.target.value)}
+            placeholder="H2 2026"
+            value={periodLabel}
+          />
+        </Field>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 12,
+          }}
+        >
+          <Field htmlFor={`${ids}-start`} label="Início" required>
+            <Input
+              id={`${ids}-start`}
+              onChange={(e) => setPeriodStart(e.target.value)}
+              type="date"
+              value={periodStart}
+            />
+          </Field>
+          <Field error={endError} htmlFor={`${ids}-end`} label="Fim" required>
+            <Input
+              id={`${ids}-end`}
+              invalid={inverted}
+              onChange={(e) => setPeriodEnd(e.target.value)}
+              type="date"
+              value={periodEnd}
+            />
+          </Field>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}

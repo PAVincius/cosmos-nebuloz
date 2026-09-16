@@ -11,6 +11,7 @@ import {
   deriveMappingState,
   describeImpact,
   HEALTH_META,
+  type SignalTone,
 } from "@/lib/signal/health";
 import { nnStr, optStr } from "../../actions/_base";
 import {
@@ -56,7 +57,7 @@ export type ConnectionRow = {
   icon: string | null;
   health: ConnHealth;
   healthLabel: string;
-  healthTone: string;
+  healthTone: SignalTone;
   lastSyncAt: Date | null;
   expectedFreqMinutes: number | null;
   rowsLabel: string | null;

@@ -11,7 +11,7 @@
 // (as observações apontam para elas) e serão exibidas quando houver tela de
 // histórico — listar todas aqui misturaria "o que vale hoje" com "o que valia".
 
-import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import { listMappings, type MappingRow } from "@/app/(signal)/actions/mapping";
 import {
@@ -22,6 +22,7 @@ import {
   SmartEmptyState,
   useSignalData,
 } from "../base";
+import { CodeBlock, ListCard, ListCardHead, MetaRow } from "../list-card";
 
 const STATE_FILTERS: ChipOption[] = [
   { id: "BROKEN", label: "Fonte caída", tone: "red" },
@@ -37,6 +38,38 @@ const STATE_RANK: Record<string, number> = {
   STALE: 2,
   ACTIVE: 3,
 };
+
+function MappingCard({ m }: { m: MappingRow }) {
+  const tone = m.stateTone;
+  const cardTone = m.state === "ACTIVE" ? undefined : tone;
+  const meta = [
+    `${m.observationCount} ${m.observationCount === 1 ? "observação" : "observações"}`,
+    m.changedBy ? `alterado por ${m.changedBy}` : null,
+    new Date(m.changedAt).toLocaleDateString("pt-BR"),
+  ];
+  return (
+    <ListCard tone={cardTone}>
+      <ListCardHead
+        code={`${m.code} · v${m.version}`}
+        context={`${m.connectionName} → ${m.initiativeCode ?? "todas as iniciativas"}`}
+        title={m.metricLabel}
+      >
+        <Badge tone={tone}>{m.stateLabel}</Badge>
+      </ListCardHead>
+
+      {/* Evento de origem e a conta. Nesta ordem: entra assim, sai assado. */}
+      <CodeBlock>
+        <div>{m.eventKey}</div>
+        <div style={{ color: "var(--ink)" }}>
+          ↳ {m.transform}{" "}
+          <span style={{ color: "var(--ink-faint)" }}>[{m.unit}]</span>
+        </div>
+      </CodeBlock>
+
+      <MetaRow items={meta} />
+    </ListCard>
+  );
+}
 
 export default function MappingScreen() {
   const [state, setState] = useState("all");
@@ -101,107 +134,7 @@ export default function MappingScreen() {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {rows.map((m) => (
-              <div
-                key={`${m.code}-${m.version}`}
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "var(--r-md)",
-                  border: "1px solid var(--hairline)",
-                  background: "var(--surface-2)",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 9,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: "var(--ink-faint)",
-                    }}
-                  >
-                    {m.code} · v{m.version}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: "var(--ink)",
-                    }}
-                  >
-                    {m.metricLabel}
-                  </span>
-                  <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-                    {m.connectionName} →{" "}
-                    {m.initiativeCode ?? "todas as iniciativas"}
-                  </span>
-                  <span
-                    className="mono"
-                    style={{
-                      marginLeft: "auto",
-                      fontSize: 10.5,
-                      fontWeight: 700,
-                      padding: "2px 9px",
-                      borderRadius: 99,
-                      background: `var(--${m.stateTone}-soft)`,
-                      color: `var(--${m.stateTone}-text)`,
-                    }}
-                  >
-                    {m.stateLabel}
-                  </span>
-                </div>
-
-                {/* Evento de origem e a conta. Nesta ordem: entra assim, sai
-                    assado. */}
-                <div
-                  className="mono"
-                  style={{
-                    marginTop: 9,
-                    padding: "8px 10px",
-                    borderRadius: "var(--r-sm)",
-                    background: "var(--surface-3)",
-                    fontSize: 11,
-                    lineHeight: 1.6,
-                    color: "var(--ink-muted)",
-                    overflowX: "auto",
-                  }}
-                >
-                  <div>{m.eventKey}</div>
-                  <div style={{ color: "var(--ink)" }}>
-                    ↳ {m.transform}{" "}
-                    <span style={{ color: "var(--ink-faint)" }}>
-                      [{m.unit}]
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className="mono"
-                  style={{
-                    display: "flex",
-                    gap: 14,
-                    flexWrap: "wrap",
-                    marginTop: 7,
-                    fontSize: 10.5,
-                    color: "var(--ink-faint)",
-                  }}
-                >
-                  <span>
-                    {m.observationCount}{" "}
-                    {m.observationCount === 1 ? "observação" : "observações"}
-                  </span>
-                  {m.changedBy ? <span>alterado por {m.changedBy}</span> : null}
-                  <span>
-                    {new Date(m.changedAt).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-              </div>
+              <MappingCard key={`${m.code}-${m.version}`} m={m} />
             ))}
           </div>
         </SectionCard>

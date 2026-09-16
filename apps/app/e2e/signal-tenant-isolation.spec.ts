@@ -33,12 +33,16 @@ test.describe("Signal — módulo e escopo @auth", () => {
   test("a página de módulo não contratado explica em vez de errar", async ({
     page,
   }) => {
-    // Não é 404 nem tela branca: quem cai aqui precisa saber que o módulo
-    // existe e não foi contratado — e a quem pedir.
+    // Não é 404 nem tela branca: quem cai aqui precisa saber POR QUE não
+    // entra — módulo não contratado ou papel ausente — e a quem pedir. A
+    // página escolhe o texto pelo estado real do tenant; o teste aceita os
+    // dois porque o que ele protege é a explicação, não qual das duas.
     await page.goto("/signal-indisponivel");
     await expect(page).toHaveTitle(/Signal indisponível/);
     await expect(
-      page.getByRole("heading", { name: /Signal não está contratado/i })
+      page.getByRole("heading", {
+        name: /Signal não está contratado|ainda não tem papel de medição/i,
+      })
     ).toBeVisible();
   });
 

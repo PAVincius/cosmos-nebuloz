@@ -41,6 +41,21 @@ const BAND_LABEL: Record<string, string> = {
  * rotulado**, nunca escondido: esconder faria a iniciativa parecer não medida,
  * quando na verdade ela foi medida mal. A diferença importa para quem decide.
  */
+/** Badge neutro do "sem veredito": chip sem tom, não vermelho nem verde. */
+const UNBACKED_BADGE = {
+  background: "var(--chip-bg)",
+  color: "var(--ink-muted)",
+  border: "1px solid var(--hairline)",
+} as const;
+
+function verdictBadgeStyle(tone: string) {
+  return {
+    background: `var(--${tone}-soft)`,
+    color: `var(--${tone}-text)`,
+    border: `1px solid rgba(var(--${tone}-rgb),.28)`,
+  };
+}
+
 export function ValueReading({
   multiple,
   formulaVersion,
@@ -53,6 +68,14 @@ export function ValueReading({
   compact = false,
 }: ValueReadingProps) {
   const unbacked = confidenceScore === 0 || formulaVersion === null;
+  // Sem lastro não há veredito: "candidata a parada" para um rascunho que
+  // ainda nem lançou a primeira linha da conta é acusação, não leitura. O
+  // badge diz o que falta em vez de fingir que julgou.
+  const badgeLabel = unbacked ? "Sem veredito" : verdictLabel;
+  const badge = unbacked ? UNBACKED_BADGE : verdictBadgeStyle(verdictTone);
+  const action = unbacked
+    ? "Assinar o baseline e versionar a fórmula"
+    : verdictAction;
 
   return (
     <div
@@ -74,12 +97,10 @@ export function ValueReading({
           borderRadius: 99,
           fontSize: 11,
           fontWeight: 700,
-          background: `var(--${verdictTone}-soft)`,
-          color: `var(--${verdictTone}-text)`,
-          border: `1px solid rgba(var(--${verdictTone}-rgb),.28)`,
+          ...badge,
         }}
       >
-        {verdictLabel}
+        {badgeLabel}
       </span>
 
       <span
@@ -147,7 +168,7 @@ export function ValueReading({
         adoção {fmtAdoption(adoptionPct)}
       </span>
 
-      {verdictAction !== undefined && !compact ? (
+      {action !== undefined && !compact ? (
         <span
           style={{
             display: "inline-flex",
@@ -159,7 +180,7 @@ export function ValueReading({
           }}
         >
           <Icon name="arrowUpRight" size={12} />
-          {verdictAction}
+          {action}
         </span>
       ) : null}
     </div>

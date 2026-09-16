@@ -99,13 +99,17 @@ export function computePortfolioRoi(
 
 /** Formatação BRL curta do handoff: "R$ 764 mil", "R$ 1,20 mi". */
 export function fmtBRL(n: number): string {
-  if (Math.abs(n) >= 1_000_000) {
-    return `R$ ${(n / 1_000_000).toFixed(2).replace(".", ",")} mi`;
+  // O sinal vem antes do símbolo, com o menos tipográfico (U+2212): "R$ -24
+  // mil" lê como "R$ menos-alguma-coisa" e o hífen some em fonte tabular.
+  const sign = n < 0 ? "−" : "";
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) {
+    return `${sign}R$ ${(abs / 1_000_000).toFixed(2).replace(".", ",")} mi`;
   }
-  if (Math.abs(n) >= 1000) {
-    return `R$ ${Math.round(n / 1000)} mil`;
+  if (abs >= 1000) {
+    return `${sign}R$ ${Math.round(abs / 1000)} mil`;
   }
-  return `R$ ${n}`;
+  return `${sign}R$ ${abs}`;
 }
 
 /** "4,2×". Nulo vira travessão — nunca "0,0×", que afirmaria ausência de

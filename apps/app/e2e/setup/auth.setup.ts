@@ -141,6 +141,15 @@ async function globalSetup(config: FullConfig) {
     console.warn("⚠️ pnpm seed:meridian had warnings/errors but continuing...");
   }
 
+  // O Signal também vive no tenant do e2e. A jornada 3 congela o rascunho
+  // semeado; o seed o devolve a DRAFT para a próxima rodada ter o que travar.
+  console.log("🌱 Executing seed:signal before E2E tests...");
+  try {
+    execSync("pnpm seed:signal", { stdio: "inherit" });
+  } catch (_err) {
+    console.warn("⚠️ pnpm seed:signal had warnings/errors but continuing...");
+  }
+
   const charterPassword = process.env.CHARTER_SEED_PASSWORD ?? "charter123";
   const meridianPassword = process.env.MERIDIAN_SEED_PASSWORD ?? "meridian123";
 
