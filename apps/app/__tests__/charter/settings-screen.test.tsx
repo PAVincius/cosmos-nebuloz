@@ -102,6 +102,7 @@ describe("SettingsScreen — troca de papel de governança", () => {
     toastMocks.success.mockReset();
     toastMocks.error.mockReset();
     toastMocks.loading.mockReturnValue("toast-1");
+    window.localStorage.clear();
     getSettingsMock.mockResolvedValue(baseSettings());
   });
 
@@ -205,5 +206,15 @@ describe("SettingsScreen — troca de papel de governança", () => {
         "Perde acesso a: Decidir caso de uso, Aprovar fornecedor / mudar tier."
       )
     ).toBeTruthy();
+  });
+
+  it("painel 'Entrega ainda não ligada' começa colapsado (onda 5a)", async () => {
+    render(<SettingsScreen />);
+    fireEvent.click(await screen.findByText("Notificações"));
+
+    const toggle = await screen.findByRole("button", {
+      name: /entrega ainda não ligada/i,
+    });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 });
