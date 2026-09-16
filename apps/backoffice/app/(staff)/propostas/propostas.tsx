@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
@@ -33,112 +34,101 @@ function LinhaProposta({
   podeEscrever,
   primeira,
   onEnviar,
-  onAbrir,
 }: {
   p: ProposalRow;
   podeEscrever: boolean;
   primeira: boolean;
   onEnviar: (id: string) => void;
-  onAbrir: (id: string) => void;
 }) {
   const acimaDoLimite = p.descontoPercent > LIMITE_DESCONTO_SEM_APROVACAO;
   // Só rascunho tem ação: enviada de novo mudaria o que o cliente já recebeu.
   const podeEnviar = podeEscrever && p.status === "RASCUNHO";
 
   return (
-    // A linha inteira abre a proposta. Não é `<button>` porque carrega outros
-    // controles dentro (enviar), e botão dentro de botão não é HTML válido —
-    // daí role, tabIndex e o handler de Enter na mão (NFR-2.3).
-    //
-    // Os dois ignores abaixo marcam dívida conhecida, não a quitam: o controle
-    // aninhado em `<li role=button>` é assunto da onda de a11y. Aqui só entra a
-    // barreira do envio.
-    // biome-ignore lint/a11y/useSemanticElements: onda de a11y — ver comentário acima
+    // `<li>` neutro. O que abre a proposta é o `<Link>` — um controle próprio,
+    // com o conteúdo da linha como nome acessível e "Abrir" em `sr-only` na
+    // frente, para o leitor de tela dizer a intenção antes do conteúdo. O
+    // "Enviar" fica fora do link, como irmão: controle dentro de controle não
+    // é HTML válido, e era o que o `<li role="button">` anterior fazia.
     <li
-      aria-label={`Abrir proposta ${p.numero} — ${p.titulo}`}
-      onClick={() => onAbrir(p.id)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onAbrir(p.id);
-        }
-      }}
-      // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: onda de a11y — ver comentário acima
-      role="button"
       style={{
         display: "flex",
         alignItems: "center",
         gap: 12,
         padding: "11px 2px",
         borderTop: primeira ? "none" : "1px solid var(--hairline)",
-        cursor: "pointer",
       }}
-      tabIndex={0}
     >
-      <span
-        className="mono"
-        style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 84 }}
-      >
-        {p.numero}
-      </span>
-      <span style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            display: "block",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {p.titulo}
-        </span>
-        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
-          {p.cliente}
-        </span>
-      </span>
-      {p.descontoPercent > 0 ? (
-        // Acima do limite fica em âmbar mesmo depois de decidido: é o que
-        // explica por que a proposta passou pela fila.
-        <Badge tone={acimaDoLimite ? "amber" : "neutral"}>
-          −{p.descontoPercent}%
-        </Badge>
-      ) : null}
-      <span
-        className="mono"
+      <Link
+        href={`/propostas/${p.id}`}
         style={{
-          fontSize: "var(--fs-base)",
-          color: "var(--accent-text)",
-          width: 110,
-          textAlign: "right",
+          flex: 1,
+          minWidth: 0,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          color: "inherit",
+          textDecoration: "none",
         }}
       >
-        {formatarBRL(p.totalCentavos)}
-      </span>
-      <Badge dot tone={TOM[p.status] ?? "neutral"}>
-        {ROTULO[p.status] ?? p.status}
-      </Badge>
-      {podeEnviar ? (
-        // `stopPropagation` (clique e teclado) porque a linha inteira abre a
-        // proposta: sem isto, cada passo da barreira também navegaria, e a
-        // pessoa sairia da lista sem saber se o envio aconteceu. Enviar é sem
-        // volta — a barreira é a mesma do gerador.
-        // biome-ignore lint/a11y/noStaticElementInteractions: só isola os eventos da barreira do `<li role=button>` que a envolve; não aciona nada — a onda de a11y refaz a linha
-        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: idem
+        <span className="sr-only">Abrir </span>
         <span
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
+          className="mono"
+          style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 84 }}
         >
-          <ConfirmarAcao
-            alvo={`${p.titulo} · ${p.cliente}`}
-            consequencia={
-              acimaDoLimite
-                ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
-                : "O cliente recebe esta versão; não há como editar depois de enviada."
-            }
-            onConfirmar={() => onEnviar(p.id)}
-            rotulo={acimaDoLimite ? "Pedir aprovação" : "Enviar"}
-            tom="accent"
-          />
+          {p.numero}
         </span>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span
+            style={{
+              display: "block",
+              fontSize: "var(--fs-base)",
+              fontWeight: 600,
+            }}
+          >
+            {p.titulo}
+          </span>
+          <span
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
+          >
+            {p.cliente}
+          </span>
+        </span>
+        {p.descontoPercent > 0 ? (
+          // Acima do limite fica em âmbar mesmo depois de decidido: é o que
+          // explica por que a proposta passou pela fila.
+          <Badge tone={acimaDoLimite ? "amber" : "neutral"}>
+            −{p.descontoPercent}%
+          </Badge>
+        ) : null}
+        <span
+          className="mono"
+          style={{
+            fontSize: "var(--fs-base)",
+            color: "var(--accent-text)",
+            width: 110,
+            textAlign: "right",
+          }}
+        >
+          {formatarBRL(p.totalCentavos)}
+        </span>
+        <Badge dot tone={TOM[p.status] ?? "neutral"}>
+          {ROTULO[p.status] ?? p.status}
+        </Badge>
+      </Link>
+      {podeEnviar ? (
+        // Enviar é sem volta — a barreira é a mesma do gerador.
+        <ConfirmarAcao
+          alvo={`${p.titulo} · ${p.cliente}`}
+          consequencia={
+            acimaDoLimite
+              ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
+              : "O cliente recebe esta versão; não há como editar depois de enviada."
+          }
+          onConfirmar={() => onEnviar(p.id)}
+          rotulo={acimaDoLimite ? "Pedir aprovação" : "Enviar"}
+          tom="accent"
+        />
       ) : null}
     </li>
   );
@@ -212,7 +202,7 @@ export function Propostas({
           ) : null
         }
         icon="tag"
-        subtitle={`${lista.length} proposta(s)`}
+        subtitle={`${lista.length} ${lista.length === 1 ? "proposta" : "propostas"}`}
         title="Pipeline"
       >
         {lista.length === 0 ? (
@@ -236,7 +226,6 @@ export function Propostas({
             {lista.map((p, i) => (
               <LinhaProposta
                 key={p.id}
-                onAbrir={(id) => router.push(`/propostas/${id}`)}
                 onEnviar={enviar}
                 p={p}
                 podeEscrever={podeEscrever}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Barreira antes de operação sem volta.
@@ -120,6 +120,23 @@ export function ConfirmarAcao({
   const bloqueado = executando || desabilitado;
   const paleta = PALETA[tom];
 
+  // O gatilho desmonta quando a pergunta abre, e o foco que estava nele cairia
+  // no `body`: quem navega por teclado perdia o lugar no passo da decisão.
+  // Abrir pelo gatilho foca "Voltar" (a saída vem primeiro); desistir devolve
+  // o foco ao gatilho. Com `aberto` vindo de fora o gatilho foi um `<select>`
+  // que ainda pode estar sendo navegado — aí ninguém rouba o foco dele.
+  const gatilhoRef = useRef<HTMLButtonElement>(null);
+  const voltarRef = useRef<HTMLButtonElement>(null);
+  const deveFocar = useRef(false);
+
+  useEffect(() => {
+    if (!deveFocar.current) {
+      return;
+    }
+    deveFocar.current = false;
+    (perguntando ? voltarRef : gatilhoRef).current?.focus();
+  }, [perguntando]);
+
   const gatilho = paleta.solido
     ? { ...SOLIDO }
     : { ...FANTASMA, color: paleta.texto };
@@ -129,7 +146,11 @@ export function ConfirmarAcao({
       <button
         className="btn"
         disabled={bloqueado}
-        onClick={() => setPerguntando(true)}
+        onClick={() => {
+          deveFocar.current = true;
+          setPerguntando(true);
+        }}
+        ref={gatilhoRef}
         style={{
           ...gatilho,
           opacity: bloqueado ? 0.5 : 1,
@@ -143,6 +164,7 @@ export function ConfirmarAcao({
   }
 
   const voltar = () => {
+    deveFocar.current = true;
     setPerguntando(false);
     onVoltar?.();
   };
@@ -171,6 +193,7 @@ export function ConfirmarAcao({
         <button
           className="btn"
           onClick={voltar}
+          ref={voltarRef}
           style={{ ...FANTASMA, color: "var(--ink-muted)" }}
           type="button"
         >
