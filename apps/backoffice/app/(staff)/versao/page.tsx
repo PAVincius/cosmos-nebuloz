@@ -191,49 +191,70 @@ export default async function VersaoPage() {
       </SectionCard>
 
       <SectionCard
-        bodyStyle={{ padding: 0 }}
+        bodyStyle={recentes.length === 0 ? undefined : { padding: 0 }}
         icon="layers"
         subtitle="as últimas registradas em _prisma_migrations, da mais recente para trás"
         title="Migrations recentes"
       >
-        <Tabela larguras={LARGURAS}>
-          <TableHead labels={["Migration", "Estado", "Aplicada em"]} />
-          <tbody>
-            {recentes.map((m, i) => {
-              const ultima = i === recentes.length - 1;
-              return (
-                <TableRow key={m.nome}>
-                  <Celula last={ultima}>
-                    <span
-                      className="mono"
-                      style={{ fontSize: "var(--fs-nota)" }}
-                    >
-                      {m.nome}
-                    </span>
-                  </Celula>
-                  <Celula last={ultima}>
-                    {m.concluida ? (
-                      <StatusDot tom="green">Concluída</StatusDot>
-                    ) : (
-                      <StatusDot tom="red">Travada</StatusDot>
-                    )}
-                  </Celula>
-                  <Celula last={ultima}>
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: "var(--fs-nota)",
-                        color: "var(--ink-faint)",
-                      }}
-                    >
-                      {formatarQuando(m.aplicadaEm)}
-                    </span>
-                  </Celula>
-                </TableRow>
-              );
-            })}
-          </tbody>
-        </Tabela>
+        {recentes.length === 0 ? (
+          // Vazio que ensina: tabela sem linha não diz se o banco é novo ou
+          // se a leitura falhou. Aqui a leitura deu certo e a tabela do
+          // banco está vazia — é o que a frase precisa dizer.
+          <p
+            style={{
+              margin: 0,
+              padding: 28,
+              textAlign: "center",
+              fontSize: "var(--fs-base)",
+              lineHeight: 1.6,
+              color: "var(--ink-muted)",
+            }}
+          >
+            Nenhuma migration registrada em _prisma_migrations. O código deste
+            deploy lista {schema.totalDoCodigo}: este banco nunca recebeu um
+            migrate deploy, ou a tabela foi zerada — o veredito acima é o que
+            manda.
+          </p>
+        ) : (
+          <Tabela larguras={LARGURAS}>
+            <TableHead labels={["Migration", "Estado", "Aplicada em"]} />
+            <tbody>
+              {recentes.map((m, i) => {
+                const ultima = i === recentes.length - 1;
+                return (
+                  <TableRow key={m.nome}>
+                    <Celula last={ultima}>
+                      <span
+                        className="mono"
+                        style={{ fontSize: "var(--fs-nota)" }}
+                      >
+                        {m.nome}
+                      </span>
+                    </Celula>
+                    <Celula last={ultima}>
+                      {m.concluida ? (
+                        <StatusDot tom="green">Concluída</StatusDot>
+                      ) : (
+                        <StatusDot tom="red">Travada</StatusDot>
+                      )}
+                    </Celula>
+                    <Celula last={ultima}>
+                      <span
+                        className="mono"
+                        style={{
+                          fontSize: "var(--fs-nota)",
+                          color: "var(--ink-faint)",
+                        }}
+                      >
+                        {formatarQuando(m.aplicadaEm)}
+                      </span>
+                    </Celula>
+                  </TableRow>
+                );
+              })}
+            </tbody>
+          </Tabela>
+        )}
       </SectionCard>
 
       <p
