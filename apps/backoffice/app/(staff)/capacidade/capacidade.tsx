@@ -1,16 +1,16 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
-import { useCallback, useState } from "react";
+import { type FormEvent, useCallback, useState, useTransition } from "react";
 import {
   allocatePersonAction,
-  createPersonAction,
+  listCapacity,
   type PessoaCapacidade,
 } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
-import { horasNaJanela, semanasDaJanela } from "@/lib/capacidade/janela";
 import { formatarDataBr } from "@/lib/empresa/periodo";
+import { FormularioDeCapacidade } from "./formulario";
 
 /**
  * Capacidade por pessoa.
@@ -20,7 +20,13 @@ import { formatarDataBr } from "@/lib/empresa/periodo";
  * barra faz de relance.
  */
 
-const VIRGULA = /\s*,\s*/;
+const ALOCACAO_VAZIA = {
+  engagementId: "",
+  percentual: "50",
+  inicioEm: "",
+  fimEm: "",
+  motivo: "",
+};
 
 function tomDaOcupacao(pct: number): Tone {
   if (pct > 100) {
@@ -57,145 +63,6 @@ function BarraDeOcupacao({ pct }: { pct: number }) {
         }}
       />
     </span>
-  );
-}
-
-/**
- * Os dois tipos de capacidade. A escolha não vira coluna no banco: ela decide
- * se "Sai em" é obrigatório, e ter data de saída É o que faz alguém terceiro.
- */
-const TIPOS = [
-  {
-    id: "pessoa",
-    label: "Pessoa",
-    hint: "Entra no plano sem data de saída prevista",
-  },
-  {
-    id: "terceiro",
-    label: "Terceiro",
-    hint: "Capacidade temporária, com janela de contrato",
-  },
-] as const;
-
-type Tipo = (typeof TIPOS)[number]["id"];
-
-function CardsDeTipo({
-  tipo,
-  onTipo,
-}: {
-  tipo: Tipo;
-  onTipo: (t: Tipo) => void;
-}) {
-  return (
-    <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
-      {TIPOS.map((t) => {
-        const ativo = t.id === tipo;
-        return (
-          <button
-            aria-pressed={ativo}
-            className="btn"
-            key={t.id}
-            onClick={() => onTipo(t.id)}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 4,
-              padding: "10px 12px",
-              borderRadius: "var(--r-md)",
-              textAlign: "left",
-              cursor: "pointer",
-              border: `1px solid ${ativo ? "var(--accent)" : "var(--hairline)"}`,
-              background: ativo ? "var(--surface-3)" : "none",
-            }}
-            type="button"
-          >
-            <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
-              {t.label}
-            </span>
-            <span
-              style={{
-                fontSize: "var(--fs-nota)",
-                color: "var(--ink-muted)",
-                lineHeight: 1.4,
-              }}
-            >
-              {t.hint}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/**
- * O que a janela dá em horas. O design de referência mostra R$ aqui; sem
- * tabela de papel/hora no back-office, o número em reais seria inventado — e
- * rodapé inventado é pior que rodapé nenhum.
- */
-function FaixaDaJanela({
-  horasSemana,
-  entraEm,
-  saiEm,
-}: {
-  horasSemana: number;
-  entraEm: string;
-  saiEm: string;
-}) {
-  const janela = {
-    entraEm: entraEm ? new Date(entraEm) : null,
-    saiEm: saiEm ? new Date(saiEm) : null,
-  };
-  const semanas = semanasDaJanela(janela);
-  const horas = horasNaJanela(horasSemana, janela);
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 16,
-        flexWrap: "wrap",
-        padding: "10px 14px",
-        borderRadius: "var(--r-md)",
-        background: "var(--surface-2)",
-        border: "1px solid var(--hairline)",
-      }}
-    >
-      <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <span
-          style={{
-            fontSize: "var(--fs-nota)",
-            color: "var(--ink-faint)",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            letterSpacing: ".04em",
-          }}
-        >
-          Horas na janela
-        </span>
-        <span
-          className="mono"
-          style={{ fontSize: 19, fontWeight: 700, color: "var(--ink)" }}
-        >
-          {horas === null ? "—" : `${horas}h`}
-        </span>
-      </span>
-      <span
-        style={{
-          fontSize: "var(--fs-nota)",
-          color: "var(--ink-muted)",
-          lineHeight: 1.5,
-          marginLeft: "auto",
-          textAlign: "right",
-        }}
-      >
-        {semanas === null
-          ? "Sem as duas datas não dá para dizer quantas semanas."
-          : `${semanas} ${semanas === 1 ? "semana" : "semanas"} de ${formatarDataBr(entraEm)} a ${formatarDataBr(saiEm)}`}
-      </span>
-    </div>
   );
 }
 
@@ -248,6 +115,9 @@ function Pessoa({
             </span>
           ) : null}
         </span>
+        {/* Inativa continua na lista, esmaecida — e com a palavra: opacidade
+            sozinha não diz a quem lê por que a linha está apagada. */}
+        {p.ativo ? null : <Badge tone="neutral">Inativa</Badge>}
         {/* Ter data de saída é o que faz alguém terceiro — não há coluna. */}
         {p.saiEm ? <Badge tone="blue">terceiro</Badge> : null}
         {p.habilidades.map((h) => (
@@ -314,215 +184,6 @@ function Pessoa({
   );
 }
 
-/**
- * Formulário de entrada de capacidade. Fora da tela porque só ele conhece o
- * tipo escolhido e as regras da janela — deixar isso em `Capacidade` misturava
- * a validação do cadastro com a da alocação, que não têm nada em comum.
- */
-function FormularioDeCapacidade({
-  onCriada,
-  onErro,
-}: {
-  onCriada: (p: PessoaCapacidade) => void;
-  onErro: (msg: string) => void;
-}) {
-  const [tipo, setTipo] = useState<Tipo>("pessoa");
-  const [pessoa, setPessoa] = useState({
-    nome: "",
-    email: "",
-    habilidades: "",
-    horas: "40",
-    entraEm: "",
-    saiEm: "",
-    observacao: "",
-  });
-
-  const cadastrar = useCallback(async () => {
-    const habilidades = pessoa.habilidades
-      .split(VIRGULA)
-      .map((h) => h.trim())
-      .filter(Boolean);
-    const horasSemana = Number(pessoa.horas) || 40;
-    // Só o terceiro tem saída: em "Pessoa" uma data digitada antes da troca de
-    // tipo não pode viajar escondida no envio.
-    const saiEm = tipo === "terceiro" ? pessoa.saiEm : "";
-    const observacao = pessoa.observacao.trim();
-
-    const res = await createPersonAction({
-      nome: pessoa.nome,
-      email: pessoa.email,
-      habilidades,
-      horasSemana,
-      entraEm: pessoa.entraEm || undefined,
-      saiEm: saiEm || undefined,
-      observacao: observacao || undefined,
-    });
-    if (!res.ok) {
-      onErro(res.error);
-      return;
-    }
-    onCriada({
-      id: res.data.id,
-      nome: pessoa.nome,
-      email: pessoa.email,
-      habilidades,
-      horasSemana,
-      entraEm: pessoa.entraEm || null,
-      saiEm: saiEm || null,
-      observacao: observacao || null,
-      ativo: true,
-      ocupacaoAtual: 0,
-      alocacoes: [],
-    });
-  }, [pessoa, tipo, onCriada, onErro]);
-
-  // Terceiro sem as duas pontas da janela não tem como entrar: é a data de
-  // saída que o distingue, e sem entrada não há quantas semanas ele cobre.
-  const janelaOk =
-    tipo === "pessoa" ||
-    Boolean(pessoa.entraEm && pessoa.saiEm && pessoa.saiEm >= pessoa.entraEm);
-  const podeCadastrar =
-    pessoa.nome.trim().length >= 2 && pessoa.email.includes("@") && janelaOk;
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-        paddingBottom: 14,
-        marginBottom: 14,
-        borderBottom: "1px solid var(--hairline)",
-      }}
-    >
-      <CardsDeTipo
-        onTipo={(t) => {
-          setTipo(t);
-          if (t === "pessoa") {
-            setPessoa((p) => ({ ...p, saiEm: "" }));
-          }
-        }}
-        tipo={tipo}
-      />
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-        }}
-      >
-        <Campo htmlFor="p-nome" label="Nome">
-          <input
-            id="p-nome"
-            onChange={(e) => setPessoa((p) => ({ ...p, nome: e.target.value }))}
-            style={INPUT}
-            value={pessoa.nome}
-          />
-        </Campo>
-        <Campo htmlFor="p-email" label="E-mail">
-          <input
-            id="p-email"
-            onChange={(e) =>
-              setPessoa((p) => ({ ...p, email: e.target.value }))
-            }
-            style={INPUT}
-            type="email"
-            value={pessoa.email}
-          />
-        </Campo>
-        <Campo
-          hint="separadas por vírgula — quase todo mundo faz mais de uma"
-          htmlFor="p-hab"
-          label="Habilidades"
-        >
-          <input
-            id="p-hab"
-            onChange={(e) =>
-              setPessoa((p) => ({ ...p, habilidades: e.target.value }))
-            }
-            placeholder="frontend, backend, dados"
-            style={INPUT}
-            value={pessoa.habilidades}
-          />
-        </Campo>
-        <Campo
-          hint="já sem overhead interno"
-          htmlFor="p-horas"
-          label="Horas faturáveis/semana"
-        >
-          <input
-            id="p-horas"
-            onChange={(e) =>
-              setPessoa((p) => ({ ...p, horas: e.target.value }))
-            }
-            style={INPUT}
-            type="number"
-            value={pessoa.horas}
-          />
-        </Campo>
-        <Campo htmlFor="p-entra" label="Entra em">
-          <input
-            id="p-entra"
-            onChange={(e) =>
-              setPessoa((p) => ({ ...p, entraEm: e.target.value }))
-            }
-            style={INPUT}
-            type="date"
-            value={pessoa.entraEm}
-          />
-        </Campo>
-        {tipo === "terceiro" ? (
-          <Campo htmlFor="p-sai" label="Sai em">
-            <input
-              id="p-sai"
-              onChange={(e) =>
-                setPessoa((p) => ({ ...p, saiEm: e.target.value }))
-              }
-              style={INPUT}
-              type="date"
-              value={pessoa.saiEm}
-            />
-          </Campo>
-        ) : null}
-        <Campo
-          hint="aparece na linha da pessoa"
-          htmlFor="p-obs"
-          label="Observação"
-        >
-          <input
-            id="p-obs"
-            onChange={(e) =>
-              setPessoa((p) => ({ ...p, observacao: e.target.value }))
-            }
-            placeholder="ex. metade do tempo em gestão"
-            style={INPUT}
-            value={pessoa.observacao}
-          />
-        </Campo>
-      </div>
-
-      {tipo === "terceiro" ? (
-        <FaixaDaJanela
-          entraEm={pessoa.entraEm}
-          horasSemana={Number(pessoa.horas) || 40}
-          saiEm={pessoa.saiEm}
-        />
-      ) : null}
-
-      <div>
-        <BotaoPrimario
-          disabled={!podeCadastrar}
-          full={false}
-          onClick={cadastrar}
-          type="button"
-        >
-          {tipo === "terceiro" ? "Adicionar ao plano" : "Cadastrar"}
-        </BotaoPrimario>
-      </div>
-    </div>
-  );
-}
-
 export function Capacidade({
   iniciais,
   engajamentos,
@@ -534,158 +195,203 @@ export function Capacidade({
 }) {
   const [lista, setLista] = useState(iniciais);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [nova, setNova] = useState(false);
   const [alocando, setAlocando] = useState<string | null>(null);
-  const [aloc, setAloc] = useState({
-    engagementId: "",
-    percentual: "50",
-    inicioEm: "",
-    fimEm: "",
-    motivo: "",
-  });
+  const [aloc, setAloc] = useState(ALOCACAO_VAZIA);
+  const [pendente, iniciar] = useTransition();
 
-  const alocar = useCallback(async () => {
-    if (!alocando) {
-      return;
-    }
-    setErro(null);
-    const res = await allocatePersonAction({
-      personId: alocando,
-      engagementId: aloc.engagementId,
-      percentual: Number(aloc.percentual) || 0,
-      inicioEm: aloc.inicioEm,
-      fimEm: aloc.fimEm || undefined,
-      motivoExcesso: aloc.motivo || undefined,
-    });
+  // Relê a lista pela action em vez de `window.location.reload()`: a ocupação
+  // vem recalculada pelo servidor (somar aqui duplicaria a regra de
+  // sobreposição de períodos), e a tela não perde o scroll nem o que estava
+  // digitado em outro lugar.
+  const recarregar = useCallback(async () => {
+    const res = await listCapacity();
     if (!res.ok) {
       setErro(res.error);
       return;
     }
-    // Recarrega para a ocupação vir recalculada pelo servidor. Somar aqui
-    // duplicaria a regra de sobreposição de períodos, e duas cópias divergem.
-    window.location.reload();
-  }, [alocando, aloc]);
+    setLista(res.data);
+  }, []);
+
+  const alocar = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      if (!alocando) {
+        return;
+      }
+      setErro(null);
+      setConfirmacao(null);
+      const personId = alocando;
+      iniciar(async () => {
+        const res = await allocatePersonAction({
+          personId,
+          engagementId: aloc.engagementId,
+          percentual: Number(aloc.percentual) || 0,
+          inicioEm: aloc.inicioEm,
+          fimEm: aloc.fimEm || undefined,
+          motivoExcesso: aloc.motivo || undefined,
+        });
+        if (!res.ok) {
+          setErro(res.error);
+          return;
+        }
+        await recarregar();
+        const quem = lista.find((p) => p.id === personId)?.nome ?? personId;
+        const onde =
+          engajamentos.find((e) => e.id === aloc.engagementId)?.codigo ??
+          aloc.engagementId;
+        setConfirmacao(
+          `Alocação registrada — ${quem} em ${onde}, ${aloc.percentual}%.`
+        );
+        setAlocando(null);
+        setAloc(ALOCACAO_VAZIA);
+      });
+    },
+    [alocando, aloc, lista, engajamentos, recarregar]
+  );
 
   const sobrecarregados = lista.filter((p) => p.ocupacaoAtual > 100).length;
   // Fora do JSX: o `&&` inline vira valor vazando para o render aos olhos do
   // lint, e nomear a condição diz o que ela significa.
-  const podeAlocar = Boolean(aloc.engagementId && aloc.inicioEm);
+  const podeAlocar = Boolean(aloc.engagementId && aloc.inicioEm) && !pendente;
   // O formulário abre abaixo da lista, longe da linha clicada: o título
   // precisa dizer quem está sendo alocado.
   const nomeDeQuemAloca = lista.find((p) => p.id === alocando)?.nome ?? "";
+  const pessoas = lista.length === 1 ? "1 pessoa" : `${lista.length} pessoas`;
+  const subtituloDaEquipe =
+    sobrecarregados > 0
+      ? `${pessoas} · ${sobrecarregados} acima de 100%`
+      : pessoas;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? (
+        <output
+          style={{
+            display: "block",
+            padding: "9px 11px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            border: "1px solid rgba(var(--green-rgb),.3)",
+            color: "var(--green-text)",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
+          {confirmacao}
+        </output>
+      ) : null}
 
       {alocando ? (
         <SectionCard icon="users" title={`Nova alocação — ${nomeDeQuemAloca}`}>
-          <div
-            style={{
-              display: "grid",
-              gap: 10,
-              gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-            }}
+          <form
+            aria-label={`Nova alocação — ${nomeDeQuemAloca}`}
+            onSubmit={alocar}
           >
-            <Campo htmlFor="a-eng" label="Engajamento">
-              <select
-                id="a-eng"
-                onChange={(e) =>
-                  setAloc((a) => ({ ...a, engagementId: e.target.value }))
-                }
-                style={{ ...INPUT, cursor: "pointer" }}
-                value={aloc.engagementId}
-              >
-                <option value="">Escolha…</option>
-                {engajamentos.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.codigo} · {e.nome}
-                  </option>
-                ))}
-              </select>
-            </Campo>
-            <Campo htmlFor="a-pct" label="Percentual">
-              <input
-                id="a-pct"
-                max={100}
-                min={1}
-                onChange={(e) =>
-                  setAloc((a) => ({ ...a, percentual: e.target.value }))
-                }
-                style={INPUT}
-                type="number"
-                value={aloc.percentual}
-              />
-            </Campo>
-            <Campo htmlFor="a-ini" label="Início">
-              <input
-                id="a-ini"
-                onChange={(e) =>
-                  setAloc((a) => ({ ...a, inicioEm: e.target.value }))
-                }
-                style={INPUT}
-                type="date"
-                value={aloc.inicioEm}
-              />
-            </Campo>
-            <Campo htmlFor="a-fim" label="Fim (opcional)">
-              <input
-                id="a-fim"
-                onChange={(e) =>
-                  setAloc((a) => ({ ...a, fimEm: e.target.value }))
-                }
-                style={INPUT}
-                type="date"
-                value={aloc.fimEm}
-              />
-            </Campo>
-          </div>
-
-          <div style={{ marginTop: 10 }}>
-            <Campo
-              hint="só é exigido se a soma no período passar de 100%"
-              htmlFor="a-motivo"
-              label="Motivo da sobrecarga"
-            >
-              <input
-                id="a-motivo"
-                onChange={(e) =>
-                  setAloc((a) => ({ ...a, motivo: e.target.value }))
-                }
-                placeholder="ex.: cobertura de férias por duas semanas"
-                style={INPUT}
-                value={aloc.motivo}
-              />
-            </Campo>
-          </div>
-
-          <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-            <BotaoPrimario
-              disabled={!podeAlocar}
-              full={false}
-              onClick={alocar}
-              type="button"
-            >
-              Alocar
-            </BotaoPrimario>
-            <button
-              className="btn"
-              onClick={() => setAlocando(null)}
+            <div
               style={{
-                padding: "9px 15px",
-                borderRadius: "var(--r-md)",
-                border: "1px solid var(--hairline)",
-                background: "none",
-                color: "var(--ink-muted)",
-                fontSize: "var(--fs-base)",
-                fontWeight: 600,
-                cursor: "pointer",
+                display: "grid",
+                gap: 10,
+                gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
               }}
-              type="button"
             >
-              Cancelar
-            </button>
-          </div>
+              <Campo htmlFor="a-eng" label="Engajamento">
+                <select
+                  id="a-eng"
+                  onChange={(e) =>
+                    setAloc((a) => ({ ...a, engagementId: e.target.value }))
+                  }
+                  style={{ ...INPUT, cursor: "pointer" }}
+                  value={aloc.engagementId}
+                >
+                  <option value="">Escolha…</option>
+                  {engajamentos.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.codigo} · {e.nome}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
+              <Campo htmlFor="a-pct" label="Percentual">
+                <input
+                  id="a-pct"
+                  max={100}
+                  min={1}
+                  onChange={(e) =>
+                    setAloc((a) => ({ ...a, percentual: e.target.value }))
+                  }
+                  style={INPUT}
+                  type="number"
+                  value={aloc.percentual}
+                />
+              </Campo>
+              <Campo htmlFor="a-ini" label="Início">
+                <input
+                  id="a-ini"
+                  onChange={(e) =>
+                    setAloc((a) => ({ ...a, inicioEm: e.target.value }))
+                  }
+                  style={INPUT}
+                  type="date"
+                  value={aloc.inicioEm}
+                />
+              </Campo>
+              <Campo htmlFor="a-fim" label="Fim (opcional)">
+                <input
+                  id="a-fim"
+                  onChange={(e) =>
+                    setAloc((a) => ({ ...a, fimEm: e.target.value }))
+                  }
+                  style={INPUT}
+                  type="date"
+                  value={aloc.fimEm}
+                />
+              </Campo>
+            </div>
+
+            <div style={{ marginTop: 10 }}>
+              <Campo
+                hint="só é exigido se a soma no período passar de 100%"
+                htmlFor="a-motivo"
+                label="Motivo da sobrecarga"
+              >
+                <input
+                  id="a-motivo"
+                  onChange={(e) =>
+                    setAloc((a) => ({ ...a, motivo: e.target.value }))
+                  }
+                  placeholder="ex.: cobertura de férias por duas semanas"
+                  style={INPUT}
+                  value={aloc.motivo}
+                />
+              </Campo>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+              <BotaoPrimario disabled={!podeAlocar} full={false} type="submit">
+                {pendente ? "Alocando…" : "Alocar"}
+              </BotaoPrimario>
+              <button
+                className="btn"
+                onClick={() => setAlocando(null)}
+                style={{
+                  padding: "9px 15px",
+                  borderRadius: "var(--r-md)",
+                  border: "1px solid var(--hairline)",
+                  background: "none",
+                  color: "var(--ink-muted)",
+                  fontSize: "var(--fs-base)",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
         </SectionCard>
       ) : null}
 
@@ -702,11 +408,7 @@ export function Capacidade({
           ) : null
         }
         icon="users"
-        subtitle={
-          sobrecarregados > 0
-            ? `${lista.length} pessoa(s) · ${sobrecarregados} acima de 100%`
-            : `${lista.length} pessoa(s)`
-        }
+        subtitle={subtituloDaEquipe}
         title="Equipe"
       >
         {nova ? (

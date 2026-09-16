@@ -2,6 +2,7 @@ import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarCatalogoComercial } from "@/app/actions/catalogo-comercial";
 import { getPropostaParaEdicao } from "@/app/actions/proposta-escopo";
 import { listServices } from "@/app/actions/services";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Gerador } from "./gerador";
 
@@ -30,25 +31,43 @@ export default async function GeradorPage({
     nova ? Promise.resolve(null) : getPropostaParaEdicao(id),
   ]);
 
+  const existente = proposta?.ok ? proposta.data : null;
+
+  // O cabeçalho fica nos dois caminhos: erro dentro da moldura do sucesso.
+  const cabecalho = (
+    <PageHeader
+      eyebrow={existente ? `proposta · ${existente.numero}` : "nova proposta"}
+      subtitle="Configura escopo e comercial de um lado; o documento se monta do outro."
+      title={existente?.clienteNome || "Gerador de proposta"}
+    />
+  );
+
+  // Erro de leitura tem retry (NFR-4): o botão faz o que "recarregue a
+  // página" pedia em prosa, e dizer o motivo evita a pessoa achar que o
+  // catálogo está vazio.
+  const falhou = (motivo: string) => (
+    <>
+      {cabecalho}
+      <FalhaAoCarregar
+        motivo={motivo}
+        nota="Se persistir, o catálogo comercial pode não ter sido semeado neste ambiente."
+        titulo="Não foi possível abrir o gerador"
+      />
+    </>
+  );
   if (!catalogo.ok) {
-    return <FalhaAoCarregar motivo={catalogo.error} />;
+    return falhou(catalogo.error);
   }
   if (!servicos.ok) {
-    return <FalhaAoCarregar motivo={servicos.error} />;
+    return falhou(servicos.error);
   }
   if (proposta && !proposta.ok) {
-    return <FalhaAoCarregar motivo={proposta.error} />;
+    return falhou(proposta.error);
   }
-
-  const existente = proposta?.ok ? proposta.data : null;
 
   return (
     <>
-      <PageHeader
-        eyebrow={existente ? `proposta · ${existente.numero}` : "nova proposta"}
-        subtitle="Configura escopo e comercial de um lado; o documento se monta do outro."
-        title={existente?.clienteNome || "Gerador de proposta"}
-      />
+      {cabecalho}
       <Gerador
         catalogo={catalogo.data}
         podeEscrever={staff.canWrite}
@@ -56,41 +75,5 @@ export default async function GeradorPage({
         servicos={servicos.data.filter((s) => s.ativo)}
       />
     </>
-  );
-}
-
-/** Erro de leitura tem retry (NFR-4) — recarregar é o que resolve, e dizer o
- *  motivo evita a pessoa achar que o catálogo está vazio. */
-function FalhaAoCarregar({ motivo }: { motivo: string }) {
-  return (
-    <div
-      style={{
-        margin: "24px 0",
-        padding: 20,
-        borderRadius: "var(--r-md)",
-        border: "1px solid rgba(var(--red-rgb),.3)",
-        background: "var(--red-soft)",
-      }}
-    >
-      <p
-        style={{
-          margin: 0,
-          fontSize: "var(--fs-base)",
-          color: "var(--red-text)",
-        }}
-      >
-        Não foi possível abrir o gerador: {motivo}
-      </p>
-      <p
-        style={{
-          margin: "6px 0 0",
-          fontSize: "var(--fs-nota)",
-          color: "var(--ink-faint)",
-        }}
-      >
-        Recarregue a página; se persistir, o catálogo comercial pode não ter
-        sido semeado neste ambiente.
-      </p>
-    </div>
   );
 }

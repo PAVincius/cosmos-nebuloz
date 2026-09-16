@@ -94,7 +94,13 @@ export default async function AprovacoesPage() {
           >
             {pedidos.map((p) => (
               <Pedido key={p.id} pedido={p}>
-                <Decisao canWrite={staff.canWrite} id={p.id} />
+                {/* O alvo por extenso: a barreira de rejeitar mostra o
+                    pedido que a pessoa reconhece, não o id. */}
+                <Decisao
+                  alvo={p.alvoLabel}
+                  canWrite={staff.canWrite}
+                  id={p.id}
+                />
               </Pedido>
             ))}
           </ul>

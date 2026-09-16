@@ -1,3 +1,4 @@
+import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import {
   type AuditEventoRow,
@@ -40,6 +41,10 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             fontSize: "var(--fs-base)",
           }}
         >
+          {/* `listStyle: none` apagou o triângulo nativo; sem ele a linha
+              parece texto parado. O chevron gira em `details[open]` (CSS em
+              backoffice-theme.css). */}
+          <Icon className="bo-chevron" name="chevronRight" size={14} />
           <Badge tone="blue">{evento.tenantSlug}</Badge>
           <span
             className="mono"

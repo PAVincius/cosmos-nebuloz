@@ -9,22 +9,37 @@ import {
 import { Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
-import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 
 const PAPEIS = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"] as const;
 type Papel = (typeof PAPEIS)[number];
 
+/** Uma linha por sigla. Legenda visível, não tooltip: quem opera o painel
+ *  conhece o vocabulário, mas STE/RTE/SM/PO/DEV sem expansão em lugar nenhum
+ *  é o que a crítica apontou — e tooltip de mouse não chega ao teclado. */
+const SIGNIFICADO: Record<Papel, string> = {
+  ADMIN: "administra o tenant: convida, remove e promove",
+  STE: "Solution Train Engineer — coordena vários ARTs",
+  RTE: "Release Train Engineer — conduz o ART e o PI Planning",
+  SM: "Scrum Master — facilita um time",
+  PO: "Product Owner — prioriza o backlog do time",
+  DEV: "desenvolvedor — entrega no time",
+  MEMBER: "só lê",
+};
+
+const ID_MOTIVO_LEITURA = "usuarios-somente-leitura";
+
 /** `<select>` devolve string; o contrato da action é fechado. Estreitar aqui
  *  evita empurrar o `as` para dentro da action, onde ele apagaria a validação. */
 const ehPapel = (v: string): v is Papel =>
   (PAPEIS as readonly string[]).includes(v);
 
+// Sem coluna "Acesso": dizia "Ativo" para todo mundo, hardcoded — nem
+// `TenantMember` nem `TenantMemberRow` carregam esse dado.
 const LARGURAS = [
   { id: "usuario", largura: "auto" },
   { id: "papel", largura: "110px" },
-  { id: "acesso", largura: "120px" },
   { id: "alterar", largura: "160px" },
 ];
 
@@ -64,12 +79,14 @@ function CelulaDePapel({
   onVoltar: () => void;
 }) {
   const nome = m.nome ?? m.email;
+  const descricaoDoBloqueio = canWrite ? undefined : ID_MOTIVO_LEITURA;
   return (
     <Celula last={ultima}>
       <label className="sr-only" htmlFor={`papel-${m.id}`}>
         Papel de {m.email}
       </label>
       <select
+        aria-describedby={descricaoDoBloqueio}
         disabled={!canWrite || pendente}
         id={`papel-${m.id}`}
         onChange={(e) => onEscolher(m.id, e.target.value)}
@@ -79,11 +96,6 @@ function CelulaDePapel({
           opacity: canWrite ? 1 : 0.5,
           cursor: canWrite ? "pointer" : "not-allowed",
         }}
-        title={
-          canWrite
-            ? undefined
-            : "Somente leitura — seu papel no tenant system é MEMBER."
-        }
         value={pendenteDe ?? m.role}
       >
         {PAPEIS.map((p) => (
@@ -196,8 +208,52 @@ export function AbaUsuarios({
       subtitle="Papel dentro do tenant do cliente — mudanças auditadas"
       title="Usuários"
     >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          padding: "12px 16px",
+          borderBottom: "1px solid var(--hairline)",
+        }}
+      >
+        {/* Motivo do bloqueio em texto, uma vez — o `title` no select
+            desabilitado não chegava a ninguém: select desabilitado nem
+            recebe foco. Cada select aponta para cá por `aria-describedby`. */}
+        {canWrite ? null : (
+          <p
+            id={ID_MOTIVO_LEITURA}
+            style={{
+              margin: 0,
+              fontSize: "var(--fs-nota)",
+              color: "var(--ink-muted)",
+            }}
+          >
+            Somente leitura — seu papel no tenant system é MEMBER.
+          </p>
+        )}
+        <dl
+          style={{
+            margin: 0,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "4px 14px",
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-faint)",
+          }}
+        >
+          {PAPEIS.map((p) => (
+            <div key={p} style={{ display: "inline-flex", gap: 5 }}>
+              <dt className="mono" style={{ fontWeight: 700 }}>
+                {p}
+              </dt>
+              <dd style={{ margin: 0 }}>{SIGNIFICADO[p]}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
       <Tabela larguras={LARGURAS}>
-        <TableHead labels={["Usuário", "Papel", "Acesso", "Alterar papel"]} />
+        <TableHead labels={["Usuário", "Papel", "Alterar papel"]} />
         <tbody>
           {lista.map((m, i) => {
             const ultima = i === lista.length - 1;
@@ -258,10 +314,6 @@ export function AbaUsuarios({
                   >
                     {m.role}
                   </span>
-                </Celula>
-
-                <Celula last={ultima}>
-                  <StatusDot tom="green">Ativo</StatusDot>
                 </Celula>
 
                 <CelulaDePapel

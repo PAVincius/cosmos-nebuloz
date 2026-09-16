@@ -10,6 +10,14 @@
 // bloqueado é conversa parada, observação é relógio correndo. Três trabalhos
 // diferentes, três listas.
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import {
   Badge,
@@ -17,12 +25,13 @@ import {
   Card,
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   enterTenantContext,
   type QueueEntry,
   type QueueKind,
 } from "@/app/actions/scaffold-supervision";
+import { BotaoPrimario, BotaoSecundario, Erro } from "@/components/campo";
 import { Vazio } from "@/components/vazio";
 
 const PHASE_LABEL: Record<string, string> = {
@@ -143,6 +152,12 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
   const [rationale, setRationale] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const motivoRef = useRef<HTMLTextAreaElement>(null);
+
+  const fechar = useCallback(() => {
+    setPending(null);
+    setError(null);
+  }, []);
 
   const grouped = useMemo(
     () =>
@@ -215,154 +230,118 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
 
       {/* A travessia é o momento em que a fronteira aparece: até aqui, nada do
           cliente foi lido. Pedir o motivo antes é o que torna o registro de
-          acesso defensável numa auditoria. */}
-      {pending ? (
-        // O backdrop fecha no clique fora, e é `button` de verdade em vez de
-        // `div` com handler: leitor de tela precisa anunciar o controle de
-        // fechar (mesma exigência que o Charter aplica aos modais dele).
-        <div
+          acesso defensável numa auditoria.
+
+          `Dialog` do kit, não um `div role="dialog"` artesanal: é o Radix quem
+          põe o foco dentro, prende o Tab, fecha no Esc e devolve o foco ao
+          botão da linha ao fechar — o modal anterior tinha o papel e nenhum
+          desses comportamentos. */}
+      <Dialog
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            fechar();
+          }
+        }}
+        open={pending !== null}
+      >
+        <DialogContent
+          onOpenAutoFocus={(e) => {
+            // O primeiro controle é o campo do motivo; o foco nasce nele, e
+            // não no X de fechar, porque é o que a pessoa veio preencher.
+            e.preventDefault();
+            motivoRef.current?.focus();
+          }}
           style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 100,
-            display: "grid",
-            placeItems: "center",
-            padding: 24,
-            background: "rgba(4,5,9,.62)",
-            backdropFilter: "blur(6px)",
+            background: "var(--surface)",
+            border: "1px solid var(--hairline-strong)",
+            borderRadius: "var(--r-xl)",
+            color: "var(--ink)",
           }}
         >
-          <button
-            aria-label="Fechar sem entrar no cliente"
-            onClick={() => {
-              setPending(null);
-              setError(null);
-            }}
-            style={{
-              position: "absolute",
-              inset: 0,
-              border: "none",
-              background: "transparent",
-              cursor: "default",
-            }}
-            type="button"
-          />
-          <div aria-modal="true" role="dialog" style={{ position: "relative" }}>
-            <div
-              style={{
-                width: "min(520px,100%)",
-                borderRadius: "var(--r-xl,16px)",
-                background: "var(--surface)",
-                border: "1px solid var(--hairline-strong)",
-                padding: 22,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 9,
-                  marginBottom: 10,
-                }}
-              >
-                <Icon
-                  name="shield"
-                  size={16}
-                  style={{ color: "var(--amber-text)" }}
-                />
-                <span
-                  style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)" }}
-                >
-                  Entrar no tenant de {pending.orgName}
-                </span>
-              </div>
-              <p
-                style={{
-                  fontSize: 13,
-                  lineHeight: 1.6,
-                  color: "var(--ink-muted)",
-                  margin: "0 0 14px",
-                }}
-              >
-                Até aqui você viu apenas metadado de gate. Entrar no cliente dá
-                acesso aos artefatos da trilha{" "}
-                <strong style={{ color: "var(--ink)" }}>
-                  {pending.trackCode}
-                </strong>{" "}
-                e fica registrado com seu nome, a data e o motivo abaixo.
-              </p>
-              <label
-                htmlFor="crossing-rationale"
-                style={{
-                  display: "block",
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  color: "var(--ink-faint)",
-                  marginBottom: 6,
-                }}
-              >
-                Por que precisa entrar
-              </label>
-              <textarea
-                id="crossing-rationale"
-                onChange={(e) => setRationale(e.target.value)}
-                placeholder="Ex.: revisar o log do piloto antes de decidir o gate."
-                rows={3}
-                style={{
-                  width: "100%",
-                  resize: "vertical",
-                  padding: "10px 12px",
-                  borderRadius: 8,
-                  border: "1px solid var(--hairline-strong)",
-                  background: "var(--surface-2)",
-                  color: "var(--ink)",
-                  fontSize: 13,
-                  fontFamily: "inherit",
-                  lineHeight: 1.55,
-                }}
-                value={rationale}
-              />
-              {error ? (
-                <p
+          {pending ? (
+            <>
+              <DialogHeader>
+                <DialogTitle
                   style={{
-                    fontSize: 12,
-                    color: "var(--red-text)",
-                    margin: "8px 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 9,
+                    fontSize: "var(--fs-forte)",
                   }}
                 >
-                  {error}
-                </p>
-              ) : null}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 9,
-                  marginTop: 16,
-                }}
-              >
-                <Button
-                  onClick={() => {
-                    setPending(null);
-                    setError(null);
+                  <Icon
+                    name="shield"
+                    size={16}
+                    style={{ color: "var(--amber-text)" }}
+                  />
+                  Entrar no tenant de {pending.orgName}
+                </DialogTitle>
+                <DialogDescription
+                  style={{
+                    fontSize: "var(--fs-base)",
+                    lineHeight: 1.6,
+                    color: "var(--ink-muted)",
                   }}
-                  variant="secondary"
                 >
-                  Cancelar
-                </Button>
-                <Button
-                  disabled={busy || rationale.trim().length < 12}
-                  icon="externalLink"
-                  onClick={confirm}
-                  variant="primary"
+                  Até aqui você viu apenas metadado de gate. Entrar no cliente
+                  dá acesso aos artefatos da trilha{" "}
+                  <strong style={{ color: "var(--ink)" }}>
+                    {pending.trackCode}
+                  </strong>{" "}
+                  e fica registrado com seu nome, a data e o motivo abaixo.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                <label
+                  htmlFor="crossing-rationale"
+                  style={{
+                    display: "block",
+                    fontSize: "var(--fs-nota)",
+                    fontWeight: 700,
+                    color: "var(--ink-faint)",
+                    marginBottom: 6,
+                  }}
                 >
-                  Registrar e entrar
-                </Button>
+                  Por que precisa entrar
+                </label>
+                <textarea
+                  id="crossing-rationale"
+                  onChange={(e) => setRationale(e.target.value)}
+                  placeholder="Ex.: revisar o log do piloto antes de decidir o gate."
+                  ref={motivoRef}
+                  rows={3}
+                  style={{
+                    width: "100%",
+                    resize: "vertical",
+                    padding: "10px 12px",
+                    borderRadius: "var(--r-sm)",
+                    border: "1px solid var(--hairline-strong)",
+                    background: "var(--surface-2)",
+                    color: "var(--ink)",
+                    fontSize: "var(--fs-base)",
+                    fontFamily: "inherit",
+                    lineHeight: 1.55,
+                  }}
+                  value={rationale}
+                />
               </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+              {error ? <Erro>{error}</Erro> : null}
+              <DialogFooter>
+                <BotaoSecundario onClick={fechar}>Voltar</BotaoSecundario>
+                <BotaoPrimario
+                  disabled={busy || rationale.trim().length < 12}
+                  full={false}
+                  onClick={confirm}
+                  type="button"
+                >
+                  <Icon name="externalLink" size={14} />
+                  Registrar e entrar
+                </BotaoPrimario>
+              </DialogFooter>
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

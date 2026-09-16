@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -146,7 +147,13 @@ function FormularioBaixar({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Baixar título — {titulo.descricao}</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Baixar título — {titulo.descricao}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Marca o título como pago ou recebido numa data e competência, e gera o
+          lançamento no livro.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
@@ -267,7 +274,13 @@ function FormularioCancelar({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Cancelar título — {titulo.descricao}</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Cancelar título — {titulo.descricao}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Cancela o título em aberto com um motivo. Ele sai do que está a vencer
+          e não gera lançamento.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

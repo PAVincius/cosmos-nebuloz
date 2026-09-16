@@ -268,7 +268,7 @@ export function Lancamentos({
 
   return (
     <SectionCard
-      subtitle={`${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)} · ${linhasFiltradas.length} de ${dados.linhas.length} lançamento(s)`}
+      subtitle={`${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)} · ${linhasFiltradas.length} de ${dados.linhas.length} ${dados.linhas.length === 1 ? "lançamento" : "lançamentos"}`}
       title="Lançamentos"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

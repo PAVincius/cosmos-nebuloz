@@ -75,12 +75,14 @@ function combina(href: string, pathname: string): boolean {
   return pathname.startsWith(href);
 }
 
-/** Nome da tela quando o item é "Tenants" — o detalhe tem nome próprio. */
-function nomeDeTenants(pathname: string, label: string): string {
+/** Nome da tela quando o item é "Clientes" — o detalhe tem nome próprio.
+ *  "Cliente" e "Provisionar cliente", como o menu e a carteira: a trilha dizia
+ *  "Tenant" enquanto o item ao lado dizia "Clientes". */
+function nomeDeClientes(pathname: string, label: string): string {
   if (!pathname.startsWith("/clientes/")) {
     return label;
   }
-  return pathname === "/clientes/novo" ? "Criar tenant" : "Tenant";
+  return pathname === "/clientes/novo" ? "Provisionar cliente" : "Cliente";
 }
 
 /** Trilha "Seção › Tela" da topbar, derivada da rota atual. */
@@ -90,7 +92,7 @@ function trilha(pathname: string): [string, string] {
     if (item) {
       return [
         grupo.section,
-        item.href === "/" ? nomeDeTenants(pathname, item.label) : item.label,
+        item.href === "/" ? nomeDeClientes(pathname, item.label) : item.label,
       ];
     }
   }
