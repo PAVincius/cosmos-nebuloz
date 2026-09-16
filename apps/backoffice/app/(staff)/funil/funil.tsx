@@ -59,6 +59,12 @@ export type DadosFunil = {
   hoje: string;
 };
 
+/** "1 lead" / "12 leads" — fora do componente, que já está no teto de
+ *  complexidade do lint. */
+function plural(n: number, um: string, varios: string): string {
+  return `${n} ${n === 1 ? um : varios}`;
+}
+
 function leadVisivel(
   l: LeadRow,
   filtro: string,
@@ -366,7 +372,7 @@ export function Funil({
       </div>
 
       <SectionCard
-        subtitle={`${visiveis.length} de ${dados.leads.length} lead(s)`}
+        subtitle={`${visiveis.length} de ${plural(dados.leads.length, "lead", "leads")}`}
         title="Leads"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

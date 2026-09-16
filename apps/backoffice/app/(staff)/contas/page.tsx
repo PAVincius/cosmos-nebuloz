@@ -121,7 +121,10 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
                   s.nivel === "RISCO" ? "var(--red-text)" : "var(--amber-text)",
               }}
             >
-              · {s.texto}
+              {/* O nível em palavra, além da cor: vermelho e âmbar são iguais
+                  para quem não distingue os dois. */}
+              <strong>{s.nivel === "RISCO" ? "Crítico" : "Atenção"}</strong> ·{" "}
+              {s.texto}
             </li>
           ))}
         </ul>
@@ -228,7 +231,7 @@ export default async function ContasPage() {
       <PageHeader
         eyebrow="Comercial · carteira"
         subtitle={`Saúde derivada do que a plataforma já grava: status de módulo, renovação, integração com erro e silêncio de mais de ${DIAS_SEM_ATIVIDADE} dias. Não há campo marcado à mão — ele envelheceria sem ninguém perceber.`}
-        title="Health e renovação"
+        title="Saúde e renovação"
       />
       {res.ok ? (
         <Conteudo contas={res.data} />

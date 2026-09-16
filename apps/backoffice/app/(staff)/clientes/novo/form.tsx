@@ -28,6 +28,13 @@ const ROTULO_STATUS: Record<StatusInicial, string> = {
   TRIAL: "Trial",
 };
 
+/** As três escolhas por módulo. "" é fora: o módulo não entra no payload. */
+const OPCOES_DE_STATUS: { valor: StatusInicial | ""; rotulo: string }[] = [
+  { valor: "ACTIVE", rotulo: ROTULO_STATUS.ACTIVE },
+  { valor: "TRIAL", rotulo: ROTULO_STATUS.TRIAL },
+  { valor: "", rotulo: "Fora" },
+];
+
 export function NewClientForm({
   modulos,
   canWrite,
@@ -54,20 +61,18 @@ export function NewClientForm({
   // campo chegam ao mesmo lugar, e nenhum dos dois pula a confirmação.
   const [perguntando, setPerguntando] = useState(false);
 
-  // Ativo → Trial → fora, como no desenho. Um clique só percorre os três
-  // estados; um checkbox não teria como expressar o do meio.
-  const alternar = (module: string) =>
+  // Três estados, três rádios — não um botão que percorre Ativo → Trial →
+  // fora a cada clique: `aria-pressed` só sabe dizer ligado/desligado, e o
+  // do meio ficava sem nome para quem não vê a cor do badge. Escolher "fora"
+  // tira o módulo do payload, como antes.
+  const definir = (module: string, valor: StatusInicial | "") =>
     setStatus((prev) => {
-      const atual = prev[module];
-      if (atual === undefined) {
-        return { ...prev, [module]: "ACTIVE" };
+      if (valor === "") {
+        return Object.fromEntries(
+          Object.entries(prev).filter(([m]) => m !== module)
+        );
       }
-      if (atual === "ACTIVE") {
-        return { ...prev, [module]: "TRIAL" };
-      }
-      return Object.fromEntries(
-        Object.entries(prev).filter(([m]) => m !== module)
-      );
+      return { ...prev, [module]: valor };
     });
 
   const escolhidos = Object.entries(status);
@@ -270,53 +275,73 @@ export function NewClientForm({
               fontWeight: 500,
             }}
           >
-            O clique alterna: Ativo → Trial → fora. Entram já com o status
-            escolhido.
+            Escolha o status inicial de cada módulo. Fora = não contratado; os
+            outros entram já com o status escolhido.
           </p>
           {modulos.map((module) => {
             const atual = status[module];
             return (
-              <button
-                aria-pressed={atual !== undefined}
-                className="btn"
-                disabled={!canWrite}
+              <div
+                aria-label={`Status inicial de ${module}`}
                 key={module}
-                onClick={() => alternar(module)}
+                role="radiogroup"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
-                  textAlign: "left",
+                  flexWrap: "wrap",
                   padding: "10px 12px",
                   borderRadius: "var(--r-md)",
                   border: `1px solid ${atual ? "rgba(var(--accent-rgb),.4)" : "var(--hairline)"}`,
                   background: atual ? "var(--accent-soft)" : "var(--surface-2)",
-                  color: "var(--ink)",
-                  fontFamily: "inherit",
-                  fontSize: "var(--fs-base)",
-                  fontWeight: 700,
                   opacity: canWrite ? 1 : 0.6,
-                  cursor: canWrite ? "pointer" : "not-allowed",
                 }}
-                type="button"
               >
-                <span style={{ flex: 1 }}>{module}</span>
+                <span
+                  style={{
+                    flex: 1,
+                    minWidth: 90,
+                    fontSize: "var(--fs-base)",
+                    fontWeight: 700,
+                  }}
+                >
+                  {module}
+                </span>
+                {/* O estado atual em palavra, além da cor do badge. */}
                 {atual ? (
                   <Badge dot tone={atual === "ACTIVE" ? "green" : "blue"}>
                     {ROTULO_STATUS[atual]}
                   </Badge>
                 ) : (
-                  <span
-                    style={{
-                      fontSize: "var(--fs-nota)",
-                      color: "var(--ink-faint)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    fora
-                  </span>
+                  <Badge tone="neutral">Fora</Badge>
                 )}
-              </button>
+                <span style={{ display: "inline-flex", gap: 12 }}>
+                  {OPCOES_DE_STATUS.map((opcao) => (
+                    <label
+                      key={opcao.valor}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontSize: "var(--fs-nota)",
+                        fontWeight: 600,
+                        color: "var(--ink-muted)",
+                        cursor: canWrite ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      <input
+                        checked={(atual ?? "") === opcao.valor}
+                        disabled={!canWrite}
+                        name={`status-${module}`}
+                        onChange={() => definir(module, opcao.valor)}
+                        type="radio"
+                        value={opcao.valor}
+                      />
+                      {opcao.rotulo}
+                    </label>
+                  ))}
+                </span>
+              </div>
             );
           })}
         </fieldset>

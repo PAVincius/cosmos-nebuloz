@@ -303,3 +303,32 @@ describe("listAccountHealth — a leitura de atividade não pode depender de amo
     expect(res.data[0].ultimaAtividade).toBe(dias(-3).toISOString());
   });
 });
+
+describe("plural real nos sinais, não (s)", () => {
+  beforeEach(resetar);
+
+  async function sinalDeRenovacao(faltam: number): Promise<string> {
+    mocks.tenantFindMany.mockResolvedValue([
+      tenant({
+        modules: [
+          { module: "COSMOS", status: "ACTIVE", expiresAt: dias(faltam) },
+        ],
+      }),
+    ]);
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-2) } },
+    ]);
+    const res = await listAccountHealth(HOJE);
+    return res.ok ? (res.data[0].sinais[0]?.texto ?? "") : "";
+  }
+
+  it("renova em 1 dia / em 12 dias", async () => {
+    expect(await sinalDeRenovacao(1)).toBe("Renova em 1 dia.");
+    expect(await sinalDeRenovacao(12)).toBe("Renova em 12 dias.");
+  });
+
+  it("venceu há 1 dia / há 3 dias", async () => {
+    expect(await sinalDeRenovacao(-1)).toMatch(/^Renovação venceu há 1 dia e/);
+    expect(await sinalDeRenovacao(-3)).toMatch(/^Renovação venceu há 3 dias e/);
+  });
+});

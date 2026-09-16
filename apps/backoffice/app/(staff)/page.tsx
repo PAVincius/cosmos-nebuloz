@@ -135,7 +135,7 @@ export default async function ClientsPage() {
           >
             Nenhum cliente provisionado ainda. Comece pelo{" "}
             <Link href="/clientes/novo" style={{ color: "var(--accent-text)" }}>
-              Criar tenant
+              Provisionar cliente
             </Link>
             .
           </p>

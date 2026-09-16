@@ -18,6 +18,11 @@ export const dynamic = "force-dynamic";
  *  zero: "Nada exige atenção" sobre dado que não veio é mentira. */
 type FilaDeAprovacoes = { pendentes: number } | { erro: string };
 
+/** "1 acesso recusado" / "3 acessos recusados" — plural real, não entre parênteses. */
+function plural(n: number, um: string, varios: string): string {
+  return `${n} ${n === 1 ? um : varios}`;
+}
+
 /** Sem o número não há como dizer verde: o "não sei" fica âmbar. */
 function tomDasAprovacoes(pendentes: number | null): "amber" | "green" {
   if (pendentes === null || pendentes > 0) {
@@ -48,9 +53,11 @@ function ItemDeAprovacoes({ aprovacoes }: { aprovacoes: FilaDeAprovacoes }) {
   return (
     <li>
       <Badge dot tone="amber">
-        {aprovacoes.pendentes === 1
-          ? "1 aprovação pendente"
-          : `${aprovacoes.pendentes} aprovações pendentes`}
+        {plural(
+          aprovacoes.pendentes,
+          "aprovação pendente",
+          "aprovações pendentes"
+        )}
       </Badge>
       <Link href="/aprovacoes" style={ATALHO}>
         Abrir a fila →
@@ -163,7 +170,7 @@ function Conteudo({
             {quebradas > 0 ? (
               <li>
                 <Badge dot tone="red">
-                  {quebradas} integração(ões) com erro
+                  {plural(quebradas, "integração", "integrações")} com erro
                 </Badge>
                 <Link href="/observabilidade" style={ATALHO}>
                   Ver quais →
@@ -173,7 +180,11 @@ function Conteudo({
             {saude.recusas > 0 ? (
               <li>
                 <Badge dot tone="amber">
-                  {saude.recusas} acesso(s) recusado(s)
+                  {plural(
+                    saude.recusas,
+                    "acesso recusado",
+                    "acessos recusados"
+                  )}
                 </Badge>
                 <Link href="/observabilidade" style={ATALHO}>
                   Ver a trilha →
@@ -267,7 +278,7 @@ export default async function HomePage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow="Plataforma · visão geral"
-        subtitle="O que exige atenção agora. A carteira de clientes fica em Tenants — esta tela responde se você precisa fazer alguma coisa hoje."
+        subtitle="O que exige atenção agora. A carteira de clientes fica em Clientes — esta tela responde se você precisa fazer alguma coisa hoje."
         title="Home"
       />
       {saude.ok ? (

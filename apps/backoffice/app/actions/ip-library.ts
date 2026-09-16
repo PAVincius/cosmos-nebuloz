@@ -232,7 +232,7 @@ export async function createIpAssetAction(
     if (pendentes.length > 0) {
       throw new StaffAuthError(
         "FORBIDDEN",
-        `Faltam ${pendentes.length} critério(s) da régua: ${pendentes.map((c) => c.texto).join("; ")}.`
+        `${pendentes.length === 1 ? "Falta 1 critério" : `Faltam ${pendentes.length} critérios`} da régua: ${pendentes.map((c) => c.texto).join("; ")}.`
       );
     }
 

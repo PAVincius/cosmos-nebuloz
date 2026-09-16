@@ -52,6 +52,12 @@ const PESO: Record<Saude, number> = {
   OK: 3,
 };
 
+/** "1 dia" / "12 dias" — o sinal é lido em voz alta numa reunião de
+ *  renovação, e plural entre parênteses não se lê. */
+function dias(n: number): string {
+  return n === 1 ? "1 dia" : `${n} dias`;
+}
+
 /** Sinais que vêm dos módulos: status quebrado e renovação. */
 function sinaisDeModulo(
   modulos: { module: string; status: string; expiresAt: Date | null }[],
@@ -81,12 +87,12 @@ function sinaisDeModulo(
     if (faltam < 0) {
       sinais.push({
         nivel: "RISCO",
-        texto: `Renovação venceu há ${Math.abs(faltam)} dia(s) e o módulo segue ativo.`,
+        texto: `Renovação venceu há ${dias(Math.abs(faltam))} e o módulo segue ativo.`,
       });
     } else if (faltam <= DIAS_PARA_RENOVACAO) {
       sinais.push({
         nivel: "ATENCAO",
-        texto: `Renova em ${faltam} dia(s).`,
+        texto: `Renova em ${dias(faltam)}.`,
       });
     }
   }
