@@ -3,6 +3,7 @@
 import type { ProductModule } from "@repo/database";
 import { Icon } from "@repo/design-system/cosmos/icons";
 import type { Tone } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { LeadRow } from "@/app/actions/leads";
 import { BotaoPrimario, BotaoSecundario, INPUT } from "@/components/campo";
@@ -252,9 +253,9 @@ export function BlocoProposta({ lead }: { lead: LeadRow }) {
         {lead.proposta?.numero ?? "—"}.
       </span>
       {lead.proposta ? (
-        <a href={`/propostas/${lead.proposta.id}`} style={LINK_PRIMARIO}>
+        <Link href={`/propostas/${lead.proposta.id}`} style={LINK_PRIMARIO}>
           Abrir proposta
-        </a>
+        </Link>
       ) : null}
     </div>
   );
@@ -425,14 +426,14 @@ export function BlocoFechado({ lead }: { lead: LeadRow }) {
         <span style={{ fontSize: 12.5, fontWeight: 800 }}>
           {lead.proposta?.numero} virou cliente
         </span>
-        <a
+        <Link
           href={slug ? `/clientes/${slug}` : `/propostas/${lead.proposta?.id}`}
           style={{ fontSize: 12, fontWeight: 700, color: "inherit" }}
         >
           {slug
             ? "Abrir cliente"
             : "Aguardando provisionamento — abrir proposta"}
-        </a>
+        </Link>
       </div>
     );
   }
@@ -552,9 +553,9 @@ function AcaoPrincipal({
       return null;
     }
     return (
-      <a href={`/propostas/${lead.proposta.id}`} style={LINK_PRIMARIO}>
+      <Link href={`/propostas/${lead.proposta.id}`} style={LINK_PRIMARIO}>
         Abrir proposta
-      </a>
+      </Link>
     );
   }
   if (podeConverter(leadFunil)) {

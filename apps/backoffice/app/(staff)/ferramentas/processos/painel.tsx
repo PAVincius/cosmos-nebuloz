@@ -120,7 +120,6 @@ export function Painel({
       style={{
         background: "var(--surface)",
         border: "1px solid var(--hairline)",
-        borderLeft: `3px solid var(--${tom})`,
         borderRadius: "var(--r-lg)",
         display: "flex",
         flexDirection: "column",
@@ -134,14 +133,31 @@ export function Painel({
         <p
           className="mono"
           style={{
+            alignItems: "center",
             color: `var(--${tom}-text)`,
+            display: "flex",
             fontSize: "var(--fs-micro)",
             fontWeight: 700,
+            gap: 6,
             letterSpacing: ".08em",
             margin: 0,
             textTransform: "uppercase",
           }}
         >
+          {/* A cor do domínio, num ponto ao lado do rótulo — não numa borda
+              grossa no cartão (DESIGN.backoffice.md: hairline, nunca borda
+              grossa). O nome do domínio já está no texto; o ponto é só cor. */}
+          <span
+            aria-hidden="true"
+            data-ponto-dominio=""
+            style={{
+              background: `var(--${tom})`,
+              borderRadius: "var(--r-pill)",
+              flex: "none",
+              height: 7,
+              width: 7,
+            }}
+          />
           {eyebrowDoProcesso(processo)}
         </p>
         <h2 style={{ fontSize: 18, fontWeight: 700, margin: "6px 0 0" }}>

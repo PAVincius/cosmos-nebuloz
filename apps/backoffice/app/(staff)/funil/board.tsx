@@ -160,7 +160,9 @@ function CartaoLead({
         border: `1px solid ${vencido ? "rgba(var(--red-rgb),.38)" : "var(--hairline)"}`,
         background: vencido ? "rgba(var(--red-rgb),.08)" : "var(--surface)",
         opacity: arrastando ? 0.45 : 1,
-        cursor: podeEscrever ? "grab" : "pointer",
+        // A mão só quando o card de fato arrasta: em PROPOSAL (e sem
+        // permissão) o clique abre o lead, e é isso que o cursor promete.
+        cursor: podeArrastar ? "grab" : "pointer",
         font: "inherit",
         textAlign: "left",
         color: "inherit",
@@ -413,7 +415,11 @@ function ColunaDoEstagio({
               textAlign: "center",
             }}
           >
-            {sobreColuna ? "Soltar aqui" : "Vazio"}
+            {/* O que cai nesta coluna, não só "Vazio": é a definição do
+                estágio, a mesma que o diálogo do estágio mostra. */}
+            {sobreColuna
+              ? "Soltar aqui"
+              : INFO_ESTAGIO[coluna.codigo].descricao}
           </div>
         ) : null}
         {coluna.leads.map((l) => {
