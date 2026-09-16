@@ -58,7 +58,7 @@ export default async function AprovacoesPage() {
         subtitle={
           pedidos.length === 0
             ? "Nada pendente"
-            : `${pendentes.length} pendente(s) de ${pedidos.length}`
+            : `${pendentes.length} ${pendentes.length === 1 ? "pendente" : "pendentes"} de ${pedidos.length}`
         }
         title="Fila"
       >

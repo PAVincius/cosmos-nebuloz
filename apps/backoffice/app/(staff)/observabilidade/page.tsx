@@ -164,7 +164,7 @@ export default async function ObservabilidadePage() {
             icon="userCheck"
             subtitle={
               res.data.recusas > 0
-                ? `${res.data.recusas} tentativa(s) recusada(s) nas últimas 50`
+                ? `${res.data.recusas} ${res.data.recusas === 1 ? "tentativa recusada" : "tentativas recusadas"} nas últimas 50`
                 : "Quem entrou, quando e de onde"
             }
             title="Acessos ao Big Bang"
