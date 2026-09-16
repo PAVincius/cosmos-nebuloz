@@ -2,9 +2,17 @@ import { describe, expect, it, vi } from "vitest";
 import { bootstrapCharter, POLICY_SECTIONS } from "../charter";
 
 function makeDb(
-  options: { policyExists?: boolean; userExists?: boolean } = {}
+  options: {
+    policyExists?: boolean;
+    userExists?: boolean;
+    tenantExists?: boolean;
+  } = {}
 ) {
-  const { policyExists = false, userExists = true } = options;
+  const {
+    policyExists = false,
+    userExists = true,
+    tenantExists = true,
+  } = options;
   return {
     user: {
       findUnique: vi
@@ -14,7 +22,9 @@ function makeDb(
     tenant: {
       findUnique: vi
         .fn()
-        .mockResolvedValue({ id: "tenant-abc", slug: "vanta-saude" }),
+        .mockResolvedValue(
+          tenantExists ? { id: "tenant-abc", slug: "vanta-saude" } : null
+        ),
     },
     charterMembership: { upsert: vi.fn().mockResolvedValue({ id: "cm-1" }) },
     charterSettings: { upsert: vi.fn().mockResolvedValue({ id: "cs-1" }) },
@@ -120,6 +130,42 @@ describe("bootstrapCharter", () => {
         actorUserId: "user-staff",
       })
     ).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+  });
+
+  it("falha com TENANT_NOT_FOUND antes de consultar usuário ou escrever", async () => {
+    const db = makeDb({ tenantExists: false });
+
+    await expect(
+      bootstrapCharter(depsFor(db) as never, {
+        tenantId: "tenant-fantasma",
+        complianceEmail: "ana@vanta.exemplo",
+        actorUserId: "user-staff",
+      })
+    ).rejects.toMatchObject({
+      code: "TENANT_NOT_FOUND",
+      message: expect.stringContaining("tenant-fantasma"),
+    });
+
+    // O tenant é a primeira verificação: nada abaixo dela roda.
+    expect(db.user.findUnique).not.toHaveBeenCalled();
+    expect(db.charterMembership.upsert).not.toHaveBeenCalled();
+    expect(db.charterPolicy.create).not.toHaveBeenCalled();
+    expect(db.auditLog.create).not.toHaveBeenCalled();
+  });
+
+  it("normaliza o e-mail (trim + minúsculas) antes de procurar a conta", async () => {
+    const db = makeDb();
+
+    await bootstrapCharter(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      complianceEmail: "  Ana@Vanta.Exemplo ",
+      actorUserId: "user-staff",
+    });
+
+    expect(db.user.findUnique).toHaveBeenCalledWith({
+      where: { email: "ana@vanta.exemplo" },
+      select: { id: true },
+    });
   });
 
   it("a lista de seções tem nove entradas com ordinal único", () => {
