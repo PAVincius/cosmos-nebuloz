@@ -23,6 +23,7 @@ import {
   SkeletonCard,
   SmartEmptyState,
 } from "../base";
+import { download } from "../download";
 import { ModalProvider, useModal } from "../modal";
 import { ExportPackageModal } from "../modals";
 import { AUDIT_TYPE_META, AuditList } from "../parts";
@@ -41,18 +42,6 @@ const PACKAGE_CONTENT: [string, string][] = [
   ["Postura de fornecedor", "cláusulas, teto de classe e mudanças de situação"],
   ["Aceite de política", "quem aceitou, quando e qual versão leu"],
 ];
-
-/** Dispara o download no browser sem passar por endpoint — o conteúdo já veio
- *  da server action, e um blob local evita uma segunda rota autenticada. */
-function download(filename: string, mimeType: string, content: string) {
-  const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 function AuditInner() {
   const { open, close } = useModal();

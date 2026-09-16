@@ -210,9 +210,9 @@ function PolicyInner() {
                 ? `${data.blockers.length} seções fora de publicação`
                 : "Todas as seções publicadas"}
             </Badge>
-            <Badge tone="accent">
-              Revisão em {data.daysToReview ?? "—"} dias
-            </Badge>
+            {data.daysToReview !== null && (
+              <Badge tone="accent">Revisão em {data.daysToReview} dias</Badge>
+            )}
           </>
         }
         subtitle={data.scope ?? undefined}
