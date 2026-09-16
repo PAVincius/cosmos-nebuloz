@@ -237,10 +237,29 @@ export async function publishTrack(
   });
 }
 
-const AckSchema = z.object({ id: z.string().cuid() });
+const AckSchema = z.object({
+  id: z.string().cuid(),
+  /** Só obrigatória quando quem registra não é a própria pessoa do aceite
+   *  (ver checagem abaixo, feita após o findFirst — schema sozinho não sabe
+   *  quem é o dono do registro). Curta demais não é justificativa. */
+  justificativa: z
+    .string()
+    .trim()
+    .min(
+      10,
+      "Justificativa muito curta — descreva por que você está registrando em nome de outra pessoa."
+    )
+    .optional(),
+});
 
 /** Registra o aceite. Guarda a versão aceita — quem aceitou a v3.2 não aceitou
- *  a v3.3, e é isso que a auditoria precisa saber. */
+ *  a v3.3, e é isso que a auditoria precisa saber.
+ *
+ *  Registrar em nome de outra pessoa (`ctx.userId !== ack.userId`, o que
+ *  inclui `ack.userId` nulo — hoje sempre o caso, já que nenhum fluxo ainda
+ *  pré-atribui o aceite a uma conta) fabrica evidência com um clique: exige
+ *  justificativa e fica atribuído na trilha de auditoria a quem de fato
+ *  clicou, não só à pessoa nomeada em `personName`. */
 export async function acknowledge(
   input: z.infer<typeof AckSchema>
 ): Promise<Result<null>> {
@@ -257,8 +276,16 @@ export async function acknowledge(
         throw new GovernanceError("ack.unknown", "Atribuição não encontrada.");
       }
 
+      const emNomeDeTerceiro = ctx.userId !== ack.userId;
+      if (emNomeDeTerceiro && !data.justificativa) {
+        throw new GovernanceError(
+          "ack.justificationRequired",
+          "Registrar aceite em nome de outra pessoa exige justificativa (mínimo 10 caracteres)."
+        );
+      }
+
       await db.charterAcknowledgment.update({
-        where: { id: ack.id },
+        where: { id: ack.id, tenantId: ctx.tenantId },
         data: {
           status: "ACKNOWLEDGED",
           acknowledgedAt: new Date(),
@@ -266,13 +293,24 @@ export async function acknowledge(
         },
       });
 
-      await logCharterAudit(db, ctx, {
-        action: "Registrou aceite",
-        entityType: "charter.track",
-        entityId: ack.trackId,
-        target: `${ack.track.code} · ${ack.personName}`,
-        diff: [["Status", "PENDING", "ACKNOWLEDGED"]],
-      });
+      if (emNomeDeTerceiro) {
+        await logCharterAudit(db, ctx, {
+          action: "Registrou aceite em nome de terceiro",
+          entityType: "charter.track",
+          entityId: ack.trackId,
+          target: `${ack.personName} · ${ack.track.name}`,
+          note: `Registrado por ${ctx.user.name ?? ctx.user.email} em nome de ${ack.personName} — ${data.justificativa}`,
+          diff: [["Status", "PENDING", "ACKNOWLEDGED"]],
+        });
+      } else {
+        await logCharterAudit(db, ctx, {
+          action: "Registrou aceite",
+          entityType: "charter.track",
+          entityId: ack.trackId,
+          target: `${ack.track.code} · ${ack.personName}`,
+          diff: [["Status", "PENDING", "ACKNOWLEDGED"]],
+        });
+      }
 
       revalidatePath("/charter", "layout");
       return null;
