@@ -9,6 +9,7 @@ const h = vi.hoisted(() => ({
   getBusinessCase: vi.fn(),
   signBusinessCase: vi.fn(),
   contestBusinessCase: vi.fn(),
+  exportBusinessCase: vi.fn(),
   push: vi.fn(),
 }));
 
@@ -19,6 +20,9 @@ vi.mock("@/app/(scaffold)/actions/business-case", () => ({
   contestBusinessCase: h.contestBusinessCase,
   submitForSignature: vi.fn(),
   newVersionFromSigned: vi.fn(),
+}));
+vi.mock("@/app/(scaffold)/actions/export", () => ({
+  exportBusinessCase: h.exportBusinessCase,
 }));
 
 import BaselineDetailScreen from "@/components/scaffold/screens/baseline-detail";
@@ -160,5 +164,48 @@ describe("caso de negócio — contestar", () => {
     expect(
       (screen.getByLabelText(/quem assina/i) as HTMLInputElement).value
     ).toBe("Marina Costa");
+  });
+});
+
+describe("caso de negócio — exportar contrato v2", () => {
+  it("não oferece exportar sem assinatura", async () => {
+    render(<BaselineDetailScreen param={BC_ID} />);
+    await screen.findByText("Contrato com o Signal");
+    expect(screen.queryByRole("button", { name: /exportar v2/i })).toBeNull();
+  });
+
+  it("assinado, pede o shape v2 e baixa o arquivo com o código do caso", async () => {
+    const signed = { ...awaiting(), state: "SIGNED", signedVersionId: VER_ID };
+    h.getBusinessCase.mockResolvedValue({ ok: true, data: signed });
+    h.exportBusinessCase.mockResolvedValue({
+      ok: true,
+      data: { schema: "signal-baseline/v2", metrics: [] },
+    });
+    // jsdom não implementa createObjectURL; o que importa é o nome do arquivo.
+    const createUrl = vi.fn(() => "blob:test");
+    const revokeUrl = vi.fn();
+    Object.assign(URL, {
+      createObjectURL: createUrl,
+      revokeObjectURL: revokeUrl,
+    });
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    render(<BaselineDetailScreen param={BC_ID} />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /exportar v2/i })
+    );
+
+    await waitFor(() => expect(h.exportBusinessCase).toHaveBeenCalledTimes(1));
+    expect(h.exportBusinessCase.mock.calls[0][0]).toEqual({
+      businessCaseId: BC_ID,
+      shape: "v2",
+    });
+    await waitFor(() => expect(click).toHaveBeenCalledTimes(1));
+    const anchor = click.mock.instances[0] as HTMLAnchorElement;
+    expect(anchor.download).toBe("BC-104-signal-v2.json");
+    expect(revokeUrl).toHaveBeenCalledWith("blob:test");
+    click.mockRestore();
   });
 });

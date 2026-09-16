@@ -28,6 +28,7 @@ import {
   signBusinessCase,
   submitForSignature,
 } from "@/app/(scaffold)/actions/business-case";
+import { exportBusinessCase } from "@/app/(scaffold)/actions/export";
 import {
   Eyebrow,
   Field,
@@ -199,7 +200,15 @@ function MetricRow({ m, last }: { m: Metric; last: boolean }) {
  *  A distinção "vigente" versus "em edição" é o motivo de `signedVersionId` e
  *  `currentVersionId` serem colunas separadas: o Signal continua apurando
  *  contra a assinada enquanto um rascunho existe por cima. */
-function SignalContractCard({ bc }: { bc: BusinessCaseDetail }) {
+function SignalContractCard({
+  bc,
+  busy,
+  onExport,
+}: {
+  bc: BusinessCaseDetail;
+  busy: boolean;
+  onExport: () => void;
+}) {
   const signed = bc.versions.find((v) => v.id === bc.signedVersionId);
   const editing =
     bc.currentVersionId && bc.currentVersionId !== bc.signedVersionId
@@ -208,6 +217,19 @@ function SignalContractCard({ bc }: { bc: BusinessCaseDetail }) {
 
   return (
     <SectionCard
+      action={
+        signed ? (
+          <Button
+            disabled={busy}
+            icon="download"
+            onClick={onExport}
+            size="sm"
+            variant="secondary"
+          >
+            Exportar v2
+          </Button>
+        ) : null
+      }
       icon="pulse"
       subtitle={
         signed
@@ -501,6 +523,33 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
     },
     [load]
   );
+
+  // O contrato v2 sai como arquivo: é o que o Signal importa sem transformação
+  // (SC-004), e é o que o patrocinador leva para a reunião.
+  const exportContract = useCallback(async () => {
+    if (!bc) {
+      return;
+    }
+    setBusy(true);
+    const res = await exportBusinessCase({
+      businessCaseId: bc.id,
+      shape: "v2",
+    });
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    const blob = new Blob([JSON.stringify(res.data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${bc.code}-signal-v2.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [bc]);
 
   const openModal = useCallback((kind: "sign" | "contest") => {
     setForm({ signer: "", by: "", role: "", objection: "", asks: "" });
@@ -875,7 +924,7 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
             gap: "var(--gap)",
           }}
         >
-          <SignalContractCard bc={bc} />
+          <SignalContractCard bc={bc} busy={busy} onExport={exportContract} />
           <VersionTrail bc={bc} />
           <SectionCard
             icon="clock"
