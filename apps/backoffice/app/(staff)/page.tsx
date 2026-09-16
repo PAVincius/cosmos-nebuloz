@@ -5,6 +5,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { type ClientRow, listClients } from "@/app/actions/clients";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota } from "@/components/nav";
 import { ClientesTabela } from "./clientes-tabela";
 
@@ -29,21 +30,47 @@ function contar(clientes: ClientRow[]) {
 export default async function ClientsPage() {
   const result = await listClients();
 
-  if (!result.ok) {
-    return (
-      <p
+  // O cabeçalho fica nos dois caminhos: erro dentro da moldura do sucesso, não
+  // um parágrafo solto que faz a tela parecer outra.
+  const cabecalho = (
+    <PageHeader
+      eyebrow={`${secaoDaRota("/")} · carteira`}
+      subtitle="Todos os tenants provisionados, seus módulos e status de contratação."
+      title="Carteira de clientes"
+    >
+      <Link
+        className="btn"
+        href="/clientes/novo"
         style={{
-          padding: 14,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "9px 15px",
           borderRadius: "var(--r-md)",
-          background: "var(--red-soft)",
-          border: "1px solid rgba(var(--red-rgb),.3)",
-          color: "var(--red-text)",
-          fontSize: "var(--fs-base)",
+          background: "var(--accent)",
+          color: "var(--accent-fg)",
+          border: "1px solid var(--accent)",
+          fontSize: "var(--fs-forte)",
           fontWeight: 600,
+          textDecoration: "none",
+          boxShadow:
+            "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
         }}
       >
-        {result.error}
-      </p>
+        + Provisionar cliente
+      </Link>
+    </PageHeader>
+  );
+
+  if (!result.ok) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        {cabecalho}
+        <FalhaAoCarregar
+          motivo={result.error}
+          titulo="Não foi possível carregar a carteira"
+        />
+      </div>
     );
   }
 
@@ -52,33 +79,7 @@ export default async function ClientsPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <PageHeader
-        eyebrow={`${secaoDaRota("/")} · carteira`}
-        subtitle="Todos os tenants provisionados, seus módulos e status de contratação."
-        title="Carteira de clientes"
-      >
-        <Link
-          className="btn"
-          href="/clientes/novo"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "9px 15px",
-            borderRadius: "var(--r-md)",
-            background: "var(--accent)",
-            color: "var(--accent-fg)",
-            border: "1px solid var(--accent)",
-            fontSize: "var(--fs-forte)",
-            fontWeight: 600,
-            textDecoration: "none",
-            boxShadow:
-              "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
-          }}
-        >
-          + Provisionar cliente
-        </Link>
-      </PageHeader>
+      {cabecalho}
 
       <div
         style={{
