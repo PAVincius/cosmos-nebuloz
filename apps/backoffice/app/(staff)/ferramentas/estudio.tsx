@@ -15,7 +15,7 @@ import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
-import { useParamState } from "@/lib/url-state";
+import { useParamState, useSubstituirParams } from "@/lib/url-state";
 
 /**
  * Estúdio de diagramas: lista à esquerda, editor à direita, histórico embaixo.
@@ -39,6 +39,18 @@ const LIMITE_BYTES = 2 * 1024 * 1024;
 const EXTENSOES: Record<DiagramKind, string> = {
   BPMN: ".bpmn,.xml",
   MERMAID: ".mmd,.mermaid,.md,.txt",
+};
+
+/** Fonte com que um diagrama novo nasce quando não há arquivo enviado. */
+const EM_BRANCO: Record<DiagramKind, string> = {
+  BPMN: BPMN_EM_BRANCO,
+  MERMAID: MERMAID_EXEMPLO,
+};
+
+/** Ícone da lista e do cabeçalho — tabela em vez de ternário repetido. */
+const ICONE: Record<DiagramKind, "fileCode" | "server"> = {
+  BPMN: "fileCode",
+  MERMAID: "server",
 };
 
 /** No topo por exigência do lint, e com razão: regex literal dentro de handler
@@ -177,6 +189,65 @@ function SeletorDeCliente({
   );
 }
 
+/** Revisões do diagrama aberto, mais nova primeiro. Componente próprio (e não
+ *  JSX inline no `Estudio`) para o componente raiz caber na conta de
+ *  complexidade do lint; nada muda no que aparece. */
+function Historico({ revisoes }: { revisoes: DiagramDetail["historico"] }) {
+  return (
+    <SectionCard
+      icon="history"
+      subtitle="append-only — editar cria revisão, nunca sobrescreve"
+      title="Histórico"
+    >
+      <ul
+        style={{
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {revisoes.map((h, i) => (
+          <li
+            key={h.versao}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "9px 2px",
+              borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
+            }}
+          >
+            <Badge tone={i === 0 ? "green" : "neutral"}>v{h.versao}</Badge>
+            <span
+              style={{
+                flex: 1,
+                minWidth: 0,
+                fontSize: "var(--fs-base)",
+              }}
+            >
+              {h.nota ?? (
+                <span style={{ color: "var(--ink-faint)" }}>sem nota</span>
+              )}
+            </span>
+            <span
+              className="mono"
+              style={{
+                fontSize: "var(--fs-nota)",
+                color: "var(--ink-faint)",
+              }}
+            >
+              {h.autorNome ?? "—"} ·{" "}
+              {new Date(h.criadoEm).toLocaleString("pt-BR")}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </SectionCard>
+  );
+}
+
 /**
  * A URL manda: `?diagrama=` muda (clique, F5, link colado) e o detalhe é lido.
  * Só busca id que está na lista — link para diagrama apagado ou de outro tipo
@@ -236,13 +307,19 @@ export function Estudio({
 }) {
   const [lista, setLista] = useState(iniciais);
   const [diagramaId, setDiagramaId] = useParamState("diagrama");
+  // `?novo=<nome>` vem de "Criar diagrama para {processo}" no mapa: abre o
+  // formulário já com o nome. Só o estado inicial lê o param — depois disso
+  // é o formulário que manda, e o param sai da URL quando o diagrama nasce.
+  const [novo] = useParamState("novo");
+  const substituirParams = useSubstituirParams();
   const [aberto, setAberto] = useState<DiagramDetail | null>(null);
-  const [criando, setCriando] = useState(false);
-  const [nome, setNome] = useState("");
+  const [criando, setCriando] = useState(podeEscrever && novo !== "");
+  const [nome, setNome] = useState(novo);
   const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  const emBranco = kind === "BPMN" ? BPMN_EM_BRANCO : MERMAID_EXEMPLO;
+  const emBranco = EM_BRANCO[kind];
+  const icone = ICONE[kind];
 
   useDiagramaDaUrl({
     abertoId: aberto?.id,
@@ -309,10 +386,11 @@ export function Estudio({
         },
         ...atual,
       ]);
-      // Abre pela URL, como qualquer outro item da lista.
-      setDiagramaId(det.data.id);
+      // Abre pela URL, como qualquer outro item da lista; `novo` sai junto,
+      // num replace só — senão F5 reabriria o formulário com o nome usado.
+      substituirParams({ diagrama: det.data.id, novo: "" });
     }
-  }, [kind, nome, emBranco, enviado, setDiagramaId]);
+  }, [kind, nome, emBranco, enviado, substituirParams]);
 
   const trocarCliente = useCallback(
     async (sobreTenantId: string) => {
@@ -382,7 +460,7 @@ export function Estudio({
             />
           ) : null
         }
-        icone={kind === "BPMN" ? "fileCode" : "server"}
+        icone={icone}
         itens={lista.map((d) => ({
           id: d.id,
           titulo: d.name,
@@ -407,7 +485,7 @@ export function Estudio({
                   valor={aberto.sobreTenantId}
                 />
               }
-              icon={kind === "BPMN" ? "fileCode" : "server"}
+              icon={icone}
               subtitle={`${aberto.slug} · versão atual v${aberto.versoes} · ${aberto.sobreTenantNome ?? "sem cliente"}`}
               title={aberto.name}
             >
@@ -426,61 +504,7 @@ export function Estudio({
               )}
             </SectionCard>
 
-            <SectionCard
-              icon="history"
-              subtitle="append-only — editar cria revisão, nunca sobrescreve"
-              title="Histórico"
-            >
-              <ul
-                style={{
-                  listStyle: "none",
-                  margin: 0,
-                  padding: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {aberto.historico.map((h, i) => (
-                  <li
-                    key={h.versao}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      padding: "9px 2px",
-                      borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
-                    }}
-                  >
-                    <Badge tone={i === 0 ? "green" : "neutral"}>
-                      v{h.versao}
-                    </Badge>
-                    <span
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        fontSize: "var(--fs-base)",
-                      }}
-                    >
-                      {h.nota ?? (
-                        <span style={{ color: "var(--ink-faint)" }}>
-                          sem nota
-                        </span>
-                      )}
-                    </span>
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: "var(--fs-nota)",
-                        color: "var(--ink-faint)",
-                      }}
-                    >
-                      {h.autorNome ?? "—"} ·{" "}
-                      {new Date(h.criadoEm).toLocaleString("pt-BR")}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </SectionCard>
+            <Historico revisoes={aberto.historico} />
           </>
         ) : (
           <SectionCard title="Nenhum diagrama aberto">
