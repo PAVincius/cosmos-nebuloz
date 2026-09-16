@@ -29,6 +29,7 @@ export type SetupStepId =
   | "policy.write"
   | "policy.publish"
   | "roles.assign"
+  | "vendor.approve"
   | "usecase.first"
   | "decision.first";
 
@@ -53,7 +54,7 @@ export type SetupProgress = {
   passos: SetupStep[];
   concluidos: number;
   total: number;
-  /** Todos os cinco fechados — o painel se recolhe. */
+  /** Todos os seis fechados — o painel se recolhe. */
   completo: boolean;
 };
 
@@ -95,9 +96,9 @@ function podeAgirPorPermissao(
 }
 
 /**
- * As cinco etapas de montagem do Charter, computadas a partir do estado real
+ * As seis etapas de montagem do Charter, computadas a partir do estado real
  * do tenant — nunca de uma tabela de progresso. Roda em todo load do
- * dashboard: uma única `withTenantDb`, quatro `count` mais um `findMany` em
+ * dashboard: uma única `withTenantDb`, cinco `count` mais um `findMany` em
  * `charterPolicySection` restrito a `body` (a regra é `body.trim() !== ""`, e
  * `count` com `{ not: "" }` deixaria passar seção só de espaço).
  */
@@ -105,26 +106,42 @@ export async function getSetupProgress(): Promise<Result<SetupProgress>> {
   return await safeAction(async () => {
     const ctx = await requireCharterContext();
 
-    const { secoesEscritas, versoes, membros, casos, decisoes } =
+    const { secoesEscritas, versoes, membros, fornecedores, casos, decisoes } =
       await withTenantDb(ctx.tenantId, async (db) => {
-        const [secoes, versoesPublicadas, membership, useCases, decisions] =
-          await Promise.all([
-            db.charterPolicySection.findMany({
-              where: { tenantId: ctx.tenantId },
-              select: { body: true },
-            }),
-            db.charterPolicyVersion.count({
-              where: { tenantId: ctx.tenantId },
-            }),
-            db.charterMembership.count({ where: { tenantId: ctx.tenantId } }),
-            db.charterUseCase.count({ where: { tenantId: ctx.tenantId } }),
-            db.charterDecision.count({ where: { tenantId: ctx.tenantId } }),
-          ]);
+        const [
+          secoes,
+          versoesPublicadas,
+          membership,
+          vendorsElegiveis,
+          useCases,
+          decisions,
+        ] = await Promise.all([
+          db.charterPolicySection.findMany({
+            where: { tenantId: ctx.tenantId },
+            select: { body: true },
+          }),
+          db.charterPolicyVersion.count({
+            where: { tenantId: ctx.tenantId },
+          }),
+          db.charterMembership.count({ where: { tenantId: ctx.tenantId } }),
+          // Fornecedor cadastrado não basta: em REVIEW sem cláusula ele tem
+          // maxClass nulo e o gate de submissão barra todo caso que o declare.
+          db.charterVendor.count({
+            where: { tenantId: ctx.tenantId, maxClass: { not: null } },
+          }),
+          // Rascunho não é caso submetido — é o que sobra quando a submissão
+          // falha. Contá-lo fecharia o passo com a porta ainda trancada.
+          db.charterUseCase.count({
+            where: { tenantId: ctx.tenantId, status: { not: "DRAFT" } },
+          }),
+          db.charterDecision.count({ where: { tenantId: ctx.tenantId } }),
+        ]);
 
         return {
           secoesEscritas: secoes.filter((s) => s.body.trim() !== "").length,
           versoes: versoesPublicadas,
           membros: membership,
+          fornecedores: vendorsElegiveis,
           casos: useCases,
           decisoes: decisions,
         };
@@ -151,9 +168,11 @@ export async function getSetupProgress(): Promise<Result<SetupProgress>> {
         porque:
           "Rascunho não é evidência. Só uma versão publicada pode ser citada numa decisão ou numa auditoria.",
         estado: estadoDoPasso(politicaPublicada, !politicaCompleta),
+        // O bloqueador real é `policyPublishBlockers` (rules.ts): exige cada
+        // seção em PUBLISHED. Escrever não basta — é preciso aprovar.
         bloqueadoPor: politicaCompleta
           ? undefined
-          : "Escreva as nove seções primeiro.",
+          : "Aprove as nove seções primeiro.",
         href: "/charter/policy",
         ...podeAgirPorPermissao(ctx.charterRole, "policy.publish"),
       },
@@ -174,6 +193,16 @@ export async function getSetupProgress(): Promise<Result<SetupProgress>> {
           ctx.charterRole === "COMPLIANCE"
             ? undefined
             : CHARTER_ROLE_LABEL.COMPLIANCE,
+      },
+      {
+        id: "vendor.approve",
+        titulo: "Aprove um fornecedor",
+        porque:
+          "Sem fornecedor elegível, nenhum caso pode ser submetido — o gate de submissão barra todo caso cujo fornecedor não tem classe máxima de dado.",
+        // Nunca bloqueia: a postura do fornecedor não depende da política.
+        estado: estadoDoPasso(fornecedores > 0, false),
+        href: "/charter/vendors",
+        ...podeAgirPorPermissao(ctx.charterRole, "vendor.approve"),
       },
       {
         id: "usecase.first",

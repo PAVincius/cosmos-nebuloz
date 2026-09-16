@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "../base";
 import { ModalProvider, useModal } from "../modal";
-import { IntakeModal, type IntakeSubmit } from "../modals";
+import { IntakeModal, type IntakeSubmit } from "../modals-intake";
 import { useCharterData } from "../use-charter-data";
 
 const COLS = "minmax(0,1fr) 104px 122px 128px 104px 86px";

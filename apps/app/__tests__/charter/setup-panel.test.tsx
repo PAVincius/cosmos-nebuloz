@@ -29,6 +29,10 @@ vi.mock("@/app/(charter)/actions/setup", () => ({
 vi.mock("@/app/(charter)/actions/dashboard", () => ({
   getDashboard: (...args: unknown[]) => getDashboardMock(...args),
 }));
+// O dashboard exporta o pacote de evidência; a action real puxa @repo/database.
+vi.mock("@/app/(charter)/actions/audit", () => ({
+  exportEvidence: vi.fn(),
+}));
 
 import DashboardScreen from "../../components/charter/screens/dashboard";
 import { SetupPanel } from "../../components/charter/setup-panel";

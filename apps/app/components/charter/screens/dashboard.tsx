@@ -13,7 +13,8 @@ import {
   SkeletonKpi,
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState, useTransition } from "react";
+import { exportEvidence } from "@/app/(charter)/actions/audit";
 import { getDashboard } from "@/app/(charter)/actions/dashboard";
 import {
   getSetupProgress,
@@ -28,8 +29,10 @@ import {
   SECTION_STATUS_TONE,
   type Tone,
 } from "@/lib/charter/rules";
+import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   BarRow,
+  GatedButton,
   Legend,
   MetaCell,
   ScreenError,
@@ -38,6 +41,9 @@ import {
   TableHead,
   TableRow,
 } from "../base";
+import { download } from "../download";
+import { ModalProvider, useModal } from "../modal";
+import { ExportPackageModal } from "../modals";
 import { SetupPanel } from "../setup-panel";
 import { useCharterData } from "../use-charter-data";
 
@@ -70,9 +76,9 @@ function slaToneFor(sla: number | null): Tone {
   return "green";
 }
 
-type CopiaVazia = {
-  title: string;
-  subtitle: string;
+type Copia = { title: string; subtitle: string };
+
+type CopiaVazia = Copia & {
   tone: Tone;
   icon: IconName;
 };
@@ -84,31 +90,29 @@ type CopiaVazia = {
  * ainda carrega ou depois que falhou, os dois casos ficam indistinguíveis
  * (`null`), e sem saber se a montagem está incompleta o card não pode
  * escolher a frase que afirma uma conformidade que ninguém verificou. Errar
- * para o lado de não afirmar.
+ * para o lado de não afirmar: `semProgresso` diz só o fato que a lista vazia
+ * já prova, e o que fazer a respeito.
  */
 function copiaDeMontagem(
   setupProgress: SetupProgress | null,
-  incompleta: { title: string; subtitle: string },
-  completa: { title: string; subtitle: string }
+  copia: { semProgresso: Copia; incompleta: Copia; completa: Copia }
 ): CopiaVazia {
   if (!setupProgress) {
     // Sem saber se isto é "ainda carregando" ou "falhou" (os dois casos são o
     // mesmo `null`, ver acima), o subtítulo não pode afirmar nenhum dos dois —
     // um round trip normal não pode se ler como falha.
-    return {
-      title: "Nada aqui.",
-      subtitle: "",
-      tone: "accent",
-      icon: "inbox",
-    };
+    return { ...copia.semProgresso, tone: "accent", icon: "inbox" };
   }
   return setupProgress.completo
-    ? { ...completa, tone: "green", icon: "check" }
-    : { ...incompleta, tone: "accent", icon: "inbox" };
+    ? { ...copia.completa, tone: "green", icon: "check" }
+    : { ...copia.incompleta, tone: "accent", icon: "inbox" };
 }
 
-export default function DashboardScreen() {
+function DashboardInner() {
   const router = useRouter();
+  const { open, close } = useModal();
+  const [pending, startTransition] = useTransition();
+  const [exportProgress, setExportProgress] = useState<string | null>(null);
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getDashboard(), [])
   );
@@ -123,30 +127,69 @@ export default function DashboardScreen() {
   }
 
   const k = data?.kpis;
-  const filaVazia = copiaDeMontagem(
-    setupProgress,
-    {
+  const filaVazia = copiaDeMontagem(setupProgress, {
+    semProgresso: {
+      title: "Nenhum caso aguardando decisão",
+      subtitle: "Submeta um caso de uso para ele entrar na fila.",
+    },
+    incompleta: {
       title: "Nenhum caso foi submetido ainda",
       subtitle: "A fila aparece aqui assim que o primeiro caso for submetido.",
     },
-    {
+    completa: {
       title: "Nada aguardando decisão",
       subtitle: "Toda submissão foi revisada dentro do SLA.",
-    }
-  );
-  const alertasVazio = copiaDeMontagem(
-    setupProgress,
-    {
+    },
+  });
+  const alertasVazio = copiaDeMontagem(setupProgress, {
+    semProgresso: {
+      title: "Nenhum alerta de governança",
+      subtitle:
+        "Alertas aparecem aqui quando houver SLA, mitigação ou seção de política para acompanhar.",
+    },
+    incompleta: {
       title: "Ainda não há o que monitorar",
       subtitle:
         "Alertas aparecem aqui quando houver SLA, mitigação ou seção de política para acompanhar.",
     },
-    {
+    completa: {
       title: "Nada exige ação agora",
       subtitle:
         "Nenhum SLA vencido, nenhuma mitigação atrasada e nenhuma seção de política fora de publicação.",
-    }
-  );
+    },
+  });
+  // O primário do header é o próximo passo da montagem — o mesmo rótulo e o
+  // mesmo destino do SetupPanel. Com a montagem completa, a fila é o que
+  // pede atenção. Enquanto o progresso não chegou, nenhum primário: afirmar
+  // um passo que não se sabe qual é seria o mesmo defeito de outra forma.
+  const proximoPasso =
+    setupProgress?.passos.find((p) => p.estado !== "feito") ?? null;
+
+  const openExport = () =>
+    open(
+      <ExportPackageModal
+        onClose={close}
+        onSubmit={(input) =>
+          startTransition(async () => {
+            setExportProgress("Compilando…");
+            const res = await runWithToast(() => exportEvidence(input), {
+              loading: "Compilando pacote…",
+              success: (d) => `${d.recordCount} registros exportados`,
+            });
+            if (res.ok) {
+              download(res.data.filename, res.data.mimeType, res.data.content);
+              setExportProgress(
+                `${res.data.recordCount} registros · pacote baixado`
+              );
+            } else {
+              setExportProgress(null);
+            }
+          })
+        }
+        pending={pending}
+        result={exportProgress}
+      />
+    );
 
   return (
     <div className="fade-in">
@@ -159,19 +202,20 @@ export default function DashboardScreen() {
         meta={
           data?.policy ? (
             <>
-              <Badge dot tone="green">
-                Política {data.policy.version} publicada
-              </Badge>
-              <Badge
-                tone={
-                  data.policy.daysToReview !== null &&
-                  data.policy.daysToReview < 90
-                    ? "amber"
-                    : "accent"
-                }
-              >
-                Revisão em {data.policy.daysToReview} dias
-              </Badge>
+              {data.policy.version === null ? (
+                <Badge tone="amber">Política nunca publicada</Badge>
+              ) : (
+                <Badge dot tone="green">
+                  Política {data.policy.version} publicada
+                </Badge>
+              )}
+              {data.policy.daysToReview !== null && (
+                <Badge
+                  tone={data.policy.daysToReview < 90 ? "amber" : "accent"}
+                >
+                  Revisão em {data.policy.daysToReview} dias
+                </Badge>
+              )}
               <Badge tone="accent">
                 {data.policy.publishedCount}/{data.policy.sections.length}{" "}
                 seções publicadas
@@ -183,16 +227,30 @@ export default function DashboardScreen() {
         title="Visão Geral de Governança"
         tone="accent"
       >
-        <Button
-          icon="download"
-          onClick={() => router.push("/charter/audit")}
-          variant="secondary"
-        >
-          Exportar resumo
+        <Button icon="download" onClick={openExport} variant="secondary">
+          Exportar pacote
         </Button>
-        <Button icon="upload" onClick={() => router.push("/charter/policy")}>
-          Publicar atualização
-        </Button>
+        {proximoPasso && (
+          <GatedButton
+            allowed={
+              proximoPasso.podeAgir && proximoPasso.estado === "disponivel"
+            }
+            icon="arrowRight"
+            onClick={() => router.push(proximoPasso.href)}
+            reason={
+              proximoPasso.podeAgir
+                ? (proximoPasso.bloqueadoPor ?? "Ainda não disponível.")
+                : `Só ${proximoPasso.quemPode} pode fazer isso.`
+            }
+          >
+            {proximoPasso.titulo}
+          </GatedButton>
+        )}
+        {setupProgress?.completo && (
+          <Button icon="inbox" onClick={() => router.push("/charter/cases")}>
+            Ver fila
+          </Button>
+        )}
       </PageHeader>
 
       {setupProgress && (
@@ -296,6 +354,9 @@ export default function DashboardScreen() {
           ) : data.queue.length === 0 ? (
             <SmartEmptyState
               icon={filaVazia.icon}
+              onPrimary={() => router.push("/charter/cases")}
+              primaryIcon="plus"
+              primaryLabel="Submeter caso de uso"
               subtitle={filaVazia.subtitle}
               title={filaVazia.title}
               tone={filaVazia.tone}
@@ -691,5 +752,13 @@ export default function DashboardScreen() {
         </SectionCard>
       </div>
     </div>
+  );
+}
+
+export default function DashboardScreen() {
+  return (
+    <ModalProvider>
+      <DashboardInner />
+    </ModalProvider>
   );
 }
