@@ -32,6 +32,7 @@ import {
   RISK_CATEGORY_DESC,
   RISK_CATEGORY_LABEL,
   recommendPath,
+  slaTone,
   type Tone,
 } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
@@ -40,6 +41,7 @@ import {
   BarRow,
   MetaCell,
   ScreenError,
+  SkeletonCard,
   SmartEmptyState,
   Tabs,
 } from "../base";
@@ -48,6 +50,7 @@ import { ModalProvider, useModal } from "../modal";
 import { DecisionModal, MitigationModal } from "../modals";
 import { AuditList, MitigationTable, RiskMiniMatrix } from "../parts";
 import { useCharterData } from "../use-charter-data";
+import { GatedFooterAction } from "./gated-footer-action";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
   DRAFT: { label: "Rascunho", tone: "accent" },
@@ -117,7 +120,7 @@ function CaseDetailInner({ param }: { param?: string }) {
   if (loading || !data) {
     return (
       <div className="fade-in">
-        <div className="skeleton" style={{ height: 96, borderRadius: 14 }} />
+        <SkeletonCard />
       </div>
     );
   }
@@ -272,21 +275,14 @@ function CaseDetailInner({ param }: { param?: string }) {
           </Button>
         )}
         {DECIDABLE.includes(data.status) && (
-          <span
-            style={{
-              opacity: data.can.decide ? 1 : 0.45,
-              pointerEvents: data.can.decide ? "auto" : "none",
-            }}
-            title={
-              data.can.decide
-                ? undefined
-                : "Seu papel de governança não decide caso de uso"
-            }
+          <GatedFooterAction
+            allowed={data.can.decide}
+            icon="gavel"
+            onClick={openDecision}
+            reason="Seu papel de governança não decide caso de uso"
           >
-            <Button icon="gavel" onClick={openDecision}>
-              Registrar decisão
-            </Button>
-          </span>
+            Registrar decisão
+          </GatedFooterAction>
         )}
         {HAS_TRAIL_SHORTCUT.includes(data.status) && (
           <Button
@@ -342,13 +338,7 @@ function CaseDetailInner({ param }: { param?: string }) {
           hint={`prazo ${rec.slaDays} dias úteis`}
           icon="clock"
           label="SLA restante"
-          tone={
-            data.slaRemaining === null
-              ? "accent"
-              : data.slaRemaining <= 2
-                ? "red"
-                : "amber"
-          }
+          tone={slaTone(data.slaRemaining)}
           unit={data.slaRemaining === null ? "" : "d"}
           value={data.slaRemaining === null ? "—" : data.slaRemaining}
         />
@@ -421,7 +411,7 @@ function CaseDetailInner({ param }: { param?: string }) {
                     ? HITL_LABEL[data.hitl as keyof typeof HITL_LABEL]
                     : "—",
                 ],
-                ["Revisor", lastDecider],
+                ["Decidido por", lastDecider],
               ].map(([l, val]) => (
                 <div
                   key={l}

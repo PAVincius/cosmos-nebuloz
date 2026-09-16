@@ -157,6 +157,31 @@ describe("PolicyScope", () => {
     ).toBeTruthy();
   });
 
+  it("erro de leitura mostra retry (ScreenError) que rechama getPolicyScope, não texto vermelho mudo", async () => {
+    getPolicyScopeMock.mockResolvedValueOnce({
+      ok: false,
+      error: "Falha ao carregar o alcance da política.",
+    });
+    render(<PolicyScope />);
+
+    expect(
+      await screen.findByText("Falha ao carregar o alcance da política.")
+    ).toBeTruthy();
+    const chamadasAntes = getPolicyScopeMock.mock.calls.length;
+
+    getPolicyScopeMock.mockResolvedValueOnce({
+      ok: true,
+      data: { policyId: "pol-1", casos: [], vendors: [] },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
+
+    await waitFor(() =>
+      expect(getPolicyScopeMock.mock.calls.length).toBeGreaterThan(
+        chamadasAntes
+      )
+    );
+  });
+
   it("enquanto carrega, mostra o estado de carregamento — não a mensagem de tenant sem política", () => {
     // Promise que nunca resolve: reproduz a janela em que `loading` é true e
     // `data` ainda é null — o mesmo `null` que, depois de resolvida, passa a

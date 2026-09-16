@@ -8,6 +8,7 @@ import {
   unlinkPolicy,
 } from "@/app/(charter)/actions/policy";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
+import { ScreenError } from "../base";
 import { useCharterData } from "../use-charter-data";
 
 // policy-scope.tsx — quem está e quem não está sob a política publicada.
@@ -45,11 +46,7 @@ export default function PolicyScope() {
   }
 
   if (error) {
-    return (
-      <SectionCard subtitle={SUBTITLE} title="Alcance da política">
-        <div style={{ fontSize: 13, color: "var(--red-text)" }}>{error}</div>
-      </SectionCard>
-    );
+    return <ScreenError message={error} onRetry={reload} />;
   }
 
   // Distinto de "carregando": a leitura terminou e o tenant não tem
