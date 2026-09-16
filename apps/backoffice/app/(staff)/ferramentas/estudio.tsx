@@ -15,6 +15,7 @@ import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState, useSubstituirParams } from "@/lib/url-state";
 
 /**
@@ -189,6 +190,73 @@ function SeletorDeCliente({
   );
 }
 
+const BOTAO_PERGUNTA = {
+  padding: "6px 12px",
+  borderRadius: "var(--r-sm)",
+  border: "1px solid var(--hairline)",
+  background: "none",
+  fontSize: "var(--fs-nota)",
+  fontWeight: 600,
+  cursor: "pointer",
+} as const;
+
+/**
+ * Pergunta inline antes de trocar de diagrama com edição pendente. Mesma
+ * prosa e mesma ordem de `components/confirmar-acao.tsx` (o alvo escrito,
+ * "Voltar" antes de "Descartar"); local porque aquele componente está mudando
+ * em PR aberto — pode migrar para lá depois. Não é `window.confirm`: aquele
+ * é dispensável por hábito, não diz o alvo e some do teste.
+ */
+function PerguntaDescartar({
+  nome,
+  onVoltar,
+  onDescartar,
+}: {
+  nome: string;
+  onVoltar: () => void;
+  onDescartar: () => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        padding: "10px 12px",
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--red-border, var(--hairline-strong))",
+        background: "var(--red-soft, var(--surface-2))",
+      }}
+    >
+      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+        Descartar alterações em «{nome}»?
+      </span>
+      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
+        O que você editou e ainda não salvou some. Para manter, volte e salve
+        uma revisão antes de trocar.
+      </span>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          className="btn"
+          onClick={onVoltar}
+          style={{ ...BOTAO_PERGUNTA, color: "var(--ink-muted)" }}
+          type="button"
+        >
+          Voltar
+        </button>
+        <button
+          className="btn"
+          onClick={onDescartar}
+          style={{ ...BOTAO_PERGUNTA, color: "var(--red-text)" }}
+          type="button"
+        >
+          Descartar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** Revisões do diagrama aberto, mais nova primeiro. Componente próprio (e não
  *  JSX inline no `Estudio`) para o componente raiz caber na conta de
  *  complexidade do lint; nada muda no que aparece. */
@@ -317,6 +385,8 @@ export function Estudio({
   const [nome, setNome] = useState(novo);
   const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // O editor é quem sabe se o XML/texto mudou; ele avisa por `onSujo`.
+  const [sujo, setSujo] = useState(false);
 
   const emBranco = EM_BRANCO[kind];
   const icone = ICONE[kind];
@@ -327,6 +397,23 @@ export function Estudio({
     lista,
     setAberto,
     setErro,
+  });
+
+  const abrirDeFato = useCallback(
+    (id: string) => {
+      setSujo(false);
+      setErro(null);
+      setDiagramaId(id);
+    },
+    [setDiagramaId]
+  );
+
+  // Trocar de diagrama com edição pendente pergunta antes — e enquanto está
+  // sujo, fechar a aba passa pelo aviso do navegador.
+  const guarda = useGuardaDeRascunho({
+    abertoId: aberto?.id,
+    abrirDeFato,
+    sujo,
   });
 
   const receberArquivo = useCallback(async (arquivo: File | undefined) => {
@@ -346,14 +433,6 @@ export function Estudio({
     // vazio: sobrescrever o que a pessoa já digitou seria roubar o teclado.
     setNome((atual) => atual || arquivo.name.replace(EXTENSAO_FINAL, ""));
   }, []);
-
-  const abrir = useCallback(
-    (id: string) => {
-      setErro(null);
-      setDiagramaId(id);
-    },
-    [setDiagramaId]
-  );
 
   const criar = useCallback(async () => {
     setErro(null);
@@ -466,7 +545,7 @@ export function Estudio({
           titulo: d.name,
           detalhe: `${d.slug} · v${d.versoes}`,
         }))}
-        onSelecionar={abrir}
+        onSelecionar={guarda.abrir}
         selecionadoId={aberto?.id ?? null}
         subtitulo={`${lista.length} diagrama(s)`}
         titulo="Diagramas"
@@ -476,6 +555,13 @@ export function Estudio({
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {aberto ? (
           <>
+            {guarda.pendente ? (
+              <PerguntaDescartar
+                nome={aberto.name}
+                onDescartar={guarda.descartar}
+                onVoltar={guarda.voltar}
+              />
+            ) : null}
             <SectionCard
               action={
                 <SeletorDeCliente
@@ -489,15 +575,22 @@ export function Estudio({
               subtitle={`${aberto.slug} · versão atual v${aberto.versoes} · ${aberto.sobreTenantNome ?? "sem cliente"}`}
               title={aberto.name}
             >
+              {/* `key` por diagrama: trocar de item remonta o editor, então
+                  fonte, nota e `sujo` nascem limpos em vez de vazar do
+                  anterior — o Mermaid guarda o texto em `useState`. */}
               {kind === "BPMN" ? (
                 <BpmnModeler
+                  key={aberto.id}
                   onSalvar={salvar}
+                  onSujo={setSujo}
                   podeEscrever={podeEscrever}
                   sourceInicial={aberto.source}
                 />
               ) : (
                 <MermaidEditor
+                  key={aberto.id}
                   onSalvar={salvar}
+                  onSujo={setSujo}
                   podeEscrever={podeEscrever}
                   sourceInicial={aberto.source}
                 />
