@@ -46,7 +46,10 @@ describe("WriteButton", () => {
     // No DOM, não só no title: title não é lido por leitor de tela em todo
     // navegador, e a regra é "desabilita COM motivo".
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
+    // Nomeia o papel que a pessoa tem e quem precisa agir — não a função do
+    // servidor, que é nome de código e não diz a quem pedir.
     expect(MOTIVO_SOMENTE_LEITURA).toContain("MEMBER");
-    expect(MOTIVO_SOMENTE_LEITURA).toContain("assertCanWrite");
+    expect(MOTIVO_SOMENTE_LEITURA).toContain("ADMIN");
+    expect(MOTIVO_SOMENTE_LEITURA).not.toContain("assertCanWrite");
   });
 });

@@ -155,8 +155,8 @@ export default async function AuditPage({
         icon="history"
         subtitle={
           pagina.ok
-            ? `${pagina.data.total} evento(s) no filtro atual`
-            : "listAuditEvents()"
+            ? `${pagina.data.total} ${pagina.data.total === 1 ? "evento" : "eventos"} no filtro atual`
+            : "Não foi possível carregar"
         }
         title="Eventos"
       >

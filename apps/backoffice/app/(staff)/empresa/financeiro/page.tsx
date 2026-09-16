@@ -537,7 +537,7 @@ export default async function FinanceiroPage({
       <PageHeader
         eyebrow="Empresa · Base financeira"
         subtitle={subtitleDaAba(aba, intervalo, competencia)}
-        title="DRE e caixa"
+        title="Financeiro"
       />
       <div
         style={{

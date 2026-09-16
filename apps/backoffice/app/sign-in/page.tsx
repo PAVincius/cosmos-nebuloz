@@ -115,11 +115,8 @@ export default function SignInPage() {
             lineHeight: 1.6,
           }}
         >
-          Sem sessão você não passa do{" "}
-          <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
-            requirePlatformStaff
-          </span>
-          . Acesso restrito à equipe da Nebuloz.
+          Acesso restrito à equipe da Nebuloz: conta de staff da plataforma com
+          verificação em dois fatores.
         </p>
 
         <SignInForm />

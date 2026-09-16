@@ -17,16 +17,23 @@ import { Campo, INPUT } from "@/components/campo";
 
 /** As ações que o painel realmente grava. Lista fechada em vez de campo livre:
  *  digitar "update" e não achar nada porque o valor é "updated" é frustração
- *  sem aprendizado. */
-const ACOES = ["created", "updated", "deleted", "approved", "rejected"];
+ *  sem aprendizado. A chave é o valor gravado no AuditLog e o que vai para a
+ *  URL; o rótulo é o que a pessoa lê no select. */
+const ACOES: Record<string, string> = {
+  created: "Criação",
+  updated: "Alteração",
+  deleted: "Remoção",
+  approved: "Aprovação",
+  rejected: "Rejeição",
+};
 
-const ENTIDADES = [
-  "tenant",
-  "tenant_member",
-  "tenant_module",
-  "staff_diagram",
-  "platform_approval",
-];
+const ENTIDADES: Record<string, string> = {
+  tenant: "Cliente",
+  tenant_member: "Membro do cliente",
+  tenant_module: "Módulo contratado",
+  staff_diagram: "Diagrama do staff",
+  platform_approval: "Pedido de aprovação",
+};
 
 export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
   const router = useRouter();
@@ -89,9 +96,9 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
           value={params.get("acao") ?? ""}
         >
           <option value="">Todas</option>
-          {ACOES.map((a) => (
-            <option key={a} value={a}>
-              {a}
+          {Object.entries(ACOES).map(([valor, rotulo]) => (
+            <option key={valor} value={valor}>
+              {rotulo}
             </option>
           ))}
         </select>
@@ -105,9 +112,9 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
           value={params.get("entidade") ?? ""}
         >
           <option value="">Todas</option>
-          {ENTIDADES.map((e) => (
-            <option key={e} value={e}>
-              {e}
+          {Object.entries(ENTIDADES).map(([valor, rotulo]) => (
+            <option key={valor} value={valor}>
+              {rotulo}
             </option>
           ))}
         </select>
@@ -198,7 +205,8 @@ export function Paginacao({
           color: "var(--ink-faint)",
         }}
       >
-        página {pagina} de {ultima} · {total} evento(s)
+        página {pagina} de {ultima} · {total}{" "}
+        {total === 1 ? "evento" : "eventos"}
       </span>
       {botao("Próxima →", pagina + 1, pagina < ultima)}
     </div>
