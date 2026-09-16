@@ -16,6 +16,7 @@ import {
   INPUT,
   rotuloSalvar,
 } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 
 const ROTULO_BASE = {
@@ -86,6 +87,86 @@ function Texto({ texto, abertos }: { texto: string; abertos: string[] }) {
         )
       )}
     </p>
+  );
+}
+
+type BaseLegal = keyof typeof ROTULO_BASE;
+
+/** Os chips da base legal e a barreira que grava. O clique só escolhe; o
+ *  "Confirmar" grava — antes, o chip gravava na hora, e a decisão vai para a
+ *  auditoria com o nome de quem clicou. Clicar na base já vigente desfaz a
+ *  escolha em vez de perguntar de novo. */
+function EscolhaDeBaseLegal({
+  atual,
+  podeEscrever,
+  onDecidir,
+}: {
+  atual: BaseLegal;
+  podeEscrever: boolean;
+  onDecidir: (baseLegal: BaseLegal) => Promise<void>;
+}) {
+  const [escolhida, setEscolhida] = useState<BaseLegal | null>(null);
+
+  function escolher(b: BaseLegal) {
+    if (b === atual) {
+      setEscolhida(null);
+      return;
+    }
+    setEscolhida(b);
+  }
+
+  return (
+    <>
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          flexWrap: "wrap",
+          marginBottom: 12,
+        }}
+      >
+        {(Object.keys(ROTULO_BASE) as BaseLegal[]).map((b) => (
+          <button
+            aria-pressed={atual === b}
+            className="btn"
+            disabled={!podeEscrever}
+            key={b}
+            onClick={() => escolher(b)}
+            style={{
+              padding: "6px 12px",
+              borderRadius: 99,
+              border: `1px solid ${
+                atual === b ? "rgba(var(--accent-rgb),.45)" : "var(--hairline)"
+              }`,
+              background:
+                atual === b ? "var(--accent-soft)" : "var(--surface-2)",
+              fontSize: "var(--fs-nota)",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+            type="button"
+          >
+            {ROTULO_BASE[b]}
+          </button>
+        ))}
+      </div>
+      {escolhida ? (
+        <div style={{ marginBottom: 12 }}>
+          <ConfirmarAcao
+            aberto
+            alvo={ROTULO_BASE[escolhida]}
+            consequencia="A base legal fica registrada na auditoria com seu nome."
+            onConfirmar={async () => {
+              await onDecidir(escolhida);
+              setEscolhida(null);
+            }}
+            onVoltar={() => setEscolhida(null)}
+            rotulo="Registrar base legal"
+            tom="accent"
+          />
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -339,45 +420,11 @@ export function Painel({
         subtitle="A escolha é do responsável jurídico. Até lá, nenhum tenant habilita o consentimento permanente."
         title="Base legal"
       >
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            flexWrap: "wrap",
-            marginBottom: 12,
-          }}
-        >
-          {(Object.keys(ROTULO_BASE) as (keyof typeof ROTULO_BASE)[]).map(
-            (b) => (
-              <button
-                aria-pressed={view.decisao.baseLegal === b}
-                className="btn"
-                disabled={!podeEscrever}
-                key={b}
-                onClick={() => decidir({ baseLegal: b })}
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: 99,
-                  border: `1px solid ${
-                    view.decisao.baseLegal === b
-                      ? "rgba(var(--accent-rgb),.45)"
-                      : "var(--hairline)"
-                  }`,
-                  background:
-                    view.decisao.baseLegal === b
-                      ? "var(--accent-soft)"
-                      : "var(--surface-2)",
-                  fontSize: "var(--fs-nota)",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-                type="button"
-              >
-                {ROTULO_BASE[b]}
-              </button>
-            )
-          )}
-        </div>
+        <EscolhaDeBaseLegal
+          atual={view.decisao.baseLegal}
+          onDecidir={(baseLegal) => decidir({ baseLegal })}
+          podeEscrever={podeEscrever}
+        />
         <label
           style={{
             display: "flex",

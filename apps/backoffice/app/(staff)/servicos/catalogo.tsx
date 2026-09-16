@@ -9,6 +9,7 @@ import {
   setServiceAtivoAction,
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
 /**
@@ -25,6 +26,46 @@ const MODALIDADES = [
   { valor: "RETAINER", rotulo: "Retainer" },
   { valor: "LICENCA", rotulo: "Licença" },
 ];
+
+/** Tirar do catálogo some da lista de escolha de quem monta proposta no
+ *  mesmo instante — passa pela barreira. Devolver tem volta e continua um
+ *  clique. Os dois ficam fora do <Link> (irmãos, não filhos): é o que os
+ *  mantém fora da navegação — `stopPropagation` não bastaria. */
+function acaoDaLinha(
+  s: ServiceRow,
+  onAlternar: (id: string, ativo: boolean) => void
+) {
+  if (s.ativo) {
+    return (
+      <ConfirmarAcao
+        alvo={`${s.codigo} · ${s.nome}`}
+        consequencia="Sai da lista de escolha do gerador de proposta agora; propostas já emitidas não mudam."
+        onConfirmar={() => onAlternar(s.id, false)}
+        rotulo="Tirar do catálogo"
+        tom="red"
+      />
+    );
+  }
+  return (
+    <button
+      className="btn"
+      onClick={() => onAlternar(s.id, true)}
+      style={{
+        padding: "4px 10px",
+        borderRadius: "var(--r-sm)",
+        border: "1px solid var(--hairline)",
+        background: "none",
+        color: "var(--ink-muted)",
+        fontSize: "var(--fs-nota)",
+        fontWeight: 600,
+        cursor: "pointer",
+      }}
+      type="button"
+    >
+      Devolver
+    </button>
+  );
+}
 
 /** Uma linha do catálogo. Extraída porque a linha carrega toda a decisão
  *  visual — inativo esmaecido, preço com unidade, ação conforme o papel — e
@@ -93,25 +134,7 @@ function LinhaServico({
         </span>
       </Link>
       {podeEscrever ? (
-        <button
-          className="btn"
-          // `stopPropagation` não basta aqui: o alvo é irmão do <Link>, não
-          // filho. O que o mantém fora da navegação é estar fora dele.
-          onClick={() => onAlternar(s.id, !s.ativo)}
-          style={{
-            padding: "4px 10px",
-            borderRadius: "var(--r-sm)",
-            border: "1px solid var(--hairline)",
-            background: "none",
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-nota)",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-          type="button"
-        >
-          {s.ativo ? "Tirar do catálogo" : "Devolver"}
-        </button>
+        acaoDaLinha(s, onAlternar)
       ) : (
         <Badge tone={s.ativo ? "green" : "neutral"}>
           {s.ativo ? "Ativo" : "Fora"}

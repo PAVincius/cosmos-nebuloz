@@ -8,6 +8,7 @@ import {
   submitProposalAction,
 } from "@/app/actions/proposals";
 import { BotaoPrimario, Erro } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 
@@ -116,29 +117,28 @@ function LinhaProposta({
         {ROTULO[p.status] ?? p.status}
       </Badge>
       {podeEnviar ? (
-        <button
-          className="btn"
-          // `stopPropagation` porque a linha inteira abre a proposta: sem
-          // isto, enviar também navegaria, e a pessoa sairia da lista sem
-          // saber se o envio aconteceu.
-          onClick={(e) => {
-            e.stopPropagation();
-            onEnviar(p.id);
-          }}
-          style={{
-            padding: "4px 10px",
-            borderRadius: "var(--r-sm)",
-            border: "1px solid var(--hairline)",
-            background: "none",
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-nota)",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-          type="button"
+        // `stopPropagation` (clique e teclado) porque a linha inteira abre a
+        // proposta: sem isto, cada passo da barreira também navegaria, e a
+        // pessoa sairia da lista sem saber se o envio aconteceu. Enviar é sem
+        // volta — a barreira é a mesma do gerador.
+        // biome-ignore lint/a11y/noStaticElementInteractions: só isola os eventos da barreira do `<li role=button>` que a envolve; não aciona nada — a onda de a11y refaz a linha
+        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: idem
+        <span
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
         >
-          {acimaDoLimite ? "Pedir aprovação" : "Enviar"}
-        </button>
+          <ConfirmarAcao
+            alvo={`${p.titulo} · ${p.cliente}`}
+            consequencia={
+              acimaDoLimite
+                ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
+                : "O cliente recebe esta versão; não há como editar depois de enviada."
+            }
+            onConfirmar={() => onEnviar(p.id)}
+            rotulo={acimaDoLimite ? "Pedir aprovação" : "Enviar"}
+            tom="accent"
+          />
+        </span>
       ) : null}
     </li>
   );

@@ -10,6 +10,7 @@ import {
 } from "@/app/actions/engagements";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
 
@@ -98,26 +99,39 @@ function LinhaEngajamento({
       {/* Só as transições que a action aceita. Oferecer uma que ela recusa é
           pior que não oferecer nada. */}
       {podeEscrever
-        ? e.proximos.map((p) => (
-            <button
-              className="btn"
-              key={p}
-              onClick={() => onStatus(e.id, p as StatusEngajamento)}
-              style={{
-                padding: "4px 9px",
-                borderRadius: "var(--r-sm)",
-                border: "1px solid var(--hairline)",
-                background: "none",
-                color: "var(--ink-muted)",
-                fontSize: "var(--fs-nota)",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-              type="button"
-            >
-              → {ROTULO_STATUS[p as StatusEngajamento] ?? p}
-            </button>
-          ))
+        ? e.proximos.map((p) =>
+            p === "CANCELADO" ? (
+              // Cancelado é estado final: a action não deixa reabrir. É a
+              // única transição da linha que passa pela barreira.
+              <ConfirmarAcao
+                alvo={`${e.codigo} · ${e.nome}`}
+                consequencia="O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro."
+                key={p}
+                onConfirmar={() => onStatus(e.id, "CANCELADO")}
+                rotulo="→ Cancelado"
+                tom="red"
+              />
+            ) : (
+              <button
+                className="btn"
+                key={p}
+                onClick={() => onStatus(e.id, p as StatusEngajamento)}
+                style={{
+                  padding: "4px 9px",
+                  borderRadius: "var(--r-sm)",
+                  border: "1px solid var(--hairline)",
+                  background: "none",
+                  color: "var(--ink-muted)",
+                  fontSize: "var(--fs-nota)",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                → {ROTULO_STATUS[p as StatusEngajamento] ?? p}
+              </button>
+            )
+          )
         : null}
     </li>
   );

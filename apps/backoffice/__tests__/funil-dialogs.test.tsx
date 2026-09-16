@@ -77,16 +77,35 @@ function montarLeadDialog(lead: LeadRow | null, podeEscrever = true) {
 }
 
 describe("LeadDialog", () => {
-  it("lead ativo em Avaliação mostra Converter em proposta e chama onConverter", () => {
+  // Converter é sem volta: o servidor nunca mais deixa mover o lead. Passa
+  // pela barreira — o primeiro clique só pergunta, com o lead escrito.
+  it("lead ativo em Avaliação mostra Converter em proposta; converte só depois de confirmar", () => {
     const lead = leadFactory({ estagio: "EVALUATION", id: "lead-2" });
     const { onConverter } = montarLeadDialog(lead);
 
-    const botao = screen.getByRole("button", {
-      name: "Converter em proposta",
-    });
-    fireEvent.click(botao);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Converter em proposta" })
+    );
+
+    expect(onConverter).not.toHaveBeenCalled();
+    expect(screen.getByText(/sai do funil e vira rascunho/)).toBeTruthy();
+    expect(screen.getAllByText(/Meridian Corp/).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     expect(onConverter).toHaveBeenCalledWith("lead-2");
+  });
+
+  it("Voltar na conversão não converte", () => {
+    const lead = leadFactory({ estagio: "EVALUATION", id: "lead-2" });
+    const { onConverter } = montarLeadDialog(lead);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Converter em proposta" })
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
+
+    expect(onConverter).not.toHaveBeenCalled();
   });
 
   it("Marcar perdido abre chips e textarea; Registrar perda só libera com motivo e nota válida", () => {

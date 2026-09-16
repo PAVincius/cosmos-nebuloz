@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 
 /**
@@ -132,8 +133,8 @@ export function NewClientForm({
               fontWeight: 600,
             }}
           >
-            Seu papel é MEMBER — este formulário está em somente leitura.
-            assertCanWrite recusaria a action.
+            Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa
+            fazer esta ação.
           </span>
         </div>
       )}
@@ -310,13 +311,22 @@ export function NewClientForm({
         </fieldset>
 
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <WriteButton
-            canWrite={canWrite}
-            disabled={!podeEnviar}
-            onClick={submit}
-          >
-            {pending ? "Provisionando…" : "Provisionar tenant"}
-          </WriteButton>
+          {/* Provisionar chega ao cliente em segundos e não tem desfazer — é
+              o caso que `ConfirmarAcao` cita no próprio comentário. O alvo é
+              o slug ao vivo: se o nome saiu errado, é aqui que se vê. */}
+          {canWrite ? (
+            <ConfirmarAcao
+              alvo={slug || "—"}
+              consequencia="O cliente ganha acesso em segundos; módulos marcados nascem ativos."
+              desabilitado={!podeEnviar}
+              executando={pending}
+              onConfirmar={submit}
+              rotulo={pending ? "Provisionando…" : "Provisionar tenant"}
+              tom="accent"
+            />
+          ) : (
+            <WriteButton canWrite={false}>Provisionar tenant</WriteButton>
+          )}
         </div>
       </SectionCard>
     </div>
