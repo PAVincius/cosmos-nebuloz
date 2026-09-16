@@ -50,9 +50,8 @@ describe("PolicyDraftPreview", () => {
     fireEvent.click(screen.getByText("Gerar rascunho"));
 
     const botao = await screen.findByText(/Gerando rascunho/);
-    expect(botao).toBeTruthy();
-    const wrapper = botao.closest("span");
-    expect(wrapper?.style.pointerEvents).toBe("none");
+    const button = botao.closest("button");
+    expect(button?.disabled).toBe(true);
   });
 
   it("sucesso mostra o corpo e Aceitar salva com a primeira exigência fundamentada", async () => {
@@ -214,11 +213,29 @@ describe("PolicyDraftPreview", () => {
       />
     );
 
-    const botao = screen.getByText("Gerar rascunho");
-    const wrapper = botao.closest("span");
-    expect(wrapper?.style.pointerEvents).toBe("none");
-    expect(wrapper?.style.opacity).toBe("0.45");
-    expect(wrapper?.title).toBe("Somente Legal ou Compliance edita seção");
+    const botao = screen.getByText("Gerar rascunho").closest("button");
+    expect(botao?.disabled).toBe(true);
+    expect(
+      screen.getByText("Somente Legal ou Compliance edita seção")
+    ).toBeTruthy();
+  });
+
+  it("Gerar rascunho desabilitado não dispara a action via clique ou Enter (M6, mutação: voltar ao span → falha)", () => {
+    render(
+      <PolicyDraftPreview
+        bodyAtual=""
+        canEdit={false}
+        onAccepted={vi.fn()}
+        sectionId="sec-1"
+        sectionName="Classificação de dados"
+      />
+    );
+
+    const botao = screen.getByText("Gerar rascunho").closest("button");
+    fireEvent.click(botao as HTMLButtonElement);
+    fireEvent.keyDown(botao as HTMLButtonElement, { key: "Enter" });
+
+    expect(gerarMock).not.toHaveBeenCalled();
   });
 
   it("sem exigência fundamentada (grounded vazio), Aceitar rascunho fica desabilitado (M9)", async () => {
@@ -243,12 +260,39 @@ describe("PolicyDraftPreview", () => {
     fireEvent.click(screen.getByText("Gerar rascunho"));
     await screen.findByDisplayValue("Rascunho sem exigência.");
 
-    const botao = screen.getByText("Aceitar rascunho");
-    const wrapper = botao.closest("span");
-    expect(wrapper?.style.pointerEvents).toBe("none");
-    expect(wrapper?.style.opacity).toBe("0.45");
-    expect(wrapper?.title).toBe(
-      "Sem exigência para fundamentar — cadastre cobertura"
+    const botao = screen.getByText("Aceitar rascunho").closest("button");
+    expect(botao?.disabled).toBe(true);
+    expect(
+      screen.getByText("Sem exigência para fundamentar — cadastre cobertura")
+    ).toBeTruthy();
+  });
+
+  it("Aceitar rascunho desabilitado não dispara saveGeneratedDraft via clique ou Enter (M9, mutação: voltar ao span → falha)", async () => {
+    gerarMock.mockResolvedValue({
+      ok: true,
+      data: {
+        body: "Rascunho sem exigência.",
+        grounded: [],
+        fontes: { casos: 1, fornecedores: 0, exigencias: 0 },
+      },
+    });
+
+    render(
+      <PolicyDraftPreview
+        bodyAtual=""
+        canEdit={true}
+        onAccepted={vi.fn()}
+        sectionId="sec-1"
+        sectionName="Classificação de dados"
+      />
     );
+    fireEvent.click(screen.getByText("Gerar rascunho"));
+    await screen.findByDisplayValue("Rascunho sem exigência.");
+
+    const botao = screen.getByText("Aceitar rascunho").closest("button");
+    fireEvent.click(botao as HTMLButtonElement);
+    fireEvent.keyDown(botao as HTMLButtonElement, { key: "Enter" });
+
+    expect(salvarMock).not.toHaveBeenCalled();
   });
 });
