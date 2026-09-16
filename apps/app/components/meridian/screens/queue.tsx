@@ -59,7 +59,11 @@ export default function QueueScreen() {
         <SectionCard
           bodyStyle={{ display: "flex", flexDirection: "column", gap: 9 }}
           icon="gavel"
-          title={`${items.length} eixo(s) aguardando julgamento`}
+          title={
+            items.length === 1
+              ? "1 eixo aguardando julgamento"
+              : `${items.length} eixos aguardando julgamento`
+          }
           tone="amber"
         >
           {items.map((it) => (

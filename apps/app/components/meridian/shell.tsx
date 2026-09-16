@@ -12,13 +12,24 @@
 //  2. O rodapé da sidebar carrega as regras do V1 — append-only, auditoria de
 //     evidência, assistência obrigatória do consultor. São as três invariantes
 //     que explicam por que a tela pede rationale e não deixa apagar nada.
+//
+// Abaixo de 1024px a sidebar vira gaveta — mesmo mecanismo do CosmosShell
+// (fixed + translateX, scrim, botão de menu, Escape fecha, foco volta ao
+// gatilho). A regra visual mora em meridian.css; aqui só o estado.
 
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { type ReactNode, useCallback, useMemo } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Eyebrow } from "./base";
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL" | "MERIDIAN";
@@ -149,7 +160,7 @@ function Brand() {
         MERIDIAN
       </span>
       <span
-        className="mono"
+        className="mono meridian-brand-chip"
         style={{
           fontSize: 9.5,
           fontWeight: 700,
@@ -174,7 +185,14 @@ function NavRow({
   active,
   count,
   comingSoon,
-}: NavItem & { active: boolean; count?: number; comingSoon: boolean }) {
+  onNavigate,
+}: NavItem & {
+  active: boolean;
+  count?: number;
+  comingSoon: boolean;
+  /** Fecha a gaveta no celular. No desktop não muda nada visível. */
+  onNavigate: () => void;
+}) {
   const body = (
     <>
       <Icon name={icon} size={15.5} strokeWidth={active ? 2.1 : 1.9} />
@@ -229,6 +247,7 @@ function NavRow({
       aria-current={active ? "page" : undefined}
       className="btn navitem"
       href={href(id)}
+      onClick={onNavigate}
       style={style}
     >
       {body}
@@ -246,14 +265,13 @@ function AppSwitcher({ modules }: { modules: ModuleId[] }) {
     <div style={{ display: "flex", gap: 6 }}>
       {others.map((m) => (
         <Link
-          className="btn navitem"
+          className="btn navitem meridian-switch"
           href={MODULE_META[m].href}
           key={m}
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            padding: "5px 10px",
             borderRadius: 99,
             border: "1px solid var(--hairline)",
             color: "var(--ink-subtle)",
@@ -263,7 +281,7 @@ function AppSwitcher({ modules }: { modules: ModuleId[] }) {
           title={MODULE_META[m].blurb}
         >
           <Icon name={MODULE_META[m].icon} size={13} />
-          {MODULE_META[m].label}
+          <span className="meridian-switch-label">{MODULE_META[m].label}</span>
         </Link>
       ))}
     </div>
@@ -289,11 +307,69 @@ export function MeridianShell({
     (id: string) => !screenIdSet.has(id),
     [screenIdSet]
   );
+  const [navOpen, setNavOpen] = useState(false);
+  const navButtonRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusRef = useRef(false);
+
+  const closeNav = useCallback(() => {
+    setNavOpen((wasOpen) => {
+      // Devolve o foco ao gatilho: sem isso, fechar por Escape ou pelo scrim
+      // deixa o teclado no início do documento. Só marca a intenção — o botão
+      // vive dentro do `inert={navOpen}` abaixo, que só cai no commit, e
+      // `focus()` em subárvore inerte é ignorado em silêncio. Quem foca de
+      // fato é o efeito, já com o `inert` removido.
+      if (wasOpen) {
+        restoreFocusRef.current = true;
+      }
+      return false;
+    });
+  }, []);
+
   const navigate = useCallback(
-    (id: string, param?: string) =>
-      router.push(param ? `${href(id)}/${param}` : href(id)),
+    (id: string, param?: string) => {
+      setNavOpen(false);
+      router.push(param ? `${href(id)}/${param}` : href(id));
+    },
     [router]
   );
+
+  useEffect(() => {
+    if (!navOpen) {
+      if (restoreFocusRef.current) {
+        restoreFocusRef.current = false;
+        navButtonRef.current?.focus();
+      }
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeNav();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    // `focus()` em elemento `visibility: hidden` é ignorado, e fechada a
+    // gaveta é exatamente isso — o `[data-open="true"]` só vira `visible`
+    // alguns quadros depois. Espera a visibilidade em vez de contar quadros;
+    // o teto evita laço eterno se a regra mudar.
+    let frame = 0;
+    let attemptsLeft = 20;
+    const focusDrawer = () => {
+      const drawer = document.getElementById("meridian-drawer");
+      if (drawer && getComputedStyle(drawer).visibility === "visible") {
+        drawer.focus();
+        return;
+      }
+      if (attemptsLeft > 0) {
+        attemptsLeft -= 1;
+        frame = requestAnimationFrame(focusDrawer);
+      }
+    };
+    frame = requestAnimationFrame(focusDrawer);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [navOpen, closeNav]);
 
   const [title, parent] = TITLES[activeId] ?? ["Meridian", "Nebuloz"];
 
@@ -301,18 +377,23 @@ export function MeridianShell({
     <NavCtx.Provider value={{ navigate, isComingSoon }}>
       <div className="meridian-root grain" style={{ display: "flex" }}>
         <nav
-          className="scroll"
+          className="scroll meridian-sidebar"
+          data-open={navOpen ? "true" : "false"}
+          id="meridian-drawer"
           style={{
             width: 232,
             flexShrink: 0,
             borderRight: "1px solid var(--hairline)",
             background: "var(--sidebar)",
-            padding: "16px 10px",
+            // 72px embaixo: o lançador global "N" do app é fixo no canto
+            // inferior esquerdo e cobria a última linha de "Regras do V1".
+            padding: "16px 10px 72px",
             display: "flex",
             flexDirection: "column",
             gap: 20,
             overflowY: "auto",
           }}
+          tabIndex={-1}
         >
           {NAV.map((sec) => (
             <div
@@ -329,6 +410,7 @@ export function MeridianShell({
                   id={it.id}
                   key={it.id}
                   label={it.label}
+                  onNavigate={closeNav}
                 />
               ))}
             </div>
@@ -359,8 +441,19 @@ export function MeridianShell({
             </div>
           </div>
         </nav>
+        {navOpen && (
+          <button
+            aria-label="Fechar navegação"
+            className="meridian-scrim"
+            onClick={closeNav}
+            type="button"
+          />
+        )}
 
         <div
+          // `inert` só tem efeito abaixo de 1024px, onde a gaveta flutua; no
+          // desktop `navOpen` nunca liga, então isto nunca desativa nada ali.
+          inert={navOpen}
           style={{
             flex: 1,
             display: "flex",
@@ -369,20 +462,43 @@ export function MeridianShell({
           }}
         >
           <header
+            className="meridian-topbar"
             style={{
               display: "flex",
               alignItems: "center",
               gap: 14,
               height: 56,
               flexShrink: 0,
-              padding: "0 20px",
               borderBottom: "1px solid var(--hairline)",
               background: "var(--sidebar)",
             }}
           >
+            <button
+              aria-controls="meridian-drawer"
+              aria-expanded={navOpen}
+              aria-label="Abrir navegação"
+              className="meridian-menu-btn btn navitem"
+              onClick={() => setNavOpen(true)}
+              ref={navButtonRef}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                width: 40,
+                height: 40,
+                padding: 0,
+                flexShrink: 0,
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-sm)",
+                background: "var(--surface)",
+                color: "var(--ink-muted)",
+              }}
+              type="button"
+            >
+              <Icon name="panelLeft" size={18} />
+            </button>
             <Brand />
             <span
-              className="mono"
+              className="mono meridian-topbar-crumb"
               style={{
                 fontSize: 11,
                 color: "var(--ink-faint)",
@@ -395,7 +511,7 @@ export function MeridianShell({
             <div style={{ flex: 1 }} />
             <AppSwitcher modules={modules} />
             <span
-              className="mono"
+              className="mono meridian-topbar-role"
               style={{
                 fontSize: 11,
                 color: "var(--ink-subtle)",
@@ -414,11 +530,10 @@ export function MeridianShell({
           </header>
 
           <main
-            className="scroll bg-grid"
+            className="scroll meridian-content bg-grid"
             style={{
               flex: 1,
               overflowY: "auto",
-              padding: "24px 28px 48px",
             }}
           >
             <div style={{ maxWidth: 1280, margin: "0 auto" }}>{children}</div>

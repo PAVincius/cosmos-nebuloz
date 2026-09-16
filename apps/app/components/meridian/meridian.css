@@ -562,6 +562,106 @@
   }
 }
 
+/* ============ Casca responsiva — gaveta abaixo de 1024px ============
+   Mesmo mecanismo do cosmos.css (.cosmos-sidebar / .cosmos-scrim /
+   .cosmos-menu-btn), reescopado. Antes disto a sidebar de 232px era fixa em
+   qualquer largura: num celular sobravam ~140px para o conteúdo, e o título
+   do assessment aparecia como "Asse".
+
+   Padding do topbar e do conteúdo vive aqui, não em style inline: inline
+   vence stylesheet, e a media query abaixo precisa poder sobrepor. */
+.meridian-root .meridian-scrim,
+.meridian-root .meridian-menu-btn {
+  display: none;
+}
+.meridian-root .meridian-topbar {
+  padding: 0 20px;
+}
+.meridian-root .meridian-content {
+  padding: 24px 28px 48px;
+}
+.meridian-root .meridian-switch {
+  padding: 5px 10px;
+}
+
+@media (max-width: 1023px) {
+  .meridian-root .meridian-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 0.26s cubic-bezier(0.2, 0.8, 0.3, 1),
+      visibility 0.26s;
+    box-shadow: 0 0 60px -12px rgba(0, 0, 0, 0.5);
+  }
+  .meridian-root .meridian-sidebar[data-open="true"] {
+    visibility: visible;
+    transform: translateX(0);
+  }
+  /* A gaveta recebe foco programático ao abrir, para o Tab seguinte cair no
+     primeiro item. O contêiner não é alvo visual — o anel de foco fica para
+     os links dentro dele. */
+  .meridian-root .meridian-sidebar:focus-visible {
+    outline: none;
+  }
+  .meridian-root .meridian-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: var(--scrim);
+    border: 0;
+    padding: 0;
+    animation: meridian-scrimIn 0.2s ease;
+  }
+  .meridian-root .meridian-menu-btn {
+    display: inline-flex;
+  }
+  .meridian-root .meridian-topbar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+  /* Papel · nome, o breadcrumb e o chip de versão não cabem ao lado da marca
+     num celular; a identidade continua no avatar e o contexto no título da
+     tela. */
+  .meridian-root .meridian-topbar-role,
+  .meridian-root .meridian-topbar-crumb,
+  .meridian-root .meridian-brand-chip,
+  .meridian-root .meridian-switch-label {
+    display: none;
+  }
+  /* Sem o rótulo, o pill do switcher é só o ícone; o `title` continua
+     dizendo qual módulo é. */
+  .meridian-root .meridian-switch {
+    padding: 7px;
+  }
+  .meridian-root .meridian-content {
+    padding: 16px 16px 32px;
+  }
+}
+
+@keyframes meridian-scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meridian-root .meridian-sidebar {
+    transition: none;
+  }
+  .meridian-root .meridian-scrim {
+    animation: none;
+  }
+}
+
 /* Pulso radial disparado no hover de card de eixo — só o Meridian usa. */
 @keyframes meridian-merPulse {
   from {

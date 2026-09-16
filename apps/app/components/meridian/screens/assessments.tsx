@@ -168,177 +168,187 @@ export default function AssessmentsScreen() {
             />
           </div>
         ) : (
-          <>
-            <TableHead
-              cols={COLS}
-              labels={[
-                "Organização",
-                "Template",
-                "Respostas",
-                "Composite por eixo",
-                "Prazo",
-                { t: "Status", align: "right" },
-              ]}
-            />
-            {rows.map((a, i) => (
-              <TableRow
+          <div className="scroll" style={{ overflowX: "auto" }}>
+            <div style={{ minWidth: 760 }}>
+              <TableHead
                 cols={COLS}
-                key={a.id}
-                label={`Abrir assessment ${a.orgName}`}
-                last={i === rows.length - 1}
-                onClick={() => router.push(`/meridian/assessment/${a.id}`)}
-              >
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    minWidth: 0,
-                  }}
+                labels={[
+                  "Organização",
+                  "Template",
+                  "Respostas",
+                  "Composite por eixo",
+                  "Prazo",
+                  { t: "Status", align: "right" },
+                ]}
+              />
+              {rows.map((a, i) => (
+                <TableRow
+                  cols={COLS}
+                  key={a.id}
+                  label={`Abrir assessment ${a.orgName}`}
+                  last={i === rows.length - 1}
+                  onClick={() => router.push(`/meridian/assessment/${a.id}`)}
                 >
-                  <Avatar name={a.orgName} size={28} tone="accent" />
-                  <span style={{ minWidth: 0 }}>
-                    <span
-                      style={{
-                        display: "block",
-                        fontSize: 12.5,
-                        fontWeight: 700,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {a.orgName}
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Avatar name={a.orgName} size={28} tone="accent" />
+                    <span style={{ minWidth: 0 }}>
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {a.orgName}
+                      </span>
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: 10,
+                          color: "var(--ink-faint)",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {a.code} · {a.sector} · {a.sizeBand}
+                        {a.reassessmentOfCode
+                          ? ` · re-run de ${a.reassessmentOfCode}`
+                          : ""}
+                      </span>
+                    </span>
+                  </span>
+
+                  <span
+                    className="mono"
+                    style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
+                  >
+                    {a.templateVersion}
+                  </span>
+
+                  <span
+                    style={{ display: "flex", alignItems: "center", gap: 7 }}
+                  >
+                    <span style={{ flex: 1 }}>
+                      <Progress
+                        height={5}
+                        tone="accent"
+                        value={
+                          a.responses.total
+                            ? Math.round(
+                                (a.responses.done / a.responses.total) * 100
+                              )
+                            : 0
+                        }
+                      />
                     </span>
                     <span
+                      className="mono"
                       style={{
-                        display: "block",
-                        fontSize: 10,
+                        fontSize: 10.5,
                         color: "var(--ink-faint)",
-                        fontWeight: 600,
+                        flexShrink: 0,
                       }}
                     >
-                      {a.code} · {a.sector} · {a.sizeBand}
-                      {a.reassessmentOfCode
-                        ? ` · re-run de ${a.reassessmentOfCode}`
-                        : ""}
+                      {a.responses.done}/{a.responses.total}
                     </span>
                   </span>
-                </span>
 
-                <span
-                  className="mono"
-                  style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
-                >
-                  {a.templateVersion}
-                </span>
-
-                <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <span style={{ flex: 1 }}>
-                    <Progress
-                      height={5}
-                      tone="accent"
-                      value={
-                        a.responses.total
-                          ? Math.round(
-                              (a.responses.done / a.responses.total) * 100
-                            )
-                          : 0
-                      }
-                    />
+                  <span
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    {a.scores && a.composite !== null ? (
+                      <>
+                        <span
+                          className="display"
+                          style={{
+                            fontSize: 21,
+                            fontWeight: 700,
+                            letterSpacing: "-.02em",
+                            color: `var(--${scoreTone(a.composite)}-text)`,
+                            width: 34,
+                            textAlign: "right",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {a.composite}
+                        </span>
+                        <span
+                          style={{
+                            display: "flex",
+                            gap: 4,
+                            alignItems: "flex-end",
+                            height: 24,
+                          }}
+                        >
+                          {AXIS_IDS.map((x) => {
+                            const s = a.scores?.find((v) => v.axis === x);
+                            if (!s) {
+                              return null;
+                            }
+                            const v = finalOf(s);
+                            return (
+                              <span
+                                key={x}
+                                style={{
+                                  width: 10,
+                                  height: Math.max(4, (v / 100) * 24),
+                                  borderRadius: 2,
+                                  background: `var(--${scoreTone(v)})`,
+                                  opacity: 0.85,
+                                }}
+                                title={`${AXES[x].label}: ${v}`}
+                              />
+                            );
+                          })}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          color: "var(--ink-faint)",
+                          fontWeight: 500,
+                        }}
+                      >
+                        sem scoring
+                      </span>
+                    )}
                   </span>
+
+                  {/* Data em linha única: "12 de out. de 2026" quebrava em duas
+                    linhas numa coluna de 110px e desalinhava a linha inteira. */}
                   <span
                     className="mono"
                     style={{
-                      fontSize: 10.5,
-                      color: "var(--ink-faint)",
-                      flexShrink: 0,
+                      fontSize: 11,
+                      color: "var(--ink-muted)",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    {a.responses.done}/{a.responses.total}
+                    {dateBR(a.deadline)}
                   </span>
-                </span>
 
-                <span
-                  style={{ display: "flex", alignItems: "center", gap: 10 }}
-                >
-                  {a.scores && a.composite !== null ? (
-                    <>
-                      <span
-                        className="display"
-                        style={{
-                          fontSize: 21,
-                          fontWeight: 700,
-                          letterSpacing: "-.02em",
-                          color: `var(--${scoreTone(a.composite)}-text)`,
-                          width: 34,
-                          textAlign: "right",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {a.composite}
-                      </span>
-                      <span
-                        style={{
-                          display: "flex",
-                          gap: 4,
-                          alignItems: "flex-end",
-                          height: 24,
-                        }}
-                      >
-                        {AXIS_IDS.map((x) => {
-                          const s = a.scores?.find((v) => v.axis === x);
-                          if (!s) {
-                            return null;
-                          }
-                          const v = finalOf(s);
-                          return (
-                            <span
-                              key={x}
-                              style={{
-                                width: 10,
-                                height: Math.max(4, (v / 100) * 24),
-                                borderRadius: 2,
-                                background: `var(--${scoreTone(v)})`,
-                                opacity: 0.85,
-                              }}
-                              title={`${AXES[x].label}: ${v}`}
-                            />
-                          );
-                        })}
-                      </span>
-                    </>
-                  ) : (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        color: "var(--ink-faint)",
-                        fontWeight: 500,
-                      }}
+                  <span style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Badge
+                      dot={a.status === "COLLECTING"}
+                      tone={STATUS_META[a.status].tone}
                     >
-                      sem scoring
-                    </span>
-                  )}
-                </span>
-
-                <span
-                  className="mono"
-                  style={{ fontSize: 11, color: "var(--ink-muted)" }}
-                >
-                  {dateBR(a.deadline)}
-                </span>
-
-                <span style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Badge
-                    dot={a.status === "COLLECTING"}
-                    tone={STATUS_META[a.status].tone}
-                  >
-                    {STATUS_META[a.status].label}
-                  </Badge>
-                </span>
-              </TableRow>
-            ))}
-          </>
+                      {STATUS_META[a.status].label}
+                    </Badge>
+                  </span>
+                </TableRow>
+              ))}
+            </div>
+          </div>
         )}
       </SectionCard>
     </div>
