@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -209,15 +210,22 @@ function Conteudo({
   return (
     <>
       <DialogHeader>
-        <DialogTitle style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <DialogTitle
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: "var(--fs-forte)",
+          }}
+        >
           {info.rotulo}
           <Badge tone={info.tom}>
             {cfg.pesoPercent}% · teto {cfg.tetoDias} d
           </Badge>
         </DialogTitle>
-        <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+        <DialogDescription style={{ fontSize: 12, color: "var(--ink-faint)" }}>
           {info.descricao}
-        </span>
+        </DialogDescription>
       </DialogHeader>
 
       {erroCarga ? <Erro>{erroCarga}</Erro> : null}

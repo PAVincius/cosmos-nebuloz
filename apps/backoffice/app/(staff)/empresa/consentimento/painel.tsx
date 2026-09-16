@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
-import { type FocusEvent, useCallback, useState } from "react";
+import { type FocusEvent, useCallback, useEffect, useState } from "react";
 import {
   type ConsentimentoView,
   lerConsentimento,
@@ -59,6 +59,64 @@ function gridColunaDoAviso(peca: PecaDoAviso): string | undefined {
     return "1 / -1";
   }
   return;
+}
+
+const COPIADO_MS = 2000;
+
+/** "Copiar" que diz se copiou. A região `aria-live` existe desde o primeiro
+ *  render (vazia): leitor de tela só anuncia mudança em região que já estava
+ *  na árvore. Na recusa do navegador — aba sem foco, permissão negada — a
+ *  pessoa colaria vazio sem saber; a mensagem manda selecionar o texto. */
+function BotaoCopiar({ texto }: { texto: string }) {
+  const [estado, setEstado] = useState<"ocioso" | "copiado" | "falhou">(
+    "ocioso"
+  );
+
+  useEffect(() => {
+    if (estado !== "copiado") {
+      return;
+    }
+    const t = setTimeout(() => setEstado("ocioso"), COPIADO_MS);
+    return () => clearTimeout(t);
+  }, [estado]);
+
+  const copiar = () => {
+    navigator.clipboard
+      .writeText(texto)
+      .then(() => setEstado("copiado"))
+      .catch(() => setEstado("falhou"));
+  };
+
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <output
+        aria-live="polite"
+        style={{
+          fontSize: "var(--fs-nota)",
+          color: estado === "falhou" ? "var(--red-text)" : "var(--ink-muted)",
+        }}
+      >
+        {estado === "copiado" ? "Copiado" : null}
+        {estado === "falhou" ? "Não deu para copiar — selecione o texto" : null}
+      </output>
+      <button
+        className="btn"
+        onClick={copiar}
+        style={{
+          background: "none",
+          border: "1px solid var(--hairline)",
+          borderRadius: "var(--r-sm)",
+          padding: "2px 8px",
+          fontSize: "var(--fs-nota)",
+          cursor: "pointer",
+          color: "var(--ink-muted)",
+        }}
+        type="button"
+      >
+        Copiar
+      </button>
+    </span>
+  );
 }
 
 /** Marcador destacado no texto: `[prazo]` em cream — o único sinal quente da
@@ -382,22 +440,7 @@ export function Painel({
                 <strong style={{ fontSize: "var(--fs-base)" }}>
                   {a.titulo}
                 </strong>
-                <button
-                  className="btn"
-                  onClick={() => navigator.clipboard.writeText(a.texto)}
-                  style={{
-                    background: "none",
-                    border: "1px solid var(--hairline)",
-                    borderRadius: "var(--r-sm)",
-                    padding: "2px 8px",
-                    fontSize: "var(--fs-nota)",
-                    cursor: "pointer",
-                    color: "var(--ink-muted)",
-                  }}
-                  type="button"
-                >
-                  Copiar
-                </button>
+                <BotaoCopiar texto={a.texto} />
               </div>
               {a.nota ? (
                 <div

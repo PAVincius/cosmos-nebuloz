@@ -175,4 +175,33 @@ describe("ConfirmarAcao", () => {
       expect(onConfirmar).not.toHaveBeenCalled();
     });
   });
+
+  // Ao abrir a pergunta o gatilho desmonta — e o foco, que estava nele, caía
+  // no `body`. Quem navega por teclado (persona Sam) perdia o lugar exatamente
+  // no passo em que precisa decidir. O foco vai para "Voltar" ao abrir e
+  // volta ao gatilho ao desistir.
+  describe("foco", () => {
+    it("ao abrir a pergunta, o foco está em Voltar", () => {
+      montar();
+      const gatilho = screen.getByRole("button", { name: /Cancelar COSMOS/ });
+      gatilho.focus();
+
+      fireEvent.click(gatilho);
+
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: /Voltar/ })
+      );
+    });
+
+    it("ao Voltar, o foco volta ao gatilho", () => {
+      montar();
+      fireEvent.click(screen.getByRole("button", { name: /Cancelar COSMOS/ }));
+
+      fireEvent.click(screen.getByRole("button", { name: /Voltar/ }));
+
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: /Cancelar COSMOS/ })
+      );
+    });
+  });
 });

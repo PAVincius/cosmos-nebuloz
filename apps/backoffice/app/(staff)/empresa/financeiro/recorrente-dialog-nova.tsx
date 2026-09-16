@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -171,7 +172,13 @@ function FormularioNova({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Nova assinatura</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Nova assinatura
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Cria a assinatura recorrente de um cliente: plano, valor mensal,
+          franquia de créditos e data de início.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

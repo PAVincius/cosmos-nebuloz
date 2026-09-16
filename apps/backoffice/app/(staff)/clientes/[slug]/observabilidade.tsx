@@ -1,3 +1,4 @@
+import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import type {
   AuditRow,
@@ -160,6 +161,9 @@ export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
                   gap: 8,
                 }}
               >
+                {/* Mesmo chevron do Audit Explorer: o `listStyle: none`
+                    apagou o triângulo nativo. Gira em `details[open]`. */}
+                <Icon className="bo-chevron" name="chevronRight" size={14} />
                 <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
                   {e.action}
                 </span>

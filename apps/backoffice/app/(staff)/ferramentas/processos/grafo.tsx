@@ -66,7 +66,11 @@ function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
 }
 
-const SELETOR_INTERATIVO = "button, select, a, input, textarea, [tabindex]";
+/** O próprio canvas é focável (`tabIndex=0`, ver abaixo) e não é ativado por
+ *  Space — fica fora do seletor para o "modo mão" continuar funcionando com
+ *  ele focado. */
+const SELETOR_INTERATIVO =
+  "button, select, a, input, textarea, [tabindex]:not([data-mapa-canvas])";
 
 /** Space é a tecla de ativação de `<button>` (e afins) — sequestrar o evento
  *  pro "modo mão" enquanto um desses tem foco impede ativar "Novo processo",
@@ -74,6 +78,16 @@ const SELETOR_INTERATIVO = "button, select, a, input, textarea, [tabindex]";
  *  teclado. */
 function elementoInterativo(alvo: EventTarget | null): boolean {
   return alvo instanceof Element && alvo.closest(SELETOR_INTERATIVO) !== null;
+}
+
+/** Escape com um diálogo aberto é do diálogo: o Radix já o consumiu
+ *  (`defaultPrevented`) e o foco está preso lá dentro. Limpar a seleção aqui
+ *  fechava o painel junto com o `ProcessoDialog`. */
+function escapeDeOutraCamada(e: globalThis.KeyboardEvent): boolean {
+  return (
+    e.defaultPrevented ||
+    (e.target instanceof Element && e.target.closest("[role=dialog]") !== null)
+  );
 }
 
 /** Raio cresce com o grau do nó (quantas ligações tocam nele) e com nível 1
@@ -171,6 +185,7 @@ export function Grafo({
   onExportar,
 }: GrafoProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const canvasRef = useRef<HTMLElement>(null);
   const arrasteRef = useRef<Arraste | null>(null);
   const panRef = useRef<PanEmCurso | null>(null);
 
@@ -186,7 +201,9 @@ export function Grafo({
   useEffect(() => {
     function aoTeclarBaixo(e: globalThis.KeyboardEvent) {
       if (e.key === "Escape") {
-        onSelecionar(null);
+        if (!escapeDeOutraCamada(e)) {
+          onSelecionar(null);
+        }
         return;
       }
       if (e.code === "Space" && !elementoInterativo(e.target)) {
@@ -261,9 +278,18 @@ export function Grafo({
   // deixando o pinch do trackpad dar zoom na página e a roda simples rolar o
   // fundo. Por isso o listener é nativo (useEffect abaixo) com
   // `{ passive: false }`, e o parâmetro é o `WheelEvent` do DOM.
+  //
+  // Mas a roda só é do mapa quando a pessoa o escolheu: canvas focado (clique
+  // nele) ou modificador. Sem isso, um canvas de 640px no meio da página
+  // travava a rolagem de quem só queria passar por ele.
   const aoRodar = useCallback((e: globalThis.WheelEvent) => {
     const { zoom: zoomAtual, pan: panAtual, w, h } = estadoRodaRef.current;
-    if (!(e.ctrlKey || e.metaKey)) {
+    const modificador = e.ctrlKey || e.metaKey;
+    const focado = canvasRef.current?.contains(document.activeElement) ?? false;
+    if (!(modificador || focado)) {
+      return;
+    }
+    if (!modificador) {
       e.preventDefault();
       setPan((p) => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
       return;
@@ -387,7 +413,14 @@ export function Grafo({
   }
 
   return (
-    <div
+    // Focável: clicar no mapa (ou chegar nele por Tab) é o que liga a roda ao
+    // pan/zoom. O anel de foco vem do `:focus-visible` global do cosmos.css.
+    // `<section>` com nome, não `div`: o leitor de tela anuncia "Mapa de
+    // processos, região" ao chegar aqui, em vez de um foco mudo.
+    <section
+      aria-label="Mapa de processos"
+      data-mapa-canvas=""
+      ref={canvasRef}
       style={{
         position: "relative",
         width: "100%",
@@ -398,6 +431,8 @@ export function Grafo({
         overflow: "hidden",
         touchAction: "none",
       }}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: o canvas precisa de foco para a roda virar pan/zoom só quando a pessoa o escolheu; Space e Esc já são tratados nele
+      tabIndex={0}
     >
       <svg
         height="100%"
@@ -474,6 +509,20 @@ export function Grafo({
           ))}
         </g>
       </svg>
+      <p
+        style={{
+          position: "absolute",
+          top: 12,
+          left: 12,
+          margin: 0,
+          fontSize: 10.5,
+          color: "var(--ink-faint)",
+          pointerEvents: "none",
+        }}
+      >
+        Clique no mapa para navegar com a roda · arrastar um nó é temporário: a
+        posição não é salva
+      </p>
       <BotaoExportar onExportar={onExportar} />
       <ControlesDeZoom
         onAfastar={afastar}
@@ -486,6 +535,6 @@ export function Grafo({
         nos={processos.length}
         zoomPercent={Math.round(zoom * 100)}
       />
-    </div>
+    </section>
   );
 }

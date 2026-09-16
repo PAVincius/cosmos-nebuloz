@@ -204,6 +204,25 @@
   }
 }
 
+/* Indicador de expansão do `<summary>` que apagou o triângulo nativo com
+   `list-style: none` (audit explorer, timeline do cliente). O giro sai do
+   estado do próprio `<details>` — nada de JS nem `aria-expanded` na mão, o
+   elemento já anuncia expandido/recolhido sozinho. */
+.bo-chevron {
+  color: var(--ink-faint);
+  transition: transform 0.15s ease;
+}
+
+details[open] > summary > .bo-chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bo-chevron {
+    transition: none;
+  }
+}
+
 /* Textura do modo escuro do protótipo: grão e grade. Decorativas — ficam fora
    do fluxo e não recebem eventos. */
 [data-theme="dark"] .grain::after {

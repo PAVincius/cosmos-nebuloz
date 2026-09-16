@@ -110,13 +110,19 @@ function LinhaDoCriterio({
   criterio,
   resposta,
   travado,
+  erro,
   onGravar,
 }: {
   criterio: Criterio;
   resposta: { nivel: number; nota: string | null } | undefined;
   travado: boolean;
+  /** Recusa do servidor à última gravação deste critério — fica ao lado
+   *  dele, não no topo da página. */
+  erro: string | null;
   onGravar: (nivel: number, nota: string | null) => void;
 }) {
+  const nivelInfo =
+    resposta === undefined ? null : INFO_NIVEL[resposta.nivel as Nivel];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div>
@@ -151,6 +157,21 @@ function LinhaDoCriterio({
           />
         ))}
       </div>
+      {/* A definição do nível escolhido, em texto: `title` no botão só
+          aparece para quem passa o mouse. Em `ink-muted`, não na cor do tom —
+          `green`/`amber` como cor de texto reprovam AA no tema claro. */}
+      {nivelInfo ? (
+        <p
+          style={{
+            margin: 0,
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-muted)",
+          }}
+        >
+          {nivelInfo.definicao}
+        </p>
+      ) : null}
+      {erro ? <Erro>{erro}</Erro> : null}
       {resposta ? (
         <input
           aria-label={`Evidência — ${criterio.pergunta}`}
@@ -307,6 +328,13 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
     )
   );
   const [erro, setErro] = useState<string | null>(null);
+  // Recusa à gravação de um critério fica com ele — no topo da página o
+  // `Erro` aparecia longe do botão que falhou. `erro` continua para o que é
+  // da folha inteira (concluir).
+  const [erroDoCriterio, setErroDoCriterio] = useState<{
+    criterioId: string;
+    mensagem: string;
+  } | null>(null);
   const [salvando, iniciar] = useTransition();
 
   // Desfaz o otimismo: deixar a tela mostrando um nível que o servidor recusou
@@ -329,7 +357,7 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
   function gravar(criterioId: string, nivel: number, nota: string | null) {
     const anterior = estado[criterioId];
     setEstado((s) => ({ ...s, [criterioId]: { nivel, nota } }));
-    setErro(null);
+    setErroDoCriterio(null);
     iniciar(async () => {
       try {
         const r = await responder({
@@ -340,10 +368,10 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
         });
         if (!r.ok) {
           reverter(criterioId, anterior);
-          setErro(r.error);
+          setErroDoCriterio({ criterioId, mensagem: r.error });
         }
       } catch (e) {
-        setErro(mensagemDeErro(e));
+        setErroDoCriterio({ criterioId, mensagem: mensagemDeErro(e) });
       }
     });
   }
@@ -364,7 +392,7 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
     });
   }
 
-  return { estado, erro, salvando, gravar, concluir };
+  return { estado, erro, erroDoCriterio, salvando, gravar, concluir };
 }
 
 export function Avaliacao({
@@ -374,7 +402,8 @@ export function Avaliacao({
   inicial: AvaliacaoDetalhe;
   podeEscrever: boolean;
 }) {
-  const { estado, erro, salvando, gravar, concluir } = useRespostas(inicial);
+  const { estado, erro, erroDoCriterio, salvando, gravar, concluir } =
+    useRespostas(inicial);
 
   const concluida = inicial.status === "CONCLUIDA";
   const travado = concluida || !podeEscrever;
@@ -432,6 +461,11 @@ export function Avaliacao({
               {criterios.map((c) => (
                 <LinhaDoCriterio
                   criterio={c}
+                  erro={
+                    erroDoCriterio?.criterioId === c.id
+                      ? erroDoCriterio.mensagem
+                      : null
+                  }
                   key={c.id}
                   onGravar={(nivel, nota) => gravar(c.id, nivel, nota)}
                   resposta={estado[c.id]}

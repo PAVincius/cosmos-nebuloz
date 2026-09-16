@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BotaoPrimario, Erro, mensagemDeErro, rotuloSalvar } from "./campo";
 
@@ -70,13 +71,20 @@ function BotaoZoom({
   );
 }
 
+type TemaMermaid = "dark" | "default";
+
 /** Renderiza a DSL em SVG. Fora do componente para o efeito ficar só com o
- *  debounce e a decisão de qual resposta ainda vale. */
-async function renderizar(id: string, source: string): Promise<string> {
+ *  debounce e a decisão de qual resposta ainda vale. O tema vem do painel
+ *  (`next-themes`): "dark" fixo deixava o diagrama ilegível no tema claro. */
+async function renderizar(
+  id: string,
+  source: string,
+  tema: TemaMermaid
+): Promise<string> {
   const { default: mermaid } = await import("mermaid");
   mermaid.initialize({
     startOnLoad: false,
-    theme: "dark",
+    theme: tema,
     securityLevel: "strict",
     fontFamily: "inherit",
   });
@@ -108,6 +116,10 @@ export function MermaidEditor({
   const [salvando, setSalvando] = useState(false);
   const [zoom, setZoom] = useState(1);
   const seq = useRef(0);
+  // Escuro é o padrão do painel (`defaultTheme="dark"` no layout); só o
+  // claro resolvido troca o tema do diagrama.
+  const { resolvedTheme } = useTheme();
+  const tema: TemaMermaid = resolvedTheme === "light" ? "default" : "dark";
 
   const sujo = source !== sourceInicial;
 
@@ -124,7 +136,7 @@ export function MermaidEditor({
       // A guarda `meu === seq.current` descarta resposta de render superseded:
       // sem ela, um texto inválido que demora pode chegar depois do válido e
       // deixar o preview mostrando o erro de algo que já não existe mais.
-      renderizar(`m-${meu}`, source)
+      renderizar(`m-${meu}`, source, tema)
         .then((gerado) => {
           if (meu === seq.current) {
             setSvg(gerado);
@@ -139,7 +151,7 @@ export function MermaidEditor({
     }, ESPERA_MS);
 
     return () => clearTimeout(t);
-  }, [source]);
+  }, [source, tema]);
 
   const podeSalvar = podeEscrever && sujo && !salvando;
   const podeExportar = Boolean(svg) && !erroRender;
@@ -202,7 +214,6 @@ export function MermaidEditor({
             fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
-            outline: "none",
           }}
           value={nota}
         />
@@ -254,7 +265,6 @@ export function MermaidEditor({
               fontSize: "var(--fs-base)",
               lineHeight: 1.65,
               color: "var(--ink)",
-              outline: "none",
             }}
             value={source}
           />

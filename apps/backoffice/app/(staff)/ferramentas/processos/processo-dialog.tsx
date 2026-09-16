@@ -14,6 +14,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -217,9 +218,14 @@ function Formulario({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
           {processo ? "Editar processo" : "Novo processo"}
         </DialogTitle>
+        <DialogDescription className="sr-only">
+          {processo
+            ? "Altera código, nome, domínio, nível, dono, tags e diagrama deste processo do mapa."
+            : "Cadastra um processo no mapa: código, nome, domínio, nível, dono, tags e diagrama."}
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

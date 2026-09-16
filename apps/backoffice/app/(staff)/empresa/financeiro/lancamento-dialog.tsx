@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -232,9 +233,14 @@ function Formulario({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
           {linha ? "Editar lançamento" : "Novo lançamento"}
         </DialogTitle>
+        <DialogDescription className="sr-only">
+          {linha
+            ? "Altera competência, data, conta, descrição e valor deste lançamento do livro."
+            : "Registra um lançamento no livro, com competência, data, conta, descrição e valor."}
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}

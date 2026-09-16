@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
@@ -146,7 +147,13 @@ function FormularioNovo({
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Novo título</DialogTitle>
+        <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
+          Novo título
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Lança um título a pagar ou a receber, com contraparte, conta, emissão
+          e vencimento.
+        </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
