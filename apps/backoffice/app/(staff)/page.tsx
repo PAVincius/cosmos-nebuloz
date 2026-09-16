@@ -5,6 +5,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { type ClientRow, listClients } from "@/app/actions/clients";
+import { secaoDaRota } from "@/components/nav";
 import { ClientesTabela } from "./clientes-tabela";
 
 /**
@@ -52,7 +53,7 @@ export default async function ClientsPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Tenant · system"
+        eyebrow={`${secaoDaRota("/")} · carteira`}
         subtitle="Todos os tenants provisionados, seus módulos e status de contratação."
         title="Carteira de clientes"
       >

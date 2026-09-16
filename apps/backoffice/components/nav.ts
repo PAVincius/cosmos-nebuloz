@@ -21,9 +21,18 @@
  * para sempre. Nenhum item usa `pendente` hoje, e o campo fica: é o mecanismo
  * que o LAB vai usar ao voltar em fatias.
  *
- * O id `clients` com label "Tenants" é do próprio protótipo — a rota continua
- * `/clientes` porque é a que existe, é a que os `revalidatePath` das actions
- * apontam, e renomear seria quebra sem ganho.
+ * O protótipo chamava o item de `/` de "Tenants". Aqui ele se chama
+ * "Clientes" porque é o que a tela é — "Carteira de clientes", KPI "Clientes
+ * na carteira" — e porque "tenant" é vocabulário de quem escreveu o schema,
+ * não de quem abre o painel no primeiro dia. A rota continua `/clientes`
+ * porque é a que existe, é a que os `revalidatePath` das actions apontam, e
+ * renomear seria quebra sem ganho.
+ *
+ * Cada rota aparece uma vez só. O `/scaffold` chegou a estar em duas seções
+ * ("Fila de gates" em Delivery e "Scaffold" em Comercial) e as duas acendiam
+ * juntas; ficou a de Delivery, porque é o que a tela monta — a fila de gates
+ * da carteira. `secaoDaRota` é o que deixa a tela dizer a própria seção no
+ * eyebrow lendo daqui, em vez de repetir o nome em string solta.
  */
 import type { IconName } from "@repo/design-system/cosmos/icons";
 
@@ -50,7 +59,7 @@ export const BO_NAV: NavSection[] = [
         icon: "gauge",
         label: "Home",
       },
-      { href: "/", icon: "building", label: "Tenants" },
+      { href: "/", icon: "building", label: "Clientes" },
       { href: "/aprovacoes", icon: "approve", label: "Aprovações" },
       {
         href: "/observabilidade",
@@ -123,11 +132,6 @@ export const BO_NAV: NavSection[] = [
         href: "/servicos",
         icon: "briefcase",
         label: "Serviços",
-      },
-      {
-        href: "/scaffold",
-        icon: "puzzle",
-        label: "Scaffold",
       },
       { href: "/contas", icon: "heart", label: "Health e renovação" },
       {
@@ -205,6 +209,16 @@ export function itemDaRota(href: string): NavItem | undefined {
     }
   }
   return;
+}
+
+/**
+ * A seção do menu em que uma rota mora — para o eyebrow da tela ser o mesmo
+ * nome que a sidebar mostra, lido de um lugar só. Rota fora do menu cai no
+ * nome do painel, o mesmo fallback da trilha da topbar.
+ */
+export function secaoDaRota(href: string): string {
+  const grupo = BO_NAV.find((g) => g.items.some((i) => i.href === href));
+  return grupo?.section ?? "Nebuloz";
 }
 
 /** Rotas que o operador não encontra porque elas não existem por decisão. */
