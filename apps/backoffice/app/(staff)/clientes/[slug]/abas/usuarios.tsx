@@ -7,6 +7,7 @@ import {
   updateTenantMemberRoleAction,
 } from "@/app/actions/tenant-members";
 import { Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -26,6 +27,93 @@ const LARGURAS = [
   { id: "acesso", largura: "120px" },
   { id: "alterar", largura: "160px" },
 ];
+
+/** O que muda para quem, em prosa. Entrar ou sair de ADMIN é a mudança que
+ *  importa: é quem convida, remove e promove os outros. */
+function consequenciaDaTroca(nome: string, de: string, para: Papel): string {
+  if (para === "ADMIN") {
+    return `${nome} passa a administrar o tenant do cliente: convida, remove e promove qualquer membro.`;
+  }
+  if (de === "ADMIN") {
+    return `${nome} deixa de administrar o tenant. Se for o último ADMIN, o servidor recusa.`;
+  }
+  return `${nome} passa a ${para} no tenant do cliente; a mudança fica na auditoria.`;
+}
+
+/** A célula "Alterar papel": o `<select>` escolhe, a barreira grava.
+ *  Componente próprio porque, inline no `map`, a linha passava do teto de
+ *  complexidade do lint. */
+function CelulaDePapel({
+  m,
+  ultima,
+  canWrite,
+  pendente,
+  pendenteDe,
+  onEscolher,
+  onMudar,
+  onVoltar,
+}: {
+  m: TenantMemberRow;
+  ultima: boolean;
+  canWrite: boolean;
+  pendente: boolean;
+  /** Papel escolhido no select e ainda não gravado. */
+  pendenteDe: Papel | null;
+  onEscolher: (memberId: string, role: string) => void;
+  onMudar: (memberId: string, role: Papel) => void;
+  onVoltar: () => void;
+}) {
+  const nome = m.nome ?? m.email;
+  return (
+    <Celula last={ultima}>
+      <label className="sr-only" htmlFor={`papel-${m.id}`}>
+        Papel de {m.email}
+      </label>
+      <select
+        disabled={!canWrite || pendente}
+        id={`papel-${m.id}`}
+        onChange={(e) => onEscolher(m.id, e.target.value)}
+        style={{
+          ...INPUT,
+          padding: "6px 9px",
+          opacity: canWrite ? 1 : 0.5,
+          cursor: canWrite ? "pointer" : "not-allowed",
+        }}
+        title={
+          canWrite
+            ? undefined
+            : "Somente leitura — seu papel no tenant system é MEMBER."
+        }
+        value={pendenteDe ?? m.role}
+      >
+        {PAPEIS.map((p) => (
+          <option key={p} value={p}>
+            {p}
+          </option>
+        ))}
+      </select>
+      {pendenteDe ? (
+        <div style={{ marginTop: 8 }}>
+          {/* `aberto`: o select já foi o gatilho. Vermelho quando
+              entra ou sai de ADMIN; "Voltar" devolve o select ao
+              papel atual. */}
+          <ConfirmarAcao
+            aberto
+            alvo={m.email}
+            consequencia={consequenciaDaTroca(nome, m.role, pendenteDe)}
+            executando={pendente}
+            onConfirmar={() => onMudar(m.id, pendenteDe)}
+            onVoltar={onVoltar}
+            rotulo={`Trocar papel de ${nome} para ${pendenteDe}`}
+            tom={
+              pendenteDe === "ADMIN" || m.role === "ADMIN" ? "red" : "accent"
+            }
+          />
+        </div>
+      ) : null}
+    </Celula>
+  );
+}
 
 /**
  * Aba Usuários — a tabela do `TenantUsersTab`, com filtro por papel.
@@ -47,15 +135,28 @@ export function AbaUsuarios({
   const [erro, setErro] = useState<string | null>(null);
   const [papel, setPapel] = useState("all");
   const [pendente, iniciar] = useTransition();
+  // O `<select>` só muda isto; gravar é o "Confirmar" da barreira. Antes, o
+  // `onChange` gravava direto — inclusive para e de ADMIN.
+  const [escolha, setEscolha] = useState<{
+    memberId: string;
+    role: Papel;
+  } | null>(null);
 
-  const mudar = (memberId: string, role: string) => {
+  const escolher = (memberId: string, role: string) => {
     if (!ehPapel(role)) {
       return;
     }
     setErro(null);
+    setEscolha({ memberId, role });
+  };
+
+  const mudar = (memberId: string, role: Papel) => {
+    setErro(null);
     iniciar(async () => {
       const res = await updateTenantMemberRoleAction({ slug, memberId, role });
-      if (!res.ok) {
+      if (res.ok) {
+        setEscolha(null);
+      } else {
         setErro(res.error);
       }
     });
@@ -100,6 +201,10 @@ export function AbaUsuarios({
         <tbody>
           {lista.map((m, i) => {
             const ultima = i === lista.length - 1;
+            const pendenteDe =
+              escolha?.memberId === m.id && escolha.role !== m.role
+                ? escolha.role
+                : null;
             return (
               <TableRow key={m.id}>
                 <Celula last={ultima}>
@@ -159,34 +264,16 @@ export function AbaUsuarios({
                   <StatusDot tom="green">Ativo</StatusDot>
                 </Celula>
 
-                <Celula last={ultima}>
-                  <label className="sr-only" htmlFor={`papel-${m.id}`}>
-                    Papel de {m.email}
-                  </label>
-                  <select
-                    disabled={!canWrite || pendente}
-                    id={`papel-${m.id}`}
-                    onChange={(e) => mudar(m.id, e.target.value)}
-                    style={{
-                      ...INPUT,
-                      padding: "6px 9px",
-                      opacity: canWrite ? 1 : 0.5,
-                      cursor: canWrite ? "pointer" : "not-allowed",
-                    }}
-                    title={
-                      canWrite
-                        ? undefined
-                        : "Somente leitura — seu papel no tenant system é MEMBER."
-                    }
-                    value={m.role}
-                  >
-                    {PAPEIS.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
-                      </option>
-                    ))}
-                  </select>
-                </Celula>
+                <CelulaDePapel
+                  canWrite={canWrite}
+                  m={m}
+                  onEscolher={escolher}
+                  onMudar={mudar}
+                  onVoltar={() => setEscolha(null)}
+                  pendente={pendente}
+                  pendenteDe={pendenteDe}
+                  ultima={ultima}
+                />
               </TableRow>
             );
           })}

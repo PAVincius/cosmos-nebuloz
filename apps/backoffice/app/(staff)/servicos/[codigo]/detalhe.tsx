@@ -4,6 +4,10 @@ import Link from "next/link";
 import type { ServiceDetail } from "@/app/actions/services";
 import { MetaCell } from "@/components/meta-cell";
 import { formatarBRL } from "@/lib/comercial/formato";
+import {
+  ROTULO_STATUS as ROTULO_STATUS_ENGAJAMENTO,
+  type StatusEngajamento,
+} from "@/lib/delivery";
 
 /**
  * Detalhe de um serviço do catálogo, no layout do `backoffice-services.jsx`.
@@ -19,14 +23,17 @@ import { formatarBRL } from "@/lib/comercial/formato";
  *  marca essa unidade com ponto no badge. */
 const RECORRENTE = new Set(["RETAINER"]);
 
-const ROTULO_UNIDADE: Record<string, string> = {
+/** Rótulos compartilhados com `page.tsx` (selos do cabeçalho) e `editar.tsx`
+ *  (opções dos selects). Moram aqui, e não em `page.tsx`, porque página do
+ *  App Router não pode exportar nada além do contrato do Next. */
+export const ROTULO_UNIDADE: Record<string, string> = {
   PROJETO: "Projeto fechado",
   SPRINT: "Por sprint",
   HORA: "Hora técnica",
   RETAINER: "Retainer mensal",
 };
 
-const TRILHA: Record<
+export const TRILHA: Record<
   string,
   { label: string; tone: "accent" | "green" | "purple" | "blue" }
 > = {
@@ -44,6 +51,17 @@ const TOM_STATUS: Record<string, "green" | "amber" | "neutral"> = {
   EM_ANDAMENTO: "green",
   PROPOSTO: "amber",
   CONCLUIDO: "neutral",
+};
+
+/** Status de proposta em rótulo. O enum cru ("ENVIADA") era o que aparecia
+ *  no badge — o mesmo mapa de `propostas/propostas.tsx`, que mora lá como
+ *  const local. */
+const ROTULO_STATUS_PROPOSTA: Record<string, string> = {
+  RASCUNHO: "Rascunho",
+  AGUARDANDO_APROVACAO: "Aguardando aprovação",
+  ENVIADA: "Enviada",
+  ACEITA: "Aceita",
+  RECUSADA: "Recusada",
 };
 
 /** O código do pré-requisito. Vira link só quando o serviço existe — apontar
@@ -138,10 +156,19 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
                   fontSize: "var(--fs-base)",
                   color: "var(--ink-subtle)",
                   fontWeight: 500,
+                  lineHeight: 1.55,
                 }}
               >
                 Sem entregáveis cadastrados — uma proposta com este item não diz
-                ao cliente o que ele recebe.
+                ao cliente o que ele recebe.{" "}
+                {/* O aviso ganha saída: abre a edição já com o foco no campo.
+                    Sem isto, a frase apontava o problema e parava. */}
+                <Link
+                  href={`/servicos/${encodeURIComponent(servico.codigo)}?editar=entregaveis`}
+                  style={{ fontWeight: 700, color: "var(--accent-text)" }}
+                >
+                  Cadastrar entregáveis
+                </Link>
               </span>
             ) : (
               servico.entregaveis.map((d) => (
@@ -262,7 +289,7 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
                     {p.quantidade}× {formatarBRL(p.precoUnitCentavos)}
                   </span>
                   <Badge dot tone={TOM_STATUS[p.status] ?? "neutral"}>
-                    {p.status}
+                    {ROTULO_STATUS_PROPOSTA[p.status] ?? p.status}
                   </Badge>
                 </Link>
               ))}
@@ -297,7 +324,8 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
                     {e.nome}
                   </span>
                   <Badge dot tone={TOM_STATUS[e.status] ?? "neutral"}>
-                    {e.status}
+                    {ROTULO_STATUS_ENGAJAMENTO[e.status as StatusEngajamento] ??
+                      e.status}
                   </Badge>
                 </div>
               ))}

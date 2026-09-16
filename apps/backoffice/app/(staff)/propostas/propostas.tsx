@@ -1,13 +1,14 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
   type ProposalRow,
   submitProposalAction,
 } from "@/app/actions/proposals";
-import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { BotaoPrimario, Erro } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 
@@ -48,6 +49,11 @@ function LinhaProposta({
     // A linha inteira abre a proposta. Não é `<button>` porque carrega outros
     // controles dentro (enviar), e botão dentro de botão não é HTML válido —
     // daí role, tabIndex e o handler de Enter na mão (NFR-2.3).
+    //
+    // Os dois ignores abaixo marcam dívida conhecida, não a quitam: o controle
+    // aninhado em `<li role=button>` é assunto da onda de a11y. Aqui só entra a
+    // barreira do envio.
+    // biome-ignore lint/a11y/useSemanticElements: onda de a11y — ver comentário acima
     <li
       aria-label={`Abrir proposta ${p.numero} — ${p.titulo}`}
       onClick={() => onAbrir(p.id)}
@@ -57,6 +63,7 @@ function LinhaProposta({
           onAbrir(p.id);
         }
       }}
+      // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: onda de a11y — ver comentário acima
       role="button"
       style={{
         display: "flex",
@@ -110,29 +117,28 @@ function LinhaProposta({
         {ROTULO[p.status] ?? p.status}
       </Badge>
       {podeEnviar ? (
-        <button
-          className="btn"
-          // `stopPropagation` porque a linha inteira abre a proposta: sem
-          // isto, enviar também navegaria, e a pessoa sairia da lista sem
-          // saber se o envio aconteceu.
-          onClick={(e) => {
-            e.stopPropagation();
-            onEnviar(p.id);
-          }}
-          style={{
-            padding: "4px 10px",
-            borderRadius: "var(--r-sm)",
-            border: "1px solid var(--hairline)",
-            background: "none",
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-nota)",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-          type="button"
+        // `stopPropagation` (clique e teclado) porque a linha inteira abre a
+        // proposta: sem isto, cada passo da barreira também navegaria, e a
+        // pessoa sairia da lista sem saber se o envio aconteceu. Enviar é sem
+        // volta — a barreira é a mesma do gerador.
+        // biome-ignore lint/a11y/noStaticElementInteractions: só isola os eventos da barreira do `<li role=button>` que a envolve; não aciona nada — a onda de a11y refaz a linha
+        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: idem
+        <span
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
         >
-          {acimaDoLimite ? "Pedir aprovação" : "Enviar"}
-        </button>
+          <ConfirmarAcao
+            alvo={`${p.titulo} · ${p.cliente}`}
+            consequencia={
+              acimaDoLimite
+                ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
+                : "O cliente recebe esta versão; não há como editar depois de enviada."
+            }
+            onConfirmar={() => onEnviar(p.id)}
+            rotulo={acimaDoLimite ? "Pedir aprovação" : "Enviar"}
+            tom="accent"
+          />
+        </span>
       ) : null}
     </li>
   );
@@ -149,6 +155,14 @@ export function Propostas({
   const [lista, setLista] = useState(iniciais);
   const [erro, setErro] = useState<string | null>(null);
 
+  // O gerador chega aqui com `?enviada=<id>` depois de enviar. Confirmar pelo
+  // título, e não com um "enviado com sucesso" genérico: é a frase que diz
+  // qual proposta saiu — e para um id que não está na lista, nada.
+  const enviadaId = useSearchParams().get("enviada");
+  const enviada = enviadaId
+    ? iniciais.find((p) => p.id === enviadaId)
+    : undefined;
+
   const enviar = useCallback(async (id: string) => {
     setErro(null);
     const res = await submitProposalAction({ id });
@@ -163,6 +177,26 @@ export function Propostas({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {enviada ? (
+        <output
+          style={{
+            display: "block",
+            padding: "9px 11px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            border: "1px solid rgba(var(--green-rgb),.3)",
+            color: "var(--green-text)",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
+          Proposta «{enviada.titulo}» enviada
+          {enviada.status === "AGUARDANDO_APROVACAO"
+            ? " para a fila de aprovação"
+            : ""}
+          .
+        </output>
+      ) : null}
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard

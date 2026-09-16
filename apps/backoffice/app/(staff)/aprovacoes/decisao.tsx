@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { decidePlatformApprovalAction } from "@/app/actions/approvals";
 import { Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 
 /**
@@ -12,8 +13,21 @@ import { WriteButton } from "@/components/write-button";
  * A nota fica sempre visível, não escondida atrás de "adicionar observação":
  * rejeição sem motivo é o que faz o solicitante reabrir o mesmo pedido na
  * semana seguinte.
+ *
+ * Rejeitar passa pela barreira: o servidor não deixa decidir de novo, e um
+ * clique errado aqui devolve o pedido ao solicitante sem apelação.
  */
-export function Decisao({ id, canWrite }: { id: string; canWrite: boolean }) {
+export function Decisao({
+  id,
+  canWrite,
+  alvo,
+}: {
+  id: string;
+  canWrite: boolean;
+  /** O que está sendo decidido, por extenso — título e cliente do pedido.
+   *  Sem ele a barreira mostra o id, que é único mas não é reconhecível. */
+  alvo?: string;
+}) {
   const [nota, setNota] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [pendente, iniciar] = useTransition();
@@ -63,13 +77,18 @@ export function Decisao({ id, canWrite }: { id: string; canWrite: boolean }) {
         >
           {pendente ? "Decidindo…" : "Aprovar"}
         </WriteButton>
-        <WriteButton
-          canWrite={canWrite}
-          disabled={pendente}
-          onClick={() => decidir("REJECTED")}
-        >
-          Rejeitar
-        </WriteButton>
+        {canWrite ? (
+          <ConfirmarAcao
+            alvo={alvo ?? `pedido ${id}`}
+            consequencia="O solicitante recebe a recusa e o pedido não pode ser decidido de novo."
+            executando={pendente}
+            onConfirmar={() => decidir("REJECTED")}
+            rotulo={pendente ? "Decidindo…" : "Rejeitar"}
+            tom="red"
+          />
+        ) : (
+          <WriteButton canWrite={false}>Rejeitar</WriteButton>
+        )}
       </div>
       {erro ? <Erro>{erro}</Erro> : null}
     </div>

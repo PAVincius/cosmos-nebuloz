@@ -6,6 +6,7 @@ import type { Tone } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import type { LeadRow } from "@/app/actions/leads";
 import { BotaoPrimario, BotaoSecundario, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
@@ -557,14 +558,21 @@ function AcaoPrincipal({
     );
   }
   if (podeConverter(leadFunil)) {
+    // Converter é sem volta: o servidor nunca mais deixa mover o lead. O
+    // diálogo já está aberto, então a barreira é inline — alvo e consequência
+    // na mesma prosa das outras.
+    if (!podeEscrever) {
+      return <WriteButton canWrite={false}>Converter em proposta</WriteButton>;
+    }
     return (
-      <WriteButton
-        canWrite={podeEscrever}
-        disabled={pendente}
-        onClick={onConverter}
-      >
-        {pendente ? "Convertendo…" : "Converter em proposta"}
-      </WriteButton>
+      <ConfirmarAcao
+        alvo={lead.nome}
+        consequencia="O lead sai do funil e vira rascunho de proposta; não volta."
+        executando={pendente}
+        onConfirmar={onConverter}
+        rotulo={pendente ? "Convertendo…" : "Converter em proposta"}
+        tom="accent"
+      />
     );
   }
   if (podeMover(leadFunil) && proximo) {

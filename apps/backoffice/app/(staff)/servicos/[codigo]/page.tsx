@@ -3,29 +3,15 @@ import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { getServiceDetail, type ServiceDetail } from "@/app/actions/services";
 import { Erro } from "@/components/campo";
+import { WriteButton } from "@/components/write-button";
 import { requirePlatformStaff } from "@/lib/guard";
-import { DetalheDoServico } from "./detalhe";
+import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
+import { DetalheDoServico, ROTULO_UNIDADE, TRILHA } from "./detalhe";
+import { EditarServico } from "./editar";
 
 export const dynamic = "force-dynamic";
 
 const RECORRENTE = new Set(["RETAINER"]);
-
-const ROTULO_UNIDADE: Record<string, string> = {
-  PROJETO: "Projeto fechado",
-  SPRINT: "Por sprint",
-  HORA: "Hora técnica",
-  RETAINER: "Retainer mensal",
-};
-
-const TRILHA: Record<
-  string,
-  { label: string; tone: "accent" | "green" | "purple" | "blue" }
-> = {
-  readiness: { label: "AI Readiness", tone: "accent" },
-  adoption: { label: "AI Adoption", tone: "green" },
-  enablement: { label: "Enablement", tone: "purple" },
-  custom: { label: "Modelo próprio", tone: "blue" },
-};
 
 /** Os selos do cabeçalho: trilha, modelo de cobrança e as duas exceções que
  *  mudam o que dá para prometer — LAB e fora de catálogo. Componente próprio
@@ -52,6 +38,46 @@ function SelosDoServico({ servico }: { servico: ServiceDetail }) {
   );
 }
 
+/** "Editar" no cabeçalho. É um link porque abre pela URL (`?editar=1`) — o
+ *  formulário é componente de cliente e o cabeçalho não; um `<Link>` alcança
+ *  os dois sem subir estado. Sem permissão de escrita, vira o botão
+ *  desabilitado com motivo do resto do painel. */
+function BotaoEditar({
+  codigo,
+  canWrite,
+  editando,
+}: {
+  codigo: string;
+  canWrite: boolean;
+  editando: boolean;
+}) {
+  if (!canWrite) {
+    return <WriteButton canWrite={false}>Editar</WriteButton>;
+  }
+  const base = `/servicos/${encodeURIComponent(codigo)}`;
+  return (
+    <Link
+      className="btn"
+      href={editando ? base : `${base}?editar=1`}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "9px 15px",
+        borderRadius: "var(--r-md)",
+        border: `1px solid ${editando ? "var(--hairline-strong)" : "var(--accent)"}`,
+        background: editando ? "var(--surface-2)" : "var(--accent)",
+        color: editando ? "var(--ink-muted)" : "var(--accent-fg)",
+        fontSize: "var(--fs-forte)",
+        fontWeight: 600,
+        textDecoration: "none",
+      }}
+    >
+      {editando ? "Fechar edição" : "Editar"}
+    </Link>
+  );
+}
+
 /**
  * Detalhe de um serviço do catálogo (`/servicos/SV-09`).
  *
@@ -60,11 +86,13 @@ function SelosDoServico({ servico }: { servico: ServiceDetail }) {
  */
 export default async function ServicoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ codigo: string }>;
+  searchParams: Promise<{ editar?: string }>;
 }) {
-  const { codigo } = await params;
-  const [, res] = await Promise.all([
+  const [{ codigo }, { editar }] = await Promise.all([params, searchParams]);
+  const [staff, res] = await Promise.all([
     requirePlatformStaff(),
     getServiceDetail(decodeURIComponent(codigo)),
   ]);
@@ -79,6 +107,17 @@ export default async function ServicoPage({
   const trilha = res.ok ? TRILHA[res.data.trilha] : undefined;
   const selos = res.ok ? <SelosDoServico servico={res.data} /> : null;
   const codigoExibido = res.ok ? res.data.codigo : codigo;
+  const editando = editar !== undefined;
+  const focarEm = editar === "entregaveis" ? "entregaveis" : undefined;
+  const edicao =
+    res.ok && editando ? (
+      <EditarServico
+        focarEm={focarEm}
+        modulos={MODULOS_DA_PLATAFORMA}
+        podeEscrever={staff.canWrite}
+        servico={res.data}
+      />
+    ) : null;
 
   return (
     <div
@@ -110,8 +149,18 @@ export default async function ServicoPage({
           subtitle={subtitulo}
           title={titulo}
           tone={trilha?.tone ?? "accent"}
-        />
+        >
+          {res.ok ? (
+            <BotaoEditar
+              canWrite={staff.canWrite}
+              codigo={res.data.codigo}
+              editando={editando}
+            />
+          ) : null}
+        </PageHeader>
       </div>
+
+      {edicao}
 
       {res.ok ? (
         <DetalheDoServico servico={res.data} />
