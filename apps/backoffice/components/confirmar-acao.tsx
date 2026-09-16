@@ -20,7 +20,66 @@ import { useState } from "react";
  *
  * Não é `window.confirm`: aquele é dispensável por hábito, não diz o alvo e
  * some do teste.
+ *
+ * Dois tons: `red` para o que apaga ou cancela (o gatilho é um botão fantasma
+ * vermelho — o padrão, porque todos os usos que existiam eram destrutivos);
+ * `accent` para o que é sem volta mas não destrói — enviar proposta,
+ * provisionar tenant, concluir avaliação. Nesse caso o gatilho é a ação
+ * primária da tela, com o mesmo visual do `BotaoPrimario`: a barreira não
+ * pode rebaixar o botão principal a um link cinza.
  */
+
+type Tom = "accent" | "red";
+
+const PALETA: Record<
+  Tom,
+  { texto: string; moldura: string; fundo: string; solido: boolean }
+> = {
+  accent: {
+    texto: "var(--accent-text)",
+    moldura: "1px solid rgba(var(--accent-rgb),.35)",
+    fundo: "var(--accent-soft)",
+    solido: true,
+  },
+  red: {
+    texto: "var(--red-text)",
+    moldura: "1px solid rgba(var(--red-rgb),.3)",
+    fundo: "var(--red-soft)",
+    solido: false,
+  },
+};
+
+/** Botão fantasma compacto — o do tom vermelho e o "Voltar". */
+const FANTASMA = {
+  padding: "5px 11px",
+  borderRadius: "var(--r-sm)",
+  border: "1px solid var(--hairline)",
+  background: "none",
+  fontSize: "var(--fs-nota)",
+  fontWeight: 600,
+  fontFamily: "inherit",
+  cursor: "pointer",
+} as const;
+
+/** Ação primária — mesmo visual do `BotaoPrimario` de `campo.tsx`. */
+const SOLIDO = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  padding: "9px 15px",
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--accent)",
+  background: "var(--accent)",
+  color: "var(--accent-fg)",
+  fontSize: "var(--fs-forte)",
+  fontWeight: 600,
+  fontFamily: "inherit",
+  boxShadow:
+    "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
+  cursor: "pointer",
+} as const;
+
 export function ConfirmarAcao({
   rotulo,
   alvo,
@@ -28,6 +87,9 @@ export function ConfirmarAcao({
   onConfirmar,
   executando = false,
   desabilitado = false,
+  tom = "red",
+  aberto = false,
+  onVoltar,
 }: {
   /** O que o botão faz, em imperativo: "Cancelar COSMOS". */
   rotulo: string;
@@ -43,19 +105,24 @@ export function ConfirmarAcao({
    *  Separado de `executando` porque as duas coisas viram estados visuais
    *  diferentes: um botão cinza não é a mesma mensagem que "Executando…". */
   desabilitado?: boolean;
+  /** `red` (padrão) para o que apaga ou cancela; `accent` para o que é sem
+   *  volta mas não destrói — e aí o gatilho é a ação primária da tela. */
+  tom?: Tom;
+  /** Começa já perguntando. Para quando o gatilho aconteceu fora do
+   *  componente — um `<select>` que mudou, um chip que foi clicado — e um
+   *  segundo botão só para chegar à pergunta seria um passo a mais. */
+  aberto?: boolean;
+  /** Chamado ao desistir. Quem montou com `aberto` usa isto para restaurar o
+   *  valor anterior. */
+  onVoltar?: () => void;
 }) {
-  const [perguntando, setPerguntando] = useState(false);
+  const [perguntando, setPerguntando] = useState(aberto);
   const bloqueado = executando || desabilitado;
+  const paleta = PALETA[tom];
 
-  const BOTAO = {
-    padding: "5px 11px",
-    borderRadius: "var(--r-sm)",
-    border: "1px solid var(--hairline)",
-    background: "none",
-    fontSize: "var(--fs-nota)",
-    fontWeight: 600,
-    cursor: "pointer",
-  } as const;
+  const gatilho = paleta.solido
+    ? { ...SOLIDO }
+    : { ...FANTASMA, color: paleta.texto };
 
   if (!perguntando) {
     return (
@@ -64,8 +131,7 @@ export function ConfirmarAcao({
         disabled={bloqueado}
         onClick={() => setPerguntando(true)}
         style={{
-          ...BOTAO,
-          color: "var(--red-text)",
+          ...gatilho,
           opacity: bloqueado ? 0.5 : 1,
           cursor: bloqueado ? "not-allowed" : "pointer",
         }}
@@ -76,6 +142,11 @@ export function ConfirmarAcao({
     );
   }
 
+  const voltar = () => {
+    setPerguntando(false);
+    onVoltar?.();
+  };
+
   return (
     <div
       style={{
@@ -84,8 +155,8 @@ export function ConfirmarAcao({
         gap: 8,
         padding: "10px 12px",
         borderRadius: "var(--r-md)",
-        border: "1px solid var(--red-border, var(--hairline-strong))",
-        background: "var(--red-soft, var(--surface-2))",
+        border: paleta.moldura,
+        background: paleta.fundo,
       }}
     >
       <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
@@ -94,13 +165,13 @@ export function ConfirmarAcao({
       <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
         {consequencia}
       </span>
-      <div style={{ display: "flex", gap: 8 }}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         {/* Voltar vem primeiro: o dedo que veio do gatilho encontra a saída,
             não a confirmação. */}
         <button
           className="btn"
-          onClick={() => setPerguntando(false)}
-          style={{ ...BOTAO, color: "var(--ink-muted)" }}
+          onClick={voltar}
+          style={{ ...FANTASMA, color: "var(--ink-muted)" }}
           type="button"
         >
           Voltar
@@ -110,9 +181,9 @@ export function ConfirmarAcao({
           disabled={bloqueado}
           onClick={onConfirmar}
           style={{
-            ...BOTAO,
-            color: "var(--red-text)",
+            ...gatilho,
             opacity: bloqueado ? 0.5 : 1,
+            cursor: bloqueado ? "not-allowed" : "pointer",
           }}
           type="button"
         >
