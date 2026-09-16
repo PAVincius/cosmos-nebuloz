@@ -9,10 +9,15 @@ import {
   PageHeader,
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import { listAuditForEntity } from "@/app/(charter)/actions/audit";
-import { decideCase, getCase } from "@/app/(charter)/actions/cases";
+import {
+  decideCase,
+  getCase,
+  submitDraftCase,
+} from "@/app/(charter)/actions/cases";
 import {
   createMitigation,
   type MitigationRow as MitigationTableRow,
@@ -85,6 +90,9 @@ function CaseDetailInner({ param }: { param?: string }) {
   const { open, close } = useModal();
   const [pending, startTransition] = useTransition();
   const [tab, setTab] = useState("overview");
+  // Motivo da última recusa do gate de submissão. Fica na tela, não só no
+  // toast: o requester precisa ler o que ajustar depois que o toast sumiu.
+  const [gateError, setGateError] = useState<string | null>(null);
 
   const code = param ?? "";
   const { data, loading, error, reload } = useCharterData(
@@ -175,6 +183,26 @@ function CaseDetailInner({ param }: { param?: string }) {
       />
     );
 
+  // Sem `disabled` preventivo: a action roda o gate e decide; a tela mostra o
+  // motivo. Um botão apagado não diz ao requester o que falta.
+  const submitDraft = () =>
+    startTransition(async () => {
+      const res = await runWithToast(
+        () => submitDraftCase({ caseId: data.id }),
+        {
+          loading: "Submetendo…",
+          success: (d) => `Caso ${d.code} submetido — caminho: ${d.path}`,
+        }
+      );
+      if (res.ok) {
+        setGateError(null);
+        reload();
+        audit.reload();
+      } else {
+        setGateError(res.error);
+      }
+    });
+
   const openMitigation = () =>
     open(
       <MitigationModal
@@ -238,6 +266,11 @@ function CaseDetailInner({ param }: { param?: string }) {
         title={data.title}
         tone={meta.tone}
       >
+        {data.status === "DRAFT" && (
+          <Button disabled={pending} icon="send" onClick={submitDraft}>
+            Submeter para revisão
+          </Button>
+        )}
         {DECIDABLE.includes(data.status) && (
           <span
             style={{
@@ -265,6 +298,23 @@ function CaseDetailInner({ param }: { param?: string }) {
           </Button>
         )}
       </PageHeader>
+
+      {gateError && (
+        <Callout icon="ban" style={{ marginBottom: "var(--gap)" }} tone="red">
+          {gateError}
+          {data.vendorId && !eligible && (
+            <>
+              {" "}
+              <Link
+                href={`/charter/vendor/${data.vendorCode}`}
+                style={{ color: "var(--red-text)", fontWeight: 700 }}
+              >
+                Ajustar fornecedor {data.vendorName}
+              </Link>
+            </>
+          )}
+        </Callout>
+      )}
 
       <div
         style={{

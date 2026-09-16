@@ -10,6 +10,7 @@
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, Button } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { VendorRow } from "@/app/(charter)/actions/vendors";
 import {
@@ -463,11 +464,18 @@ export function IntakeModal({
               />
             </FormField>
           </div>
-          {gate?.eligible === false && (
+          {vendor && gate?.eligible === false && (
             <Callout icon="ban" tone="red">
               A combinação escolhida não é permitida pela política vigente:{" "}
-              <strong>{vendor?.name}</strong> não pode processar dado{" "}
-              <strong>{DATA_CLASS_LABEL[dataClass]}</strong>. {gate.reason}
+              <strong>{vendor.name}</strong> não pode processar dado{" "}
+              <strong>{DATA_CLASS_LABEL[dataClass]}</strong>. {gate.reason}{" "}
+              {/* A saída, não só o motivo: a classe máxima vem das cláusulas. */}
+              <Link
+                href={`/charter/vendor/${vendor.code}`}
+                style={{ color: "var(--red-text)", fontWeight: 700 }}
+              >
+                Ajustar cláusulas de {vendor.name}
+              </Link>
             </Callout>
           )}
         </div>

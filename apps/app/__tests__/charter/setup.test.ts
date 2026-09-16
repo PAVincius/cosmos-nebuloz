@@ -7,6 +7,7 @@ const h = vi.hoisted(() => ({
   membershipCount: vi.fn(),
   useCaseCount: vi.fn(),
   decisionCount: vi.fn(),
+  vendorCount: vi.fn(),
 }));
 
 vi.mock("@/lib/charter/guards", () => ({
@@ -25,6 +26,7 @@ vi.mock("@repo/database", () => ({
       charterMembership: { count: h.membershipCount },
       charterUseCase: { count: h.useCaseCount },
       charterDecision: { count: h.decisionCount },
+      charterVendor: { count: h.vendorCount },
     }),
 }));
 
@@ -39,6 +41,7 @@ function tenantNovo() {
   h.membershipCount.mockResolvedValue(1);
   h.useCaseCount.mockResolvedValue(0);
   h.decisionCount.mockResolvedValue(0);
+  h.vendorCount.mockResolvedValue(0);
 }
 
 function passo(res: Awaited<ReturnType<typeof getSetupProgress>>, id: string) {
@@ -76,9 +79,72 @@ describe("getSetupProgress", () => {
       return;
     }
     expect(res.data.concluidos).toBe(0);
-    expect(res.data.total).toBe(5);
+    expect(res.data.total).toBe(6);
     expect(res.data.completo).toBe(false);
     expect(passo(res, "policy.write").estado).toBe("disponivel");
+  });
+
+  it("os passos vêm na ordem da montagem, com fornecedor entre publicar e submeter", async () => {
+    const res = await getSetupProgress();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.passos.map((p) => p.id)).toEqual([
+      "policy.write",
+      "policy.publish",
+      "roles.assign",
+      "vendor.approve",
+      "usecase.first",
+      "decision.first",
+    ]);
+  });
+
+  it("aprovar fornecedor só fecha com fornecedor de classe máxima não nula", async () => {
+    // O tenant real: quatro fornecedores em REVIEW, nenhum com cláusula →
+    // maxClass nulo em todos → nenhum caso pode ser submetido. Contar
+    // fornecedor cadastrado fecharia o passo com a porta ainda trancada.
+    const antes = passo(await getSetupProgress(), "vendor.approve");
+    expect(antes.estado).toBe("disponivel");
+    expect(antes.porque).toMatch(/nenhum caso pode ser submetido/i);
+    expect(antes.href).toBe("/charter/vendors");
+    expect(h.vendorCount.mock.calls[0][0].where).toMatchObject({
+      tenantId: "t-1",
+      maxClass: { not: null },
+    });
+
+    h.vendorCount.mockResolvedValue(1);
+    expect(passo(await getSetupProgress(), "vendor.approve").estado).toBe(
+      "feito"
+    );
+  });
+
+  it("rascunho não conta como primeiro caso submetido", async () => {
+    // Dois rascunhos no tenant real e o painel dizia "submetido" — enquanto o
+    // caminho de submissão continuava fechado. Só status fora de DRAFT conta:
+    // o banco fake responde 2 sem filtro de status e 0 com ele.
+    h.useCaseCount.mockImplementation(
+      ({ where }: { where: { status?: { not: string } } }) =>
+        Promise.resolve(where.status?.not === "DRAFT" ? 0 : 2)
+    );
+
+    const res = await getSetupProgress();
+
+    expect(h.useCaseCount.mock.calls[0][0].where).toMatchObject({
+      tenantId: "t-1",
+    });
+    expect(passo(res, "usecase.first").estado).not.toBe("feito");
+  });
+
+  it("publicar bloqueado nomeia o bloqueador real: aprovar as seções, não escrevê-las", async () => {
+    // policyPublishBlockers exige status PUBLISHED em cada seção; a copy
+    // prometia "escrever" — quem escrevesse as nove e tentasse publicar
+    // esbarraria num bloqueio que o painel não anunciou.
+    const p = passo(await getSetupProgress(), "policy.publish");
+
+    expect(p.bloqueadoPor).toMatch(/aprove as nove seções/i);
+    expect(p.bloqueadoPor).not.toMatch(/escreva/i);
   });
 
   it("mostra 3 de 9, e seção só com espaço não conta como escrita", async () => {
@@ -175,6 +241,7 @@ describe("getSetupProgress", () => {
     h.membershipCount.mockResolvedValue(3);
     h.useCaseCount.mockResolvedValue(2);
     h.decisionCount.mockResolvedValue(1);
+    h.vendorCount.mockResolvedValue(1);
 
     const res = await getSetupProgress();
 
@@ -182,7 +249,7 @@ describe("getSetupProgress", () => {
     if (!res.ok) {
       return;
     }
-    expect(res.data.concluidos).toBe(5);
+    expect(res.data.concluidos).toBe(6);
     expect(res.data.completo).toBe(true);
   });
 });

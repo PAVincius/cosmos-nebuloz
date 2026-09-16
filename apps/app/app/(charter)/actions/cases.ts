@@ -1,7 +1,9 @@
 "use server";
 
 import {
+  type CharterCriticality,
   type CharterDataClass,
+  type CharterExposure,
   type CharterUseCase,
   type CharterUseCaseStatus,
   withTenantDb,
@@ -10,19 +12,26 @@ import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
-  GovernanceError,
   requireCharterContext,
   requireCharterPermissionContext,
 } from "@/lib/charter/guards";
 import {
+  type PathRecommendation,
   recommendPath,
   riskScore,
   slaRemaining,
+  type VendorGateInput,
   vendorEligibility,
 } from "@/lib/charter/rules";
 import { feriadosAbertos } from "@/lib/feriados";
 import { type Result, safeAction } from "../../actions/_base";
-import { buildDiff, FIELD_LABELS, logCharterAudit, nextCode } from "./_shared";
+import {
+  buildDiff,
+  FIELD_LABELS,
+  GovernanceError,
+  logCharterAudit,
+  nextCode,
+} from "./_shared";
 
 // Casos de uso — FR-3, FR-4, FR-5, FR-6.
 //
@@ -300,6 +309,40 @@ const SubmitSchema = z.object({
   asDraft: z.boolean().default(false),
 });
 
+/**
+ * O gate de submissão: fornecedor obrigatório → elegibilidade por classe de
+ * dado → caminho de aprovação. Um só lugar para submissão nova (`submitCase`)
+ * e rascunho promovido (`submitDraftCase`): a recusa tem de ter a mesma frase
+ * nos dois caminhos, senão o requester lê um motivo no intake e outro no
+ * detalhe do caso. Barra ANTES de submeter — submeter para reprovar depois
+ * queima um ciclo de SLA e a paciência do requester.
+ */
+function submissionGate(
+  vendor: VendorGateInput | null,
+  data: {
+    dataClass: CharterDataClass;
+    exposure: CharterExposure;
+    criticality: CharterCriticality;
+  }
+): PathRecommendation {
+  if (!vendor) {
+    throw new GovernanceError(
+      "vendor.required",
+      "Todo caso submetido precisa declarar o fornecedor ou modelo usado."
+    );
+  }
+  const gate = vendorEligibility(vendor, data.dataClass);
+  if (!gate.eligible) {
+    throw new GovernanceError("vendor.maxClass", gate.reason);
+  }
+  return recommendPath(data.dataClass, data.exposure, data.criticality);
+}
+
+/** Nota da trilha no ato da submissão — a mesma para os dois caminhos. */
+function submissionNote(rec: PathRecommendation): string {
+  return `${rec.path} · SLA ${rec.slaDays} dias úteis · ${rec.rule}`;
+}
+
 export async function submitCase(
   input: z.input<typeof SubmitSchema>
 ): Promise<Result<{ code: string }>> {
@@ -308,41 +351,23 @@ export async function submitCase(
     const data = SubmitSchema.parse(input);
 
     return withTenantDb(ctx.tenantId, async (db) => {
-      let vendorName: string | null = null;
-
-      if (data.vendorId) {
-        const vendor = await db.charterVendor.findFirst({
-          where: { id: data.vendorId, tenantId: ctx.tenantId },
-          select: { name: true, maxClass: true, notes: true },
-        });
-        if (!vendor) {
-          throw new GovernanceError(
-            "vendor.unknown",
-            "Fornecedor não encontrado nesta organização."
-          );
-        }
-        vendorName = vendor.name;
-
-        // Gate de fornecedor: barra ANTES de submeter. Submeter para reprovar
-        // depois queima um ciclo de SLA e a paciência do requester.
-        if (!data.asDraft) {
-          const gate = vendorEligibility(vendor, data.dataClass);
-          if (!gate.eligible) {
-            throw new GovernanceError("vendor.maxClass", gate.reason);
-          }
-        }
-      } else if (!data.asDraft) {
+      const vendor = data.vendorId
+        ? await db.charterVendor.findFirst({
+            where: { id: data.vendorId, tenantId: ctx.tenantId },
+            select: { name: true, maxClass: true, notes: true },
+          })
+        : null;
+      if (data.vendorId && !vendor) {
         throw new GovernanceError(
-          "vendor.required",
-          "Todo caso submetido precisa declarar o fornecedor ou modelo usado."
+          "vendor.unknown",
+          "Fornecedor não encontrado nesta organização."
         );
       }
+      const vendorName = vendor?.name ?? null;
 
-      const rec = recommendPath(
-        data.dataClass,
-        data.exposure,
-        data.criticality
-      );
+      // Rascunho não passa pelo gate: é a saída para quem ainda não tem
+      // fornecedor elegível. A saída do rascunho é `submitDraftCase`.
+      const rec = data.asDraft ? null : submissionGate(vendor, data);
       const code = await nextCode({
         db,
         tenantId: ctx.tenantId,
@@ -367,9 +392,9 @@ export async function submitCase(
           status: data.asDraft ? "DRAFT" : "SUBMITTED",
           // Congelado no ato da submissão: mudar a regra depois não pode
           // reescrever o SLA de um caso em curso.
-          approvalPath: data.asDraft ? null : rec.path,
-          slaTotal: data.asDraft ? null : rec.slaDays,
-          hitl: data.asDraft ? null : rec.hitl,
+          approvalPath: rec?.path ?? null,
+          slaTotal: rec?.slaDays ?? null,
+          hitl: rec?.hitl ?? null,
           submittedAt: data.asDraft ? null : new Date(),
         },
       });
@@ -379,9 +404,7 @@ export async function submitCase(
         entityType: "charter.usecase",
         entityId: created.id,
         target: `${code} · ${data.title}`,
-        note: data.asDraft
-          ? undefined
-          : `${rec.path} · SLA ${rec.slaDays} dias úteis · ${rec.rule}`,
+        note: rec ? submissionNote(rec) : undefined,
         diff: [
           ["Status", "—", data.asDraft ? "Rascunho" : "Submetido"],
           ["Classe de dado", "—", data.dataClass],
@@ -390,6 +413,74 @@ export async function submitCase(
       });
 
       return { code };
+    });
+  });
+}
+
+// ── Saída do rascunho ─────────────────────────────────────────────────────────
+
+const SubmitDraftSchema = z.object({
+  caseId: z.string().min(1),
+});
+
+/**
+ * Promove um rascunho a SUBMITTED. Mesmo gate de `submitCase` — o rascunho
+ * existe justamente para quem ainda não tinha fornecedor elegível, e é aqui
+ * que ele descobre se já tem. Não existe opção "sem fornecedor": a regra
+ * `vendor.required` vale igual nos dois caminhos.
+ */
+export async function submitDraftCase(
+  input: z.input<typeof SubmitDraftSchema>
+): Promise<Result<{ code: string; path: string }>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("case.submit");
+    const data = SubmitDraftSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const uc = await db.charterUseCase.findFirst({
+        where: { id: data.caseId, tenantId: ctx.tenantId },
+        include: {
+          vendor: { select: { name: true, maxClass: true, notes: true } },
+        },
+      });
+      if (!uc) {
+        throw new GovernanceError("case.unknown", "Caso não encontrado.");
+      }
+      if (uc.status !== "DRAFT") {
+        throw new GovernanceError(
+          "case.notDraft",
+          "Este caso já saiu do rascunho — só rascunho pode ser submetido para revisão."
+        );
+      }
+
+      const rec = submissionGate(uc.vendor, uc);
+
+      await db.charterUseCase.update({
+        where: { id: uc.id },
+        data: {
+          status: "SUBMITTED",
+          // Congelado no ato da submissão, igual à submissão direta.
+          approvalPath: rec.path,
+          slaTotal: rec.slaDays,
+          hitl: rec.hitl,
+          submittedAt: new Date(),
+        },
+      });
+
+      await logCharterAudit(db, ctx, {
+        action: "Submeteu caso de uso",
+        entityType: "charter.usecase",
+        entityId: uc.id,
+        target: `${uc.code} · ${uc.title}`,
+        note: submissionNote(rec),
+        diff: [
+          ["Status", "Rascunho", "Submetido"],
+          ["Fornecedor", "—", uc.vendor?.name ?? "—"],
+        ],
+      });
+
+      revalidatePath("/charter", "layout");
+      return { code: uc.code, path: rec.path };
     });
   });
 }
