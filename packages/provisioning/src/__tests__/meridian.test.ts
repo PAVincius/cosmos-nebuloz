@@ -2,9 +2,17 @@ import { describe, expect, it, vi } from "vitest";
 import { bootstrapMeridian, MERIDIAN_BATTERY } from "../meridian";
 
 function makeDb(
-  options: { templateExists?: boolean; userExists?: boolean } = {}
+  options: {
+    templateExists?: boolean;
+    userExists?: boolean;
+    tenantExists?: boolean;
+  } = {}
 ) {
-  const { templateExists = false, userExists = true } = options;
+  const {
+    templateExists = false,
+    userExists = true,
+    tenantExists = true,
+  } = options;
   return {
     user: {
       findUnique: vi
@@ -14,7 +22,9 @@ function makeDb(
     tenant: {
       findUnique: vi
         .fn()
-        .mockResolvedValue({ id: "tenant-abc", slug: "vanta-saude" }),
+        .mockResolvedValue(
+          tenantExists ? { id: "tenant-abc", slug: "vanta-saude" } : null
+        ),
     },
     meridianMembership: { upsert: vi.fn().mockResolvedValue({ id: "mm-1" }) },
     meridianTemplate: {
@@ -136,6 +146,42 @@ describe("bootstrapMeridian", () => {
         actorUserId: "user-staff",
       })
     ).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+  });
+
+  it("falha com TENANT_NOT_FOUND antes de consultar usuário ou escrever", async () => {
+    const db = makeDb({ tenantExists: false });
+
+    await expect(
+      bootstrapMeridian(depsFor(db) as never, {
+        tenantId: "tenant-fantasma",
+        consultantEmail: "marina@vanta.exemplo",
+        actorUserId: "user-staff",
+      })
+    ).rejects.toMatchObject({
+      code: "TENANT_NOT_FOUND",
+      message: expect.stringContaining("tenant-fantasma"),
+    });
+
+    // O tenant é a primeira verificação: nada abaixo dela roda.
+    expect(db.user.findUnique).not.toHaveBeenCalled();
+    expect(db.meridianMembership.upsert).not.toHaveBeenCalled();
+    expect(db.meridianTemplate.create).not.toHaveBeenCalled();
+    expect(db.auditLog.create).not.toHaveBeenCalled();
+  });
+
+  it("normaliza o e-mail (trim + minúsculas) antes de procurar a conta", async () => {
+    const db = makeDb();
+
+    await bootstrapMeridian(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      consultantEmail: "  Marina@Vanta.Exemplo ",
+      actorUserId: "user-staff",
+    });
+
+    expect(db.user.findUnique).toHaveBeenCalledWith({
+      where: { email: "marina@vanta.exemplo" },
+      select: { id: true },
+    });
   });
 
   it("a bateria tem três perguntas por eixo, com código e ordinal únicos", () => {
