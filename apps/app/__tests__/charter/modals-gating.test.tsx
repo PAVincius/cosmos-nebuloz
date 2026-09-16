@@ -298,7 +298,12 @@ describe("PublishTrackModal", () => {
   it("com nome e uma seção, Publicar e atribuir dispara", () => {
     const onSubmit = renderIt();
     type(screen.getByPlaceholderText(/Dado de paciente/), "Trilha base");
-    fireEvent.click(screen.getByRole("button", { name: "01 · Escopo" }));
+    // O CheckRow vira role="checkbox" na PR #211; aceitar os dois roles evita
+    // que o merge das duas branches quebre este teste.
+    fireEvent.click(
+      screen.queryByRole("checkbox", { name: "01 · Escopo" }) ??
+        screen.getByRole("button", { name: "01 · Escopo" })
+    );
     fireEvent.click(
       screen.getByRole("button", { name: "Publicar e atribuir" })
     );
