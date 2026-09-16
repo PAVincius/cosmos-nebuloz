@@ -6,6 +6,7 @@
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import { RISK_CATEGORY_LABEL } from "@/lib/charter/rules";
+import { GatedButton } from "../base";
 import {
   Callout,
   FooterHint,
@@ -16,7 +17,6 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { GatedAction } from "./_shared";
 
 // ── 3. MitigationModal ────────────────────────────────────────────────────────
 
@@ -47,39 +47,40 @@ export function MitigationModal({
   const [action, setAction] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [due, setDue] = useState("");
-  const ready = action.trim().length > 8 && due !== "";
+  // Dono é obrigatório no formulário e no gate: risco sem dono é risco
+  // aceito por omissão. Motivo do gate como texto no rodapé; null quando pronto.
+  const gateReason =
+    action.trim().length > 8 && ownerName.trim() !== "" && due !== ""
+      ? null
+      : "Descreva a ação, informe o dono e o prazo";
 
   return (
     <ModalShell
       footer={
         <>
           <FooterHint>
-            <Kbd>esc</Kbd> cancelar
+            <Kbd>esc</Kbd> cancelar{gateReason ? ` · ${gateReason}` : ""}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason="Descreva a ação e informe o prazo"
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="check"
+              onClick={() =>
+                onSubmit({
+                  useCaseCode,
+                  category,
+                  action: action.trim(),
+                  ownerName: ownerName.trim(),
+                  dueDate: due,
+                })
+              }
+              reason={gateReason ?? ""}
             >
-              <Button
-                icon="check"
-                onClick={() =>
-                  onSubmit({
-                    useCaseCode,
-                    category,
-                    action: action.trim(),
-                    ownerName: ownerName.trim(),
-                    dueDate: due,
-                  })
-                }
-                size="md"
-              >
-                {pending ? "Registrando…" : "Registrar"}
-              </Button>
-            </GatedAction>
+              {pending ? "Registrando…" : "Registrar"}
+            </GatedButton>
           </div>
         </>
       }

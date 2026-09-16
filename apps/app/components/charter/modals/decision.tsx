@@ -12,7 +12,7 @@ import {
   DATA_CLASS_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import { Eyebrow, MetaCell } from "../base";
+import { Eyebrow, GatedButton, MetaCell } from "../base";
 import {
   Callout,
   CheckRow,
@@ -23,7 +23,7 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { type DataClass, GatedAction } from "./_shared";
+import type { DataClass } from "./_shared";
 
 // ── 2. DecisionModal (FR-6) ───────────────────────────────────────────────────
 
@@ -109,7 +109,13 @@ export function DecisionModal({
   const [draft, setDraft] = useState("");
   const sel = DECISIONS.find((d) => d.value === decision) ?? DECISIONS[0];
   const needsCond = decision === "RESTRICTED";
-  const ready = note.trim().length >= 12 && (!needsCond || conds.length > 0);
+  // Motivo do gate como texto no rodapé; null quando está pronto.
+  const gateReason =
+    needsCond && conds.length === 0
+      ? "Aprovação com restrições exige ao menos uma condição"
+      : note.trim().length < 12
+        ? "Escreva a justificativa"
+        : null;
 
   const cells = [
     {
@@ -144,43 +150,38 @@ export function DecisionModal({
       footer={
         <>
           <FooterHint>
-            <Icon name="userCheck" size={12} />
-            {deciderName} · {deciderRole}
+            {gateReason ?? (
+              <>
+                <Icon name="userCheck" size={12} />
+                {deciderName} · {deciderRole}
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason={
-                needsCond && conds.length === 0
-                  ? "Aprovação com restrições exige ao menos uma condição"
-                  : "Escreva a justificativa"
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon={sel.icon}
+              onClick={() =>
+                onSubmit({
+                  outcome: decision,
+                  rationale: note.trim(),
+                  conditions: needsCond ? conds : [],
+                  changeRequest:
+                    decision === "CHANGES" ? note.trim() : undefined,
+                  blockReason: decision === "BLOCKED" ? note.trim() : undefined,
+                })
               }
+              reason={gateReason ?? ""}
+              style={{
+                background: `var(--${sel.tone})`,
+                borderColor: `var(--${sel.tone})`,
+              }}
             >
-              <Button
-                icon={sel.icon}
-                onClick={() =>
-                  onSubmit({
-                    outcome: decision,
-                    rationale: note.trim(),
-                    conditions: needsCond ? conds : [],
-                    changeRequest:
-                      decision === "CHANGES" ? note.trim() : undefined,
-                    blockReason:
-                      decision === "BLOCKED" ? note.trim() : undefined,
-                  })
-                }
-                size="md"
-                style={{
-                  background: `var(--${sel.tone})`,
-                  borderColor: `var(--${sel.tone})`,
-                }}
-              >
-                {pending ? "Registrando…" : sel.label}
-              </Button>
-            </GatedAction>
+              {pending ? "Registrando…" : sel.label}
+            </GatedButton>
           </div>
         </>
       }

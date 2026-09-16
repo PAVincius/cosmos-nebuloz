@@ -6,8 +6,8 @@
 // caller é follow-up de uma linha por arquivo, e aí este barrel some.
 // O IntakeModal (FR-4) continua em `modals-intake.tsx`.
 
+export type { DataClass } from "./modals/_shared";
 // biome-ignore lint/performance/noBarrelFile: reexport intencional e transitório — ver cabeçalho
-export { type DataClass, GatedAction } from "./modals/_shared";
 export { ClauseLibraryModal } from "./modals/clause-library";
 export { DecisionModal, type DecisionSubmit } from "./modals/decision";
 export { DiffModal } from "./modals/diff";

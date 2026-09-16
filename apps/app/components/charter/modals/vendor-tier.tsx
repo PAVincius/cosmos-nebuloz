@@ -7,6 +7,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import { DATA_CLASS_LABEL, type Tone } from "@/lib/charter/rules";
+import { GatedButton } from "../base";
 import {
   Callout,
   FooterHint,
@@ -15,7 +16,7 @@ import {
   TextArea,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { type DataClass, GatedAction } from "./_shared";
+import type { DataClass } from "./_shared";
 
 type VendorTier = "APPROVED" | "RESTRICTED" | "REVIEW" | "BLOCKED";
 
@@ -70,33 +71,40 @@ export function VendorTierModal({
 }) {
   const [tier, setTier] = useState<VendorTier>(vendor.tier as VendorTier);
   const [note, setNote] = useState("");
-  const ready = note.trim().length >= 12;
   const meta = TIER_OPTS.find((t) => t.value === tier) ?? TIER_OPTS[0];
+  // Aplicar o mesmo tier registraria uma alteração sem alteração na
+  // auditoria. Motivo do gate como texto no rodapé; null quando pronto.
+  const gateReason =
+    tier === vendor.tier
+      ? "Escolha um tier diferente do atual"
+      : note.trim().length < 12
+        ? "Escreva a justificativa"
+        : null;
 
   return (
     <ModalShell
       footer={
         <>
           <FooterHint>
-            <Icon name="history" size={12} />
-            Alteração entra na trilha de auditoria
+            {gateReason ?? (
+              <>
+                <Icon name="history" size={12} />
+                Alteração entra na trilha de auditoria
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason="Escreva a justificativa"
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="check"
+              onClick={() => onSubmit({ tier, rationale: note.trim() })}
+              reason={gateReason ?? ""}
             >
-              <Button
-                icon="check"
-                onClick={() => onSubmit({ tier, rationale: note.trim() })}
-                size="md"
-              >
-                {pending ? "Aplicando…" : "Aplicar"}
-              </Button>
-            </GatedAction>
+              {pending ? "Aplicando…" : "Aplicar"}
+            </GatedButton>
           </div>
         </>
       }

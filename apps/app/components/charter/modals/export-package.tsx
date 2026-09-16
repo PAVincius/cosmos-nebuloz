@@ -6,7 +6,7 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
-import { Eyebrow } from "../base";
+import { Eyebrow, GatedButton } from "../base";
 import {
   Callout,
   CheckRow,
@@ -16,7 +16,6 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { GatedAction } from "./_shared";
 
 // ── 11. ExportPackageModal (FR-11.5, FR-11.6) ─────────────────────────────────
 
@@ -56,32 +55,36 @@ export function ExportPackageModal({
   ]);
   const toggle = (id: string) =>
     setArts((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
-  const ready = arts.length > 0 && from !== "" && to !== "";
+  // Motivo do gate como texto no rodapé; null quando está pronto.
+  const gateReason =
+    arts.length > 0 && from !== "" && to !== ""
+      ? null
+      : "Informe o período e ao menos um artefato";
 
   return (
     <ModalShell
       footer={
         <>
           <FooterHint>
-            <Icon name="lock" size={12} />
-            {result ?? "Referências imutáveis aos registros de origem"}
+            {gateReason ?? (
+              <>
+                <Icon name="lock" size={12} />
+                {result ?? "Referências imutáveis aos registros de origem"}
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Fechar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason="Informe o período e ao menos um artefato"
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="download"
+              onClick={() => onSubmit({ from, to, categories: arts, format })}
+              reason={gateReason ?? ""}
             >
-              <Button
-                icon="download"
-                onClick={() => onSubmit({ from, to, categories: arts, format })}
-                size="md"
-              >
-                {pending ? "Gerando…" : "Gerar pacote"}
-              </Button>
-            </GatedAction>
+              {pending ? "Gerando…" : "Gerar pacote"}
+            </GatedButton>
           </div>
         </>
       }

@@ -5,8 +5,8 @@
 // Extraído de modals.tsx, que está na baseline do file-size-guard e não pode
 // crescer: qualquer mudança no intake passa a acontecer aqui. Anatomia
 // preservada 1:1 — ModalSplit com trilho de avaliação ao vivo, e Callout
-// carregando a razão na tela em vez de tooltip. `GatedAction` e `DataClass`
-// continuam em modals.tsx porque os outros modais também os usam.
+// carregando a razão na tela em vez de tooltip. `DataClass` continua em
+// modals.tsx porque os outros modais também o usam.
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, Button } from "@repo/design-system/cosmos/kit";
@@ -23,7 +23,7 @@ import {
   type Tone,
   vendorEligibility,
 } from "@/lib/charter/rules";
-import { Eyebrow, MetaCell } from "./base";
+import { Eyebrow, GatedButton, MetaCell } from "./base";
 import {
   Callout,
   FooterHint,
@@ -34,7 +34,7 @@ import {
   TextInput,
 } from "./form-kit";
 import { ModalShell, ModalSplit } from "./modal";
-import { type DataClass, GatedAction } from "./modals";
+import type { DataClass } from "./modals";
 
 type Exposure = "INTERNAL" | "EXTERNAL";
 type Criticality = "LOW" | "MEDIUM" | "HIGH";
@@ -124,8 +124,17 @@ export function IntakeModal({
       )
     : null;
   const eligible = gate?.eligible ?? false;
-  const ready =
-    title.trim().length > 5 && objective.trim().length > 15 && eligible;
+  // Responsável é obrigatório no formulário e no gate. Motivo do gate como
+  // texto no rodapé; null quando está pronto.
+  const filled =
+    title.trim().length > 5 &&
+    objective.trim().length > 15 &&
+    ownerName.trim() !== "";
+  const gateReason = eligible
+    ? filled
+      ? null
+      : "Preencha título, objetivo e responsável"
+    : "Fornecedor não elegível à classe de dado escolhida";
 
   const submit = (asDraft: boolean) =>
     onSubmit({
@@ -145,25 +154,25 @@ export function IntakeModal({
       footer={
         <>
           <FooterHint>
-            <Icon name="lock" size={12} />
-            Submissão cria registro de risco e marca o SLA de revisão
+            {gateReason ?? (
+              <>
+                <Icon name="lock" size={12} />
+                Submissão cria registro de risco e marca o SLA de revisão
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={() => submit(true)} size="md" variant="secondary">
               Salvar rascunho
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason={
-                eligible
-                  ? "Preencha título e objetivo"
-                  : "Fornecedor não elegível à classe de dado escolhida"
-              }
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="send"
+              onClick={() => submit(false)}
+              reason={gateReason ?? ""}
             >
-              <Button icon="send" onClick={() => submit(false)} size="md">
-                {pending ? "Submetendo…" : "Submeter para revisão"}
-              </Button>
-            </GatedAction>
+              {pending ? "Submetendo…" : "Submeter para revisão"}
+            </GatedButton>
           </div>
         </>
       }

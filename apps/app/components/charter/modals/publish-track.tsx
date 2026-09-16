@@ -7,7 +7,7 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
-import { Eyebrow, MetaCell } from "../base";
+import { Eyebrow, GatedButton, MetaCell } from "../base";
 import {
   CheckRow,
   FooterHint,
@@ -18,7 +18,6 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell, ModalSplit } from "../modal";
-import { GatedAction } from "./_shared";
 
 // ── 10. PublishTrackModal (FR-10.4) ───────────────────────────────────────────
 
@@ -77,42 +76,46 @@ export function PublishTrackModal({
       const [n, dept] = l.split(",").map((s) => s.trim());
       return { name: n, department: dept || undefined };
     });
-  const ready = name.trim().length > 3 && picked.length > 0;
+  // Motivo do gate como texto no rodapé; null quando está pronto.
+  const gateReason =
+    name.trim().length > 3 && picked.length > 0
+      ? null
+      : "Informe o nome e escolha ao menos uma seção publicada";
 
   return (
     <ModalShell
       footer={
         <>
           <FooterHint>
-            <Icon name="lock" size={12} />
-            Aceite registra a versão {policyVersion ?? "—"}
+            {gateReason ?? (
+              <>
+                <Icon name="lock" size={12} />
+                Aceite registra a versão {policyVersion ?? "—"}
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason="Informe o nome e escolha ao menos uma seção publicada"
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="send"
+              onClick={() =>
+                onSubmit({
+                  name: name.trim(),
+                  audience,
+                  modules: picked.length,
+                  minutes,
+                  recert: recert === "Anual" ? "ANNUAL" : "SEMIANNUAL",
+                  people,
+                  dueInDays: 14,
+                })
+              }
+              reason={gateReason ?? ""}
             >
-              <Button
-                icon="send"
-                onClick={() =>
-                  onSubmit({
-                    name: name.trim(),
-                    audience,
-                    modules: picked.length,
-                    minutes,
-                    recert: recert === "Anual" ? "ANNUAL" : "SEMIANNUAL",
-                    people,
-                    dueInDays: 14,
-                  })
-                }
-                size="md"
-              >
-                {pending ? "Publicando…" : "Publicar e atribuir"}
-              </Button>
-            </GatedAction>
+              {pending ? "Publicando…" : "Publicar e atribuir"}
+            </GatedButton>
           </div>
         </>
       }

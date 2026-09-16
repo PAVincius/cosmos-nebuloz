@@ -5,7 +5,7 @@
 
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
-import { Eyebrow } from "../base";
+import { Eyebrow, GatedButton } from "../base";
 import {
   Callout,
   CheckRow,
@@ -15,7 +15,6 @@ import {
   TextArea,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { GatedAction } from "./_shared";
 
 // ── 4. PublishVersionModal (FR-2.3, FR-2.4) ───────────────────────────────────
 
@@ -49,35 +48,33 @@ export function PublishVersionModal({
   const [notify, setNotify] = useState(true);
   const [recert, setRecert] = useState(true);
   const blocked = blockers.length > 0;
-  const ready = summary.trim().length >= 12 && !blocked;
+  // Motivo do gate como texto no rodapé; null quando está pronto.
+  const gateReason = blocked
+    ? "Aprove todas as seções antes de publicar"
+    : summary.trim().length < 12
+      ? "Escreva um resumo de mudança"
+      : null;
 
   return (
     <ModalShell
       footer={
         <>
           <FooterHint>
-            <Kbd>esc</Kbd> cancelar · publicação entra na auditoria
+            <Kbd>esc</Kbd> cancelar ·{" "}
+            {gateReason ?? "publicação entra na auditoria"}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction
-              ready={ready && !pending}
-              reason={
-                blocked
-                  ? "Aprove todas as seções antes de publicar"
-                  : "Escreva um resumo de mudança"
-              }
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="check"
+              onClick={() => onSubmit(summary.trim())}
+              reason={gateReason ?? ""}
             >
-              <Button
-                icon="check"
-                onClick={() => onSubmit(summary.trim())}
-                size="md"
-              >
-                {pending ? "Publicando…" : `Publicar ${nextVersion}`}
-              </Button>
-            </GatedAction>
+              {pending ? "Publicando…" : `Publicar ${nextVersion}`}
+            </GatedButton>
           </div>
         </>
       }

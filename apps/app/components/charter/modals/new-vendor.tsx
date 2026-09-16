@@ -7,7 +7,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useMemo, useState } from "react";
 import { DATA_CLASS_LABEL } from "@/lib/charter/rules";
-import { Eyebrow } from "../base";
+import { Eyebrow, GatedButton } from "../base";
 import {
   Callout,
   CheckRow,
@@ -18,7 +18,7 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell } from "../modal";
-import { type DataClass, GatedAction } from "./_shared";
+import type { DataClass } from "./_shared";
 
 // ── 8. NewVendorModal (FR-8.4) ────────────────────────────────────────────────
 
@@ -68,7 +68,8 @@ export function NewVendorModal({
   const [dpa, setDpa] = useState(false);
   const [notes, setNotes] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
-  const ready = name.trim().length > 2;
+  // Motivo do gate como texto no rodapé; null quando está pronto.
+  const gateReason = name.trim().length > 2 ? null : "Informe o nome";
 
   // Prévia da mesma escada que o servidor aplica (ADR-0003).
   const derived = useMemo<DataClass>(() => {
@@ -86,32 +87,35 @@ export function NewVendorModal({
       footer={
         <>
           <FooterHint>
-            <Icon name="lock" size={12} />
-            Entra como Em revisão até a avaliação de Segurança
+            {gateReason ?? (
+              <>
+                <Icon name="lock" size={12} />
+                Entra como Em revisão até a avaliação de Segurança
+              </>
+            )}
           </FooterHint>
           <div style={{ display: "flex", gap: 10 }}>
             <Button onClick={onClose} size="md" variant="secondary">
               Cancelar
             </Button>
-            <GatedAction ready={ready && !pending} reason="Informe o nome">
-              <Button
-                icon="check"
-                onClick={() =>
-                  onSubmit({
-                    name: name.trim(),
-                    category,
-                    region,
-                    retention,
-                    dpa,
-                    notes: notes.trim(),
-                    clauseCodes: selected,
-                  })
-                }
-                size="md"
-              >
-                {pending ? "Adicionando…" : "Adicionar"}
-              </Button>
-            </GatedAction>
+            <GatedButton
+              allowed={gateReason === null && !pending}
+              icon="check"
+              onClick={() =>
+                onSubmit({
+                  name: name.trim(),
+                  category,
+                  region,
+                  retention,
+                  dpa,
+                  notes: notes.trim(),
+                  clauseCodes: selected,
+                })
+              }
+              reason={gateReason ?? ""}
+            >
+              {pending ? "Adicionando…" : "Adicionar"}
+            </GatedButton>
           </div>
         </>
       }
