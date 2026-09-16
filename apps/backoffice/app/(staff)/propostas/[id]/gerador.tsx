@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/proposta-escopo";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { planoPadrao } from "@/lib/comercial/plano-padrao";
 import {
@@ -30,12 +31,60 @@ import { validarProposta } from "@/lib/comercial/validacoes";
 
 const TROCA = { display: "flex", gap: 8, flexWrap: "wrap" } as const;
 
+/** FR-13.7: enviar exige contato com e-mail — o servidor valida de novo. */
+const EMAIL = /.+@.+\..+/;
+
 const ROTULO_DE_STATUS: Record<string, string> = {
   AGUARDANDO_APROVACAO: "na fila de aprovação",
   ENVIADA: "enviada",
   ACEITA: "aceita",
   RECUSADA: "recusada",
 };
+
+/** O escopo como `salvarEscopoAction` o recebe, em texto e com as listas
+ *  ordenadas — é o que se compara com a última gravação para saber se a tela
+ *  está à frente do banco. Ordenar porque marcar COSMOS e depois CHARTER é o
+ *  mesmo escopo que marcar na ordem inversa. */
+function assinaturaDoEscopo(escopo: {
+  titulo: string;
+  clienteNome: string | undefined;
+  contatoEmail: string | undefined;
+  planoSlug: string;
+  assentos: number;
+  modulos: string[];
+  addOnSlugs: string[];
+  termoSlug: string;
+  descontoPercent: number;
+  servicoIds: string[];
+}): string {
+  return JSON.stringify({
+    ...escopo,
+    modulos: [...escopo.modulos].sort(),
+    addOnSlugs: [...escopo.addOnSlugs].sort(),
+    servicoIds: [...escopo.servicoIds].sort(),
+  });
+}
+
+/** O que o botão de envio diz. "Salvar e enviar" vence os outros dois: com
+ *  edição pendente, o nome precisa avisar que vai gravar antes. */
+function rotuloDeEnvio(sujo: boolean, precisaAprovacao: boolean): string {
+  if (sujo) {
+    return "Salvar e enviar";
+  }
+  return precisaAprovacao ? "Enviar para aprovação" : "Enviar proposta";
+}
+
+/** Cor do texto de um aviso de validação, pelo tom que `validarProposta`
+ *  atribui. Sem ternário aninhado: cada tom é um `if`. */
+function corDoAviso(tom: "amber" | "red" | "blue"): string {
+  if (tom === "red") {
+    return "var(--red-text)";
+  }
+  if (tom === "blue") {
+    return "var(--blue-text)";
+  }
+  return "var(--amber-text)";
+}
 
 function botaoDeEscolha(ativo: boolean) {
   return {
@@ -51,6 +100,7 @@ function botaoDeEscolha(ativo: boolean) {
   };
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: componente de ~900 linhas herdado inteiro; a onda P0 muda só o envio, e o refactor em partes é assunto de outra onda
 export function Gerador({
   catalogo,
   servicos,
@@ -96,8 +146,32 @@ export function Gerador({
   );
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [salvo, setSalvo] = useState<{ id: string; numero: string } | null>(
-    proposta ? { id: proposta.id, numero: proposta.numero } : null
+  // `assinatura` é o escopo como foi gravado. Sem isso, "Enviar" mandava o
+  // que estava no banco e a tela mostrava o que estava sendo editado — o
+  // cliente recebia a versão antiga.
+  const [salvo, setSalvo] = useState<{
+    id: string;
+    numero: string;
+    assinatura: string;
+  } | null>(
+    proposta
+      ? {
+          id: proposta.id,
+          numero: proposta.numero,
+          assinatura: assinaturaDoEscopo({
+            titulo: proposta.titulo,
+            clienteNome: proposta.clienteNome ?? undefined,
+            contatoEmail: proposta.contatoEmail ?? undefined,
+            planoSlug: proposta.planoSlug ?? "",
+            assentos: proposta.assentos,
+            modulos: proposta.modulos,
+            addOnSlugs: proposta.addOnSlugs,
+            termoSlug: proposta.termoSlug ?? "",
+            descontoPercent: proposta.descontoPercent,
+            servicoIds: proposta.servicoIds,
+          }),
+        }
+      : null
   );
 
   const alterna = (lista: string[], valor: string) =>
@@ -174,9 +248,41 @@ export function Gerador({
     : [];
 
   const precisaAprovacao = avisos.some((a) => a.bloqueiaEnvio);
-  const emailValido = /.+@.+\..+/.test(contato);
+  const emailValido = EMAIL.test(contato);
   const podeEnviar =
     titulo.trim().length >= 2 && emailValido && modulos.length > 0;
+
+  const escopoAtual = {
+    titulo: titulo.trim(),
+    clienteNome: cliente.trim() || undefined,
+    contatoEmail: contato.trim() || undefined,
+    planoSlug,
+    assentos,
+    modulos,
+    addOnSlugs,
+    termoSlug,
+    descontoPercent: desconto,
+    servicoIds,
+  };
+  /** A tela está à frente do que foi gravado. */
+  const sujo =
+    salvo !== null && assinaturaDoEscopo(escopoAtual) !== salvo.assinatura;
+
+  /** Grava o escopo e devolve o id — `null` quando o servidor recusou (o erro
+   *  já foi para a tela). Compartilhado entre o submit do formulário e o
+   *  "Salvar e enviar". */
+  const gravar = async (): Promise<string | null> => {
+    const res = await salvarEscopoAction({
+      ...(salvo ? { id: salvo.id } : {}),
+      ...escopoAtual,
+    });
+    if (!res.ok) {
+      setErro(res.error);
+      return null;
+    }
+    setSalvo({ ...res.data, assinatura: assinaturaDoEscopo(escopoAtual) });
+    return res.data.id;
+  };
 
   const salvar = async (event: FormEvent) => {
     event.preventDefault();
@@ -186,27 +292,12 @@ export function Gerador({
     setSalvando(true);
     setErro(null);
 
-    const res = await salvarEscopoAction({
-      ...(salvo ? { id: salvo.id } : {}),
-      titulo: titulo.trim(),
-      clienteNome: cliente.trim() || undefined,
-      contatoEmail: contato.trim() || undefined,
-      planoSlug,
-      assentos,
-      modulos,
-      addOnSlugs,
-      termoSlug,
-      descontoPercent: desconto,
-      servicoIds,
-    });
+    const id = await gravar();
 
     setSalvando(false);
-    if (res.ok) {
-      setSalvo(res.data);
+    if (id) {
       router.refresh();
-      return;
     }
-    setErro(res.error);
   };
 
   const enviar = async () => {
@@ -216,14 +307,41 @@ export function Gerador({
     setSalvando(true);
     setErro(null);
 
-    const res = await submitProposalAction({ id: salvo.id });
+    // Com edição pendente, grava primeiro — e só envia se gravou. Enviar o
+    // que está no banco enquanto a tela mostra outra coisa é o bug que esta
+    // função existia para não ter.
+    const id = sujo ? await gravar() : salvo.id;
+    if (!id) {
+      setSalvando(false);
+      return;
+    }
+
+    const res = await submitProposalAction({ id });
     setSalvando(false);
     if (res.ok) {
-      router.push("/propostas");
+      // O destino nomeia o que aconteceu: a lista lê `?enviada` e confirma
+      // por título, em vez de trocar de tela em silêncio.
+      router.push(`/propostas?enviada=${encodeURIComponent(id)}`);
       return;
     }
     setErro(res.error);
   };
+
+  // Rótulo e consequência do envio — fora do JSX para o lint não ler o
+  // ternário como valor vazando para o render.
+  const rotuloDoEnvio = rotuloDeEnvio(sujo, precisaAprovacao);
+  const consequenciaDoEnvio = precisaAprovacao
+    ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
+    : "O cliente recebe esta versão; não há como editar depois de enviada.";
+  const alvoDoEnvio = cliente.trim()
+    ? `${titulo.trim()} · ${cliente.trim()}`
+    : titulo.trim();
+  const dicaDeAssentos = plano
+    ? `mínimo faturável: ${plano.minimoAssentos} · faturando ${preco?.assentosFaturados ?? assentos}`
+    : undefined;
+  const dicaDoTermo = termo
+    ? `desconto de prazo: ${termo.descontoPercent}%`
+    : undefined;
 
   return (
     <form
@@ -321,21 +439,15 @@ export function Gerador({
               </div>
             </Campo>
 
-            <Campo
-              hint={
-                plano
-                  ? `mínimo faturável: ${plano.minimoAssentos} · faturando ${preco?.assentosFaturados ?? assentos}`
-                  : undefined
-              }
-              htmlFor="g-assentos"
-              label="Assentos"
-            >
+            <Campo hint={dicaDeAssentos} htmlFor="g-assentos" label="Assentos">
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <input
                   disabled={!editavel}
                   id="g-assentos"
                   max="500"
-                  min="5"
+                  // 0 é legítimo (proposta de diagnóstico, ver `assentos`
+                  // acima); `precificarProposta` aplica o mínimo do plano.
+                  min="0"
                   onChange={(e) => setAssentos(Number(e.target.value))}
                   step="5"
                   style={{ flex: 1, accentColor: "var(--accent)" }}
@@ -434,7 +546,7 @@ export function Gerador({
                           >
                             {a.nome}
                           </span>
-                          {a.nota && (
+                          {a.nota ? (
                             <span
                               style={{
                                 display: "block",
@@ -444,7 +556,7 @@ export function Gerador({
                             >
                               {a.nota}
                             </span>
-                          )}
+                          ) : null}
                         </span>
                         <span
                           className="mono"
@@ -502,7 +614,7 @@ export function Gerador({
                         }}
                       >
                         {s.nome}
-                        {s.exigeLab && <Badge tone="blue">LAB</Badge>}
+                        {s.exigeLab ? <Badge tone="blue">LAB</Badge> : null}
                       </span>
                       <span
                         className="mono"
@@ -537,11 +649,7 @@ export function Gerador({
         <SectionCard bodyStyle={{ padding: 14 }} icon="tag" title="Comercial">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
-              hint={
-                termo
-                  ? `desconto de prazo: ${termo.descontoPercent}%`
-                  : undefined
-              }
+              hint={dicaDoTermo}
               htmlFor="g-termo"
               label="Prazo de contrato"
             >
@@ -641,7 +749,7 @@ export function Gerador({
             </div>
           </div>
 
-          {preco && plano && (
+          {preco !== null && plano !== undefined ? (
             <div style={{ display: "flex", flexDirection: "column" }}>
               <LinhaDoDocumento
                 detalhe={
@@ -739,7 +847,7 @@ export function Gerador({
                 />
               </div>
             </div>
-          )}
+          ) : null}
         </SectionCard>
 
         {avisos.length > 0 && (
@@ -756,12 +864,7 @@ export function Gerador({
                     fontSize: "var(--fs-nota)",
                     fontWeight: 600,
                     lineHeight: 1.5,
-                    color:
-                      a.tom === "red"
-                        ? "var(--red-text)"
-                        : a.tom === "blue"
-                          ? "var(--blue-text)"
-                          : "var(--amber-text)",
+                    color: corDoAviso(a.tom),
                   }}
                 >
                   · {a.texto}
@@ -771,9 +874,9 @@ export function Gerador({
           </SectionCard>
         )}
 
-        {erro && <Erro>{erro}</Erro>}
+        {erro ? <Erro>{erro}</Erro> : null}
 
-        {somenteLeitura && (
+        {somenteLeitura ? (
           <SectionCard
             bodyStyle={{ padding: 14 }}
             icon="lock"
@@ -791,23 +894,29 @@ export function Gerador({
               preço ou escopo, monte uma proposta nova.
             </span>
           </SectionCard>
-        )}
+        ) : null}
 
         {editavel ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <BotaoPrimario disabled={salvando || !podeEnviar}>
               {salvo ? "Salvar alterações" : "Criar rascunho"}
             </BotaoPrimario>
-            {salvo && (
-              <BotaoPrimario
-                disabled={salvando || !podeEnviar}
-                onClick={enviar}
-                type="button"
-              >
-                {precisaAprovacao ? "Enviar para aprovação" : "Enviar proposta"}
-              </BotaoPrimario>
-            )}
-            {!podeEnviar && (
+            {salvo ? (
+              // Enviar é sem volta — o servidor não deixa editar depois. O
+              // grid faz o gatilho ocupar a largura do botão de cima.
+              <div style={{ display: "grid" }}>
+                <ConfirmarAcao
+                  alvo={alvoDoEnvio}
+                  consequencia={consequenciaDoEnvio}
+                  desabilitado={!podeEnviar}
+                  executando={salvando}
+                  onConfirmar={enviar}
+                  rotulo={rotuloDoEnvio}
+                  tom="accent"
+                />
+              </div>
+            ) : null}
+            {podeEnviar ? null : (
               <span
                 style={{
                   fontSize: "var(--fs-nota)",
@@ -824,7 +933,8 @@ export function Gerador({
             <span
               style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
             >
-              Somente leitura — seu papel no back-office é MEMBER.
+              Somente leitura: seu papel no back-office é MEMBER. Um ADMIN
+              precisa fazer esta ação.
             </span>
           )
         )}
@@ -866,7 +976,7 @@ function LinhaDoDocumento({
         >
           {rotulo}
         </span>
-        {detalhe && (
+        {detalhe ? (
           <span
             style={{
               display: "block",
@@ -876,7 +986,7 @@ function LinhaDoDocumento({
           >
             {detalhe}
           </span>
-        )}
+        ) : null}
       </span>
       <span
         className="mono"
