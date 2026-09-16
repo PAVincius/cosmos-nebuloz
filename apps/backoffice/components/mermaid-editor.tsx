@@ -202,7 +202,6 @@ export function MermaidEditor({
             fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
-            outline: "none",
           }}
           value={nota}
         />
@@ -254,7 +253,6 @@ export function MermaidEditor({
               fontSize: "var(--fs-base)",
               lineHeight: 1.65,
               color: "var(--ink)",
-              outline: "none",
             }}
             value={source}
           />

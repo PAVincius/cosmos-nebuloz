@@ -207,7 +207,6 @@ export function BpmnModeler({
             fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
-            outline: "none",
           }}
           value={nota}
         />

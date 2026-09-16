@@ -18,7 +18,6 @@ export const INPUT: CSSProperties = {
   fontSize: "var(--fs-base)",
   fontWeight: 600,
   color: "var(--ink)",
-  outline: "none",
   width: "100%",
 };
 
