@@ -54,12 +54,16 @@ motivo é texto visível no rodapé, no lugar da dica enquanto trava.
 não pode crescer. A cor do veredito no botão de decisão vem de `--accent`
 redefinido no escopo do botão (`decision.tsx`).
 
+## Bloco 3 — `cases.tsx` repassa `launchTarget`
+
+`screens/cases.tsx` montava o `submitCase` campo a campo e descartava o
+`launchTarget` que o intake passou a emitir. Liberado pela coordenação, entra
+na própria PR: teste de tela (`cases-screen-launch-target.test.tsx`) que abre
+o intake, preenche "Início pretendido", submete e asserta `submitCase` com
+`launchTarget: "2026-11-01"`; mutação (linha removida) derruba o teste.
+
 ## Fora do escopo (relatado)
 
-- `screens/cases.tsx` monta o `submitCase` campo a campo e **não repassa**
-  `launchTarget` — tela proibida nesta onda. Follow-up de uma linha:
-  `launchTarget: input.launchTarget,` no objeto passado a `submitCase`.
-  Até lá, o intake emite o campo e a action aceita, mas a tela o descarta.
 - `scripts/seed-charter.ts` ainda semeia "IA clínica"/"Clínico" — dado de
   demonstração, não UI.
 - `scripts/file-size-baseline.json` não foi baixado (`modals.tsx` saiu da
@@ -67,7 +71,7 @@ redefinido no escopo do botão (`decision.tsx`).
 
 ## Verificação
 
-vitest 4140/0 (405 arquivos; +44 testes) · tsc limpo · biome limpo nos
+vitest 4142/0 (406 arquivos; +46 testes) · tsc limpo · biome limpo nos
 arquivos tocados · `size:guard` verde sem `--update` (`modals.tsx` caiu
 abaixo de 800; nenhum arquivo novo acima) · build "Compiled successfully" +
 TypeScript OK (falha posterior em "Collecting page data" de
