@@ -3,6 +3,7 @@ import { listCapacity } from "@/app/actions/capacity";
 import { listEngagements } from "@/app/actions/engagements";
 import { listIpAssets } from "@/app/actions/ip-library";
 import { listServices } from "@/app/actions/services";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Biblioteca } from "./biblioteca";
 
@@ -36,12 +37,12 @@ export default async function IpPage() {
           servicos={servicos.data}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {ativos.ok ? "" : ativos.error}
-          {engajamentos.ok ? "" : engajamentos.error}
-          {servicos.ok ? "" : servicos.error}
-          {pessoas.ok ? "" : pessoas.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={[ativos, engajamentos, servicos, pessoas].flatMap((r) =>
+            r.ok ? [] : [r.error]
+          )}
+          titulo="Não foi possível carregar a biblioteca"
+        />
       )}
     </div>
   );

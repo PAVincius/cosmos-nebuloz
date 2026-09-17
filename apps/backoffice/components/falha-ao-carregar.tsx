@@ -25,13 +25,21 @@ export function FalhaAoCarregar({
 }: {
   /** O que não abriu: "Não foi possível abrir o gerador". */
   titulo: string;
-  /** A mensagem do servidor — é mais precisa que qualquer texto daqui. */
-  motivo: string;
+  /** A mensagem do servidor — é mais precisa que qualquer texto daqui. Lista
+   *  quando a tela soma leituras (Delivery, Capacidade, Biblioteca): uma linha
+   *  por leitura que falhou, em vez de três mensagens coladas num parágrafo. */
+  motivo: string | string[];
   /** O que pode estar por trás, quando tentar de novo não basta. */
   nota?: string;
 }) {
   const router = useRouter();
   const [pendente, iniciar] = useTransition();
+  // Sem repetição: banco fora derruba as três leituras com a mesma frase, e a
+  // frase repetida três vezes não diz mais que uma. O título vai colado no
+  // primeiro motivo; os outros são linhas soltas abaixo dele.
+  const motivos = Array.from(
+    new Set(Array.isArray(motivo) ? motivo : [motivo])
+  ).map((m, i) => (i === 0 ? `${titulo}: ${m}` : m));
 
   return (
     <div
@@ -47,16 +55,19 @@ export function FalhaAoCarregar({
         gap: 10,
       }}
     >
-      <p
-        style={{
-          margin: 0,
-          fontSize: "var(--fs-base)",
-          fontWeight: 600,
-          color: "var(--red-text)",
-        }}
-      >
-        {titulo}: {motivo}
-      </p>
+      {motivos.map((linha) => (
+        <p
+          key={linha}
+          style={{
+            margin: 0,
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+            color: "var(--red-text)",
+          }}
+        >
+          {linha}
+        </p>
+      ))}
       {nota ? (
         <p
           style={{

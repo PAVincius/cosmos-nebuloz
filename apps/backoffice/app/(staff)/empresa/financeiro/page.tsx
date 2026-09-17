@@ -9,6 +9,7 @@ import { listarLancamentos } from "@/app/actions/empresa/livro";
 import { lerOrcado } from "@/app/actions/empresa/orcamento";
 import { listarRecorrente } from "@/app/actions/empresa/recorrente";
 import { listarTitulos } from "@/app/actions/empresa/titulos";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
   competenciaAtual,
@@ -137,9 +138,10 @@ function ErroDaAba({ erro }: { erro: string | null }) {
     return null;
   }
   return (
-    <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-      {erro}
-    </p>
+    <FalhaAoCarregar
+      motivo={erro}
+      titulo="Não foi possível carregar esta aba"
+    />
   );
 }
 

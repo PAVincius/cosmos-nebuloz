@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/access";
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 
 export const dynamic = "force-dynamic";
 
@@ -284,9 +285,10 @@ export default async function HomePage() {
       {saude.ok ? (
         <Conteudo aprovacoes={filaDeAprovacoes} saude={saude.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {saude.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={saude.error}
+          titulo="Não foi possível carregar a saúde da plataforma"
+        />
       )}
     </div>
   );

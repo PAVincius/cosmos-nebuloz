@@ -1,6 +1,7 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listClients } from "@/app/actions/clients";
 import { listDiagrams } from "@/app/actions/diagrams";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Estudio } from "../estudio";
 
@@ -32,9 +33,10 @@ export default async function DiagramasPage() {
           podeEscrever={staff.canWrite}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar os diagramas"
+        />
       )}
     </div>
   );

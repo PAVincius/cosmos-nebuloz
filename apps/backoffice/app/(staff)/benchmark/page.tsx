@@ -11,6 +11,7 @@ import {
   listBenchmark,
   type ServicoBenchmark,
 } from "@/app/actions/benchmark";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { formatarBRL } from "@/lib/comercial/formato";
 
 export const dynamic = "force-dynamic";
@@ -293,9 +294,10 @@ export default async function BenchmarkPage() {
       {res.ok ? (
         <Conteudo dados={res.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o benchmark"
+        />
       )}
     </div>
   );

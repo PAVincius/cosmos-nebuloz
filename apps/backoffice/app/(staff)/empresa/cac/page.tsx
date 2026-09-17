@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerCac } from "@/app/actions/empresa/cac";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota } from "@/components/nav";
 import {
   intervaloPadraoCompetencia,
@@ -39,9 +40,10 @@ export default async function CacPage({
           podeEscrever={staff.canWrite}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o CAC"
+        />
       )}
     </div>
   );

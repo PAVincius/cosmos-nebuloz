@@ -2,7 +2,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { getServiceDetail, type ServiceDetail } from "@/app/actions/services";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { WriteButton } from "@/components/write-button";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
@@ -165,7 +165,10 @@ export default async function ServicoPage({
       {res.ok ? (
         <DetalheDoServico servico={res.data} />
       ) : (
-        <Erro>{res.error}</Erro>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível abrir o serviço"
+        />
       )}
     </div>
   );

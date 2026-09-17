@@ -1,5 +1,6 @@
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { listPlatformApprovals } from "@/app/actions/approvals";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Decisao } from "./decisao";
@@ -25,23 +26,10 @@ export default async function AprovacoesPage() {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {cabecalho}
-        <SectionCard title="Fila" tone="red">
-          <p
-            role="alert"
-            style={{
-              margin: 0,
-              padding: "11px 13px",
-              borderRadius: "var(--r-md)",
-              background: "var(--red-soft)",
-              border: "1px solid rgba(var(--red-rgb),.3)",
-              color: "var(--red-text)",
-              fontSize: "var(--fs-base)",
-              fontWeight: 600,
-            }}
-          >
-            {res.error}
-          </p>
-        </SectionCard>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar a fila"
+        />
       </div>
     );
   }

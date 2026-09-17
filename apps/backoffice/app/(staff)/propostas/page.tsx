@@ -1,5 +1,6 @@
 import { KpiCard, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listProposals } from "@/app/actions/proposals";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -32,9 +33,10 @@ export default async function PropostasPage() {
           subtitle="Do escopo ao contrato."
           title="Propostas"
         />
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {propostas.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={propostas.error}
+          titulo="Não foi possível carregar as propostas"
+        />
       </div>
     );
   }
@@ -60,6 +62,8 @@ export default async function PropostasPage() {
     decididas.length > 0
       ? Math.round((ganhas.length / decididas.length) * 100)
       : null;
+  // Fora do JSX: inline, o lint lê o ternário como valor vazando para o render.
+  const valorDoWinRate = winRate === null ? "—" : winRate;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -93,7 +97,7 @@ export default async function PropostasPage() {
           label="Win rate"
           tone="green"
           unit={winRate === null ? undefined : "%"}
-          value={winRate === null ? "—" : winRate}
+          value={valorDoWinRate}
         />
         <KpiCard
           hint="todas as propostas"

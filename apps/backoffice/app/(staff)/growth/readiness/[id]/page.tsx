@@ -1,6 +1,6 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerAvaliacao } from "@/app/actions/maturidade";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Avaliacao } from "./avaliacao";
 
@@ -33,7 +33,10 @@ export default async function AvaliacaoPage({
           title="Avaliação"
           tone="purple"
         />
-        <Erro>{res.error}</Erro>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível abrir a avaliação"
+        />
       </div>
     );
   }
