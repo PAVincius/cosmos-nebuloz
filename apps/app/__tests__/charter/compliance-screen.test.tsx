@@ -919,4 +919,25 @@ describe("ComplianceScreen", () => {
 
     expect(await screen.findByText(/2 removidas\./)).toBeTruthy();
   });
+
+  it("conjunto sem exigências mostra estado vazio com CTA de importar, não um texto seco", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("1 conjunto de exigências");
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /importar exigências para este conjunto/i,
+      })
+    );
+
+    expect(
+      await screen.findByPlaceholderText("ex: RFP Banco Aurora 2026")
+    ).toBeTruthy();
+  });
 });

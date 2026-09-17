@@ -507,7 +507,13 @@ function RequirementRow({
   );
 }
 
-function ComplianceMapSection({ setId }: { setId: string }) {
+function ComplianceMapSection({
+  setId,
+  onImport,
+}: {
+  setId: string;
+  onImport: () => void;
+}) {
   const [format, setFormat] = useState<"csv" | "json" | "pdf">("csv");
   const [pending, startTransition] = useTransition();
   const { data, loading, error, reload } = useCharterData(
@@ -628,16 +634,14 @@ function ComplianceMapSection({ setId }: { setId: string }) {
         tone="accent"
       >
         {data.linhas.length === 0 ? (
-          <div
-            style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              color: "var(--ink-muted)",
-              fontSize: 13,
-            }}
-          >
-            Este conjunto não tem exigências.
-          </div>
+          <SmartEmptyState
+            icon="scale"
+            onPrimary={onImport}
+            primaryIcon="upload"
+            primaryLabel="Importar exigências para este conjunto"
+            subtitle="Nenhuma exigência foi importada para este conjunto ainda. Importe agora ou escolha outro conjunto no topo da tela."
+            title="Este conjunto não tem exigências"
+          />
         ) : (
           data.linhas.map((row) => (
             <RequirementRow
@@ -774,7 +778,12 @@ function ComplianceInner() {
           title="Nenhum conjunto de exigências"
         />
       ) : (
-        activeId && <ComplianceMapSection setId={activeId} />
+        activeId && (
+          <ComplianceMapSection
+            onImport={() => setShowImport(true)}
+            setId={activeId}
+          />
+        )
       )}
 
       {showImport && (
