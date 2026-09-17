@@ -9,11 +9,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { IntegrationType, type Result, safeAction } from "../_base";
-import {
-  type IntegrationFull,
-  type IntegrationPublic,
-  UpsertIntegrationSchema,
-} from "./schema";
+import { type IntegrationPublic, UpsertIntegrationSchema } from "./schema";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -55,9 +51,17 @@ export async function listIntegrations(): Promise<Result<IntegrationPublic[]>> {
   });
 }
 
+/**
+ * Devolve só o shape público. `config` guarda token, PAT e URL de webhook, e
+ * uma server action exportada é invocável pelo cliente por qualquer membro do
+ * tenant — com ou sem tela que a chame. Descriptografar e devolver aqui era
+ * entregar o segredo em claro para quem pedisse. `configured` é o que a UI
+ * precisa saber; quem precisa do valor real lê a linha do lado do servidor,
+ * como `testIntegration` faz.
+ */
 export async function getIntegrationByType(
   type: string
-): Promise<Result<IntegrationFull>> {
+): Promise<Result<IntegrationPublic>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     IntegrationType.parse(type);
@@ -70,12 +74,7 @@ export async function getIntegrationByType(
       throw new Error(`Integração '${type}' não encontrada.`);
     }
 
-    return {
-      ...toPublic(row),
-      config: decryptConfigSecrets(
-        (row.config as Record<string, unknown>) ?? {}
-      ),
-    };
+    return toPublic(row);
   });
 }
 
