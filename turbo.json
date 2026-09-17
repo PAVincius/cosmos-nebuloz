@@ -20,6 +20,11 @@
     },
     "docs#build": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "../../docs/cliente/**"],
+      "outputs": ["build/**"]
+    },
+    "docs-internal#build": {
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "../../docs/produto/**"],
       "outputs": ["build/**"]
     },
