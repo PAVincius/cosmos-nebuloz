@@ -26,6 +26,7 @@ import {
   ScreenError,
   Segmented,
   Select,
+  SkeletonCard,
   Tabs,
 } from "../base";
 import { DisclosurePanel } from "../disclosure-panel";
@@ -62,7 +63,9 @@ function SettingsScreenInner() {
   }
   if (loading || !data) {
     return (
-      <div className="skeleton" style={{ height: 260, borderRadius: 14 }} />
+      <div className="fade-in">
+        <SkeletonCard />
+      </div>
     );
   }
 

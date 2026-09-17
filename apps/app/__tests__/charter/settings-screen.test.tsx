@@ -217,4 +217,17 @@ describe("SettingsScreen — troca de papel de governança", () => {
     });
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
+
+  it("estado de carregamento usa o idioma de SkeletonCard, não um retângulo genérico", () => {
+    getSettingsMock.mockReturnValue(
+      new Promise(() => {
+        // nunca resolve — mantém a tela em loading durante o teste
+      })
+    );
+
+    const { container } = render(<SettingsScreen />);
+
+    expect(container.querySelector('[style*="height: 260px"]')).toBeNull();
+    expect(container.querySelectorAll(".skeleton").length).toBeGreaterThan(1);
+  });
 });
