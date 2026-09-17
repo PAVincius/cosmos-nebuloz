@@ -43,7 +43,7 @@ import {
 } from "../base";
 import { download } from "../download";
 import { ModalProvider, useModal } from "../modal";
-import { ExportPackageModal } from "../modals";
+import { ExportPackageModal } from "../modals/export-package";
 import { SetupPanel } from "../setup-panel";
 import { useCharterData } from "../use-charter-data";
 

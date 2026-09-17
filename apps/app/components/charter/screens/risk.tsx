@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "../base";
 import { ModalProvider, useModal } from "../modal";
-import { MitigationModal } from "../modals";
+import { MitigationModal } from "../modals/mitigation";
 import { Heatmap, MitigationTable } from "../parts";
 import { useCharterData } from "../use-charter-data";
 

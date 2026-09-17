@@ -32,7 +32,8 @@ import {
   TableRow,
 } from "../base";
 import { ModalProvider, useModal } from "../modal";
-import { ClauseLibraryModal, NewVendorModal } from "../modals";
+import { ClauseLibraryModal } from "../modals/clause-library";
+import { NewVendorModal } from "../modals/new-vendor";
 import { useCharterData } from "../use-charter-data";
 
 const COLS = "minmax(0,1fr) 132px 128px 92px 88px 96px";
