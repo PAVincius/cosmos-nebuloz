@@ -14,6 +14,13 @@ import { type ClientRow, listClients } from "@/app/actions/clients";
 // titulo-dialog-novo.tsx.
 import type { criarAssinatura } from "@/app/actions/empresa/recorrente";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { hojeIso } from "@/lib/empresa/periodo";
 import type { Result } from "@/lib/safe-action";
@@ -84,11 +91,13 @@ export function NovaAssinaturaDialog({
   onClose: () => void;
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={aberto}
@@ -102,7 +111,20 @@ export function NovaAssinaturaDialog({
           color: "var(--ink)",
         }}
       >
-        {aberto ? <FormularioNova onClose={onClose} onCriar={onCriar} /> : null}
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
+        {aberto ? (
+          <FormularioNova
+            marcarSujo={guarda.marcarSujo}
+            onClose={onClose}
+            onCriar={onCriar}
+          />
+        ) : null}
       </DialogContent>
     </Dialog>
   );
@@ -125,15 +147,18 @@ function useClientesDoPicker() {
 }
 
 function FormularioNova({
+  marcarSujo,
   onClose,
   onCriar,
 }: {
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
 }) {
   const [form, setForm] = useState<FormNova>(formNovaInicial);
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, formNovaInicial()), marcarSujo);
   const clientes = useClientesDoPicker();
 
   function mudar<K extends keyof FormNova>(campo: K, valor: FormNova[K]) {

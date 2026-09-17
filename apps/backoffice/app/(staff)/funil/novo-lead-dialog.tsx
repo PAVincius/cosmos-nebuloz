@@ -14,6 +14,13 @@ import { useState } from "react";
 // quem chama a action de fato é `onCriar`, vindo de funil.tsx.
 import type { CanalRow, criarLead } from "@/app/actions/leads";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { PORTAS } from "@/lib/comercial/funil";
 import type { Result } from "@/lib/safe-action";
@@ -72,11 +79,13 @@ export function NovoLeadDialog({
   onClose: () => void;
   onCriar: (input: CriarLeadInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={aberto}
@@ -90,8 +99,20 @@ export function NovoLeadDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {aberto ? (
-          <Formulario canais={canais} onClose={onClose} onCriar={onCriar} />
+          <Formulario
+            canais={canais}
+            marcarSujo={guarda.marcarSujo}
+            onClose={onClose}
+            onCriar={onCriar}
+          />
         ) : null}
       </DialogContent>
     </Dialog>
@@ -167,16 +188,19 @@ function GrupoChips({
 
 function Formulario({
   canais,
+  marcarSujo,
   onClose,
   onCriar,
 }: {
   canais: CanalRow[];
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCriar: (input: CriarLeadInput) => Promise<Result<{ id: string }>>;
 }) {
   const [form, setForm] = useState<FormNovoLead>(() => formInicial(canais));
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, formInicial(canais)), marcarSujo);
 
   function mudar<K extends keyof FormNovoLead>(
     campo: K,

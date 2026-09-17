@@ -18,6 +18,7 @@ import {
   type UnidadeDeCobranca,
 } from "@/lib/comercial/precificar";
 import { validarProposta } from "@/lib/comercial/validacoes";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 import { PreviewDaProposta } from "./gerador-documento";
 import {
   assinaturaDoEscopo,
@@ -234,6 +235,7 @@ export function Gerador({
   /** A tela está à frente do que foi gravado. */
   const sujo =
     salvo !== null && assinaturaDoEscopo(escopoAtual) !== salvo.assinatura;
+  useAvisoAoSair(sujo);
 
   /** Grava o escopo e devolve o id — `null` quando o servidor recusou (o erro
    *  já foi para a tela). Compartilhado entre o submit do formulário e o

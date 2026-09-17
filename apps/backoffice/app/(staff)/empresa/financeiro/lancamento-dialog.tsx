@@ -19,6 +19,13 @@ import type {
 } from "@/app/actions/empresa/livro";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
+import {
   centavosParaCampo,
   formatarBRL,
   paraCentavos,
@@ -140,11 +147,13 @@ export function LancamentoDialog({
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
   onAtualizar: (input: AtualizarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={aberto}
@@ -158,10 +167,18 @@ export function LancamentoDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {aberto ? (
           <Formulario
             contas={contas}
             linha={linha}
+            marcarSujo={guarda.marcarSujo}
             onAtualizar={onAtualizar}
             onClose={onClose}
             onCriar={onCriar}
@@ -175,12 +192,14 @@ export function LancamentoDialog({
 function Formulario({
   linha,
   contas,
+  marcarSujo,
   onClose,
   onCriar,
   onAtualizar,
 }: {
   linha: LinhaDoLivro | null;
   contas: ContaView[];
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
   onAtualizar: (input: AtualizarInput) => Promise<Result<{ id: string }>>;
@@ -188,6 +207,7 @@ function Formulario({
   const [form, setForm] = useState<FormLancamento>(() => formInicial(linha));
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, formInicial(linha)), marcarSujo);
   const grupos = agruparPorCentro(contas.filter((c) => c.ativa));
   const migradaInvalida = linhaMigradaInvalida(linha);
   // Fora do JSX por causa do noLeakedRender: `migradaInvalida && !erro` como

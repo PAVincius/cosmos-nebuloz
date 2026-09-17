@@ -11,6 +11,7 @@ import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { MOTIVO_SOMENTE_LEITURA, WriteButton } from "@/components/write-button";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 /**
  * Formulário de provisionamento.
@@ -35,6 +36,13 @@ const OPCOES_DE_STATUS: { valor: StatusInicial | ""; rotulo: string }[] = [
   { valor: "", rotulo: "Fora" },
 ];
 
+/** COSMOS é o default histórico do provisionamento; se um dia sair do enum,
+ *  cai no primeiro que existir em vez de deixar o form sem nada marcado. */
+function statusPadrao(modulos: ProductModule[]): Record<string, StatusInicial> {
+  const inicial = modulos.includes("COSMOS") ? "COSMOS" : modulos[0];
+  return inicial ? { [inicial]: "ACTIVE" } : {};
+}
+
 export function NewClientForm({
   modulos,
   canWrite,
@@ -47,12 +55,16 @@ export function NewClientForm({
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  // COSMOS é o default histórico do provisionamento; se um dia sair do enum,
-  // cai no primeiro que existir em vez de deixar o form sem nada marcado.
-  const [status, setStatus] = useState<Record<string, StatusInicial>>(() => {
-    const inicial = modulos.includes("COSMOS") ? "COSMOS" : modulos[0];
-    return inicial ? { [inicial]: "ACTIVE" } : {};
-  });
+  const [status, setStatus] = useState<Record<string, StatusInicial>>(() =>
+    statusPadrao(modulos)
+  );
+  // Rascunho = algum campo diferente do inicial. Fechar a aba no meio do
+  // provisionamento passa a avisar; limpo, sai em silêncio.
+  const sujo =
+    name !== "" ||
+    ownerEmail !== "" ||
+    JSON.stringify(status) !== JSON.stringify(statusPadrao(modulos));
+  useAvisoAoSair(sujo);
   const [pendingOwner, setPendingOwner] = useState<{
     slug: string;
     email: string;
