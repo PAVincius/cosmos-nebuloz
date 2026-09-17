@@ -116,7 +116,7 @@ export function AbaResumo({
       <SectionCard
         icon="eye"
         subtitle="Integrações e sincronização"
-        title="Health"
+        title="Saúde"
         tone={tomDaSaude}
       >
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>

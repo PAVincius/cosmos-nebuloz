@@ -32,6 +32,7 @@ import {
   type QueueKind,
 } from "@/app/actions/scaffold-supervision";
 import { BotaoPrimario, BotaoSecundario, Erro } from "@/components/campo";
+import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 
 const PHASE_LABEL: Record<string, string> = {
@@ -40,6 +41,32 @@ const PHASE_LABEL: Record<string, string> = {
   SCALE: "Scale",
   EMBED: "Embed",
 };
+
+/** Uma linha por termo. Legenda visível, não tooltip: quem opera a fila sabe
+ *  o vocabulário, mas Assess/Pilot/Scale/Embed, "gate" e "trilha" sem
+ *  expansão em lugar nenhum foi o que a crítica apontou. As definições das
+ *  fases são as de `apps/app/lib/scaffold/phases.ts`. */
+const LEGENDA: { termo: string; significado: string }[] = [
+  { termo: "Trilha", significado: "o programa contratado por um cliente" },
+  {
+    termo: "Gate",
+    significado: "a decisão que fecha uma fase e abre a seguinte",
+  },
+  { termo: "Assess", significado: "medir o processo como roda hoje" },
+  {
+    termo: "Pilot",
+    significado: "rodar a versão assistida em paralelo, com rollback",
+  },
+  { termo: "Scale", significado: "estender ao time inteiro" },
+  {
+    termo: "Embed",
+    significado: "aposentar o caminho antigo; 30 dias de observação",
+  },
+];
+
+/** O motivo do acesso vai para o registro de auditoria; abaixo disto não diz
+ *  nada a quem revisar. */
+const MINIMO_DO_MOTIVO = 12;
 
 const GROUPS: {
   kind: QueueKind;
@@ -72,6 +99,18 @@ const GROUPS: {
   },
 ];
 
+/** As mesmas seis colunas do grid original, agora como `<colgroup>`: a fila
+ *  era `div` em grid sem cabeçalho, e leitor de tela não sabia o que era
+ *  "3 d" nem "2/4 critérios". `Tabela` do painel dá `scope="col"` de graça. */
+const LARGURAS = [
+  { id: "trilha", largura: "104px" },
+  { id: "org", largura: "auto" },
+  { id: "fase", largura: "92px" },
+  { id: "idade", largura: "128px" },
+  { id: "criterios", largura: "130px" },
+  { id: "acao", largura: "176px" },
+];
+
 function QueueRow({
   entry,
   onEnter,
@@ -83,56 +122,59 @@ function QueueRow({
 }) {
   const complete = entry.criteriaMet === entry.criteriaTotal;
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "104px minmax(140px,1fr) 92px 128px 118px auto",
-        gap: 12,
-        alignItems: "center",
-        padding: "11px 14px",
-        borderBottom: "1px solid var(--hairline)",
-      }}
-    >
-      <span
-        className="mono"
-        style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-text)" }}
-      >
-        {entry.trackCode}
-      </span>
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: 600,
-          color: "var(--ink)",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {entry.orgName}
-      </span>
-      <Badge tone="neutral">{PHASE_LABEL[entry.phase] ?? entry.phase}</Badge>
-      <span
-        className="mono"
-        style={{
-          fontSize: 11.5,
-          color: entry.ageDays >= 14 ? "var(--red-text)" : "var(--ink-subtle)",
-          fontWeight: entry.ageDays >= 14 ? 700 : 500,
-        }}
-      >
-        {entry.ageLabel}
-      </span>
-      <span
-        className="mono"
-        style={{
-          fontSize: 11.5,
-          fontWeight: 700,
-          color: complete ? "var(--green-text)" : "var(--amber-text)",
-        }}
-      >
-        {entry.criteriaMet}/{entry.criteriaTotal} critérios
-      </span>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <TableRow>
+      <Celula>
+        <span
+          className="mono"
+          style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-text)" }}
+        >
+          {entry.trackCode}
+        </span>
+      </Celula>
+      <Celula>
+        <span
+          style={{
+            display: "block",
+            fontSize: 13,
+            fontWeight: 600,
+            color: "var(--ink)",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {entry.orgName}
+        </span>
+      </Celula>
+      <Celula>
+        <Badge tone="neutral">{PHASE_LABEL[entry.phase] ?? entry.phase}</Badge>
+      </Celula>
+      <Celula>
+        <span
+          className="mono"
+          style={{
+            fontSize: 11.5,
+            color:
+              entry.ageDays >= 14 ? "var(--red-text)" : "var(--ink-subtle)",
+            fontWeight: entry.ageDays >= 14 ? 700 : 500,
+          }}
+        >
+          {entry.ageLabel}
+        </span>
+      </Celula>
+      <Celula>
+        <span
+          className="mono"
+          style={{
+            fontSize: 11.5,
+            fontWeight: 700,
+            color: complete ? "var(--green-text)" : "var(--amber-text)",
+          }}
+        >
+          {entry.criteriaMet}/{entry.criteriaTotal} critérios
+        </span>
+      </Celula>
+      <Celula style={{ textAlign: "right" }}>
         <Button
           disabled={busy}
           icon="externalLink"
@@ -142,8 +184,8 @@ function QueueRow({
         >
           Entrar no cliente
         </Button>
-      </div>
-    </div>
+      </Celula>
+    </TableRow>
   );
 }
 
@@ -205,6 +247,27 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <dl
+        aria-label="Legenda"
+        style={{
+          margin: 0,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "4px 14px",
+          fontSize: "var(--fs-nota)",
+          color: "var(--ink-faint)",
+        }}
+      >
+        {LEGENDA.map((l) => (
+          <div key={l.termo} style={{ display: "inline-flex", gap: 5 }}>
+            <dt style={{ fontWeight: 700, color: "var(--ink-muted)" }}>
+              {l.termo}
+            </dt>
+            <dd style={{ margin: 0 }}>{l.significado}</dd>
+          </div>
+        ))}
+      </dl>
+
       {grouped
         .filter((g) => g.rows.length > 0)
         .map((g) => (
@@ -217,14 +280,28 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
             title={g.title}
             tone={g.tone}
           >
-            {g.rows.map((e) => (
-              <QueueRow
-                busy={busy}
-                entry={e}
-                key={e.phaseInstanceId}
-                onEnter={setPending}
+            <Tabela larguras={LARGURAS}>
+              <TableHead
+                labels={[
+                  "Trilha",
+                  "Organização",
+                  "Fase",
+                  "Idade",
+                  "Critérios",
+                  "",
+                ]}
               />
-            ))}
+              <tbody>
+                {g.rows.map((e) => (
+                  <QueueRow
+                    busy={busy}
+                    entry={e}
+                    key={e.phaseInstanceId}
+                    onEnter={setPending}
+                  />
+                ))}
+              </tbody>
+            </Tabela>
           </SectionCard>
         ))}
 
@@ -305,6 +382,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
                   Por que precisa entrar
                 </label>
                 <textarea
+                  aria-describedby="crossing-rationale-contador"
                   id="crossing-rationale"
                   onChange={(e) => setRationale(e.target.value)}
                   placeholder="Ex.: revisar o log do piloto antes de decidir o gate."
@@ -324,12 +402,26 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
                   }}
                   value={rationale}
                 />
+                {/* O botão trava abaixo do mínimo; sem o contador ninguém
+                    sabia por quê. Mesmo padrão do diálogo de estágio do funil. */}
+                <span
+                  id="crossing-rationale-contador"
+                  style={{
+                    display: "block",
+                    marginTop: 6,
+                    fontSize: "var(--fs-nota)",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  {rationale.trim().length}/{MINIMO_DO_MOTIVO} · vai para o
+                  registro de acesso com seu nome
+                </span>
               </div>
               {error ? <Erro>{error}</Erro> : null}
               <DialogFooter>
                 <BotaoSecundario onClick={fechar}>Voltar</BotaoSecundario>
                 <BotaoPrimario
-                  disabled={busy || rationale.trim().length < 12}
+                  disabled={busy || rationale.trim().length < MINIMO_DO_MOTIVO}
                   full={false}
                   onClick={confirm}
                   type="button"

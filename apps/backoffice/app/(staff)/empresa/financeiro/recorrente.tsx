@@ -18,6 +18,7 @@ import {
 } from "@/app/actions/empresa/recorrente";
 import { Erro, INPUT } from "@/components/campo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
@@ -636,36 +637,45 @@ export function Recorrente({
         subtitle="valor vigente na competência, degrau, franquia de créditos de IA, uso e excedente do mês"
         title="Assinaturas"
       >
-        <div style={{ overflowX: "auto" }}>
-          <Tabela larguras={LARGURAS_ASSINATURAS}>
-            <TableHead
-              labels={[
-                "Cliente",
-                "Degrau",
-                "Valor",
-                "Franquia",
-                "Uso",
-                "Excedente",
-                "",
-              ]}
-            />
-            <tbody>
-              {dados.assinaturas.map((a) => (
-                <LinhaAssinatura
-                  a={a}
-                  competencia={competencia}
-                  credito={creditoPorCliente.get(a.clienteSlug)}
-                  key={a.id}
-                  mudancas={dados.mudancas}
-                  onAlterar={setAlterando}
-                  onCredito={setLancandoCredito}
-                  onEncerrar={setEncerrando}
-                  podeEscrever={podeEscrever}
-                />
-              ))}
-            </tbody>
-          </Tabela>
-        </div>
+        {dados.assinaturas.length === 0 ? (
+          <Vazio>
+            Nenhuma assinatura cadastrada. O MRR, o ARR e o churn acima são a
+            soma das assinaturas vigentes — sem assinatura ficam em zero, e o
+            movimento do mês não tem o que mostrar. Cadastre em "Nova
+            assinatura" quando um cliente fechar contrato recorrente.
+          </Vazio>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <Tabela larguras={LARGURAS_ASSINATURAS}>
+              <TableHead
+                labels={[
+                  "Cliente",
+                  "Degrau",
+                  "Valor",
+                  "Franquia",
+                  "Uso",
+                  "Excedente",
+                  "",
+                ]}
+              />
+              <tbody>
+                {dados.assinaturas.map((a) => (
+                  <LinhaAssinatura
+                    a={a}
+                    competencia={competencia}
+                    credito={creditoPorCliente.get(a.clienteSlug)}
+                    key={a.id}
+                    mudancas={dados.mudancas}
+                    onAlterar={setAlterando}
+                    onCredito={setLancandoCredito}
+                    onEncerrar={setEncerrando}
+                    podeEscrever={podeEscrever}
+                  />
+                ))}
+              </tbody>
+            </Tabela>
+          </div>
+        )}
       </SectionCard>
 
       <FaixaServico valor={servicoCentavos} />

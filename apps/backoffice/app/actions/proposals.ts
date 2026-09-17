@@ -128,7 +128,7 @@ export async function createProposalAction(
     if (faltando.length > 0) {
       throw new StaffAuthError(
         "FORBIDDEN",
-        `${faltando.length} item(ns) apontam para serviço que não está no catálogo ativo. Proposta só monta com o que está à venda.`
+        `${faltando.length === 1 ? "1 item aponta" : `${faltando.length} itens apontam`} para serviço que não está no catálogo ativo. Proposta só monta com o que está à venda.`
       );
     }
 

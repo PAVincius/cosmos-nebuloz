@@ -1,7 +1,6 @@
 "use client";
 
-import { Tabs } from "@repo/design-system/cosmos/kit";
-import type { ReactNode } from "react";
+import { type KeyboardEvent, type ReactNode, useRef } from "react";
 import type { TenantMemberRow } from "@/app/actions/tenant-members";
 import type {
   AuditRow,
@@ -30,9 +29,9 @@ import { SecaoSimples } from "./secao";
  * "aba Usuários do cliente X" vira um link que cabe num ticket. Aba que não
  * existe no param — ou que o contrato não dá mais — cai em Resumo.
  *
- * A contagem vai no rótulo (`Usuários · 4`) porque o `Tabs` do kit não tem slot
- * de contador como o do protótipo. Estender o kit por isso mexeria no Cosmos
- * junto; o rótulo resolve com o mesmo resultado para quem lê.
+ * A contagem vai no rótulo (`Usuários · 4`) porque a faixa segue a aparência
+ * do `Tabs` do kit, que não tem slot de contador como o do protótipo. O rótulo
+ * resolve com o mesmo resultado para quem lê.
  *
  * O handoff desenha nove abas. Quatro ficaram de fora — MCP, Políticas,
  * Ambientes e defaults do Signal — porque leem de estruturas que não existem no
@@ -46,6 +45,96 @@ type Aba = {
   label: string;
   conteudo: ReactNode;
 };
+
+/**
+ * A faixa de abas, com os papéis que o `Tabs` do kit não tem: `tablist`,
+ * `tab` com `aria-selected`/`aria-controls`, foco só na ativa (roving
+ * tabindex) e setas trocando de aba. O kit é `<button>` puro e não aceita
+ * `role` nem `aria-*` por prop; envolver com `tablist` sem `tab` dentro é
+ * ARIA inválido. A aparência é a do kit, literal — quando ele ganhar os
+ * papéis, isto volta a ser `<Tabs>`.
+ */
+function FaixaDeAbas({
+  abas,
+  ativa,
+  onMudar,
+}: {
+  abas: { id: string; label: string }[];
+  ativa: string;
+  onMudar: (id: string) => void;
+}) {
+  const refs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const irPara = (id: string) => {
+    onMudar(id);
+    refs.current.get(id)?.focus();
+  };
+
+  const aoTeclar = (e: KeyboardEvent<HTMLButtonElement>, indice: number) => {
+    const ultimo = abas.length - 1;
+    const destino = {
+      ArrowRight: indice === ultimo ? 0 : indice + 1,
+      ArrowLeft: indice === 0 ? ultimo : indice - 1,
+      Home: 0,
+      End: ultimo,
+    }[e.key];
+    if (destino === undefined) {
+      return;
+    }
+    e.preventDefault();
+    irPara(abas[destino].id);
+  };
+
+  return (
+    <div
+      role="tablist"
+      style={{
+        display: "flex",
+        gap: 4,
+        borderBottom: "1px solid var(--hairline)",
+        marginBottom: 16,
+      }}
+    >
+      {abas.map((t, i) => {
+        const selecionada = ativa === t.id;
+        return (
+          <button
+            aria-controls={`painel-${t.id}`}
+            aria-selected={selecionada}
+            id={`aba-${t.id}`}
+            key={t.id}
+            onClick={() => onMudar(t.id)}
+            onKeyDown={(e) => aoTeclar(e, i)}
+            ref={(el) => {
+              if (el) {
+                refs.current.set(t.id, el);
+              } else {
+                refs.current.delete(t.id);
+              }
+            }}
+            role="tab"
+            style={{
+              padding: "8px 14px",
+              fontSize: 13,
+              fontWeight: 600,
+              background: "transparent",
+              border: "none",
+              borderBottom: selecionada
+                ? "2px solid var(--accent)"
+                : "2px solid transparent",
+              color: selecionada ? "var(--ink)" : "var(--ink-muted)",
+              cursor: "pointer",
+            }}
+            tabIndex={selecionada ? 0 : -1}
+            type="button"
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function DetalheDoTenant({
   slug,
@@ -149,25 +238,29 @@ export function DetalheDoTenant({
 
   return (
     <div>
-      {/* O `Tabs` do kit é `flex` com `nowrap` e `overflow: visible` — quando
-          o conteúdo passa da caixa, ele corta e não há rolagem que traga a
+      {/* A faixa é `flex` com `nowrap` e `overflow: visible` — quando o
+          conteúdo passa da caixa, ela corta e não há rolagem que traga a
           última aba de volta.
 
           Com as seis abas de hoje não transborda, mas por nada: medido a 375px,
           343px de conteúdo em 343px de caixa. O número de abas é variável
           (Charter, Meridian e Signal aparecem por contrato) e as contagens
           crescem no rótulo — "Usuários · 128" é mais largo que "Usuários · 3".
-          O envelope rola em vez de cortar.
-
-          Não mexo no kit: ele é do Cosmos também, e lá as abas são poucas. */}
+          O envelope rola em vez de cortar. */}
       <div className="scroll" style={{ overflowX: "auto", marginBottom: 16 }}>
-        <Tabs
-          active={atual.id}
-          onChange={setAba}
-          tabs={abas.map(({ id, label }) => ({ id, label }))}
+        <FaixaDeAbas
+          abas={abas.map(({ id, label }) => ({ id, label }))}
+          ativa={atual.id}
+          onMudar={setAba}
         />
       </div>
-      {atual.conteudo}
+      <div
+        aria-labelledby={`aba-${atual.id}`}
+        id={`painel-${atual.id}`}
+        role="tabpanel"
+      >
+        {atual.conteudo}
+      </div>
     </div>
   );
 }

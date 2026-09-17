@@ -32,42 +32,56 @@ function infoDoCodigo(codigo: string | null) {
   return i === -1 ? null : INFO_NIVEL[i as Nivel];
 }
 
-/** Botão de nível. Cinco por critério, um selecionado por vez. */
-function BotaoNivel({
+/** Opção de nível. Cinco por critério, uma marcada por vez — rádio nativo,
+ *  não botão com `aria-pressed`: o leitor de tela anuncia "2 de 5" e as
+ *  setas trocam o nível sem sair do grupo. O rádio fica visível dentro do
+ *  chip (não `sr-only`) para o anel de foco do cosmos.css continuar
+ *  aparecendo. Mesmo padrão de `clientes/novo/form.tsx`. */
+function OpcaoDeNivel({
+  nome,
   nivel,
   ativo,
   desabilitado,
-  onClick,
+  onEscolher,
 }: {
+  nome: string;
   nivel: Nivel;
   ativo: boolean;
   desabilitado: boolean;
-  onClick: () => void;
+  onEscolher: () => void;
 }) {
   const info = INFO_NIVEL[nivel];
   return (
-    <button
-      aria-pressed={ativo}
-      disabled={desabilitado}
-      onClick={onClick}
+    <label
       style={{
         flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 5,
         padding: "7px 6px",
         borderRadius: "var(--r-sm)",
         border: `1px solid ${ativo ? `var(--${info.tom})` : "var(--hairline)"}`,
         background: ativo ? `var(--${info.tom}-soft)` : "var(--surface-2)",
         color: ativo ? `var(--${info.tom}-text)` : "var(--ink-muted)",
-        fontFamily: "inherit",
         fontSize: "var(--fs-nota)",
         fontWeight: 700,
         cursor: desabilitado ? "not-allowed" : "pointer",
         opacity: desabilitado ? 0.6 : 1,
       }}
       title={info.definicao}
-      type="button"
     >
+      <input
+        checked={ativo}
+        disabled={desabilitado}
+        name={nome}
+        onChange={onEscolher}
+        style={{ margin: 0 }}
+        type="radio"
+        value={nivel}
+      />
       {nivel} · {info.rotulo}
-    </button>
+    </label>
   );
 }
 
@@ -146,14 +160,19 @@ function LinhaDoCriterio({
           {criterio.pista}
         </p>
       </div>
-      <div style={{ display: "flex", gap: 6 }}>
+      <div
+        aria-label={criterio.pergunta}
+        role="radiogroup"
+        style={{ display: "flex", gap: 6 }}
+      >
         {NIVEIS.map((n) => (
-          <BotaoNivel
+          <OpcaoDeNivel
             ativo={resposta?.nivel === n}
             desabilitado={travado}
             key={n}
             nivel={n}
-            onClick={() => onGravar(n, resposta?.nota ?? null)}
+            nome={`nivel-${criterio.id}`}
+            onEscolher={() => onGravar(n, resposta?.nota ?? null)}
           />
         ))}
       </div>

@@ -11,6 +11,7 @@ import {
   salvarParcelas,
 } from "@/app/actions/empresa/cac";
 import { BotaoPrimario, Erro, INPUT, rotuloSalvar } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { SeletorDePeriodo } from "@/components/seletor-de-periodo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import {
@@ -22,6 +23,52 @@ import { PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
 import type { ContaDoCac } from "@/lib/empresa/plano-de-contas";
 
 const rotuloValor = (v: number | null) => (v === null ? "—" : formatarBRL(v));
+
+/** Botão de gravar e a confirmação ao lado dele, no rodapé do cartão de pesos
+ *  e do de conversão. Pesos e conversão não têm "Sem alterações" para dizer
+ *  que gravou — o botão voltava ao rótulo de sempre em silêncio; a
+ *  confirmação nasce ao lado do botão que agiu. Fora do `Painel` pelo teto
+ *  de complexidade do lint. */
+function RodapeDeGravar({
+  rotulo,
+  rotuloSalvando,
+  salvando,
+  desabilitado,
+  confirmacao,
+  onClick,
+}: {
+  rotulo: string;
+  rotuloSalvando: string;
+  salvando: boolean;
+  desabilitado: boolean;
+  /** A frase de sucesso, quando a última gravação foi a deste botão. */
+  confirmacao: string | null;
+  onClick: () => void;
+}) {
+  // Fora do JSX por causa do noLeakedRender.
+  const texto = salvando ? rotuloSalvando : rotulo;
+  return (
+    <div
+      style={{
+        marginTop: 10,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        flexWrap: "wrap",
+      }}
+    >
+      <BotaoPrimario
+        disabled={salvando || desabilitado}
+        full={false}
+        onClick={onClick}
+        type="button"
+      >
+        {texto}
+      </BotaoPrimario>
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
+    </div>
+  );
+}
 
 /** As oito parcelas da tela, com "como medir" e fonte de cac-modelo.md §2.
  *  As seis primeiras são contas do DRE; as duas últimas, do CacPeriodo. */
@@ -310,6 +357,10 @@ export function Painel({
     )
   );
   const [erro, setErro] = useState<string | null>(null);
+  // Qual dos dois rodapés confirma — ver `RodapeDeGravar`.
+  const [confirmacao, setConfirmacao] = useState<"pesos" | "conversao" | null>(
+    null
+  );
   // Três transições, uma por escrita: o pendente de cada uma trava o próprio
   // botão no mesmo render em que o envio começa (segundo clique não grava
   // duas vezes) sem travar as outras duas.
@@ -318,18 +369,23 @@ export function Painel({
   const [salvandoPesos, iniciarSalvarPesos] = useTransition();
 
   const aplicar = useCallback(
-    (res: Awaited<ReturnType<typeof salvarParcelas>>) => {
+    (
+      res: Awaited<ReturnType<typeof salvarParcelas>>,
+      confirmar: "pesos" | "conversao" | null = null
+    ) => {
       if (!res.ok) {
         setErro(res.error);
         return;
       }
       setView(res.data);
+      setConfirmacao(confirmar);
     },
     []
   );
 
   const salvar = useCallback(() => {
     setErro(null);
+    setConfirmacao(null);
     iniciarSalvar(async () => {
       aplicar(
         await salvarParcelas({
@@ -344,6 +400,7 @@ export function Painel({
 
   const salvarConv = useCallback(() => {
     setErro(null);
+    setConfirmacao(null);
     iniciarSalvarConv(async () => {
       aplicar(
         await salvarConversao({
@@ -358,13 +415,15 @@ export function Painel({
           ),
           de: view.intervalo.de,
           ate: view.intervalo.ate,
-        })
+        }),
+        "conversao"
       );
     });
   }, [conv, view.competenciaEditavel, view.intervalo, aplicar]);
 
   const salvarPesos = useCallback(() => {
     setErro(null);
+    setConfirmacao(null);
     iniciarSalvarPesos(async () => {
       aplicar(
         await salvarAlocacao({
@@ -377,7 +436,8 @@ export function Painel({
           ),
           de: view.intervalo.de,
           ate: view.intervalo.ate,
-        })
+        }),
+        "pesos"
       );
     });
   }, [pesos, view.competenciaEditavel, view.intervalo, aplicar]);
@@ -562,16 +622,14 @@ export function Painel({
             </tbody>
           </Tabela>
           {podeEscrever ? (
-            <div style={{ marginTop: 10 }}>
-              <BotaoPrimario
-                disabled={salvandoPesos || !view.editavel}
-                full={false}
-                onClick={salvarPesos}
-                type="button"
-              >
-                {salvandoPesos ? "Salvando pesos…" : "Salvar pesos"}
-              </BotaoPrimario>
-            </div>
+            <RodapeDeGravar
+              confirmacao={confirmacao === "pesos" ? "Pesos salvos" : null}
+              desabilitado={!view.editavel}
+              onClick={salvarPesos}
+              rotulo="Salvar pesos"
+              rotuloSalvando="Salvando pesos…"
+              salvando={salvandoPesos}
+            />
           ) : null}
         </SectionCard>
 
@@ -611,16 +669,16 @@ export function Painel({
             </div>
           ))}
           {podeEscrever ? (
-            <div style={{ marginTop: 10 }}>
-              <BotaoPrimario
-                disabled={salvandoConv || !view.editavel}
-                full={false}
-                onClick={salvarConv}
-                type="button"
-              >
-                {salvandoConv ? "Salvando conversão…" : "Salvar conversão"}
-              </BotaoPrimario>
-            </div>
+            <RodapeDeGravar
+              confirmacao={
+                confirmacao === "conversao" ? "Conversão salva" : null
+              }
+              desabilitado={!view.editavel}
+              onClick={salvarConv}
+              rotulo="Salvar conversão"
+              rotuloSalvando="Salvando conversão…"
+              salvando={salvandoConv}
+            />
           ) : null}
         </SectionCard>
       </div>

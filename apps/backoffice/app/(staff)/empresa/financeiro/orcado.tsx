@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionCard } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import {
   lerOrcado,
@@ -9,6 +10,7 @@ import {
   salvarOrcamento,
 } from "@/app/actions/empresa/orcamento";
 import { Erro, INPUT } from "@/components/campo";
+import { Vazio } from "@/components/vazio";
 import {
   centavosParaCampo,
   formatarBRL,
@@ -382,6 +384,30 @@ export function Orcado({
   }, [dados.contas]);
 
   const colunas = 1 + 3 * dados.competencias.length;
+
+  // Sem conta no plano não há linha para orçar: a tabela nasce do plano de
+  // contas, não dos lançamentos. O vazio aponta a aba que resolve.
+  if (dados.contas.length === 0) {
+    return (
+      <SectionCard
+        subtitle="orçado editável por conta e competência, realizado somado do livro-razão"
+        title="Orçado × realizado"
+      >
+        <Vazio>
+          Plano de contas vazio. Cada linha desta tabela é uma conta do plano;
+          sem conta cadastrada não há o que orçar nem onde somar o realizado.
+          Cadastre as contas em{" "}
+          <Link
+            href="/empresa/financeiro?aba=plano"
+            style={{ color: "var(--accent-text)" }}
+          >
+            Plano de contas
+          </Link>
+          .
+        </Vazio>
+      </SectionCard>
+    );
+  }
 
   return (
     <SectionCard

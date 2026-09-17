@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { BotaoPrimario } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 
@@ -63,6 +64,63 @@ function rotuloDeEnvio(sujo: boolean, precisaAprovacao: boolean): string {
   return precisaAprovacao ? "Enviar para aprovação" : "Enviar proposta";
 }
 
+/** Quanto tempo "Salvo" fica no botão antes de virar "Sem alterações". */
+const DURACAO_DO_SALVO_MS = 3000;
+
+/** O que o botão de gravar diz, nos seus cinco estados. "Salvo" é o único que
+ *  não se lê do estado atual — é a memória de que a última gravação acabou de
+ *  dar certo, e dura poucos segundos. */
+function rotuloDeGravar({
+  temRascunho,
+  salvando,
+  sujo,
+  salvoHaPouco,
+}: {
+  temRascunho: boolean;
+  salvando: boolean;
+  sujo: boolean;
+  salvoHaPouco: boolean;
+}): string {
+  if (salvando) {
+    return "Salvando…";
+  }
+  if (!temRascunho) {
+    return "Criar rascunho";
+  }
+  if (salvoHaPouco) {
+    return "Salvo";
+  }
+  return sujo ? "Salvar alterações" : "Sem alterações";
+}
+
+/** `true` por alguns segundos depois que uma gravação termina bem.
+ *
+ *  O `Gerador` não avisa "gravou": ele muda `salvando` de volta para `false`
+ *  e, no mesmo render, `sujo` cai (o escopo da tela passou a ser o do banco)
+ *  ou `temRascunho` sobe (o primeiro rascunho nasceu). Uma gravação que
+ *  falha deixa `sujo` como estava — e por isso não conta. */
+function useSalvoHaPouco(
+  salvando: boolean,
+  sujo: boolean,
+  temRascunho: boolean
+): boolean {
+  const [salvoHaPouco, setSalvoHaPouco] = useState(false);
+  const anterior = useRef({ salvando, sujo, temRascunho });
+  useEffect(() => {
+    const antes = anterior.current;
+    anterior.current = { salvando, sujo, temRascunho };
+    const terminou = antes.salvando && !salvando;
+    const gravou = (antes.sujo && !sujo) || (!antes.temRascunho && temRascunho);
+    if (!(terminou && gravou)) {
+      return;
+    }
+    setSalvoHaPouco(true);
+    const id = setTimeout(() => setSalvoHaPouco(false), DURACAO_DO_SALVO_MS);
+    return () => clearTimeout(id);
+  }, [salvando, sujo, temRascunho]);
+  return salvoHaPouco;
+}
+
 export function PainelDeEnvio({
   editavel,
   somenteLeitura,
@@ -90,6 +148,9 @@ export function PainelDeEnvio({
   cliente: string;
   onEnviar: () => void;
 }) {
+  // Antes do retorno precoce: hook não pode ser condicional.
+  const salvoHaPouco = useSalvoHaPouco(salvando, sujo, temRascunho);
+
   if (!editavel) {
     if (somenteLeitura) {
       return null;
@@ -112,10 +173,16 @@ export function PainelDeEnvio({
     ? `${titulo.trim()} · ${cliente.trim()}`
     : titulo.trim();
 
+  // Com rascunho e nada mudado não há o que gravar — o botão diz "Sem
+  // alterações" e trava, como o do CAC. Sem rascunho ainda, "Criar rascunho"
+  // fica livre mesmo com `sujo` falso (o `Gerador` só marca sujo contra um
+  // rascunho que existe).
+  const nadaAGravar = temRascunho && !sujo;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <BotaoPrimario disabled={salvando || !podeEnviar}>
-        {temRascunho ? "Salvar alterações" : "Criar rascunho"}
+      <BotaoPrimario disabled={salvando || !podeEnviar || nadaAGravar}>
+        {rotuloDeGravar({ temRascunho, salvando, sujo, salvoHaPouco })}
       </BotaoPrimario>
       {temRascunho ? (
         // Enviar é sem volta — o servidor não deixa editar depois. O grid

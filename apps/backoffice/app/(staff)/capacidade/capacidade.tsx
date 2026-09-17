@@ -1,7 +1,15 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
-import { type FormEvent, useCallback, useState, useTransition } from "react";
+import {
+  type FormEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   allocatePersonAction,
   listCapacity,
@@ -9,6 +17,7 @@ import {
 } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { FormularioDeCapacidade } from "./formulario";
 
@@ -71,11 +80,17 @@ function Pessoa({
   primeira,
   podeEscrever,
   onAlocar,
+  formulario,
+  confirmacao,
 }: {
   p: PessoaCapacidade;
   primeira: boolean;
   podeEscrever: boolean;
   onAlocar: (id: string) => void;
+  /** O formulário de alocação, quando é esta a pessoa sendo alocada. */
+  formulario: ReactNode;
+  /** A última alocação gravada, quando foi nesta pessoa. */
+  confirmacao: string | null;
 }) {
   return (
     <li
@@ -180,7 +195,168 @@ function Pessoa({
           ))}
         </div>
       ) : null}
+
+      {/* Formulário e confirmação nascem na linha que agiu: quem clicou
+          "Alocar" está olhando para esta pessoa, não para o topo da página. */}
+      {formulario}
+      {confirmacao ? (
+        <div style={{ marginTop: 10 }}>
+          <Confirmacao>{confirmacao}</Confirmacao>
+        </div>
+      ) : null}
     </li>
+  );
+}
+
+const BOTAO_FECHAR = {
+  padding: "9px 15px",
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline)",
+  background: "none",
+  color: "var(--ink-muted)",
+  fontSize: "var(--fs-base)",
+  fontWeight: 600,
+  cursor: "pointer",
+} as const;
+
+type Alocacao = typeof ALOCACAO_VAZIA;
+
+/** O formulário de alocação, montado dentro da linha da pessoa. Foca o
+ *  primeiro campo ao abrir: sem isso o clique em "Alocar" não movia nada, e
+ *  quem navega por teclado ficava no botão sem saber que algo abriu. */
+function FormularioDeAlocacao({
+  nome,
+  aloc,
+  engajamentos,
+  pendente,
+  onMudar,
+  onEnviar,
+  onFechar,
+}: {
+  nome: string;
+  aloc: Alocacao;
+  engajamentos: EngagementRow[];
+  pendente: boolean;
+  onMudar: (parcial: Partial<Alocacao>) => void;
+  onEnviar: (event: FormEvent) => void;
+  onFechar: () => void;
+}) {
+  const primeiroCampo = useRef<HTMLSelectElement>(null);
+  useEffect(() => {
+    primeiroCampo.current?.focus();
+  }, []);
+  // Fora do JSX: o `&&` inline vira valor vazando para o render aos olhos do
+  // lint, e nomear a condição diz o que ela significa.
+  const podeAlocar = Boolean(aloc.engagementId && aloc.inicioEm) && !pendente;
+  const titulo = `Nova alocação — ${nome}`;
+
+  return (
+    <form
+      aria-label={titulo}
+      onSubmit={onEnviar}
+      style={{
+        marginTop: 12,
+        padding: 14,
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--hairline-strong)",
+        background: "var(--surface-2)",
+      }}
+    >
+      <p
+        style={{
+          margin: "0 0 10px",
+          fontSize: "var(--fs-base)",
+          fontWeight: 700,
+        }}
+      >
+        {titulo}
+      </p>
+      <div
+        style={{
+          display: "grid",
+          gap: 10,
+          gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
+        }}
+      >
+        <Campo htmlFor="a-eng" label="Engajamento">
+          <select
+            id="a-eng"
+            onChange={(e) => onMudar({ engagementId: e.target.value })}
+            ref={primeiroCampo}
+            style={{ ...INPUT, cursor: "pointer" }}
+            value={aloc.engagementId}
+          >
+            <option value="">Escolha…</option>
+            {engajamentos.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.codigo} · {e.nome}
+              </option>
+            ))}
+          </select>
+        </Campo>
+        <Campo htmlFor="a-pct" label="Percentual">
+          <input
+            id="a-pct"
+            max={100}
+            min={1}
+            onChange={(e) => onMudar({ percentual: e.target.value })}
+            style={INPUT}
+            type="number"
+            value={aloc.percentual}
+          />
+        </Campo>
+        <Campo htmlFor="a-ini" label="Início">
+          <input
+            id="a-ini"
+            onChange={(e) => onMudar({ inicioEm: e.target.value })}
+            style={INPUT}
+            type="date"
+            value={aloc.inicioEm}
+          />
+        </Campo>
+        <Campo htmlFor="a-fim" label="Fim (opcional)">
+          <input
+            id="a-fim"
+            onChange={(e) => onMudar({ fimEm: e.target.value })}
+            style={INPUT}
+            type="date"
+            value={aloc.fimEm}
+          />
+        </Campo>
+      </div>
+
+      <div style={{ marginTop: 10 }}>
+        <Campo
+          hint="só é exigido se a soma no período passar de 100%"
+          htmlFor="a-motivo"
+          label="Motivo da sobrecarga"
+        >
+          <input
+            id="a-motivo"
+            onChange={(e) => onMudar({ motivo: e.target.value })}
+            placeholder="ex.: cobertura de férias por duas semanas"
+            style={INPUT}
+            value={aloc.motivo}
+          />
+        </Campo>
+      </div>
+
+      <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+        <BotaoPrimario disabled={!podeAlocar} full={false} type="submit">
+          {pendente ? "Alocando…" : "Alocar"}
+        </BotaoPrimario>
+        {/* "Fechar", não "Cancelar": só fecha o formulário; nada é
+            desfeito nem apagado. */}
+        <button
+          className="btn"
+          onClick={onFechar}
+          style={BOTAO_FECHAR}
+          type="button"
+        >
+          Fechar
+        </button>
+      </div>
+    </form>
   );
 }
 
@@ -195,7 +371,11 @@ export function Capacidade({
 }) {
   const [lista, setLista] = useState(iniciais);
   const [erro, setErro] = useState<string | null>(null);
-  const [confirmacao, setConfirmacao] = useState<string | null>(null);
+  // Presa à pessoa: a frase aparece na linha de quem foi alocado.
+  const [confirmacao, setConfirmacao] = useState<{
+    personId: string;
+    texto: string;
+  } | null>(null);
   const [nova, setNova] = useState(false);
   const [alocando, setAlocando] = useState<string | null>(null);
   const [aloc, setAloc] = useState(ALOCACAO_VAZIA);
@@ -241,9 +421,10 @@ export function Capacidade({
         const onde =
           engajamentos.find((e) => e.id === aloc.engagementId)?.codigo ??
           aloc.engagementId;
-        setConfirmacao(
-          `Alocação registrada — ${quem} em ${onde}, ${aloc.percentual}%.`
-        );
+        setConfirmacao({
+          personId,
+          texto: `Alocação registrada — ${quem} em ${onde}, ${aloc.percentual}%.`,
+        });
         setAlocando(null);
         setAloc(ALOCACAO_VAZIA);
       });
@@ -251,13 +432,12 @@ export function Capacidade({
     [alocando, aloc, lista, engajamentos, recarregar]
   );
 
+  const abrirAlocacao = useCallback((id: string) => {
+    setConfirmacao(null);
+    setAlocando(id);
+  }, []);
+
   const sobrecarregados = lista.filter((p) => p.ocupacaoAtual > 100).length;
-  // Fora do JSX: o `&&` inline vira valor vazando para o render aos olhos do
-  // lint, e nomear a condição diz o que ela significa.
-  const podeAlocar = Boolean(aloc.engagementId && aloc.inicioEm) && !pendente;
-  // O formulário abre abaixo da lista, longe da linha clicada: o título
-  // precisa dizer quem está sendo alocado.
-  const nomeDeQuemAloca = lista.find((p) => p.id === alocando)?.nome ?? "";
   const pessoas = lista.length === 1 ? "1 pessoa" : `${lista.length} pessoas`;
   const subtituloDaEquipe =
     sobrecarregados > 0
@@ -267,133 +447,6 @@ export function Capacidade({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
-      {confirmacao ? (
-        <output
-          style={{
-            display: "block",
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {confirmacao}
-        </output>
-      ) : null}
-
-      {alocando ? (
-        <SectionCard icon="users" title={`Nova alocação — ${nomeDeQuemAloca}`}>
-          <form
-            aria-label={`Nova alocação — ${nomeDeQuemAloca}`}
-            onSubmit={alocar}
-          >
-            <div
-              style={{
-                display: "grid",
-                gap: 10,
-                gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-              }}
-            >
-              <Campo htmlFor="a-eng" label="Engajamento">
-                <select
-                  id="a-eng"
-                  onChange={(e) =>
-                    setAloc((a) => ({ ...a, engagementId: e.target.value }))
-                  }
-                  style={{ ...INPUT, cursor: "pointer" }}
-                  value={aloc.engagementId}
-                >
-                  <option value="">Escolha…</option>
-                  {engajamentos.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.codigo} · {e.nome}
-                    </option>
-                  ))}
-                </select>
-              </Campo>
-              <Campo htmlFor="a-pct" label="Percentual">
-                <input
-                  id="a-pct"
-                  max={100}
-                  min={1}
-                  onChange={(e) =>
-                    setAloc((a) => ({ ...a, percentual: e.target.value }))
-                  }
-                  style={INPUT}
-                  type="number"
-                  value={aloc.percentual}
-                />
-              </Campo>
-              <Campo htmlFor="a-ini" label="Início">
-                <input
-                  id="a-ini"
-                  onChange={(e) =>
-                    setAloc((a) => ({ ...a, inicioEm: e.target.value }))
-                  }
-                  style={INPUT}
-                  type="date"
-                  value={aloc.inicioEm}
-                />
-              </Campo>
-              <Campo htmlFor="a-fim" label="Fim (opcional)">
-                <input
-                  id="a-fim"
-                  onChange={(e) =>
-                    setAloc((a) => ({ ...a, fimEm: e.target.value }))
-                  }
-                  style={INPUT}
-                  type="date"
-                  value={aloc.fimEm}
-                />
-              </Campo>
-            </div>
-
-            <div style={{ marginTop: 10 }}>
-              <Campo
-                hint="só é exigido se a soma no período passar de 100%"
-                htmlFor="a-motivo"
-                label="Motivo da sobrecarga"
-              >
-                <input
-                  id="a-motivo"
-                  onChange={(e) =>
-                    setAloc((a) => ({ ...a, motivo: e.target.value }))
-                  }
-                  placeholder="ex.: cobertura de férias por duas semanas"
-                  style={INPUT}
-                  value={aloc.motivo}
-                />
-              </Campo>
-            </div>
-
-            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-              <BotaoPrimario disabled={!podeAlocar} full={false} type="submit">
-                {pendente ? "Alocando…" : "Alocar"}
-              </BotaoPrimario>
-              <button
-                className="btn"
-                onClick={() => setAlocando(null)}
-                style={{
-                  padding: "9px 15px",
-                  borderRadius: "var(--r-md)",
-                  border: "1px solid var(--hairline)",
-                  background: "none",
-                  color: "var(--ink-muted)",
-                  fontSize: "var(--fs-base)",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-                type="button"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </SectionCard>
-      ) : null}
 
       <SectionCard
         action={
@@ -403,7 +456,8 @@ export function Capacidade({
               onClick={() => setNova((v) => !v)}
               type="button"
             >
-              {nova ? "Cancelar" : "Nova pessoa"}
+              {/* "Fechar": só recolhe o formulário, não desfaz nada. */}
+              {nova ? "Fechar" : "Nova pessoa"}
             </BotaoPrimario>
           ) : null
         }
@@ -439,8 +493,26 @@ export function Capacidade({
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {lista.map((p, i) => (
               <Pessoa
+                confirmacao={
+                  confirmacao?.personId === p.id ? confirmacao.texto : null
+                }
+                formulario={
+                  alocando === p.id ? (
+                    <FormularioDeAlocacao
+                      aloc={aloc}
+                      engajamentos={engajamentos}
+                      nome={p.nome}
+                      onEnviar={alocar}
+                      onFechar={() => setAlocando(null)}
+                      onMudar={(parcial) =>
+                        setAloc((a) => ({ ...a, ...parcial }))
+                      }
+                      pendente={pendente}
+                    />
+                  ) : null
+                }
                 key={p.id}
-                onAlocar={setAlocando}
+                onAlocar={abrirAlocacao}
                 p={p}
                 podeEscrever={podeEscrever}
                 primeira={i === 0}

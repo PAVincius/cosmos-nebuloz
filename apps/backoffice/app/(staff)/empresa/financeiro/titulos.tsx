@@ -12,6 +12,7 @@ import {
 import { BotaoSecundario, Erro } from "@/components/campo";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
@@ -147,25 +148,64 @@ function LinhaTitulo({
   );
 }
 
+/** O vazio distingue primeiro uso de filtro sem resultado: no primeiro, ensina
+ *  o que alimenta a lista e o que fazer; no segundo, diz que é o filtro — a
+ *  frase de "cadastre" ao lado de um chip ativo leria como "não há nada". */
+function VazioDeTitulos({
+  tipo,
+  filtro,
+}: {
+  tipo: TituloRow["tipo"];
+  /** O chip de situação ativo, ou `null` quando é "Todos". */
+  filtro: Situacao | null;
+}) {
+  const rotulo = ROTULO_TIPO[tipo].toLowerCase();
+  if (filtro) {
+    return (
+      <Vazio>
+        Nenhum título {rotulo} {ROTULO_SITUACAO[filtro].toLowerCase()}. Troque o
+        filtro para "Todos" para ver os demais.
+      </Vazio>
+    );
+  }
+  return (
+    <Vazio>
+      Nenhum título {rotulo}. Título é o que ainda vai virar dinheiro — a conta
+      a pagar ao fornecedor, a fatura a receber do cliente. Cadastre em "Novo
+      título"; a baixa, quando pagar ou receber, gera o lançamento no
+      livro-razão.
+    </Vazio>
+  );
+}
+
 function ListaDeTitulos({
-  titulo,
+  tipo,
   titulos,
+  filtro,
   hoje,
   podeEscrever,
   onBaixar,
   onCancelar,
 }: {
-  titulo: string;
+  tipo: TituloRow["tipo"];
   titulos: TituloRow[];
+  filtro: Situacao | null;
   hoje: Date;
   podeEscrever: boolean;
   onBaixar: (t: TituloRow) => void;
   onCancelar: (t: TituloRow) => void;
 }) {
+  if (titulos.length === 0) {
+    return (
+      <SectionCard subtitle="0 títulos" title={ROTULO_TIPO[tipo]}>
+        <VazioDeTitulos filtro={filtro} tipo={tipo} />
+      </SectionCard>
+    );
+  }
   return (
     <SectionCard
       subtitle={`${titulos.length} ${titulos.length === 1 ? "título" : "títulos"}`}
-      title={titulo}
+      title={ROTULO_TIPO[tipo]}
     >
       <Tabela larguras={LARGURAS}>
         <TableHead
@@ -281,6 +321,10 @@ export function Titulos({
 
   const aPagar = titulosVisiveis.filter((t) => t.tipo === "PAGAR");
   const aReceber = titulosVisiveis.filter((t) => t.tipo === "RECEBER");
+  // Para o vazio saber se é filtro ou cadastro. `FiltroChips` devolve string;
+  // "all" é o único valor fora de `Situacao`.
+  const filtroAtivo =
+    situacaoFiltro === "all" ? null : (situacaoFiltro as Situacao);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -322,19 +366,21 @@ export function Titulos({
       </div>
 
       <ListaDeTitulos
+        filtro={filtroAtivo}
         hoje={hoje}
         onBaixar={setTituloBaixando}
         onCancelar={setTituloCancelando}
         podeEscrever={podeEscrever}
-        titulo={ROTULO_TIPO.PAGAR}
+        tipo="PAGAR"
         titulos={aPagar}
       />
       <ListaDeTitulos
+        filtro={filtroAtivo}
         hoje={hoje}
         onBaixar={setTituloBaixando}
         onCancelar={setTituloCancelando}
         podeEscrever={podeEscrever}
-        titulo={ROTULO_TIPO.RECEBER}
+        tipo="RECEBER"
         titulos={aReceber}
       />
 

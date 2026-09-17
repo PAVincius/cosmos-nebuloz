@@ -39,6 +39,10 @@ const TIPOS = [
 
 type Tipo = (typeof TIPOS)[number]["id"];
 
+/** Escolha única entre os dois tipos — rádio nativo dentro do cartão, não
+ *  botão com `aria-pressed`: o leitor anuncia "1 de 2" e as setas trocam.
+ *  O rádio fica visível para o anel de foco do cosmos.css continuar
+ *  aparecendo. Mesmo padrão de `clientes/novo/form.tsx`. */
 function CardsDeTipo({
   tipo,
   onTipo,
@@ -47,20 +51,20 @@ function CardsDeTipo({
   onTipo: (t: Tipo) => void;
 }) {
   return (
-    <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
+    <div
+      aria-label="Tipo"
+      role="radiogroup"
+      style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}
+    >
       {TIPOS.map((t) => {
         const ativo = t.id === tipo;
         return (
-          <button
-            aria-pressed={ativo}
-            className="btn"
+          <label
             key={t.id}
-            onClick={() => onTipo(t.id)}
             style={{
               display: "flex",
-              flexDirection: "column",
               alignItems: "flex-start",
-              gap: 4,
+              gap: 10,
               padding: "10px 12px",
               borderRadius: "var(--r-md)",
               textAlign: "left",
@@ -68,21 +72,30 @@ function CardsDeTipo({
               border: `1px solid ${ativo ? "var(--accent)" : "var(--hairline)"}`,
               background: ativo ? "var(--surface-3)" : "none",
             }}
-            type="button"
           >
-            <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
-              {t.label}
+            <input
+              checked={ativo}
+              name="tipo-de-capacidade"
+              onChange={() => onTipo(t.id)}
+              style={{ margin: "3px 0 0" }}
+              type="radio"
+              value={t.id}
+            />
+            <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+                {t.label}
+              </span>
+              <span
+                style={{
+                  fontSize: "var(--fs-nota)",
+                  color: "var(--ink-muted)",
+                  lineHeight: 1.4,
+                }}
+              >
+                {t.hint}
+              </span>
             </span>
-            <span
-              style={{
-                fontSize: "var(--fs-nota)",
-                color: "var(--ink-muted)",
-                lineHeight: 1.4,
-              }}
-            >
-              {t.hint}
-            </span>
-          </button>
+          </label>
         );
       })}
     </div>

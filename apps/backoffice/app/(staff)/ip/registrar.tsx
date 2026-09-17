@@ -115,6 +115,27 @@ const LINHA_CHIPS: React.CSSProperties = {
   gap: 6,
 };
 
+const CHIP: React.CSSProperties = {
+  padding: "6px 11px",
+  borderRadius: "var(--r-sm)",
+  fontSize: "var(--fs-nota)",
+  fontWeight: 600,
+  fontFamily: "inherit",
+  cursor: "pointer",
+};
+
+function estiloDoChip(ativo: boolean): React.CSSProperties {
+  return {
+    ...CHIP,
+    border: `1px solid ${ativo ? "var(--accent)" : "var(--hairline)"}`,
+    background: ativo ? "var(--accent-soft)" : "var(--surface-2)",
+    color: ativo ? "var(--ink)" : "var(--ink-muted)",
+  };
+}
+
+/** Chip alternável — só para escolha múltipla (os serviços). Para escolha
+ *  única é `OpcaoDeChip`: `aria-pressed` num grupo em que só um fica ativo
+ *  faz o leitor de tela anunciar "pressionado" sem dizer "1 de 4". */
 function Chip({
   ativo,
   onClick,
@@ -129,21 +150,49 @@ function Chip({
       aria-pressed={ativo}
       className="btn"
       onClick={onClick}
-      style={{
-        padding: "6px 11px",
-        borderRadius: "var(--r-sm)",
-        fontSize: "var(--fs-nota)",
-        fontWeight: 600,
-        fontFamily: "inherit",
-        cursor: "pointer",
-        border: `1px solid ${ativo ? "var(--accent)" : "var(--hairline)"}`,
-        background: ativo ? "var(--accent-soft)" : "var(--surface-2)",
-        color: ativo ? "var(--ink)" : "var(--ink-muted)",
-      }}
+      style={estiloDoChip(ativo)}
       type="button"
     >
       {children}
     </button>
+  );
+}
+
+/** A mesma aparência do chip, com um rádio nativo dentro: escolha única.
+ *  O rádio fica visível (não `sr-only`) para o anel de foco do cosmos.css
+ *  continuar aparecendo. Mesmo padrão de `clientes/novo/form.tsx`. */
+function OpcaoDeChip({
+  nome,
+  valor,
+  ativo,
+  onEscolher,
+  children,
+}: {
+  nome: string;
+  valor: string;
+  ativo: boolean;
+  onEscolher: () => void;
+  children: string;
+}) {
+  return (
+    <label
+      style={{
+        ...estiloDoChip(ativo),
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+      }}
+    >
+      <input
+        checked={ativo}
+        name={nome}
+        onChange={onEscolher}
+        style={{ margin: 0 }}
+        type="radio"
+        value={valor}
+      />
+      {children}
+    </label>
   );
 }
 
@@ -211,13 +260,19 @@ const LEGENDA: React.CSSProperties = {
  */
 function CampoDeGrupo({
   label,
+  escolhaUnica = false,
   children,
 }: {
   label: string;
+  /** `role="radiogroup"` no fieldset: o leitor anuncia "1 de 4" nos rádios
+   *  de dentro. Sem isto é só "grupo". Serviços (escolha múltipla) não usa. */
+  escolhaUnica?: boolean;
   children: ReactNode;
 }) {
+  // Fora do JSX por causa do noLeakedRender.
+  const papel = escolhaUnica ? "radiogroup" : undefined;
   return (
-    <fieldset style={RESET_FIELDSET}>
+    <fieldset role={papel} style={RESET_FIELDSET}>
       <legend className="mono" style={LEGENDA}>
         {label}
       </legend>
@@ -240,16 +295,18 @@ function BlocoDeProcedencia({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <CampoDeGrupo label="Procedência">
+      <CampoDeGrupo escolhaUnica label="Procedência">
         <div style={LINHA_CHIPS}>
           {PROCEDENCIAS.map((p) => (
-            <Chip
+            <OpcaoDeChip
               ativo={p === form.procedencia}
               key={p}
-              onClick={() => alterar({ procedencia: p })}
+              nome="ip-procedencia"
+              onEscolher={() => alterar({ procedencia: p })}
+              valor={p}
             >
               {ROTULO_PROCEDENCIA[p]}
-            </Chip>
+            </OpcaoDeChip>
           ))}
         </div>
       </CampoDeGrupo>
@@ -302,16 +359,18 @@ function BlocoDeLicenca({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <CampoDeGrupo label="Licença de terceiro">
+      <CampoDeGrupo escolhaUnica label="Licença de terceiro">
         <div style={LINHA_CHIPS}>
           {LICENCAS.map((l) => (
-            <Chip
+            <OpcaoDeChip
               ativo={l === form.licenca}
               key={l}
-              onClick={() => alterar({ licenca: l })}
+              nome="ip-licenca"
+              onEscolher={() => alterar({ licenca: l })}
+              valor={l}
             >
               {ROTULO_LICENCA[l]}
-            </Chip>
+            </OpcaoDeChip>
           ))}
         </div>
       </CampoDeGrupo>
@@ -399,6 +458,20 @@ function PainelDaRegua({
           >
             <span aria-hidden="true">{c.ok ? "☑" : "☐"}</span>
             <span style={{ flex: 1, minWidth: 0 }}>{c.texto}</span>
+            {/* O estado em palavra, além da cor e do glifo (que é
+                `aria-hidden`): sem isto o leitor de tela lia seis critérios
+                iguais. Em `ink-muted`/`ink-faint`, não em verde/âmbar —
+                esses reprovam AA como texto no tema claro. */}
+            <span
+              className="mono"
+              style={{
+                fontSize: "var(--fs-micro)",
+                fontWeight: 700,
+                color: c.ok ? "var(--ink-muted)" : "var(--ink-faint)",
+              }}
+            >
+              {c.ok ? "atende" : "falta"}
+            </span>
             <span
               className="mono"
               style={{ fontSize: "var(--fs-micro)", color: "var(--ink-faint)" }}

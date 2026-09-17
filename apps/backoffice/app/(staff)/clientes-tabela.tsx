@@ -51,22 +51,22 @@ export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Cliente
             </th>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Slug
             </th>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Módulos
             </th>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Plano
             </th>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Membros
             </th>
-            <th className="mono" style={CABECALHO}>
+            <th className="mono" scope="col" style={CABECALHO}>
               Desde
             </th>
           </tr>
