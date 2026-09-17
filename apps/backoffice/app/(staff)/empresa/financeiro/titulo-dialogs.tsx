@@ -15,10 +15,15 @@ import type {
   baixarTitulo,
   cancelarTitulo,
 } from "@/app/actions/empresa/titulos";
-import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { formatarBRL } from "@/lib/comercial/formato";
 import type { TituloRow } from "@/lib/empresa/livro";
-import { competenciaAtual, hojeIso } from "@/lib/empresa/periodo";
+import {
+  competenciaAtual,
+  formatarDataBr,
+  hojeIso,
+} from "@/lib/empresa/periodo";
 import type { Result } from "@/lib/safe-action";
 
 /**
@@ -127,6 +132,7 @@ function FormularioBaixar({
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const mesDivergente = form.data.slice(0, 7) !== form.competencia;
+  const incompleto = form.data === "" || form.competencia === "";
 
   async function confirmar() {
     setErro(null);
@@ -184,16 +190,18 @@ function FormularioBaixar({
         </Campo>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <BotaoPrimario
-          disabled={pendente}
-          full={false}
-          onClick={confirmar}
-          type="button"
-        >
-          {pendente ? "Baixando…" : "Confirmar baixa"}
-        </BotaoPrimario>
-      </div>
+      {/* Barreira: baixar grava um lançamento no livro na mesma transação
+          (`baixarTitulo`), e não há action que desfaça — só um estorno lançado
+          à mão. Cancelar já passava por aqui; baixar era um botão só. */}
+      <ConfirmarAcao
+        alvo={`${titulo.descricao} · ${formatarBRL(titulo.valorCentavos)}`}
+        consequencia={`Grava um lançamento de ${formatarBRL(titulo.valorCentavos)} no livro em ${formatarDataBr(form.data)}, competência ${form.competencia}; a baixa não se desfaz — para corrigir, lança-se o estorno à mão.`}
+        desabilitado={incompleto}
+        executando={pendente}
+        onConfirmar={confirmar}
+        rotulo="Confirmar baixa"
+        tom="accent"
+      />
     </>
   );
 }

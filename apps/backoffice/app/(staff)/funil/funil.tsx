@@ -158,7 +158,9 @@ export function Funil({
     : "all";
   const [erro, setErro] = useState<string | null>(null);
   const [leadAbertoId, setLeadAbertoId] = useParamState("lead");
-  const [leadAbertoModo, setLeadAbertoModo] = useState<"perda" | null>(null);
+  const [leadAbertoModo, setLeadAbertoModo] = useState<
+    "perda" | "conversao" | null
+  >(null);
   const [estagioAbertoId, setEstagioAbertoId] = useState<Estagio | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
 
@@ -261,6 +263,17 @@ export function Funil({
     [setLeadAbertoId]
   );
 
+  // Soltar em Proposta não converte: abre o mesmo diálogo já na pergunta
+  // de conversão. Converter é sem volta (o servidor nunca mais deixa mover o
+  // lead), e o diálogo já perguntava — o board era o atalho que pulava isso.
+  const abrirLeadEmModoConversao = useCallback(
+    (id: string) => {
+      setLeadAbertoId(id);
+      setLeadAbertoModo("conversao");
+    },
+    [setLeadAbertoId]
+  );
+
   const fecharLead = useCallback(() => {
     setLeadAbertoId("");
     setLeadAbertoModo(null);
@@ -355,7 +368,7 @@ export function Funil({
           leads={dados.leads}
           onAbrirEstagio={abrirEstagio}
           onAbrirLead={abrirLead}
-          onConverter={converter}
+          onConverter={abrirLeadEmModoConversao}
           onMover={mover}
           onPerder={abrirLeadEmModoPerda}
           podeEscrever={podeEscrever}

@@ -537,6 +537,7 @@ function AcaoPrincipal({
   proximo,
   podeEscrever,
   pendente,
+  perguntandoConversao = false,
   onConverter,
   onAvancar,
 }: {
@@ -545,6 +546,8 @@ function AcaoPrincipal({
   proximo: Estagio | null;
   podeEscrever: boolean;
   pendente: boolean;
+  /** Soltar em Proposta no board abre o diálogo já na pergunta. */
+  perguntandoConversao?: boolean;
   onConverter: () => void;
   onAvancar: () => void;
 }) {
@@ -567,6 +570,7 @@ function AcaoPrincipal({
     }
     return (
       <ConfirmarAcao
+        aberto={perguntandoConversao}
         alvo={lead.nome}
         consequencia="O lead sai do funil e vira rascunho de proposta; não volta."
         executando={pendente}
@@ -601,6 +605,7 @@ export function RodapeLeadDialog({
   podeEscrever,
   pendente,
   modoPerda,
+  perguntandoConversao,
   motivo,
   nota,
   onEntrarModoPerda,
@@ -616,6 +621,7 @@ export function RodapeLeadDialog({
   podeEscrever: boolean;
   pendente: boolean;
   modoPerda: boolean;
+  perguntandoConversao?: boolean;
   motivo: MotivoPerda | null;
   nota: string;
   onEntrarModoPerda: () => void;
@@ -666,6 +672,7 @@ export function RodapeLeadDialog({
         onAvancar={onAvancar}
         onConverter={onConverter}
         pendente={pendente}
+        perguntandoConversao={perguntandoConversao}
         podeEscrever={podeEscrever}
         proximo={proximo}
       />

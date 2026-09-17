@@ -50,6 +50,17 @@ function periodo(inicio: string | null, fim: string | null): string {
   return `${d(inicio)} → ${d(fim)}`;
 }
 
+/** O que o servidor faz ao fechar — a verdade de `lib/delivery.ts`: os dois
+ *  são terminais, e reabrir é criar outro. Concluído não sai da capacidade:
+ *  as alocações não olham o status do engajamento, então não se promete
+ *  isso aqui. */
+const CONSEQUENCIA_TERMINAL: Record<"CANCELADO" | "CONCLUIDO", string> = {
+  CANCELADO:
+    "O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro.",
+  CONCLUIDO:
+    "O engajamento fecha como concluído e não pode ser reaberto; para retomar, cria-se outro.",
+};
+
 /** Botão de uma transição da linha. Fora de `LinhaEngajamento` porque, com o
  *  pendente, o ternário dentro do `.map` passava o teto de complexidade. */
 function BotaoDeTransicao({
@@ -156,18 +167,19 @@ function LinhaEngajamento({
           pior que não oferecer nada. */}
       {podeEscrever
         ? e.proximos.map((p) =>
-            p === "CANCELADO" ? (
-              // Cancelado é estado final: a action não deixa reabrir. É a
-              // única transição da linha que passa pela barreira.
+            p === "CANCELADO" || p === "CONCLUIDO" ? (
+              // Os dois terminais (`lib/delivery.ts`): a action não deixa
+              // reabrir nenhum. Concluído não destrói, então o tom é o da
+              // ação primária — mas é tão sem volta quanto cancelar.
               <ConfirmarAcao
                 alvo={`${e.codigo} · ${e.nome}`}
-                consequencia="O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro."
+                consequencia={CONSEQUENCIA_TERMINAL[p]}
                 desabilitado={travada}
-                executando={mudando === "CANCELADO"}
+                executando={mudando === p}
                 key={p}
-                onConfirmar={() => onStatus(e.id, "CANCELADO")}
-                rotulo="→ Cancelado"
-                tom="red"
+                onConfirmar={() => onStatus(e.id, p)}
+                rotulo={`→ ${ROTULO_STATUS[p]}`}
+                tom={p === "CANCELADO" ? "red" : "accent"}
               />
             ) : (
               <BotaoDeTransicao

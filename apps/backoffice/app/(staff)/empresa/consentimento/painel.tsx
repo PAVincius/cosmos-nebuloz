@@ -228,6 +228,114 @@ function EscolhaDeBaseLegal({
   );
 }
 
+/** O que `marcarParecer` faz no servidor: grava o status com a data de hoje e
+ *  o nome de quem clicou na auditoria, e não há action que volte atrás —
+ *  RECEBIDO só nasce de ENVIADO, e nenhum dos dois volta a PENDENTE. */
+const CONSEQUENCIA_PARECER: Record<"ENVIADO" | "RECEBIDO", string> = {
+  ENVIADO:
+    "O parecer passa a “Enviado ao jurídico” com a data de hoje, registrado na auditoria com o seu nome; não volta a pendente.",
+  RECEBIDO:
+    "O parecer passa a “Parecer recebido” com a data de hoje, registrado na auditoria com o seu nome; não há como reabrir.",
+};
+
+const ROTULO_AVANCO: Record<"ENVIADO" | "RECEBIDO", string> = {
+  ENVIADO: "Enviar ao jurídico",
+  RECEBIDO: "Marcar parecer recebido",
+};
+
+/** Avanço do parecer com barreira: era um `WriteButton` que gravava no
+ *  clique, num caminho que só anda para a frente. */
+function AvancoDoParecer({
+  proximo,
+  podeEscrever,
+  onAvancar,
+}: {
+  proximo: "ENVIADO" | "RECEBIDO";
+  podeEscrever: boolean;
+  onAvancar: () => Promise<void>;
+}) {
+  const [executando, setExecutando] = useState(false);
+  if (!podeEscrever) {
+    return <WriteButton canWrite={false}>{ROTULO_AVANCO[proximo]}</WriteButton>;
+  }
+  return (
+    <ConfirmarAcao
+      alvo="Consentimento de gravação"
+      consequencia={CONSEQUENCIA_PARECER[proximo]}
+      executando={executando}
+      onConfirmar={async () => {
+        setExecutando(true);
+        try {
+          await onAvancar();
+        } finally {
+          setExecutando(false);
+        }
+      }}
+      rotulo={ROTULO_AVANCO[proximo]}
+      tom="accent"
+    />
+  );
+}
+
+/** Mesma regra da base legal: a caixa muda só o estado local e a pergunta
+ *  aparece com o valor escolhido; gravar é o Confirmar. Antes gravava no
+ *  `onChange` — um clique errado na caixa já era uma decisão jurídica na
+ *  auditoria. E o rótulo é o da pergunta 4, não o enum `STANDING`. */
+function EscolhaDeStanding({
+  atual,
+  podeEscrever,
+  onDecidir,
+}: {
+  atual: boolean | null;
+  podeEscrever: boolean;
+  onDecidir: (standingHabilitavel: boolean) => Promise<void>;
+}) {
+  const [escolhido, setEscolhido] = useState<boolean | null>(null);
+  const marcado = escolhido ?? atual === true;
+
+  return (
+    <>
+      <label
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          fontSize: "var(--fs-base)",
+        }}
+      >
+        <input
+          checked={marcado}
+          disabled={!podeEscrever}
+          onChange={(e) =>
+            setEscolhido(
+              e.target.checked === (atual === true) ? null : e.target.checked
+            )
+          }
+          type="checkbox"
+        />
+        Consentimento permanente habilitável (pergunta 4) —{" "}
+        {rotuloStanding(atual)}
+      </label>
+      {escolhido === null ? null : (
+        <div style={{ marginTop: 12 }}>
+          <ConfirmarAcao
+            aberto
+            alvo={`Consentimento permanente habilitável: ${rotuloStanding(escolhido)}`}
+            consequencia="A resposta fica registrada na auditoria com o seu nome."
+            onConfirmar={async () => {
+              await onDecidir(escolhido);
+              setEscolhido(null);
+            }}
+            onVoltar={() => setEscolhido(null)}
+            rotulo="Registrar resposta"
+            tom="accent"
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
 export function Painel({
   inicial,
   podeEscrever,
@@ -336,20 +444,23 @@ export function Painel({
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 10,
+        }}
+      >
         <Badge tone={view.decisao.parecer === "RECEBIDO" ? "green" : "blue"}>
           {ROTULO_PARECER[view.decisao.parecer]}
         </Badge>
         {proximoParecer ? (
-          <WriteButton
-            canWrite={podeEscrever}
-            onClick={() => parecer(proximoParecer)}
-            type="button"
-          >
-            {proximoParecer === "ENVIADO"
-              ? "Enviar ao jurídico"
-              : "Marcar parecer recebido"}
-          </WriteButton>
+          <AvancoDoParecer
+            onAvancar={() => parecer(proximoParecer)}
+            podeEscrever={podeEscrever}
+            proximo={proximoParecer}
+          />
         ) : null}
       </div>
       {erro ? <Erro>{erro}</Erro> : null}
@@ -468,23 +579,11 @@ export function Painel({
           onDecidir={(baseLegal) => decidir({ baseLegal })}
           podeEscrever={podeEscrever}
         />
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: "var(--fs-base)",
-          }}
-        >
-          <input
-            checked={view.decisao.standingHabilitavel === true}
-            disabled={!podeEscrever}
-            onChange={(e) => decidir({ standingHabilitavel: e.target.checked })}
-            type="checkbox"
-          />
-          STANDING habilitável (pergunta 4) —{" "}
-          {rotuloStanding(view.decisao.standingHabilitavel)}
-        </label>
+        <EscolhaDeStanding
+          atual={view.decisao.standingHabilitavel}
+          onDecidir={(standingHabilitavel) => decidir({ standingHabilitavel })}
+          podeEscrever={podeEscrever}
+        />
       </SectionCard>
 
       <SectionCard
