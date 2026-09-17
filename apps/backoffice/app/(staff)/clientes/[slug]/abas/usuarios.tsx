@@ -7,6 +7,7 @@ import {
   updateTenantMemberRoleAction,
 } from "@/app/actions/tenant-members";
 import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -64,6 +65,7 @@ function CelulaDePapel({
   canWrite,
   pendente,
   pendenteDe,
+  confirmada,
   onEscolher,
   onMudar,
   onVoltar,
@@ -74,6 +76,8 @@ function CelulaDePapel({
   pendente: boolean;
   /** Papel escolhido no select e ainda não gravado. */
   pendenteDe: Papel | null;
+  /** A última troca gravada, em prosa — só na linha que agiu. */
+  confirmada: string | null;
   onEscolher: (memberId: string, role: string) => void;
   onMudar: (memberId: string, role: Papel) => void;
   onVoltar: () => void;
@@ -123,6 +127,13 @@ function CelulaDePapel({
           />
         </div>
       ) : null}
+      {/* O sucesso nasce onde a ação foi feita: sem isto o select voltava ao
+          papel novo em silêncio, e quem confirmou não sabia se gravou. */}
+      {confirmada ? (
+        <div style={{ marginTop: 8 }}>
+          <Confirmacao>{confirmada}</Confirmacao>
+        </div>
+      ) : null}
     </Celula>
   );
 }
@@ -153,21 +164,32 @@ export function AbaUsuarios({
     memberId: string;
     role: Papel;
   } | null>(null);
+  // A última troca gravada, presa ao membro: a frase aparece na linha dele,
+  // não no rodapé da tabela.
+  const [confirmacao, setConfirmacao] = useState<{
+    memberId: string;
+    texto: string;
+  } | null>(null);
 
   const escolher = (memberId: string, role: string) => {
     if (!ehPapel(role)) {
       return;
     }
     setErro(null);
+    setConfirmacao(null);
     setEscolha({ memberId, role });
   };
 
   const mudar = (memberId: string, role: Papel) => {
     setErro(null);
+    setConfirmacao(null);
     iniciar(async () => {
       const res = await updateTenantMemberRoleAction({ slug, memberId, role });
       if (res.ok) {
+        const m = membros.find((x) => x.id === memberId);
+        const nome = m?.nome ?? m?.email ?? memberId;
         setEscolha(null);
+        setConfirmacao({ memberId, texto: `Papel de ${nome} agora é ${role}` });
       } else {
         setErro(res.error);
       }
@@ -318,6 +340,9 @@ export function AbaUsuarios({
 
                 <CelulaDePapel
                   canWrite={canWrite}
+                  confirmada={
+                    confirmacao?.memberId === m.id ? confirmacao.texto : null
+                  }
                   m={m}
                   onEscolher={escolher}
                   onMudar={mudar}
