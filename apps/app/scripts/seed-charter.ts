@@ -46,7 +46,10 @@ import type {
 import { PrismaClient } from "../../../packages/database/generated";
 import {
   deriveVendorMaxClass,
+  INTAKE_DEPARTMENTS,
   riskScore,
+  TRACK_AUDIENCES,
+  VENDOR_CATEGORIES,
   vendorEligibility,
 } from "../lib/charter/rules";
 
@@ -291,7 +294,7 @@ const VENDORS: {
   {
     code: "V-04",
     name: "Meridian Health AI",
-    category: "IA clínica",
+    category: VENDOR_CATEGORIES[0], // "Assistente de texto" — resume prontuário
     tier: "RESTRICTED",
     region: "BR (São Paulo)",
     dpa: true,
@@ -447,7 +450,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-115",
     title: "Resumo de prontuário para equipe clínica",
-    dept: "Clínico",
+    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
     owner: "Dra. Helena Braz",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -567,7 +570,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-109",
     title: "Geração de laudo preliminar por imagem",
-    dept: "Clínico",
+    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
     owner: "Dr. Ivo Mattos",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -719,7 +722,7 @@ const TRACKS = [
   {
     code: "TR-02",
     name: "Dado de paciente e IA",
-    audience: "Clínico · Operações",
+    audience: TRACK_AUDIENCES[1], // "Operações · Atendimento"
     modules: 5,
     minutes: 35,
     recert: "SEMIANNUAL" as const,
@@ -771,7 +774,7 @@ const TRACKS = [
 const NAMED_PENDING = [
   {
     name: "Dr. Ivo Mattos",
-    dept: "Clínico",
+    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
     track: "TR-02",
     assignedDaysAgo: 34,
   },
@@ -789,7 +792,12 @@ const NAMED_PENDING = [
     assignedDaysAgo: 23,
   },
   { name: "Lia Costa", dept: "Marketing", track: "TR-04", assignedDaysAgo: 20 },
-  { name: "Helena Braz", dept: "Clínico", track: "TR-05", assignedDaysAgo: 19 },
+  {
+    name: "Helena Braz",
+    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
+    track: "TR-05",
+    assignedDaysAgo: 19,
+  },
 ];
 
 const FIRST_NAMES = [
@@ -837,7 +845,7 @@ const LAST_NAMES = [
   "Xavier",
 ];
 const DEPARTMENTS = [
-  "Clínico",
+  INTAKE_DEPARTMENTS[1], // "Atendimento"
   "Operações",
   "Engenharia",
   "CX",
