@@ -896,4 +896,27 @@ describe("ComplianceScreen", () => {
     expect(labels).not.toContain("EU AI Act (v1)");
     expect(labels).toContain("RFP Banco Aurora (v1)");
   });
+
+  // ── Observações menores da onda de conformidade ───────────────────────────
+
+  it('pluraliza "removida/removidas" no banner de versão nova', async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({
+          id: "set-v1",
+          supersededById: "set-v2",
+          diff: { alteradas: 0, novas: 0, removidas: 2 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText(/2 removidas\./)).toBeTruthy();
+  });
 });

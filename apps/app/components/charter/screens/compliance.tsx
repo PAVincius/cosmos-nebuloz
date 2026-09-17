@@ -715,19 +715,15 @@ function ComplianceInner() {
       </PageHeader>
 
       {ativo?.supersededById && ativo.diff && (
-        <div
-          style={{
-            marginBottom: "var(--gap)",
-            padding: "8px 10px",
-            borderRadius: "var(--r-md)",
-            background: "rgba(var(--accent-rgb),.08)",
-            border: "1px solid var(--hairline)",
-          }}
+        <Callout
+          icon="alert"
+          style={{ marginBottom: "var(--gap)" }}
+          tone="amber"
         >
-          <div style={{ fontSize: 12.5, color: "var(--ink)" }}>
+          <div>
             Há uma versão nova deste conjunto — {ativo.diff.alteradas}{" "}
             alteradas, {ativo.diff.novas} novas, {ativo.diff.removidas}{" "}
-            removida.
+            {ativo.diff.removidas === 1 ? "removida" : "removidas"}.
           </div>
           {/* Adotar é escolha, não automatismo: o mapa é artefato de auditoria
               e mudar sozinho entre duas visitas é o que um time de compliance
@@ -763,7 +759,7 @@ function ComplianceInner() {
           >
             Adotar a versão nova
           </Button>
-        </div>
+        </Callout>
       )}
 
       {setsState.loading ? (
