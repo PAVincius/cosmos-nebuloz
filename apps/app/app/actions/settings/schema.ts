@@ -50,10 +50,6 @@ export type IntegrationPublic = {
   updatedAt: Date;
 };
 
-export type IntegrationFull = IntegrationPublic & {
-  config: Record<string, unknown>;
-};
-
 /** Alias for backward-compat with components that import Integration */
 export type Integration = IntegrationPublic & {
   config?: Record<string, unknown>;

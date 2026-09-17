@@ -113,12 +113,17 @@ describe("listIntegrations", () => {
 // ─── getIntegrationByType ─────────────────────────────────────────────────────
 
 describe("getIntegrationByType", () => {
-  it("returns full integration with config", async () => {
+  // Server action exportada é invocável pelo cliente por qualquer membro do
+  // tenant. O que ela devolve atravessa a fronteira — token não pode.
+  it("devolve o shape público e nunca o config", async () => {
     mocks.integrationFindFirst.mockResolvedValue(ROW);
     const result = await getIntegrationByType("jira");
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.data.config).toMatchObject({ baseUrl: expect.any(String) });
+      expect(result.data).not.toHaveProperty("config");
+      expect(JSON.stringify(result.data)).not.toContain(ROW.config.apiToken);
+      expect(result.data.type).toBe("jira");
+      expect(result.data.configured).toBe(true);
     }
   });
 
