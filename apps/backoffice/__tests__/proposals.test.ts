@@ -175,6 +175,31 @@ describe("createProposalAction", () => {
     expect(mocks.proposalCreate).not.toHaveBeenCalled();
   });
 
+  it("a recusa conta no plural certo: '1 item aponta', '2 itens apontam'", async () => {
+    mocks.serviceFindMany.mockResolvedValue([]);
+
+    const um = await createProposalAction({
+      titulo: "Piloto",
+      itens: [{ serviceId: "x-1", quantidade: 1 }],
+    });
+    expect(um.ok).toBe(false);
+    if (!um.ok) {
+      expect(um.error).toMatch(/^1 item aponta /);
+    }
+
+    const dois = await createProposalAction({
+      titulo: "Piloto",
+      itens: [
+        { serviceId: "x-1", quantidade: 1 },
+        { serviceId: "x-2", quantidade: 1 },
+      ],
+    });
+    expect(dois.ok).toBe(false);
+    if (!dois.ok) {
+      expect(dois.error).toMatch(/^2 itens apontam /);
+    }
+  });
+
   it("recusa proposta sem item — proposta vazia não tem o que aprovar", async () => {
     const res = await createProposalAction({ titulo: "Piloto", itens: [] });
 

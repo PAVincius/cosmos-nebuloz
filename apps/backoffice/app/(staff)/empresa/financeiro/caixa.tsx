@@ -45,6 +45,13 @@ const CEL = {
 } as const;
 const dinheiro = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 
+/** "S3 · 16/09": o número da semana e o dia que ela começa, visíveis. Antes a
+ *  data vivia só no `title`, e tooltip não chega ao teclado nem ao leitor de
+ *  tela. Sem o ano porque o subtítulo já situa o intervalo. */
+function rotuloDaSemana(indice: number, semanaInicio: string): string {
+  return `S${indice + 1} · ${formatarDataBr(semanaInicio).slice(0, 5)}`;
+}
+
 function Input({
   s,
   chave,
@@ -172,14 +179,17 @@ export function Caixa({
         <table style={{ borderCollapse: "collapse", minWidth: 1500 }}>
           <thead>
             <tr>
-              <th style={{ ...CEL, textAlign: "left" }}>Linha</th>
+              <th scope="col" style={{ ...CEL, textAlign: "left" }}>
+                Linha
+              </th>
               {view.semanas.map((s, i) => (
                 <th
                   key={s.semanaInicio}
+                  scope="col"
                   style={{ ...CEL, textAlign: "right" }}
-                  title={s.semanaInicio}
+                  title={formatarDataBr(s.semanaInicio)}
                 >
-                  S{i + 1}
+                  {rotuloDaSemana(i, s.semanaInicio)}
                 </th>
               ))}
             </tr>

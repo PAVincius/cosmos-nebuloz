@@ -149,7 +149,9 @@ export function SeletorDeAcervo({
     <SectionCard
       action={acao}
       icon={icone}
-      subtitle={subtitulo ?? `${itens.length} item(ns)`}
+      subtitle={
+        subtitulo ?? (itens.length === 1 ? "1 item" : `${itens.length} itens`)
+      }
       title={titulo}
     >
       {expandido ? (

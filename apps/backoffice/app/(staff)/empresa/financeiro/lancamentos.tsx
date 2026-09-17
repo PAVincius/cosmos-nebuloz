@@ -14,6 +14,7 @@ import { BotaoSecundario, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
 import type { LinhaDoLivro } from "@/lib/empresa/livro";
@@ -148,6 +149,27 @@ function LinhaTabela({
         </div>
       </Celula>
     </TableRow>
+  );
+}
+
+/** Primeiro uso ensina o que alimenta o livro; filtro sem resultado diz que é
+ *  o filtro — a mesma frase nos dois casos leria como "não há nada" com a
+ *  busca preenchida. */
+function VazioDeLancamentos({ filtrado }: { filtrado: boolean }) {
+  if (filtrado) {
+    return (
+      <Vazio>
+        Nenhum lançamento bate com o centro de custo ou a busca. Limpe o filtro
+        para ver os demais do período.
+      </Vazio>
+    );
+  }
+  return (
+    <Vazio>
+      Nenhum lançamento neste período. O livro-razão é o que alimenta o DRE, o
+      orçado × realizado e o CAC — sem lançamento, essas abas ficam em zero.
+      Lance em "Novo lançamento" ou baixe um título na aba Títulos.
+    </Vazio>
   );
 }
 
@@ -330,23 +352,34 @@ export function Lancamentos({
           </WriteButton>
         </div>
 
-        <Tabela larguras={LARGURAS}>
-          <TableHead
-            labels={["Data", "Conta", "Descrição", "Contraparte", "Valor", ""]}
-          />
-          <tbody>
-            {linhasFiltradas.map((l) => (
-              <LinhaTabela
-                excluindo={excluindoId === l.id}
-                key={l.id}
-                l={l}
-                onEditar={abrirEdicao}
-                onExcluir={excluir}
-                podeEscrever={podeEscrever}
-              />
-            ))}
-          </tbody>
-        </Tabela>
+        {linhasFiltradas.length === 0 ? (
+          <VazioDeLancamentos filtrado={dados.linhas.length > 0} />
+        ) : (
+          <Tabela larguras={LARGURAS}>
+            <TableHead
+              labels={[
+                "Data",
+                "Conta",
+                "Descrição",
+                "Contraparte",
+                "Valor",
+                "",
+              ]}
+            />
+            <tbody>
+              {linhasFiltradas.map((l) => (
+                <LinhaTabela
+                  excluindo={excluindoId === l.id}
+                  key={l.id}
+                  l={l}
+                  onEditar={abrirEdicao}
+                  onExcluir={excluir}
+                  podeEscrever={podeEscrever}
+                />
+              ))}
+            </tbody>
+          </Tabela>
+        )}
 
         <div
           style={{

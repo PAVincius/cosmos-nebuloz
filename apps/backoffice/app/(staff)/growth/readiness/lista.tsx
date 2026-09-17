@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import type { AvaliacaoRow } from "@/app/actions/maturidade";
 import { criarAvaliacao } from "@/app/actions/maturidade";
 import { Campo, Erro, INPUT, mensagemDeErro } from "@/components/campo";
+import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { CODIGOS_NIVEL, INFO_NIVEL, type Nivel } from "@/lib/growth/maturidade";
 
@@ -117,15 +118,12 @@ export function Lista({
         title="Avaliações"
       >
         {avaliacoes.length === 0 ? (
-          <p
-            style={{
-              color: "var(--ink-faint)",
-              fontSize: "var(--fs-base)",
-              margin: 0,
-            }}
-          >
-            Nenhuma avaliação ainda.
-          </p>
+          <Vazio>
+            Nenhuma avaliação ainda. Uma avaliação é a folha de{" "}
+            {totalDeCriterios} critérios respondida com a organização — o score
+            e o nível de maturidade saem dela e alimentam o funil. Comece pelo
+            nome da organização acima e "Criar e responder".
+          </Vazio>
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
