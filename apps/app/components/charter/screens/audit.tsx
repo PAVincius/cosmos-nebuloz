@@ -23,9 +23,10 @@ import {
   SkeletonCard,
   SmartEmptyState,
 } from "../base";
+import { DisclosurePanel } from "../disclosure-panel";
 import { download } from "../download";
 import { ModalProvider, useModal } from "../modal";
-import { ExportPackageModal } from "../modals";
+import { ExportPackageModal } from "../modals/export-package";
 import { AUDIT_TYPE_META, AuditList } from "../parts";
 import { useCharterData } from "../use-charter-data";
 
@@ -328,8 +329,9 @@ function AuditInner() {
             gap: "var(--gap)",
           }}
         >
-          <SectionCard
+          <DisclosurePanel
             icon="download"
+            id="audit-pacote-evidencia"
             subtitle="O que sai quando alguém pede prova"
             title="Pacote de evidência"
             tone="accent"
@@ -389,10 +391,11 @@ function AuditInner() {
             >
               Montar pacote
             </Button>
-          </SectionCard>
+          </DisclosurePanel>
 
-          <SectionCard
+          <DisclosurePanel
             icon="lock"
+            id="audit-controles-trilha"
             subtitle="Quem pode ler o quê"
             title="Controles da trilha"
             tone="blue"
@@ -444,7 +447,7 @@ function AuditInner() {
                 </div>
               ))}
             </div>
-          </SectionCard>
+          </DisclosurePanel>
         </div>
       </div>
     </div>

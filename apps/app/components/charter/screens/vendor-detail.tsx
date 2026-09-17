@@ -31,18 +31,33 @@ import {
   GatedButton,
   MetaCell,
   ScreenError,
+  SkeletonCard,
   SmartEmptyState,
   TableRow,
 } from "../base";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
-import { VendorTierModal } from "../modals";
+import { VendorTierModal } from "../modals/vendor-tier";
 import { useCharterData } from "../use-charter-data";
 
 const CASE_COLS = "minmax(0,1fr) 120px 130px";
 const SUBPROCESSOR_LIMIT = 5;
 const HIGH_SCORE = 70;
 const MID_SCORE = 45;
+// Códigos de caso no hint do KpiCard, antes de truncar em "e mais N" — acima
+// disso o card estoura (FR-8.3, ver crítica de design da onda 5a).
+const LINKED_CASES_HINT_LIMIT = 3;
+
+function linkedCasesHint(codes: string[]): string {
+  if (codes.length === 0) {
+    return "nenhum vinculado";
+  }
+  if (codes.length <= LINKED_CASES_HINT_LIMIT) {
+    return codes.join(" · ");
+  }
+  const shown = codes.slice(0, LINKED_CASES_HINT_LIMIT).join(" · ");
+  return `${shown} · e mais ${codes.length - LINKED_CASES_HINT_LIMIT}`;
+}
 
 const TIER_META: Record<string, { label: string; tone: Tone }> = {
   APPROVED: { label: "Aprovado", tone: "green" },
@@ -233,10 +248,7 @@ function VendorDetailView({
           value={data.score}
         />
         <KpiCard
-          hint={
-            data.linkedCases.map((c) => c.code).join(" · ") ||
-            "nenhum vinculado"
-          }
+          hint={linkedCasesHint(data.linkedCases.map((c) => c.code))}
           icon="inbox"
           label="Casos de uso vinculados"
           tone="accent"
@@ -476,7 +488,9 @@ function VendorDetailInner({ param }: { param?: string }) {
   }
   if (loading) {
     return (
-      <div className="skeleton" style={{ height: 240, borderRadius: 14 }} />
+      <div className="fade-in">
+        <SkeletonCard />
+      </div>
     );
   }
   if (!data) {

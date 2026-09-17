@@ -26,8 +26,10 @@ import {
   ScreenError,
   Segmented,
   Select,
+  SkeletonCard,
   Tabs,
 } from "../base";
+import { DisclosurePanel } from "../disclosure-panel";
 import { ModalProvider, useModal } from "../modal";
 import { useCharterData } from "../use-charter-data";
 import { RoleChangeModal } from "./settings-confirm-role";
@@ -61,7 +63,9 @@ function SettingsScreenInner() {
   }
   if (loading || !data) {
     return (
-      <div className="skeleton" style={{ height: 260, borderRadius: 14 }} />
+      <div className="fade-in">
+        <SkeletonCard />
+      </div>
     );
   }
 
@@ -628,8 +632,9 @@ function SettingsScreenInner() {
           {/* O protótipo mostra aqui um painel de integrações (Slack, Okta,
               webhooks). Nada disso existe no V1 — em lugar de simular canal,
               a tela diz o que o toggle faz hoje (ADR-0011). */}
-          <SectionCard
+          <DisclosurePanel
             icon="clock"
+            id="settings-entrega-nao-ligada"
             subtitle="O que o toggle faz hoje"
             title="Entrega ainda não ligada"
             tone="accent"
@@ -658,7 +663,7 @@ function SettingsScreenInner() {
             >
               ADR-0011 · notificações e job de SLA fora do V1
             </p>
-          </SectionCard>
+          </DisclosurePanel>
         </div>
       )}
     </div>
