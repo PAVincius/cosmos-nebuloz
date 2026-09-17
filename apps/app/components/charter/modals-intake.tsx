@@ -36,7 +36,7 @@ import {
   TextInput,
 } from "./form-kit";
 import { ModalShell, ModalSplit } from "./modal";
-import type { DataClass } from "./modals";
+import type { DataClass } from "./modals/_shared";
 
 type Exposure = "INTERNAL" | "EXTERNAL";
 type Criticality = "LOW" | "MEDIUM" | "HIGH";
@@ -389,6 +389,7 @@ export function IntakeModal({
             hint="Determina fornecedores elegíveis e nível mínimo de revisão humana"
             label="Classe de dado envolvida"
             required
+            variant="group"
           >
             <Segmented
               full
@@ -401,9 +402,10 @@ export function IntakeModal({
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
             <FormField
-              hint="Externo = visível a cliente ou paciente"
+              hint="Externo = visível a cliente ou usuário fora da empresa"
               label="Exposição"
               required
+              variant="group"
             >
               <Segmented
                 full
@@ -416,6 +418,7 @@ export function IntakeModal({
               hint="Efeito de um erro sobre pessoa ou contrato"
               label="Criticidade da decisão"
               required
+              variant="group"
             >
               <Segmented
                 full

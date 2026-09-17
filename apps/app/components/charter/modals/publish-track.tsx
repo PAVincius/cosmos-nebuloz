@@ -244,7 +244,7 @@ export function PublishTrackModal({
           <FormField label="Nome da trilha" required>
             <TextInput
               onChange={(e) => setName(e.target.value)}
-              placeholder="ex: Dado de paciente e IA"
+              placeholder="ex: Uso de IA generativa no atendimento"
               value={name}
             />
           </FormField>
@@ -258,7 +258,7 @@ export function PublishTrackModal({
                 value={audience}
               />
             </FormField>
-            <FormField label="Re-certificação" required>
+            <FormField label="Re-certificação" required variant="group">
               <Segmented
                 full
                 onChange={setRecert}

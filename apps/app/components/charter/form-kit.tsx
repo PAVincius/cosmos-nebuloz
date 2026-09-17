@@ -47,57 +47,89 @@ export function FormField({
   hint,
   children,
   error,
+  variant = "field",
 }: {
   label: string;
   required?: boolean;
   hint?: ReactNode;
   children: ReactNode;
   error?: string;
+  /** "group": o filho é um conjunto de vários <button> (Segmented/RadioCards)
+   *  — um <label> associaria o rótulo só ao primeiro botão, deixando o resto
+   *  sem nome acessível. Renderiza role="group" + aria-labelledby em vez de
+   *  <label> (evitamos <fieldset>: dentro do grid/flex dos modais ele tem o
+   *  quirk de min-width que quebra colunas "1fr 1fr"). */
+  variant?: "field" | "group";
 }) {
+  const groupLabelId = useId();
+  const isGroup = variant === "group";
+
+  const labelNode = (
+    <span
+      id={isGroup ? groupLabelId : undefined}
+      style={{
+        fontSize: 12,
+        fontWeight: 700,
+        color: "var(--ink)",
+        display: "flex",
+        gap: 5,
+        alignItems: "center",
+      }}
+    >
+      {label}
+      {required && <span style={{ color: "var(--red-text)" }}>*</span>}
+    </span>
+  );
+
+  // Erro substitui a dica: quando os dois existem, o erro é o que importa.
+  const footerNode = error ? (
+    <span
+      style={{
+        fontSize: 11.5,
+        color: "var(--red-text)",
+        display: "flex",
+        gap: 5,
+        alignItems: "center",
+      }}
+    >
+      <Icon name="alert" size={12} />
+      {error}
+    </span>
+  ) : (
+    hint && (
+      <span
+        style={{
+          fontSize: 11.5,
+          color: "var(--ink-faint)",
+          lineHeight: 1.45,
+        }}
+      >
+        {hint}
+      </span>
+    )
+  );
+
+  if (isGroup) {
+    return (
+      // biome-ignore lint/a11y/useSemanticElements: <fieldset> tem quirk de min-width que quebra as colunas "1fr 1fr" dos modais quando ele é filho de grid/flex — mesma lógica do biome-ignore de CheckRow, mais abaixo neste arquivo
+      <div
+        aria-labelledby={groupLabelId}
+        role="group"
+        style={{ display: "flex", flexDirection: "column", gap: 6 }}
+      >
+        {labelNode}
+        {children}
+        {footerNode}
+      </div>
+    );
+  }
+
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: o controle é o children — todo uso passa um input/select/textarea ou um grupo com aria-label próprio
     <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <span
-        style={{
-          fontSize: 12,
-          fontWeight: 700,
-          color: "var(--ink)",
-          display: "flex",
-          gap: 5,
-          alignItems: "center",
-        }}
-      >
-        {label}
-        {required && <span style={{ color: "var(--red-text)" }}>*</span>}
-      </span>
+      {labelNode}
       {children}
-      {/* Erro substitui a dica: quando os dois existem, o erro é o que importa. */}
-      {error ? (
-        <span
-          style={{
-            fontSize: 11.5,
-            color: "var(--red-text)",
-            display: "flex",
-            gap: 5,
-            alignItems: "center",
-          }}
-        >
-          <Icon name="alert" size={12} />
-          {error}
-        </span>
-      ) : (
-        hint && (
-          <span
-            style={{
-              fontSize: 11.5,
-              color: "var(--ink-faint)",
-              lineHeight: 1.45,
-            }}
-          >
-            {hint}
-          </span>
-        )
-      )}
+      {footerNode}
     </label>
   );
 }

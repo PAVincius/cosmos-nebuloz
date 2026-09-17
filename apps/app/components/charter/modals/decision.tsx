@@ -234,7 +234,7 @@ export function DecisionModal({
           ))}
         </div>
 
-        <FormField label="Decisão" required>
+        <FormField label="Decisão" required variant="group">
           <RadioCards
             onChange={(v) => setDecision(v as DecisionSubmit["outcome"])}
             options={DECISIONS}

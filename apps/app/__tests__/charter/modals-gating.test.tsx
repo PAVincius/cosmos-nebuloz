@@ -297,7 +297,7 @@ describe("PublishTrackModal", () => {
 
   it("com nome e uma seção, Publicar e atribuir dispara", () => {
     const onSubmit = renderIt();
-    type(screen.getByPlaceholderText(/Dado de paciente/), "Trilha base");
+    type(screen.getByPlaceholderText(/Uso de IA generativa/), "Trilha base");
     // O CheckRow vira role="checkbox" na PR #211; aceitar os dois roles evita
     // que o merge das duas branches quebre este teste.
     fireEvent.click(
