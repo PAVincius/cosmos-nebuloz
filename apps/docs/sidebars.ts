@@ -1,25 +1,40 @@
 import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 const sidebars: SidebarsConfig = {
-  produto: [
+  cliente: [
     "index",
     {
       type: "category",
-      label: "Cosmos",
+      label: "Primeiros passos",
       collapsed: false,
+      link: { type: "doc", id: "getting-started/index" },
+      items: ["getting-started/quickstart", "getting-started/primeiro-pi"],
+    },
+    {
+      type: "category",
+      label: "Conceitos centrais",
+      collapsed: false,
+      link: { type: "doc", id: "conceitos/index" },
+      items: ["conceitos/permissoes"],
+    },
+    {
+      type: "category",
+      label: "Guias",
+      collapsed: false,
+      link: { type: "doc", id: "guias/index" },
       items: [
-        { type: "doc", id: "cosmos-prd", label: "PRD" },
-        { type: "doc", id: "cosmos-srd", label: "SRD" },
+        "guias/portfolio-kanban-wsjf",
+        "guias/pi-planning",
+        "guias/board-do-time-e-metricas",
+        "guias/integracoes",
       ],
     },
     {
       type: "category",
-      label: "Back-office",
+      label: "Referência",
       collapsed: false,
-      items: [
-        { type: "doc", id: "backoffice-prd", label: "PRD" },
-        { type: "doc", id: "backoffice-srd", label: "SRD" },
-      ],
+      link: { type: "doc", id: "referencia/index" },
+      items: ["referencia/configuracoes", "referencia/glossario"],
     },
   ],
 };

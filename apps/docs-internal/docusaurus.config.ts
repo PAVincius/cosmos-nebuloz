@@ -5,25 +5,31 @@ import { themes as prismThemes } from "prism-react-renderer";
 const GITHUB_REPO = "https://github.com/PAVincius/cosmos-nebuloz";
 
 /**
- * O conteúdo NÃO mora aqui. A fonte única é `docs/cliente/` na raiz do repo —
- * os mesmos arquivos que o time edita e revisa em PR. Este app só publica.
+ * Docs internas (equipe Nebuloz), NÃO para cliente. A fonte é `docs/produto/`
+ * na raiz do repo — PRD/SRD de Cosmos e Back-office, trilhas e pesquisa.
  *
- * `docs/produto/` (PRD/SRD internos, inclusive de Back-office) NUNCA deve
- * entrar no path deste app — esse conteúdo é publicado só pelo app
- * `apps/docs-internal`, protegido por Vercel Authentication.
+ * Este app roda como um projeto Vercel separado, protegido por Vercel
+ * Authentication (Deployment Protection). Sem isso configurado no projeto,
+ * o conteúdo fica público mesmo com `noIndex: true` — noIndex só tira de
+ * buscador, não é controle de acesso.
  */
 const config: Config = {
-  title: "Cosmos",
-  tagline: "Documentação de produto da plataforma Nebuloz",
+  title: "Cosmos — Docs internas",
+  tagline: "Documentação interna Nebuloz (Cosmos e Back-office)",
   favicon: "img/favicon.svg",
 
-  url: "https://cosmos-nebuloz-docs.vercel.app",
+  // Ajuste para a URL real depois de criar o projeto na Vercel.
+  url: "https://cosmos-nebuloz-docs-internal.vercel.app",
   baseUrl: "/",
 
   organizationName: "PAVincius",
   projectName: "cosmos-nebuloz",
 
-  onBrokenLinks: "throw",
+  noIndex: true,
+
+  // "warn": mesmo motivo do onBrokenMarkdownLinks acima — PRDs internos
+  // linkam para fora de `docs/produto/` (specs/, docs/comercial/).
+  onBrokenLinks: "warn",
   onBrokenAnchors: "warn",
 
   i18n: {
@@ -32,11 +38,12 @@ const config: Config = {
   },
 
   markdown: {
-    // `.md` como CommonMark: os documentos de produto usam diagramas ASCII e
-    // sinais de `<`/`{` que o MDX interpretaria como JSX.
     format: "detect",
     hooks: {
-      onBrokenMarkdownLinks: "throw",
+      // "warn", não "throw": PRDs internos linkam arquivos fora de
+      // `docs/produto/` (ex: specs/, docs/comercial/) que não existem
+      // dentro do path deste plugin. Não é link quebrado de verdade.
+      onBrokenMarkdownLinks: "warn",
     },
   },
 
@@ -45,10 +52,10 @@ const config: Config = {
       "classic",
       {
         docs: {
-          path: "../../docs/cliente",
+          path: "../../docs/produto",
           routeBasePath: "/",
           sidebarPath: "./sidebars.ts",
-          editUrl: `${GITHUB_REPO}/tree/main/docs/cliente/`,
+          editUrl: `${GITHUB_REPO}/tree/main/docs/produto/`,
           showLastUpdateTime: true,
         },
         blog: false,
@@ -64,13 +71,13 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Cosmos",
+      title: "Cosmos — Interno",
       items: [
         {
           type: "docSidebar",
-          sidebarId: "cliente",
+          sidebarId: "interno",
           position: "left",
-          label: "Documentação",
+          label: "Docs",
         },
         {
           href: GITHUB_REPO,
@@ -83,20 +90,11 @@ const config: Config = {
       style: "dark",
       links: [
         {
-          title: "Documentação",
-          items: [
-            { label: "Primeiros passos", to: "/getting-started/" },
-            { label: "Conceitos centrais", to: "/conceitos/" },
-            { label: "Guias", to: "/guias/" },
-            { label: "Referência", to: "/referencia/" },
-          ],
-        },
-        {
           title: "Repositório",
           items: [{ label: "GitHub", href: GITHUB_REPO }],
         },
       ],
-      copyright: `Nebuloz · ${new Date().getFullYear()}`,
+      copyright: `Nebuloz · interno · ${new Date().getFullYear()}`,
     },
     prism: {
       theme: prismThemes.github,
