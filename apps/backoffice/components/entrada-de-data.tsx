@@ -251,6 +251,11 @@ export function EntradaDeData({
     padding: "6px 4px",
     textAlign: "center",
   } as const;
+  // `.cosmos-root *` é `border-box`: `width: 2ch` incluía os 4+4px de padding
+  // e 1+1px de borda, sobrando ~4px para dois dígitos de 13px. A largura
+  // passa a ser o texto mais a caixa — 10px é o que `padding` e a borda do
+  // `INPUT` somam na horizontal.
+  const caixa = "10px";
 
   return (
     <div style={{ alignItems: "center", display: "inline-flex", gap: 2 }}>
@@ -262,7 +267,7 @@ export function EntradaDeData({
         onChange={aoMudar("dia")}
         onKeyDown={(e) => aoTeclar(e, "dia")}
         ref={diaRef}
-        style={{ ...estilo, width: "2ch" }}
+        style={{ ...estilo, width: `calc(2ch + ${caixa})` }}
         value={partes.dia}
       />
       <span style={{ color: "var(--ink-faint)" }}>/</span>
@@ -274,7 +279,7 @@ export function EntradaDeData({
         onChange={aoMudar("mes")}
         onKeyDown={(e) => aoTeclar(e, "mes")}
         ref={mesRef}
-        style={{ ...estilo, width: "2ch" }}
+        style={{ ...estilo, width: `calc(2ch + ${caixa})` }}
         value={partes.mes}
       />
       <span style={{ color: "var(--ink-faint)" }}>/</span>
@@ -286,7 +291,7 @@ export function EntradaDeData({
         onChange={aoMudar("ano")}
         onKeyDown={(e) => aoTeclar(e, "ano")}
         ref={anoRef}
-        style={{ ...estilo, width: "4ch" }}
+        style={{ ...estilo, width: `calc(4ch + ${caixa})` }}
         value={partes.ano}
       />
     </div>

@@ -64,7 +64,7 @@ describe("DetalheDoTenant — aba na URL", () => {
     zerarRoteador("/clientes/vanta", "q=vanta");
     montar();
 
-    fireEvent.click(screen.getByRole("button", { name: /Usuários/ }));
+    fireEvent.click(screen.getByRole("tab", { name: /Usuários/ }));
 
     expect(replaceMock).toHaveBeenCalledWith(
       "/clientes/vanta?q=vanta&aba=usuarios",
@@ -77,7 +77,7 @@ describe("DetalheDoTenant — aba na URL", () => {
     zerarRoteador("/clientes/vanta", "aba=audit");
     montar();
 
-    fireEvent.click(screen.getByRole("button", { name: "Resumo" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Resumo" }));
 
     expect(replaceMock).toHaveBeenCalledWith("/clientes/vanta", {
       scroll: false,

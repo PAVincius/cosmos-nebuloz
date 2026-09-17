@@ -51,12 +51,12 @@ function avaliacao(over: Partial<AvaliacaoDetalhe> = {}): AvaliacaoDetalhe {
   };
 }
 
-/** Os cinco botões de nível do critério cuja pergunta é `pergunta`. */
-function botoesDoCriterio(pergunta: string): HTMLButtonElement[] {
+/** Os cinco rádios de nível do critério cuja pergunta é `pergunta`. */
+function botoesDoCriterio(pergunta: string): HTMLInputElement[] {
   const bloco = screen.getByText(pergunta).closest("div")
     ?.parentElement as HTMLElement;
   return Array.from(
-    bloco.querySelectorAll<HTMLButtonElement>("button[aria-pressed]")
+    bloco.querySelectorAll<HTMLInputElement>('input[type="radio"]')
   );
 }
 
