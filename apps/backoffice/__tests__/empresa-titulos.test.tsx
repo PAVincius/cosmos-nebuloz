@@ -240,7 +240,11 @@ describe("Titulos", () => {
 
     const confirmar = screen.getByRole("button", { name: "Confirmar baixa" });
     expect(confirmar.hasAttribute("disabled")).toBe(false);
+    // Baixar passou pela barreira (onda 5): o gatilho abre a pergunta com
+    // valor e data; o Confirmar é quem grava.
     fireEvent.click(confirmar);
+    expect(baixarTituloMock).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     expect(baixarTituloMock).toHaveBeenCalledWith({
       competencia: "2026-09",

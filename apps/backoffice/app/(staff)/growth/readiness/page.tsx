@@ -1,6 +1,6 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarAvaliacoes } from "@/app/actions/maturidade";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Lista } from "./lista";
 
@@ -32,7 +32,10 @@ export default async function ReadinessPage() {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {cabecalho()}
-        <Erro>{res.error}</Erro>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar as avaliações"
+        />
       </div>
     );
   }

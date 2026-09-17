@@ -16,6 +16,12 @@ import {
 } from "@/app/actions/funil-config";
 import { BotaoSecundario, Erro } from "@/components/campo";
 import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
+import {
   diasNoEstagio,
   type Estagio,
   INFO_ESTAGIO,
@@ -61,11 +67,14 @@ export function EstagioDialog({
   onFiltrar,
   onRecarregar,
 }: Props) {
+  // Esc, clique fora e X chegam aqui; com edição pendente, a guarda pergunta
+  // antes — o `dirty` de dentro era calculado e ignorado no fechamento.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(aberto) => {
         if (!aberto) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={codigo !== null}
@@ -79,13 +88,21 @@ export function EstagioDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {codigo ? (
           <Conteudo
             codigo={codigo}
             dados={dados}
             key={codigo}
+            marcarSujo={guarda.marcarSujo}
             onAbrirLead={onAbrirLead}
-            onClose={onClose}
+            onClose={guarda.pedirFechar}
             onFiltrar={onFiltrar}
             onRecarregar={onRecarregar}
             podeEscrever={podeEscrever}
@@ -108,6 +125,7 @@ function Conteudo({
   codigo,
   dados,
   podeEscrever,
+  marcarSujo,
   onClose,
   onAbrirLead,
   onFiltrar,
@@ -116,6 +134,8 @@ function Conteudo({
   codigo: Estagio;
   dados: DadosFunil;
   podeEscrever: boolean;
+  marcarSujo: (sujo: boolean) => void;
+  /** Fechar pedido pela tela ("Filtrar tabela") — passa pela guarda. */
   onClose: () => void;
   onAbrirLead: (id: string) => void;
   onFiltrar: (codigo: Estagio) => void;
@@ -150,6 +170,18 @@ function Conteudo({
     setErroCarga(null);
     setMudancas(res.data.mudancas);
   }, [codigo]);
+
+  // Só em edição há o que perder: fora dela peso/teto são só o valor atual.
+  // Antes do `return` de estágio sem config, como todo hook.
+  useRascunhoReportado(
+    editando &&
+      cfg !== undefined &&
+      (peso !== cfg.pesoPercent ||
+        teto !== cfg.tetoDias ||
+        criteriosMudaram(criteriosTexto, cfg.criterios) ||
+        motivo !== ""),
+    marcarSujo
+  );
 
   useEffect(() => {
     carregar();

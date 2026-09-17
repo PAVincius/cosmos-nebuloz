@@ -7,6 +7,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { type ContaComSaude, listAccountHealth } from "@/app/actions/accounts";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import {
   DIAS_PARA_RENOVACAO,
   DIAS_SEM_ATIVIDADE,
@@ -236,9 +237,10 @@ export default async function ContasPage() {
       {res.ok ? (
         <Conteudo contas={res.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar a saúde das contas"
+        />
       )}
     </div>
   );

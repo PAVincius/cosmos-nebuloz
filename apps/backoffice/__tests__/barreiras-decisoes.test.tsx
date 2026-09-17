@@ -2,7 +2,8 @@
 // barreiras-decisoes.test.tsx — [P1] rejeitar um pedido de aprovação e
 // concluir uma avaliação de readiness (congela o score) eram um clique.
 // Por item: gatilho não chama; alvo escrito; Confirmar chama com o payload;
-// Voltar não chama. Em Aprovações, o pendente aparece nos dois botões.
+// Voltar não chama. Em Aprovações, o pendente trava a confirmação e o outro
+// gatilho (Aprovar ganhou a própria barreira em barreiras-onda5.test.tsx).
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Decisao } from "@/app/(staff)/aprovacoes/decisao";
@@ -73,7 +74,7 @@ describe("Aprovações — rejeitar", () => {
     expect(decidirMock).not.toHaveBeenCalled();
   });
 
-  it("enquanto decide, os dois botões mostram pendente", async () => {
+  it("enquanto decide, a confirmação e o outro gatilho mostram pendente", async () => {
     decidirMock.mockReturnValue(
       new Promise(() => {
         /* pendente de propósito */
@@ -81,15 +82,17 @@ describe("Aprovações — rejeitar", () => {
     );
     render(<Decisao canWrite id="ap-1" />);
 
+    // Aprovar também passa pela barreira agora (onda 5): o gatilho abre a
+    // pergunta, e é o Confirmar que decide.
     fireEvent.click(screen.getByRole("button", { name: "Aprovar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
-    const pendentes = await screen.findAllByRole("button", {
-      name: "Decidindo…",
+    const confirmando = await screen.findByRole("button", {
+      name: "Executando…",
     });
-    expect(pendentes.length).toBe(2);
-    for (const b of pendentes) {
-      expect(b.hasAttribute("disabled")).toBe(true);
-    }
+    expect(confirmando.hasAttribute("disabled")).toBe(true);
+    const outro = screen.getByRole("button", { name: "Decidindo…" });
+    expect(outro.hasAttribute("disabled")).toBe(true);
   });
 });
 

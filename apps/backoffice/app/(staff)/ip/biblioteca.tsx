@@ -26,6 +26,7 @@ import {
   INPUT,
   rotuloSalvar,
 } from "@/components/campo";
+import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState } from "@/lib/url-state";
@@ -195,72 +196,6 @@ function BlocoDeReuso({
         <BotaoSecundario disabled={enviando} onClick={onCancelar}>
           Cancelar
         </BotaoSecundario>
-      </div>
-    </div>
-  );
-}
-
-const BOTAO_PERGUNTA = {
-  padding: "6px 12px",
-  borderRadius: "var(--r-sm)",
-  border: "1px solid var(--hairline)",
-  background: "none",
-  fontSize: "var(--fs-nota)",
-  fontWeight: 600,
-  cursor: "pointer",
-} as const;
-
-/**
- * Pergunta inline antes de trocar de ativo com edição pendente. Mesma prosa
- * e mesma ordem de `components/confirmar-acao.tsx` (o alvo escrito, "Voltar"
- * antes de "Descartar"); local porque aquele componente está mudando em PR
- * aberto — pode migrar para lá depois (é a mesma peça de `estudio.tsx`).
- */
-function PerguntaDescartar({
-  nome,
-  onVoltar,
-  onDescartar,
-}: {
-  nome: string;
-  onVoltar: () => void;
-  onDescartar: () => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        padding: "10px 12px",
-        borderRadius: "var(--r-md)",
-        border: "1px solid var(--red-border, var(--hairline-strong))",
-        background: "var(--red-soft, var(--surface-2))",
-      }}
-    >
-      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
-        Descartar alterações em «{nome}»?
-      </span>
-      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
-        O que você editou e ainda não salvou some. Para manter, volte e salve
-        uma revisão antes de trocar.
-      </span>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button
-          className="btn"
-          onClick={onVoltar}
-          style={{ ...BOTAO_PERGUNTA, color: "var(--ink-muted)" }}
-          type="button"
-        >
-          Voltar
-        </button>
-        <button
-          className="btn"
-          onClick={onDescartar}
-          style={{ ...BOTAO_PERGUNTA, color: "var(--red-text)" }}
-          type="button"
-        >
-          Descartar
-        </button>
       </div>
     </div>
   );
@@ -539,7 +474,7 @@ export function Biblioteca({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo"}
+              {criando ? "Fechar" : "Novo"}
             </BotaoPrimario>
           ) : null
         }

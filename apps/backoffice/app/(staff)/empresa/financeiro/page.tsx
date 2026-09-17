@@ -9,6 +9,7 @@ import { listarLancamentos } from "@/app/actions/empresa/livro";
 import { lerOrcado } from "@/app/actions/empresa/orcamento";
 import { listarRecorrente } from "@/app/actions/empresa/recorrente";
 import { listarTitulos } from "@/app/actions/empresa/titulos";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
   competenciaAtual,
@@ -137,54 +138,44 @@ function ErroDaAba({ erro }: { erro: string | null }) {
     return null;
   }
   return (
-    <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-      {erro}
-    </p>
+    <FalhaAoCarregar
+      motivo={erro}
+      titulo="Não foi possível carregar esta aba"
+    />
   );
+}
+
+const ABAS: { id: Aba; rotulo: string }[] = [
+  { id: "dre", rotulo: "DRE mensal" },
+  { id: "lancamentos", rotulo: "Lançamentos" },
+  { id: "titulos", rotulo: "Títulos" },
+  { id: "orcado", rotulo: "Orçado × realizado" },
+  { id: "recorrente", rotulo: "Receita recorrente" },
+  { id: "caixa", rotulo: "Caixa" },
+  { id: "plano", rotulo: "Plano de contas" },
+];
+
+/** Fora do JSX: inline, o lint lê o ternário como valor vazando. */
+function ariaCurrent(ativa: boolean): "page" | undefined {
+  return ativa ? "page" : undefined;
 }
 
 function Abas({ aba }: { aba: Aba }) {
   return (
-    <div style={{ display: "flex", gap: 6 }}>
-      <Link href="/empresa/financeiro?aba=dre" style={abaStyle(aba === "dre")}>
-        DRE mensal
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=lancamentos"
-        style={abaStyle(aba === "lancamentos")}
-      >
-        Lançamentos
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=titulos"
-        style={abaStyle(aba === "titulos")}
-      >
-        Títulos
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=orcado"
-        style={abaStyle(aba === "orcado")}
-      >
-        Orçado × realizado
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=recorrente"
-        style={abaStyle(aba === "recorrente")}
-      >
-        Receita recorrente
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=caixa"
-        style={abaStyle(aba === "caixa")}
-      >
-        Caixa
-      </Link>
-      <Link
-        href="/empresa/financeiro?aba=plano"
-        style={abaStyle(aba === "plano")}
-      >
-        Plano de contas
-      </Link>
+    // `flexWrap`: sete abas não cabem numa linha de 720px, e sem quebra a
+    // última saía do cartão. `aria-current` é o que diz ao leitor de tela
+    // qual está aberta — a cor de fundo só diz a quem enxerga.
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      {ABAS.map((a) => (
+        <Link
+          aria-current={ariaCurrent(aba === a.id)}
+          href={`/empresa/financeiro?aba=${a.id}`}
+          key={a.id}
+          style={abaStyle(aba === a.id)}
+        >
+          {a.rotulo}
+        </Link>
+      ))}
     </div>
   );
 }

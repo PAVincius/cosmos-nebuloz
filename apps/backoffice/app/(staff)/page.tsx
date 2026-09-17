@@ -35,7 +35,7 @@ export default async function ClientsPage() {
   const cabecalho = (
     <PageHeader
       eyebrow={`${secaoDaRota("/")} · carteira`}
-      subtitle="Todos os tenants provisionados, seus módulos e status de contratação."
+      subtitle="Todos os clientes provisionados, seus módulos e status de contratação."
       title="Carteira de clientes"
     >
       <Link
@@ -89,7 +89,7 @@ export default async function ClientsPage() {
         }}
       >
         <KpiCard
-          hint="tenants provisionados"
+          hint="clientes provisionados"
           icon="building"
           label="Clientes na carteira"
           tone="blue"

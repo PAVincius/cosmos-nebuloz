@@ -14,6 +14,7 @@ import {
 import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
+import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState, useSubstituirParams } from "@/lib/url-state";
@@ -76,6 +77,14 @@ function dica(enviado: Enviado | null, kind: DiagramKind): string {
  * Sem a segunda, trazer um diagrama que já existe obriga a abrir o arquivo,
  * copiar e colar — e no BPMN isso é um XML de dezenas de KB.
  */
+/** Sem ternário aninhado no JSX: pendente vence, depois importar/criar. */
+function rotuloDeCriar(importando: boolean, noAr: boolean): string {
+  if (noAr) {
+    return importando ? "Importando…" : "Criando…";
+  }
+  return importando ? "Importar" : "Criar em branco";
+}
+
 function FormularioNovo({
   kind,
   nome,
@@ -83,6 +92,7 @@ function FormularioNovo({
   onNome,
   onArquivo,
   onCriar,
+  criandoNoAr,
 }: {
   kind: DiagramKind;
   nome: string;
@@ -90,6 +100,8 @@ function FormularioNovo({
   onNome: (v: string) => void;
   onArquivo: (f: File | undefined) => void;
   onCriar: () => void;
+  /** A chamada está no ar: o botão trava e diz. */
+  criandoNoAr: boolean;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
@@ -130,11 +142,11 @@ function FormularioNovo({
       </p>
 
       <BotaoPrimario
-        disabled={nome.trim().length < 2}
+        disabled={nome.trim().length < 2 || criandoNoAr}
         onClick={onCriar}
         type="button"
       >
-        {enviado ? "Importar" : "Criar em branco"}
+        {rotuloDeCriar(enviado !== null, criandoNoAr)}
       </BotaoPrimario>
     </div>
   );
@@ -187,73 +199,6 @@ function SeletorDeCliente({
         </option>
       ))}
     </select>
-  );
-}
-
-const BOTAO_PERGUNTA = {
-  padding: "6px 12px",
-  borderRadius: "var(--r-sm)",
-  border: "1px solid var(--hairline)",
-  background: "none",
-  fontSize: "var(--fs-nota)",
-  fontWeight: 600,
-  cursor: "pointer",
-} as const;
-
-/**
- * Pergunta inline antes de trocar de diagrama com edição pendente. Mesma
- * prosa e mesma ordem de `components/confirmar-acao.tsx` (o alvo escrito,
- * "Voltar" antes de "Descartar"); local porque aquele componente está mudando
- * em PR aberto — pode migrar para lá depois. Não é `window.confirm`: aquele
- * é dispensável por hábito, não diz o alvo e some do teste.
- */
-function PerguntaDescartar({
-  nome,
-  onVoltar,
-  onDescartar,
-}: {
-  nome: string;
-  onVoltar: () => void;
-  onDescartar: () => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        padding: "10px 12px",
-        borderRadius: "var(--r-md)",
-        border: "1px solid var(--red-border, var(--hairline-strong))",
-        background: "var(--red-soft, var(--surface-2))",
-      }}
-    >
-      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
-        Descartar alterações em «{nome}»?
-      </span>
-      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
-        O que você editou e ainda não salvou some. Para manter, volte e salve
-        uma revisão antes de trocar.
-      </span>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button
-          className="btn"
-          onClick={onVoltar}
-          style={{ ...BOTAO_PERGUNTA, color: "var(--ink-muted)" }}
-          type="button"
-        >
-          Voltar
-        </button>
-        <button
-          className="btn"
-          onClick={onDescartar}
-          style={{ ...BOTAO_PERGUNTA, color: "var(--red-text)" }}
-          type="button"
-        >
-          Descartar
-        </button>
-      </div>
-    </div>
   );
 }
 
@@ -385,6 +330,8 @@ export function Estudio({
   const [nome, setNome] = useState(novo);
   const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Dois cliques rápidos em Criar eram dois diagramas.
+  const [criandoNoAr, setCriandoNoAr] = useState(false);
   // O editor é quem sabe se o XML/texto mudou; ele avisa por `onSujo`.
   const [sujo, setSujo] = useState(false);
 
@@ -436,11 +383,13 @@ export function Estudio({
 
   const criar = useCallback(async () => {
     setErro(null);
+    setCriandoNoAr(true);
     const res = await createDiagramAction({
       kind,
       name: nome,
       source: enviado?.texto ?? emBranco,
     });
+    setCriandoNoAr(false);
     if (!res.ok) {
       setErro(res.error);
       return;
@@ -523,13 +472,14 @@ export function Estudio({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo"}
+              {criando ? "Fechar" : "Novo"}
             </BotaoPrimario>
           ) : null
         }
         formulario={
           criando ? (
             <FormularioNovo
+              criandoNoAr={criandoNoAr}
               enviado={enviado}
               kind={kind}
               nome={nome}

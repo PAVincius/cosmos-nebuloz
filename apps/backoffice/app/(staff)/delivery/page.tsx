@@ -2,6 +2,7 @@ import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listAuditTenants } from "@/app/actions/audit";
 import { listEngagements } from "@/app/actions/engagements";
 import { listServices } from "@/app/actions/services";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Engajamentos } from "./engajamentos";
 
@@ -32,11 +33,12 @@ export default async function DeliveryPage() {
           servicos={servicos.data}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {engajamentos.ok ? "" : engajamentos.error}
-          {clientes.ok ? "" : clientes.error}
-          {servicos.ok ? "" : servicos.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={[engajamentos, clientes, servicos].flatMap((r) =>
+            r.ok ? [] : [r.error]
+          )}
+          titulo="Não foi possível carregar os engajamentos"
+        />
       )}
     </div>
   );

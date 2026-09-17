@@ -1,7 +1,7 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { listarProcessos } from "@/app/actions/processos";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { statusDe } from "@/lib/ferramentas/processos";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Mapa } from "./mapa";
@@ -46,7 +46,10 @@ export default async function ProcessosPage() {
           title="Mapa de processos"
           tone="accent"
         />
-        <Erro>{res.error}</Erro>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o mapa"
+        />
       </div>
     );
   }

@@ -27,7 +27,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, refresh: vi.fn() }),
 }));
 
-describe("Provisionar tenant", () => {
+describe("Provisionar cliente", () => {
   beforeEach(() => {
     provisionMock.mockReset();
     provisionMock.mockResolvedValue({
@@ -50,7 +50,9 @@ describe("Provisionar tenant", () => {
   it("o clique em Provisionar não chama a action e mostra o slug ao vivo", () => {
     preencher();
 
-    fireEvent.click(screen.getByRole("button", { name: "Provisionar tenant" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Provisionar cliente" })
+    );
 
     expect(provisionMock).not.toHaveBeenCalled();
     // O slug aparece no hint do campo e na barreira — o `mono` da barreira.
@@ -61,7 +63,9 @@ describe("Provisionar tenant", () => {
   it("Confirmar chama provisionTenantAction com o payload", async () => {
     preencher();
 
-    fireEvent.click(screen.getByRole("button", { name: "Provisionar tenant" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Provisionar cliente" })
+    );
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => expect(provisionMock).toHaveBeenCalledTimes(1));
@@ -78,7 +82,9 @@ describe("Provisionar tenant", () => {
   it("Voltar não chama", () => {
     preencher();
 
-    fireEvent.click(screen.getByRole("button", { name: "Provisionar tenant" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Provisionar cliente" })
+    );
     fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
 
     expect(provisionMock).not.toHaveBeenCalled();
@@ -87,7 +93,7 @@ describe("Provisionar tenant", () => {
   it("com o formulário incompleto o gatilho fica desabilitado", () => {
     render(<NewClientForm canWrite modulos={["COSMOS"]} />);
 
-    const gatilho = screen.getByRole("button", { name: "Provisionar tenant" });
+    const gatilho = screen.getByRole("button", { name: "Provisionar cliente" });
     expect(gatilho.hasAttribute("disabled")).toBe(true);
   });
 
@@ -104,7 +110,7 @@ describe("Provisionar tenant", () => {
     ).toBeTruthy();
     expect(
       screen
-        .getByRole("button", { name: "Provisionar tenant" })
+        .getByRole("button", { name: "Provisionar cliente" })
         .hasAttribute("disabled")
     ).toBe(true);
   });

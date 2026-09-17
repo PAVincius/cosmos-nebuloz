@@ -70,18 +70,42 @@ type AcaoDpaHandler = (
   evidenciaUrl?: string
 ) => Promise<void>;
 
+/** A evidência do aceite é um link — a linha vai para o Charter e alguém
+ *  clica nela. Validada com `URL` antes de gravar: "aceito por e-mail"
+ *  digitado no campo não vira evidência. */
+function urlValida(texto: string): boolean {
+  try {
+    const u = new URL(texto);
+    return u.protocol === "https:" || u.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
 /** Extraída da linha: junta o estado de "pedindo evidência" que só essa ação
  *  usa, e tira da linha o segundo nível de ternário que a complexidade
  *  cognitiva do Biome recusa. */
 function AcaoMarcarAceito({
   f,
+  agindo,
   onAgir,
 }: {
   f: FornecedorDpaRow;
+  agindo: boolean;
   onAgir: AcaoDpaHandler;
 }) {
   const [evidencia, setEvidencia] = useState("");
   const [pedindo, setPedindo] = useState(false);
+  const [erroDaUrl, setErroDaUrl] = useState<string | null>(null);
+
+  const confirmar = () => {
+    if (!urlValida(evidencia.trim())) {
+      setErroDaUrl("A evidência precisa ser um link (https://…).");
+      return;
+    }
+    setErroDaUrl(null);
+    onAgir(f.codigo, "MARCAR_ACEITO", evidencia.trim());
+  };
 
   if (!pedindo) {
     return (
@@ -105,25 +129,52 @@ function AcaoMarcarAceito({
         style={{ ...INPUT, padding: "6px 8px" }}
         value={evidencia}
       />
+      {erroDaUrl ? <Erro>{erroDaUrl}</Erro> : null}
       <button
         className="btn"
-        onClick={() => onAgir(f.codigo, "MARCAR_ACEITO", evidencia)}
-        style={BOTAO}
+        disabled={agindo}
+        onClick={confirmar}
+        style={{ ...BOTAO, opacity: agindo ? 0.6 : 1 }}
         type="button"
       >
-        Confirmar
+        {agindo ? "Confirmando…" : "Confirmar"}
       </button>
     </>
+  );
+}
+
+/** Fora da linha pelo pendente: os dois ternários passavam o teto de
+ *  complexidade do lint. */
+function BotaoRegistrarPedido({
+  agindo,
+  onClick,
+}: {
+  agindo: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className="btn"
+      disabled={agindo}
+      onClick={onClick}
+      style={{ ...BOTAO, opacity: agindo ? 0.6 : 1 }}
+      type="button"
+    >
+      {agindo ? "Registrando…" : "Registrar pedido"}
+    </button>
   );
 }
 
 function LinhaFornecedor({
   f,
   podeEscrever,
+  agindo,
   onAgir,
 }: {
   f: FornecedorDpaRow;
   podeEscrever: boolean;
+  /** A chamada desta linha está no ar: os botões dela travam e dizem. */
+  agindo: boolean;
   onAgir: AcaoDpaHandler;
 }) {
   const bloqueiaVenda = f.bloqueiaVenda && f.estado !== "ASSINADO";
@@ -186,16 +237,14 @@ function LinhaFornecedor({
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {bloqueiaVenda ? <Badge tone="amber">Bloqueia venda</Badge> : null}
           {podeRegistrarPedido ? (
-            <button
-              className="btn"
+            <BotaoRegistrarPedido
+              agindo={agindo}
               onClick={() => onAgir(f.codigo, "REGISTRAR_PEDIDO")}
-              style={BOTAO}
-              type="button"
-            >
-              Registrar pedido
-            </button>
+            />
           ) : null}
-          {podeMarcarAceito ? <AcaoMarcarAceito f={f} onAgir={onAgir} /> : null}
+          {podeMarcarAceito ? (
+            <AcaoMarcarAceito agindo={agindo} f={f} onAgir={onAgir} />
+          ) : null}
         </div>
       </Celula>
     </TableRow>
@@ -223,6 +272,9 @@ export function Inventario({
   const visiveis = linhas.filter((l) => linhaVisivel(l, filtro));
   const algumaProvisoria = linhas.some((l) => l.classificacaoProvisoria);
 
+  // Código da linha cuja chamada está no ar: dois cliques rápidos em
+  // "Registrar pedido" eram dois pedidos.
+  const [agindoEm, setAgindoEm] = useState<string | null>(null);
   const agir = useCallback(
     async (
       codigo: string,
@@ -230,18 +282,23 @@ export function Inventario({
       evidenciaUrl?: string
     ) => {
       setErro(null);
-      const res = await aplicarAcaoDpa({
-        codigo,
-        acao,
-        evidenciaUrl: evidenciaUrl || undefined,
-      });
-      if (!res.ok) {
-        setErro(res.error);
-        return;
+      setAgindoEm(codigo);
+      try {
+        const res = await aplicarAcaoDpa({
+          codigo,
+          acao,
+          evidenciaUrl: evidenciaUrl || undefined,
+        });
+        if (!res.ok) {
+          setErro(res.error);
+          return;
+        }
+        setLinhas((atual) =>
+          atual.map((l) => (l.codigo === codigo ? res.data : l))
+        );
+      } finally {
+        setAgindoEm(null);
       }
-      setLinhas((atual) =>
-        atual.map((l) => (l.codigo === codigo ? res.data : l))
-      );
     },
     []
   );
@@ -398,6 +455,7 @@ export function Inventario({
               <tbody>
                 {visiveis.map((f) => (
                   <LinhaFornecedor
+                    agindo={agindoEm === f.codigo}
                     f={f}
                     key={f.codigo}
                     onAgir={agir}

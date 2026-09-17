@@ -1,6 +1,6 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarFunil } from "@/app/actions/leads";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { estagnado, paraLeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Funil } from "./funil";
@@ -27,7 +27,10 @@ export default async function FunilPage() {
           title="Funil"
           tone="amber"
         />
-        <Erro>{res.error}</Erro>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o funil"
+        />
       </div>
     );
   }

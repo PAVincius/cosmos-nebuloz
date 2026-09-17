@@ -44,7 +44,7 @@ describe("NewClientForm — <form>", () => {
     );
     expect(
       screen
-        .getByRole("button", { name: "Provisionar tenant" })
+        .getByRole("button", { name: "Provisionar cliente" })
         .getAttribute("type")
     ).toBe("submit");
   });
@@ -76,7 +76,7 @@ describe("NewClientForm — <form>", () => {
 
     expect(screen.queryByText(/ganha acesso em segundos/)).toBeNull();
     expect(
-      screen.getByRole("button", { name: "Provisionar tenant" })
+      screen.getByRole("button", { name: "Provisionar cliente" })
     ).toBeTruthy();
   });
 

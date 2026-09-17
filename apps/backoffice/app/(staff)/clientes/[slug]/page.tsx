@@ -8,6 +8,7 @@ import {
   listTenantAudit,
   listTenantIntegrations,
 } from "@/app/actions/tenant-observability";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
@@ -44,7 +45,19 @@ export default async function ClientDetailPage({
     if (result.code === "TENANT_NOT_FOUND") {
       notFound();
     }
-    return <p style={{ color: "var(--red-text)" }}>{result.error}</p>;
+    // Erro dentro da moldura: o cabeçalho leva o slug (o nome não chegou) e a
+    // saída é o botão, não um parágrafo solto.
+    return (
+      <div
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <PageHeader eyebrow={`cliente · ${slug}`} title={slug} />
+        <FalhaAoCarregar
+          motivo={result.error}
+          titulo="Não foi possível abrir o cliente"
+        />
+      </div>
+    );
   }
 
   const client = result.data;
@@ -88,11 +101,11 @@ export default async function ClientDetailPage({
           }}
         >
           <Icon name="arrowLeft" size={14} />
-          Tenants
+          Clientes
         </Link>
 
         <PageHeader
-          eyebrow={`tenant · ${client.slug}`}
+          eyebrow={`cliente · ${client.slug}`}
           meta={
             <>
               <Badge tone={TOM_DO_PLANO[client.plan] ?? "neutral"}>

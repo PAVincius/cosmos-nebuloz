@@ -49,8 +49,10 @@ type Props = {
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
-  /** Ruling 8: soltar no alvo Perdido do board abre já em modo perda. */
-  modoInicial?: "perda";
+  /** Ruling 8: soltar no alvo Perdido do board abre já em modo perda;
+   *  soltar em Proposta abre já na pergunta de conversão — o board não
+   *  converte, o diálogo é quem confirma. */
+  modoInicial?: "perda" | "conversao";
   onClose: () => void;
   onMover: (id: string, estagio: EstagioAberto) => Promise<Result<unknown>>;
   onConverter: (id: string) => Promise<Result<unknown>>;
@@ -131,7 +133,7 @@ function Conteudo({
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
-  modoInicial?: "perda";
+  modoInicial?: "perda" | "conversao";
   onClose: () => void;
   onMover: Props["onMover"];
   onConverter: Props["onConverter"];
@@ -269,6 +271,7 @@ function Conteudo({
         }}
         onSairModoPerda={() => setModoPerda(false)}
         pendente={pendente}
+        perguntandoConversao={modoInicial === "conversao"}
         podeEscrever={podeEscrever}
         proximo={proximo}
       />

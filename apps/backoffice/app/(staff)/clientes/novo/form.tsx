@@ -11,6 +11,7 @@ import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { MOTIVO_SOMENTE_LEITURA, WriteButton } from "@/components/write-button";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 /**
  * Formulário de provisionamento.
@@ -35,6 +36,13 @@ const OPCOES_DE_STATUS: { valor: StatusInicial | ""; rotulo: string }[] = [
   { valor: "", rotulo: "Fora" },
 ];
 
+/** COSMOS é o default histórico do provisionamento; se um dia sair do enum,
+ *  cai no primeiro que existir em vez de deixar o form sem nada marcado. */
+function statusPadrao(modulos: ProductModule[]): Record<string, StatusInicial> {
+  const inicial = modulos.includes("COSMOS") ? "COSMOS" : modulos[0];
+  return inicial ? { [inicial]: "ACTIVE" } : {};
+}
+
 export function NewClientForm({
   modulos,
   canWrite,
@@ -47,12 +55,16 @@ export function NewClientForm({
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  // COSMOS é o default histórico do provisionamento; se um dia sair do enum,
-  // cai no primeiro que existir em vez de deixar o form sem nada marcado.
-  const [status, setStatus] = useState<Record<string, StatusInicial>>(() => {
-    const inicial = modulos.includes("COSMOS") ? "COSMOS" : modulos[0];
-    return inicial ? { [inicial]: "ACTIVE" } : {};
-  });
+  const [status, setStatus] = useState<Record<string, StatusInicial>>(() =>
+    statusPadrao(modulos)
+  );
+  // Rascunho = algum campo diferente do inicial. Fechar a aba no meio do
+  // provisionamento passa a avisar; limpo, sai em silêncio.
+  const sujo =
+    name !== "" ||
+    ownerEmail !== "" ||
+    JSON.stringify(status) !== JSON.stringify(statusPadrao(modulos));
+  useAvisoAoSair(sujo);
   const [pendingOwner, setPendingOwner] = useState<{
     slug: string;
     email: string;
@@ -206,7 +218,7 @@ export function NewClientForm({
       <SectionCard
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 16 }}
         icon="building"
-        title="Dados do tenant"
+        title="Dados do cliente"
       >
         <Campo
           hint={
@@ -358,11 +370,11 @@ export function NewClientForm({
             <ConfirmarAcao
               aberto
               alvo={slug || "—"}
-              consequencia="O cliente ganha acesso em segundos; módulos marcados nascem ativos."
+              consequencia="O cliente ganha acesso em segundos: o responsável é vinculado ou convidado, e cada módulo marcado nasce com o status escolhido — ativo ou trial."
               executando={pending}
               onConfirmar={submit}
               onVoltar={() => setPerguntando(false)}
-              rotulo={pending ? "Provisionando…" : "Provisionar tenant"}
+              rotulo={pending ? "Provisionando…" : "Provisionar cliente"}
               tom="accent"
             />
           ) : (
@@ -371,7 +383,7 @@ export function NewClientForm({
               disabled={!podeEnviar}
               type="submit"
             >
-              Provisionar tenant
+              Provisionar cliente
             </WriteButton>
           )}
         </div>

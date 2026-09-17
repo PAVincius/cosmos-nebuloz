@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listServices } from "@/app/actions/services";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Catalogo } from "./catalogo";
 
@@ -21,9 +22,10 @@ export default async function ServicosPage() {
       {res.ok ? (
         <Catalogo iniciais={res.data} podeEscrever={staff.canWrite} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o catálogo"
+        />
       )}
     </div>
   );

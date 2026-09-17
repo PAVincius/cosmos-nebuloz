@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerConsentimento } from "@/app/actions/empresa/consentimento";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Painel } from "./painel";
@@ -21,9 +22,10 @@ export default async function ConsentimentoPage() {
       {res.ok ? (
         <Painel inicial={res.data} podeEscrever={staff.canWrite} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar o consentimento"
+        />
       )}
     </div>
   );

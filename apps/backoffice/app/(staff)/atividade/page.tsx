@@ -4,6 +4,8 @@ import {
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import { listStaffActivity } from "@/app/actions/clients";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { ACOES } from "../audit/rotulos";
 
 export default async function ActivityPage() {
   const result = await listStaffActivity();
@@ -30,21 +32,10 @@ export default async function ActivityPage() {
 function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
   if (!result.ok) {
     return (
-      <p
-        role="alert"
-        style={{
-          margin: 0,
-          padding: "11px 13px",
-          borderRadius: "var(--r-md)",
-          background: "var(--red-soft)",
-          border: "1px solid rgba(var(--red-rgb),.3)",
-          color: "var(--red-text)",
-          fontSize: "var(--fs-base)",
-          fontWeight: 600,
-        }}
-      >
-        {result.error}
-      </p>
+      <FalhaAoCarregar
+        motivo={result.error}
+        titulo="Não foi possível carregar a trilha"
+      />
     );
   }
 
@@ -95,7 +86,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
                 className="mono"
                 style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
               >
-                {row.action}
+                {ACOES[row.action] ?? row.action}
               </span>{" "}
               <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
             </span>

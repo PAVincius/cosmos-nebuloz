@@ -33,11 +33,14 @@ function LinhaProposta({
   p,
   podeEscrever,
   primeira,
+  enviando,
   onEnviar,
 }: {
   p: ProposalRow;
   podeEscrever: boolean;
   primeira: boolean;
+  /** Esta linha está no ar — o Confirmar da barreira trava e diz. */
+  enviando: boolean;
   onEnviar: (id: string) => void;
 }) {
   const acimaDoLimite = p.descontoPercent > LIMITE_DESCONTO_SEM_APROVACAO;
@@ -125,6 +128,7 @@ function LinhaProposta({
               ? "A proposta vai para a fila de aprovação; não há como editar depois de enviada."
               : "O cliente recebe esta versão; não há como editar depois de enviada."
           }
+          executando={enviando}
           onConfirmar={() => onEnviar(p.id)}
           rotulo={acimaDoLimite ? "Pedir aprovação" : "Enviar"}
           tom="accent"
@@ -144,6 +148,9 @@ export function Propostas({
   const router = useRouter();
   const [lista, setLista] = useState(iniciais);
   const [erro, setErro] = useState<string | null>(null);
+  // A proposta cuja chamada está no ar: segundo clique no Confirmar da
+  // barreira não chama de novo (o botão trava e diz "Executando…").
+  const [enviandoId, setEnviandoId] = useState<string | null>(null);
 
   // O gerador chega aqui com `?enviada=<id>` depois de enviar. Confirmar pelo
   // título, e não com um "enviado com sucesso" genérico: é a frase que diz
@@ -155,13 +162,20 @@ export function Propostas({
 
   const enviar = useCallback(async (id: string) => {
     setErro(null);
-    const res = await submitProposalAction({ id });
-    if (res.ok) {
-      setLista((atual) =>
-        atual.map((p) => (p.id === id ? { ...p, status: res.data.status } : p))
-      );
-    } else {
-      setErro(res.error);
+    setEnviandoId(id);
+    try {
+      const res = await submitProposalAction({ id });
+      if (res.ok) {
+        setLista((atual) =>
+          atual.map((p) =>
+            p.id === id ? { ...p, status: res.data.status } : p
+          )
+        );
+      } else {
+        setErro(res.error);
+      }
+    } finally {
+      setEnviandoId(null);
     }
   }, []);
 
@@ -225,6 +239,7 @@ export function Propostas({
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {lista.map((p, i) => (
               <LinhaProposta
+                enviando={enviandoId === p.id}
                 key={p.id}
                 onEnviar={enviar}
                 p={p}

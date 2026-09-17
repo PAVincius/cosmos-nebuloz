@@ -4,6 +4,7 @@ import {
   type IntegracaoQuebrada,
   listPlatformHealth,
 } from "@/app/actions/access";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,13 @@ const TOM_EVENTO = {
   LOGOUT: "neutral",
   RECUSADO: "red",
 } as const;
+
+/** O evento como a pessoa lê, não como o enum grava. */
+const ROTULO_EVENTO: Record<string, string> = {
+  LOGIN: "Entrou",
+  LOGOUT: "Saiu",
+  RECUSADO: "Recusado",
+};
 
 function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
   if (linhas.length === 0) {
@@ -109,7 +117,7 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
           }}
         >
           <Badge dot tone={TOM_EVENTO[a.evento as "LOGIN"] ?? "neutral"}>
-            {a.evento}
+            {ROTULO_EVENTO[a.evento] ?? a.evento}
           </Badge>
           <span
             className="mono"
@@ -173,9 +181,10 @@ export default async function ObservabilidadePage() {
           </SectionCard>
         </>
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar a saúde da plataforma"
+        />
       )}
     </div>
   );

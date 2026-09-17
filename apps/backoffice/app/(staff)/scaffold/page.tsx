@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listGateQueue } from "@/app/actions/scaffold-supervision";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { FilaDeGates } from "./fila-de-gates";
@@ -29,9 +30,10 @@ export default async function ScaffoldSupervisionPage() {
       {fila.ok ? (
         <FilaDeGates iniciais={fila.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {fila.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={fila.error}
+          titulo="Não foi possível carregar a fila"
+        />
       )}
     </div>
   );

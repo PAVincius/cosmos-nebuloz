@@ -5,7 +5,9 @@ import {
   listAuditEvents,
   listAuditTenants,
 } from "@/app/actions/audit";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { Filtros, Paginacao } from "./filtros";
+import { ACOES } from "./rotulos";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +52,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             className="mono"
             style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
           >
-            {evento.action}
+            {ACOES[evento.action] ?? evento.action}
           </span>
           <span style={{ flex: 1, minWidth: 0, color: "var(--ink-muted)" }}>
             {evento.alvo ?? evento.entityType ?? "—"}
@@ -144,15 +146,10 @@ export default async function AuditPage({
         {tenants.ok ? (
           <Filtros tenants={tenants.data} />
         ) : (
-          <p
-            style={{
-              margin: 0,
-              color: "var(--red-text)",
-              fontSize: "var(--fs-base)",
-            }}
-          >
-            {tenants.error}
-          </p>
+          <FalhaAoCarregar
+            motivo={tenants.error}
+            titulo="Não foi possível carregar os clientes do filtro"
+          />
         )}
       </SectionCard>
 
@@ -174,9 +171,10 @@ export default async function AuditPage({
 function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
   if (!pagina.ok) {
     return (
-      <p role="alert" style={{ margin: 0, color: "var(--red-text)" }}>
-        {pagina.error}
-      </p>
+      <FalhaAoCarregar
+        motivo={pagina.error}
+        titulo="Não foi possível carregar os eventos"
+      />
     );
   }
 

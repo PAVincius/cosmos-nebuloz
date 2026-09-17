@@ -467,6 +467,9 @@ export function Board({
   onAbrirEstagio: (codigo: Estagio) => void;
   onAbrirLead: (id: string) => void;
   onMover: (id: string, estagio: EstagioAberto) => void;
+  /** Soltar um lead de Avaliação em Proposta. Não converte: abre o diálogo
+   *  do lead já na pergunta de conversão — é lá que a barreira mora, e o
+   *  board não pode ser o atalho que pula ela (mesmo padrão de `onPerder`). */
   onConverter: (id: string) => void;
   onPerder: (id: string) => void;
 }) {

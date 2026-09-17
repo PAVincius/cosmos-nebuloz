@@ -50,6 +50,17 @@ function periodo(inicio: string | null, fim: string | null): string {
   return `${d(inicio)} → ${d(fim)}`;
 }
 
+/** O que o servidor faz ao fechar — a verdade de `lib/delivery.ts`: os dois
+ *  são terminais, e reabrir é criar outro. Concluído não sai da capacidade:
+ *  as alocações não olham o status do engajamento, então não se promete
+ *  isso aqui. */
+const CONSEQUENCIA_TERMINAL: Record<"CANCELADO" | "CONCLUIDO", string> = {
+  CANCELADO:
+    "O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro.",
+  CONCLUIDO:
+    "O engajamento fecha como concluído e não pode ser reaberto; para retomar, cria-se outro.",
+};
+
 /** Botão de uma transição da linha. Fora de `LinhaEngajamento` porque, com o
  *  pendente, o ternário dentro do `.map` passava o teto de complexidade. */
 function BotaoDeTransicao({
@@ -156,18 +167,19 @@ function LinhaEngajamento({
           pior que não oferecer nada. */}
       {podeEscrever
         ? e.proximos.map((p) =>
-            p === "CANCELADO" ? (
-              // Cancelado é estado final: a action não deixa reabrir. É a
-              // única transição da linha que passa pela barreira.
+            p === "CANCELADO" || p === "CONCLUIDO" ? (
+              // Os dois terminais (`lib/delivery.ts`): a action não deixa
+              // reabrir nenhum. Concluído não destrói, então o tom é o da
+              // ação primária — mas é tão sem volta quanto cancelar.
               <ConfirmarAcao
                 alvo={`${e.codigo} · ${e.nome}`}
-                consequencia="O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro."
+                consequencia={CONSEQUENCIA_TERMINAL[p]}
                 desabilitado={travada}
-                executando={mudando === "CANCELADO"}
+                executando={mudando === p}
                 key={p}
-                onConfirmar={() => onStatus(e.id, "CANCELADO")}
-                rotulo="→ Cancelado"
-                tom="red"
+                onConfirmar={() => onStatus(e.id, p)}
+                rotulo={`→ ${ROTULO_STATUS[p]}`}
+                tom={p === "CANCELADO" ? "red" : "accent"}
               />
             ) : (
               <BotaoDeTransicao
@@ -181,6 +193,59 @@ function LinhaEngajamento({
           )
         : null}
     </li>
+  );
+}
+
+/** `recarregar` que falha deixava a lista velha sem dizer: a escrita foi, a
+ *  releitura não, e a tela seguia mostrando o estado anterior como se fosse
+ *  o atual. Aqui o aviso fica junto da lista, com a saída — reler de novo. */
+function AvisoListaVelha({
+  motivo,
+  onTentar,
+}: {
+  motivo: string | null;
+  onTentar: () => void;
+}) {
+  if (motivo === null) {
+    return null;
+  }
+  return (
+    <div
+      role="alert"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 10,
+        padding: "9px 11px",
+        borderRadius: "var(--r-md)",
+        background: "var(--amber-soft)",
+        border: "1px solid rgba(var(--amber-rgb),.35)",
+        color: "var(--amber-text)",
+        fontSize: "var(--fs-base)",
+        fontWeight: 600,
+      }}
+    >
+      <span>Lista pode estar desatualizada — {motivo}</span>
+      <button
+        className="btn"
+        onClick={onTentar}
+        style={{
+          padding: "4px 10px",
+          borderRadius: "var(--r-sm)",
+          border: "1px solid var(--hairline-strong)",
+          background: "var(--surface-2)",
+          color: "var(--ink)",
+          fontFamily: "inherit",
+          fontSize: "var(--fs-nota)",
+          fontWeight: 600,
+          cursor: "pointer",
+        }}
+        type="button"
+      >
+        Tentar de novo
+      </button>
+    </div>
   );
 }
 
@@ -213,12 +278,16 @@ export function Engajamentos({
   // Relê a lista pela action em vez de `window.location.reload()`: as
   // transições possíveis vêm do mapa do servidor (recalculá-las aqui
   // duplicaria o que já existe lá), e a tela não perde o scroll.
+  // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
+  // escritas — a escrita deu certo, o que ficou velho foi a tela.
+  const [listaVelha, setListaVelha] = useState<string | null>(null);
   const recarregar = useCallback(async () => {
     const res = await listEngagements();
     if (!res.ok) {
-      setErro(res.error);
+      setListaVelha(res.error);
       return;
     }
+    setListaVelha(null);
     setLista(res.data);
   }, []);
 
@@ -297,6 +366,7 @@ export function Engajamentos({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
       {confirmacao ? (
         <output
           style={{
@@ -322,7 +392,7 @@ export function Engajamentos({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo engajamento"}
+              {criando ? "Fechar" : "Novo engajamento"}
             </BotaoPrimario>
           ) : null
         }

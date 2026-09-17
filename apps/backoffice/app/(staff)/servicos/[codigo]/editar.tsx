@@ -1,7 +1,6 @@
 "use client";
 
 import type { ProductModule } from "@repo/database";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {
@@ -9,8 +8,13 @@ import {
   updateServiceAction,
 } from "@/app/actions/services";
 import { Campo, Erro, INPUT } from "@/components/campo";
+import {
+  PerguntaDescartar,
+  rascunhoMudou,
+} from "@/components/pergunta-descartar";
 import { WriteButton } from "@/components/write-button";
 import { centavosParaCampo, paraCentavos } from "@/lib/comercial/formato";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 import { ROTULO_UNIDADE, TRILHA } from "./detalhe";
 
 /**
@@ -52,6 +56,26 @@ function linhas(texto: string): string[] {
 
 const AREA = { ...INPUT, fontWeight: 500, resize: "vertical" } as const;
 
+/** O serviço na forma dos campos — o estado inicial e a base do rascunho. */
+function formDoServico(servico: ServiceDetail) {
+  return {
+    nome: servico.nome,
+    descricao: servico.descricao ?? "",
+    preco: centavosParaCampo(servico.precoBaseCentavos),
+    unidade: servico.unidade,
+    trilha: ehTrilha(servico.trilha) ? servico.trilha : "readiness",
+    unidadeDeCobranca: ehUnidade(servico.unidadeDeCobranca)
+      ? servico.unidadeDeCobranca
+      : "PROJETO",
+    duracao: servico.duracao ?? "",
+    entregaveis: servico.entregaveis.join("\n"),
+    papeis: servico.papeis.join("\n"),
+    preRequisitos: servico.preRequisitos.map((p) => p.codigo).join("\n"),
+    moduloVinculado: servico.moduloVinculado ?? "",
+    exigeLab: servico.exigeLab,
+  };
+}
+
 export function EditarServico({
   servico,
   podeEscrever,
@@ -71,25 +95,17 @@ export function EditarServico({
   const caminho = usePathname();
   const entregaveisRef = useRef<HTMLTextAreaElement>(null);
 
-  const [form, setForm] = useState({
-    nome: servico.nome,
-    descricao: servico.descricao ?? "",
-    preco: centavosParaCampo(servico.precoBaseCentavos),
-    unidade: servico.unidade,
-    trilha: ehTrilha(servico.trilha) ? servico.trilha : "readiness",
-    unidadeDeCobranca: ehUnidade(servico.unidadeDeCobranca)
-      ? servico.unidadeDeCobranca
-      : "PROJETO",
-    duracao: servico.duracao ?? "",
-    entregaveis: servico.entregaveis.join("\n"),
-    papeis: servico.papeis.join("\n"),
-    preRequisitos: servico.preRequisitos.map((p) => p.codigo).join("\n"),
-    moduloVinculado: servico.moduloVinculado ?? "",
-    exigeLab: servico.exigeLab,
-  });
+  const [form, setForm] = useState(() => formDoServico(servico));
+  // O que está gravado, na forma dos campos: o rascunho é a diferença entre
+  // isto e `form`. Salvar move a base; recarregar do servidor não a moveria
+  // sozinho (o preço digitado "1250" volta como "1250,00").
+  const [base, setBase] = useState(() => formDoServico(servico));
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [salvo, setSalvo] = useState(false);
+  const [perguntandoFechar, setPerguntandoFechar] = useState(false);
+  const sujo = rascunhoMudou(form, base);
+  useAvisoAoSair(sujo);
 
   useEffect(() => {
     if (focarEm === "entregaveis") {
@@ -140,7 +156,18 @@ export function EditarServico({
       return;
     }
     setSalvo(true);
+    setBase(form);
     router.refresh();
+  };
+
+  // "Fechar edição" descartava sem perguntar — era um Link para a mesma rota
+  // sem `?editar`. Com rascunho, pergunta antes; limpo, fecha direto.
+  const fecharEdicao = () => {
+    if (sujo) {
+      setPerguntandoFechar(true);
+      return;
+    }
+    router.push(caminho);
   };
 
   return (
@@ -169,17 +196,33 @@ export function EditarServico({
         <span style={{ fontSize: "var(--fs-forte)", fontWeight: 700 }}>
           Editar {servico.codigo}
         </span>
-        <Link
-          href={caminho}
+        <button
+          className="btn"
+          onClick={fecharEdicao}
           style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            fontFamily: "inherit",
             fontSize: "var(--fs-nota)",
             fontWeight: 700,
             color: "var(--ink-muted)",
+            cursor: "pointer",
           }}
+          type="button"
         >
           Fechar edição
-        </Link>
+        </button>
       </div>
+
+      {perguntandoFechar ? (
+        <PerguntaDescartar
+          explicacao="O que você editou e ainda não salvou some. Para manter, volte e salve antes de fechar."
+          nome={servico.codigo}
+          onDescartar={() => router.push(caminho)}
+          onVoltar={() => setPerguntandoFechar(false)}
+        />
+      ) : null}
 
       {erro ? <Erro>{erro}</Erro> : null}
       {salvo ? (

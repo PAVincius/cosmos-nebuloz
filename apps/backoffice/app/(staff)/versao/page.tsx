@@ -1,6 +1,6 @@
 import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { lerEstadoDoDeploy } from "@/app/actions/versao";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { MetaCell } from "@/components/meta-cell";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -142,7 +142,22 @@ export default async function VersaoPage() {
   const resultado = await lerEstadoDoDeploy();
 
   if (!resultado.ok) {
-    return <Erro>{resultado.error}</Erro>;
+    // Erro dentro da moldura: o cabeçalho fica de pé e a saída é o botão.
+    return (
+      <div
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <PageHeader
+          eyebrow="Operações"
+          subtitle="O que está implantado aqui, e se o banco deste ambiente acompanha."
+          title="Versão e schema"
+        />
+        <FalhaAoCarregar
+          motivo={resultado.error}
+          titulo="Não foi possível ler o estado do deploy"
+        />
+      </div>
+    );
   }
 
   const { codigo, schema, recentes, lidoEm } = resultado.data;

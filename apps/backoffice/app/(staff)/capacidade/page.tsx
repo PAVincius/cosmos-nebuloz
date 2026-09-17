@@ -1,6 +1,7 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listCapacity } from "@/app/actions/capacity";
 import { listEngagements } from "@/app/actions/engagements";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Capacidade } from "./capacidade";
 
@@ -29,10 +30,12 @@ export default async function CapacidadePage() {
           podeEscrever={staff.canWrite}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {pessoas.ok ? "" : pessoas.error}
-          {engajamentos.ok ? "" : engajamentos.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={[pessoas, engajamentos].flatMap((r) =>
+            r.ok ? [] : [r.error]
+          )}
+          titulo="Não foi possível carregar a capacidade"
+        />
       )}
     </div>
   );

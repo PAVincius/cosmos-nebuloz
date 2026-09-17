@@ -41,6 +41,7 @@ const FORM_VAZIO = {
  *  mantém fora da navegação — `stopPropagation` não bastaria. */
 function acaoDaLinha(
   s: ServiceRow,
+  alternando: boolean,
   onAlternar: (id: string, ativo: boolean) => void
 ) {
   if (s.ativo) {
@@ -48,6 +49,7 @@ function acaoDaLinha(
       <ConfirmarAcao
         alvo={`${s.codigo} · ${s.nome}`}
         consequencia="Sai da lista de escolha do gerador de proposta agora; propostas já emitidas não mudam."
+        executando={alternando}
         onConfirmar={() => onAlternar(s.id, false)}
         rotulo="Tirar do catálogo"
         tom="red"
@@ -57,6 +59,7 @@ function acaoDaLinha(
   return (
     <button
       className="btn"
+      disabled={alternando}
       onClick={() => onAlternar(s.id, true)}
       style={{
         padding: "4px 10px",
@@ -66,11 +69,12 @@ function acaoDaLinha(
         color: "var(--ink-muted)",
         fontSize: "var(--fs-nota)",
         fontWeight: 600,
-        cursor: "pointer",
+        cursor: alternando ? "not-allowed" : "pointer",
+        opacity: alternando ? 0.6 : 1,
       }}
       type="button"
     >
-      Devolver
+      {alternando ? "Devolvendo…" : "Devolver"}
     </button>
   );
 }
@@ -88,11 +92,14 @@ function LinhaServico({
   servico: s,
   primeira,
   podeEscrever,
+  alternando,
   onAlternar,
 }: {
   servico: ServiceRow;
   primeira: boolean;
   podeEscrever: boolean;
+  /** A chamada desta linha está no ar: o botão trava e diz. */
+  alternando: boolean;
   onAlternar: (id: string, ativo: boolean) => void;
 }) {
   return (
@@ -151,7 +158,9 @@ function LinhaServico({
           <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
         </span>
       </Link>
-      {podeEscrever ? acaoDaLinha(s, onAlternar) : badgeDeLeitura(s)}
+      {podeEscrever
+        ? acaoDaLinha(s, alternando, onAlternar)
+        : badgeDeLeitura(s)}
     </li>
   );
 }
@@ -219,15 +228,23 @@ export function Catalogo({
     [form]
   );
 
+  // Id da linha cuja chamada está no ar: dois cliques rápidos em Devolver
+  // eram duas chamadas.
+  const [alternandoId, setAlternandoId] = useState<string | null>(null);
   const alternar = useCallback(async (id: string, ativo: boolean) => {
     setErro(null);
-    const res = await setServiceAtivoAction({ id, ativo });
-    if (res.ok) {
-      setLista((atual) =>
-        atual.map((s) => (s.id === id ? { ...s, ativo } : s))
-      );
-    } else {
-      setErro(res.error);
+    setAlternandoId(id);
+    try {
+      const res = await setServiceAtivoAction({ id, ativo });
+      if (res.ok) {
+        setLista((atual) =>
+          atual.map((s) => (s.id === id ? { ...s, ativo } : s))
+        );
+      } else {
+        setErro(res.error);
+      }
+    } finally {
+      setAlternandoId(null);
     }
   }, []);
 
@@ -247,7 +264,7 @@ export function Catalogo({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo serviço"}
+              {criando ? "Fechar" : "Novo serviço"}
             </BotaoPrimario>
           ) : null
         }
@@ -367,6 +384,7 @@ export function Catalogo({
           >
             {lista.map((s, i) => (
               <LinhaServico
+                alternando={alternandoId === s.id}
                 key={s.id}
                 onAlternar={alternar}
                 podeEscrever={podeEscrever}

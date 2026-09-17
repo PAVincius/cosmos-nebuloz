@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import type { TenantOpcao } from "@/app/actions/audit";
 import { Campo, INPUT } from "@/components/campo";
+import { ACOES, ENTIDADES } from "./rotulos";
 
 /**
  * Filtros do Audit Explorer.
@@ -14,26 +15,6 @@ import { Campo, INPUT } from "@/components/campo";
  * Como efeito colateral, voltar no histórico desfaz o filtro, que é o que a
  * seta de voltar deveria fazer mesmo.
  */
-
-/** As ações que o painel realmente grava. Lista fechada em vez de campo livre:
- *  digitar "update" e não achar nada porque o valor é "updated" é frustração
- *  sem aprendizado. A chave é o valor gravado no AuditLog e o que vai para a
- *  URL; o rótulo é o que a pessoa lê no select. */
-const ACOES: Record<string, string> = {
-  created: "Criação",
-  updated: "Alteração",
-  deleted: "Remoção",
-  approved: "Aprovação",
-  rejected: "Rejeição",
-};
-
-const ENTIDADES: Record<string, string> = {
-  tenant: "Cliente",
-  tenant_member: "Membro do cliente",
-  tenant_module: "Módulo contratado",
-  staff_diagram: "Diagrama do staff",
-  platform_approval: "Pedido de aprovação",
-};
 
 export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
   const router = useRouter();

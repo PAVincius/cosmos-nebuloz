@@ -14,9 +14,27 @@ import { WriteButton } from "@/components/write-button";
  * rejeição sem motivo é o que faz o solicitante reabrir o mesmo pedido na
  * semana seguinte.
  *
- * Rejeitar passa pela barreira: o servidor não deixa decidir de novo, e um
- * clique errado aqui devolve o pedido ao solicitante sem apelação.
+ * As duas decisões passam pela barreira: o servidor não deixa decidir de
+ * novo. Rejeitar devolve o pedido ao solicitante sem apelação; aprovar
+ * executa a ação original (FR-8.4 — a proposta com desconto acima do limite
+ * vira Enviada) e grava a decisão com o nome de quem aprovou. Aprovar era um
+ * clique só, e é a operação com mais efeito da tela.
+ *
+ * O fim é anunciado num `<output role="status">` no lugar dos botões; o
+ * cartão em volta troca para "Aprovado por X em…" quando a lista relê.
  */
+
+const CONSEQUENCIA: Record<"APPROVED" | "REJECTED", string> = {
+  APPROVED:
+    "A ação pedida é executada — uma proposta com desconto acima do limite passa a Enviada — e a decisão fica registrada com o seu nome; não pode ser refeita.",
+  REJECTED:
+    "O solicitante recebe a recusa e o pedido não pode ser decidido de novo.",
+};
+
+const FIM: Record<"APPROVED" | "REJECTED", string> = {
+  APPROVED: "Aprovado — registrado com o seu nome.",
+  REJECTED: "Rejeitado — registrado com o seu nome.",
+};
 export function Decisao({
   id,
   canWrite,
@@ -30,6 +48,9 @@ export function Decisao({
 }) {
   const [nota, setNota] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [decidido, setDecidido] = useState<"APPROVED" | "REJECTED" | null>(
+    null
+  );
   const [pendente, iniciar] = useTransition();
 
   const decidir = (outcome: "APPROVED" | "REJECTED") => {
@@ -45,9 +66,31 @@ export function Decisao({
         // aprovador na mesma janela). A mensagem dele é mais precisa que
         // qualquer texto genérico daqui.
         setErro(res.error);
+        return;
       }
+      setDecidido(outcome);
     });
   };
+
+  if (decidido) {
+    return (
+      <output
+        style={{
+          display: "block",
+          marginTop: 12,
+          padding: "9px 11px",
+          borderRadius: "var(--r-md)",
+          background: "var(--green-soft)",
+          border: "1px solid rgba(var(--green-rgb),.3)",
+          color: "var(--green-text)",
+          fontSize: "var(--fs-base)",
+          fontWeight: 600,
+        }}
+      >
+        {FIM[decidido]}
+      </output>
+    );
+  }
 
   return (
     <div
@@ -69,25 +112,38 @@ export function Decisao({
         style={{ ...INPUT, fontWeight: 500, resize: "vertical" }}
         value={nota}
       />
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <WriteButton
-          canWrite={canWrite}
-          disabled={pendente}
-          onClick={() => decidir("APPROVED")}
-        >
-          {pendente ? "Decidindo…" : "Aprovar"}
-        </WriteButton>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 8,
+        }}
+      >
         {canWrite ? (
-          <ConfirmarAcao
-            alvo={alvo ?? `pedido ${id}`}
-            consequencia="O solicitante recebe a recusa e o pedido não pode ser decidido de novo."
-            executando={pendente}
-            onConfirmar={() => decidir("REJECTED")}
-            rotulo={pendente ? "Decidindo…" : "Rejeitar"}
-            tom="red"
-          />
+          <>
+            <ConfirmarAcao
+              alvo={alvo ?? `pedido ${id}`}
+              consequencia={CONSEQUENCIA.APPROVED}
+              executando={pendente}
+              onConfirmar={() => decidir("APPROVED")}
+              rotulo={pendente ? "Decidindo…" : "Aprovar"}
+              tom="accent"
+            />
+            <ConfirmarAcao
+              alvo={alvo ?? `pedido ${id}`}
+              consequencia={CONSEQUENCIA.REJECTED}
+              executando={pendente}
+              onConfirmar={() => decidir("REJECTED")}
+              rotulo={pendente ? "Decidindo…" : "Rejeitar"}
+              tom="red"
+            />
+          </>
         ) : (
-          <WriteButton canWrite={false}>Rejeitar</WriteButton>
+          <>
+            <WriteButton canWrite={false}>Aprovar</WriteButton>
+            <WriteButton canWrite={false}>Rejeitar</WriteButton>
+          </>
         )}
       </div>
       {erro ? <Erro>{erro}</Erro> : null}

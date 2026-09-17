@@ -1,5 +1,6 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarFornecedoresDpa } from "@/app/actions/empresa/fornecedores";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Inventario } from "./inventario";
@@ -22,9 +23,10 @@ export default async function FornecedoresPage() {
       {res.ok ? (
         <Inventario iniciais={res.data.linhas} podeEscrever={staff.canWrite} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
-          {res.error}
-        </p>
+        <FalhaAoCarregar
+          motivo={res.error}
+          titulo="Não foi possível carregar os fornecedores"
+        />
       )}
     </div>
   );

@@ -13,6 +13,13 @@ import type { ContaView } from "@/app/actions/empresa/financeiro";
 // titulo-dialogs.tsx.
 import type { criarTitulo } from "@/app/actions/empresa/titulos";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { ROTULO_TIPO, type TituloRow } from "@/lib/empresa/livro";
 import { hojeIso } from "@/lib/empresa/periodo";
@@ -76,11 +83,13 @@ export function NovoTituloDialog({
   onClose: () => void;
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={aberto}
@@ -94,8 +103,20 @@ export function NovoTituloDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {aberto ? (
-          <FormularioNovo contas={contas} onClose={onClose} onCriar={onCriar} />
+          <FormularioNovo
+            contas={contas}
+            marcarSujo={guarda.marcarSujo}
+            onClose={onClose}
+            onCriar={onCriar}
+          />
         ) : null}
       </DialogContent>
     </Dialog>
@@ -104,16 +125,19 @@ export function NovoTituloDialog({
 
 function FormularioNovo({
   contas,
+  marcarSujo,
   onClose,
   onCriar,
 }: {
   contas: ContaView[];
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCriar: (input: CriarInput) => Promise<Result<{ id: string }>>;
 }) {
   const [form, setForm] = useState<FormNovo>(formNovoInicial);
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, formNovoInicial()), marcarSujo);
   const contasAtivas = contas.filter((c) => c.ativa);
   const vencimentoInvalido =
     form.emissao.length > 0 &&
