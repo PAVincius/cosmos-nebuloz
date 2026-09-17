@@ -77,6 +77,14 @@ function dica(enviado: Enviado | null, kind: DiagramKind): string {
  * Sem a segunda, trazer um diagrama que já existe obriga a abrir o arquivo,
  * copiar e colar — e no BPMN isso é um XML de dezenas de KB.
  */
+/** Sem ternário aninhado no JSX: pendente vence, depois importar/criar. */
+function rotuloDeCriar(importando: boolean, noAr: boolean): string {
+  if (noAr) {
+    return importando ? "Importando…" : "Criando…";
+  }
+  return importando ? "Importar" : "Criar em branco";
+}
+
 function FormularioNovo({
   kind,
   nome,
@@ -84,6 +92,7 @@ function FormularioNovo({
   onNome,
   onArquivo,
   onCriar,
+  criandoNoAr,
 }: {
   kind: DiagramKind;
   nome: string;
@@ -91,6 +100,8 @@ function FormularioNovo({
   onNome: (v: string) => void;
   onArquivo: (f: File | undefined) => void;
   onCriar: () => void;
+  /** A chamada está no ar: o botão trava e diz. */
+  criandoNoAr: boolean;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
@@ -131,11 +142,11 @@ function FormularioNovo({
       </p>
 
       <BotaoPrimario
-        disabled={nome.trim().length < 2}
+        disabled={nome.trim().length < 2 || criandoNoAr}
         onClick={onCriar}
         type="button"
       >
-        {enviado ? "Importar" : "Criar em branco"}
+        {rotuloDeCriar(enviado !== null, criandoNoAr)}
       </BotaoPrimario>
     </div>
   );
@@ -319,6 +330,8 @@ export function Estudio({
   const [nome, setNome] = useState(novo);
   const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Dois cliques rápidos em Criar eram dois diagramas.
+  const [criandoNoAr, setCriandoNoAr] = useState(false);
   // O editor é quem sabe se o XML/texto mudou; ele avisa por `onSujo`.
   const [sujo, setSujo] = useState(false);
 
@@ -370,11 +383,13 @@ export function Estudio({
 
   const criar = useCallback(async () => {
     setErro(null);
+    setCriandoNoAr(true);
     const res = await createDiagramAction({
       kind,
       name: nome,
       source: enviado?.texto ?? emBranco,
     });
+    setCriandoNoAr(false);
     if (!res.ok) {
       setErro(res.error);
       return;
@@ -457,13 +472,14 @@ export function Estudio({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo"}
+              {criando ? "Fechar" : "Novo"}
             </BotaoPrimario>
           ) : null
         }
         formulario={
           criando ? (
             <FormularioNovo
+              criandoNoAr={criandoNoAr}
               enviado={enviado}
               kind={kind}
               nome={nome}

@@ -142,6 +142,59 @@ function unidadeKpiPipeline(semEstagios: boolean): "k" | undefined {
   return semEstagios ? undefined : "k";
 }
 
+/** `recarregar` que falha deixava a lista velha sem dizer: a escrita foi, a
+ *  releitura não, e a tela seguia mostrando o estado anterior como se fosse
+ *  o atual. Aqui o aviso fica junto da lista, com a saída — reler de novo. */
+function AvisoListaVelha({
+  motivo,
+  onTentar,
+}: {
+  motivo: string | null;
+  onTentar: () => void;
+}) {
+  if (motivo === null) {
+    return null;
+  }
+  return (
+    <div
+      role="alert"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 10,
+        padding: "9px 11px",
+        borderRadius: "var(--r-md)",
+        background: "var(--amber-soft)",
+        border: "1px solid rgba(var(--amber-rgb),.35)",
+        color: "var(--amber-text)",
+        fontSize: "var(--fs-base)",
+        fontWeight: 600,
+      }}
+    >
+      <span>Lista pode estar desatualizada — {motivo}</span>
+      <button
+        className="btn"
+        onClick={onTentar}
+        style={{
+          padding: "4px 10px",
+          borderRadius: "var(--r-sm)",
+          border: "1px solid var(--hairline-strong)",
+          background: "var(--surface-2)",
+          color: "var(--ink)",
+          fontFamily: "inherit",
+          fontSize: "var(--fs-nota)",
+          fontWeight: 600,
+          cursor: "pointer",
+        }}
+        type="button"
+      >
+        Tentar de novo
+      </button>
+    </div>
+  );
+}
+
 export function Funil({
   inicial,
   podeEscrever,
@@ -170,12 +223,16 @@ export function Funil({
     [dados.leads]
   );
 
+  // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
+  // escritas — a escrita deu certo, o que ficou velho foi a tela.
+  const [listaVelha, setListaVelha] = useState<string | null>(null);
   const recarregar = useCallback(async () => {
     const res = await listarFunil();
     if (!res.ok) {
-      setErro(res.error);
+      setListaVelha(res.error);
       return;
     }
+    setListaVelha(null);
     setDados(res.data);
   }, []);
 
@@ -314,6 +371,7 @@ export function Funil({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <WriteButton

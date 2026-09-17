@@ -101,11 +101,11 @@ export default async function ClientDetailPage({
           }}
         >
           <Icon name="arrowLeft" size={14} />
-          Tenants
+          Clientes
         </Link>
 
         <PageHeader
-          eyebrow={`tenant · ${client.slug}`}
+          eyebrow={`cliente · ${client.slug}`}
           meta={
             <>
               <Badge tone={TOM_DO_PLANO[client.plan] ?? "neutral"}>

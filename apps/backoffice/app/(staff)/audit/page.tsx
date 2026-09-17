@@ -7,6 +7,7 @@ import {
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { Filtros, Paginacao } from "./filtros";
+import { ACOES } from "./rotulos";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             className="mono"
             style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
           >
-            {evento.action}
+            {ACOES[evento.action] ?? evento.action}
           </span>
           <span style={{ flex: 1, minWidth: 0, color: "var(--ink-muted)" }}>
             {evento.alvo ?? evento.entityType ?? "—"}

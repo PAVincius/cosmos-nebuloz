@@ -16,7 +16,7 @@ export default async function AprovacoesPage() {
   const cabecalho = (
     <PageHeader
       eyebrow="Plataforma · governança"
-      subtitle="Operação sensível não executa no clique — ela entra aqui. Deleção de tenant, MCP writes avançadas, desconto acima de 15%, export sensível e mudança grande de plano."
+      subtitle="Operação sensível não executa no clique — ela entra aqui. Remoção de cliente, escrita de agentes de IA nos dados do cliente, desconto acima de 15%, export sensível e mudança grande de plano."
       title="Aprovações"
       tone="amber"
     />

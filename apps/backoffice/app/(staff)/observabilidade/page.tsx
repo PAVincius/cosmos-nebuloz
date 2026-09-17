@@ -14,6 +14,13 @@ const TOM_EVENTO = {
   RECUSADO: "red",
 } as const;
 
+/** O evento como a pessoa lê, não como o enum grava. */
+const ROTULO_EVENTO: Record<string, string> = {
+  LOGIN: "Entrou",
+  LOGOUT: "Saiu",
+  RECUSADO: "Recusado",
+};
+
 function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
   if (linhas.length === 0) {
     // Vazio aqui é boa notícia, e a tela precisa dizer isso — "nenhum
@@ -110,7 +117,7 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
           }}
         >
           <Badge dot tone={TOM_EVENTO[a.evento as "LOGIN"] ?? "neutral"}>
-            {a.evento}
+            {ROTULO_EVENTO[a.evento] ?? a.evento}
           </Badge>
           <span
             className="mono"

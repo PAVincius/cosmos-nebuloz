@@ -474,7 +474,7 @@ export function Biblioteca({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo"}
+              {criando ? "Fechar" : "Novo"}
             </BotaoPrimario>
           ) : null
         }

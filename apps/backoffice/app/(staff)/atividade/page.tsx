@@ -5,6 +5,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { listStaffActivity } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { ACOES } from "../audit/rotulos";
 
 export default async function ActivityPage() {
   const result = await listStaffActivity();
@@ -85,7 +86,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
                 className="mono"
                 style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
               >
-                {row.action}
+                {ACOES[row.action] ?? row.action}
               </span>{" "}
               <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
             </span>

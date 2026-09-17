@@ -196,6 +196,59 @@ function LinhaEngajamento({
   );
 }
 
+/** `recarregar` que falha deixava a lista velha sem dizer: a escrita foi, a
+ *  releitura não, e a tela seguia mostrando o estado anterior como se fosse
+ *  o atual. Aqui o aviso fica junto da lista, com a saída — reler de novo. */
+function AvisoListaVelha({
+  motivo,
+  onTentar,
+}: {
+  motivo: string | null;
+  onTentar: () => void;
+}) {
+  if (motivo === null) {
+    return null;
+  }
+  return (
+    <div
+      role="alert"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 10,
+        padding: "9px 11px",
+        borderRadius: "var(--r-md)",
+        background: "var(--amber-soft)",
+        border: "1px solid rgba(var(--amber-rgb),.35)",
+        color: "var(--amber-text)",
+        fontSize: "var(--fs-base)",
+        fontWeight: 600,
+      }}
+    >
+      <span>Lista pode estar desatualizada — {motivo}</span>
+      <button
+        className="btn"
+        onClick={onTentar}
+        style={{
+          padding: "4px 10px",
+          borderRadius: "var(--r-sm)",
+          border: "1px solid var(--hairline-strong)",
+          background: "var(--surface-2)",
+          color: "var(--ink)",
+          fontFamily: "inherit",
+          fontSize: "var(--fs-nota)",
+          fontWeight: 600,
+          cursor: "pointer",
+        }}
+        type="button"
+      >
+        Tentar de novo
+      </button>
+    </div>
+  );
+}
+
 export function Engajamentos({
   iniciais,
   clientes,
@@ -225,12 +278,16 @@ export function Engajamentos({
   // Relê a lista pela action em vez de `window.location.reload()`: as
   // transições possíveis vêm do mapa do servidor (recalculá-las aqui
   // duplicaria o que já existe lá), e a tela não perde o scroll.
+  // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
+  // escritas — a escrita deu certo, o que ficou velho foi a tela.
+  const [listaVelha, setListaVelha] = useState<string | null>(null);
   const recarregar = useCallback(async () => {
     const res = await listEngagements();
     if (!res.ok) {
-      setErro(res.error);
+      setListaVelha(res.error);
       return;
     }
+    setListaVelha(null);
     setLista(res.data);
   }, []);
 
@@ -309,6 +366,7 @@ export function Engajamentos({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
       {confirmacao ? (
         <output
           style={{
@@ -334,7 +392,7 @@ export function Engajamentos({
               onClick={() => setCriando((v) => !v)}
               type="button"
             >
-              {criando ? "Cancelar" : "Novo engajamento"}
+              {criando ? "Fechar" : "Novo engajamento"}
             </BotaoPrimario>
           ) : null
         }

@@ -218,7 +218,7 @@ export function NewClientForm({
       <SectionCard
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 16 }}
         icon="building"
-        title="Dados do tenant"
+        title="Dados do cliente"
       >
         <Campo
           hint={
@@ -370,11 +370,11 @@ export function NewClientForm({
             <ConfirmarAcao
               aberto
               alvo={slug || "—"}
-              consequencia="O cliente ganha acesso em segundos; módulos marcados nascem ativos."
+              consequencia="O cliente ganha acesso em segundos: o responsável é vinculado ou convidado, e cada módulo marcado nasce com o status escolhido — ativo ou trial."
               executando={pending}
               onConfirmar={submit}
               onVoltar={() => setPerguntando(false)}
-              rotulo={pending ? "Provisionando…" : "Provisionar tenant"}
+              rotulo={pending ? "Provisionando…" : "Provisionar cliente"}
               tom="accent"
             />
           ) : (
@@ -383,7 +383,7 @@ export function NewClientForm({
               disabled={!podeEnviar}
               type="submit"
             >
-              Provisionar tenant
+              Provisionar cliente
             </WriteButton>
           )}
         </div>

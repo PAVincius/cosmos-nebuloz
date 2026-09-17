@@ -262,7 +262,9 @@ describe("status inicial por módulo é um grupo de rádio", () => {
       ) as HTMLInputElement
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Provisionar tenant" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Provisionar cliente" })
+    );
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await vi.waitFor(() =>

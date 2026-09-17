@@ -91,7 +91,7 @@ function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
           color: "var(--accent-text)",
         }}
       >
-        Voltar para Tenants
+        Voltar para Clientes
       </Link>
     </div>
   );
