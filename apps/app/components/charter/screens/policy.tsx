@@ -34,7 +34,8 @@ import {
 } from "../base";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
-import { DiffModal, PublishVersionModal } from "../modals";
+import { DiffModal } from "../modals/diff";
+import { PublishVersionModal } from "../modals/publish-version";
 import { useCharterData } from "../use-charter-data";
 import { GatedFooterAction } from "./gated-footer-action";
 import { ReopenSectionModal } from "./policy-confirm-reopen";
