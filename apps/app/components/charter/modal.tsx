@@ -177,7 +177,7 @@ function ModalHost({
               zIndex: 310,
               display: "grid",
               placeItems: "center",
-              background: "rgba(4,5,7,.55)",
+              background: "var(--scrim)",
               backdropFilter: "blur(3px)",
             }}
           >
