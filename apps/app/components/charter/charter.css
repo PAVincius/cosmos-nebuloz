@@ -318,34 +318,10 @@
   opacity: 1;
   filter: drop-shadow(0 0 5px rgba(var(--tone-rgb), calc(0.6 * var(--fx))));
 }
-.charter-root .no-ecg .sig {
-  display: none !important;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .charter-root .sig path {
     animation: none;
   }
-}
-
-/* generic interactive lift for kanban/list cards in dark */
-.charter-root .lift {
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
-}
-.charter-root .lift:hover {
-  transform: translateY(-2px);
-}
-[data-theme="dark"] .charter-root .lift:hover {
-  border-color: var(--hairline-strong);
-  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.9);
-}
-[data-theme="light"] .charter-root .lift:hover {
-  box-shadow: var(--hover-shadow);
-  border-color: var(--hairline-strong);
 }
 
 /* nav item */
@@ -393,65 +369,12 @@
   }
 }
 
-/* staggered card entrance (compositor-only transform/opacity) */
-@keyframes charter-cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.charter-root .card-in {
-  animation: charter-cardIn 0.38s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .charter-root .card-in {
-    animation: none;
-  }
-}
-@keyframes charter-emptyPulse {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-}
-@keyframes charter-badgeFlash {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.18);
-    filter: brightness(1.3);
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
 @keyframes charter-shimmer {
   0% {
     background-position: -600px 0;
   }
   100% {
     background-position: 600px 0;
-  }
-}
-@keyframes charter-toastIn {
-  from {
-    opacity: 0;
-    transform: translateX(18px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 .charter-root .skeleton {
@@ -538,36 +461,4 @@
 .charter-root .glossary-term:hover {
   border-color: var(--accent);
   color: var(--accent-text, var(--accent));
-}
-
-/* ============ Command palette (⌘K / Ctrl+K) ============ */
-.charter-root [cmdk-item][data-selected="true"] {
-  background: var(--accent-soft);
-  color: var(--accent-text);
-}
-
-/* Editor de blocos da nota nativa: o botão remover só aparece no hover ou
-   quando o próprio botão recebe foco por teclado. */
-.charter-root .block-remove {
-  opacity: 0;
-  transition: opacity 0.12s ease;
-}
-.charter-root .block-hover:hover .block-remove,
-.charter-root .block-remove:focus-visible {
-  opacity: 1;
-}
-@media (prefers-reduced-motion: reduce) {
-  .charter-root .block-remove {
-    transition: none;
-  }
-}
-
-/* Chevron das linhas expansíveis da árvore do épico. */
-.charter-root .tree-chevron {
-  transition: transform 0.15s ease;
-}
-@media (prefers-reduced-motion: reduce) {
-  .charter-root .tree-chevron {
-    transition: none;
-  }
 }
