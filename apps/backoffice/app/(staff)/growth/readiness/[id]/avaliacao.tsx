@@ -306,7 +306,11 @@ function PainelDeResultado({
         <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
           <span
             className="mono"
-            style={{ fontSize: 38, fontWeight: 800, color: "var(--ink)" }}
+            style={{
+              fontSize: "var(--fs-display)",
+              fontWeight: 800,
+              color: "var(--ink)",
+            }}
           >
             {scoreExibido ?? "—"}
           </span>

@@ -515,7 +515,7 @@ export function Grafo({
           top: 12,
           left: 12,
           margin: 0,
-          fontSize: 10.5,
+          fontSize: "var(--fs-nota)",
           color: "var(--ink-faint)",
           pointerEvents: "none",
         }}

@@ -160,7 +160,13 @@ export function Painel({
           />
           {eyebrowDoProcesso(processo)}
         </p>
-        <h2 style={{ fontSize: 18, fontWeight: 700, margin: "6px 0 0" }}>
+        <h2
+          style={{
+            fontSize: "var(--fs-titulo)",
+            fontWeight: 700,
+            margin: "6px 0 0",
+          }}
+        >
           {processo.nome}
         </h2>
         <p

@@ -97,7 +97,7 @@ function PassoDoStepper({
           display: "inline-flex",
           alignItems: "center",
           gap: 4,
-          fontSize: 10.5,
+          fontSize: "var(--fs-nota)",
           fontWeight: 700,
           color: destaque ? `var(--${tom}-text)` : "var(--ink-faint)",
         }}
@@ -112,7 +112,7 @@ function PassoDoStepper({
       </span>
       <span
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: destaque ? `var(--${tom}-text)` : "var(--ink-muted)",
         }}
@@ -219,7 +219,7 @@ export function CartoesResumo({
           <span
             className="mono"
             style={{
-              fontSize: 10,
+              fontSize: "var(--fs-micro)",
               fontWeight: 700,
               letterSpacing: ".08em",
               textTransform: "uppercase",
@@ -228,8 +228,12 @@ export function CartoesResumo({
           >
             {c.rotulo}
           </span>
-          <span style={{ fontSize: 13.5, fontWeight: 800 }}>{c.valor}</span>
-          <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+          <span style={{ fontSize: "var(--fs-base)", fontWeight: 800 }}>
+            {c.valor}
+          </span>
+          <span
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
+          >
             {c.dica}
           </span>
         </div>
@@ -242,7 +246,7 @@ export function CartoesResumo({
 export function BlocoProposta({ lead }: { lead: LeadRow }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <span style={{ fontSize: 12.5, color: "var(--ink-muted)" }}>
+      <span style={{ fontSize: "var(--fs-base)", color: "var(--ink-muted)" }}>
         Neste estágio o funil não tem passo próprio — ele lê o status de{" "}
         {lead.proposta?.numero ?? "—"}.
       </span>
@@ -291,7 +295,7 @@ export function BlocoProximoPasso({
     <span
       className="mono"
       style={{
-        fontSize: 11,
+        fontSize: "var(--fs-nota)",
         fontWeight: 700,
         color: vencido ? "var(--red-text)" : "var(--ink-faint)",
       }}
@@ -345,7 +349,7 @@ export function BlocoProximoPasso({
         }}
       >
         {lead.proximaAcao ? (
-          <span style={{ fontSize: 12.5, fontWeight: 600 }}>
+          <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
             {lead.proximaAcao}
             {lead.proximaAcaoEm
               ? ` — ${new Date(lead.proximaAcaoEm).toLocaleDateString("pt-BR")}`
@@ -354,7 +358,7 @@ export function BlocoProximoPasso({
         ) : (
           <span
             style={{
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
               color: "var(--amber-text)",
             }}
@@ -389,12 +393,12 @@ export function BlocoFechado({ lead }: { lead: LeadRow }) {
           color: "var(--red-text)",
         }}
       >
-        <span style={{ fontSize: 12.5, fontWeight: 800 }}>
+        <span style={{ fontSize: "var(--fs-base)", fontWeight: 800 }}>
           Perdido em {INFO_ESTAGIO[codigo]?.rotulo ?? codigo}
           {motivo ? ` · ${MOTIVOS_PERDA[motivo]}` : ""}
         </span>
         {lead.notaPerda ? (
-          <span style={{ fontSize: 12, fontWeight: 500 }}>
+          <span style={{ fontSize: "var(--fs-base)", fontWeight: 500 }}>
             {lead.notaPerda}
           </span>
         ) : null}
@@ -417,12 +421,16 @@ export function BlocoFechado({ lead }: { lead: LeadRow }) {
           color: "var(--green-text)",
         }}
       >
-        <span style={{ fontSize: 12.5, fontWeight: 800 }}>
+        <span style={{ fontSize: "var(--fs-base)", fontWeight: 800 }}>
           {lead.proposta?.numero} virou cliente
         </span>
         <Link
           href={slug ? `/clientes/${slug}` : `/propostas/${lead.proposta?.id}`}
-          style={{ fontSize: 12, fontWeight: 700, color: "inherit" }}
+          style={{
+            fontSize: "var(--fs-base)",
+            fontWeight: 700,
+            color: "inherit",
+          }}
         >
           {slug
             ? "Abrir cliente"
@@ -511,7 +519,7 @@ export function ModoPerda({
         <span
           className="mono"
           style={{
-            fontSize: 10.5,
+            fontSize: "var(--fs-nota)",
             alignSelf: "flex-end",
             color: notaValida(nota) ? "var(--ink-faint)" : "var(--red-text)",
           }}

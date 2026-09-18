@@ -151,7 +151,11 @@ function FaixaDaJanela({
         </span>
         <span
           className="mono"
-          style={{ fontSize: 19, fontWeight: 700, color: "var(--ink)" }}
+          style={{
+            fontSize: "var(--fs-titulo)",
+            fontWeight: 700,
+            color: "var(--ink)",
+          }}
         >
           {horas === null ? "—" : `${horas}h`}
         </span>

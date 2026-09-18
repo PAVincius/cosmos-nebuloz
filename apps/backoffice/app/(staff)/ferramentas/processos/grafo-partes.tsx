@@ -455,7 +455,7 @@ export function BotaoExportar({ onExportar }: { onExportar: () => void }) {
         borderRadius: "var(--r-md)",
         border: "1px solid var(--hairline)",
         background: "var(--surface)",
-        fontSize: 11.5,
+        fontSize: "var(--fs-nota)",
         fontWeight: 700,
         color: "var(--ink)",
         cursor: "pointer",
@@ -520,7 +520,7 @@ export function Rodape({
         justifyContent: "space-between",
         alignItems: "baseline",
         gap: 8,
-        fontSize: 10.5,
+        fontSize: "var(--fs-nota)",
         color: "var(--ink-faint)",
         pointerEvents: "none",
       }}

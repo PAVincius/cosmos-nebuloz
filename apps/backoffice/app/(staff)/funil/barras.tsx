@@ -58,7 +58,7 @@ export function Barras({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 12,
+                  fontSize: "var(--fs-base)",
                   marginBottom: 4,
                 }}
               >
@@ -74,7 +74,10 @@ export function Barras({
                 </span>
                 <span
                   className="mono"
-                  style={{ color: "var(--ink-faint)", fontSize: 11 }}
+                  style={{
+                    color: "var(--ink-faint)",
+                    fontSize: "var(--fs-nota)",
+                  }}
                 >
                   {l.quantidade} · {percent}%
                 </span>
@@ -85,7 +88,7 @@ export function Barras({
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   color: "var(--ink-muted)",
                   whiteSpace: "nowrap",
                 }}
