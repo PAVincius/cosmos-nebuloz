@@ -7,6 +7,7 @@
 
 import { Button } from "@repo/design-system/cosmos/kit";
 import { ModalShell } from "../modal";
+import { FS } from "../type-scale";
 
 export function ReopenSectionModal({
   sectionName,
@@ -45,7 +46,7 @@ export function ReopenSectionModal({
       <div style={{ padding: 20 }}>
         <p
           style={{
-            fontSize: 13,
+            fontSize: FS.base,
             color: "var(--ink-muted)",
             margin: 0,
             lineHeight: 1.6,

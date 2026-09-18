@@ -30,6 +30,7 @@ import {
   useState,
 } from "react";
 import { Eyebrow, StatusDot } from "./base";
+import { FS } from "./type-scale";
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL";
 
@@ -164,7 +165,7 @@ function Brand() {
           className="display"
           style={{
             display: "block",
-            fontSize: 15.5,
+            fontSize: FS.forte,
             fontWeight: 700,
             letterSpacing: "-.02em",
             color: "var(--ink)",
@@ -177,7 +178,7 @@ function Brand() {
           className="mono"
           style={{
             display: "block",
-            fontSize: 9,
+            fontSize: FS.micro,
             fontWeight: 700,
             letterSpacing: ".18em",
             color: "var(--ink-faint)",
@@ -237,7 +238,7 @@ function NavRow({
         <span
           className="mono"
           style={{
-            fontSize: 10.5,
+            fontSize: FS.micro,
             fontWeight: 700,
             padding: "1px 6px",
             borderRadius: 99,
@@ -262,7 +263,7 @@ function NavRow({
     padding: "7px 10px",
     borderRadius: "var(--r-sm)",
     textAlign: "left",
-    fontSize: 13,
+    fontSize: FS.base,
     border: `1px solid ${active ? "rgba(var(--accent-rgb),.18)" : "transparent"}`,
     background: active ? "var(--accent-soft)" : "transparent",
     color: active ? "var(--accent-text)" : "var(--ink-muted)",
@@ -369,7 +370,7 @@ function Sidebar({
             <div
               className="mono"
               style={{
-                fontSize: 15,
+                fontSize: FS.forte,
                 fontWeight: 800,
                 color: "var(--ink)",
                 letterSpacing: "-.01em",
@@ -380,7 +381,7 @@ function Sidebar({
             {policy.daysToReview !== null && (
               <div
                 style={{
-                  fontSize: 11,
+                  fontSize: FS.nota,
                   color:
                     policy.daysToReview < 0
                       ? "var(--red-text)"
@@ -418,7 +419,7 @@ function Sidebar({
           <div style={{ minWidth: 0, flex: 1 }}>
             <div
               style={{
-                fontSize: 12,
+                fontSize: FS.nota,
                 fontWeight: 700,
                 color: "var(--ink)",
                 overflow: "hidden",
@@ -430,7 +431,7 @@ function Sidebar({
             </div>
             {/* Papel de governança sempre visível: é o que explica por que um
                 botão está desabilitado. */}
-            <div style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+            <div style={{ fontSize: FS.micro, color: "var(--ink-faint)" }}>
               {user.role}
             </div>
           </div>
@@ -479,7 +480,9 @@ function ModuleSwitcher({ modules }: { modules: ModuleId[] }) {
         type="button"
       >
         <Icon name="shield" size={13} strokeWidth={2.2} />
-        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)" }}>
+        <span
+          style={{ fontSize: FS.nota, fontWeight: 700, color: "var(--ink)" }}
+        >
           Charter
         </span>
         <Icon
@@ -546,7 +549,7 @@ function ModuleSwitcher({ modules }: { modules: ModuleId[] }) {
                   <span
                     style={{
                       display: "block",
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       fontWeight: 700,
                       color: on ? "var(--accent-text)" : "var(--ink)",
                     }}
@@ -556,7 +559,7 @@ function ModuleSwitcher({ modules }: { modules: ModuleId[] }) {
                   <span
                     style={{
                       display: "block",
-                      fontSize: 11,
+                      fontSize: FS.nota,
                       color: "var(--ink-faint)",
                     }}
                   >
@@ -625,7 +628,7 @@ function Topbar({
           style={{
             padding: "2px 4px",
             borderRadius: 5,
-            fontSize: 12,
+            fontSize: FS.nota,
             color: "var(--ink-faint)",
             whiteSpace: "nowrap",
           }}
@@ -637,7 +640,7 @@ function Topbar({
           size={12}
           style={{ color: "var(--ink-faint)" }}
         />
-        <span style={{ fontSize: 12, color: "var(--ink-subtle)" }}>
+        <span style={{ fontSize: FS.nota, color: "var(--ink-subtle)" }}>
           {parent}
         </span>
         <Icon
@@ -647,7 +650,7 @@ function Topbar({
         />
         <span
           style={{
-            fontSize: 12.5,
+            fontSize: FS.base,
             fontWeight: 700,
             color: "var(--ink)",
             overflow: "hidden",
@@ -753,13 +756,13 @@ export function ComingSoon({ id }: { id: string }) {
       <Eyebrow style={{ marginBottom: 8 }}>Em breve</Eyebrow>
       <div
         className="display"
-        style={{ fontSize: 21, fontWeight: 700, color: "var(--ink)" }}
+        style={{ fontSize: FS.display, fontWeight: 700, color: "var(--ink)" }}
       >
         {title}
       </div>
       <div
         style={{
-          fontSize: 13,
+          fontSize: FS.base,
           color: "var(--ink-muted)",
           marginTop: 6,
         }}

@@ -37,6 +37,7 @@ import {
 } from "./form-kit";
 import { ModalShell, ModalSplit } from "./modal";
 import type { DataClass } from "./modals/_shared";
+import { FS } from "./type-scale";
 
 type Exposure = "INTERNAL" | "EXTERNAL";
 type Criticality = "LOW" | "MEDIUM" | "HIGH";
@@ -201,7 +202,7 @@ export function IntakeModal({
                 />
                 <span
                   style={{
-                    fontSize: 11,
+                    fontSize: FS.nota,
                     fontWeight: 700,
                     letterSpacing: ".04em",
                     textTransform: "uppercase",
@@ -213,7 +214,7 @@ export function IntakeModal({
               </div>
               <div
                 style={{
-                  fontSize: 13.5,
+                  fontSize: FS.base,
                   fontWeight: 700,
                   color: "var(--ink)",
                   lineHeight: 1.4,
@@ -238,7 +239,7 @@ export function IntakeModal({
               {/* A regra, não só o resultado (FR-4.3). */}
               <div
                 style={{
-                  fontSize: 11.5,
+                  fontSize: FS.nota,
                   color: "var(--ink-muted)",
                   lineHeight: 1.5,
                   marginTop: 11,
@@ -268,7 +269,7 @@ export function IntakeModal({
               </div>
               <div
                 style={{
-                  fontSize: 12,
+                  fontSize: FS.nota,
                   color: "var(--ink-muted)",
                   lineHeight: 1.55,
                 }}
@@ -287,13 +288,17 @@ export function IntakeModal({
             >
               <Eyebrow style={{ marginBottom: 7 }}>Fornecedor</Eyebrow>
               <div
-                style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink)" }}
+                style={{
+                  fontSize: FS.base,
+                  fontWeight: 700,
+                  color: "var(--ink)",
+                }}
               >
                 {vendor?.name ?? "—"}
               </div>
               <div
                 style={{
-                  fontSize: 11.5,
+                  fontSize: FS.nota,
                   color: "var(--ink-muted)",
                   marginTop: 3,
                 }}
@@ -316,7 +321,7 @@ export function IntakeModal({
               {gate?.eligible === false && (
                 <div
                   style={{
-                    fontSize: 11.5,
+                    fontSize: FS.nota,
                     color: "var(--red-text)",
                     marginTop: 8,
                     lineHeight: 1.5,
@@ -330,7 +335,7 @@ export function IntakeModal({
             <div
               style={{
                 marginTop: "auto",
-                fontSize: 11,
+                fontSize: FS.nota,
                 color: "var(--ink-faint)",
                 lineHeight: 1.5,
               }}

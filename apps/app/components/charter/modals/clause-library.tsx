@@ -8,6 +8,7 @@ import type { ClauseLibraryRow } from "@/app/(charter)/actions/vendors";
 import { TableHead, TableRow } from "../base";
 import { Callout, FooterHint, Kbd } from "../form-kit";
 import { ModalShell } from "../modal";
+import { FS } from "../type-scale";
 
 // ── 9. ClauseLibraryModal (FR-9.5) ────────────────────────────────────────────
 
@@ -68,7 +69,7 @@ export function ClauseLibraryModal({
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: FS.nota,
                   fontWeight: 700,
                   color: "var(--ink-faint)",
                 }}
@@ -76,7 +77,11 @@ export function ClauseLibraryModal({
                 {c.code}
               </span>
               <span
-                style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}
+                style={{
+                  fontSize: FS.base,
+                  fontWeight: 600,
+                  color: "var(--ink)",
+                }}
               >
                 {c.name}
               </span>
@@ -86,7 +91,7 @@ export function ClauseLibraryModal({
               <span
                 className="mono"
                 style={{
-                  fontSize: 12,
+                  fontSize: FS.nota,
                   fontWeight: 700,
                   color:
                     c.covered === c.total

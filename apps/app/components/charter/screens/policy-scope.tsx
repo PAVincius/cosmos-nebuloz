@@ -9,6 +9,7 @@ import {
 } from "@/app/(charter)/actions/policy";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { ScreenError } from "../base";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 // policy-scope.tsx — quem está e quem não está sob a política publicada.
@@ -38,7 +39,7 @@ export default function PolicyScope() {
   if (loading) {
     return (
       <SectionCard subtitle={SUBTITLE} title="Alcance da política">
-        <div style={{ fontSize: 13, color: "var(--ink-faint)" }}>
+        <div style={{ fontSize: FS.base, color: "var(--ink-faint)" }}>
           Carregando…
         </div>
       </SectionCard>
@@ -55,7 +56,7 @@ export default function PolicyScope() {
   if (data === null) {
     return (
       <SectionCard subtitle={SUBTITLE} title="Alcance da política">
-        <div style={{ fontSize: 13, color: "var(--ink-faint)" }}>
+        <div style={{ fontSize: FS.base, color: "var(--ink-faint)" }}>
           Nenhuma política nesta organização. O seed inicial cria a estrutura.
         </div>
       </SectionCard>
@@ -102,7 +103,7 @@ export default function PolicyScope() {
     <SectionCard subtitle={SUBTITLE} title="Alcance da política">
       <div
         style={{
-          fontSize: 12.5,
+          fontSize: FS.base,
           fontWeight: 700,
           color: fora > 0 ? "var(--amber-text)" : "var(--green-text)",
           marginBottom: 10,
@@ -127,7 +128,7 @@ export default function PolicyScope() {
             <span
               style={{
                 flex: 1,
-                fontSize: 13,
+                fontSize: FS.base,
                 color: alvo.vinculado ? "var(--ink)" : "var(--amber-text)",
               }}
             >

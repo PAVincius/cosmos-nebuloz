@@ -31,6 +31,7 @@ import {
 } from "../base";
 import { ModalProvider, useModal } from "../modal";
 import { IntakeModal, type IntakeSubmit } from "../modals-intake";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const COLS = "minmax(0,1fr) 104px 122px 128px 104px 86px";
@@ -303,7 +304,7 @@ function CasesInner() {
                       <span
                         className="mono"
                         style={{
-                          fontSize: 10.5,
+                          fontSize: FS.micro,
                           fontWeight: 700,
                           color: "var(--ink-faint)",
                         }}
@@ -317,7 +318,7 @@ function CasesInner() {
                     </div>
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: FS.base,
                         fontWeight: 600,
                         color: "var(--ink)",
                         marginTop: 3,
@@ -329,7 +330,9 @@ function CasesInner() {
                       {u.title}
                     </div>
                   </div>
-                  <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  <span
+                    style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}
+                  >
                     {u.department ?? "—"}
                   </span>
                   <Badge tone={DATA_CLASS_TONE[u.dataClass]}>
@@ -338,7 +341,7 @@ function CasesInner() {
                   <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        fontSize: 12,
+                        fontSize: FS.nota,
                         color: "var(--ink)",
                         fontWeight: 600,
                         overflow: "hidden",
@@ -351,7 +354,7 @@ function CasesInner() {
                     {tier && (
                       <div
                         style={{
-                          fontSize: 10.5,
+                          fontSize: FS.micro,
                           color: `var(--${tier.tone}-text)`,
                           fontWeight: 700,
                           marginTop: 2,
@@ -365,7 +368,7 @@ function CasesInner() {
                     <span
                       className="mono"
                       style={{
-                        fontSize: 13,
+                        fontSize: FS.base,
                         fontWeight: 800,
                         color: `var(--${u.riskTone}-text)`,
                       }}
@@ -374,7 +377,7 @@ function CasesInner() {
                     </span>
                     <span
                       style={{
-                        fontSize: 10.5,
+                        fontSize: FS.micro,
                         color: "var(--ink-faint)",
                         marginLeft: 5,
                       }}
@@ -386,7 +389,7 @@ function CasesInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       fontWeight: 700,
                       color: `var(--${slaTone}-text)`,
                       textAlign: "right",

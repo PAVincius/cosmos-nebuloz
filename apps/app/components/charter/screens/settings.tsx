@@ -31,6 +31,7 @@ import {
 } from "../base";
 import { DisclosurePanel } from "../disclosure-panel";
 import { ModalProvider, useModal } from "../modal";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 import { RoleChangeModal } from "./settings-confirm-role";
 
@@ -282,7 +283,7 @@ function SettingsScreenInner() {
                       style={{
                         textAlign: "left",
                         padding: "8px 10px",
-                        fontSize: 10,
+                        fontSize: FS.micro,
                         fontWeight: 700,
                         letterSpacing: ".06em",
                         textTransform: "uppercase",
@@ -300,7 +301,7 @@ function SettingsScreenInner() {
                           key={r}
                           style={{
                             padding: "8px 6px",
-                            fontSize: 10.5,
+                            fontSize: FS.micro,
                             fontWeight: 700,
                             color: active
                               ? "var(--accent-text)"
@@ -323,7 +324,7 @@ function SettingsScreenInner() {
                       <td
                         style={{
                           padding: "9px 10px",
-                          fontSize: 12.5,
+                          fontSize: FS.base,
                           color: "var(--ink)",
                           borderTop: "1px solid var(--hairline)",
                         }}
@@ -333,7 +334,7 @@ function SettingsScreenInner() {
                           className="mono"
                           style={{
                             display: "block",
-                            fontSize: 10,
+                            fontSize: FS.micro,
                             color: "var(--ink-faint)",
                           }}
                         >
@@ -396,7 +397,7 @@ function SettingsScreenInner() {
             </div>
             <p
               style={{
-                fontSize: 11.5,
+                fontSize: FS.nota,
                 color: "var(--ink-muted)",
                 lineHeight: 1.6,
                 marginTop: 12,
@@ -432,14 +433,16 @@ function SettingsScreenInner() {
                   <span
                     style={{
                       display: "block",
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       fontWeight: 600,
                       color: "var(--ink)",
                     }}
                   >
                     {m.name}
                   </span>
-                  <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                  <span
+                    style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}
+                  >
                     {m.email}
                   </span>
                 </span>
@@ -516,14 +519,16 @@ function SettingsScreenInner() {
                     <span
                       style={{
                         display: "block",
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 600,
                         color: "var(--ink)",
                       }}
                     >
                       {m.name}
                     </span>
-                    <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                    <span
+                      style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}
+                    >
                       {m.email}
                     </span>
                   </span>
@@ -599,7 +604,7 @@ function SettingsScreenInner() {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, color: "var(--ink)" }}>
+                    <div style={{ fontSize: FS.base, color: "var(--ink)" }}>
                       {n.label}
                     </div>
                     <Eyebrow>{n.audience}</Eyebrow>
@@ -641,7 +646,7 @@ function SettingsScreenInner() {
           >
             <p
               style={{
-                fontSize: 12.5,
+                fontSize: FS.base,
                 color: "var(--ink-muted)",
                 lineHeight: 1.6,
                 margin: 0,
@@ -654,7 +659,7 @@ function SettingsScreenInner() {
             </p>
             <p
               style={{
-                fontSize: 11.5,
+                fontSize: FS.nota,
                 color: "var(--ink-faint)",
                 lineHeight: 1.6,
                 marginBottom: 0,

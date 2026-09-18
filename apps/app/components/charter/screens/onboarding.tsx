@@ -39,6 +39,7 @@ import {
 import { DisclosurePanel } from "../disclosure-panel";
 import { ModalProvider, ModalShell, useModal } from "../modal";
 import { PublishTrackModal } from "../modals/publish-track";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const PENDING_COLS = "minmax(0,1fr) 78px 48px 92px";
@@ -103,7 +104,11 @@ function TrackCard({ track, last }: { track: TrackRow; last: boolean }) {
             }}
           >
             <span
-              style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ink)" }}
+              style={{
+                fontSize: FS.base,
+                fontWeight: 700,
+                color: "var(--ink)",
+              }}
             >
               {track.name}
             </span>
@@ -115,7 +120,11 @@ function TrackCard({ track, last }: { track: TrackRow; last: boolean }) {
             )}
           </div>
           <div
-            style={{ fontSize: 11.5, color: "var(--ink-muted)", marginTop: 3 }}
+            style={{
+              fontSize: FS.nota,
+              color: "var(--ink-muted)",
+              marginTop: 3,
+            }}
           >
             {track.audience} · {track.modules} módulos · {track.minutes} min ·
             re-certificação {recertLabel(track.recert)}
@@ -125,7 +134,7 @@ function TrackCard({ track, last }: { track: TrackRow; last: boolean }) {
           <span
             className="mono"
             style={{
-              fontSize: 15,
+              fontSize: FS.forte,
               fontWeight: 800,
               color: `var(--${tone}-text)`,
             }}
@@ -133,7 +142,11 @@ function TrackCard({ track, last }: { track: TrackRow; last: boolean }) {
             {track.coverage}%
           </span>
           <div
-            style={{ fontSize: 10.5, color: "var(--ink-faint)", marginTop: 1 }}
+            style={{
+              fontSize: FS.micro,
+              color: "var(--ink-faint)",
+              marginTop: 1,
+            }}
           >
             {track.done}/{track.assigned}
           </div>
@@ -198,7 +211,7 @@ function AckThirdPartyModal({
           }}
         >
           {!podeConfirmar && (
-            <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+            <span style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}>
               Descreva em pelo menos {JUSTIFICATIVA_MIN} caracteres por que você
               está registrando por {personName}.
             </span>
@@ -239,7 +252,7 @@ function AckThirdPartyModal({
       >
         <p
           style={{
-            fontSize: 13,
+            fontSize: FS.base,
             color: "var(--ink-muted)",
             margin: 0,
             lineHeight: 1.6,
@@ -519,7 +532,7 @@ function OnboardingInner() {
                     <div style={{ minWidth: 0 }}>
                       <div
                         style={{
-                          fontSize: 12.5,
+                          fontSize: FS.base,
                           fontWeight: 600,
                           color: "var(--ink)",
                           overflow: "hidden",
@@ -530,7 +543,10 @@ function OnboardingInner() {
                         {p.personName}
                       </div>
                       <div
-                        style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                        style={{
+                          fontSize: FS.micro,
+                          color: "var(--ink-faint)",
+                        }}
                       >
                         {p.department ?? "—"}
                       </div>
@@ -538,7 +554,7 @@ function OnboardingInner() {
                   </div>
                   <span
                     className="mono"
-                    style={{ fontSize: 11, color: "var(--ink-muted)" }}
+                    style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}
                     title={p.trackName}
                   >
                     {p.trackCode}
@@ -546,7 +562,7 @@ function OnboardingInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       fontWeight: 700,
                       textAlign: "right",
                       color:
@@ -602,7 +618,7 @@ function OnboardingInner() {
                   style={{
                     display: "flex",
                     gap: 9,
-                    fontSize: 12.5,
+                    fontSize: FS.base,
                     color: "var(--ink-muted)",
                     lineHeight: 1.55,
                   }}

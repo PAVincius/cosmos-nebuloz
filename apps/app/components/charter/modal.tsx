@@ -26,6 +26,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { DirtyCtx } from "./form-kit";
+import { FS } from "./type-scale";
 
 type ModalApi = { open: (n: ReactNode) => void; close: () => void };
 
@@ -220,13 +221,17 @@ function ModalHost({
                   <div
                     className="display"
                     id="charter-discard-title"
-                    style={{ fontSize: 15, fontWeight: 700, marginBottom: 5 }}
+                    style={{
+                      fontSize: FS.forte,
+                      fontWeight: 700,
+                      marginBottom: 5,
+                    }}
                   >
                     Descartar alterações?
                   </div>
                   <div
                     style={{
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       color: "var(--ink-muted)",
                       lineHeight: 1.55,
                     }}
@@ -355,7 +360,7 @@ export function ModalShell({
           <div
             className="display"
             style={{
-              fontSize: 17,
+              fontSize: FS.titulo,
               fontWeight: 700,
               letterSpacing: "-.02em",
               color: "var(--ink)",
@@ -366,7 +371,7 @@ export function ModalShell({
           {subtitle && (
             <div
               style={{
-                fontSize: 12.5,
+                fontSize: FS.base,
                 color: "var(--ink-muted)",
                 marginTop: 3,
                 lineHeight: 1.5,

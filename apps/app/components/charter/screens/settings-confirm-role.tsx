@@ -15,6 +15,7 @@ import {
 } from "@/app/(charter)/actions/settings";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { ModalShell, useModal } from "../modal";
+import { FS } from "../type-scale";
 
 /** Deriva a consequência da troca a partir da matriz de permissões que a
  *  própria tela já busca (data.permissions) — não duplica CHARTER_MATRIX. */
@@ -115,7 +116,7 @@ export function RoleChangeModal({
       >
         <p
           style={{
-            fontSize: 13,
+            fontSize: FS.base,
             color: "var(--ink-muted)",
             margin: 0,
             lineHeight: 1.6,
@@ -126,7 +127,7 @@ export function RoleChangeModal({
         {isSelf && (
           <p
             style={{
-              fontSize: 13,
+              fontSize: FS.base,
               color: "var(--red-text)",
               margin: 0,
               fontWeight: 600,

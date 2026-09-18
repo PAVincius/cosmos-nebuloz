@@ -39,6 +39,7 @@ import {
   Textarea,
 } from "../base";
 import { Callout } from "../form-kit";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 import { ImportQuickAddForm } from "./compliance-import";
 
@@ -161,13 +162,17 @@ function EvidenceBlock({ row }: { row: MapRow }) {
     return (
       <div>
         <div
-          style={{ fontSize: 12, fontWeight: 700, color: "var(--red-text)" }}
+          style={{
+            fontSize: FS.nota,
+            fontWeight: 700,
+            color: "var(--red-text)",
+          }}
         >
           Evidência indisponível
         </div>
         <div
           style={{
-            fontSize: 11.5,
+            fontSize: FS.nota,
             color: "var(--ink-faint)",
             marginTop: 2,
             lineHeight: 1.45,
@@ -187,7 +192,7 @@ function EvidenceBlock({ row }: { row: MapRow }) {
       <div>
         <div
           className="mono"
-          style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}
+          style={{ fontSize: FS.base, fontWeight: 700, color: "var(--ink)" }}
         >
           {row.evidencia.de === undefined
             ? `${row.evidencia.total} ${noun}`
@@ -201,7 +206,7 @@ function EvidenceBlock({ row }: { row: MapRow }) {
         {lacunas.length > 0 && (
           <div
             style={{
-              fontSize: 11.5,
+              fontSize: FS.nota,
               color: "var(--amber-text)",
               marginTop: 2,
               lineHeight: 1.45,
@@ -215,7 +220,7 @@ function EvidenceBlock({ row }: { row: MapRow }) {
     );
   }
   return (
-    <div style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+    <div style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}>
       Nenhuma evidência vinculada
     </div>
   );
@@ -449,20 +454,20 @@ function RequirementRow({
             <span
               className="mono"
               style={{
-                fontSize: 10.5,
+                fontSize: FS.micro,
                 fontWeight: 700,
                 color: "var(--ink-faint)",
               }}
             >
               {row.codigo}
             </span>
-            <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+            <span style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}>
               {row.citacao}
             </span>
           </div>
           <div
             style={{
-              fontSize: 13,
+              fontSize: FS.base,
               color: "var(--ink)",
               marginTop: 3,
               lineHeight: 1.5,
@@ -484,7 +489,11 @@ function RequirementRow({
           ainda, então a frase abaixo explica a origem do estado. */}
       {revisar && (
         <div
-          style={{ fontSize: 12, color: "var(--amber-text)", fontWeight: 700 }}
+          style={{
+            fontSize: FS.nota,
+            color: "var(--amber-text)",
+            fontWeight: 700,
+          }}
         >
           Motivo:{" "}
           {row.comentario ??
@@ -492,7 +501,7 @@ function RequirementRow({
         </div>
       )}
       {!revisar && row.comentario && (
-        <div style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+        <div style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}>
           Comentário: {row.comentario}
         </div>
       )}

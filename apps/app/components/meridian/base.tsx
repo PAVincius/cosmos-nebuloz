@@ -24,8 +24,8 @@
 // isso a casca do Meridian marca `.meridian-root`.
 
 // biome-ignore lint/performance/noBarrelFile: ponto único e deliberado de acoplamento com o Charter — ver comentário acima
+export { BackLink } from "@/components/charter/back-link";
 export {
-  BackLink,
   BarRow,
   type ChipOption,
   type ColumnLabel,

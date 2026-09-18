@@ -11,6 +11,7 @@
 import type { IconName } from "@repo/design-system/cosmos/icons";
 import type { ReactNode } from "react";
 import { GatedButton } from "../base";
+import { FS } from "../type-scale";
 
 export function GatedFooterAction({
   allowed,
@@ -40,7 +41,11 @@ export function GatedFooterAction({
       </GatedButton>
       {!allowed && (
         <span
-          style={{ fontSize: 11, color: "var(--ink-faint)", maxWidth: 220 }}
+          style={{
+            fontSize: FS.nota,
+            color: "var(--ink-faint)",
+            maxWidth: 220,
+          }}
         >
           {reason}
         </span>

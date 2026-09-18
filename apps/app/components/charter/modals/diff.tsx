@@ -8,6 +8,7 @@ import type { VersionDiff } from "@/app/(charter)/actions/policy";
 import { TableHead } from "../base";
 import { Callout, FooterHint, Kbd } from "../form-kit";
 import { ModalShell } from "../modal";
+import { FS } from "../type-scale";
 
 // ── 6. DiffModal (FR-2.6) ─────────────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ export function DiffModal({
         {diff.rows.length === 0 ? (
           <div
             style={{
-              fontSize: 12.5,
+              fontSize: FS.base,
               color: "var(--ink-muted)",
               padding: "20px 0",
               textAlign: "center",
@@ -85,7 +86,7 @@ export function DiffModal({
               >
                 <div
                   style={{
-                    fontSize: 12,
+                    fontSize: FS.nota,
                     fontWeight: 700,
                     color: "var(--ink)",
                     marginBottom: 8,
@@ -102,7 +103,7 @@ export function DiffModal({
                 >
                   <div
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       color: "var(--red-text)",
                       background: "var(--red-soft)",
                       padding: "8px 10px",
@@ -114,7 +115,7 @@ export function DiffModal({
                   </div>
                   <div
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       color: "var(--green-text)",
                       background: "var(--green-soft)",
                       padding: "8px 10px",

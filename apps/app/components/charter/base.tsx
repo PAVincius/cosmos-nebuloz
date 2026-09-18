@@ -17,6 +17,7 @@ import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Button, Progress, type Tone } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties, ReactNode, Ref } from "react";
 import { useEffect, useId, useState } from "react";
+import { FS } from "./type-scale";
 
 /** Rótulo lido por leitor de tela e invisível na tela. Usado em <legend> de
  *  fieldset, onde o texto visível já vem do <Field> acima. */
@@ -49,7 +50,7 @@ export function Eyebrow({
     <div
       className="mono"
       style={{
-        fontSize: 10,
+        fontSize: FS.micro,
         fontWeight: 700,
         letterSpacing: ".12em",
         textTransform: "uppercase",
@@ -59,43 +60,6 @@ export function Eyebrow({
     >
       {children}
     </div>
-  );
-}
-
-// ── BackLink ──────────────────────────────────────────────────────────────────
-
-/** Volta para a lista de origem no topo de toda tela de detalhe. `<button>` de
- *  verdade — a tela de detalhe é alcançável por URL direta e o retorno precisa
- *  ser focável pelo teclado. */
-export function BackLink({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 7,
-        marginBottom: 14,
-        padding: "6px 12px",
-        borderRadius: "var(--r-sm)",
-        border: "1px solid var(--hairline)",
-        background: "var(--surface-2)",
-        color: "var(--ink-muted)",
-        fontSize: 12.5,
-        fontWeight: 600,
-        cursor: "pointer",
-      }}
-      type="button"
-    >
-      <Icon name="arrowLeft" size={14} />
-      {label}
-    </button>
   );
 }
 
@@ -127,7 +91,7 @@ export function MetaCell({
       <span
         className={mono ? "mono" : undefined}
         style={{
-          fontSize: mono ? 12.5 : 13,
+          fontSize: FS.base,
           fontWeight: 700,
           color: tone ? `var(--${tone}-text)` : "var(--ink)",
           overflow: "hidden",
@@ -178,7 +142,7 @@ export function Tabs({
               borderBottom: `2px solid ${on ? "var(--accent)" : "transparent"}`,
               marginBottom: -1,
               padding: "9px 14px",
-              fontSize: 13,
+              fontSize: FS.base,
               fontWeight: on ? 700 : 600,
               color: on ? "var(--ink)" : "var(--ink-muted)",
               display: "flex",
@@ -192,7 +156,7 @@ export function Tabs({
               <span
                 className="mono"
                 style={{
-                  fontSize: 10.5,
+                  fontSize: FS.micro,
                   fontWeight: 700,
                   padding: "1px 6px",
                   borderRadius: 99,
@@ -258,7 +222,7 @@ export function FilterChips({
             style={{
               padding: "5px 11px",
               borderRadius: 99,
-              fontSize: 12,
+              fontSize: FS.nota,
               fontWeight: 700,
               cursor: "pointer",
               border: `1px solid ${on ? `rgba(var(--${tone}-rgb),.35)` : "var(--hairline)"}`,
@@ -317,7 +281,7 @@ export function Legend({
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            fontSize: 11.5,
+            fontSize: FS.nota,
             color: "var(--ink-muted)",
             fontWeight: 600,
           }}
@@ -388,7 +352,7 @@ export function BarRow({
         >
           <span
             style={{
-              fontSize: 12.5,
+              fontSize: FS.base,
               fontWeight: 600,
               color: "var(--ink)",
               overflow: "hidden",
@@ -401,7 +365,7 @@ export function BarRow({
           {hint && (
             <span
               style={{
-                fontSize: 11,
+                fontSize: FS.nota,
                 color: "var(--ink-faint)",
                 flexShrink: 0,
               }}
@@ -415,7 +379,7 @@ export function BarRow({
       <span
         className="mono"
         style={{
-          fontSize: 12.5,
+          fontSize: FS.base,
           fontWeight: 700,
           color: `var(--${tone}-text)`,
           textAlign: "right",
@@ -461,7 +425,7 @@ export function StatusDot({ tone, label }: { tone: Tone; label: string }) {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
-        fontSize: 12,
+        fontSize: FS.nota,
         fontWeight: 600,
         color: "var(--ink)",
       }}
@@ -515,7 +479,7 @@ export function TableHead({
             className="mono"
             key={text}
             style={{
-              fontSize: 10,
+              fontSize: FS.micro,
               fontWeight: 700,
               letterSpacing: ".06em",
               textTransform: "uppercase",
@@ -592,7 +556,7 @@ const CONTROL_STYLE: CSSProperties = {
   border: "1px solid var(--hairline)",
   background: "var(--surface-2)",
   color: "var(--ink)",
-  fontSize: 13,
+  fontSize: FS.base,
   fontWeight: 600,
   fontFamily: "inherit",
   outline: "none",
@@ -618,7 +582,7 @@ export function Field({
       <label
         htmlFor={htmlFor}
         style={{
-          fontSize: 11.5,
+          fontSize: FS.nota,
           fontWeight: 700,
           color: "var(--ink-muted)",
           display: "flex",
@@ -637,13 +601,17 @@ export function Field({
       {/* Erro antes de hint: quando os dois existem, o erro é o que importa. */}
       {error ? (
         <span
-          style={{ fontSize: 11.5, color: "var(--red-text)", fontWeight: 600 }}
+          style={{
+            fontSize: FS.nota,
+            color: "var(--red-text)",
+            fontWeight: 600,
+          }}
         >
           {error}
         </span>
       ) : (
         hint && (
-          <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+          <span style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}>
             {hint}
           </span>
         )
@@ -780,7 +748,7 @@ export function Segmented<T extends string>({
               padding: "6px 10px",
               borderRadius: "var(--r-xs)",
               border: "none",
-              fontSize: 12,
+              fontSize: FS.nota,
               fontWeight: 700,
               cursor: "pointer",
               background: on ? `var(--${tone}-soft)` : "transparent",
@@ -935,12 +903,12 @@ export function SmartEmptyState({
       >
         <Icon name={icon} size={20} />
       </div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)" }}>
+      <div style={{ fontSize: FS.forte, fontWeight: 700, color: "var(--ink)" }}>
         {title}
       </div>
       <div
         style={{
-          fontSize: 12.5,
+          fontSize: FS.base,
           color: "var(--ink-muted)",
           maxWidth: 400,
           lineHeight: 1.6,
@@ -1000,12 +968,12 @@ export function ScreenError({
       >
         <Icon name="alert" size={20} />
       </div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink)" }}>
+      <div style={{ fontSize: FS.forte, fontWeight: 700, color: "var(--ink)" }}>
         Não foi possível carregar
       </div>
       <div
         style={{
-          fontSize: 12.5,
+          fontSize: FS.base,
           color: "var(--ink-muted)",
           maxWidth: 420,
           lineHeight: 1.6,
@@ -1023,7 +991,7 @@ export function ScreenError({
           border: "1px solid var(--hairline-strong)",
           background: "var(--surface-2)",
           color: "var(--ink)",
-          fontSize: 12.5,
+          fontSize: FS.base,
           fontWeight: 700,
           cursor: "pointer",
         }}
@@ -1089,7 +1057,7 @@ export function GatedButton({
         gap: 7,
         padding: "8px 14px",
         borderRadius: "var(--r-sm)",
-        fontSize: 12.5,
+        fontSize: FS.base,
         fontWeight: 700,
         cursor: allowed ? "pointer" : "not-allowed",
         opacity: allowed ? 1 : 0.5,
