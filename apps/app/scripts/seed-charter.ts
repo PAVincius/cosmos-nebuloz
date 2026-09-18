@@ -53,6 +53,9 @@ import {
   vendorEligibility,
 } from "../lib/charter/rules";
 
+// Departamento padrão do seed ("Atendimento"); nome curto para caber em 80 colunas.
+const DEPT = INTAKE_DEPARTMENTS[1];
+
 type Tx = Prisma.TransactionClient;
 
 const TENANT_SLUG = process.argv[2] ?? "medcore";
@@ -450,7 +453,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-115",
     title: "Resumo de prontuário para equipe clínica",
-    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
+    dept: DEPT,
     owner: "Dra. Helena Braz",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -570,7 +573,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-109",
     title: "Geração de laudo preliminar por imagem",
-    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
+    dept: DEPT,
     owner: "Dr. Ivo Mattos",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -774,7 +777,7 @@ const TRACKS = [
 const NAMED_PENDING = [
   {
     name: "Dr. Ivo Mattos",
-    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
+    dept: DEPT,
     track: "TR-02",
     assignedDaysAgo: 34,
   },
@@ -792,12 +795,7 @@ const NAMED_PENDING = [
     assignedDaysAgo: 23,
   },
   { name: "Lia Costa", dept: "Marketing", track: "TR-04", assignedDaysAgo: 20 },
-  {
-    name: "Helena Braz",
-    dept: INTAKE_DEPARTMENTS[1], // "Atendimento"
-    track: "TR-05",
-    assignedDaysAgo: 19,
-  },
+  { name: "Helena Braz", dept: DEPT, track: "TR-05", assignedDaysAgo: 19 },
 ];
 
 const FIRST_NAMES = [
@@ -844,17 +842,7 @@ const LAST_NAMES = [
   "Vieira",
   "Xavier",
 ];
-const DEPARTMENTS = [
-  INTAKE_DEPARTMENTS[1], // "Atendimento"
-  "Operações",
-  "Engenharia",
-  "CX",
-  "Marketing",
-  "Financeiro",
-  "Legal",
-  "Growth",
-  "People Ops",
-];
+const DEPARTMENTS = INTAKE_DEPARTMENTS;
 
 /** Nome sintético determinístico — o seed precisa ser reproduzível. */
 function syntheticPerson(i: number) {
