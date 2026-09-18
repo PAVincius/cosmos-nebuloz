@@ -16,6 +16,7 @@ import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { Vazio } from "@/components/vazio";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState, useSubstituirParams } from "@/lib/url-state";
 
@@ -551,18 +552,7 @@ export function Estudio({
           </>
         ) : (
           <SectionCard title="Nenhum diagrama aberto">
-            <p
-              style={{
-                margin: 0,
-                padding: 24,
-                textAlign: "center",
-                fontSize: "var(--fs-base)",
-                lineHeight: 1.6,
-                color: "var(--ink-muted)",
-              }}
-            >
-              Escolha um diagrama na lista para editar.
-            </p>
+            <Vazio>Escolha um diagrama na lista para editar.</Vazio>
           </SectionCard>
         )}
       </div>

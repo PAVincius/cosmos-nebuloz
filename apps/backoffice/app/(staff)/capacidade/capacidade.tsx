@@ -18,6 +18,7 @@ import {
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import { Vazio } from "@/components/vazio";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { FormularioDeCapacidade } from "./formulario";
 
@@ -476,19 +477,10 @@ export function Capacidade({
         ) : null}
 
         {lista.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Nenhuma pessoa cadastrada. Sem equipe registrada não dá para
             responder se um engajamento novo cabe.
-          </p>
+          </Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {lista.map((p, i) => (

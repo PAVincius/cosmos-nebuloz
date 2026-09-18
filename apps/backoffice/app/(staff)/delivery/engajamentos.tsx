@@ -11,7 +11,9 @@ import {
 } from "@/app/actions/engagements";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
 
@@ -102,6 +104,7 @@ function LinhaEngajamento({
   primeira,
   podeEscrever,
   mudando,
+  confirmacao,
   onStatus,
 }: {
   e: EngagementRow;
@@ -110,6 +113,8 @@ function LinhaEngajamento({
   /** Transição em curso nesta linha, se houver — os outros botões da linha
    *  travam junto, só o clicado diz "Mudando…". */
   mudando: StatusEngajamento | null;
+  /** "Deu certo" desta linha — nasce aqui, junto do botão que agiu. */
+  confirmacao: string | null;
   onStatus: (id: string, status: StatusEngajamento) => void;
 }) {
   const terminal = e.proximos.length === 0;
@@ -192,6 +197,11 @@ function LinhaEngajamento({
             )
           )
         : null}
+      {confirmacao ? (
+        <span style={{ flexBasis: "100%" }}>
+          <Confirmacao>{confirmacao}</Confirmacao>
+        </span>
+      ) : null}
     </li>
   );
 }
@@ -263,7 +273,12 @@ export function Engajamentos({
   const [lista, setLista] = useState(iniciais);
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [confirmacao, setConfirmacao] = useState<string | null>(null);
+  // Presa ao engajamento: a frase aparece na linha que mudou (ou nasceu), não
+  // no topo da lista, longe do botão que a pessoa acabou de clicar.
+  const [confirmacao, setConfirmacao] = useState<{
+    id: string;
+    texto: string;
+  } | null>(null);
   const [form, setForm] = useState(FORM_VAZIO);
   // Duas transições separadas: criar e mudar status são escritas diferentes,
   // e o pendente de uma não pode travar a outra. `mudando` guarda id e alvo
@@ -327,7 +342,10 @@ export function Engajamentos({
           },
           ...atual,
         ]);
-        setConfirmacao(`Engajamento ${res.data.codigo} criado como proposto.`);
+        setConfirmacao({
+          id: res.data.id,
+          texto: `Engajamento ${res.data.codigo} criado como proposto.`,
+        });
         setCriando(false);
         setForm(FORM_VAZIO);
       });
@@ -345,7 +363,10 @@ export function Engajamentos({
         if (res.ok) {
           await recarregar();
           const codigo = lista.find((e) => e.id === id)?.codigo ?? id;
-          setConfirmacao(`${codigo} agora está ${ROTULO_STATUS[status]}.`);
+          setConfirmacao({
+            id,
+            texto: `${codigo} agora está ${ROTULO_STATUS[status]}.`,
+          });
         } else {
           setErro(res.error);
         }
@@ -367,22 +388,6 @@ export function Engajamentos({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
       <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
-      {confirmacao ? (
-        <output
-          style={{
-            display: "block",
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {confirmacao}
-        </output>
-      ) : null}
 
       <SectionCard
         action={
@@ -543,24 +548,18 @@ export function Engajamentos({
         ) : null}
 
         {lista.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Nenhum engajamento. Um engajamento nasce proposto e só vira ativo
             quando alguém confirma — nascer ativo faria a receita entrar antes
             do aceite.
-          </p>
+          </Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {lista.map((e, i) => (
               <LinhaEngajamento
+                confirmacao={
+                  confirmacao?.id === e.id ? confirmacao.texto : null
+                }
                 e={e}
                 key={e.id}
                 mudando={mudando?.id === e.id ? mudando.status : null}

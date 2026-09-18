@@ -8,6 +8,7 @@ import {
 } from "@/app/actions/scaffold";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 
 const SEVERIDADE_ROTULO: Record<string, string> = {
@@ -205,19 +206,10 @@ export function Scaffold({
         title="Fila de Scaffold"
       >
         {grupos.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Nenhuma promoção pendente. Uma lacuna promovida para Scaffold no
             Meridian aparece aqui até virar engajamento.
-          </p>
+          </Vazio>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {grupos.map((g) => (

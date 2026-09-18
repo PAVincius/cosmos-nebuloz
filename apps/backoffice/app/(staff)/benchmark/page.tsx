@@ -4,7 +4,6 @@ import {
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import {
   type Benchmark,
   type ClienteBenchmark,
@@ -12,6 +11,7 @@ import {
   type ServicoBenchmark,
 } from "@/app/actions/benchmark";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 
 export const dynamic = "force-dynamic";
@@ -33,25 +33,6 @@ const CELULA = {
   borderTop: "1px solid var(--hairline)",
   fontSize: "var(--fs-base)",
 };
-
-/** Vazio que ensina, no tom do catálogo: diz o que alimenta a tabela e o que
- *  fazer — um <thead> sem linha não dizia se era falta de dado ou falha. */
-function Vazio({ children }: { children: ReactNode }) {
-  return (
-    <p
-      style={{
-        margin: 0,
-        padding: 28,
-        textAlign: "center",
-        fontSize: "var(--fs-base)",
-        lineHeight: 1.6,
-        color: "var(--ink-muted)",
-      }}
-    >
-      {children}
-    </p>
-  );
-}
 
 /**
  * Barra proporcional ao maior valor da coluna.

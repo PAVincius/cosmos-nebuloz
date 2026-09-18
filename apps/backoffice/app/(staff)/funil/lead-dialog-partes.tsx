@@ -202,13 +202,7 @@ export function CartoesResumo({
   ];
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 10,
-      }}
-    >
+    <div className="bo-kpis" style={{ gap: 10 }}>
       {cartoes.map((c) => (
         <div
           key={c.rotulo}

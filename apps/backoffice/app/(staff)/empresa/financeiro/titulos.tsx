@@ -330,13 +330,7 @@ export function Titulos({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "repeat(5, 1fr)",
-        }}
-      >
+      <div className="bo-kpis bo-kpis-5">
         {faixas.map((f) => (
           <CartaoFaixa faixa={f} key={f.id} />
         ))}

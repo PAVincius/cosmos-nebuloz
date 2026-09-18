@@ -1,6 +1,7 @@
 import { Badge } from "@repo/design-system/cosmos/kit";
 import type { LeadRow } from "@/app/actions/leads";
 import { Celula, Tabela, TableHead } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
   type ConfigEstagio,
@@ -230,19 +231,7 @@ export function TabelaLeads({
   );
 
   if (ordenados.length === 0) {
-    return (
-      <p
-        style={{
-          margin: 0,
-          padding: 28,
-          textAlign: "center",
-          fontSize: "var(--fs-base)",
-          color: "var(--ink-muted)",
-        }}
-      >
-        Nenhum lead neste filtro.
-      </p>
-    );
+    return <Vazio>Nenhum lead neste filtro.</Vazio>;
   }
 
   return (

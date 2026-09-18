@@ -266,7 +266,7 @@ function Formulario({
       {erro ? <Erro>{erro}</Erro> : null}
       {mostrarAvisoMigrada ? <Erro>{VALOR_MIGRADO_INVALIDO}</Erro> : null}
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="lc-competencia" label="Competência">
           <input
             id="lc-competencia"
@@ -316,7 +316,7 @@ function Formulario({
         />
       </Campo>
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo
           hint={`grava ${formatarBRL(form.valor.trim() ? paraCentavos(form.valor) : 0)}`}
           htmlFor="lc-valor"
@@ -341,7 +341,7 @@ function Formulario({
         </Campo>
       </div>
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo hint="opcional" htmlFor="lc-documento" label="Documento">
           <input
             id="lc-documento"

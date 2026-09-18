@@ -140,13 +140,7 @@ export function CartoesEstagio({
   const estagnados = contarEstagnados(leads, cfg.tetoDias, hoje);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 10,
-      }}
-    >
+    <div className="bo-kpis" style={{ gap: 10 }}>
       <KpiCard
         hint={`${formatarBRL(valorAgora)} · ponderado ${formatarBRL(ponderado)}`}
         icon="wallet"
@@ -528,7 +522,7 @@ export function EditorDeEstagio({
           value={criteriosTexto}
         />
       </Campo>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="bo-duas-colunas">
         <Campo
           hint="Multiplica o valor no pipeline ponderado."
           htmlFor="ee-peso"

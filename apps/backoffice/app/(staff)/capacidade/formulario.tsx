@@ -53,8 +53,9 @@ function CardsDeTipo({
   return (
     <div
       aria-label="Tipo"
+      className="bo-duas-colunas"
       role="radiogroup"
-      style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}
+      style={{ gap: 8 }}
     >
       {TIPOS.map((t) => {
         const ativo = t.id === tipo;

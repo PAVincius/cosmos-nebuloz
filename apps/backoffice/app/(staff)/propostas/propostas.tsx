@@ -9,7 +9,9 @@ import {
   submitProposalAction,
 } from "@/app/actions/proposals";
 import { BotaoPrimario, Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Vazio } from "@/components/vazio";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 
@@ -34,6 +36,7 @@ function LinhaProposta({
   podeEscrever,
   primeira,
   enviando,
+  confirmacao,
   onEnviar,
 }: {
   p: ProposalRow;
@@ -41,6 +44,8 @@ function LinhaProposta({
   primeira: boolean;
   /** Esta linha está no ar — o Confirmar da barreira trava e diz. */
   enviando: boolean;
+  /** "Deu certo" desta proposta — nasce na linha dela, não no topo. */
+  confirmacao: string | null;
   onEnviar: (id: string) => void;
 }) {
   const acimaDoLimite = p.descontoPercent > LIMITE_DESCONTO_SEM_APROVACAO;
@@ -57,6 +62,7 @@ function LinhaProposta({
       style={{
         display: "flex",
         alignItems: "center",
+        flexWrap: "wrap",
         gap: 12,
         padding: "11px 2px",
         borderTop: primeira ? "none" : "1px solid var(--hairline)",
@@ -134,8 +140,20 @@ function LinhaProposta({
           tom="accent"
         />
       ) : null}
+      {confirmacao ? (
+        <span style={{ flexBasis: "100%" }}>
+          <Confirmacao>{confirmacao}</Confirmacao>
+        </span>
+      ) : null}
     </li>
   );
+}
+
+/** A frase de envio, pelo título — "enviado com sucesso" não diz qual saiu. */
+function fraseDeEnvio(p: ProposalRow): string {
+  const destino =
+    p.status === "AGUARDANDO_APROVACAO" ? " para a fila de aprovação" : "";
+  return `Proposta «${p.titulo}» enviada${destino}.`;
 }
 
 export function Propostas({
@@ -152,13 +170,9 @@ export function Propostas({
   // barreira não chama de novo (o botão trava e diz "Executando…").
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
 
-  // O gerador chega aqui com `?enviada=<id>` depois de enviar. Confirmar pelo
-  // título, e não com um "enviado com sucesso" genérico: é a frase que diz
-  // qual proposta saiu — e para um id que não está na lista, nada.
+  // O gerador chega aqui com `?enviada=<id>` depois de enviar. A confirmação
+  // nasce na linha dessa proposta — e para um id que não está na lista, nada.
   const enviadaId = useSearchParams().get("enviada");
-  const enviada = enviadaId
-    ? iniciais.find((p) => p.id === enviadaId)
-    : undefined;
 
   const enviar = useCallback(async (id: string) => {
     setErro(null);
@@ -181,26 +195,6 @@ export function Propostas({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      {enviada ? (
-        <output
-          style={{
-            display: "block",
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          Proposta «{enviada.titulo}» enviada
-          {enviada.status === "AGUARDANDO_APROVACAO"
-            ? " para a fila de aprovação"
-            : ""}
-          .
-        </output>
-      ) : null}
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
@@ -220,25 +214,17 @@ export function Propostas({
         title="Pipeline"
       >
         {lista.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Nenhuma proposta ainda. Uma proposta nasce em rascunho e só sai
             daqui quando alguém a envia — acima de{" "}
             {LIMITE_DESCONTO_SEM_APROVACAO}% de desconto, passando pela fila de
             aprovação.
-          </p>
+          </Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {lista.map((p, i) => (
               <LinhaProposta
+                confirmacao={p.id === enviadaId ? fraseDeEnvio(p) : null}
                 enviando={enviandoId === p.id}
                 key={p.id}
                 onEnviar={enviar}

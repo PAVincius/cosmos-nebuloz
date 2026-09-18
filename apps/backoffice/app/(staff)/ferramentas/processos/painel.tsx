@@ -174,7 +174,7 @@ export function Painel({
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas" style={{ gap: 8 }}>
         <CartaoMetrica label="Status">
           <Badge tone={STATUS[status].tom}>{STATUS[status].rotulo}</Badge>
         </CartaoMetrica>

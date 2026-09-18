@@ -584,13 +584,7 @@ export function Recorrente({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(4, 1fr)",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           icon="dollar"
           label="MRR"

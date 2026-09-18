@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { type ContaComSaude, listAccountHealth } from "@/app/actions/accounts";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { Vazio } from "@/components/vazio";
 import {
   DIAS_PARA_RENOVACAO,
   DIAS_SEM_ATIVIDADE,
@@ -201,17 +202,7 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
         title="Contas"
       >
         {contas.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              color: "var(--ink-muted)",
-            }}
-          >
-            Nenhum cliente na carteira ainda.
-          </p>
+          <Vazio>Nenhum cliente na carteira ainda.</Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {contas.map((c, i) => (

@@ -10,6 +10,7 @@ import {
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
 /**
@@ -359,19 +360,10 @@ export function Catalogo({
         ) : null}
 
         {lista.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Catálogo vazio. Sem serviço cadastrado, proposta vira texto livre e
             o Benchmark fica sem eixo de comparação.
-          </p>
+          </Vazio>
         ) : (
           <ul
             style={{

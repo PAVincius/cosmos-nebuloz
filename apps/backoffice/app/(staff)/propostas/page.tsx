@@ -73,13 +73,7 @@ export default async function PropostasPage() {
         title="Propostas"
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-          gap: "var(--gap)",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint={`${abertas.length} em aberto`}
           icon="tag"

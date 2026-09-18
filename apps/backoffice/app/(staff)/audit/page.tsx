@@ -6,6 +6,7 @@ import {
   listAuditTenants,
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { Vazio } from "@/components/vazio";
 import { Filtros, Paginacao } from "./filtros";
 import { ACOES } from "./rotulos";
 
@@ -181,19 +182,10 @@ function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
   if (pagina.data.eventos.length === 0) {
     // Empty com saída: diz o que fazer, não só que não achou.
     return (
-      <p
-        style={{
-          margin: 0,
-          padding: 28,
-          textAlign: "center",
-          fontSize: "var(--fs-base)",
-          lineHeight: 1.6,
-          color: "var(--ink-muted)",
-        }}
-      >
+      <Vazio>
         Nenhum evento neste filtro. Amplie o período ou limpe o cliente para ver
         a plataforma inteira.
-      </p>
+      </Vazio>
     );
   }
 

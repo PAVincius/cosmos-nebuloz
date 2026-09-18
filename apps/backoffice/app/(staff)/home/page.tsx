@@ -12,6 +12,7 @@ import {
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { Erro } from "@/components/campo";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
 
@@ -135,20 +136,11 @@ function Conteudo({
 
       {tudoCalmo ? (
         <SectionCard icon="check" title="Nada exige atenção" tone="green">
-          <p
-            style={{
-              margin: 0,
-              padding: 20,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Sem aprovação parada, sem integração com erro e sem acesso recusado.
             Esta tela fica vazia quando está tudo bem — é o comportamento
             pretendido, não falta de dado.
-          </p>
+          </Vazio>
         </SectionCard>
       ) : (
         <SectionCard
@@ -202,17 +194,7 @@ function Conteudo({
         title="Eventos de auditoria"
       >
         {saude.ultimosEventos.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 20,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              color: "var(--ink-muted)",
-            }}
-          >
-            Nada registrado ainda.
-          </p>
+          <Vazio>Nada registrado ainda.</Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {saude.ultimosEventos.map((e, i) => (

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { decidePlatformApprovalAction } from "@/app/actions/approvals";
 import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 
@@ -20,8 +21,8 @@ import { WriteButton } from "@/components/write-button";
  * vira Enviada) e grava a decisão com o nome de quem aprovou. Aprovar era um
  * clique só, e é a operação com mais efeito da tela.
  *
- * O fim é anunciado num `<output role="status">` no lugar dos botões; o
- * cartão em volta troca para "Aprovado por X em…" quando a lista relê.
+ * O fim é anunciado num `<Confirmacao>` (status polite) no lugar dos botões;
+ * o cartão em volta troca para "Aprovado por X em…" quando a lista relê.
  */
 
 const CONSEQUENCIA: Record<"APPROVED" | "REJECTED", string> = {
@@ -74,21 +75,9 @@ export function Decisao({
 
   if (decidido) {
     return (
-      <output
-        style={{
-          display: "block",
-          marginTop: 12,
-          padding: "9px 11px",
-          borderRadius: "var(--r-md)",
-          background: "var(--green-soft)",
-          border: "1px solid rgba(var(--green-rgb),.3)",
-          color: "var(--green-text)",
-          fontSize: "var(--fs-base)",
-          fontWeight: 600,
-        }}
-      >
-        {FIM[decidido]}
-      </output>
+      <div style={{ marginTop: 12 }}>
+        <Confirmacao>{FIM[decidido]}</Confirmacao>
+      </div>
     );
   }
 

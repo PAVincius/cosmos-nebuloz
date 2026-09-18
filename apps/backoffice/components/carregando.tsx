@@ -145,13 +145,7 @@ function Tabela({ linhas = 8 }: { linhas?: number }) {
 /** O gerador de proposta: formulário à esquerda, documento à direita. */
 function Documento() {
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: "var(--gap)",
-        gridTemplateColumns: "1fr 1fr",
-      }}
-    >
+    <div className="bo-duas-colunas" style={{ gap: "var(--gap)" }}>
       <Cartao linhas={6} />
       <Cartao linhas={9} />
     </div>

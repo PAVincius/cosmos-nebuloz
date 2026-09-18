@@ -4,6 +4,7 @@ import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { MetaCell } from "@/components/meta-cell";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import {
   type ComparacaoDeSchema,
   EXPLICACAO_ESTADO,
@@ -215,21 +216,12 @@ export default async function VersaoPage() {
           // Vazio que ensina: tabela sem linha não diz se o banco é novo ou
           // se a leitura falhou. Aqui a leitura deu certo e a tabela do
           // banco está vazia — é o que a frase precisa dizer.
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Nenhuma migration registrada em _prisma_migrations. O código deste
             deploy lista {schema.totalDoCodigo}: este banco nunca recebeu um
             migrate deploy, ou a tabela foi zerada — o veredito acima é o que
             manda.
-          </p>
+          </Vazio>
         ) : (
           <Tabela larguras={LARGURAS}>
             <TableHead labels={["Migration", "Estado", "Aplicada em"]} />

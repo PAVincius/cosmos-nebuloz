@@ -270,14 +270,7 @@ function Conteudo({
         tone={info.tom}
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)",
-          gap: 14,
-          alignItems: "start",
-        }}
-      >
+      <div className="bo-duas-colunas" style={{ gap: 14, alignItems: "start" }}>
         {editando ? (
           <EditorDeEstagio
             criteriosTexto={criteriosTexto}
