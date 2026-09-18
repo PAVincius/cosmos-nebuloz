@@ -267,10 +267,14 @@ function ColunaDoEstagio({
   onDragOverColuna,
   onDragLeaveColuna,
   onDropColuna,
+  ocupada = false,
 }: {
   coluna: Coluna;
   podeEscrever: boolean;
   arrastando: string | null;
+  /** Há uma mudança de estágio em curso: a coluna anuncia `aria-busy` e não
+   *  aceita drop até a releitura. */
+  ocupada?: boolean;
   sobreColuna: boolean;
   hoje: Date;
   estagios: ConfigEstagio[];
@@ -301,6 +305,7 @@ function ColunaDoEstagio({
   return (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: alvo nativo de drag-and-drop HTML5, sem equivalente de teclado — cartão e cabeçalho (buttons) cobrem o resto
     <fieldset
+      aria-busy={ocupada || undefined}
       aria-label={`Coluna ${coluna.rotulo}`}
       onDragLeave={onDragLeaveColuna}
       onDragOver={aoArrastarSobre}
@@ -459,11 +464,16 @@ export function Board({
   onMover,
   onConverter,
   onPerder,
+  movendo = null,
 }: {
   leads: LeadRow[];
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
+  /** Id do lead cuja mudança de estágio está em curso. Enquanto existe, o
+   *  board recusa outro drop: um segundo arraste antes da releitura
+   *  dispararia outra action sobre a lista velha. */
+  movendo?: string | null;
   onAbrirEstagio: (codigo: Estagio) => void;
   onAbrirLead: (id: string) => void;
   onMover: (id: string, estagio: EstagioAberto) => void;
@@ -491,7 +501,8 @@ export function Board({
 
   function soltarEmColuna(codigo: Estagio) {
     setSobre(null);
-    if (!arrastando) {
+    if (!arrastando || movendo) {
+      setArrastando(null);
       return;
     }
     const lead = leads.find((l) => l.id === arrastando);
@@ -553,6 +564,7 @@ export function Board({
             estagios={estagios}
             hoje={hoje}
             key={coluna.codigo}
+            ocupada={movendo !== null}
             onAbrirEstagio={onAbrirEstagio}
             onAbrirLead={onAbrirLead}
             onDragEndCard={finalizarArraste}
