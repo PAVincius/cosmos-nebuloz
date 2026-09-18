@@ -12,6 +12,7 @@ import {
 } from "@/app/actions/empresa/cac";
 import { BotaoPrimario, Erro, INPUT, rotuloSalvar } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDePeriodo } from "@/components/seletor-de-periodo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import {
@@ -19,8 +20,9 @@ import {
   formatarBRL,
   paraCentavos,
 } from "@/lib/comercial/formato";
-import { PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
+import { type Intervalo, PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
 import type { ContaDoCac } from "@/lib/empresa/plano-de-contas";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 const rotuloValor = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 
@@ -445,6 +447,26 @@ export function Painel({
 
   const r = view.resultado;
   const sujo = haAlteracao(form, view.parcelas);
+  useAvisoAoSair(sujo);
+
+  // Trocar o período é `router.push`, e a página remonta com `key` — o
+  // rascunho ia junto sem pergunta. Sujo, o intervalo pedido fica guardado
+  // até a pessoa responder; limpo, navega direto.
+  const [periodoPendente, setPeriodoPendente] = useState<Intervalo | null>(
+    null
+  );
+  const irParaPeriodo = (i: Intervalo) =>
+    router.push(
+      `/empresa/cac?de=${encodeURIComponent(i.de)}&ate=${encodeURIComponent(i.ate)}`
+    );
+  const pedirPeriodo = (i: Intervalo) => {
+    if (sujo) {
+      setPeriodoPendente(i);
+      return;
+    }
+    irParaPeriodo(i);
+  };
+
   const { podeEditar, podeSalvar, estiloDoCampo } = modoDeEdicao({
     editavel: view.editavel,
     podeEscrever,
@@ -471,11 +493,7 @@ export function Painel({
         }}
       >
         <SeletorDePeriodo
-          onAplicar={(i) =>
-            router.push(
-              `/empresa/cac?de=${encodeURIComponent(i.de)}&ate=${encodeURIComponent(i.ate)}`
-            )
-          }
+          onAplicar={pedirPeriodo}
           presets={PRESETS_COMPETENCIA}
           valor={view.intervalo}
         />
@@ -490,6 +508,13 @@ export function Painel({
           </BotaoPrimario>
         ) : null}
       </div>
+      {periodoPendente ? (
+        <PerguntaDescartar
+          explicacao="As parcelas editadas e ainda não salvas somem ao trocar o período. Para manter, volte e salve antes."
+          onDescartar={() => irParaPeriodo(periodoPendente)}
+          onVoltar={() => setPeriodoPendente(null)}
+        />
+      ) : null}
       {view.editavel ? null : (
         <p
           style={{

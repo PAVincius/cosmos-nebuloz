@@ -18,6 +18,7 @@ import {
 } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 const ROTULO_BASE = {
   SEM_DECISAO: "Sem decisão",
@@ -355,6 +356,7 @@ export function Painel({
     form.ferramenta !== (view.decisao.ferramenta ?? "") ||
     form.prazoRetencao !== (view.decisao.prazoRetencao ?? "") ||
     form.contatoTitular !== (view.decisao.contatoTitular ?? "");
+  useAvisoAoSair(sujo);
 
   const recarregar = useCallback(async () => {
     const res = await lerConsentimento();

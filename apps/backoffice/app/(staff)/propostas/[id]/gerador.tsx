@@ -232,9 +232,15 @@ export function Gerador({
     descontoPercent: desconto,
     servicoIds,
   };
-  /** A tela está à frente do que foi gravado. */
-  const sujo =
-    salvo !== null && assinaturaDoEscopo(escopoAtual) !== salvo.assinatura;
+  // Proposta nova não tem `salvo`; a referência é o formulário como abriu.
+  // Sem isso, fechar a aba com a proposta inteira digitada não avisava.
+  const [assinaturaInicial] = useState(() => assinaturaDoEscopo(escopoAtual));
+  const assinatura = assinaturaDoEscopo(escopoAtual);
+  /** A tela está à frente do que foi gravado (ou do que abriu, se nunca
+   *  gravou). */
+  const sujo = salvo
+    ? assinatura !== salvo.assinatura
+    : assinatura !== assinaturaInicial;
   useAvisoAoSair(sujo);
 
   /** Grava o escopo e devolve o id — `null` quando o servidor recusou (o erro
