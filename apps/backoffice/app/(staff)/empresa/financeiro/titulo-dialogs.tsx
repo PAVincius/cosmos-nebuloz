@@ -17,6 +17,13 @@ import type {
 } from "@/app/actions/empresa/titulos";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { formatarBRL } from "@/lib/comercial/formato";
 import type { TituloRow } from "@/lib/empresa/livro";
 import {
@@ -88,11 +95,13 @@ export function BaixarDialog({
   onClose: () => void;
   onBaixar: (input: BaixarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={titulo !== null}
@@ -106,9 +115,17 @@ export function BaixarDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {titulo ? (
           <FormularioBaixar
             key={titulo.id}
+            marcarSujo={guarda.marcarSujo}
             onBaixar={onBaixar}
             onClose={onClose}
             titulo={titulo}
@@ -121,16 +138,22 @@ export function BaixarDialog({
 
 function FormularioBaixar({
   titulo,
+  marcarSujo,
   onClose,
   onBaixar,
 }: {
   titulo: TituloRow;
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onBaixar: (input: BaixarInput) => Promise<Result<{ id: string }>>;
 }) {
-  const [form, setForm] = useState<FormBaixar>(formBaixarInicial);
+  // O inicial guardado: `formBaixarInicial()` lê o relógio, e o rascunho é a
+  // diferença para o que nasceu, não para "agora".
+  const [inicial] = useState<FormBaixar>(formBaixarInicial);
+  const [form, setForm] = useState<FormBaixar>(inicial);
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, inicial), marcarSujo);
   const mesDivergente = form.data.slice(0, 7) !== form.competencia;
   const incompleto = form.data === "" || form.competencia === "";
 
@@ -223,11 +246,13 @@ export function CancelarDialog({
   onClose: () => void;
   onCancelar: (input: CancelarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={titulo !== null}
@@ -241,9 +266,17 @@ export function CancelarDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {titulo ? (
           <FormularioCancelar
             key={titulo.id}
+            marcarSujo={guarda.marcarSujo}
             onCancelar={onCancelar}
             onClose={onClose}
             titulo={titulo}
@@ -256,16 +289,19 @@ export function CancelarDialog({
 
 function FormularioCancelar({
   titulo,
+  marcarSujo,
   onClose,
   onCancelar,
 }: {
   titulo: TituloRow;
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCancelar: (input: CancelarInput) => Promise<Result<{ id: string }>>;
 }) {
   const [motivo, setMotivo] = useState("");
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(motivo.trim() !== "", marcarSujo);
 
   async function cancelar() {
     setErro(null);

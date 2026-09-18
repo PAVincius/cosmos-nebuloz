@@ -18,6 +18,13 @@ import type {
 } from "@/app/actions/empresa/recorrente";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { hojeIso } from "@/lib/empresa/periodo";
 import type { AssinaturaRow } from "@/lib/empresa/recorrente";
@@ -75,21 +82,31 @@ export function AlterarValorDialog({
   onClose: () => void;
   onAlterar: (input: AlterarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={assinatura !== null}
     >
       <DialogContent className="sm:max-w-md" style={ESTILO_DIALOGO}>
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {assinatura ? (
           <FormularioAlterar
             assinatura={assinatura}
             competenciaInicial={competencia}
             key={assinatura.id}
+            marcarSujo={guarda.marcarSujo}
             onAlterar={onAlterar}
             onClose={onClose}
           />
@@ -102,11 +119,13 @@ export function AlterarValorDialog({
 function FormularioAlterar({
   assinatura,
   competenciaInicial,
+  marcarSujo,
   onClose,
   onAlterar,
 }: {
   assinatura: AssinaturaRow;
   competenciaInicial: string;
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onAlterar: (input: AlterarInput) => Promise<Result<{ id: string }>>;
 }) {
@@ -115,6 +134,10 @@ function FormularioAlterar({
   );
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(
+    rascunhoMudou(form, formAlterarInicial(competenciaInicial)),
+    marcarSujo
+  );
 
   async function salvar() {
     setErro(null);
@@ -216,20 +239,30 @@ export function EncerrarDialog({
   onClose: () => void;
   onEncerrar: (input: EncerrarInput) => Promise<Result<{ id: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={assinatura !== null}
     >
       <DialogContent className="sm:max-w-md" style={ESTILO_DIALOGO}>
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {assinatura ? (
           <FormularioEncerrar
             assinatura={assinatura}
             key={assinatura.id}
+            marcarSujo={guarda.marcarSujo}
             onClose={onClose}
             onEncerrar={onEncerrar}
           />
@@ -241,17 +274,26 @@ export function EncerrarDialog({
 
 function FormularioEncerrar({
   assinatura,
+  marcarSujo,
   onClose,
   onEncerrar,
 }: {
   assinatura: AssinaturaRow;
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onEncerrar: (input: EncerrarInput) => Promise<Result<{ id: string }>>;
 }) {
-  const [data, setData] = useState(hojeIso);
+  // A data nasce em "hoje" e guarda o valor de nascença: o rascunho é a
+  // diferença para ele, não para o relógio.
+  const [dataInicial] = useState(hojeIso);
+  const [data, setData] = useState(dataInicial);
   const [motivo, setMotivo] = useState("");
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(
+    motivo.trim() !== "" || data !== dataInicial,
+    marcarSujo
+  );
 
   async function encerrar() {
     setErro(null);
@@ -341,21 +383,31 @@ export function CreditoDialog({
     input: CreditoInput
   ) => Promise<Result<{ clienteSlug: string; competencia: string }>>;
 }) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={assinatura !== null}
     >
       <DialogContent className="sm:max-w-sm" style={ESTILO_DIALOGO}>
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {assinatura ? (
           <FormularioCredito
             assinatura={assinatura}
             competencia={competencia}
             key={assinatura.id}
+            marcarSujo={guarda.marcarSujo}
             onClose={onClose}
             onSalvar={onSalvar}
           />
@@ -368,11 +420,13 @@ export function CreditoDialog({
 function FormularioCredito({
   assinatura,
   competencia,
+  marcarSujo,
   onClose,
   onSalvar,
 }: {
   assinatura: AssinaturaRow;
   competencia: string;
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onSalvar: (
     input: CreditoInput
@@ -381,6 +435,7 @@ function FormularioCredito({
   const [consumidos, setConsumidos] = useState("");
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(consumidos.trim() !== "", marcarSujo);
 
   async function salvar() {
     setErro(null);

@@ -56,7 +56,7 @@ describe("FilaDeGates — diálogo de travessia", () => {
     expect(
       screen.getByRole("dialog", {
         description: /Até aqui você viu apenas metadado/,
-        name: /Entrar no tenant de Acme Saúde/,
+        name: /Entrar no cliente Acme Saúde/,
       })
     ).toBeTruthy();
   });
