@@ -126,6 +126,7 @@ export default async function ClientDetailPage({
       <DetalheDoTenant
         acoesDeModulo={
           <ModuleForm
+            canWrite={staff.canWrite}
             modules={client.modules}
             modulos={MODULOS_DA_PLATAFORMA}
             slug={client.slug}
@@ -137,7 +138,10 @@ export default async function ClientDetailPage({
           <ProntidaoDoModulo
             acao={
               needsCharterBootstrap ? (
-                <CharterBootstrap slug={client.slug} />
+                <CharterBootstrap
+                  canWrite={staff.canWrite}
+                  slug={client.slug}
+                />
               ) : null
             }
             icone="approve"
@@ -160,7 +164,10 @@ export default async function ClientDetailPage({
           <ProntidaoDoModulo
             acao={
               needsMeridianBootstrap ? (
-                <MeridianBootstrap slug={client.slug} />
+                <MeridianBootstrap
+                  canWrite={staff.canWrite}
+                  slug={client.slug}
+                />
               ) : null
             }
             icone="target"

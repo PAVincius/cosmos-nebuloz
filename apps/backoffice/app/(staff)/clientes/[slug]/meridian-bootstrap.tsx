@@ -2,9 +2,19 @@
 
 import { useState, useTransition } from "react";
 import { bootstrapMeridianAction } from "@/app/actions/provisioning";
-import { BotaoPrimario, Erro, INPUT } from "@/components/campo";
+import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
+import { WriteButton } from "@/components/write-button";
 
-export function MeridianBootstrap({ slug }: { slug: string }) {
+export function MeridianBootstrap({
+  slug,
+  canWrite,
+}: {
+  slug: string;
+  /** SRD FR-0.4 — MEMBER lê o cartão e não prepara nada. O `WriteButton`
+   *  desabilita com o motivo em `sr-only`; a action recusa de novo. */
+  canWrite: boolean;
+}) {
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -58,29 +68,14 @@ export function MeridianBootstrap({ slug }: { slug: string }) {
       </p>
 
       {error ? <Erro>{error}</Erro> : null}
-      {message ? (
-        <output
-          style={{
-            display: "block",
-            margin: 0,
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {message}
-        </output>
-      ) : null}
+      {message ? <Confirmacao>{message}</Confirmacao> : null}
 
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <label className="sr-only" htmlFor="meridian-consultant-email">
           E-mail do consultor de diagnóstico
         </label>
         <input
+          disabled={!canWrite}
           id="meridian-consultant-email"
           onChange={(e) => setEmail(e.target.value)}
           placeholder="e-mail do consultor de diagnóstico"
@@ -88,15 +83,14 @@ export function MeridianBootstrap({ slug }: { slug: string }) {
           type="email"
           value={email}
         />
-        <BotaoPrimario
+        <WriteButton
+          aria-label="Preparar o Meridian deste cliente"
+          canWrite={canWrite}
           disabled={pending || !email.includes("@")}
-          full={false}
           onClick={run}
-          rotulo="Preparar o Meridian deste cliente"
-          type="button"
         >
           {pending ? "Preparando…" : "Preparar"}
-        </BotaoPrimario>
+        </WriteButton>
       </div>
     </div>
   );
