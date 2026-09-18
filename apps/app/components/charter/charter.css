@@ -370,6 +370,16 @@
 .charter-root .btn:active {
   transform: translateY(0.5px);
 }
+/* Mesmos valores de scaffold.css e signal.css — o kit conta com esta regra
+   (`disabled={pending}` é o único estado de carregamento dos botões). */
+.charter-root .btn:disabled,
+.charter-root .btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.charter-root .btn:disabled:active {
+  transform: none;
+}
 
 .charter-root .fade-in {
   animation: charter-fadeIn 0.45s ease;

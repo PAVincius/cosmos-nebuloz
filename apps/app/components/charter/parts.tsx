@@ -197,10 +197,11 @@ export function Heatmap({
                       ? `rgba(var(--${tone}-rgb),${0.14 + Math.min(count, 4) * 0.14})`
                       : `rgba(var(--${tone}-rgb),.05)`,
                     border: `1px solid ${on ? `var(--${tone})` : `rgba(var(--${tone}-rgb),${count ? 0.3 : 0.12})`}`,
-                    outline: on
-                      ? `2px solid rgba(var(--${tone}-rgb),.45)`
-                      : "none",
-                    outlineOffset: 2,
+                    // Anel de seleção em box-shadow — um outline inline
+                    // apagaria o anel de foco global do teclado.
+                    boxShadow: on
+                      ? `0 0 0 2px rgba(var(--${tone}-rgb),.45)`
+                      : undefined,
                   }}
                   type="button"
                 >

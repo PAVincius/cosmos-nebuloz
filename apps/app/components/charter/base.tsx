@@ -559,7 +559,6 @@ const CONTROL_STYLE: CSSProperties = {
   fontSize: FS.base,
   fontWeight: 600,
   fontFamily: "inherit",
-  outline: "none",
 };
 
 export function Field({

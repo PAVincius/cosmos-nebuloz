@@ -37,7 +37,6 @@ const inputStyle: CSSProperties = {
   color: "var(--ink)",
   fontSize: FS.base,
   fontFamily: "inherit",
-  outline: "none",
 };
 
 // ── FormField ─────────────────────────────────────────────────────────────────
