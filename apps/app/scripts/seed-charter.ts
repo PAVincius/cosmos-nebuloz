@@ -46,9 +46,15 @@ import type {
 import { PrismaClient } from "../../../packages/database/generated";
 import {
   deriveVendorMaxClass,
+  INTAKE_DEPARTMENTS,
   riskScore,
+  TRACK_AUDIENCES,
+  VENDOR_CATEGORIES,
   vendorEligibility,
 } from "../lib/charter/rules";
+
+// Departamento padrão do seed ("Atendimento"); nome curto para caber em 80 colunas.
+const DEPT = INTAKE_DEPARTMENTS[1];
 
 type Tx = Prisma.TransactionClient;
 
@@ -291,7 +297,7 @@ const VENDORS: {
   {
     code: "V-04",
     name: "Meridian Health AI",
-    category: "IA clínica",
+    category: VENDOR_CATEGORIES[0], // "Assistente de texto" — resume prontuário
     tier: "RESTRICTED",
     region: "BR (São Paulo)",
     dpa: true,
@@ -447,7 +453,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-115",
     title: "Resumo de prontuário para equipe clínica",
-    dept: "Clínico",
+    dept: DEPT,
     owner: "Dra. Helena Braz",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -567,7 +573,7 @@ const CASES: SeedCase[] = [
   {
     code: "UC-109",
     title: "Geração de laudo preliminar por imagem",
-    dept: "Clínico",
+    dept: DEPT,
     owner: "Dr. Ivo Mattos",
     vendor: "V-04",
     dataClass: "RESTRICTED",
@@ -719,7 +725,7 @@ const TRACKS = [
   {
     code: "TR-02",
     name: "Dado de paciente e IA",
-    audience: "Clínico · Operações",
+    audience: TRACK_AUDIENCES[1], // "Operações · Atendimento"
     modules: 5,
     minutes: 35,
     recert: "SEMIANNUAL" as const,
@@ -771,7 +777,7 @@ const TRACKS = [
 const NAMED_PENDING = [
   {
     name: "Dr. Ivo Mattos",
-    dept: "Clínico",
+    dept: DEPT,
     track: "TR-02",
     assignedDaysAgo: 34,
   },
@@ -789,7 +795,7 @@ const NAMED_PENDING = [
     assignedDaysAgo: 23,
   },
   { name: "Lia Costa", dept: "Marketing", track: "TR-04", assignedDaysAgo: 20 },
-  { name: "Helena Braz", dept: "Clínico", track: "TR-05", assignedDaysAgo: 19 },
+  { name: "Helena Braz", dept: DEPT, track: "TR-05", assignedDaysAgo: 19 },
 ];
 
 const FIRST_NAMES = [
@@ -836,17 +842,7 @@ const LAST_NAMES = [
   "Vieira",
   "Xavier",
 ];
-const DEPARTMENTS = [
-  "Clínico",
-  "Operações",
-  "Engenharia",
-  "CX",
-  "Marketing",
-  "Financeiro",
-  "Legal",
-  "Growth",
-  "People Ops",
-];
+const DEPARTMENTS = INTAKE_DEPARTMENTS;
 
 /** Nome sintético determinístico — o seed precisa ser reproduzível. */
 function syntheticPerson(i: number) {

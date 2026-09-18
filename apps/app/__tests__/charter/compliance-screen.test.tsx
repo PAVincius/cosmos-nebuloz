@@ -8,11 +8,6 @@
 // snapshot: um ajuste de Tailwind não pode quebrar este arquivo.
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type {
-  ComplianceMap,
-  MapRow,
-  SetRow,
-} from "@/app/(charter)/actions/compliance";
 
 const listRequirementSetsMock = vi.fn();
 const getComplianceMapMock = vi.fn();
@@ -41,61 +36,7 @@ vi.mock("@/app/(charter)/actions/compliance-export", () => ({
 
 import ComplianceScreen from "../../components/charter/screens/compliance";
 
-const set = (over: Partial<SetRow> = {}): SetRow => ({
-  id: "set-1",
-  nome: "RFP Banco Aurora",
-  origem: "RFP",
-  global: false,
-  versao: "1",
-  total: 1,
-  supersedesId: null,
-  supersededById: null,
-  temCobertura: false,
-  diff: null,
-  normaStatus: "VIGENTE",
-  vigenciaEm: null,
-  vigenciaPropostaEm: null,
-  ...over,
-});
-
-/** RFP sem data: obriga desde já. É o padrão do domínio, e por isso é o padrão
- *  da fixture — teste que não fala de vigência não deveria ter de declará-la. */
-const vigenciaPadrao: MapRow["vigencia"] = {
-  status: "VIGENTE",
-  em: null,
-  obriga: true,
-  motivo: null,
-  nota: null,
-  herdada: true,
-};
-
-const row = (over: Partial<MapRow> = {}): MapRow => ({
-  requirementId: "req-1",
-  codigo: "4.2.1",
-  citacao: "RFP §4.2.1",
-  resumo: "Aceite individual de política deve ser rastreável por pessoa",
-  peso: null,
-  status: "SEM_VEREDITO",
-  comentario: null,
-  capabilityId: null,
-  capabilityLabel: null,
-  evidencia: null,
-  evidenciaErro: null,
-  vigencia: vigenciaPadrao,
-  ...over,
-});
-
-const map = (over: Partial<ComplianceMap> = {}): ComplianceMap => ({
-  setId: "set-1",
-  nome: "RFP Banco Aurora",
-  cenario: "EM_VIGOR",
-  referencia: "2026-08-08T00:00:00.000Z",
-  semVeredito: 0,
-  semVereditoQueObriga: 0,
-  divergentes: 0,
-  linhas: [],
-  ...over,
-});
+import { map, row, set } from "./compliance-screen.fixtures";
 
 type BlobCall = { parts: unknown[]; type?: string };
 
@@ -520,7 +461,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Banco Aurora 2026" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: {
         value:
           "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
@@ -565,7 +506,7 @@ describe("ComplianceScreen", () => {
     });
     // Segunda linha não tem os dois separadores "|" — igual a colar uma
     // linha da RFP que não seguiu o formato pedido no hint do campo.
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: {
         value:
           "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
@@ -633,7 +574,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Cliente" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: { value: "A-1 | §1 | Resumo" },
     });
     fireEvent.change(screen.getByLabelText("Substitui um conjunto existente"), {
@@ -670,7 +611,7 @@ describe("ComplianceScreen", () => {
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Nova" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1/), {
       target: { value: "A-1 | §1 | Resumo" },
     });
 
@@ -895,5 +836,49 @@ describe("ComplianceScreen", () => {
 
     expect(labels).not.toContain("EU AI Act (v1)");
     expect(labels).toContain("RFP Banco Aurora (v1)");
+  });
+
+  // ── Observações menores da onda de conformidade ───────────────────────────
+
+  it('pluraliza "removida/removidas" no banner de versão nova', async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({
+          id: "set-v1",
+          supersededById: "set-v2",
+          diff: { alteradas: 0, novas: 0, removidas: 2 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText(/2 removidas\./)).toBeTruthy();
+  });
+
+  it("conjunto sem exigências mostra estado vazio com CTA de importar, não um texto seco", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("1 conjunto de exigências");
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /importar exigências para este conjunto/i,
+      })
+    );
+
+    expect(
+      await screen.findByPlaceholderText("ex: RFP Banco Aurora 2026")
+    ).toBeTruthy();
   });
 });
