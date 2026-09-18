@@ -1,7 +1,7 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listGateQueue } from "@/app/actions/scaffold-supervision";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { secaoDaRota } from "@/components/nav";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { FilaDeGates } from "./fila-de-gates";
 
@@ -14,6 +14,8 @@ import { FilaDeGates } from "./fila-de-gates";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = { title: tituloDaAba("/scaffold") };
+
 export default async function ScaffoldSupervisionPage() {
   const [, fila] = await Promise.all([
     requirePlatformStaff(),
@@ -24,7 +26,7 @@ export default async function ScaffoldSupervisionPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow={`${secaoDaRota("/scaffold")} · supervisão`}
-        subtitle="Gates de toda a carteira num lugar só. A fila mostra metadado — trilha, cliente, fase, idade e critérios — e nunca os artefatos por trás deles: ver o conteúdo exige entrar no tenant do cliente, e essa entrada fica registrada."
+        subtitle="Gates de toda a carteira num lugar só. A fila mostra metadado — trilha, cliente, fase, idade e critérios — e nunca os artefatos por trás deles: ver o conteúdo exige entrar no ambiente do cliente, e essa entrada fica registrada."
         title="Fila de gates"
       />
       {fila.ok ? (

@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 import { type ClientRow, listClients } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { secaoDaRota } from "@/components/nav";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { ClientesTabela } from "./clientes-tabela";
 
@@ -27,6 +27,8 @@ function contar(clientes: ClientRow[]) {
     atencao: modulos.filter((m) => m.status === "SUSPENDED").length,
   };
 }
+
+export const metadata = { title: tituloDaAba("/") };
 
 export default async function ClientsPage() {
   const result = await listClients();

@@ -5,8 +5,11 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { listStaffActivity } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { ACOES } from "../audit/rotulos";
+
+export const metadata = { title: tituloDaAba("/atividade") };
 
 export default async function ActivityPage() {
   const result = await listStaffActivity();
@@ -14,7 +17,7 @@ export default async function ActivityPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Auditoria · staff"
+        eyebrow={`${secaoDaRota("/atividade")} · staff`}
         subtitle="Quem da Nebuloz mexeu em qual cliente, e quando."
         title="Atividade do staff"
       />

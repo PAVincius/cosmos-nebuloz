@@ -1,4 +1,10 @@
-import type { CSSProperties, ReactNode } from "react";
+import {
+  type CSSProperties,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 /**
  * Campo, input e mensagem de erro do handoff (BoField / boInputStyle do
@@ -21,17 +27,52 @@ export const INPUT: CSSProperties = {
   width: "100%",
 };
 
+type AtributosDescritos = {
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean;
+};
+
+/**
+ * Liga hint e erro ao controle: `aria-describedby` com os dois e
+ * `aria-invalid` quando há erro. O leitor de tela lia o rótulo e parava — a
+ * dica de formato e a mensagem de erro ficavam no DOM sem chegar a ninguém.
+ * O controle é o filho direto; quando não é um elemento, nada muda.
+ */
+function descrever(
+  children: ReactNode,
+  ids: string[],
+  invalido: boolean
+): ReactNode {
+  if (ids.length === 0 || !isValidElement<AtributosDescritos>(children)) {
+    return children;
+  }
+  const filho: ReactElement<AtributosDescritos> = children;
+  const existente = filho.props["aria-describedby"];
+  return cloneElement(filho, {
+    "aria-describedby": [existente, ...ids].filter(Boolean).join(" "),
+    ...(invalido ? { "aria-invalid": true } : {}),
+  });
+}
+
 export function Campo({
   label,
   htmlFor,
   hint,
+  erro,
   children,
 }: {
   label: string;
   htmlFor: string;
   hint?: string;
+  /** Erro deste campo — vira `role="alert"` ligado ao controle. */
+  erro?: string;
   children: ReactNode;
 }) {
+  const idDoHint = `${htmlFor}-hint`;
+  const idDoErro = `${htmlFor}-erro`;
+  const ids = [hint ? idDoHint : null, erro ? idDoErro : null].filter(
+    (id): id is string => id !== null
+  );
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <label
@@ -47,9 +88,10 @@ export function Campo({
       >
         {label}
       </label>
-      {children}
+      {descrever(children, ids, Boolean(erro))}
       {hint ? (
         <span
+          id={idDoHint}
           style={{
             fontSize: "var(--fs-nota)",
             color: "var(--ink-faint)",
@@ -59,6 +101,7 @@ export function Campo({
           {hint}
         </span>
       ) : null}
+      {erro ? <Erro id={idDoErro}>{erro}</Erro> : null}
     </div>
   );
 }
@@ -88,9 +131,10 @@ export function mensagemDeErro(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
 }
 
-export function Erro({ children }: { children: string }) {
+export function Erro({ children, id }: { children: string; id?: string }) {
   return (
     <p
+      id={id}
       role="alert"
       style={{
         margin: 0,

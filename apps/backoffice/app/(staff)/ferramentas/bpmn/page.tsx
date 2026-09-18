@@ -2,10 +2,13 @@ import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listClients } from "@/app/actions/clients";
 import { listDiagrams } from "@/app/actions/diagrams";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Estudio } from "../estudio";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/ferramentas/bpmn") };
 
 export default async function BpmnPage() {
   const [staff, res, clientes] = await Promise.all([
@@ -17,7 +20,7 @@ export default async function BpmnPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Ferramentas · BPMN 2.0"
+        eyebrow={`${secaoDaRota("/ferramentas/bpmn")} · BPMN 2.0`}
         meta={<Badge tone="purple">self-hosted</Badge>}
         subtitle="Modelagem de processo versionada. O XML é a fonte da verdade — o canvas reflete o arquivo, e é ele que entra no diff de uma revisão."
         title="Modelagem BPMN"

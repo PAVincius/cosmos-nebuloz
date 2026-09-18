@@ -12,6 +12,7 @@ import {
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { Erro } from "@/components/campo";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
@@ -241,6 +242,8 @@ function Conteudo({
   );
 }
 
+export const metadata = { title: tituloDaAba("/home") };
+
 export default async function HomePage() {
   const [saude, aprovacoes] = await Promise.all([
     listPlatformHealth(),
@@ -260,7 +263,7 @@ export default async function HomePage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Plataforma · visão geral"
+        eyebrow={`${secaoDaRota("/home")} · visão geral`}
         subtitle="O que exige atenção agora. A carteira de clientes fica em Clientes — esta tela responde se você precisa fazer alguma coisa hoje."
         title="Home"
       />

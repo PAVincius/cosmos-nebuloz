@@ -315,7 +315,7 @@ describe("Lancamentos", () => {
     montar(false);
 
     const botaoNovo = screen.getByRole("button", { name: "Novo lançamento" });
-    expect(botaoNovo.hasAttribute("disabled")).toBe(true);
+    expect(botaoNovo.getAttribute("aria-disabled")).toBe("true");
 
     expect(
       screen.queryByRole("button", {

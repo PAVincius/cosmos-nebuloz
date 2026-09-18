@@ -2,10 +2,13 @@ import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listClients } from "@/app/actions/clients";
 import { listDiagrams } from "@/app/actions/diagrams";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Estudio } from "../estudio";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/ferramentas/diagramas") };
 
 export default async function DiagramasPage() {
   const [staff, res, clientes] = await Promise.all([
@@ -17,7 +20,7 @@ export default async function DiagramasPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Ferramentas · diagrama como código"
+        eyebrow={`${secaoDaRota("/ferramentas/diagramas")} · diagrama como código`}
         meta={<Badge tone="blue">self-hosted</Badge>}
         subtitle="A DSL é a fonte da verdade e é versionável em git; o canvas reflete o texto. Renderiza no navegador — nenhum byte do diagrama sai daqui."
         title="Diagramas"

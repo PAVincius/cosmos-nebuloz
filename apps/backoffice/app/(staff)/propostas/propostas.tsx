@@ -170,9 +170,12 @@ export function Propostas({
   // barreira não chama de novo (o botão trava e diz "Executando…").
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
 
-  // O gerador chega aqui com `?enviada=<id>` depois de enviar. A confirmação
-  // nasce na linha dessa proposta — e para um id que não está na lista, nada.
-  const enviadaId = useSearchParams().get("enviada");
+  // O gerador chega aqui com `?enviada=<id>` depois de enviar; enviar pela
+  // própria linha marca o mesmo id. A confirmação nasce na linha dessa
+  // proposta — e para um id que não está na lista, nada.
+  const enviadaPeloGerador = useSearchParams().get("enviada");
+  const [enviadaAqui, setEnviadaAqui] = useState<string | null>(null);
+  const enviadaId = enviadaAqui ?? enviadaPeloGerador;
 
   const enviar = useCallback(async (id: string) => {
     setErro(null);
@@ -185,6 +188,7 @@ export function Propostas({
             p.id === id ? { ...p, status: res.data.status } : p
           )
         );
+        setEnviadaAqui(id);
       } else {
         setErro(res.error);
       }

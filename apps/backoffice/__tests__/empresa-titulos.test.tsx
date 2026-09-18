@@ -309,7 +309,7 @@ describe("Titulos", () => {
     montar(false);
 
     const botaoNovo = screen.getByRole("button", { name: "Novo título" });
-    expect(botaoNovo.hasAttribute("disabled")).toBe(true);
+    expect(botaoNovo.getAttribute("aria-disabled")).toBe("true");
 
     expect(
       screen.queryByRole("button", { name: "Baixar — Hospedagem AWS" })

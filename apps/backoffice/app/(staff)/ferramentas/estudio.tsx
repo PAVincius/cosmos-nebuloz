@@ -13,6 +13,7 @@ import {
 } from "@/app/actions/diagrams";
 import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
@@ -308,6 +309,19 @@ function useDiagramaDaUrl({
   }, [diagramaId, lista, abertoId, setAberto, setErro]);
 }
 
+/** A frase do salvar, abaixo do editor — fora do `Estudio` porque ele já
+ *  está no teto de complexidade do lint. */
+function ConfirmacaoDoEditor({ texto }: { texto: string | null }) {
+  if (!texto) {
+    return null;
+  }
+  return (
+    <div style={{ marginTop: 10 }}>
+      <Confirmacao>{texto}</Confirmacao>
+    </div>
+  );
+}
+
 export function Estudio({
   kind,
   iniciais,
@@ -331,6 +345,8 @@ export function Estudio({
   const [nome, setNome] = useState(novo);
   const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // "Deu certo" do salvar, dito depois da releitura — junto do editor.
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   // Dois cliques rápidos em Criar eram dois diagramas.
   const [criandoNoAr, setCriandoNoAr] = useState(false);
   // O editor é quem sabe se o XML/texto mudou; ele avisa por `onSujo`.
@@ -351,6 +367,7 @@ export function Estudio({
     (id: string) => {
       setSujo(false);
       setErro(null);
+      setConfirmacao(null);
       setDiagramaId(id);
     },
     [setDiagramaId]
@@ -448,6 +465,7 @@ export function Estudio({
       if (!aberto) {
         return "Nenhum diagrama aberto.";
       }
+      setConfirmacao(null);
       const res = await updateDiagramAction({ id: aberto.id, source, nota });
       if (!res.ok) {
         return res.error;
@@ -455,6 +473,9 @@ export function Estudio({
       const det = await getDiagram(aberto.id);
       if (det.ok) {
         setAberto(det.data);
+        setConfirmacao(
+          `Revisão v${det.data.versoes} de ${det.data.name} salva.`
+        );
       }
       return null;
     },
@@ -546,6 +567,7 @@ export function Estudio({
                   sourceInicial={aberto.source}
                 />
               )}
+              <ConfirmacaoDoEditor texto={confirmacao} />
             </SectionCard>
 
             <Historico revisoes={aberto.historico} />

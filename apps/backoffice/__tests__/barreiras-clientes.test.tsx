@@ -111,8 +111,8 @@ describe("Provisionar cliente", () => {
     expect(
       screen
         .getByRole("button", { name: "Provisionar cliente" })
-        .hasAttribute("disabled")
-    ).toBe(true);
+        .getAttribute("aria-disabled")
+    ).toBe("true");
   });
 });
 

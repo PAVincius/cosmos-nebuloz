@@ -11,6 +11,7 @@ import {
   listarLancamentos,
 } from "@/app/actions/empresa/livro";
 import { BotaoSecundario, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -191,6 +192,7 @@ export function Lancamentos({
   const [centro, setCentro] = useState("all");
   const [busca, setBusca] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [dialogoAberto, setDialogoAberto] = useState(false);
   const [linhaEditando, setLinhaEditando] = useState<LinhaDoLivro | null>(null);
   const [excluindoId, setExcluindoId] = useState<string | null>(null);
@@ -237,11 +239,13 @@ export function Lancamentos({
     setDados(res.data);
   }, [intervalo.de, intervalo.ate, contaFiltro]);
 
+  // A frase só depois da releitura: confirma o que a tabela já mostra.
   const criar = useCallback(
     async (input: Parameters<typeof criarLancamento>[0]) => {
       const res = await criarLancamento(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Lançamento «${input.descricao}» gravado.`);
       }
       return res;
     },
@@ -253,6 +257,7 @@ export function Lancamentos({
       const res = await atualizarLancamento(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Lançamento «${input.descricao}» atualizado.`);
       }
       return res;
     },
@@ -262,6 +267,7 @@ export function Lancamentos({
   const excluir = useCallback(
     async (id: string) => {
       setErro(null);
+      setConfirmacao(null);
       setExcluindoId(id);
       const res = await excluirLancamento({ id });
       setExcluindoId(null);
@@ -270,15 +276,18 @@ export function Lancamentos({
         return;
       }
       await recarregar();
+      setConfirmacao("Lançamento excluído.");
     },
     [recarregar]
   );
 
   const abrirNovo = useCallback(() => {
+    setConfirmacao(null);
     setLinhaEditando(null);
     setDialogoAberto(true);
   }, []);
   const abrirEdicao = useCallback((l: LinhaDoLivro) => {
+    setConfirmacao(null);
     setLinhaEditando(l);
     setDialogoAberto(true);
   }, []);
@@ -295,6 +304,7 @@ export function Lancamentos({
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {erro ? <Erro>{erro}</Erro> : null}
+        {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
         <div
           style={{

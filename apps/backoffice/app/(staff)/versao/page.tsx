@@ -2,6 +2,7 @@ import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { lerEstadoDoDeploy } from "@/app/actions/versao";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { MetaCell } from "@/components/meta-cell";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
@@ -139,6 +140,8 @@ function Veredito({ schema }: { schema: ComparacaoDeSchema }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/versao") };
+
 export default async function VersaoPage() {
   const resultado = await lerEstadoDoDeploy();
 
@@ -149,7 +152,7 @@ export default async function VersaoPage() {
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
         <PageHeader
-          eyebrow="Operações"
+          eyebrow={secaoDaRota("/versao")}
           subtitle="O que está implantado aqui, e se o banco deste ambiente acompanha."
           title="Versão e schema"
         />
@@ -169,7 +172,7 @@ export default async function VersaoPage() {
       style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
     >
       <PageHeader
-        eyebrow="Operações"
+        eyebrow={secaoDaRota("/versao")}
         meta={
           <>
             <Badge tone={tomDoAmbiente}>{codigo.ambiente}</Badge>

@@ -33,8 +33,9 @@ export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {
   if (integracoes.length === 0) {
     return (
       <Vazio>
-        Nenhuma integração configurada para este tenant. Elas são criadas dentro
-        do produto, pelo próprio cliente — o back-office observa, não conecta.
+        Nenhuma integração configurada para este cliente. Elas são criadas
+        dentro do produto, pelo próprio cliente — o back-office observa, não
+        conecta.
       </Vazio>
     );
   }
@@ -120,7 +121,7 @@ export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {
  */
 export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
   if (eventos.length === 0) {
-    return <Vazio>Nenhum evento auditado para este tenant ainda.</Vazio>;
+    return <Vazio>Nenhum evento auditado para este cliente ainda.</Vazio>;
   }
 
   return (
@@ -206,6 +207,7 @@ export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
                     <thead>
                       <tr>
                         <th
+                          scope="col"
                           style={{
                             ...CELULA_META,
                             textAlign: "left",
@@ -216,6 +218,7 @@ export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
                           Campo
                         </th>
                         <th
+                          scope="col"
                           style={{
                             ...CELULA_META,
                             textAlign: "left",
@@ -226,6 +229,7 @@ export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
                           Antes
                         </th>
                         <th
+                          scope="col"
                           style={{
                             ...CELULA_META,
                             textAlign: "left",

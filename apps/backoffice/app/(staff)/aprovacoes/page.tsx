@@ -1,6 +1,7 @@
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -9,6 +10,8 @@ import { Pedido } from "./pedido";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = { title: tituloDaAba("/aprovacoes") };
+
 export default async function AprovacoesPage() {
   // O guard roda na page, não só no layout: layout protege navegação, não RPC.
   const staff = await requirePlatformStaff();
@@ -16,7 +19,7 @@ export default async function AprovacoesPage() {
 
   const cabecalho = (
     <PageHeader
-      eyebrow="Plataforma · governança"
+      eyebrow={`${secaoDaRota("/aprovacoes")} · governança`}
       subtitle="Operação sensível não executa no clique — ela entra aqui. Remoção de cliente, escrita de agentes de IA nos dados do cliente, desconto acima de 15%, export sensível e mudança grande de plano."
       title="Aprovações"
       tone="amber"

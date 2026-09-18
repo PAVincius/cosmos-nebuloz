@@ -3,10 +3,13 @@ import { listAuditTenants } from "@/app/actions/audit";
 import { listEngagements } from "@/app/actions/engagements";
 import { listServices } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Engajamentos } from "./engajamentos";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/delivery") };
 
 export default async function DeliveryPage() {
   const [staff, engajamentos, clientes, servicos] = await Promise.all([
@@ -21,7 +24,7 @@ export default async function DeliveryPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Delivery · contratos"
+        eyebrow={`${secaoDaRota("/delivery")} · contratos`}
         subtitle="Escopo fechado: valor e entrega são acordados na assinatura e não variam com o esforço gasto. Quem mede esforço é a alocação, em Capacidade."
         title="Engajamentos"
       />

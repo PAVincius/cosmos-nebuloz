@@ -13,6 +13,7 @@ import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { OQueFalta } from "@/components/o-que-falta";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
@@ -376,11 +377,12 @@ export function Engajamentos({
     [lista, recarregar]
   );
 
-  const podeCriar =
-    form.nome.trim().length >= 2 &&
-    form.codigo.trim().length >= 2 &&
-    form.clienteTenantId !== "" &&
-    !criandoPendente;
+  const falta = [
+    form.codigo.trim().length < 2 ? "código" : null,
+    form.nome.trim().length < 2 ? "nome" : null,
+    form.clienteTenantId === "" ? "cliente" : null,
+  ].filter((f): f is string => f !== null);
+  const podeCriar = falta.length === 0 && !criandoPendente;
   const total =
     lista.length === 1 ? "1 engajamento" : `${lista.length} engajamentos`;
 
@@ -541,9 +543,19 @@ export function Engajamentos({
               />
             </Campo>
 
-            <BotaoPrimario disabled={!podeCriar} full={false} type="submit">
-              {criandoPendente ? "Criando…" : "Criar como proposto"}
-            </BotaoPrimario>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                flexWrap: "wrap",
+              }}
+            >
+              <BotaoPrimario disabled={!podeCriar} full={false} type="submit">
+                {criandoPendente ? "Criando…" : "Criar como proposto"}
+              </BotaoPrimario>
+              <OQueFalta itens={falta} verbo="criar" />
+            </div>
           </form>
         ) : null}
 

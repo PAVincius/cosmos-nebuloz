@@ -20,13 +20,26 @@ type Papel = (typeof PAPEIS)[number];
  *  conhece o vocabulário, mas STE/RTE/SM/PO/DEV sem expansão em lugar nenhum
  *  é o que a crítica apontou — e tooltip de mouse não chega ao teclado. */
 const SIGNIFICADO: Record<Papel, string> = {
-  ADMIN: "administra o tenant: convida, remove e promove",
+  ADMIN: "administra o cliente: convida, remove e promove",
   STE: "Solution Train Engineer — coordena vários ARTs",
   RTE: "Release Train Engineer — conduz o ART e o PI Planning",
   SM: "Scrum Master — facilita um time",
   PO: "Product Owner — prioriza o backlog do time",
   DEV: "desenvolvedor — entrega no time",
   MEMBER: "só lê",
+};
+
+/** O que o `<select>` mostra. O valor segue o enum do schema — é o que a
+ *  action valida —, mas "MEMBER" e "ADMIN" crus na lista eram vocabulário de
+ *  quem escreveu o schema, não de quem troca o papel de alguém. */
+const ROTULO: Record<Papel, string> = {
+  ADMIN: "Administrador",
+  STE: "STE — Solution Train Engineer",
+  RTE: "RTE — Release Train Engineer",
+  SM: "SM — Scrum Master",
+  PO: "PO — Product Owner",
+  DEV: "DEV — desenvolvedor",
+  MEMBER: "Membro",
 };
 
 const ID_MOTIVO_LEITURA = "usuarios-somente-leitura";
@@ -48,12 +61,12 @@ const LARGURAS = [
  *  importa: é quem convida, remove e promove os outros. */
 function consequenciaDaTroca(nome: string, de: string, para: Papel): string {
   if (para === "ADMIN") {
-    return `${nome} passa a administrar o tenant do cliente: convida, remove e promove qualquer membro.`;
+    return `${nome} passa a administrar o cliente: convida, remove e promove qualquer membro.`;
   }
   if (de === "ADMIN") {
-    return `${nome} deixa de administrar o tenant. Se for o último ADMIN, o servidor recusa.`;
+    return `${nome} deixa de administrar o cliente. Se for o último ADMIN, o servidor recusa.`;
   }
-  return `${nome} passa a ${para} no tenant do cliente; a mudança fica na auditoria.`;
+  return `${nome} passa a ${para} no cliente; a mudança fica na auditoria.`;
 }
 
 /** A célula "Alterar papel": o `<select>` escolhe, a barreira grava.
@@ -104,7 +117,7 @@ function CelulaDePapel({
       >
         {PAPEIS.map((p) => (
           <option key={p} value={p}>
-            {p}
+            {ROTULO[p]}
           </option>
         ))}
       </select>
@@ -209,7 +222,7 @@ export function AbaUsuarios({
     return (
       <SectionCard icon="userCheck" title="Usuários">
         <Vazio>
-          Este tenant não tem membro algum. Quem foi convidado no
+          Este cliente não tem membro algum. Quem foi convidado no
           provisionamento aparece aqui depois de criar a conta.
         </Vazio>
       </SectionCard>
@@ -227,7 +240,7 @@ export function AbaUsuarios({
       }
       bodyStyle={{ padding: 0 }}
       icon="userCheck"
-      subtitle="Papel dentro do tenant do cliente — mudanças auditadas"
+      subtitle="Papel dentro do cliente — mudanças auditadas"
       title="Usuários"
     >
       <div

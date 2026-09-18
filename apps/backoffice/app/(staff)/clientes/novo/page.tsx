@@ -1,4 +1,5 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { NewClientForm } from "./form";
@@ -10,6 +11,8 @@ import { NewClientForm } from "./form";
  * esticá-lo na largura do painel afasta o rótulo do campo a ponto de a pessoa
  * perder a linha.
  */
+export const metadata = { title: tituloDaAba("/clientes/novo") };
+
 export default async function NewClientPage() {
   const staff = await requirePlatformStaff();
 
@@ -23,8 +26,8 @@ export default async function NewClientPage() {
       }}
     >
       <PageHeader
-        eyebrow="Operações"
-        subtitle="Numa transação só: slug único, Tenant, dono (membro ou convite) e módulos."
+        eyebrow={secaoDaRota("/clientes/novo")}
+        subtitle="Numa transação só: slug único, cliente, dono (membro ou convite) e módulos."
         title="Provisionar cliente novo"
       />
       <NewClientForm

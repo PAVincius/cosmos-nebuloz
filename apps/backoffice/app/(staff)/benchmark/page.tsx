@@ -11,6 +11,7 @@ import {
   type ServicoBenchmark,
 } from "@/app/actions/benchmark";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 
@@ -195,19 +196,19 @@ function Conteudo({ dados }: { dados: Benchmark }) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Cliente
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Engaj.
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Receita
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Ticket médio
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Desconto médio
                 </th>
               </tr>
@@ -239,13 +240,13 @@ function Conteudo({ dados }: { dados: Benchmark }) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Serviço
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Engaj.
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Receita
                 </th>
               </tr>
@@ -262,13 +263,15 @@ function Conteudo({ dados }: { dados: Benchmark }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/benchmark") };
+
 export default async function BenchmarkPage() {
   const res = await listBenchmark();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Comercial · comparação"
+        eyebrow={`${secaoDaRota("/benchmark")} · comparação`}
         subtitle="Quem pesa mais na carteira e o que o catálogo realmente vendeu. Contrato cancelado e proposta recusada ficam de fora — incluí-los descreveria o que foi oferecido, não o que foi praticado."
         title="Benchmark"
       />

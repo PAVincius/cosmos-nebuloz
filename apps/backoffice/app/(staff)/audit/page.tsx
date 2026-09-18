@@ -6,6 +6,7 @@ import {
   listAuditTenants,
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { Filtros, Paginacao } from "./filtros";
 import { ACOES } from "./rotulos";
@@ -83,9 +84,15 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             <table style={{ width: "100%", fontSize: "var(--fs-nota)" }}>
               <thead>
                 <tr style={{ textAlign: "left", color: "var(--ink-faint)" }}>
-                  <th style={{ paddingBottom: 4 }}>Campo</th>
-                  <th style={{ paddingBottom: 4 }}>Antes</th>
-                  <th style={{ paddingBottom: 4 }}>Depois</th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Campo
+                  </th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Antes
+                  </th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Depois
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -117,6 +124,8 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/audit") };
+
 export default async function AuditPage({
   searchParams,
 }: {
@@ -138,7 +147,7 @@ export default async function AuditPage({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Auditoria · plataforma"
+        eyebrow={`${secaoDaRota("/audit")} · plataforma`}
         subtitle="Busca sobre o AuditLog de todos os clientes ao mesmo tempo. O filtro fica na URL — o link abre a mesma busca para quem receber."
         title="Audit Explorer"
       />
