@@ -1,4 +1,5 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
+import { notFound } from "next/navigation";
 import { listarCatalogoComercial } from "@/app/actions/catalogo-comercial";
 import { getPropostaParaEdicao } from "@/app/actions/proposta-escopo";
 import { listServices } from "@/app/actions/services";
@@ -30,6 +31,12 @@ export default async function GeradorPage({
     listServices(),
     nova ? Promise.resolve(null) : getPropostaParaEdicao(id),
   ]);
+
+  // Id que não existe não é falha de leitura: retry não resolve. O
+  // `not-found.tsx` do grupo já existe — é ele que responde.
+  if (proposta && !proposta.ok && proposta.code === "NOT_FOUND") {
+    notFound();
+  }
 
   const existente = proposta?.ok ? proposta.data : null;
 

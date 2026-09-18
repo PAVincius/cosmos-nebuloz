@@ -1,6 +1,7 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getServiceDetail, type ServiceDetail } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -56,6 +57,11 @@ export default async function ServicoPage({
     requirePlatformStaff(),
     getServiceDetail(decodeURIComponent(codigo)),
   ]);
+  // Id que não existe não é falha de leitura: retry não resolve. O
+  // `not-found.tsx` do grupo já existe — é ele que responde.
+  if (!res.ok && res.code === "NOT_FOUND") {
+    notFound();
+  }
 
   // Fora do JSX pelo mesmo motivo do `aria-current` do menu lateral: inline, o
   // ternário é lido pelo lint como valor vazando para o render.
