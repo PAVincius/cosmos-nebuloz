@@ -92,8 +92,15 @@ export function NewClientForm({
   // divergiriam no primeiro acento ou nome longo, e a pessoa leria aqui um
   // slug que o banco não guardaria.
   const slug = slugify(name);
+  // Com o cartão "sem dono" na tela o cliente já existe: um segundo submit
+  // faria o servidor sufixar o slug e nasceria outro. O formulário trava até
+  // a pessoa abrir o cliente criado.
   const podeEnviar =
-    canWrite && !pending && name.trim().length >= 2 && escolhidos.length > 0;
+    canWrite &&
+    !pending &&
+    !pendingOwner &&
+    name.trim().length >= 2 &&
+    escolhidos.length > 0;
 
   const submit = () =>
     startTransition(async () => {
@@ -109,13 +116,16 @@ export function NewClientForm({
 
       if (result.ok) {
         if (result.data.ownerLinked) {
-          router.push(`/clientes/${result.data.slug}`);
+          // `?criado=1`: o detalhe abre dizendo o nome do cliente que nasceu —
+          // a operação mais importante do painel não termina em silêncio.
+          router.push(`/clientes/${result.data.slug}?criado=1`);
           return;
         }
         // Sem conta no e-mail informado, o cliente nasce sem dono e só o convite
         // espera. Redirecionar em silêncio faria quem provisionou acreditar que
         // já tem alguém capaz de entrar.
         setPendingOwner({ slug: result.data.slug, email: ownerEmail.trim() });
+        setPerguntando(false);
         return;
       }
       setError(result.error);

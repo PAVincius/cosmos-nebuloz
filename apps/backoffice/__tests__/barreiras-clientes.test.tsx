@@ -75,7 +75,7 @@ describe("Provisionar cliente", () => {
       ownerEmail: "dono@atlas.com.br",
     });
     await waitFor(() =>
-      expect(pushMock).toHaveBeenCalledWith("/clientes/atlas-energia")
+      expect(pushMock).toHaveBeenCalledWith("/clientes/atlas-energia?criado=1")
     );
   });
 
@@ -185,14 +185,17 @@ describe("Usuários — trocar papel", () => {
 
     const select = screen.getByLabelText("Papel de ana@atlas.com.br");
     fireEvent.change(select, { target: { value: "ADMIN" } });
-    let moldura = screen.getByText(/Trocar papel de Ana para ADMIN/)
-      .parentElement as HTMLElement;
+    // A barreira é um <fieldset> nomeado pelo rótulo (aria-labelledby).
+    let moldura = screen.getByRole("group", {
+      name: /Trocar papel de Ana para ADMIN/,
+    });
     expect(moldura.style.border).toContain("var(--red-rgb)");
 
     fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
     fireEvent.change(select, { target: { value: "SM" } });
-    moldura = screen.getByText(/Trocar papel de Ana para SM/)
-      .parentElement as HTMLElement;
+    moldura = screen.getByRole("group", {
+      name: /Trocar papel de Ana para SM/,
+    });
     expect(moldura.style.border).toContain("var(--accent-rgb)");
   });
 });
