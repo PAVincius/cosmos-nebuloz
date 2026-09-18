@@ -318,6 +318,7 @@ export function Gerador({
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
         <SectionCard
+          as="h2"
           bodyStyle={{ padding: 14 }}
           icon="building"
           title="Cliente"
@@ -361,7 +362,12 @@ export function Gerador({
           </div>
         </SectionCard>
 
-        <SectionCard bodyStyle={{ padding: 14 }} icon="layers" title="Escopo">
+        <SectionCard
+          as="h2"
+          bodyStyle={{ padding: 14 }}
+          icon="layers"
+          title="Escopo"
+        >
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo htmlFor="g-plano" label="Plano">
               <div id="g-plano" style={TROCA}>
@@ -539,6 +545,7 @@ export function Gerador({
 
         {servicos.length > 0 && (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="briefcase"
             subtitle="Entram como linha própria na proposta"
@@ -606,7 +613,12 @@ export function Gerador({
           </SectionCard>
         )}
 
-        <SectionCard bodyStyle={{ padding: 14 }} icon="tag" title="Comercial">
+        <SectionCard
+          as="h2"
+          bodyStyle={{ padding: 14 }}
+          icon="tag"
+          title="Comercial"
+        >
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
               hint={dicaDoTermo}
@@ -695,6 +707,7 @@ export function Gerador({
 
         {avisos.length > 0 && (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="alert"
             title="Validações"
@@ -721,6 +734,7 @@ export function Gerador({
 
         {somenteLeitura ? (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="lock"
             title={`Proposta ${ROTULO_DE_STATUS[proposta.status] ?? proposta.status}`}

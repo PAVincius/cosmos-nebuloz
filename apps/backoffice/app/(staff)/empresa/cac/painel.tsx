@@ -252,6 +252,7 @@ function ResultadoDoCac({
   const faltam = r.total - r.preenchidas;
   return (
     <SectionCard
+      as="h2"
       title="CAC totalmente carregado"
       tone={r.cacCentavos === null ? "amber" : "green"}
     >
@@ -504,6 +505,7 @@ export function Painel({
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
+        as="h2"
         subtitle={`${r.preenchidas} de ${r.total} preenchidas · as seis primeiras vêm do livro-razão (aba Lançamentos)`}
         title="Parcelas do período"
       >
@@ -570,6 +572,7 @@ export function Painel({
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         <SectionCard
+          as="h2"
           subtitle={
             view.editavel
               ? "o Meridian é a porta de entrada; o custo dele segue para quem ele puxa"
@@ -634,6 +637,7 @@ export function Painel({
         </SectionCard>
 
         <SectionCard
+          as="h2"
           subtitle={
             view.editavel
               ? "Pondera as horas de discovery que não viraram cliente. Lê-se do funil quando houver volume; até lá, entra à mão."

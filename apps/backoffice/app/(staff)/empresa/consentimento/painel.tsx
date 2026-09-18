@@ -466,6 +466,7 @@ export function Painel({
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
+        as="h2"
         subtitle={`${view.camposEmAberto.length} campos em aberto${
           view.camposEmAberto.length
             ? `: ${view.camposEmAberto.join(" · ")}`
@@ -571,6 +572,7 @@ export function Painel({
       </SectionCard>
 
       <SectionCard
+        as="h2"
         subtitle="A escolha é do responsável jurídico. Até lá, nenhum tenant habilita o consentimento permanente."
         title="Base legal"
       >
@@ -587,6 +589,7 @@ export function Painel({
       </SectionCard>
 
       <SectionCard
+        as="h2"
         subtitle={`${view.abertas} abertas · ${
           view.perguntas.length - view.abertas
         } respondidas`}

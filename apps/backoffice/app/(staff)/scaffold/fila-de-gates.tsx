@@ -273,6 +273,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
         .map((g) => (
           <SectionCard
             action={<Badge tone={g.tone}>{g.rows.length}</Badge>}
+            as="h2"
             bodyStyle={{ padding: 0 }}
             icon={g.icon}
             key={g.kind}

@@ -419,7 +419,7 @@ export function Funil({
         />
       </div>
 
-      <SectionCard icon="kanban" title="Pipeline">
+      <SectionCard as="h2" icon="kanban" title="Pipeline">
         <Board
           estagios={dados.estagios}
           hoje={hoje}
@@ -434,15 +434,16 @@ export function Funil({
       </SectionCard>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <SectionCard title="Porta de entrada">
+        <SectionCard as="h2" title="Porta de entrada">
           <Barras linhas={linhasEntrada(dados.leads)} />
         </SectionCard>
-        <SectionCard title="Origem e custo">
+        <SectionCard as="h2" title="Origem e custo">
           <Barras linhas={linhasOrigem(dados.leads, dados.canais)} />
         </SectionCard>
       </div>
 
       <SectionCard
+        as="h2"
         subtitle={`${visiveis.length} de ${plural(dados.leads.length, "lead", "leads")}`}
         title="Leads"
       >
@@ -463,7 +464,7 @@ export function Funil({
       </SectionCard>
 
       {perdidos.length > 0 ? (
-        <SectionCard title="Motivos de perda">
+        <SectionCard as="h2" title="Motivos de perda">
           <Barras linhas={linhasMotivos(perdidos)} tom="red" />
         </SectionCard>
       ) : null}

@@ -216,6 +216,7 @@ export function NewClientForm({
       ) : null}
 
       <SectionCard
+        as="h2"
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 16 }}
         icon="building"
         title="Dados do cliente"
