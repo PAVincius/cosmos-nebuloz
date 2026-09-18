@@ -26,7 +26,8 @@ vi.mock("@/app/actions/services", () => ({
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/servicos/SV-09",
-  useRouter: () => ({ push: vi.fn(), refresh: refreshMock }),
+  useRouter: () => ({ push: vi.fn(), refresh: refreshMock, replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams("editar=1"),
 }));
 
 const SERVICO: ServiceDetail = {

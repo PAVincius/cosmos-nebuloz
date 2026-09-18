@@ -7,7 +7,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Estudio } from "@/app/(staff)/ferramentas/estudio";
 import type { DiagramDetail, DiagramRow } from "@/app/actions/diagrams";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { getDiagramMock } = vi.hoisted(() => ({ getDiagramMock: vi.fn() }));
 
@@ -78,7 +81,7 @@ async function montarComD1Sujo() {
   );
   await screen.findByText("editor:xml-d1");
   fireEvent.click(screen.getByRole("button", { name: "Sujar" }));
-  replaceMock.mockClear();
+  replaceStateMock.mockClear();
   getDiagramMock.mockClear();
 }
 
@@ -109,7 +112,7 @@ describe("Estudio — rascunho sujo", () => {
     expect(screen.getByText(PERGUNTA)).toBeTruthy();
     expect(screen.getByText("editor:xml-d1")).toBeTruthy();
     expect(screen.queryByText("editor:xml-d2")).toBeNull();
-    expect(replaceMock).not.toHaveBeenCalled();
+    expect(replaceStateMock).not.toHaveBeenCalled();
     expect(getDiagramMock).not.toHaveBeenCalledWith("d2");
 
     // Voltar vem antes de Descartar: o dedo encontra a saída, não a perda.
@@ -125,9 +128,11 @@ describe("Estudio — rascunho sujo", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Descartar" }));
 
-    expect(replaceMock).toHaveBeenCalledWith("/ferramentas/bpmn?diagrama=d2", {
-      scroll: false,
-    });
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/ferramentas/bpmn?diagrama=d2"
+    );
     expect(await screen.findByText("editor:xml-d2")).toBeTruthy();
     expect(screen.queryByText(PERGUNTA)).toBeNull();
   });
@@ -140,7 +145,7 @@ describe("Estudio — rascunho sujo", () => {
 
     expect(screen.queryByText(PERGUNTA)).toBeNull();
     expect(screen.getByText("editor:xml-d1")).toBeTruthy();
-    expect(replaceMock).not.toHaveBeenCalled();
+    expect(replaceStateMock).not.toHaveBeenCalled();
   });
 
   it("sem sujeira, trocar de diagrama não pergunta nada", async () => {

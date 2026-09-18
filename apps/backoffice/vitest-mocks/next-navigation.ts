@@ -5,12 +5,14 @@ import { vi } from "vitest";
  * `next/navigation` de mentira para teste de componente.
  *
  * As telas que guardam estado na URL (`lib/url-state.ts`) leem de
- * `useSearchParams` e escrevem com `router.replace`. Um mock estático
- * (`useSearchParams: () => new URLSearchParams("...")`) prova que o replace
- * foi chamado, mas a tela nunca reage — e o teste antigo que clica num nó e
- * espera o painel abrir quebraria. Aqui o `replace` atualiza a URL e avisa os
- * hooks, que re-renderizam via `useSyncExternalStore`: o teste vê o mesmo que
- * o operador vê depois que o Next processa a navegação.
+ * `useSearchParams` e escrevem, no modo raso, com `history.replaceState` —
+ * que o Next integra ao roteador — ou, com `{ servidor: true }`, com
+ * `router.replace`. Um mock estático (`useSearchParams: () => new
+ * URLSearchParams("...")`) prova que a escrita foi chamada, mas a tela nunca
+ * reage — e o teste antigo que clica num nó e espera o painel abrir
+ * quebraria. Aqui as duas escritas atualizam a URL e avisam os hooks, que
+ * re-renderizam via `useSyncExternalStore`: o teste vê o mesmo que o operador
+ * vê depois que o Next processa a troca.
  *
  * Uso: `vi.mock("next/navigation", () => import("../vitest-mocks/next-navigation"))`
  * e, no `beforeEach`, `zerarRoteador("/rota", "a=1")`.
@@ -41,6 +43,7 @@ function irPara(href: string): void {
 /** Coloca a URL num estado conhecido e limpa as chamadas gravadas. */
 export function zerarRoteador(caminho = "/", consulta = ""): void {
   replaceMock.mockClear();
+  replaceStateMock.mockClear();
   pushMock.mockClear();
   pathname = caminho;
   search = consulta;
@@ -49,6 +52,19 @@ export function zerarRoteador(caminho = "/", consulta = ""): void {
 
 export const replaceMock = vi.fn((href: string) => irPara(href));
 export const pushMock = vi.fn((href: string) => irPara(href));
+
+/** A troca rasa de URL. O Next faz `history.replaceState` chegar a
+ *  `useSearchParams`; aqui é o mesmo caminho, e a chamada fica gravada para o
+ *  teste afirmar `(null, "", url)` — a assinatura documentada. */
+export const replaceStateMock = vi.fn(
+  (_estado: unknown, _titulo: string, url?: string | URL | null) => {
+    if (url !== undefined && url !== null) {
+      irPara(String(url));
+    }
+  }
+);
+window.history.replaceState =
+  replaceStateMock as unknown as History["replaceState"];
 
 export function usePathname(): string {
   return useSyncExternalStore(

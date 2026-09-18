@@ -7,7 +7,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Biblioteca } from "@/app/(staff)/ip/biblioteca";
 import type { IpAssetDetail, IpAssetRow } from "@/app/actions/ip-library";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { getIpAssetMock } = vi.hoisted(() => ({ getIpAssetMock: vi.fn() }));
 
@@ -96,9 +99,11 @@ describe("Biblioteca — ativo aberto na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Playbook Um/ }));
 
-    expect(replaceMock).toHaveBeenCalledWith("/ip?q=playbook&ativo=a1", {
-      scroll: false,
-    });
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/ip?q=playbook&ativo=a1"
+    );
     expect(await screen.findByDisplayValue("conteudo-a1")).toBeTruthy();
   });
 });

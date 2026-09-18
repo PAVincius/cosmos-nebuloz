@@ -408,7 +408,9 @@ describe("falha de leitura em toda rota: cabeçalho de pé e Tentar de novo", ()
     expect(
       screen.getByRole("heading", { level: 1, name: heading })
     ).toBeTruthy();
-    expect(screen.getByRole("alert").textContent).toContain(
+    // `findBy`: no financeiro o corpo da aba chega por um `<Suspense>` local
+    // (cabeçalho e abas ficam fora dele); nas demais rotas já está lá.
+    expect((await screen.findByRole("alert")).textContent).toContain(
       "Banco indisponível."
     );
     expect(screen.getByRole("button", { name: /Tentar de novo/ })).toBeTruthy();

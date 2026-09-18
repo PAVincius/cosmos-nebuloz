@@ -166,6 +166,9 @@ export function DetalheDoTenant({
    *  cliente não comprou é rota morta no meio da navegação. */
   contratados: Set<string>;
 }) {
+  // Raso (padrão do hook): as três leituras já vieram no primeiro render, e
+  // trocar de aba não tem o que buscar no servidor — antes passava pelo
+  // `loading.tsx` inteiro para mostrar o que já estava na página.
   const [aba, setAba] = useParamState("aba", "resumo");
 
   const listaDeMembros = membros.ok ? membros.data : [];

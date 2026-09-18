@@ -7,7 +7,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DetalheDoTenant } from "@/app/(staff)/clientes/[slug]/detalhe";
 import type { TenantMemberRow } from "@/app/actions/tenant-members";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 vi.mock("next/navigation", () => import("../vitest-mocks/next-navigation"));
 
@@ -66,9 +69,10 @@ describe("DetalheDoTenant — aba na URL", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: /Usuários/ }));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      "/clientes/vanta?q=vanta&aba=usuarios",
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/clientes/vanta?q=vanta&aba=usuarios"
     );
     expect(screen.getByText("ana@vanta.com")).toBeTruthy();
   });
@@ -79,9 +83,7 @@ describe("DetalheDoTenant — aba na URL", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: "Resumo" }));
 
-    expect(replaceMock).toHaveBeenCalledWith("/clientes/vanta", {
-      scroll: false,
-    });
+    expect(replaceStateMock).toHaveBeenCalledWith(null, "", "/clientes/vanta");
     expect(screen.getByText("ações de módulo")).toBeTruthy();
   });
 
