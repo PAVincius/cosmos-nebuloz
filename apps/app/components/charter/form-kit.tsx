@@ -19,6 +19,7 @@ import {
   useContext,
   useId,
 } from "react";
+import { FS } from "./type-scale";
 
 export const DirtyCtx = createContext<{ markDirty: () => void }>({
   markDirty: () => {
@@ -34,9 +35,8 @@ const inputStyle: CSSProperties = {
   border: "1px solid var(--hairline-strong)",
   background: "var(--surface)",
   color: "var(--ink)",
-  fontSize: 13.5,
+  fontSize: FS.base,
   fontFamily: "inherit",
-  outline: "none",
 };
 
 // ── FormField ─────────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ export function FormField({
     <span
       id={isGroup ? groupLabelId : undefined}
       style={{
-        fontSize: 12,
+        fontSize: FS.nota,
         fontWeight: 700,
         color: "var(--ink)",
         display: "flex",
@@ -85,7 +85,7 @@ export function FormField({
   const footerNode = error ? (
     <span
       style={{
-        fontSize: 11.5,
+        fontSize: FS.nota,
         color: "var(--red-text)",
         display: "flex",
         gap: 5,
@@ -99,7 +99,7 @@ export function FormField({
     hint && (
       <span
         style={{
-          fontSize: 11.5,
+          fontSize: FS.nota,
           color: "var(--ink-faint)",
           lineHeight: 1.45,
         }}
@@ -260,7 +260,7 @@ export function Segmented({
               flex: full ? 1 : "none",
               padding: "7px 13px",
               borderRadius: "var(--r-sm)",
-              fontSize: 12.5,
+              fontSize: FS.base,
               fontWeight: 700,
               cursor: "pointer",
               border: `1px solid ${on ? `rgba(var(--${t}-rgb),.4)` : "var(--hairline-strong)"}`,
@@ -354,7 +354,7 @@ export function RadioCards({
               <span
                 style={{
                   display: "block",
-                  fontSize: 13.5,
+                  fontSize: FS.base,
                   fontWeight: 700,
                   color: on ? `var(--${t}-text)` : "var(--ink)",
                 }}
@@ -365,7 +365,7 @@ export function RadioCards({
                 <span
                   style={{
                     display: "block",
-                    fontSize: 12,
+                    fontSize: FS.nota,
                     color: "var(--ink-muted)",
                     marginTop: 3,
                     lineHeight: 1.5,
@@ -449,7 +449,7 @@ export function CheckRow({
         <div
           id={labelId}
           style={{
-            fontSize: 12.5,
+            fontSize: FS.base,
             fontWeight: 600,
             color: checked ? "var(--ink-muted)" : "var(--ink)",
             lineHeight: 1.45,
@@ -460,7 +460,7 @@ export function CheckRow({
         {hint && (
           <div
             style={{
-              fontSize: 11.5,
+              fontSize: FS.nota,
               color: "var(--ink-faint)",
               marginTop: 2,
               lineHeight: 1.45,
@@ -494,7 +494,7 @@ export function Callout({
         display: "flex",
         gap: 9,
         alignItems: "flex-start",
-        fontSize: 12.5,
+        fontSize: FS.base,
         lineHeight: 1.6,
         color: "var(--ink-muted)",
         padding: "11px 13px",
@@ -522,7 +522,7 @@ export function FooterHint({ children }: { children: ReactNode }) {
   return (
     <span
       style={{
-        fontSize: 11.5,
+        fontSize: FS.nota,
         color: "var(--ink-faint)",
         display: "flex",
         alignItems: "center",
@@ -540,7 +540,7 @@ export function Kbd({ children }: { children: ReactNode }) {
     <kbd
       className="mono"
       style={{
-        fontSize: 10,
+        fontSize: FS.micro,
         fontWeight: 700,
         padding: "1px 5px",
         borderRadius: 4,

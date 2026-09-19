@@ -25,8 +25,8 @@ import {
   type Tone,
 } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
+import { BackLink } from "../back-link";
 import {
-  BackLink,
   Eyebrow,
   GatedButton,
   MetaCell,
@@ -38,6 +38,7 @@ import {
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { VendorTierModal } from "../modals/vendor-tier";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const CASE_COLS = "minmax(0,1fr) 120px 130px";
@@ -311,7 +312,7 @@ function VendorDetailView({
                 right={
                   <span
                     className="mono"
-                    style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                    style={{ fontSize: FS.micro, color: "var(--ink-faint)" }}
                   >
                     {c.code}
                   </span>
@@ -400,7 +401,7 @@ function VendorDetailView({
               style={{
                 margin: "7px 0 0",
                 paddingLeft: 16,
-                fontSize: 11.5,
+                fontSize: FS.nota,
                 color: "var(--ink-muted)",
                 lineHeight: 1.65,
               }}
@@ -438,7 +439,7 @@ function VendorDetailView({
                     <span
                       className="mono"
                       style={{
-                        fontSize: 10.5,
+                        fontSize: FS.micro,
                         fontWeight: 700,
                         color: "var(--ink-faint)",
                       }}
@@ -447,7 +448,7 @@ function VendorDetailView({
                     </span>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 600,
                         color: "var(--ink)",
                         marginTop: 2,

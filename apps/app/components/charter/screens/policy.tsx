@@ -36,46 +36,16 @@ import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DiffModal } from "../modals/diff";
 import { PublishVersionModal } from "../modals/publish-version";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 import { GatedFooterAction } from "./gated-footer-action";
 import { ReopenSectionModal } from "./policy-confirm-reopen";
+import { DERIVED_RULES, VERSION_DISCIPLINE } from "./policy-copy";
 import { PolicyDraftPreview } from "./policy-draft-preview";
 import PolicyScope from "./policy-scope";
 
 const fmt = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
-
-/** O que a seção passa a exigir na prática, em cada superfície do Charter.
- *  Torna visível que política não é documento — é regra que muda o sistema. */
-const DERIVED_RULES: { icon: IconName; t: string; d: string }[] = [
-  {
-    icon: "inbox",
-    t: "Intake de caso de uso",
-    d: "Campos obrigatórios e caminho de aprovação recalculados",
-  },
-  {
-    icon: "plug",
-    t: "Elegibilidade de fornecedor",
-    d: "Classe máxima de dado permitida por fornecedor",
-  },
-  {
-    icon: "userCheck",
-    t: "Trilha de onboarding",
-    d: "Módulos e aceite revinculados à nova versão",
-  },
-  {
-    icon: "history",
-    t: "Trilha de auditoria",
-    d: "Diff de campo e aprovador registrados por versão",
-  },
-];
-
-const VERSION_DISCIPLINE = [
-  "Toda publicação exige resumo de mudança — não existe versão sem justificativa.",
-  "Aceite de colaborador guarda a versão que ele leu, não apenas a data.",
-  "Reabrir seção publicada não altera a versão vigente até nova aprovação.",
-  "Exceção concedida expira em 90 dias e volta ao Comitê.",
-];
 
 const VERSION_PATTERN = /^v?(\d+)\.(\d+)$/;
 
@@ -316,7 +286,7 @@ function PolicyInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 10.5,
+                      fontSize: FS.micro,
                       fontWeight: 700,
                       color: on ? "var(--accent-text)" : "var(--ink-faint)",
                       marginTop: 2,
@@ -328,7 +298,7 @@ function PolicyInner() {
                     <span
                       style={{
                         display: "block",
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: on ? 700 : 600,
                         color: "var(--ink)",
                         lineHeight: 1.35,
@@ -348,7 +318,10 @@ function PolicyInner() {
                         {SECTION_STATUS_LABEL[s.status]}
                       </Badge>
                       <span
-                        style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                        style={{
+                          fontSize: FS.micro,
+                          color: "var(--ink-faint)",
+                        }}
                       >
                         {s.words} palavras · {fmt(s.updatedAt)}
                       </span>
@@ -388,7 +361,7 @@ function PolicyInner() {
                   >
                     <Textarea
                       onChange={(e) => setDraft(e.target.value)}
-                      style={{ minHeight: 190, fontSize: 13.5 }}
+                      style={{ minHeight: 190, fontSize: FS.base }}
                       value={draft}
                     />
                     <div style={{ display: "flex", gap: 8 }}>
@@ -428,7 +401,9 @@ function PolicyInner() {
                         Salvar
                       </Button>
                     </div>
-                    <div style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+                    <div
+                      style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}
+                    >
                       Editar uma seção publicada a rebaixa automaticamente para
                       revisão — o texto alterado não é mais o texto aprovado.
                     </div>
@@ -437,7 +412,7 @@ function PolicyInner() {
                   <>
                     <div
                       style={{
-                        fontSize: 13.5,
+                        fontSize: FS.base,
                         lineHeight: 1.75,
                         color: "var(--ink)",
                         padding: "4px 2px",
@@ -582,7 +557,7 @@ function PolicyInner() {
                       <div>
                         <div
                           style={{
-                            fontSize: 12.5,
+                            fontSize: FS.base,
                             fontWeight: 700,
                             color: "var(--ink)",
                           }}
@@ -591,7 +566,7 @@ function PolicyInner() {
                         </div>
                         <div
                           style={{
-                            fontSize: 11.5,
+                            fontSize: FS.nota,
                             color: "var(--ink-muted)",
                             marginTop: 2,
                             lineHeight: 1.45,
@@ -701,7 +676,7 @@ function PolicyInner() {
                       <span
                         className="mono"
                         style={{
-                          fontSize: 13.5,
+                          fontSize: FS.base,
                           fontWeight: 800,
                           color: "var(--ink)",
                         }}
@@ -715,14 +690,14 @@ function PolicyInner() {
                       </Badge>
                       <span
                         className="mono"
-                        style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                        style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}
                       >
                         {v.changeCount} seções alteradas
                       </span>
                     </div>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         color: "var(--ink-muted)",
                         marginTop: 5,
                         lineHeight: 1.55,
@@ -732,7 +707,7 @@ function PolicyInner() {
                     </div>
                     <div
                       style={{
-                        fontSize: 11,
+                        fontSize: FS.nota,
                         color: "var(--ink-faint)",
                         marginTop: 5,
                       }}
@@ -766,7 +741,7 @@ function PolicyInner() {
                   style={{
                     display: "flex",
                     gap: 9,
-                    fontSize: 12.5,
+                    fontSize: FS.base,
                     color: "var(--ink-muted)",
                     lineHeight: 1.55,
                   }}
@@ -900,7 +875,7 @@ function PolicyInner() {
                   <div>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: "var(--ink)",
                       }}
@@ -909,7 +884,7 @@ function PolicyInner() {
                     </div>
                     <div
                       style={{
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                         marginTop: 2,
                         lineHeight: 1.45,

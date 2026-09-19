@@ -18,6 +18,7 @@ import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import type { SetupProgress, SetupStep } from "@/app/(charter)/actions/setup";
 import { GatedButton } from "./base";
+import { FS } from "./type-scale";
 
 const ESTADO_LABEL: Record<SetupStep["estado"], string> = {
   feito: "Feito",
@@ -69,13 +70,19 @@ function StepRow({ onOpen, step }: { onOpen: () => void; step: SetupStep }) {
           >
             {ESTADO_LABEL[step.estado]}
           </Badge>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>
+          <span
+            style={{ fontSize: FS.base, fontWeight: 700, color: "var(--ink)" }}
+          >
             {step.titulo}
           </span>
         </div>
 
         <div
-          style={{ fontSize: 12, color: "var(--ink-muted)", lineHeight: 1.5 }}
+          style={{
+            fontSize: FS.nota,
+            color: "var(--ink-muted)",
+            lineHeight: 1.5,
+          }}
         >
           {step.porque}
         </div>
@@ -84,7 +91,7 @@ function StepRow({ onOpen, step }: { onOpen: () => void; step: SetupStep }) {
           <div
             className="mono"
             style={{
-              fontSize: 11.5,
+              fontSize: FS.nota,
               fontWeight: 700,
               color: "var(--ink-faint)",
               marginTop: 6,
@@ -96,7 +103,11 @@ function StepRow({ onOpen, step }: { onOpen: () => void; step: SetupStep }) {
 
         {step.estado === "bloqueado" && step.bloqueadoPor && (
           <div
-            style={{ fontSize: 11.5, color: "var(--ink-faint)", marginTop: 6 }}
+            style={{
+              fontSize: FS.nota,
+              color: "var(--ink-faint)",
+              marginTop: 6,
+            }}
           >
             {step.bloqueadoPor}
           </div>
@@ -104,7 +115,11 @@ function StepRow({ onOpen, step }: { onOpen: () => void; step: SetupStep }) {
 
         {!step.podeAgir && step.quemPode && (
           <div
-            style={{ fontSize: 11.5, color: "var(--ink-faint)", marginTop: 6 }}
+            style={{
+              fontSize: FS.nota,
+              color: "var(--ink-faint)",
+              marginTop: 6,
+            }}
           >
             Só {step.quemPode} pode fazer isso.
           </div>
@@ -131,7 +146,7 @@ export function SetupPanel({ progresso }: { progresso: SetupProgress }) {
   if (progresso.completo) {
     return (
       <SectionCard icon="check" title="Montagem concluída" tone="green">
-        <span style={{ fontSize: 12.5, color: "var(--ink-muted)" }}>
+        <span style={{ fontSize: FS.base, color: "var(--ink-muted)" }}>
           Os {progresso.total} passos de montagem inicial foram feitos.
         </span>
       </SectionCard>

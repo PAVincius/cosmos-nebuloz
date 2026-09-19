@@ -20,6 +20,7 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell, ModalSplit } from "../modal";
+import { FS } from "../type-scale";
 
 // ── 10. PublishTrackModal (FR-10.4) ───────────────────────────────────────────
 
@@ -130,7 +131,7 @@ export function PublishTrackModal({
             >
               <div
                 style={{
-                  fontSize: 13.5,
+                  fontSize: FS.base,
                   fontWeight: 700,
                   color: "var(--ink)",
                   lineHeight: 1.35,
@@ -140,7 +141,7 @@ export function PublishTrackModal({
               </div>
               <div
                 style={{
-                  fontSize: 11.5,
+                  fontSize: FS.nota,
                   color: "var(--ink-muted)",
                   marginTop: 4,
                 }}
@@ -176,7 +177,7 @@ export function PublishTrackModal({
                       style={{
                         display: "flex",
                         gap: 8,
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                       }}
                     >
@@ -195,7 +196,7 @@ export function PublishTrackModal({
                     style={{
                       display: "flex",
                       gap: 8,
-                      fontSize: 11.5,
+                      fontSize: FS.nota,
                       color: "var(--green-text)",
                       fontWeight: 700,
                     }}
@@ -218,7 +219,7 @@ export function PublishTrackModal({
               <div
                 className="mono"
                 style={{
-                  fontSize: 22,
+                  fontSize: FS.display,
                   fontWeight: 800,
                   color: "var(--ink)",
                   lineHeight: 1,
@@ -228,7 +229,7 @@ export function PublishTrackModal({
               </div>
               <div
                 style={{
-                  fontSize: 11.5,
+                  fontSize: FS.nota,
                   color: "var(--ink-muted)",
                   marginTop: 4,
                 }}

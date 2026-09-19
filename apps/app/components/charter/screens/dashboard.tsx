@@ -45,6 +45,7 @@ import { download } from "../download";
 import { ModalProvider, useModal } from "../modal";
 import { ExportPackageModal } from "../modals/export-package";
 import { SetupPanel } from "../setup-panel";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
@@ -395,7 +396,7 @@ function DashboardInner() {
                         <span
                           className="mono"
                           style={{
-                            fontSize: 10.5,
+                            fontSize: FS.micro,
                             fontWeight: 700,
                             color: "var(--ink-faint)",
                           }}
@@ -406,7 +407,7 @@ function DashboardInner() {
                       </div>
                       <div
                         style={{
-                          fontSize: 13,
+                          fontSize: FS.base,
                           fontWeight: 600,
                           color: "var(--ink)",
                           marginTop: 3,
@@ -424,7 +425,7 @@ function DashboardInner() {
                     <span
                       className="mono"
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: `var(--${u.riskTone}-text)`,
                       }}
@@ -434,7 +435,7 @@ function DashboardInner() {
                     {/* Cor + palavra: "sem revisor" escrito, não só vermelho. */}
                     <span
                       style={{
-                        fontSize: 12,
+                        fontSize: FS.nota,
                         color: u.reviewerName
                           ? "var(--ink-muted)"
                           : "var(--red-text)",
@@ -447,7 +448,7 @@ function DashboardInner() {
                       <span
                         className="mono"
                         style={{
-                          fontSize: 12,
+                          fontSize: FS.nota,
                           fontWeight: 700,
                           color: `var(--${slaTone}-text)`,
                         }}
@@ -519,7 +520,7 @@ function DashboardInner() {
                     <span
                       className="mono"
                       style={{
-                        fontSize: 10.5,
+                        fontSize: FS.micro,
                         fontWeight: 700,
                         color: "var(--ink-faint)",
                         width: 16,
@@ -531,7 +532,7 @@ function DashboardInner() {
                     <span
                       style={{
                         flex: 1,
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 600,
                         color: "var(--ink)",
                         overflow: "hidden",
@@ -711,7 +712,7 @@ function DashboardInner() {
                     <span
                       style={{
                         display: "block",
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: "var(--ink)",
                         lineHeight: 1.4,
@@ -722,7 +723,7 @@ function DashboardInner() {
                     <span
                       style={{
                         display: "block",
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                         marginTop: 2,
                       }}
@@ -735,7 +736,7 @@ function DashboardInner() {
                       display: "flex",
                       alignItems: "center",
                       gap: 4,
-                      fontSize: 11.5,
+                      fontSize: FS.nota,
                       fontWeight: 700,
                       color: `var(--${a.tone}-text)`,
                       flexShrink: 0,

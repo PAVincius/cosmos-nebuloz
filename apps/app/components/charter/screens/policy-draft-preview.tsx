@@ -13,6 +13,7 @@ import { generatePolicyDraft } from "@/app/(charter)/actions/policy-generate";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { GatedButton, Textarea } from "../base";
 import { Callout, FooterHint } from "../form-kit";
+import { FS } from "../type-scale";
 
 type Estado = "idle" | "gerando" | "pronto" | "erro";
 type Grounded = { id: string; codigo: string; citacao: string };
@@ -138,10 +139,10 @@ export function PolicyDraftPreview({
         <Textarea
           aria-label={`Rascunho gerado para a seção ${sectionName}`}
           readOnly
-          style={{ minHeight: 190, fontSize: 13.5 }}
+          style={{ minHeight: 190, fontSize: FS.base }}
           value={body}
         />
-        <div style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+        <div style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}>
           {fontes.exigencias} exigência(s), {fontes.casos} caso(s),{" "}
           {fontes.fornecedores} fornecedor(es)
         </div>

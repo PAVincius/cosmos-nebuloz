@@ -36,8 +36,8 @@ import {
   type Tone,
 } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
+import { BackLink } from "../back-link";
 import {
-  BackLink,
   BarRow,
   MetaCell,
   ScreenError,
@@ -50,6 +50,7 @@ import { ModalProvider, useModal } from "../modal";
 import { DecisionModal } from "../modals/decision";
 import { MitigationModal } from "../modals/mitigation";
 import { AuditList, MitigationTable, RiskMiniMatrix } from "../parts";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 import { GatedFooterAction } from "./gated-footer-action";
 
@@ -383,7 +384,7 @@ function CaseDetailInner({ param }: { param?: string }) {
           >
             <p
               style={{
-                fontSize: 13,
+                fontSize: FS.base,
                 lineHeight: 1.7,
                 color: "var(--ink)",
                 marginBottom: 16,
@@ -459,7 +460,7 @@ function CaseDetailInner({ param }: { param?: string }) {
                   <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: `var(--${rec.tone}-text)`,
                       }}
@@ -468,7 +469,7 @@ function CaseDetailInner({ param }: { param?: string }) {
                     </div>
                     <div
                       style={{
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                         marginTop: 2,
                       }}
@@ -514,14 +515,16 @@ function CaseDetailInner({ param }: { param?: string }) {
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div
                       style={{
-                        fontSize: 13.5,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: "var(--ink)",
                       }}
                     >
                       {data.vendorName}
                     </div>
-                    <div style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
+                    <div
+                      style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}
+                    >
                       {data.vendorDpa ? "DPA assinado" : "sem DPA"} · retenção{" "}
                       {data.vendorRetention?.toLowerCase() ?? "não declarada"}
                     </div>
@@ -569,7 +572,7 @@ function CaseDetailInner({ param }: { param?: string }) {
             )}
             {data.status === "BLOCKED" && data.blockReason && (
               <SectionCard icon="ban" title="Motivo do bloqueio" tone="red">
-                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.65 }}>
+                <p style={{ margin: 0, fontSize: FS.base, lineHeight: 1.65 }}>
                   {data.blockReason}
                 </p>
               </SectionCard>
@@ -580,7 +583,7 @@ function CaseDetailInner({ param }: { param?: string }) {
                 title="Ajustes solicitados"
                 tone="amber"
               >
-                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.65 }}>
+                <p style={{ margin: 0, fontSize: FS.base, lineHeight: 1.65 }}>
                   {data.changeRequest}
                 </p>
               </SectionCard>
@@ -591,7 +594,7 @@ function CaseDetailInner({ param }: { param?: string }) {
                 title="Fornecedor ficou inelegível"
                 tone="red"
               >
-                <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65 }}>
+                <p style={{ margin: 0, fontSize: FS.base, lineHeight: 1.65 }}>
                   A postura contratual do fornecedor mudou e não cobre mais a
                   classe de dado deste caso. Exige revisão humana antes de
                   continuar.

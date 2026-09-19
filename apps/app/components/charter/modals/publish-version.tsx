@@ -15,6 +15,7 @@ import {
   TextArea,
 } from "../form-kit";
 import { ModalShell } from "../modal";
+import { FS } from "../type-scale";
 
 // ── 4. PublishVersionModal (FR-2.3, FR-2.4) ───────────────────────────────────
 
@@ -136,7 +137,7 @@ export function PublishVersionModal({
               resumo. Os checkboxes que ficavam aqui não entravam no submit. */}
           <div
             style={{
-              fontSize: 12.5,
+              fontSize: FS.base,
               color: "var(--ink)",
               lineHeight: 1.5,
             }}
@@ -148,7 +149,7 @@ export function PublishVersionModal({
           {/* Honestidade sobre o V1: a invalidação acontece; o envio não (ADR-0011). */}
           <div
             style={{
-              fontSize: 11,
+              fontSize: FS.nota,
               color: "var(--ink-faint)",
               marginTop: 8,
               lineHeight: 1.5,

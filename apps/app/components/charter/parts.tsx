@@ -15,6 +15,7 @@ import {
   type Tone,
 } from "@/lib/charter/rules";
 import { Legend, TableHead, TableRow } from "./base";
+import { FS } from "./type-scale";
 
 const AXIS = [1, 2, 3, 4, 5];
 const ROWS = [5, 4, 3, 2, 1];
@@ -54,7 +55,7 @@ export function RiskMiniMatrix({ sev, lik }: { sev: number; lik: number }) {
             <span
               className="mono"
               style={{
-                fontSize: 10,
+                fontSize: FS.micro,
                 color: "var(--ink-faint)",
                 display: "grid",
                 placeItems: "center",
@@ -101,7 +102,7 @@ export function RiskMiniMatrix({ sev, lik }: { sev: number; lik: number }) {
             className="mono"
             key={l}
             style={{
-              fontSize: 10,
+              fontSize: FS.micro,
               color: "var(--ink-faint)",
               textAlign: "center",
               paddingTop: 3,
@@ -116,7 +117,7 @@ export function RiskMiniMatrix({ sev, lik }: { sev: number; lik: number }) {
           display: "flex",
           justifyContent: "space-between",
           marginTop: 8,
-          fontSize: 10.5,
+          fontSize: FS.micro,
           color: "var(--ink-faint)",
         }}
       >
@@ -165,7 +166,7 @@ export function Heatmap({
             <span
               className="mono"
               style={{
-                fontSize: 10.5,
+                fontSize: FS.micro,
                 color: "var(--ink-faint)",
                 display: "grid",
                 placeItems: "center",
@@ -196,10 +197,11 @@ export function Heatmap({
                       ? `rgba(var(--${tone}-rgb),${0.14 + Math.min(count, 4) * 0.14})`
                       : `rgba(var(--${tone}-rgb),.05)`,
                     border: `1px solid ${on ? `var(--${tone})` : `rgba(var(--${tone}-rgb),${count ? 0.3 : 0.12})`}`,
-                    outline: on
-                      ? `2px solid rgba(var(--${tone}-rgb),.45)`
-                      : "none",
-                    outlineOffset: 2,
+                    // Anel de seleção em box-shadow — um outline inline
+                    // apagaria o anel de foco global do teclado.
+                    boxShadow: on
+                      ? `0 0 0 2px rgba(var(--${tone}-rgb),.45)`
+                      : undefined,
                   }}
                   type="button"
                 >
@@ -207,7 +209,7 @@ export function Heatmap({
                   <span
                     className="mono"
                     style={{
-                      fontSize: 14,
+                      fontSize: FS.forte,
                       fontWeight: 800,
                       color: count ? `var(--${tone}-text)` : "var(--ink-faint)",
                       opacity: count ? 1 : 0.5,
@@ -226,7 +228,7 @@ export function Heatmap({
             className="mono"
             key={l}
             style={{
-              fontSize: 10.5,
+              fontSize: FS.micro,
               color: "var(--ink-faint)",
               textAlign: "center",
               paddingTop: 4,
@@ -242,7 +244,7 @@ export function Heatmap({
           display: "flex",
           justifyContent: "space-between",
           marginTop: 9,
-          fontSize: 11,
+          fontSize: FS.nota,
           color: "var(--ink-faint)",
           fontWeight: 600,
         }}
@@ -301,7 +303,7 @@ export function MitigationTable({
             <span
               className="mono"
               style={{
-                fontSize: 11,
+                fontSize: FS.nota,
                 fontWeight: 700,
                 color: "var(--accent-text)",
               }}
@@ -311,7 +313,7 @@ export function MitigationTable({
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
-                  fontSize: 12.5,
+                  fontSize: FS.base,
                   fontWeight: 600,
                   color: "var(--ink)",
                   overflow: "hidden",
@@ -323,7 +325,7 @@ export function MitigationTable({
               </div>
               <span
                 className="mono"
-                style={{ fontSize: 10, color: "var(--ink-faint)" }}
+                style={{ fontSize: FS.micro, color: "var(--ink-faint)" }}
               >
                 {m.code}
               </span>
@@ -341,13 +343,13 @@ export function MitigationTable({
                 ]
               }
             </Badge>
-            <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+            <span style={{ fontSize: FS.nota, color: "var(--ink-muted)" }}>
               {m.ownerName?.split(" ")[0] ?? "—"}
             </span>
             <span
               className="mono"
               style={{
-                fontSize: 12,
+                fontSize: FS.nota,
                 color: m.overdue ? "var(--red-text)" : "var(--ink-muted)",
                 fontWeight: m.overdue ? 700 : 500,
               }}
@@ -448,7 +450,7 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                 >
                   <span
                     style={{
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       fontWeight: 700,
                       color: "var(--ink)",
                     }}
@@ -460,7 +462,7 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                 <span
                   style={{
                     display: "block",
-                    fontSize: 12.5,
+                    fontSize: FS.base,
                     color: "var(--ink-muted)",
                     marginTop: 3,
                   }}
@@ -470,7 +472,7 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                 <span
                   style={{
                     display: "block",
-                    fontSize: 11,
+                    fontSize: FS.nota,
                     color: "var(--ink-faint)",
                     marginTop: 4,
                   }}
@@ -503,7 +505,7 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                 {a.note && (
                   <div
                     style={{
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       color: "var(--ink)",
                       fontStyle: "italic",
                       lineHeight: 1.6,
@@ -545,7 +547,7 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                       >
                         <span
                           style={{
-                            fontSize: 11.5,
+                            fontSize: FS.nota,
                             fontWeight: 700,
                             color: "var(--ink-muted)",
                           }}
@@ -554,13 +556,19 @@ export function AuditList({ rows }: { rows: AuditRow[] }) {
                         </span>
                         <span
                           className="mono"
-                          style={{ fontSize: 11.5, color: "var(--red-text)" }}
+                          style={{
+                            fontSize: FS.nota,
+                            color: "var(--red-text)",
+                          }}
                         >
                           {before}
                         </span>
                         <span
                           className="mono"
-                          style={{ fontSize: 11.5, color: "var(--green-text)" }}
+                          style={{
+                            fontSize: FS.nota,
+                            color: "var(--green-text)",
+                          }}
                         >
                           {after}
                         </span>

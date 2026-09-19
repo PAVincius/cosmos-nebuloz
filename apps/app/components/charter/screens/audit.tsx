@@ -28,6 +28,7 @@ import { download } from "../download";
 import { ModalProvider, useModal } from "../modal";
 import { ExportPackageModal } from "../modals/export-package";
 import { AUDIT_TYPE_META, AuditList } from "../parts";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 // O mesmo teto do `listAudit`. Repetido aqui só para avisar na tela quando a
@@ -240,7 +241,9 @@ function AuditInner() {
               type="date"
               value={from}
             />
-            <span style={{ color: "var(--ink-faint)", fontSize: 12 }}>até</span>
+            <span style={{ color: "var(--ink-faint)", fontSize: FS.nota }}>
+              até
+            </span>
             <Input
               aria-label="Data final"
               onChange={(e) => setTo(e.target.value)}
@@ -310,7 +313,7 @@ function AuditInner() {
                   style={{
                     padding: "11px 16px",
                     borderTop: "1px solid var(--hairline)",
-                    fontSize: 11.5,
+                    fontSize: FS.nota,
                     color: "var(--ink-muted)",
                   }}
                 >
@@ -362,7 +365,7 @@ function AuditInner() {
                   <div>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 700,
                         color: "var(--ink)",
                       }}
@@ -371,7 +374,7 @@ function AuditInner() {
                     </div>
                     <div
                       style={{
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                         marginTop: 2,
                       }}
@@ -426,7 +429,7 @@ function AuditInner() {
                 >
                   <span
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       color: "var(--ink-muted)",
                       fontWeight: 600,
                     }}
@@ -435,7 +438,7 @@ function AuditInner() {
                   </span>
                   <span
                     style={{
-                      fontSize: 11.5,
+                      fontSize: FS.nota,
                       fontWeight: 700,
                       color: "var(--ink)",
                       textAlign: "right",

@@ -31,6 +31,7 @@ import {
 import { ModalProvider, useModal } from "../modal";
 import { MitigationModal } from "../modals/mitigation";
 import { Heatmap, MitigationTable } from "../parts";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const CASE_COLS = "minmax(0,1fr) 108px 70px";
@@ -253,7 +254,7 @@ function RiskInner() {
                     <span
                       className="mono"
                       style={{
-                        fontSize: 10.5,
+                        fontSize: FS.micro,
                         fontWeight: 700,
                         color: "var(--ink-faint)",
                       }}
@@ -262,7 +263,7 @@ function RiskInner() {
                     </span>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: FS.base,
                         fontWeight: 600,
                         color: "var(--ink)",
                         marginTop: 2,
@@ -280,7 +281,7 @@ function RiskInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       fontWeight: 800,
                       color: `var(--${scoreTone(c.score)}-text)`,
                       textAlign: "right",

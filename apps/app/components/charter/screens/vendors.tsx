@@ -34,6 +34,7 @@ import {
 import { ModalProvider, useModal } from "../modal";
 import { ClauseLibraryModal } from "../modals/clause-library";
 import { NewVendorModal } from "../modals/new-vendor";
+import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
 
 const COLS = "minmax(0,1fr) 132px 128px 92px 88px 96px";
@@ -288,7 +289,7 @@ function VendorsInner() {
                       <span
                         className="mono"
                         style={{
-                          fontSize: 10.5,
+                          fontSize: FS.micro,
                           fontWeight: 700,
                           color: "var(--ink-faint)",
                         }}
@@ -297,7 +298,7 @@ function VendorsInner() {
                       </span>
                       <span
                         style={{
-                          fontSize: 13,
+                          fontSize: FS.base,
                           fontWeight: 700,
                           color: "var(--ink)",
                           overflow: "hidden",
@@ -310,7 +311,7 @@ function VendorsInner() {
                     </div>
                     <div
                       style={{
-                        fontSize: 11.5,
+                        fontSize: FS.nota,
                         color: "var(--ink-muted)",
                         marginTop: 2,
                       }}
@@ -350,7 +351,7 @@ function VendorsInner() {
                   )}
                   <span
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       color: v.region ? "var(--ink-muted)" : "var(--red-text)",
                       fontWeight: v.region ? 500 : 700,
                     }}
@@ -360,7 +361,7 @@ function VendorsInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12,
+                      fontSize: FS.nota,
                       fontWeight: 600,
                       color: retTone
                         ? `var(--${retTone}-text)`
@@ -372,7 +373,7 @@ function VendorsInner() {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12.5,
+                      fontSize: FS.base,
                       fontWeight: 700,
                       color: "var(--ink)",
                     }}

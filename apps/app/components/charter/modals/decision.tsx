@@ -23,6 +23,7 @@ import {
   TextInput,
 } from "../form-kit";
 import { ModalShell } from "../modal";
+import { FS } from "../type-scale";
 import type { DataClass } from "./_shared";
 
 // ── 2. DecisionModal (FR-6) ───────────────────────────────────────────────────
@@ -276,7 +277,7 @@ export function DecisionModal({
               {conds.length === 0 && (
                 <div
                   style={{
-                    fontSize: 12,
+                    fontSize: FS.nota,
                     color: "var(--red-text)",
                     padding: "8px 4px",
                   }}
@@ -330,7 +331,7 @@ export function DecisionModal({
                     style={{
                       padding: "5px 10px",
                       borderRadius: 99,
-                      fontSize: 11.5,
+                      fontSize: FS.nota,
                       fontWeight: 600,
                       border: "1px dashed var(--hairline-strong)",
                       background: "transparent",

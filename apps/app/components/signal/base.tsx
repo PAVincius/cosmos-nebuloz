@@ -22,8 +22,8 @@
 // a casca do Signal marca `.signal-root`.
 
 // biome-ignore lint/performance/noBarrelFile: ponto único e deliberado de acoplamento com o Charter — ver comentário acima
+export { BackLink } from "@/components/charter/back-link";
 export {
-  BackLink,
   BarRow,
   type ChipOption,
   type ColumnLabel,
