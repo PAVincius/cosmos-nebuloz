@@ -26,8 +26,10 @@ import {
   INPUT,
   rotuloSalvar,
 } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
+import { Vazio } from "@/components/vazio";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState } from "@/lib/url-state";
 import {
@@ -445,22 +447,6 @@ export function Biblioteca({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
-      {confirmacao ? (
-        <output
-          style={{
-            display: "block",
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {confirmacao}
-        </output>
-      ) : null}
 
       <KpisDoAcervo lista={lista} />
 
@@ -545,6 +531,9 @@ export function Biblioteca({
                     {rotuloSalvar(salvando, sujo)}
                   </BotaoPrimario>
                 </div>
+                {/* Junto do botão que agiu, não no topo da página: quem clicou
+                    "Salvar revisão" está olhando para cá. */}
+                {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
                 <textarea
                   className="mono scroll"
@@ -617,17 +606,7 @@ export function Biblioteca({
           </>
         ) : (
           <SectionCard title="Nenhum ativo aberto">
-            <p
-              style={{
-                margin: 0,
-                padding: 24,
-                textAlign: "center",
-                fontSize: "var(--fs-base)",
-                color: "var(--ink-muted)",
-              }}
-            >
-              Escolha um ativo na lista para ver e editar.
-            </p>
+            <Vazio>Escolha um ativo na lista para ver e editar.</Vazio>
           </SectionCard>
         )}
       </div>

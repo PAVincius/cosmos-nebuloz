@@ -34,8 +34,10 @@ describe("WriteButton", () => {
       </WriteButton>
     );
 
+    // `aria-disabled`, não `disabled`: o botão continua no Tab e anuncia o
+    // motivo; o clique é engolido aqui.
     const botao = screen.getByRole("button", { name: /Contratar módulo/ });
-    expect(botao.hasAttribute("disabled")).toBe(true);
+    expect(botao.getAttribute("aria-disabled")).toBe("true");
     botao.click();
     expect(onClick).not.toHaveBeenCalled();
   });

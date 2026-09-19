@@ -4,10 +4,13 @@ import { listEngagements } from "@/app/actions/engagements";
 import { listIpAssets } from "@/app/actions/ip-library";
 import { listServices } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Biblioteca } from "./biblioteca";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/ip") };
 
 export default async function IpPage() {
   const [staff, ativos, engajamentos, servicos, pessoas] = await Promise.all([
@@ -24,7 +27,7 @@ export default async function IpPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Delivery · acervo"
+        eyebrow={`${secaoDaRota("/ip")} · acervo`}
         subtitle="O que dá para reusar no próximo cliente em vez de refazer. Versionado como os diagramas: o valor está em saber o que mudou entre a v3 e a v4."
         title="Biblioteca de IP"
       />

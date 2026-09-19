@@ -160,7 +160,13 @@ export function Painel({
           />
           {eyebrowDoProcesso(processo)}
         </p>
-        <h2 style={{ fontSize: 18, fontWeight: 700, margin: "6px 0 0" }}>
+        <h2
+          style={{
+            fontSize: "var(--fs-titulo)",
+            fontWeight: 700,
+            margin: "6px 0 0",
+          }}
+        >
           {processo.nome}
         </h2>
         <p
@@ -174,7 +180,7 @@ export function Painel({
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas" style={{ gap: 8 }}>
         <CartaoMetrica label="Status">
           <Badge tone={STATUS[status].tom}>{STATUS[status].rotulo}</Badge>
         </CartaoMetrica>

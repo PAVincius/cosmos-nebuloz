@@ -291,7 +291,11 @@ describe("Recorrente", () => {
 
     expect(screen.getByText("Receita de serviço")).toBeTruthy();
     expect(screen.getByText(/não é recorrente/)).toBeTruthy();
-    expect(screen.getByText(/fora do MRR e do ARR/)).toBeTruthy();
+    // MRR e ARR viraram <abbr>, então o texto se parte em nós; o parágrafo
+    // inteiro é o que se lê.
+    expect(
+      screen.getByText(/Projeto e consultoria avulsos/).textContent
+    ).toMatch(/fora do MRR e do ARR/);
     // 1.5 (25k) + 1.6 (20k) = 45k — não soma a conta de assinatura (1.1).
     expect(screen.getByText(dinheiro(45_000))).toBeTruthy();
   });
@@ -378,7 +382,7 @@ describe("Recorrente", () => {
     montar(false);
 
     const botaoNova = screen.getByRole("button", { name: "Nova assinatura" });
-    expect(botaoNova.hasAttribute("disabled")).toBe(true);
+    expect(botaoNova.getAttribute("aria-disabled")).toBe("true");
 
     expect(
       screen.queryByRole("button", { name: "Alterar valor — Cliente A" })

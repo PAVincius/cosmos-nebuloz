@@ -4,7 +4,6 @@ import {
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import {
   type Benchmark,
   type ClienteBenchmark,
@@ -12,6 +11,8 @@ import {
   type ServicoBenchmark,
 } from "@/app/actions/benchmark";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 
 export const dynamic = "force-dynamic";
@@ -33,25 +34,6 @@ const CELULA = {
   borderTop: "1px solid var(--hairline)",
   fontSize: "var(--fs-base)",
 };
-
-/** Vazio que ensina, no tom do catálogo: diz o que alimenta a tabela e o que
- *  fazer — um <thead> sem linha não dizia se era falta de dado ou falha. */
-function Vazio({ children }: { children: ReactNode }) {
-  return (
-    <p
-      style={{
-        margin: 0,
-        padding: 28,
-        textAlign: "center",
-        fontSize: "var(--fs-base)",
-        lineHeight: 1.6,
-        color: "var(--ink-muted)",
-      }}
-    >
-      {children}
-    </p>
-  );
-}
 
 /**
  * Barra proporcional ao maior valor da coluna.
@@ -214,19 +196,19 @@ function Conteudo({ dados }: { dados: Benchmark }) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Cliente
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Engaj.
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Receita
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Ticket médio
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Desconto médio
                 </th>
               </tr>
@@ -258,13 +240,13 @@ function Conteudo({ dados }: { dados: Benchmark }) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Serviço
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Engaj.
                 </th>
-                <th className="mono" style={CABECALHO}>
+                <th className="mono" scope="col" style={CABECALHO}>
                   Receita
                 </th>
               </tr>
@@ -281,13 +263,15 @@ function Conteudo({ dados }: { dados: Benchmark }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/benchmark") };
+
 export default async function BenchmarkPage() {
   const res = await listBenchmark();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Comercial · comparação"
+        eyebrow={`${secaoDaRota("/benchmark")} · comparação`}
         subtitle="Quem pesa mais na carteira e o que o catálogo realmente vendeu. Contrato cancelado e proposta recusada ficam de fora — incluí-los descreveria o que foi oferecido, não o que foi praticado."
         title="Benchmark"
       />

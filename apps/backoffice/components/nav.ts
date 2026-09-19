@@ -223,6 +223,16 @@ export function secaoDaRota(href: string): string {
   return grupo?.section ?? "Nebuloz";
 }
 
+/**
+ * O `<title>` da aba: o rótulo do menu e o nome do painel. Vinte e nove abas
+ * abertas diziam todas "Nebuloz — Back-office"; com o rótulo na frente, a aba
+ * certa se acha pelo nome, e o nome é o mesmo que a sidebar mostra.
+ */
+export function tituloDaAba(href: string): string {
+  const item = itemDaRota(href);
+  return item ? `${item.label} — Back-office Nebuloz` : "Nebuloz — Back-office";
+}
+
 /** Rotas que o operador não encontra porque elas não existem por decisão. */
 export const FORA_DO_PAINEL =
   "Remover cliente, revogar staff e promover ADMIN não existem aqui — são operações de banco, por decisão.";

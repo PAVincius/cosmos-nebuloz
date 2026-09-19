@@ -10,6 +10,8 @@ import {
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { OQueFalta } from "@/components/o-que-falta";
+import { Vazio } from "@/components/vazio";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
 /**
@@ -248,8 +250,11 @@ export function Catalogo({
     }
   }, []);
 
-  const podeCriar =
-    form.codigo.trim().length >= 2 && form.nome.trim().length >= 2 && !pendente;
+  const falta = [
+    form.codigo.trim().length < 2 ? "código" : null,
+    form.nome.trim().length < 2 ? "nome" : null,
+  ].filter((f): f is string => f !== null);
+  const podeCriar = falta.length === 0 && !pendente;
   const ativos = lista.filter((s) => s.ativo).length;
 
   return (
@@ -350,28 +355,27 @@ export function Catalogo({
                 value={form.unidade}
               />
             </Campo>
-            <div style={{ display: "flex", alignItems: "flex-end" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                gap: 6,
+              }}
+            >
               <BotaoPrimario disabled={!podeCriar} type="submit">
                 {pendente ? "Cadastrando…" : "Cadastrar"}
               </BotaoPrimario>
+              <OQueFalta itens={falta} verbo="cadastrar" />
             </div>
           </form>
         ) : null}
 
         {lista.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Catálogo vazio. Sem serviço cadastrado, proposta vira texto livre e
             o Benchmark fica sem eixo de comparação.
-          </p>
+          </Vazio>
         ) : (
           <ul
             style={{

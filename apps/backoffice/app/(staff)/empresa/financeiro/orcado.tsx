@@ -301,6 +301,7 @@ function CabecalhoOrcado({ competencias }: { competencias: string[] }) {
       <tr>
         <th
           rowSpan={2}
+          scope="col"
           style={{ ...CEL, textAlign: "left", verticalAlign: "bottom" }}
         >
           Conta
@@ -309,6 +310,7 @@ function CabecalhoOrcado({ competencias }: { competencias: string[] }) {
           <th
             colSpan={3}
             key={competencia}
+            scope="colgroup"
             style={{ ...CEL, textAlign: "center" }}
           >
             {rotuloMes(competencia)}
@@ -318,9 +320,15 @@ function CabecalhoOrcado({ competencias }: { competencias: string[] }) {
       <tr>
         {competencias.map((competencia) => (
           <Fragment key={competencia}>
-            <th style={{ ...CEL, textAlign: "right" }}>Orçado</th>
-            <th style={{ ...CEL, textAlign: "right" }}>Realizado</th>
-            <th style={{ ...CEL, textAlign: "right" }}>Desvio</th>
+            <th scope="col" style={{ ...CEL, textAlign: "right" }}>
+              Orçado
+            </th>
+            <th scope="col" style={{ ...CEL, textAlign: "right" }}>
+              Realizado
+            </th>
+            <th scope="col" style={{ ...CEL, textAlign: "right" }}>
+              Desvio
+            </th>
           </Fragment>
         ))}
       </tr>

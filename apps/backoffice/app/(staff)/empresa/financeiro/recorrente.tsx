@@ -17,6 +17,7 @@ import {
   salvarCreditoDoMes,
 } from "@/app/actions/empresa/recorrente";
 import { Erro, INPUT } from "@/components/campo";
+import { Sigla } from "@/components/sigla";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
@@ -65,6 +66,9 @@ import {
  * resultado gravado fica); recalcular com o teto atual é o que a mantém viva
  * se o degrau mudar sem que ninguém regrave o consumo daquele mês.
  */
+
+const MRR = "receita recorrente mensal";
+const ARR = "receita recorrente anual";
 
 function competenciaAnterior(competencia: string): string {
   const [ano, mes] = competencia.split("-").map(Number);
@@ -456,8 +460,9 @@ function FaixaServico({ valor }: { valor: number }) {
             margin: "4px 0 0",
           }}
         >
-          Projeto e consultoria avulsos — não é recorrente, fica fora do MRR e
-          do ARR.
+          Projeto e consultoria avulsos — não é recorrente, fica fora do{" "}
+          <Sigla sigla="MRR" significado={MRR} /> e do{" "}
+          <Sigla sigla="ARR" significado={ARR} />.
         </p>
       </div>
       <span
@@ -584,22 +589,16 @@ export function Recorrente({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(4, 1fr)",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           icon="dollar"
-          label="MRR"
+          label={<Sigla expandida sigla="MRR" significado={MRR} />}
           tone="green"
           value={formatarBRL(mrrCentavos)}
         />
         <KpiCard
           icon="calendar"
-          label="ARR"
+          label={<Sigla expandida sigla="ARR" significado={ARR} />}
           tone="blue"
           value={formatarBRL(arrCentavos)}
         />
@@ -639,8 +638,10 @@ export function Recorrente({
       >
         {dados.assinaturas.length === 0 ? (
           <Vazio>
-            Nenhuma assinatura cadastrada. O MRR, o ARR e o churn acima são a
-            soma das assinaturas vigentes — sem assinatura ficam em zero, e o
+            Nenhuma assinatura cadastrada. O{" "}
+            <Sigla sigla="MRR" significado={MRR} />, o{" "}
+            <Sigla sigla="ARR" significado={ARR} /> e o churn acima são a soma
+            das assinaturas vigentes — sem assinatura ficam em zero, e o
             movimento do mês não tem o que mostrar. Cadastre em "Nova
             assinatura" quando um cliente fechar contrato recorrente.
           </Vazio>

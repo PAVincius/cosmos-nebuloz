@@ -1,6 +1,7 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarAvaliacoes } from "@/app/actions/maturidade";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Lista } from "./lista";
 
@@ -12,6 +13,8 @@ import { Lista } from "./lista";
  */
 export const dynamic = "force-dynamic";
 
+export const metadata = { title: tituloDaAba("/growth/readiness") };
+
 export default async function ReadinessPage() {
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
@@ -20,7 +23,7 @@ export default async function ReadinessPage() {
 
   const cabecalho = (meta?: React.ReactNode) => (
     <PageHeader
-      eyebrow="Growth · maturidade de IA"
+      eyebrow={`${secaoDaRota("/growth/readiness")} · maturidade de IA`}
       meta={meta}
       subtitle="Seis dimensões, cinco níveis. O diagnóstico é o degrau 01 da Escada — e é ele que diz por qual degrau o cliente entra."
       title="AI readiness"

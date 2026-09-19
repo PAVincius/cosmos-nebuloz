@@ -142,14 +142,7 @@ export function PreviewDaProposta({
             </span>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: 10,
-              marginTop: 12,
-            }}
-          >
+          <div className="bo-kpis bo-kpis-3" style={{ gap: 10, marginTop: 12 }}>
             <Celula rotulo="ACV" valor={formatarBRL(preco.acvCentavos)} />
             <Celula
               rotulo={`TCV (${preco.meses}m)`}

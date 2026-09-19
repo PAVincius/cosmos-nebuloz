@@ -25,6 +25,7 @@ import {
   type ProcessoRow,
 } from "@/app/actions/processos";
 import { BotaoPrimario, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
 import {
   buscar,
@@ -139,6 +140,7 @@ export function Mapa({
 }) {
   const [dados, setDados] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [dominioParam, setDominio] = useParamState("dominio", "all");
   // Domínio que não existe no param vale como Todos — link velho não pode
@@ -191,11 +193,13 @@ export function Mapa({
   }, [setDominio]);
 
   const abrirCriacao = useCallback(() => {
+    setConfirmacao(null);
     setProcessoEmEdicao(null);
     setDialogoAberto(true);
   }, []);
 
   const abrirEdicao = useCallback((p: ProcessoRow) => {
+    setConfirmacao(null);
     setProcessoEmEdicao(p);
     setDialogoAberto(true);
   }, []);
@@ -213,6 +217,12 @@ export function Mapa({
         setDialogoAberto(false);
         setProcessoEmEdicao(null);
         await recarregar();
+        // Só depois da releitura: a frase confirma o que o mapa já mostra.
+        setConfirmacao(
+          processoEmEdicao
+            ? `${input.codigo} atualizado.`
+            : `${input.codigo} criado no mapa.`
+        );
       }
       return res;
     },
@@ -279,7 +289,15 @@ export function Mapa({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
         {podeEscrever ? (
           <BotaoPrimario full={false} onClick={abrirCriacao} type="button">
             Novo processo

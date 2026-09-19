@@ -236,14 +236,16 @@ function Formulario({
         <DialogTitle style={{ fontSize: "var(--fs-forte)" }}>
           Novo lead
         </DialogTitle>
-        <DialogDescription style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+        <DialogDescription
+          style={{ fontSize: "var(--fs-base)", color: "var(--ink-faint)" }}
+        >
           Nasce em Lead, com dono, porta de entrada e um próximo passo datado.
         </DialogDescription>
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="nl-nome" label="Organização">
           <input
             id="nl-nome"
@@ -329,7 +331,7 @@ function Formulario({
         </GrupoChips>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="nl-passo" label="Próximo passo">
           <input
             id="nl-passo"

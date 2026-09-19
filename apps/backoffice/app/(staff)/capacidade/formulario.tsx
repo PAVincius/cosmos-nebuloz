@@ -6,6 +6,7 @@ import {
   type PessoaCapacidade,
 } from "@/app/actions/capacity";
 import { BotaoPrimario, Campo, INPUT } from "@/components/campo";
+import { OQueFalta } from "@/components/o-que-falta";
 import { horasNaJanela, semanasDaJanela } from "@/lib/capacidade/janela";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 
@@ -53,8 +54,9 @@ function CardsDeTipo({
   return (
     <div
       aria-label="Tipo"
+      className="bo-duas-colunas"
       role="radiogroup"
-      style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}
+      style={{ gap: 8 }}
     >
       {TIPOS.map((t) => {
         const ativo = t.id === tipo;
@@ -150,7 +152,11 @@ function FaixaDaJanela({
         </span>
         <span
           className="mono"
-          style={{ fontSize: 19, fontWeight: 700, color: "var(--ink)" }}
+          style={{
+            fontSize: "var(--fs-titulo)",
+            fontWeight: 700,
+            color: "var(--ink)",
+          }}
         >
           {horas === null ? "—" : `${horas}h`}
         </span>
@@ -249,8 +255,12 @@ export function FormularioDeCapacidade({
   const janelaOk =
     tipo === "pessoa" ||
     Boolean(pessoa.entraEm && pessoa.saiEm && pessoa.saiEm >= pessoa.entraEm);
-  const podeCadastrar =
-    pessoa.nome.trim().length >= 2 && pessoa.email.includes("@") && janelaOk;
+  const falta = [
+    pessoa.nome.trim().length < 2 ? "nome" : null,
+    pessoa.email.includes("@") ? null : "e-mail",
+    janelaOk ? null : "entrada e saída (saída depois da entrada)",
+  ].filter((f): f is string => f !== null);
+  const podeCadastrar = falta.length === 0;
 
   return (
     // `<form>` e não `<div>`: é o que faz Enter num campo submeter. Os cartões
@@ -381,7 +391,14 @@ export function FormularioDeCapacidade({
         />
       ) : null}
 
-      <div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
         <BotaoPrimario
           disabled={!podeCadastrar || pendente}
           full={false}
@@ -389,6 +406,7 @@ export function FormularioDeCapacidade({
         >
           {rotuloDeCadastrar(tipo, pendente)}
         </BotaoPrimario>
+        <OQueFalta itens={falta} verbo="cadastrar" />
       </div>
     </form>
   );

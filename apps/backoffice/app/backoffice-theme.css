@@ -204,6 +204,44 @@
   }
 }
 
+/* Irmãs da `.bo-detalhe`, pelo mesmo motivo. O painel tinha trinta e uma
+   grades fixas em `style` inline — "1fr 1fr" nos formulários, "repeat(4, 1fr)"
+   nas fileiras de KPI — e nenhuma delas empilhava, porque inline não tem media
+   query. Duas formas cobrem todas: a de dois campos lado a lado e a fileira de
+   placas. O `minmax(0, 1fr)` é o que impede um valor longo de esticar a coluna
+   e empurrar as vizinhas para fora do cartão. */
+.bo-duas-colunas {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.bo-kpis {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bo-kpis-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bo-kpis-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1023px) {
+  .bo-duas-colunas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bo-kpis,
+  .bo-kpis-3,
+  .bo-kpis-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Indicador de expansão do `<summary>` que apagou o triângulo nativo com
    `list-style: none` (audit explorer, timeline do cliente). O giro sai do
    estado do próprio `<details>` — nada de JS nem `aria-expanded` na mão, o

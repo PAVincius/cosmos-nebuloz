@@ -39,7 +39,7 @@ function Rotulo({ children, tone }: { children: string; tone?: Tone }) {
       className="mono"
       style={{
         display: "block",
-        fontSize: 10.5,
+        fontSize: "var(--fs-nota)",
         fontWeight: 700,
         letterSpacing: ".1em",
         textTransform: "uppercase",
@@ -140,13 +140,7 @@ export function CartoesEstagio({
   const estagnados = contarEstagnados(leads, cfg.tetoDias, hoje);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 10,
-      }}
-    >
+    <div className="bo-kpis" style={{ gap: 10 }}>
       <KpiCard
         hint={`${formatarBRL(valorAgora)} · ponderado ${formatarBRL(ponderado)}`}
         icon="wallet"
@@ -217,7 +211,7 @@ export function CriteriosDeSaida({
         <p
           style={{
             margin: "10px 0 0",
-            fontSize: 12.5,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-faint)",
           }}
         >
@@ -240,7 +234,7 @@ export function CriteriosDeSaida({
               style={{
                 display: "flex",
                 gap: 9,
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 lineHeight: 1.5,
               }}
             >
@@ -248,7 +242,7 @@ export function CriteriosDeSaida({
                 aria-hidden
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   color: `var(--${tomCss(tone)}-text)`,
                   fontWeight: 700,
                   flexShrink: 0,
@@ -298,7 +292,13 @@ export function ListaLeadsPorTempo({
         <Rotulo>{String(leads.length)}</Rotulo>
       </div>
       {leads.length === 0 ? (
-        <div style={{ padding: 16, fontSize: 12.5, color: "var(--ink-faint)" }}>
+        <div
+          style={{
+            padding: 16,
+            fontSize: "var(--fs-base)",
+            color: "var(--ink-faint)",
+          }}
+        >
           Nenhum lead aqui agora.
         </div>
       ) : (
@@ -333,7 +333,7 @@ export function ListaLeadsPorTempo({
                 <span
                   style={{
                     display: "block",
-                    fontSize: 12.5,
+                    fontSize: "var(--fs-base)",
                     fontWeight: 700,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -345,7 +345,7 @@ export function ListaLeadsPorTempo({
                 <span
                   style={{
                     display: "block",
-                    fontSize: 10.5,
+                    fontSize: "var(--fs-nota)",
                     color: vencido ? "var(--red-text)" : "var(--ink-faint)",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -358,7 +358,7 @@ export function ListaLeadsPorTempo({
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 700,
                   color: "var(--amber-text)",
                 }}
@@ -368,7 +368,7 @@ export function ListaLeadsPorTempo({
               <span
                 className="mono"
                 style={{
-                  fontSize: 11.5,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 800,
                   minWidth: 34,
                   textAlign: "right",
@@ -394,14 +394,26 @@ function CorpoRegistro({
 }) {
   if (carregando) {
     return (
-      <p style={{ fontSize: 12, color: "var(--ink-faint)", marginTop: 6 }}>
+      <p
+        style={{
+          fontSize: "var(--fs-base)",
+          color: "var(--ink-faint)",
+          marginTop: 6,
+        }}
+      >
         Carregando…
       </p>
     );
   }
   if (!mudancas || mudancas.length === 0) {
     return (
-      <p style={{ fontSize: 12, color: "var(--ink-faint)", marginTop: 6 }}>
+      <p
+        style={{
+          fontSize: "var(--fs-base)",
+          color: "var(--ink-faint)",
+          marginTop: 6,
+        }}
+      >
         Configuração de origem, nunca alterada.
       </p>
     );
@@ -417,7 +429,7 @@ function CorpoRegistro({
             display: "grid",
             gridTemplateColumns: "minmax(0,1fr) auto",
             gap: 10,
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
             padding: "8px 10px",
             borderRadius: 8,
             background: "var(--surface-2)",
@@ -439,7 +451,7 @@ function CorpoRegistro({
           <span
             className="mono"
             style={{
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
               whiteSpace: "nowrap",
             }}
@@ -524,11 +536,11 @@ export function EditorDeEstagio({
           id="ee-criterios"
           onChange={(e) => onCriteriosTexto(e.target.value)}
           rows={4}
-          style={{ ...INPUT, resize: "vertical", fontSize: 12.5 }}
+          style={{ ...INPUT, resize: "vertical", fontSize: "var(--fs-base)" }}
           value={criteriosTexto}
         />
       </Campo>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div className="bo-duas-colunas">
         <Campo
           hint="Multiplica o valor no pipeline ponderado."
           htmlFor="ee-peso"

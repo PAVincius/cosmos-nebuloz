@@ -6,6 +6,8 @@ import {
   listAuditTenants,
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Vazio } from "@/components/vazio";
 import { Filtros, Paginacao } from "./filtros";
 import { ACOES } from "./rotulos";
 
@@ -82,9 +84,15 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             <table style={{ width: "100%", fontSize: "var(--fs-nota)" }}>
               <thead>
                 <tr style={{ textAlign: "left", color: "var(--ink-faint)" }}>
-                  <th style={{ paddingBottom: 4 }}>Campo</th>
-                  <th style={{ paddingBottom: 4 }}>Antes</th>
-                  <th style={{ paddingBottom: 4 }}>Depois</th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Campo
+                  </th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Antes
+                  </th>
+                  <th scope="col" style={{ paddingBottom: 4 }}>
+                    Depois
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -116,6 +124,8 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/audit") };
+
 export default async function AuditPage({
   searchParams,
 }: {
@@ -137,7 +147,7 @@ export default async function AuditPage({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Auditoria · plataforma"
+        eyebrow={`${secaoDaRota("/audit")} · plataforma`}
         subtitle="Busca sobre o AuditLog de todos os clientes ao mesmo tempo. O filtro fica na URL — o link abre a mesma busca para quem receber."
         title="Audit Explorer"
       />
@@ -181,19 +191,10 @@ function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
   if (pagina.data.eventos.length === 0) {
     // Empty com saída: diz o que fazer, não só que não achou.
     return (
-      <p
-        style={{
-          margin: 0,
-          padding: 28,
-          textAlign: "center",
-          fontSize: "var(--fs-base)",
-          lineHeight: 1.6,
-          color: "var(--ink-muted)",
-        }}
-      >
+      <Vazio>
         Nenhum evento neste filtro. Amplie o período ou limpe o cliente para ver
         a plataforma inteira.
-      </p>
+      </Vazio>
     );
   }
 

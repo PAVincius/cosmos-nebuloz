@@ -1,4 +1,5 @@
 import { Progress, type Tone } from "@repo/design-system/cosmos/kit";
+import { Vazio } from "@/components/vazio";
 
 /**
  * Barras de participação — o `ShareBars` do design (backoffice-funnel.jsx).
@@ -26,6 +27,17 @@ export function Barras({
 }) {
   const total = linhas.reduce((soma, l) => soma + l.quantidade, 0);
 
+  // Sem linha, o cartão ficava em branco — sem dizer se era falta de lead ou
+  // falha. As barras nascem dos leads do funil: é isso que o vazio diz.
+  if (linhas.length === 0) {
+    return (
+      <Vazio>
+        Nenhum lead no período. As barras nascem dos leads do funil — o gráfico
+        enche quando o primeiro entrar.
+      </Vazio>
+    );
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
       {linhas.map((l) => {
@@ -46,7 +58,7 @@ export function Barras({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 12,
+                  fontSize: "var(--fs-base)",
                   marginBottom: 4,
                 }}
               >
@@ -62,7 +74,10 @@ export function Barras({
                 </span>
                 <span
                   className="mono"
-                  style={{ color: "var(--ink-faint)", fontSize: 11 }}
+                  style={{
+                    color: "var(--ink-faint)",
+                    fontSize: "var(--fs-nota)",
+                  }}
                 >
                   {l.quantidade} · {percent}%
                 </span>
@@ -73,7 +88,7 @@ export function Barras({
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   color: "var(--ink-muted)",
                   whiteSpace: "nowrap",
                 }}

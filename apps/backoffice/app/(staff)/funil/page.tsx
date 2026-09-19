@@ -1,6 +1,7 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listarFunil } from "@/app/actions/leads";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { estagnado, paraLeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Funil } from "./funil";
@@ -12,6 +13,8 @@ import { Funil } from "./funil";
  */
 export const dynamic = "force-dynamic";
 
+export const metadata = { title: tituloDaAba("/funil") };
+
 export default async function FunilPage() {
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
@@ -22,7 +25,7 @@ export default async function FunilPage() {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         <PageHeader
-          eyebrow="Comercial · funil"
+          eyebrow={`${secaoDaRota("/funil")} · funil`}
           subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
           title="Funil"
           tone="amber"
@@ -54,7 +57,7 @@ export default async function FunilPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Comercial · funil"
+        eyebrow={`${secaoDaRota("/funil")} · funil`}
         meta={
           <>
             <Badge tone="neutral">{ativos.length} ativos</Badge>

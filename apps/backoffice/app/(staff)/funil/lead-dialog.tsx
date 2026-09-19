@@ -193,7 +193,7 @@ function Conteudo({
         </DialogTitle>
         <DialogDescription
           className="mono"
-          style={{ fontSize: 11.5, color: "var(--ink-faint)" }}
+          style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
         >
           {lead.id.slice(0, 8)} · {contato}
         </DialogDescription>

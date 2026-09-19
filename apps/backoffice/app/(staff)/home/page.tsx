@@ -12,6 +12,8 @@ import {
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { Erro } from "@/components/campo";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
 
@@ -135,20 +137,11 @@ function Conteudo({
 
       {tudoCalmo ? (
         <SectionCard icon="check" title="Nada exige atenção" tone="green">
-          <p
-            style={{
-              margin: 0,
-              padding: 20,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-              color: "var(--ink-muted)",
-            }}
-          >
+          <Vazio>
             Sem aprovação parada, sem integração com erro e sem acesso recusado.
             Esta tela fica vazia quando está tudo bem — é o comportamento
             pretendido, não falta de dado.
-          </p>
+          </Vazio>
         </SectionCard>
       ) : (
         <SectionCard
@@ -202,17 +195,7 @@ function Conteudo({
         title="Eventos de auditoria"
       >
         {saude.ultimosEventos.length === 0 ? (
-          <p
-            style={{
-              margin: 0,
-              padding: 20,
-              textAlign: "center",
-              fontSize: "var(--fs-base)",
-              color: "var(--ink-muted)",
-            }}
-          >
-            Nada registrado ainda.
-          </p>
+          <Vazio>Nada registrado ainda.</Vazio>
         ) : (
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             {saude.ultimosEventos.map((e, i) => (
@@ -259,6 +242,8 @@ function Conteudo({
   );
 }
 
+export const metadata = { title: tituloDaAba("/home") };
+
 export default async function HomePage() {
   const [saude, aprovacoes] = await Promise.all([
     listPlatformHealth(),
@@ -278,7 +263,7 @@ export default async function HomePage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Plataforma · visão geral"
+        eyebrow={`${secaoDaRota("/home")} · visão geral`}
         subtitle="O que exige atenção agora. A carteira de clientes fica em Clientes — esta tela responde se você precisa fazer alguma coisa hoje."
         title="Home"
       />

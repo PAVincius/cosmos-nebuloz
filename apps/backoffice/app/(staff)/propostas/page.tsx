@@ -1,6 +1,8 @@
 import { KpiCard, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listProposals } from "@/app/actions/proposals";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Sigla } from "@/components/sigla";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -19,6 +21,10 @@ export const dynamic = "force-dynamic";
 /** Estados que ainda podem virar contrato. */
 const EM_ABERTO = new Set(["RASCUNHO", "AGUARDANDO_APROVACAO", "ENVIADA"]);
 
+const ACV = "valor anual do contrato";
+
+export const metadata = { title: tituloDaAba("/propostas") };
+
 export default async function PropostasPage() {
   const [staff, propostas] = await Promise.all([
     requirePlatformStaff(),
@@ -29,7 +35,7 @@ export default async function PropostasPage() {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         <PageHeader
-          eyebrow="Comercial · propostas"
+          eyebrow={`${secaoDaRota("/propostas")} · propostas`}
           subtitle="Do escopo ao contrato."
           title="Propostas"
         />
@@ -68,22 +74,21 @@ export default async function PropostasPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Comercial · propostas"
+        eyebrow={`${secaoDaRota("/propostas")} · propostas`}
         subtitle={`Do escopo ao contrato. Desconto acima de ${LIMITE_DESCONTO_SEM_APROVACAO}% não envia no clique — entra na fila de aprovação.`}
         title="Propostas"
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-          gap: "var(--gap)",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint={`${abertas.length} em aberto`}
           icon="tag"
-          label="Pipeline aberto (ACV)"
+          label={
+            <>
+              Pipeline aberto ·{" "}
+              <Sigla expandida sigla="ACV" significado={ACV} />
+            </>
+          }
           tone="amber"
           value={formatarBRL(pipelineAberto)}
         />
@@ -102,7 +107,11 @@ export default async function PropostasPage() {
         <KpiCard
           hint="todas as propostas"
           icon="building"
-          label="Ticket médio (ACV)"
+          label={
+            <>
+              Ticket médio · <Sigla sigla="ACV" significado={ACV} />
+            </>
+          }
           tone="accent"
           value={formatarBRL(ticketMedio)}
         />

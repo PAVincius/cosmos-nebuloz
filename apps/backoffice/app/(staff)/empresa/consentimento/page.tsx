@@ -1,11 +1,13 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerConsentimento } from "@/app/actions/empresa/consentimento";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { secaoDaRota } from "@/components/nav";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Painel } from "./painel";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/empresa/consentimento") };
 
 export default async function ConsentimentoPage() {
   const [staff, res] = await Promise.all([

@@ -2,10 +2,13 @@ import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { listCapacity } from "@/app/actions/capacity";
 import { listEngagements } from "@/app/actions/engagements";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Capacidade } from "./capacidade";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/capacidade") };
 
 export default async function CapacidadePage() {
   const [staff, pessoas, engajamentos] = await Promise.all([
@@ -19,7 +22,7 @@ export default async function CapacidadePage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Delivery · equipe"
+        eyebrow={`${secaoDaRota("/capacidade")} · equipe`}
         subtitle="Capacidade por pessoa, não por papel — a equipe é multidisciplinar. Passar de 100% é permitido, mas nunca em silêncio: exige motivo, que fica na trilha."
         title="Capacidade"
       />

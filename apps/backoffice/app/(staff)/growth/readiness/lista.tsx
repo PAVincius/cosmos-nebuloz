@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import type { AvaliacaoRow } from "@/app/actions/maturidade";
 import { criarAvaliacao } from "@/app/actions/maturidade";
 import { Campo, Erro, INPUT, mensagemDeErro } from "@/components/campo";
+import { OQueFalta } from "@/components/o-que-falta";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { CODIGOS_NIVEL, INFO_NIVEL, type Nivel } from "@/lib/growth/maturidade";
@@ -95,6 +96,7 @@ function NovaAvaliacao({ podeEscrever }: { podeEscrever: boolean }) {
           {enviando ? "Criando…" : "Criar e responder"}
         </WriteButton>
       </form>
+      <OQueFalta itens={nome.length < 2 ? ["organização"] : []} verbo="criar" />
       {erro ? <Erro>{erro}</Erro> : null}
     </SectionCard>
   );
@@ -128,12 +130,24 @@ export function Lista({
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th style={CABECALHO}>Organização</th>
-                <th style={CABECALHO}>Situação</th>
-                <th style={CABECALHO}>Score</th>
-                <th style={CABECALHO}>Nível</th>
-                <th style={CABECALHO}>Rubrica</th>
-                <th style={CABECALHO}>Autor</th>
+                <th scope="col" style={CABECALHO}>
+                  Organização
+                </th>
+                <th scope="col" style={CABECALHO}>
+                  Situação
+                </th>
+                <th scope="col" style={CABECALHO}>
+                  Score
+                </th>
+                <th scope="col" style={CABECALHO}>
+                  Nível
+                </th>
+                <th scope="col" style={CABECALHO}>
+                  Rubrica
+                </th>
+                <th scope="col" style={CABECALHO}>
+                  Autor
+                </th>
               </tr>
             </thead>
             <tbody>

@@ -166,7 +166,7 @@ describe("EditarServico", () => {
     montar({ podeEscrever: false });
 
     const botao = screen.getByRole("button", { name: /Salvar/ });
-    expect(botao.hasAttribute("disabled")).toBe(true);
+    expect(botao.getAttribute("aria-disabled")).toBe("true");
     expect(botao.getAttribute("aria-describedby")).toBeTruthy();
   });
 

@@ -2,6 +2,7 @@ import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { listarProcessos } from "@/app/actions/processos";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { statusDe } from "@/lib/ferramentas/processos";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Mapa } from "./mapa";
@@ -31,6 +32,8 @@ export const dynamic = "force-dynamic";
 const SUBTITULO =
   "Cada processo é uma estrela da cor da sua área; a área é a nebulosa que a densidade desenha. Anéis por nível — estratégico no centro, operacional na borda.";
 
+export const metadata = { title: tituloDaAba("/ferramentas/processos") };
+
 export default async function ProcessosPage() {
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
@@ -41,7 +44,7 @@ export default async function ProcessosPage() {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         <PageHeader
-          eyebrow="Ferramentas · mapa de processos"
+          eyebrow={`${secaoDaRota("/ferramentas/processos")} · mapa de processos`}
           subtitle={SUBTITULO}
           title="Mapa de processos"
           tone="accent"
@@ -64,7 +67,7 @@ export default async function ProcessosPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Ferramentas · mapa de processos"
+        eyebrow={`${secaoDaRota("/ferramentas/processos")} · mapa de processos`}
         meta={
           <>
             <Badge dot tone="green">

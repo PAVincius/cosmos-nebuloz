@@ -5,6 +5,8 @@ import {
   listPlatformHealth,
 } from "@/app/actions/access";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
 
@@ -25,19 +27,7 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
   if (linhas.length === 0) {
     // Vazio aqui é boa notícia, e a tela precisa dizer isso — "nenhum
     // resultado" num painel de saúde parece falha de carregamento.
-    return (
-      <p
-        style={{
-          margin: 0,
-          padding: 24,
-          textAlign: "center",
-          fontSize: "var(--fs-base)",
-          color: "var(--green-text)",
-        }}
-      >
-        Nenhuma integração com erro em nenhum cliente.
-      </p>
-    );
+    return <Vazio>Nenhuma integração com erro em nenhum cliente.</Vazio>;
   }
 
   return (
@@ -87,19 +77,10 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
 function Acessos({ linhas }: { linhas: AcessoRow[] }) {
   if (linhas.length === 0) {
     return (
-      <p
-        style={{
-          margin: 0,
-          padding: 24,
-          textAlign: "center",
-          fontSize: "var(--fs-base)",
-          lineHeight: 1.6,
-          color: "var(--ink-muted)",
-        }}
-      >
+      <Vazio>
         Nenhum acesso registrado ainda. A trilha começa a encher no próximo
         login — inclusive nas tentativas recusadas.
-      </p>
+      </Vazio>
     );
   }
 
@@ -144,13 +125,15 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
   );
 }
 
+export const metadata = { title: tituloDaAba("/observabilidade") };
+
 export default async function ObservabilidadePage() {
   const res = await listPlatformHealth();
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Plataforma · saúde"
+        eyebrow={`${secaoDaRota("/observabilidade")} · saúde`}
         subtitle="Falha de integração de todos os clientes num lugar só, e quem entrou no painel — inclusive quem tentou e não conseguiu."
         title="Observabilidade"
       />

@@ -255,7 +255,9 @@ function Conteudo({
             {cfg.pesoPercent}% · teto {cfg.tetoDias} d
           </Badge>
         </DialogTitle>
-        <DialogDescription style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+        <DialogDescription
+          style={{ fontSize: "var(--fs-base)", color: "var(--ink-faint)" }}
+        >
           {info.descricao}
         </DialogDescription>
       </DialogHeader>
@@ -270,14 +272,7 @@ function Conteudo({
         tone={info.tom}
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)",
-          gap: 14,
-          alignItems: "start",
-        }}
-      >
+      <div className="bo-duas-colunas" style={{ gap: 14, alignItems: "start" }}>
         {editando ? (
           <EditorDeEstagio
             criteriosTexto={criteriosTexto}

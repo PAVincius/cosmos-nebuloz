@@ -8,9 +8,11 @@ import {
   type FornecedorDpaRow,
 } from "@/app/actions/empresa/fornecedores";
 import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
+import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { formatarData, ROTULO_ESTADO, TOM_ESTADO } from "@/lib/empresa/formato";
 import { contadores } from "@/lib/empresa/fornecedores";
@@ -327,13 +329,7 @@ export function Inventario({
 
   return (
     <>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 12,
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           icon="check"
           label="DPA embutido nos termos"
@@ -392,33 +388,9 @@ export function Inventario({
             valor={filtro}
           />
           {erro ? <Erro>{erro}</Erro> : null}
-          {aviso ? (
-            <output
-              style={{
-                display: "block",
-                padding: "9px 11px",
-                borderRadius: "var(--r-md)",
-                background: "var(--green-soft)",
-                border: "1px solid rgba(var(--green-rgb),.3)",
-                color: "var(--green-text)",
-                fontSize: "var(--fs-base)",
-                fontWeight: 600,
-              }}
-            >
-              {aviso}
-            </output>
-          ) : null}
+          {aviso ? <Confirmacao>{aviso}</Confirmacao> : null}
           {visiveis.length === 0 && filtro !== "all" ? (
-            <p
-              style={{
-                margin: 0,
-                padding: 28,
-                textAlign: "center",
-                fontSize: "var(--fs-base)",
-                lineHeight: 1.6,
-                color: "var(--ink-muted)",
-              }}
-            >
+            <Vazio>
               Nenhum fornecedor com este filtro.{" "}
               <button
                 className="btn"
@@ -436,7 +408,7 @@ export function Inventario({
               >
                 Limpar filtro
               </button>
-            </p>
+            </Vazio>
           ) : (
             <Tabela larguras={LARGURAS}>
               <TableHead

@@ -1,12 +1,16 @@
 import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Vazio } from "@/components/vazio";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Decisao } from "./decisao";
 import { Pedido } from "./pedido";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/aprovacoes") };
 
 export default async function AprovacoesPage() {
   // O guard roda na page, não só no layout: layout protege navegação, não RPC.
@@ -15,7 +19,7 @@ export default async function AprovacoesPage() {
 
   const cabecalho = (
     <PageHeader
-      eyebrow="Plataforma · governança"
+      eyebrow={`${secaoDaRota("/aprovacoes")} · governança`}
       subtitle="Operação sensível não executa no clique — ela entra aqui. Remoção de cliente, escrita de agentes de IA nos dados do cliente, desconto acima de 15%, export sensível e mudança grande de plano."
       title="Aprovações"
       tone="amber"
@@ -55,21 +59,12 @@ export default async function AprovacoesPage() {
           // faz hoje, de verdade. A única action que chama
           // `requestPlatformApproval` é o envio de proposta (proposals.ts);
           // as outras quatro operações do PRD §6.3 ainda não passam por aqui.
-          <p
-            style={{
-              margin: 0,
-              padding: 28,
-              textAlign: "center",
-              color: "var(--ink-muted)",
-              fontSize: "var(--fs-base)",
-              lineHeight: 1.6,
-            }}
-          >
+          <Vazio>
             Nenhum pedido de aprovação. Hoje, o que entra nesta fila é o envio
             de proposta com desconto acima de {LIMITE_DESCONTO_SEM_APROVACAO}% —
             a proposta fica aguardando até alguém decidir aqui. As demais
             operações sensíveis ainda não passam pela fila.
-          </p>
+          </Vazio>
         ) : (
           <ul
             style={{

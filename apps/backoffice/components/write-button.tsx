@@ -70,22 +70,28 @@ export function WriteButton({ canWrite, children, ...props }: Props) {
     );
   }
 
+  // `aria-disabled`, não `disabled`: o `disabled` tirava o botão do Tab, e quem
+  // navega por teclado passava direto sem nunca ouvir o motivo. Assim o botão
+  // continua focável, anuncia "desabilitado" e o motivo por `aria-describedby`
+  // — e o clique cai aqui, sem chegar ao `onClick` de quem o montou.
+  const { onClick: _ignorado, disabled: _semEfeito, ...resto } = props;
   return (
     <span
       style={{ display: "inline-flex", cursor: "not-allowed" }}
       title={MOTIVO_SOMENTE_LEITURA}
     >
       <button
-        {...props}
+        {...resto}
         aria-describedby={idDoMotivo}
-        disabled
+        aria-disabled="true"
+        onClick={(e) => e.preventDefault()}
         style={{
           ...BASE,
           border: "1px solid var(--hairline)",
           background: "var(--surface-2)",
           color: "var(--ink-faint)",
           opacity: 0.6,
-          pointerEvents: "none",
+          cursor: "not-allowed",
         }}
         type="button"
       >
