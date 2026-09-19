@@ -4,9 +4,8 @@
   "apps/app/__tests__/charter/compliance.test.ts": 989,
   "apps/app/app/(charter)/actions/compliance.ts": 1025,
   "apps/app/components/charter/base.tsx": 1112,
-  "apps/app/components/charter/modals.tsx": 2180,
   "apps/app/components/charter/screens/compliance.tsx": 1026,
-  "apps/app/components/charter/screens/policy.tsx": 943,
+  "apps/app/components/charter/screens/policy.tsx": 941,
   "apps/app/components/cosmos/modal-form.tsx": 955,
   "apps/app/components/cosmos/screens/epic-detail-client.tsx": 884,
   "apps/app/components/cosmos/screens/executive.tsx": 820,
@@ -20,16 +19,13 @@
   "apps/app/components/cosmos/screens/value.tsx": 949,
   "apps/app/components/cosmos/screens/wsjf-client.tsx": 1269,
   "apps/app/components/cosmos/shell.tsx": 912,
-  "apps/app/components/scaffold/screens/baseline-detail.tsx": 836,
-  "apps/app/components/scaffold/screens/track-detail.tsx": 1049,
   "apps/app/lib/cosmos-data.ts": 1009,
   "apps/app/scripts/seed-charter.ts": 1514,
   "apps/app/scripts/seed-e2e.ts": 3799,
   "apps/app/scripts/seed-meridian.ts": 834,
   "apps/app/scripts/verify-seed.ts": 964,
-  "apps/backoffice/app/(staff)/propostas/[id]/gerador.tsx": 921,
   "packages/database/scripts/regulacao-corpora.ts": 804,
   "packages/database/seed-safe-full.ts": 1675,
   "packages/database/seed-signal.ts": 2133,
-  "packages/design-system/cosmos/kit.tsx": 1651
+  "packages/design-system/cosmos/kit.tsx": 1657
 }
