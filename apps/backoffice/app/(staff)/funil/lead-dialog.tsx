@@ -11,6 +11,12 @@ import { useState } from "react";
 import type { LeadRow } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
 import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
+import {
   type ConfigEstagio,
   diasNoEstagio,
   type Estagio,
@@ -80,11 +86,14 @@ export function LeadDialog({
   onPerder,
   onProximaAcao,
 }: Props) {
+  // Esc, clique fora e X chegam aqui; com nota de perda ou próximo passo
+  // digitados, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onClose);
   return (
     <Dialog
       onOpenChange={(aberto) => {
         if (!aberto) {
-          onClose();
+          guarda.pedirFechar();
         }
       }}
       open={lead !== null}
@@ -98,11 +107,19 @@ export function LeadDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {lead ? (
           <Conteudo
             estagios={estagios}
             hoje={hoje}
             lead={lead}
+            marcarSujo={guarda.marcarSujo}
             modoInicial={modoInicial}
             onClose={onClose}
             onConverter={onConverter}
@@ -117,12 +134,41 @@ export function LeadDialog({
   );
 }
 
+/** Rascunho = nota de perda digitada, ou próximo passo em edição diferente
+ *  do gravado. Escolher só o motivo (um chip) não é texto a perder. Fora do
+ *  componente: inline, `Conteudo` passava do teto de complexidade do lint. */
+function temRascunho({
+  lead,
+  nota,
+  editandoPasso,
+  texto,
+  data,
+}: {
+  lead: LeadRow;
+  nota: string;
+  editandoPasso: boolean;
+  texto: string;
+  data: string;
+}): boolean {
+  if (nota.trim() !== "") {
+    return true;
+  }
+  if (!editandoPasso) {
+    return false;
+  }
+  return (
+    texto !== (lead.proximaAcao ?? "") ||
+    data !== (lead.proximaAcaoEm?.slice(0, 10) ?? "")
+  );
+}
+
 function Conteudo({
   lead,
   estagios,
   hoje,
   podeEscrever,
   modoInicial,
+  marcarSujo,
   onClose,
   onMover,
   onConverter,
@@ -134,6 +180,7 @@ function Conteudo({
   hoje: Date;
   podeEscrever: boolean;
   modoInicial?: "perda" | "conversao";
+  marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onMover: Props["onMover"];
   onConverter: Props["onConverter"];
@@ -148,6 +195,10 @@ function Conteudo({
   const [data, setData] = useState(lead.proximaAcaoEm?.slice(0, 10) ?? "");
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(
+    temRascunho({ data, editandoPasso, lead, nota, texto }),
+    marcarSujo
+  );
 
   const leadFunil = paraLeadFunil(lead);
   const dias = diasNoEstagio(lead.estagioDesde, hoje);

@@ -33,6 +33,54 @@ import { BO_NAV, FORA_DO_PAINEL, type NavItem } from "./nav";
  *  abrir. Constante porque os dois lados precisam concordar. */
 const ID_DA_GAVETA = "bo-gaveta";
 
+/** Alvo do skip link — o `<main>` do shell. Constante porque os dois lados
+ *  precisam concordar. */
+const ID_DO_CONTEUDO = "conteudo";
+
+/**
+ * "Pular para o conteúdo": primeiro foco do documento, invisível até o Tab
+ * chegar nele. Quem navega por teclado atravessava os 16 itens da sidebar a
+ * cada troca de tela; com isto, um Enter pousa no `<main>`.
+ *
+ * Visível por estado, não por `:focus` em CSS: o esconder é o `sr-only` do
+ * Tailwind (mesmo da casa), e o mostrar é inline com os tokens do painel —
+ * o `backoffice-theme.css` não é deste componente.
+ */
+const SKIP_LINK_VISIVEL: CSSProperties = {
+  position: "fixed",
+  top: 12,
+  left: 12,
+  zIndex: 1000,
+  padding: "9px 15px",
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--accent)",
+  background: "var(--accent)",
+  color: "var(--accent-fg)",
+  fontSize: "var(--fs-forte)",
+  fontWeight: 600,
+  textDecoration: "none",
+  boxShadow: "var(--card-shadow)",
+};
+
+function PularParaOConteudo() {
+  const [focado, setFocado] = useState(false);
+  // Fora do JSX: o lint (`noLeakedRender`) não aceita ternário com valor
+  // variável dentro de atributo.
+  const classe = focado ? undefined : "sr-only";
+  const estilo = focado ? SKIP_LINK_VISIVEL : undefined;
+  return (
+    <a
+      className={classe}
+      href={`#${ID_DO_CONTEUDO}`}
+      onBlur={() => setFocado(false)}
+      onFocus={() => setFocado(true)}
+      style={estilo}
+    >
+      Pular para o conteúdo
+    </a>
+  );
+}
+
 /** Rótulo de seção em mono maiúsculo — o único "small caps" do desenho. */
 function Eyebrow({
   children,
@@ -70,7 +118,12 @@ function Eyebrow({
  */
 function combina(href: string, pathname: string): boolean {
   if (href === "/") {
-    return pathname === "/" || pathname.startsWith("/clientes");
+    // `/clientes/novo` tem item próprio ("Provisionar cliente"); sem a
+    // exceção os dois acendiam juntos e a sidebar dizia duas telas.
+    return (
+      pathname === "/" ||
+      (pathname.startsWith("/clientes") && pathname !== "/clientes/novo")
+    );
   }
   return pathname.startsWith(href);
 }
@@ -481,6 +534,7 @@ export function ShellChrome({
 
   return (
     <div className="bo-shell">
+      <PularParaOConteudo />
       <Topbar
         aoAbrirNav={() => setAberta(true)}
         botaoRef={botaoRef}
@@ -498,10 +552,14 @@ export function ShellChrome({
       ) : null}
       {/* `inert` só tem o que desativar abaixo de 1024px, onde a gaveta cobre o
           conteúdo. No desktop `aberta` é sempre falso. */}
+      {/* `tabIndex={-1}`: alvo do skip link — sem ele o `#conteudo` rola mas
+          não foca, e o próximo Tab volta ao início da sidebar. */}
       <main
         className="scroll fade-in"
+        id={ID_DO_CONTEUDO}
         inert={aberta}
         style={{ gridArea: "main", overflowY: "auto" }}
+        tabIndex={-1}
       >
         <div style={{ margin: "0 auto", maxWidth: 1180 }}>{children}</div>
       </main>

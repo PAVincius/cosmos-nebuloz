@@ -7,7 +7,10 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type DadosFunil, Funil } from "@/app/(staff)/funil/funil";
 import type { LeadRow } from "@/app/actions/leads";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { listarFunilMock } = vi.hoisted(() => ({ listarFunilMock: vi.fn() }));
 
@@ -118,9 +121,10 @@ describe("Funil — lead e estágio na URL", () => {
 
     fireEvent.click(botaoDaTabela("Meridian Corp"));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      "/funil?estagio=DISCOVERY&lead=lead-1",
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/funil?estagio=DISCOVERY&lead=lead-1"
     );
     expect(screen.getByRole("dialog")).toBeTruthy();
   });
@@ -158,9 +162,10 @@ describe("Funil — lead e estágio na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Ganhos" }));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      "/funil?q=meridian&estagio=GANHOS",
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/funil?q=meridian&estagio=GANHOS"
     );
     expect(screen.getByText("0 de 2 leads")).toBeTruthy();
   });
@@ -171,6 +176,6 @@ describe("Funil — lead e estágio na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Todos" }));
 
-    expect(replaceMock).toHaveBeenCalledWith("/funil", { scroll: false });
+    expect(replaceStateMock).toHaveBeenCalledWith(null, "", "/funil");
   });
 });

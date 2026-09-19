@@ -32,6 +32,12 @@ import {
   type QueueKind,
 } from "@/app/actions/scaffold-supervision";
 import { BotaoPrimario, BotaoSecundario, Erro } from "@/components/campo";
+import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 
@@ -196,10 +202,18 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
   const [error, setError] = useState<string | null>(null);
   const motivoRef = useRef<HTMLTextAreaElement>(null);
 
-  const fechar = useCallback(() => {
+  // Fechar de fato: some o diálogo e o motivo não sobrevive para a próxima
+  // linha — o texto era sobre outro cliente.
+  const fecharDeFato = useCallback(() => {
     setPending(null);
     setError(null);
+    setRationale("");
   }, []);
+  // Esc, clique fora, X e "Voltar" chegam aqui; com motivo digitado, a guarda
+  // pergunta antes de jogar fora.
+  const guarda = useFecharComRascunho(fecharDeFato);
+  const fechar = guarda.pedirFechar;
+  useRascunhoReportado(rationale.trim() !== "", guarda.marcarSujo);
 
   const grouped = useMemo(
     () =>
@@ -273,6 +287,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
         .map((g) => (
           <SectionCard
             action={<Badge tone={g.tone}>{g.rows.length}</Badge>}
+            as="h2"
             bodyStyle={{ padding: 0 }}
             icon={g.icon}
             key={g.kind}
@@ -335,6 +350,13 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
             color: "var(--ink)",
           }}
         >
+          {guarda.perguntando ? (
+            <PerguntaDescartar
+              explicacao={EXPLICACAO_DO_DIALOGO}
+              onDescartar={guarda.descartar}
+              onVoltar={guarda.voltar}
+            />
+          ) : null}
           {pending ? (
             <>
               <DialogHeader>
@@ -351,7 +373,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
                     size={16}
                     style={{ color: "var(--amber-text)" }}
                   />
-                  Entrar no tenant de {pending.orgName}
+                  Entrar no cliente {pending.orgName}
                 </DialogTitle>
                 <DialogDescription
                   style={{
@@ -427,7 +449,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
                   type="button"
                 >
                   <Icon name="externalLink" size={14} />
-                  Registrar e entrar
+                  {busy ? "Entrando…" : "Registrar e entrar"}
                 </BotaoPrimario>
               </DialogFooter>
             </>

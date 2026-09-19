@@ -22,6 +22,13 @@ import { useState } from "react";
 import type { DiagramaRow, ProcessoRow } from "@/app/actions/processos";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import {
+  EXPLICACAO_DO_DIALOGO,
+  PerguntaDescartar,
+  rascunhoMudou,
+  useFecharComRascunho,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
+import {
   CODIGO,
   DOMINIOS,
   type Dominio,
@@ -64,11 +71,13 @@ export function ProcessoDialog({
   onFechar,
   onSalvar,
 }: Props) {
+  // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
+  const guarda = useFecharComRascunho(onFechar);
   return (
     <Dialog
       onOpenChange={(v) => {
         if (!v) {
-          onFechar();
+          guarda.pedirFechar();
         }
       }}
       open={aberto}
@@ -82,9 +91,17 @@ export function ProcessoDialog({
           color: "var(--ink)",
         }}
       >
+        {guarda.perguntando ? (
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DO_DIALOGO}
+            onDescartar={guarda.descartar}
+            onVoltar={guarda.voltar}
+          />
+        ) : null}
         {aberto ? (
           <Formulario
             diagramas={diagramas}
+            marcarSujo={guarda.marcarSujo}
             onFechar={onFechar}
             onSalvar={onSalvar}
             processo={processo}
@@ -187,17 +204,20 @@ function paraInput(f: FormState): ProcessoFormInput {
 function Formulario({
   processo,
   diagramas,
+  marcarSujo,
   onFechar,
   onSalvar,
 }: {
   processo: ProcessoRow | null;
   diagramas: DiagramaRow[];
+  marcarSujo: (sujo: boolean) => void;
   onFechar: () => void;
   onSalvar: (input: ProcessoFormInput) => Promise<Result<unknown>>;
 }) {
   const [form, setForm] = useState<FormState>(() => formInicial(processo));
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  useRascunhoReportado(rascunhoMudou(form, formInicial(processo)), marcarSujo);
 
   function mudar<K extends keyof FormState>(campo: K, valor: FormState[K]) {
     setForm((f) => ({ ...f, [campo]: valor }));

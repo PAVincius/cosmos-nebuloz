@@ -8,7 +8,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { DadosMapa } from "@/app/(staff)/ferramentas/processos/mapa";
 import { Mapa } from "@/app/(staff)/ferramentas/processos/mapa";
 import type { ProcessoRow } from "@/app/actions/processos";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { listarProcessosMock } = vi.hoisted(() => ({
   listarProcessosMock: vi.fn(),
@@ -93,9 +96,10 @@ describe("Mapa — processo e domínio na URL", () => {
 
     fireEvent.click(screen.getByLabelText("PZ-01 Funil de leads"));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      `${ROTA}?dominio=COMERCIAL&processo=a`,
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      `${ROTA}?dominio=COMERCIAL&processo=a`
     );
     expect(
       screen.getByRole("heading", { name: "Funil de leads" })
@@ -134,9 +138,10 @@ describe("Mapa — processo e domínio na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Delivery" }));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      `${ROTA}?processo=a&dominio=DELIVERY`,
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      `${ROTA}?processo=a&dominio=DELIVERY`
     );
     expect(screen.queryByLabelText("PZ-01 Funil de leads")).toBeNull();
   });
@@ -147,8 +152,10 @@ describe("Mapa — processo e domínio na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Todos domínios" }));
 
-    expect(replaceMock).toHaveBeenCalledWith(`${ROTA}?processo=a`, {
-      scroll: false,
-    });
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      `${ROTA}?processo=a`
+    );
   });
 });

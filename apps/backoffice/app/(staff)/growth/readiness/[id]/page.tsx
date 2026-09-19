@@ -1,4 +1,5 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import { notFound } from "next/navigation";
 import { lerAvaliacao } from "@/app/actions/maturidade";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -24,6 +25,11 @@ export default async function AvaliacaoPage({
     lerAvaliacao(id),
   ]);
 
+  // Id que não existe não é falha de leitura: retry não resolve. O
+  // `not-found.tsx` do grupo já existe — é ele que responde.
+  if (!res.ok && res.code === "NOT_FOUND") {
+    notFound();
+  }
   if (!res.ok) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>

@@ -7,7 +7,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Biblioteca } from "@/app/(staff)/ip/biblioteca";
 import type { IpAssetDetail, IpAssetRow } from "@/app/actions/ip-library";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { getIpAssetMock } = vi.hoisted(() => ({ getIpAssetMock: vi.fn() }));
 
@@ -66,7 +69,7 @@ async function montarComA1Sujo() {
   montar();
   const editor = await screen.findByDisplayValue("conteudo-a1");
   fireEvent.change(editor, { target: { value: "conteudo-a1 editado" } });
-  replaceMock.mockClear();
+  replaceStateMock.mockClear();
   getIpAssetMock.mockClear();
 }
 
@@ -97,7 +100,7 @@ describe("Biblioteca — rascunho sujo", () => {
     expect(screen.getByText(PERGUNTA)).toBeTruthy();
     expect(screen.getByDisplayValue("conteudo-a1 editado")).toBeTruthy();
     expect(screen.queryByDisplayValue("conteudo-a2")).toBeNull();
-    expect(replaceMock).not.toHaveBeenCalled();
+    expect(replaceStateMock).not.toHaveBeenCalled();
     expect(getIpAssetMock).not.toHaveBeenCalledWith("a2");
 
     const botoes = screen.getAllByRole("button", {
@@ -112,7 +115,7 @@ describe("Biblioteca — rascunho sujo", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Descartar" }));
 
-    expect(replaceMock).toHaveBeenCalledWith("/ip?ativo=a2", { scroll: false });
+    expect(replaceStateMock).toHaveBeenCalledWith(null, "", "/ip?ativo=a2");
     expect(await screen.findByDisplayValue("conteudo-a2")).toBeTruthy();
     expect(screen.queryByText(PERGUNTA)).toBeNull();
   });
@@ -125,7 +128,7 @@ describe("Biblioteca — rascunho sujo", () => {
 
     expect(screen.queryByText(PERGUNTA)).toBeNull();
     expect(screen.getByDisplayValue("conteudo-a1 editado")).toBeTruthy();
-    expect(replaceMock).not.toHaveBeenCalled();
+    expect(replaceStateMock).not.toHaveBeenCalled();
   });
 
   it("sem sujeira, trocar de ativo não pergunta nada", async () => {

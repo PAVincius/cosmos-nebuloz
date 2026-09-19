@@ -411,7 +411,7 @@ export async function getServiceDetail(
 
     if (!servico) {
       throw new StaffAuthError(
-        "FORBIDDEN",
+        "NOT_FOUND",
         `Nenhum serviço com o código ${codigo} neste catálogo.`
       );
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 /**
  * Barreira antes de operação sem volta.
@@ -119,6 +119,12 @@ export function ConfirmarAcao({
   const [perguntando, setPerguntando] = useState(aberto);
   const bloqueado = executando || desabilitado;
   const paleta = PALETA[tom];
+  // O bloco aberto é um `fieldset` (group) nomeado pelo rótulo e descrito
+  // pelo alvo e pela consequência: quem chega por leitor de tela ouve do que
+  // está desistindo antes de "Voltar, botão".
+  const idDoRotulo = useId();
+  const idDoAlvo = useId();
+  const idDaConsequencia = useId();
 
   // O gatilho desmonta quando a pergunta abre, e o foco que estava nele cairia
   // no `body`: quem navega por teclado perdia o lugar no passo da decisão.
@@ -170,11 +176,15 @@ export function ConfirmarAcao({
   };
 
   return (
-    <div
+    <fieldset
+      aria-describedby={`${idDoAlvo} ${idDaConsequencia}`}
+      aria-labelledby={idDoRotulo}
       style={{
         display: "flex",
         flexDirection: "column",
         gap: 8,
+        margin: 0,
+        minWidth: 0,
         padding: "10px 12px",
         borderRadius: "var(--r-md)",
         border: paleta.moldura,
@@ -182,9 +192,15 @@ export function ConfirmarAcao({
       }}
     >
       <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
-        {rotulo} — <span className="mono">{alvo}</span>
+        <span id={idDoRotulo}>{rotulo}</span> —{" "}
+        <span className="mono" id={idDoAlvo}>
+          {alvo}
+        </span>
       </span>
-      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
+      <span
+        id={idDaConsequencia}
+        style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}
+      >
         {consequencia}
       </span>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -213,6 +229,6 @@ export function ConfirmarAcao({
           {executando ? "Executando…" : "Confirmar"}
         </button>
       </div>
-    </div>
+    </fieldset>
   );
 }

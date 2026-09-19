@@ -1,9 +1,9 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 import type { TenantOpcao } from "@/app/actions/audit";
-import { Campo, INPUT } from "@/components/campo";
+import { BotaoSecundario, Campo, INPUT } from "@/components/campo";
 import { ACOES, ENTIDADES } from "./rotulos";
 
 /**
@@ -14,12 +14,22 @@ import { ACOES, ENTIDADES } from "./rotulos";
  * abriria a tela em branco, e quem recebe teria de refazer o filtro no escuro.
  * Como efeito colateral, voltar no histórico desfaz o filtro, que é o que a
  * seta de voltar deveria fazer mesmo.
+ *
+ * O filtro muda o que o servidor lê, então a navegação fica — mas dentro de
+ * `startTransition`: o `router.push` cru derrubava a tela no `loading.tsx`
+ * da rota a cada troca de select. Com a transição a lista antiga continua na
+ * tela, o bloco de filtros diz que está esperando (`aria-busy`), e a nova
+ * chega no lugar.
  */
+
+/** Os params que este bloco controla — o que "Limpar filtros" apaga. */
+const CHAVES = ["tenant", "acao", "entidade", "de", "ate"] as const;
 
 export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const [pendente, iniciarTransicao] = useTransition();
 
   const definir = useCallback(
     (chave: string, valor: string) => {
@@ -33,10 +43,19 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
       // tela vazia quando o novo filtro tem menos resultados, e parece que a
       // busca não achou nada.
       novo.delete("pagina");
-      router.push(`${pathname}?${novo.toString()}`);
+      iniciarTransicao(() => {
+        router.push(`${pathname}?${novo.toString()}`);
+      });
     },
     [params, pathname, router]
   );
+
+  const temFiltro = CHAVES.some((chave) => params.has(chave));
+  const limpar = () => {
+    iniciarTransicao(() => {
+      router.push(pathname);
+    });
+  };
 
   const seletor = {
     ...INPUT,
@@ -47,10 +66,13 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
 
   return (
     <div
+      aria-busy={pendente}
       style={{
         display: "grid",
         gap: 10,
         gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
+        opacity: pendente ? 0.6 : 1,
+        transition: "opacity .15s ease",
       }}
     >
       <Campo htmlFor="f-tenant" label="Cliente">
@@ -120,6 +142,14 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
           value={params.get("ate") ?? ""}
         />
       </Campo>
+
+      {/* Sem isto, desfazer cinco filtros era voltar cinco selects para
+          "Todos" um a um. Desabilitado quando não há o que limpar. */}
+      <div style={{ display: "flex", alignItems: "flex-end" }}>
+        <BotaoSecundario disabled={!temFiltro || pendente} onClick={limpar}>
+          Limpar filtros
+        </BotaoSecundario>
+      </div>
     </div>
   );
 }

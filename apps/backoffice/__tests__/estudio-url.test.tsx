@@ -7,7 +7,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Estudio } from "@/app/(staff)/ferramentas/estudio";
 import type { DiagramDetail, DiagramRow } from "@/app/actions/diagrams";
-import { replaceMock, zerarRoteador } from "../vitest-mocks/next-navigation";
+import {
+  replaceStateMock,
+  zerarRoteador,
+} from "../vitest-mocks/next-navigation";
 
 const { getDiagramMock } = vi.hoisted(() => ({ getDiagramMock: vi.fn() }));
 
@@ -101,9 +104,10 @@ describe("Estudio — diagrama aberto na URL", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Diagrama Um/ }));
 
-    expect(replaceMock).toHaveBeenCalledWith(
-      "/ferramentas/bpmn?q=vendas&diagrama=d1",
-      { scroll: false }
+    expect(replaceStateMock).toHaveBeenCalledWith(
+      null,
+      "",
+      "/ferramentas/bpmn?q=vendas&diagrama=d1"
     );
     expect(await screen.findByText("editor:xml-d1")).toBeTruthy();
   });

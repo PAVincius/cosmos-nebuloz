@@ -1,13 +1,13 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getServiceDetail, type ServiceDetail } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { WriteButton } from "@/components/write-button";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { DetalheDoServico, ROTULO_UNIDADE, TRILHA } from "./detalhe";
-import { EditarServico } from "./editar";
+import { BotaoEditar, EdicaoDoServico } from "./editar";
 
 export const dynamic = "force-dynamic";
 
@@ -38,46 +38,6 @@ function SelosDoServico({ servico }: { servico: ServiceDetail }) {
   );
 }
 
-/** "Editar" no cabeçalho. É um link porque abre pela URL (`?editar=1`) — o
- *  formulário é componente de cliente e o cabeçalho não; um `<Link>` alcança
- *  os dois sem subir estado. Sem permissão de escrita, vira o botão
- *  desabilitado com motivo do resto do painel. */
-function BotaoEditar({
-  codigo,
-  canWrite,
-  editando,
-}: {
-  codigo: string;
-  canWrite: boolean;
-  editando: boolean;
-}) {
-  if (!canWrite) {
-    return <WriteButton canWrite={false}>Editar</WriteButton>;
-  }
-  const base = `/servicos/${encodeURIComponent(codigo)}`;
-  return (
-    <Link
-      className="btn"
-      href={editando ? base : `${base}?editar=1`}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 8,
-        padding: "9px 15px",
-        borderRadius: "var(--r-md)",
-        border: `1px solid ${editando ? "var(--hairline-strong)" : "var(--accent)"}`,
-        background: editando ? "var(--surface-2)" : "var(--accent)",
-        color: editando ? "var(--ink-muted)" : "var(--accent-fg)",
-        fontSize: "var(--fs-forte)",
-        fontWeight: 600,
-        textDecoration: "none",
-      }}
-    >
-      {editando ? "Fechar edição" : "Editar"}
-    </Link>
-  );
-}
-
 /**
  * Detalhe de um serviço do catálogo (`/servicos/SV-09`).
  *
@@ -86,16 +46,22 @@ function BotaoEditar({
  */
 export default async function ServicoPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ codigo: string }>;
-  searchParams: Promise<{ editar?: string }>;
 }) {
-  const [{ codigo }, { editar }] = await Promise.all([params, searchParams]);
+  // `?editar` não é lido aqui: é estado de tela, e quem o lê são os dois
+  // componentes de cliente (`BotaoEditar`, `EdicaoDoServico`) — assim abrir e
+  // fechar a edição não passa pelo servidor nem pelo esqueleto da rota.
+  const { codigo } = await params;
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
     getServiceDetail(decodeURIComponent(codigo)),
   ]);
+  // Id que não existe não é falha de leitura: retry não resolve. O
+  // `not-found.tsx` do grupo já existe — é ele que responde.
+  if (!res.ok && res.code === "NOT_FOUND") {
+    notFound();
+  }
 
   // Fora do JSX pelo mesmo motivo do `aria-current` do menu lateral: inline, o
   // ternário é lido pelo lint como valor vazando para o render.
@@ -107,17 +73,13 @@ export default async function ServicoPage({
   const trilha = res.ok ? TRILHA[res.data.trilha] : undefined;
   const selos = res.ok ? <SelosDoServico servico={res.data} /> : null;
   const codigoExibido = res.ok ? res.data.codigo : codigo;
-  const editando = editar !== undefined;
-  const focarEm = editar === "entregaveis" ? "entregaveis" : undefined;
-  const edicao =
-    res.ok && editando ? (
-      <EditarServico
-        focarEm={focarEm}
-        modulos={MODULOS_DA_PLATAFORMA}
-        podeEscrever={staff.canWrite}
-        servico={res.data}
-      />
-    ) : null;
+  const edicao = res.ok ? (
+    <EdicaoDoServico
+      modulos={MODULOS_DA_PLATAFORMA}
+      podeEscrever={staff.canWrite}
+      servico={res.data}
+    />
+  ) : null;
 
   return (
     <div
@@ -150,13 +112,7 @@ export default async function ServicoPage({
           title={titulo}
           tone={trilha?.tone ?? "accent"}
         >
-          {res.ok ? (
-            <BotaoEditar
-              canWrite={staff.canWrite}
-              codigo={res.data.codigo}
-              editando={editando}
-            />
-          ) : null}
+          {res.ok ? <BotaoEditar canWrite={staff.canWrite} /> : null}
         </PageHeader>
       </div>
 

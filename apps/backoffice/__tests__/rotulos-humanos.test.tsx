@@ -59,6 +59,7 @@ describe("contrato de módulo", () => {
     );
     render(
       <ModuleForm
+        canWrite
         modules={[{ expiresAt: null, module: "COSMOS", status }]}
         modulos={["COSMOS"]}
         slug="acme"

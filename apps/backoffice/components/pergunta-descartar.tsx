@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 /**
  * Pergunta inline antes de jogar fora um rascunho.
@@ -38,30 +38,62 @@ export function PerguntaDescartar({
   onVoltar: () => void;
   onDescartar: () => void;
 }) {
+  // A pergunta aparece no lugar do que a pessoa acabou de clicar (outro item,
+  // o X do diálogo, o seletor de período), e o foco ficava lá fora. Mesmo
+  // padrão da `ConfirmarAcao`: ao montar, "Voltar" (a saída vem primeiro);
+  // ao desmontar, de volta a quem tinha o foco — se ainda estiver na tela.
+  const voltarRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const anterior = document.activeElement;
+    voltarRef.current?.focus();
+    return () => {
+      if (anterior instanceof HTMLElement && anterior.isConnected) {
+        anterior.focus();
+      }
+    };
+  }, []);
+
+  // `fieldset` (group) nomeado pela pergunta e descrito pela explicação:
+  // quem chega por leitor de tela ouve o que está prestes a perder antes de
+  // "Voltar, botão".
+  const idDaPergunta = useId();
+  const idDaExplicacao = useId();
+
   return (
-    <div
+    <fieldset
+      aria-describedby={idDaExplicacao}
+      aria-labelledby={idDaPergunta}
       style={{
         display: "flex",
         flexDirection: "column",
         gap: 8,
+        margin: 0,
+        minWidth: 0,
         padding: "10px 12px",
         borderRadius: "var(--r-md)",
         border: "1px solid var(--red-border, var(--hairline-strong))",
         background: "var(--red-soft, var(--surface-2))",
       }}
     >
-      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+      <span
+        id={idDaPergunta}
+        style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}
+      >
         {nome
           ? `Descartar alterações em «${nome}»?`
           : "Descartar o que foi digitado?"}
       </span>
-      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
+      <span
+        id={idDaExplicacao}
+        style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}
+      >
         {explicacao}
       </span>
       <div style={{ display: "flex", gap: 8 }}>
         <button
           className="btn"
           onClick={onVoltar}
+          ref={voltarRef}
           style={{ ...BOTAO, color: "var(--ink-muted)" }}
           type="button"
         >
@@ -76,7 +108,7 @@ export function PerguntaDescartar({
           Descartar
         </button>
       </div>
-    </div>
+    </fieldset>
   );
 }
 

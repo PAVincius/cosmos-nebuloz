@@ -282,16 +282,19 @@ const SERVICO: ServiceDetail = {
 };
 
 describe("Editar serviço — rascunho", () => {
+  // Fechar é tirar `?editar` da URL, raso — não navega no servidor.
+  const replaceState = vi.spyOn(window.history, "replaceState");
   beforeEach(() => vi.clearAllMocks());
 
-  it("limpo: beforeunload passa e Fechar edição navega direto", () => {
+  it("limpo: beforeunload passa e Fechar edição fecha direto, sem navegar", () => {
     render(
       <EditarServico modulos={["COSMOS"]} podeEscrever servico={SERVICO} />
     );
 
     expect(dispararBeforeUnload()).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Fechar edição" }));
-    expect(mocks.push).toHaveBeenCalledWith("/servicos/SV-09");
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/servicos/SV-09");
+    expect(mocks.push).not.toHaveBeenCalled();
   });
 
   it("sujo: beforeunload é preventDefault e Fechar edição pergunta antes", () => {
@@ -305,18 +308,18 @@ describe("Editar serviço — rascunho", () => {
     expect(dispararBeforeUnload()).toBe(true);
 
     fireEvent.click(screen.getByRole("button", { name: "Fechar edição" }));
-    expect(mocks.push).not.toHaveBeenCalled();
+    expect(replaceState).not.toHaveBeenCalled();
     expect(screen.getByText(/Descartar alterações em «SV-09»\?/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
-    expect(mocks.push).not.toHaveBeenCalled();
+    expect(replaceState).not.toHaveBeenCalled();
     expect(screen.getByLabelText<HTMLInputElement>("Nome").value).toBe(
       "Diagnóstico de dados v2"
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Fechar edição" }));
     fireEvent.click(screen.getByRole("button", { name: "Descartar" }));
-    expect(mocks.push).toHaveBeenCalledWith("/servicos/SV-09");
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/servicos/SV-09");
   });
 });
 

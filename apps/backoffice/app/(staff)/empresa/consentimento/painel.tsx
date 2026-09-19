@@ -18,6 +18,7 @@ import {
 } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 const ROTULO_BASE = {
   SEM_DECISAO: "Sem decisão",
@@ -355,6 +356,7 @@ export function Painel({
     form.ferramenta !== (view.decisao.ferramenta ?? "") ||
     form.prazoRetencao !== (view.decisao.prazoRetencao ?? "") ||
     form.contatoTitular !== (view.decisao.contatoTitular ?? "");
+  useAvisoAoSair(sujo);
 
   const recarregar = useCallback(async () => {
     const res = await lerConsentimento();
@@ -466,6 +468,7 @@ export function Painel({
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
+        as="h2"
         subtitle={`${view.camposEmAberto.length} campos em aberto${
           view.camposEmAberto.length
             ? `: ${view.camposEmAberto.join(" · ")}`
@@ -571,6 +574,7 @@ export function Painel({
       </SectionCard>
 
       <SectionCard
+        as="h2"
         subtitle="A escolha é do responsável jurídico. Até lá, nenhum tenant habilita o consentimento permanente."
         title="Base legal"
       >
@@ -587,6 +591,7 @@ export function Painel({
       </SectionCard>
 
       <SectionCard
+        as="h2"
         subtitle={`${view.abertas} abertas · ${
           view.perguntas.length - view.abertas
         } respondidas`}

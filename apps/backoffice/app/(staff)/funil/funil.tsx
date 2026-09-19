@@ -14,6 +14,7 @@ import {
   registrarProximaAcao,
 } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
@@ -23,6 +24,7 @@ import {
   diasNoEstagio,
   type Estagio,
   estagnado,
+  INFO_ESTAGIO,
   MOTIVOS_PERDA,
   type MotivoPerda,
   PORTAS,
@@ -195,6 +197,48 @@ function AvisoListaVelha({
   );
 }
 
+/** Um lead por vez: enquanto `movendo` existe o board recusa outro drop —
+ *  um segundo arraste antes da releitura dispararia outra action sobre a
+ *  lista velha. E o fim é dito: mover terminava em `recarregar()` mudo. */
+function useMoverLead({
+  leads,
+  onErro,
+  recarregar,
+}: {
+  leads: { id: string; nome: string }[];
+  onErro: (mensagem: string | null) => void;
+  recarregar: () => Promise<void>;
+}) {
+  const [movendo, setMovendo] = useState<string | null>(null);
+  const [movido, setMovido] = useState<string | null>(null);
+  const mover = useCallback(
+    async (id: string, estagio: Estagio) => {
+      if (movendo) {
+        return { ok: false as const, error: "Aguarde a mudança anterior." };
+      }
+      onErro(null);
+      setMovido(null);
+      setMovendo(id);
+      try {
+        const res = await moverEstagio({ id, estagio });
+        if (!res.ok) {
+          onErro(res.error);
+          return res;
+        }
+        await recarregar();
+        const nome = leads.find((l) => l.id === id)?.nome ?? "Lead";
+        setMovido(`${nome} movido para ${INFO_ESTAGIO[estagio].rotulo}.`);
+        return res;
+      } finally {
+        setMovendo(null);
+      }
+    },
+    [leads, movendo, onErro, recarregar]
+  );
+  const confirmacao = movido ? <Confirmacao>{movido}</Confirmacao> : null;
+  return { confirmacao, mover, movendo };
+}
+
 export function Funil({
   inicial,
   podeEscrever,
@@ -236,19 +280,11 @@ export function Funil({
     setDados(res.data);
   }, []);
 
-  const mover = useCallback(
-    async (id: string, estagio: Estagio) => {
-      setErro(null);
-      const res = await moverEstagio({ id, estagio });
-      if (!res.ok) {
-        setErro(res.error);
-        return res;
-      }
-      await recarregar();
-      return res;
-    },
-    [recarregar]
-  );
+  const { confirmacao, mover, movendo } = useMoverLead({
+    leads: dados.leads,
+    onErro: setErro,
+    recarregar,
+  });
 
   const converter = useCallback(
     async (id: string) => {
@@ -419,11 +455,13 @@ export function Funil({
         />
       </div>
 
-      <SectionCard icon="kanban" title="Pipeline">
+      <SectionCard as="h2" icon="kanban" title="Pipeline">
+        {confirmacao}
         <Board
           estagios={dados.estagios}
           hoje={hoje}
           leads={dados.leads}
+          movendo={movendo}
           onAbrirEstagio={abrirEstagio}
           onAbrirLead={abrirLead}
           onConverter={abrirLeadEmModoConversao}
@@ -434,15 +472,16 @@ export function Funil({
       </SectionCard>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <SectionCard title="Porta de entrada">
+        <SectionCard as="h2" title="Porta de entrada">
           <Barras linhas={linhasEntrada(dados.leads)} />
         </SectionCard>
-        <SectionCard title="Origem e custo">
+        <SectionCard as="h2" title="Origem e custo">
           <Barras linhas={linhasOrigem(dados.leads, dados.canais)} />
         </SectionCard>
       </div>
 
       <SectionCard
+        as="h2"
         subtitle={`${visiveis.length} de ${plural(dados.leads.length, "lead", "leads")}`}
         title="Leads"
       >
@@ -463,7 +502,7 @@ export function Funil({
       </SectionCard>
 
       {perdidos.length > 0 ? (
-        <SectionCard title="Motivos de perda">
+        <SectionCard as="h2" title="Motivos de perda">
           <Barras linhas={linhasMotivos(perdidos)} tom="red" />
         </SectionCard>
       ) : null}

@@ -8,6 +8,7 @@ import {
   listTenantAudit,
   listTenantIntegrations,
 } from "@/app/actions/tenant-observability";
+import { Confirmacao } from "@/components/confirmacao";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
@@ -27,10 +28,15 @@ const TOM_DO_PLANO: Record<string, "green" | "amber" | "blue" | "purple"> = {
 
 export default async function ClientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ criado?: string }>;
 }) {
   const { slug } = await params;
+  // `?criado=1` chega do provisionamento: a tela abre dizendo o nome do
+  // cliente que acabou de nascer, em vez de o redirect terminar em silêncio.
+  const recemCriado = (await searchParams)?.criado === "1";
   // Em paralelo: são leituras independentes, e serializá-las só somaria
   // latência numa tela que o operador abre o dia inteiro.
   const [staff, result, membros, integracoes, auditoria] = await Promise.all([
@@ -121,11 +127,15 @@ export default async function ClientDetailPage({
           title={client.name}
           tone={TOM_DO_PLANO[client.plan] ?? "accent"}
         />
+        {recemCriado ? (
+          <Confirmacao>Cliente {client.name} provisionado.</Confirmacao>
+        ) : null}
       </div>
 
       <DetalheDoTenant
         acoesDeModulo={
           <ModuleForm
+            canWrite={staff.canWrite}
             modules={client.modules}
             modulos={MODULOS_DA_PLATAFORMA}
             slug={client.slug}
@@ -137,7 +147,10 @@ export default async function ClientDetailPage({
           <ProntidaoDoModulo
             acao={
               needsCharterBootstrap ? (
-                <CharterBootstrap slug={client.slug} />
+                <CharterBootstrap
+                  canWrite={staff.canWrite}
+                  slug={client.slug}
+                />
               ) : null
             }
             icone="approve"
@@ -160,7 +173,10 @@ export default async function ClientDetailPage({
           <ProntidaoDoModulo
             acao={
               needsMeridianBootstrap ? (
-                <MeridianBootstrap slug={client.slug} />
+                <MeridianBootstrap
+                  canWrite={staff.canWrite}
+                  slug={client.slug}
+                />
               ) : null
             }
             icone="target"

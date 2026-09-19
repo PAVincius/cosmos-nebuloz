@@ -489,6 +489,7 @@ export function SectionCard({
   headStyle,
   tone,
   onActivate,
+  as: Titulo = "div",
 }: {
   title: ReactNode;
   subtitle?: ReactNode;
@@ -500,6 +501,10 @@ export function SectionCard({
   tone?: Tone;
   /** Card-Header-Glow: makes the header clickable + adds the one-shot mouse-enter pulse. */
   onActivate?: () => void;
+  /** Element for the title. Default `div` keeps the card out of the heading
+   *  outline (Cosmos/Charter unchanged); `h2`/`h3` lets a screen reader jump
+   *  section to section. Same class and style either way. */
+  as?: "div" | "h2" | "h3";
 }) {
   const dark = useThemeName() === "dark";
   const reduceMotion = useReducedMotion();
@@ -652,9 +657,10 @@ export function SectionCard({
           </span>
         )}
         <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
-          <div
+          <Titulo
             className="display"
             style={{
+              margin: 0,
               fontSize: 14.5,
               fontWeight: 700,
               letterSpacing: "-.015em",
@@ -662,7 +668,7 @@ export function SectionCard({
             }}
           >
             {title}
-          </div>
+          </Titulo>
           {subtitle && (
             <div
               style={{

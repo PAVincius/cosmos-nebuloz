@@ -232,9 +232,15 @@ export function Gerador({
     descontoPercent: desconto,
     servicoIds,
   };
-  /** A tela está à frente do que foi gravado. */
-  const sujo =
-    salvo !== null && assinaturaDoEscopo(escopoAtual) !== salvo.assinatura;
+  // Proposta nova não tem `salvo`; a referência é o formulário como abriu.
+  // Sem isso, fechar a aba com a proposta inteira digitada não avisava.
+  const [assinaturaInicial] = useState(() => assinaturaDoEscopo(escopoAtual));
+  const assinatura = assinaturaDoEscopo(escopoAtual);
+  /** A tela está à frente do que foi gravado (ou do que abriu, se nunca
+   *  gravou). */
+  const sujo = salvo
+    ? assinatura !== salvo.assinatura
+    : assinatura !== assinaturaInicial;
   useAvisoAoSair(sujo);
 
   /** Grava o escopo e devolve o id — `null` quando o servidor recusou (o erro
@@ -318,6 +324,7 @@ export function Gerador({
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
         <SectionCard
+          as="h2"
           bodyStyle={{ padding: 14 }}
           icon="building"
           title="Cliente"
@@ -361,7 +368,12 @@ export function Gerador({
           </div>
         </SectionCard>
 
-        <SectionCard bodyStyle={{ padding: 14 }} icon="layers" title="Escopo">
+        <SectionCard
+          as="h2"
+          bodyStyle={{ padding: 14 }}
+          icon="layers"
+          title="Escopo"
+        >
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo htmlFor="g-plano" label="Plano">
               <div id="g-plano" style={TROCA}>
@@ -539,6 +551,7 @@ export function Gerador({
 
         {servicos.length > 0 && (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="briefcase"
             subtitle="Entram como linha própria na proposta"
@@ -606,7 +619,12 @@ export function Gerador({
           </SectionCard>
         )}
 
-        <SectionCard bodyStyle={{ padding: 14 }} icon="tag" title="Comercial">
+        <SectionCard
+          as="h2"
+          bodyStyle={{ padding: 14 }}
+          icon="tag"
+          title="Comercial"
+        >
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
               hint={dicaDoTermo}
@@ -695,6 +713,7 @@ export function Gerador({
 
         {avisos.length > 0 && (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="alert"
             title="Validações"
@@ -721,6 +740,7 @@ export function Gerador({
 
         {somenteLeitura ? (
           <SectionCard
+            as="h2"
             bodyStyle={{ padding: 14 }}
             icon="lock"
             title={`Proposta ${ROTULO_DE_STATUS[proposta.status] ?? proposta.status}`}

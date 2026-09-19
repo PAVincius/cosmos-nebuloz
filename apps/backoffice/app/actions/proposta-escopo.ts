@@ -5,15 +5,15 @@ import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
+  precificarProposta,
+  type UnidadeDeCobranca,
+} from "@/lib/comercial/precificar";
+import {
   assertCanWrite,
   requirePlatformStaff,
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
-import {
-  type UnidadeDeCobranca,
-  precificarProposta,
-} from "@/lib/comercial/precificar";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -56,6 +56,7 @@ export type PropostaSalva = { id: string; numero: string };
 export async function salvarEscopoAction(
   input: z.input<typeof EscopoSchema>
 ): Promise<Result<PropostaSalva>> {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: pré-existente — valida plano, módulos, add-ons, termo e serviços num só passo; quebrar é refactor fora da onda de 404
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
@@ -311,7 +312,7 @@ export async function getPropostaParaEdicao(
       },
     });
     if (!p) {
-      throw new StaffAuthError("FORBIDDEN", "Proposta não encontrada.");
+      throw new StaffAuthError("NOT_FOUND", "Proposta não encontrada.");
     }
 
     return {

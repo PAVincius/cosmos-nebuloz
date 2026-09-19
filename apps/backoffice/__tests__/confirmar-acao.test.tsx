@@ -204,4 +204,31 @@ describe("ConfirmarAcao", () => {
       );
     });
   });
+
+  describe("anunciada", () => {
+    // O bloco aberto era três spans soltos: quem chega por leitor de tela ouve
+    // "Voltar, botão" sem saber do que está desistindo. Um `group` com nome
+    // (o rótulo) e descrição (alvo + consequência) dá o contexto na chegada.
+    it("o bloco aberto é um group nomeado pelo rótulo", () => {
+      montar();
+      fireEvent.click(screen.getByRole("button", { name: /Cancelar COSMOS/ }));
+
+      expect(
+        screen.getByRole("group", { name: /Cancelar COSMOS/ })
+      ).toBeTruthy();
+    });
+
+    it("a descrição do group traz o alvo e a consequência", () => {
+      montar();
+      fireEvent.click(screen.getByRole("button", { name: /Cancelar COSMOS/ }));
+
+      const grupo = screen.getByRole("group");
+      const descricao = (grupo.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .map((id) => document.getElementById(id)?.textContent ?? "")
+        .join(" ");
+      expect(descricao).toMatch(/vanta-saude/);
+      expect(descricao).toMatch(/perde acesso ao módulo/);
+    });
+  });
 });

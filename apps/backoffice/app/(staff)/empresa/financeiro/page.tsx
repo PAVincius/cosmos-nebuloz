@@ -1,5 +1,6 @@
-import { PageHeader } from "@repo/design-system/cosmos/kit";
+import { PageHeader, Skel } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
+import { Suspense, use } from "react";
 import {
   lerCaixa,
   lerDre,
@@ -454,6 +455,65 @@ function PainelDaAba({
   }
 }
 
+/** Esqueleto só do corpo da aba — o `loading.tsx` da rota desenha a página
+ *  inteira, cabeçalho incluído, e aqui o cabeçalho e a faixa de abas já
+ *  estão na tela. Cinco linhas com a forma da tabela, para a troca não
+ *  saltar. Chaves fixas nas repetições, como em `carregando.tsx`. */
+const LINHAS_DO_ESQUELETO = ["um", "dois", "tres", "quatro", "cinco"] as const;
+
+function EsqueletoDaAba() {
+  return (
+    <output
+      aria-busy="true"
+      aria-label="Carregando aba"
+      style={{
+        display: "block",
+        background: "var(--surface)",
+        border: "1px solid var(--hairline)",
+        borderRadius: "var(--r-lg)",
+        boxShadow: "var(--card-shadow)",
+        overflow: "hidden",
+      }}
+    >
+      <div aria-hidden="true">
+        {LINHAS_DO_ESQUELETO.map((linha, i) => (
+          <div
+            key={linha}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              padding: "12px 18px",
+              borderBottom:
+                i === LINHAS_DO_ESQUELETO.length - 1
+                  ? "none"
+                  : "1px solid var(--hairline)",
+            }}
+          >
+            <Skel h={11} w={92} />
+            <Skel h={11} w="32%" />
+            <div style={{ flex: 1 }} />
+            <Skel h={18} r={99} w={74} />
+          </div>
+        ))}
+      </div>
+    </output>
+  );
+}
+
+/** O corpo da aba espera a leitura dentro do `<Suspense>` da página, não no
+ *  `await` do topo: trocar de aba é navegar para a mesma rota, e com o `await`
+ *  lá em cima a página inteira suspendia — cabeçalho e faixa de abas caíam no
+ *  `loading.tsx` para ler uma tabela. Agora só a tabela espera. */
+function ConteudoDaAba({
+  dados,
+  ...resto
+}: Omit<Parameters<typeof PainelDaAba>[0], "dados"> & {
+  dados: Promise<Dados>;
+}) {
+  return <PainelDaAba dados={use(dados)} {...resto} />;
+}
+
 /** O controle de período no cabeçalho: `SeletorDaAba` (intervalo) para as
  *  abas que recortam por período, o seletor de competência única para
  *  Receita recorrente, e nenhum para Plano/Títulos — que são listas vivas. */
@@ -507,10 +567,10 @@ export default async function FinanceiroPage({
       ? competenciaParam
       : competenciaAtual();
 
-  const [staff, dados] = await Promise.all([
-    requirePlatformStaff(),
-    carregarDados(aba, intervalo, conta, competencia),
-  ]);
+  const staff = await requirePlatformStaff();
+  // Sem `await`: a promessa desce para o `<Suspense>` da aba (ver
+  // `ConteudoDaAba`). O guard fica no topo, como em toda rota.
+  const dados = carregarDados(aba, intervalo, conta, competencia);
   // `conta` entra na chave: duas células do DRE na mesma competência mas em
   // contas diferentes têm o mesmo `de`/`ate` — sem `conta` aqui, trocar de
   // conta não remontaria o painel e `useState(inicial)` ficaria com os dados
@@ -547,15 +607,20 @@ export default async function FinanceiroPage({
           intervalo={intervalo}
         />
       </div>
-      <PainelDaAba
-        aba={aba}
-        chaveDoPainel={chaveDoPainel}
-        competencia={competencia}
-        conta={conta}
-        dados={dados}
-        intervalo={intervalo}
-        podeEscrever={staff.canWrite}
-      />
+      {/* `key` na chave do painel: trocar de aba ou período remonta a
+          fronteira, e o esqueleto aparece de novo em vez de a aba antiga
+          ficar na tela até a nova chegar. */}
+      <Suspense fallback={<EsqueletoDaAba />} key={chaveDoPainel}>
+        <ConteudoDaAba
+          aba={aba}
+          chaveDoPainel={chaveDoPainel}
+          competencia={competencia}
+          conta={conta}
+          dados={dados}
+          intervalo={intervalo}
+          podeEscrever={staff.canWrite}
+        />
+      </Suspense>
     </div>
   );
 }

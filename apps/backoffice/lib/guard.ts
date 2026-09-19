@@ -23,15 +23,15 @@ export type PlatformStaff = {
  *  vira "entrar com outra conta", que não resolve a primeira. */
 export type MotivoDeRecusa = "SEM_SEGUNDO_FATOR";
 
+/** `NOT_FOUND` é só para leitura de detalhe por id: a página chama
+ *  `notFound()` em vez de oferecer "Tentar de novo" para o que não existe. */
+export type CodigoDeRecusa = "UNAUTHORIZED" | "FORBIDDEN" | "NOT_FOUND";
+
 export class StaffAuthError extends Error {
-  readonly code: "UNAUTHORIZED" | "FORBIDDEN";
+  readonly code: CodigoDeRecusa;
   readonly motivo?: MotivoDeRecusa;
 
-  constructor(
-    code: "UNAUTHORIZED" | "FORBIDDEN",
-    message: string,
-    motivo?: MotivoDeRecusa
-  ) {
+  constructor(code: CodigoDeRecusa, message: string, motivo?: MotivoDeRecusa) {
     super(message);
     this.name = "StaffAuthError";
     this.code = code;

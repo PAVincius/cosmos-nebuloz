@@ -127,7 +127,7 @@ export async function lerAvaliacao(
       },
     });
     if (!a) {
-      throw new StaffAuthError("FORBIDDEN", "Essa avaliação não existe.");
+      throw new StaffAuthError("NOT_FOUND", "Essa avaliação não existe.");
     }
 
     return {

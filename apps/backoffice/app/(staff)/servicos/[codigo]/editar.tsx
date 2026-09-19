@@ -1,7 +1,7 @@
 "use client";
 
 import type { ProductModule } from "@repo/database";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {
   type ServiceDetail,
@@ -15,6 +15,7 @@ import {
 import { WriteButton } from "@/components/write-button";
 import { centavosParaCampo, paraCentavos } from "@/lib/comercial/formato";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
+import { useParamState } from "@/lib/url-state";
 import { ROTULO_UNIDADE, TRILHA } from "./detalhe";
 
 /**
@@ -92,7 +93,7 @@ export function EditarServico({
   focarEm?: "entregaveis";
 }) {
   const router = useRouter();
-  const caminho = usePathname();
+  const [, setEditar] = useParamState("editar");
   const entregaveisRef = useRef<HTMLTextAreaElement>(null);
 
   const [form, setForm] = useState(() => formDoServico(servico));
@@ -161,13 +162,16 @@ export function EditarServico({
   };
 
   // "Fechar edição" descartava sem perguntar — era um Link para a mesma rota
-  // sem `?editar`. Com rascunho, pergunta antes; limpo, fecha direto.
+  // sem `?editar`. Com rascunho, pergunta antes; limpo, fecha direto. Fechar
+  // é tirar o param, raso: o `router.push` derrubava a tela no esqueleto da
+  // rota para voltar a mostrar o que já estava nela.
+  const fechar = () => setEditar("");
   const fecharEdicao = () => {
     if (sujo) {
       setPerguntandoFechar(true);
       return;
     }
-    router.push(caminho);
+    fechar();
   };
 
   return (
@@ -219,7 +223,7 @@ export function EditarServico({
         <PerguntaDescartar
           explicacao="O que você editou e ainda não salvou some. Para manter, volte e salve antes de fechar."
           nome={servico.codigo}
-          onDescartar={() => router.push(caminho)}
+          onDescartar={fechar}
           onVoltar={() => setPerguntandoFechar(false)}
         />
       ) : null}
@@ -448,5 +452,55 @@ export function EditarServico({
         </WriteButton>
       </div>
     </form>
+  );
+}
+
+/**
+ * "Editar" no cabeçalho da página. Abre pela URL (`?editar=1`) como antes,
+ * mas raso: era um `<Link>`, e navegar para a mesma rota re-renderizava a
+ * página inteira no servidor — esqueleto para abrir um formulário cujos
+ * dados já estavam na tela. Enquanto edita, não aparece: o "Fechar edição"
+ * de dentro do formulário é o que sabe perguntar pelo rascunho, e um segundo
+ * no cabeçalho descartava sem perguntar. Sem permissão de escrita, vira o
+ * botão desabilitado com motivo do resto do painel.
+ */
+export function BotaoEditar({ canWrite }: { canWrite: boolean }) {
+  const [editar, setEditar] = useParamState("editar");
+  if (editar) {
+    return null;
+  }
+  return (
+    <WriteButton canWrite={canWrite} onClick={() => setEditar("1")}>
+      Editar
+    </WriteButton>
+  );
+}
+
+/**
+ * O formulário, montado só quando a URL pede. Componente de cliente para o
+ * cabeçalho (servidor) e o formulário lerem o mesmo param sem subir estado.
+ */
+export function EdicaoDoServico({
+  servico,
+  podeEscrever,
+  modulos,
+}: {
+  servico: ServiceDetail;
+  podeEscrever: boolean;
+  modulos: ProductModule[];
+}) {
+  const [editar] = useParamState("editar");
+  if (!editar) {
+    return null;
+  }
+  // Fora do JSX: o lint lê o ternário inline como valor vazando.
+  const focarEm = editar === "entregaveis" ? "entregaveis" : undefined;
+  return (
+    <EditarServico
+      focarEm={focarEm}
+      modulos={modulos}
+      podeEscrever={podeEscrever}
+      servico={servico}
+    />
   );
 }
