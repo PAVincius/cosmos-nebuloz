@@ -28,10 +28,18 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+// `WriteButton` bloqueado fica no Tab com `aria-disabled` (o motivo é
+// anunciado); botões comuns seguem com `disabled`. Os dois contam como
+// desabilitados aqui.
+function estaDesabilitado(b: HTMLElement) {
+  return (
+    (b as HTMLButtonElement).disabled ||
+    b.getAttribute("aria-disabled") === "true"
+  );
+}
+
 function botoesHabilitados() {
-  return screen
-    .getAllByRole("button")
-    .filter((b) => !(b as HTMLButtonElement).disabled);
+  return screen.getAllByRole("button").filter((b) => !estaDesabilitado(b));
 }
 
 describe("ModuleForm — somente leitura", () => {
@@ -152,12 +160,10 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     render(<CharterBootstrap canWrite={false} slug="acme" />);
 
     expect(
-      screen
-        .getByRole("button", { name: "Preparar o Charter deste cliente" })
-        // `aria-disabled`, não `disabled`: o botão continua focável para o
-        // motivo chegar a quem navega por teclado (write-button.tsx).
-        .getAttribute("aria-disabled")
-    ).toBe("true");
+      estaDesabilitado(
+        screen.getByRole("button", { name: "Preparar o Charter deste cliente" })
+      )
+    ).toBe(true);
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
     expect(
       (
@@ -172,12 +178,12 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     render(<MeridianBootstrap canWrite={false} slug="acme" />);
 
     expect(
-      screen
-        .getByRole("button", { name: "Preparar o Meridian deste cliente" })
-        // `aria-disabled`, não `disabled`: o botão continua focável para o
-        // motivo chegar a quem navega por teclado (write-button.tsx).
-        .getAttribute("aria-disabled")
-    ).toBe("true");
+      estaDesabilitado(
+        screen.getByRole("button", {
+          name: "Preparar o Meridian deste cliente",
+        })
+      )
+    ).toBe(true);
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
   });
 
