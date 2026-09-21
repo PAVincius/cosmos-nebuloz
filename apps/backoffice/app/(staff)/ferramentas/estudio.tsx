@@ -18,6 +18,7 @@ import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState, useSubstituirParams } from "@/lib/url-state";
 
@@ -253,8 +254,7 @@ function Historico({ revisoes }: { revisoes: DiagramDetail["historico"] }) {
                 color: "var(--ink-faint)",
               }}
             >
-              {h.autorNome ?? "—"} ·{" "}
-              {new Date(h.criadoEm).toLocaleString("pt-BR")}
+              {h.autorNome ?? "—"} · {formatarDataHora(h.criadoEm)}
             </span>
           </li>
         ))}

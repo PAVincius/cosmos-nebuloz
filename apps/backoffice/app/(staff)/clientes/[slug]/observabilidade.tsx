@@ -5,6 +5,7 @@ import type {
   IntegracaoRow,
 } from "@/app/actions/tenant-observability";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 
 /** Cor sozinha nunca carrega estado — cor + palavra, sempre (NFR-2.2). O
  *  `Badge` do kit já é isso: o tom pinta, o texto informa. */
@@ -26,7 +27,7 @@ const CELULA_META: React.CSSProperties = {
 };
 
 function formatar(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR");
+  return formatarDataHora(iso);
 }
 
 export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {

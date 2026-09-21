@@ -2,6 +2,7 @@ import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import type { ReactNode } from "react";
 import type { IntegracaoRow } from "@/app/actions/tenant-observability";
 import { MetaCell } from "@/components/meta-cell";
+import { formatarData } from "@/lib/data";
 
 /**
  * Aba Resumo — a primeira leitura do tenant.
@@ -102,8 +103,7 @@ export function AbaResumo({
                       color: "var(--ink-faint)",
                     }}
                   >
-                    expira em{" "}
-                    {new Date(m.expiresAt).toLocaleDateString("pt-BR")}
+                    expira em {formatarData(m.expiresAt)}
                   </span>
                 ) : null}
               </span>

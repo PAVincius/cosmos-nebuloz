@@ -10,6 +10,7 @@ import {
 } from "@/app/actions/tenant-observability";
 import { Confirmacao } from "@/components/confirmacao";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { formatarData } from "@/lib/data";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
@@ -123,7 +124,7 @@ export default async function ClientDetailPage({
               </Badge>
             </>
           }
-          subtitle={`Cliente desde ${new Date(client.createdAt).toLocaleDateString("pt-BR")}`}
+          subtitle={`Cliente desde ${formatarData(client.createdAt)}`}
           title={client.name}
           tone={TOM_DO_PLANO[client.plan] ?? "accent"}
         />

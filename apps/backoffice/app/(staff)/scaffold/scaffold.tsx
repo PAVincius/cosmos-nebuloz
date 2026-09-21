@@ -10,6 +10,7 @@ import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
+import { formatarData } from "@/lib/data";
 
 const SEVERIDADE_ROTULO: Record<string, string> = {
   HIGH: "Alta",
@@ -37,7 +38,7 @@ function paraCentavos(texto: string): number {
 }
 
 function dataLocal(iso: string): string {
-  return new Date(iso).toLocaleDateString("pt-BR");
+  return formatarData(iso);
 }
 
 const linhaCheckbox = {

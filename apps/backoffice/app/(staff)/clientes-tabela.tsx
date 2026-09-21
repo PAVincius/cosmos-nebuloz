@@ -1,6 +1,7 @@
 import { Avatar, Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import type { ClientRow } from "@/app/actions/clients";
+import { formatarData } from "@/lib/data";
 
 /**
  * Carteira de clientes — a tabela do `backoffice-tenant.jsx`.
@@ -142,7 +143,7 @@ export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
                   fontSize: "var(--fs-base)",
                 }}
               >
-                {new Date(cliente.createdAt).toLocaleDateString("pt-BR")}
+                {formatarData(cliente.createdAt)}
               </td>
             </tr>
           ))}

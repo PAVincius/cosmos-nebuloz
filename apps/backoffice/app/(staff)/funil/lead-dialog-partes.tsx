@@ -23,6 +23,7 @@ import {
   podeMover,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { formatarData } from "@/lib/data";
 import { tomCss } from "@/lib/tom";
 
 /**
@@ -351,9 +352,7 @@ export function BlocoProximoPasso({
         {lead.proximaAcao ? (
           <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
             {lead.proximaAcao}
-            {lead.proximaAcaoEm
-              ? ` — ${new Date(lead.proximaAcaoEm).toLocaleDateString("pt-BR")}`
-              : ""}
+            {lead.proximaAcaoEm ? ` — ${formatarData(lead.proximaAcaoEm)}` : ""}
           </span>
         ) : (
           <span

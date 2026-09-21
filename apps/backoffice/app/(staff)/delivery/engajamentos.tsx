@@ -16,6 +16,7 @@ import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { OQueFalta } from "@/components/o-que-falta";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
+import { formatarData } from "@/lib/data";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
 
 const TOM: Record<string, Tone> = {
@@ -48,8 +49,7 @@ function periodo(inicio: string | null, fim: string | null): string {
   if (!(inicio || fim)) {
     return "sem período definido";
   }
-  const d = (iso: string | null) =>
-    iso ? new Date(iso).toLocaleDateString("pt-BR") : "…";
+  const d = (iso: string | null) => (iso ? formatarData(iso) : "…");
   return `${d(inicio)} → ${d(fim)}`;
 }
 

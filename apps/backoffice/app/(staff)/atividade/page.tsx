@@ -7,6 +7,7 @@ import { listStaffActivity } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 import { ACOES } from "../audit/rotulos";
 
 export const metadata = { title: tituloDaAba("/atividade") };
@@ -93,8 +94,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
                 color: "var(--ink-faint)",
               }}
             >
-              {row.actorName ?? "—"} ·{" "}
-              {new Date(row.createdAt).toLocaleString("pt-BR")}
+              {row.actorName ?? "—"} · {formatarDataHora(row.createdAt)}
             </span>
           </span>
         </li>
