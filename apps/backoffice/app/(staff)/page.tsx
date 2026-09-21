@@ -8,7 +8,7 @@ import { type ClientRow, listClients } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
-import { ClientesTabela } from "./clientes-tabela";
+import { ClientesTabela, KpiAtencao } from "./clientes-tabela";
 
 /**
  * Carteira de clientes (`backoffice-tenant.jsx`).
@@ -106,13 +106,9 @@ export default async function ClientsPage() {
           tone="accent"
           value={kpi.trials}
         />
-        <KpiCard
-          hint="módulos suspensos"
-          icon="alert"
-          label="Exigem atenção"
-          tone="amber"
-          value={kpi.atencao}
-        />
+        {/* O único KPI que também filtra: pressionado, a tabela mostra só
+            quem tem módulo suspenso (`?atencao=1`). */}
+        <KpiAtencao valor={kpi.atencao} />
       </div>
 
       <SectionCard

@@ -13,6 +13,7 @@ import {
   moverEstagio,
   registrarProximaAcao,
 } from "@/app/actions/leads";
+import { Busca, contemTexto } from "@/components/busca";
 import { Erro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
@@ -49,9 +50,11 @@ import { TabelaLeads } from "./tabela-leads";
  * demais entre si para reconstruir no cliente sem arriscar divergir do que a
  * action decidiu (mesmo raciocínio que já valia no funil anterior).
  *
- * Lead aberto e filtro de estágio moram em `?lead=` e `?estagio=` (chip
- * "Todos" = sem param): F5 devolve o mesmo diálogo, e "olha esse lead" vira
- * um link. Id ou estágio que não existe cai no estado padrão, sem erro.
+ * Lead aberto, filtro de estágio e busca moram em `?lead=`, `?estagio=`
+ * (chip "Todos" = sem param) e `?q=`: F5 devolve o mesmo diálogo, e "olha
+ * esse lead" vira um link. Id ou estágio que não existe cai no estado
+ * padrão, sem erro. A busca (nome, contato, dono) vale para o board e para a
+ * tabela; o chip de estágio, só para a tabela — o board já é por estágio.
  */
 
 export type DadosFunil = {
@@ -126,6 +129,10 @@ function useDadosDoFunil(inicial: DadosFunil) {
  *  complexidade do lint. */
 function plural(n: number, um: string, varios: string): string {
   return `${n} ${n === 1 ? um : varios}`;
+}
+
+function leadBuscado(l: LeadRow, q: string): boolean {
+  return contemTexto([l.nome, l.contatoNome, l.contatoEmail, l.donoNome], q);
 }
 
 function leadVisivel(
@@ -310,6 +317,7 @@ export function Funil({
   const { dados, listaVelha, mostrarMais, paginacao, recarregar } =
     useDadosDoFunil(inicial);
   const [filtroParam, setFiltro] = useParamState("estagio", "all");
+  const [q, setQ] = useParamState("q");
   // Estágio que não existe no param vale como Todos — link velho não pode
   // deixar a tabela vazia sem explicação.
   const filtro = FILTROS.some((f) => f.id === filtroParam)
@@ -446,7 +454,8 @@ export function Funil({
     }
   }
 
-  const visiveis = dados.leads.filter((l) =>
+  const buscados = dados.leads.filter((l) => leadBuscado(l, q));
+  const visiveis = buscados.filter((l) =>
     leadVisivel(l, filtro, dados.estagios, hoje)
   );
   const perdidos = dados.leads.filter((l) => l.situacao === "PERDIDO");
@@ -458,7 +467,23 @@ export function Funil({
       {erro ? <Erro>{erro}</Erro> : null}
       <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: 12,
+        }}
+      >
+        <Busca
+          id="busca-lead"
+          onMudar={setQ}
+          rotulo="Buscar lead"
+          total={dados.leads.length}
+          valor={q}
+          visiveis={buscados.length}
+        />
         <WriteButton
           canWrite={podeEscrever}
           onClick={() => setNovoAberto(true)}
@@ -503,7 +528,7 @@ export function Funil({
         <Board
           estagios={dados.estagios}
           hoje={hoje}
-          leads={dados.leads}
+          leads={buscados}
           movendo={movendo}
           onAbrirEstagio={abrirEstagio}
           onAbrirLead={abrirLead}
