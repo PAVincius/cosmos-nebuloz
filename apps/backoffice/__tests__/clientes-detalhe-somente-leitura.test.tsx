@@ -114,6 +114,8 @@ describe("ModuleForm — sucesso nomeado junto da linha", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /Trial/ }));
+    // Ativar também passa pela barreira (crítica rodada 4).
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     const status = await screen.findByRole("status");
     expect(status.textContent).toBe("COSMOS de acme agora está Trial");
@@ -152,8 +154,10 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     expect(
       screen
         .getByRole("button", { name: "Preparar o Charter deste cliente" })
-        .hasAttribute("disabled")
-    ).toBe(true);
+        // `aria-disabled`, não `disabled`: o botão continua focável para o
+        // motivo chegar a quem navega por teclado (write-button.tsx).
+        .getAttribute("aria-disabled")
+    ).toBe("true");
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
     expect(
       (
@@ -170,8 +174,10 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     expect(
       screen
         .getByRole("button", { name: "Preparar o Meridian deste cliente" })
-        .hasAttribute("disabled")
-    ).toBe(true);
+        // `aria-disabled`, não `disabled`: o botão continua focável para o
+        // motivo chegar a quem navega por teclado (write-button.tsx).
+        .getAttribute("aria-disabled")
+    ).toBe("true");
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
   });
 

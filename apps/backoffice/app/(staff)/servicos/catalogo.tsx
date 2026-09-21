@@ -5,10 +5,12 @@ import Link from "next/link";
 import { type FormEvent, useCallback, useState, useTransition } from "react";
 import {
   createServiceAction,
+  listServices,
   type ServiceRow,
   setServiceAtivoAction,
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { OQueFalta } from "@/components/o-que-falta";
 import { Vazio } from "@/components/vazio";
@@ -177,15 +179,30 @@ export function Catalogo({
   const [lista, setLista] = useState(iniciais);
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // O último cadastro, em prosa: sem isto o formulário fechava e a linha
+  // aparecia no topo em silêncio.
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [form, setForm] = useState(FORM_VAZIO);
   // O `pendente` desabilita o botão no mesmo render em que o envio começa —
   // é o que faz o segundo clique não cadastrar um segundo serviço.
   const [pendente, iniciar] = useTransition();
 
+  // Relê pela action em vez de montar a linha à mão: a cópia local espelhava
+  // os defaults da action e divergia dela em outra aba até o próximo load.
+  const recarregar = useCallback(async () => {
+    const res = await listServices();
+    if (!res.ok) {
+      setErro(res.error);
+      return;
+    }
+    setLista(res.data);
+  }, []);
+
   const criar = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
       setErro(null);
+      setConfirmacao(null);
       iniciar(async () => {
         const res = await createServiceAction({
           codigo: form.codigo,
@@ -198,36 +215,13 @@ export function Catalogo({
           setErro(res.error);
           return;
         }
-        setLista((atual) => [
-          {
-            id: res.data.id,
-            codigo: res.data.codigo,
-            nome: form.nome,
-            descricao: null,
-            modalidade: form.modalidade,
-            precoBaseCentavos: paraCentavos(form.preco),
-            unidade: form.unidade,
-            ativo: true,
-            // Espelha os defaults que a action grava. Divergir aqui faria a
-            // linha recém-criada aparecer diferente do que ficou no banco até
-            // o próximo carregamento.
-            trilha: "readiness",
-            unidadeDeCobranca:
-              form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
-            duracao: null,
-            entregaveis: [],
-            papeis: [],
-            preRequisitos: [],
-            moduloVinculado: null,
-            exigeLab: false,
-          },
-          ...atual,
-        ]);
+        await recarregar();
+        setConfirmacao(`Serviço ${res.data.codigo} · ${form.nome} cadastrado.`);
         setCriando(false);
         setForm(FORM_VAZIO);
       });
     },
-    [form]
+    [form, recarregar]
   );
 
   // Id da linha cuja chamada está no ar: dois cliques rápidos em Devolver
@@ -369,6 +363,13 @@ export function Catalogo({
               <OQueFalta itens={falta} verbo="cadastrar" />
             </div>
           </form>
+        ) : null}
+        {/* O sucesso nasce onde o formulário estava: acima da lista, no lugar
+            que acabou de fechar. */}
+        {confirmacao ? (
+          <div style={{ marginBottom: 14 }}>
+            <Confirmacao>{confirmacao}</Confirmacao>
+          </div>
         ) : null}
 
         {lista.length === 0 ? (

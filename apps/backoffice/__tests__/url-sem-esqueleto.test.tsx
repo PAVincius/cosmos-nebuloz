@@ -123,7 +123,11 @@ describe("Serviço — Editar é raso", () => {
     render(<BotaoEditar canWrite={false} />);
 
     expect(
-      screen.getByRole("button", { name: "Editar" }).hasAttribute("disabled")
-    ).toBe(true);
+      // `aria-disabled`, não `disabled`: o botão continua focável para o
+      // motivo chegar a quem navega por teclado (write-button.tsx).
+      screen
+        .getByRole("button", { name: "Editar" })
+        .getAttribute("aria-disabled")
+    ).toBe("true");
   });
 });

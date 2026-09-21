@@ -61,7 +61,7 @@ const LARGURAS = [
  *  importa: é quem convida, remove e promove os outros. */
 function consequenciaDaTroca(nome: string, de: string, para: Papel): string {
   if (para === "ADMIN") {
-    return `${nome} passa a administrar o cliente: convida, remove e promove qualquer membro.`;
+    return `${nome} passa a administrar o cliente: convida e remove pessoas, troca papéis, e mexe em integrações, SSO e política de segurança.`;
   }
   if (de === "ADMIN") {
     return `${nome} deixa de administrar o cliente. Se for o último ADMIN, o servidor recusa.`;

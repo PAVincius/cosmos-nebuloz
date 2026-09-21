@@ -16,6 +16,7 @@ import {
   INPUT,
   rotuloSalvar,
 } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { WriteButton } from "@/components/write-button";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
@@ -52,6 +53,20 @@ function rotuloStanding(v: boolean | null): string {
     return "sem resposta";
   }
   return v ? "sim" : "não";
+}
+
+/** A frase de sucesso de `salvarDecisao`, pelo campo que o patch carrega. */
+function fraseDaDecisao(patch: {
+  baseLegal?: keyof typeof ROTULO_BASE;
+  standingHabilitavel?: boolean | null;
+}): string {
+  if (patch.baseLegal) {
+    return `Base legal registrada: ${ROTULO_BASE[patch.baseLegal]}.`;
+  }
+  if (patch.standingHabilitavel !== undefined) {
+    return `Resposta registrada: consentimento permanente habilitável — ${rotuloStanding(patch.standingHabilitavel)}.`;
+  }
+  return "Decisão registrada.";
 }
 
 /** A cláusula ocupa as duas colunas; os demais avisos ficam lado a lado. */
@@ -352,6 +367,13 @@ export function Painel({
   });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // A última decisão gravada, em prosa, no cartão em que foi tomada: base
+  // legal e resposta 4 terminavam em silêncio, e o avanço do parecer só
+  // trocava a cor do selo.
+  const [confirmacao, setConfirmacao] = useState<{
+    onde: "decisao" | "parecer";
+    texto: string;
+  } | null>(null);
   const sujo =
     form.ferramenta !== (view.decisao.ferramenta ?? "") ||
     form.prazoRetencao !== (view.decisao.prazoRetencao ?? "") ||
@@ -389,12 +411,14 @@ export function Painel({
   const decidir = useCallback(
     async (patch: Parameters<typeof salvarDecisao>[0]) => {
       setErro(null);
+      setConfirmacao(null);
       const res = await salvarDecisao(patch);
       if (!res.ok) {
         setErro(res.error);
         return;
       }
       await recarregar();
+      setConfirmacao({ onde: "decisao", texto: fraseDaDecisao(patch) });
     },
     [recarregar]
   );
@@ -418,12 +442,17 @@ export function Painel({
   const parecer = useCallback(
     async (status: "ENVIADO" | "RECEBIDO") => {
       setErro(null);
+      setConfirmacao(null);
       const res = await marcarParecer({ status });
       if (!res.ok) {
         setErro(res.error);
         return;
       }
       await recarregar();
+      setConfirmacao({
+        onde: "parecer",
+        texto: `Parecer marcado como “${ROTULO_PARECER[status]}”.`,
+      });
     },
     [recarregar]
   );
@@ -465,6 +494,9 @@ export function Painel({
           />
         ) : null}
       </div>
+      {confirmacao?.onde === "parecer" ? (
+        <Confirmacao>{confirmacao.texto}</Confirmacao>
+      ) : null}
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
@@ -588,6 +620,11 @@ export function Painel({
           onDecidir={(standingHabilitavel) => decidir({ standingHabilitavel })}
           podeEscrever={podeEscrever}
         />
+        {confirmacao?.onde === "decisao" ? (
+          <div style={{ marginTop: 12 }}>
+            <Confirmacao>{confirmacao.texto}</Confirmacao>
+          </div>
+        ) : null}
       </SectionCard>
 
       <SectionCard

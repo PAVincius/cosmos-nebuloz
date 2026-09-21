@@ -468,8 +468,14 @@ export function Capacidade({
       >
         {nova ? (
           <FormularioDeCapacidade
-            onCriada={(nv) => {
-              setLista((atual) => [...atual, nv]);
+            onCriada={async (nv) => {
+              // Relê em vez de anexar a cópia local: a ocupação e a ordem vêm
+              // do servidor, e outra aba já via a lista velha.
+              await recarregar();
+              setConfirmacao({
+                personId: nv.id,
+                texto: `Pessoa ${nv.nome} cadastrada.`,
+              });
               setNova(false);
             }}
             onErro={setErro}
