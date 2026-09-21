@@ -1,8 +1,9 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import type { ServiceDetail } from "@/app/actions/services";
 import { MetaCell } from "@/components/meta-cell";
+import { Secao } from "@/components/secao";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
   ROTULO_STATUS as ROTULO_STATUS_ENGAJAMENTO,
@@ -144,7 +145,7 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
       <div
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
-        <SectionCard
+        <Secao
           icon="layers"
           subtitle="O que o cliente recebe — vira anexo da proposta"
           title="Entregáveis"
@@ -180,9 +181,9 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
               ))
             )}
           </div>
-        </SectionCard>
+        </Secao>
 
-        <SectionCard
+        <Secao
           icon="layers"
           subtitle="Serviços que precisam vir antes"
           title="Pré-requisitos"
@@ -236,13 +237,13 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
               feito.
             </p>
           </div>
-        </SectionCard>
+        </Secao>
 
         {/* Só aparece quando há proposta. O handoff omite o cartão vazio, e com
             razão: um cartão "nenhuma" ocupa a mesma altura de um cheio sem
             dizer nada que a contagem do cabeçalho já não diga. */}
         {uso.propostas.length > 0 ? (
-          <SectionCard icon="tag" title="Em propostas">
+          <Secao icon="tag" title="Em propostas">
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {uso.propostas.map((p) => (
                 <Link
@@ -294,11 +295,11 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
                 </Link>
               ))}
             </div>
-          </SectionCard>
+          </Secao>
         ) : null}
 
         {uso.engajamentos.length > 0 ? (
-          <SectionCard icon="briefcase" title="Em engajamentos">
+          <Secao icon="briefcase" title="Em engajamentos">
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {uso.engajamentos.map((e) => (
                 <div
@@ -330,14 +331,14 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
                 </div>
               ))}
             </div>
-          </SectionCard>
+          </Secao>
         ) : null}
       </div>
 
       <div
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
-        <SectionCard icon="tag" title="Comercial" tone="amber">
+        <Secao icon="tag" title="Comercial" tone="amber">
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <MetaCell label="Preço" mono tone="amber">
               {formatarBRL(servico.precoBaseCentavos)}
@@ -366,9 +367,9 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
               {trilha?.label ?? servico.trilha}
             </MetaCell>
           </div>
-        </SectionCard>
+        </Secao>
 
-        <SectionCard icon="users" title="Time necessário">
+        <Secao icon="users" title="Time necessário">
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
             {servico.papeis.length === 0 ? (
               <span
@@ -392,9 +393,9 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
               ))
             )}
           </div>
-        </SectionCard>
+        </Secao>
 
-        <SectionCard icon="layers" title="Vínculo com plataforma">
+        <Secao icon="layers" title="Vínculo com plataforma">
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {servico.moduloVinculado ? (
               <MetaCell label="Módulo que este serviço deixa configurado">
@@ -442,7 +443,7 @@ export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
               </div>
             ) : null}
           </div>
-        </SectionCard>
+        </Secao>
       </div>
     </div>
   );

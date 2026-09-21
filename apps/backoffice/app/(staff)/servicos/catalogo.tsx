@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { type FormEvent, useCallback, useState, useTransition } from "react";
 import {
@@ -13,6 +13,7 @@ import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { OQueFalta } from "@/components/o-que-falta";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
@@ -255,7 +256,7 @@ export function Catalogo({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
+      <Secao
         action={
           podeEscrever ? (
             <BotaoPrimario
@@ -397,7 +398,7 @@ export function Catalogo({
             ))}
           </ul>
         )}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

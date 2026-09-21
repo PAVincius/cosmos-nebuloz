@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
+import { Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import {
   type FormEvent,
   type ReactNode,
@@ -18,6 +18,7 @@ import {
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { FormularioDeCapacidade } from "./formulario";
@@ -443,7 +444,7 @@ export function Capacidade({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
+      <Secao
         action={
           podeEscrever ? (
             <BotaoPrimario
@@ -512,7 +513,7 @@ export function Capacidade({
             ))}
           </ul>
         )}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

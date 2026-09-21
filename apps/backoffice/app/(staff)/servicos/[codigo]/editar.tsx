@@ -8,6 +8,7 @@ import {
   updateServiceAction,
 } from "@/app/actions/services";
 import { Campo, Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import {
   PerguntaDescartar,
   rascunhoMudou,
@@ -229,22 +230,7 @@ export function EditarServico({
       ) : null}
 
       {erro ? <Erro>{erro}</Erro> : null}
-      {salvo ? (
-        <output
-          style={{
-            display: "block",
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--green-soft)",
-            border: "1px solid rgba(var(--green-rgb),.3)",
-            color: "var(--green-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          Serviço atualizado
-        </output>
-      ) : null}
+      {salvo ? <Confirmacao>Serviço atualizado</Confirmacao> : null}
 
       <div className="bo-campos-largos">
         <Campo htmlFor="e-nome" label="Nome">

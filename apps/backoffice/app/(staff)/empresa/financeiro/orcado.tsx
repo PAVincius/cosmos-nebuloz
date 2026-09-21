@@ -1,6 +1,5 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import {
@@ -10,6 +9,7 @@ import {
   salvarOrcamento,
 } from "@/app/actions/empresa/orcamento";
 import { Erro, INPUT } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import {
   centavosParaCampo,
@@ -397,7 +397,7 @@ export function Orcado({
   // contas, não dos lançamentos. O vazio aponta a aba que resolve.
   if (dados.contas.length === 0) {
     return (
-      <SectionCard
+      <Secao
         subtitle="orçado editável por conta e competência, realizado somado do livro-razão"
         title="Orçado × realizado"
       >
@@ -413,12 +413,12 @@ export function Orcado({
           </Link>
           .
         </Vazio>
-      </SectionCard>
+      </Secao>
     );
   }
 
   return (
-    <SectionCard
+    <Secao
       subtitle="orçado editável por conta e competência, realizado somado do livro-razão, e o desvio entre os dois — vermelho quando é ruim para a conta"
       title="Orçado × realizado"
     >
@@ -469,6 +469,6 @@ export function Orcado({
           </tbody>
         </table>
       </div>
-    </SectionCard>
+    </Secao>
   );
 }

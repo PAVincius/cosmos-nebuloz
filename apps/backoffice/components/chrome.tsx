@@ -172,6 +172,9 @@ function Topbar({
     // query precisa poder apertá-lo quando a tela é estreita.
     <header
       className="bo-topbar"
+      // Com a gaveta aberta o `<main>` já fica `inert`; a topbar também, senão
+      // o Tab sai da gaveta e cai no alternador de tema atrás do scrim.
+      inert={gavetaAberta}
       style={{
         gridArea: "bar",
         display: "flex",
@@ -506,13 +509,15 @@ export function ShellChrome({
 }) {
   const [aberta, setAberta] = useState(false);
   const botaoRef = useRef<HTMLButtonElement | null>(null);
+  // Devolver o foco ao gatilho acontece no efeito, depois do render que tira
+  // o `inert` da topbar: `focus()` num elemento inerte é ignorado em
+  // silêncio, e o teclado cairia no início do documento.
+  const devolverFoco = useRef(false);
 
   const fechar = useCallback(() => {
     setAberta((estava) => {
-      // Devolve o foco ao gatilho. Sem isto, fechar por Escape ou pelo scrim
-      // larga o teclado no início do documento.
       if (estava) {
-        botaoRef.current?.focus();
+        devolverFoco.current = true;
       }
       return false;
     });
@@ -520,6 +525,10 @@ export function ShellChrome({
 
   useEffect(() => {
     if (!aberta) {
+      if (devolverFoco.current) {
+        devolverFoco.current = false;
+        botaoRef.current?.focus();
+      }
       return;
     }
     const aoTeclar = (evento: KeyboardEvent) => {

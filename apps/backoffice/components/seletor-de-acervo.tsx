@@ -1,7 +1,7 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import { type ComponentProps, Fragment, type ReactNode, useState } from "react";
+import { Secao } from "@/components/secao";
 
 /**
  * Lista de acervo acima do conteúdo, em vez de barra lateral.
@@ -126,7 +126,7 @@ export function SeletorDeAcervo({
   /** Contagem com a palavra da tela ("3 ativo(s)"), em vez de um genérico. */
   subtitulo?: string;
   /** Nome do ícone do kit — o mesmo conjunto fechado que `SectionCard` aceita. */
-  icone: ComponentProps<typeof SectionCard>["icon"];
+  icone: ComponentProps<typeof Secao>["icon"];
   /** Texto do estado vazio — cada tela explica o próprio acervo. */
   vazio: string;
   /** Botão de "Novo"/"Cancelar" da tela, no canto do card. */
@@ -146,7 +146,7 @@ export function SeletorDeAcervo({
   const selecionado = itens.find((i) => i.id === selecionadoId) ?? null;
 
   return (
-    <SectionCard
+    <Secao
       action={acao}
       icon={icone}
       subtitle={
@@ -232,6 +232,6 @@ export function SeletorDeAcervo({
           ) : null}
         </div>
       )}
-    </SectionCard>
+    </Secao>
   );
 }

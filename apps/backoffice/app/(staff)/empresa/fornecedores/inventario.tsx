@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, KpiCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import {
   aplicarAcaoDpa,
@@ -11,6 +11,7 @@ import { Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
@@ -356,7 +357,7 @@ export function Inventario({
         />
       </div>
 
-      <SectionCard
+      <Secao
         action={
           // A única escrita fora do tenant system — e duplicata no Charter
           // do cliente não se desfaz daqui. Passa pela barreira, com a
@@ -450,7 +451,7 @@ export function Inventario({
             </p>
           ) : null}
         </div>
-      </SectionCard>
+      </Secao>
     </>
   );
 }

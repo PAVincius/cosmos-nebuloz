@@ -52,7 +52,12 @@ const CORPO_DO_CARTAO: CSSProperties = { padding: 18 };
  * os dados chegam. Uma tela de KPIs que carrega com esqueleto de cartão salta
  * a altura inteira da grade.
  */
-export type FormaDoCorpo = "cartoes" | "kpis" | "tabela" | "documento";
+export type FormaDoCorpo =
+  | "cartoes"
+  | "kpis"
+  | "tabela"
+  | "documento"
+  | "cartao-central";
 
 /** Chaves fixas para as repetições. O índice serviria — nada aqui reordena —,
  *  mas a regra que proíbe índice como chave existe justamente para não depender
@@ -170,6 +175,27 @@ function Corpo({ forma }: { forma: FormaDoCorpo }) {
 }
 
 export function Carregando({ corpo = "cartoes" }: { corpo?: FormaDoCorpo }) {
+  // A tela de segurança (fora do shell) é um cartão de 440px centrado numa
+  // tela vazia — sem `PageHeader`. O esqueleto padrão desenhava eyebrow,
+  // título e dois cartões largos onde nada disso vai aparecer.
+  if (corpo === "cartao-central") {
+    return (
+      <output
+        aria-busy="true"
+        aria-label="Carregando"
+        style={{
+          minHeight: "100vh",
+          display: "grid",
+          placeItems: "center",
+          padding: 24,
+        }}
+      >
+        <div aria-hidden="true" style={{ width: 440, maxWidth: "100%" }}>
+          <Cartao linhas={5} />
+        </div>
+      </output>
+    );
+  }
   return (
     // `<output>` traz `role="status"` de fábrica, e com rótulo a troca de tela
     // deixa de ser silenciosa para quem usa leitor de tela — sem isso a região

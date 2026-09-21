@@ -1,7 +1,9 @@
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import type { ReactNode } from "react";
 import type { IntegracaoRow } from "@/app/actions/tenant-observability";
 import { MetaCell } from "@/components/meta-cell";
+import { Secao } from "@/components/secao";
+import { rotuloDoModulo } from "@/lib/rotulo-do-modulo";
 
 /**
  * Aba Resumo — a primeira leitura do tenant.
@@ -48,7 +50,7 @@ export function AbaResumo({
     <div
       style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
     >
-      <SectionCard
+      <Secao
         icon="layers"
         subtitle="o que este cliente comprou"
         title="Módulos contratados"
@@ -86,7 +88,7 @@ export function AbaResumo({
               <span style={{ flex: 1, minWidth: 0 }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
-                    {m.module}
+                    {rotuloDoModulo(m.module)}
                   </span>
                   <Badge dot tone={TOM_MODULO[m.status] ?? "neutral"}>
                     {ROTULO_MODULO[m.status] ?? m.status}
@@ -111,9 +113,9 @@ export function AbaResumo({
           ))}
           {acoesDeModulo}
         </div>
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
+      <Secao
         icon="eye"
         subtitle="Integrações e sincronização"
         title="Saúde"
@@ -130,7 +132,7 @@ export function AbaResumo({
             {inativas}
           </MetaCell>
         </div>
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

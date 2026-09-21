@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { type FocusEvent, useCallback, useEffect, useState } from "react";
 import {
   type ConsentimentoView,
@@ -18,6 +18,7 @@ import {
 } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Secao } from "@/components/secao";
 import { WriteButton } from "@/components/write-button";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
@@ -499,8 +500,7 @@ export function Painel({
       ) : null}
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
-        as="h2"
+      <Secao
         subtitle={`${view.camposEmAberto.length} campos em aberto${
           view.camposEmAberto.length
             ? `: ${view.camposEmAberto.join(" · ")}`
@@ -589,11 +589,10 @@ export function Painel({
             </div>
           ))}
         </div>
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
-        as="h2"
-        subtitle="A escolha é do responsável jurídico. Até lá, nenhum tenant habilita o consentimento permanente."
+      <Secao
+        subtitle="A escolha é do responsável jurídico. Até lá, nenhum cliente habilita o consentimento permanente."
         title="Base legal"
       >
         <EscolhaDeBaseLegal
@@ -611,10 +610,9 @@ export function Painel({
             <Confirmacao>{confirmacao.texto}</Confirmacao>
           </div>
         ) : null}
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
-        as="h2"
+      <Secao
         subtitle={`${view.abertas} abertas · ${
           view.perguntas.length - view.abertas
         } respondidas`}
@@ -654,7 +652,7 @@ export function Painel({
             </li>
           ))}
         </ol>
-      </SectionCard>
+      </Secao>
     </>
   );
 }

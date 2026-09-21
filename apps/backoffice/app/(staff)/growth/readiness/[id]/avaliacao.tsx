@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Progress, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, Progress } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import type { AvaliacaoDetalhe } from "@/app/actions/maturidade";
@@ -8,6 +8,7 @@ import { concluirAvaliacao, responder } from "@/app/actions/maturidade";
 import { Erro, INPUT, mensagemDeErro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Secao } from "@/components/secao";
 import { WriteButton } from "@/components/write-button";
 import { PORTAS } from "@/lib/comercial/funil";
 import {
@@ -331,7 +332,7 @@ function PainelDeResultado({
   });
 
   return (
-    <SectionCard
+    <Secao
       action={acaoDeConcluir}
       subtitle={
         faltam === 0
@@ -377,7 +378,7 @@ function PainelDeResultado({
           </Confirmacao>
         )}
       </div>
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -560,7 +561,7 @@ export function Avaliacao({
           (c) => c.dimensao === dimensao
         );
         return (
-          <SectionCard
+          <Secao
             action={salvoNa === dimensao ? <Salvo /> : null}
             key={dimensao}
             subtitle={info.descricao}
@@ -585,7 +586,7 @@ export function Avaliacao({
                 />
               ))}
             </div>
-          </SectionCard>
+          </Secao>
         );
       })}
     </div>
