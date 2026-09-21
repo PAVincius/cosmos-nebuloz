@@ -128,7 +128,10 @@ describe("um nome por coisa", () => {
   });
 
   it("a tela de Saúde e renovação se intitula como o menu", async () => {
-    mocks.listAccountHealth.mockResolvedValue({ data: [], ok: true });
+    mocks.listAccountHealth.mockResolvedValue({
+      data: { itens: [], temMais: false },
+      ok: true,
+    });
     const { default: Page } = await import("@/app/(staff)/contas/page");
     render(await Page());
 
@@ -201,7 +204,10 @@ describe("eyebrow do Scaffold = seção do menu", () => {
 
 describe("sinal de saúde com palavra, não só cor", () => {
   it("cada sinal diz o nível em texto", async () => {
-    mocks.listAccountHealth.mockResolvedValue({ data: [CONTA], ok: true });
+    mocks.listAccountHealth.mockResolvedValue({
+      data: { itens: [CONTA], temMais: false },
+      ok: true,
+    });
     const { default: Page } = await import("@/app/(staff)/contas/page");
     render(await Page());
 

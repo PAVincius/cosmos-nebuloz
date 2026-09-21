@@ -9,6 +9,7 @@ import Link from "next/link";
 import { type ContaComSaude, listAccountHealth } from "@/app/actions/accounts";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
 import { Vazio } from "@/components/vazio";
 import {
   DIAS_PARA_RENOVACAO,
@@ -149,7 +150,15 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
   );
 }
 
-function Conteudo({ contas }: { contas: ContaComSaude[] }) {
+function Conteudo({
+  contas,
+  pagina,
+  temMais,
+}: {
+  contas: ContaComSaude[];
+  pagina: number;
+  temMais: boolean;
+}) {
   const risco = contas.filter((c) => c.saude === "RISCO").length;
   const atencao = contas.filter((c) => c.saude === "ATENCAO").length;
   const semSinal = contas.filter((c) => c.saude === "SEM_SINAL").length;
@@ -160,13 +169,7 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint="módulo suspenso, cancelado ou renovação vencida"
           icon="alert"
@@ -198,6 +201,7 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
       </div>
 
       <SectionCard
+        as="h2"
         icon="heart"
         subtitle="pior primeiro · saúde derivada do que a plataforma já grava"
         title="Contas"
@@ -211,6 +215,7 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
             ))}
           </ul>
         )}
+        <PaginacaoEmLinks caminho="/contas" pagina={pagina} temMais={temMais} />
       </SectionCard>
     </div>
   );
@@ -218,8 +223,19 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
 
 export const metadata = { title: tituloDaAba("/contas") };
 
-export default async function ContasPage() {
-  const res = await listAccountHealth();
+/** `?pagina=` inválido ou ausente é a primeira. */
+function paginaDaUrl(valor: string | undefined): number {
+  const n = Number(valor);
+  return Number.isInteger(n) && n > 1 ? n : 1;
+}
+
+export default async function ContasPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ pagina?: string }>;
+} = {}) {
+  const pagina = paginaDaUrl((await searchParams)?.pagina);
+  const res = await listAccountHealth(undefined, { pagina });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -229,7 +245,11 @@ export default async function ContasPage() {
         title="Saúde e renovação"
       />
       {res.ok ? (
-        <Conteudo contas={res.data} />
+        <Conteudo
+          contas={res.data.itens}
+          pagina={pagina}
+          temMais={res.data.temMais}
+        />
       ) : (
         <FalhaAoCarregar
           motivo={res.error}

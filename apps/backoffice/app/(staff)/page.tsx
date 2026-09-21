@@ -84,13 +84,7 @@ export default async function ClientsPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {cabecalho}
 
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint="clientes provisionados"
           icon="building"
@@ -122,6 +116,7 @@ export default async function ClientsPage() {
       </div>
 
       <SectionCard
+        as="h2"
         icon="building"
         subtitle="Todos os clientes da plataforma. O nome abre o detalhe."
         title="Clientes"

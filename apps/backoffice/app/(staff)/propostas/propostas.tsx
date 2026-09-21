@@ -5,15 +5,18 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
+  listProposals,
   type ProposalRow,
   submitProposalAction,
 } from "@/app/actions/proposals";
 import { BotaoPrimario, Erro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { Vazio } from "@/components/vazio";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
+import { TETO_DA_LISTA } from "@/lib/paginacao";
 
 const TOM: Record<string, Tone> = {
   RASCUNHO: "neutral",
@@ -177,6 +180,16 @@ export function Propostas({
   const [enviadaAqui, setEnviadaAqui] = useState<string | null>(null);
   const enviadaId = enviadaAqui ?? enviadaPeloGerador;
 
+  // A lista chega até o teto e cresce daqui, uma página por "Mostrar mais".
+  const ler = useCallback((pagina: number) => listProposals({ pagina }), []);
+  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => [...atual, ...mais]);
+    }
+  }, [paginacao.proxima]);
+
   const enviar = useCallback(async (id: string) => {
     setErro(null);
     setEnviandoId(id);
@@ -213,6 +226,7 @@ export function Propostas({
             </BotaoPrimario>
           ) : null
         }
+        as="h2"
         icon="tag"
         subtitle={`${lista.length} ${lista.length === 1 ? "proposta" : "propostas"}`}
         title="Pipeline"
@@ -239,6 +253,12 @@ export function Propostas({
             ))}
           </ul>
         )}
+        <BotaoMostrarMais
+          carregando={paginacao.carregando}
+          erro={paginacao.erro}
+          onClick={mostrarMais}
+          temMais={paginacao.temMais}
+        />
       </SectionCard>
     </div>
   );

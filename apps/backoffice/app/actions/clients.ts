@@ -3,6 +3,12 @@
 import { ProvisioningError, platformDb } from "@repo/provisioning";
 import { clientDetailArgs, clientListArgs } from "@/lib/client-queries";
 import { requirePlatformStaff } from "@/lib/guard";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 export type ClientRow = {
@@ -16,13 +22,23 @@ export type ClientRow = {
   modules: { module: string; status: string; expiresAt: string | null }[];
 };
 
-export async function listClients(): Promise<Result<ClientRow[]>> {
+/**
+ * Sem opções, a lista de sempre (até o teto de `lib/paginacao.ts`); com
+ * `{ pagina }`, `{ itens, temMais }` para a carteira mostrar mais. A forma do
+ * retorno segue o argumento — ver `Listagem`.
+ */
+export async function listClients<
+  O extends OpcoesDePagina | undefined = undefined,
+>(opcoes?: O): Promise<Result<Listagem<ClientRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
-    const rows = await platformDb.tenant.findMany(clientListArgs());
+    const rows = await platformDb.tenant.findMany({
+      ...clientListArgs(),
+      ...janela(opcoes),
+    });
 
-    return rows.map((row) => ({
+    const linhas = rows.map((row) => ({
       id: row.id,
       name: row.name,
       slug: row.slug,
@@ -35,6 +51,7 @@ export async function listClients(): Promise<Result<ClientRow[]>> {
         expiresAt: m.expiresAt?.toISOString() ?? null,
       })),
     }));
+    return listagem(linhas, opcoes);
   });
 }
 
