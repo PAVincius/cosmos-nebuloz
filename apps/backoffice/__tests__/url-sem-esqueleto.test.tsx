@@ -122,8 +122,11 @@ describe("Serviço — Editar é raso", () => {
   it("sem permissão, é o botão desabilitado com motivo", () => {
     render(<BotaoEditar canWrite={false} />);
 
+    // `WriteButton` bloqueado fica no Tab: `aria-disabled`, não `disabled`.
     expect(
-      screen.getByRole("button", { name: "Editar" }).hasAttribute("disabled")
-    ).toBe(true);
+      screen
+        .getByRole("button", { name: "Editar" })
+        .getAttribute("aria-disabled")
+    ).toBe("true");
   });
 });
