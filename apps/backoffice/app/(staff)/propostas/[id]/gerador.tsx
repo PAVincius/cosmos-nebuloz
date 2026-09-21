@@ -311,13 +311,9 @@ export function Gerador({
 
   return (
     <form
+      className="bo-duas-colunas"
       onSubmit={salvar}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "var(--gap)",
-        alignItems: "start",
-      }}
+      style={{ gap: "var(--gap)", alignItems: "start" }}
     >
       {/* ── configuração ─────────────────────────────────────────────── */}
       <div

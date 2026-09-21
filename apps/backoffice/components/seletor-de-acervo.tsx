@@ -170,13 +170,7 @@ export function SeletorDeAcervo({
               {vazio}
             </p>
           ) : (
-            <div
-              style={{
-                display: "grid",
-                gap: 8,
-                gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))",
-              }}
-            >
+            <div className="bo-cartoes">
               {itens.map((i) => (
                 <LinhaDoItem
                   extra={renderExtra?.(i.id)}

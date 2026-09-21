@@ -100,13 +100,7 @@ function Cartao({ linhas = 3 }: { linhas?: number }) {
 
 function Kpis() {
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: "var(--gap)",
-        gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-      }}
-    >
+    <div className="bo-kpis">
       {["a", "b", "c", "d"].map((k) => (
         <SkeletonKpi key={k} />
       ))}

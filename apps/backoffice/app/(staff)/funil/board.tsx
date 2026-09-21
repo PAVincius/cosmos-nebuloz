@@ -548,40 +548,35 @@ export function Board({
       {estagios.length === 0 ? (
         <Erro>Nenhum estágio configurado — peça a um ADMIN.</Erro>
       ) : null}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(210px, 1fr))",
-          gap: 10,
-          overflowX: "auto",
-          paddingBottom: 2,
-        }}
-      >
-        {colunas.map((coluna) => (
-          <ColunaDoEstagio
-            arrastando={arrastando}
-            coluna={coluna}
-            estagios={estagios}
-            hoje={hoje}
-            key={coluna.codigo}
-            ocupada={movendo !== null}
-            onAbrirEstagio={onAbrirEstagio}
-            onAbrirLead={onAbrirLead}
-            onDragEndCard={finalizarArraste}
-            onDragLeaveColuna={() => setSobre(null)}
-            onDragOverColuna={() => setSobre(coluna.codigo)}
-            onDragStartCard={iniciarArraste}
-            onDropColuna={() => soltarEmColuna(coluna.codigo)}
-            podeEscrever={podeEscrever}
-            sobreColuna={sobre === coluna.codigo}
-          />
-        ))}
+      {/* Rolagem horizontal consciente: quatro colunas de 210px não cabem em
+          375px, e uma coluna espremida a 90px não é um kanban. A largura
+          mínima vive na classe (`.bo-kanban`); quem rola é o contêiner. */}
+      <div style={{ overflowX: "auto", paddingBottom: 2 }}>
+        <div className="bo-kanban">
+          {colunas.map((coluna) => (
+            <ColunaDoEstagio
+              arrastando={arrastando}
+              coluna={coluna}
+              estagios={estagios}
+              hoje={hoje}
+              key={coluna.codigo}
+              ocupada={movendo !== null}
+              onAbrirEstagio={onAbrirEstagio}
+              onAbrirLead={onAbrirLead}
+              onDragEndCard={finalizarArraste}
+              onDragLeaveColuna={() => setSobre(null)}
+              onDragOverColuna={() => setSobre(coluna.codigo)}
+              onDragStartCard={iniciarArraste}
+              onDropColuna={() => soltarEmColuna(coluna.codigo)}
+              podeEscrever={podeEscrever}
+              sobreColuna={sobre === coluna.codigo}
+            />
+          ))}
+        </div>
       </div>
 
       {podeEscrever ? (
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
-        >
+        <div className="bo-duas-colunas">
           {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: alvo nativo de drag-and-drop, mesmo motivo da coluna acima */}
           <fieldset
             aria-label="Soltar para marcar ganho"

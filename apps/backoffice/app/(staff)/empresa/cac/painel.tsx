@@ -595,7 +595,7 @@ export function Painel({
         </Tabela>
       </SectionCard>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div className="bo-duas-colunas" style={{ gap: 12 }}>
         <SectionCard
           as="h2"
           subtitle={

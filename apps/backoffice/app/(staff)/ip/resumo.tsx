@@ -16,13 +16,7 @@ export function KpisDoAcervo({ lista }: { lista: IpAssetRow[] }) {
   const horas = lista.reduce((soma, a) => soma + a.horasPoupadas, 0);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: 12,
-        gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
-      }}
-    >
+    <div className="bo-kpis bo-kpis-3">
       <KpiCard
         hint={`${comprovados} ${comprovados === 1 ? "comprovado" : "comprovados"} em campo`}
         icon="book"

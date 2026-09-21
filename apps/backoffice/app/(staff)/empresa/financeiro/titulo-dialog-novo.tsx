@@ -24,13 +24,13 @@ import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { ROTULO_TIPO, type TituloRow } from "@/lib/empresa/livro";
 import { hojeIso } from "@/lib/empresa/periodo";
 import type { Result } from "@/lib/safe-action";
-import { Aviso, GRID_2 } from "./titulo-dialogs";
+import { Aviso } from "./titulo-dialogs";
 
 /**
  * Diálogo "Novo título" (Task 6, spec 2026-09-06 §4). Separado dos outros
  * dois — Baixar e Cancelar, em titulo-dialogs.tsx — só pelo tamanho: sete
  * campos contra dois, e juntos os três passariam do teto de ~400 linhas do
- * lint num arquivo só. `Aviso` e `GRID_2` são de lá; `hojeIso` é a cópia
+ * lint num arquivo só. `Aviso` é de lá; `hojeIso` é a cópia
  * única de lib/empresa/periodo.ts (fix-wave D2).
  */
 
@@ -185,7 +185,7 @@ function FormularioNovo({
         <Aviso>Vencimento não pode ser antes da emissão.</Aviso>
       ) : null}
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="tt-tipo" label="Tipo">
           <select
             id="tt-tipo"
@@ -248,7 +248,7 @@ function FormularioNovo({
         />
       </Campo>
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="tt-emissao" label="Emissão">
           <input
             id="tt-emissao"

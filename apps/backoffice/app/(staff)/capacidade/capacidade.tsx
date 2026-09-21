@@ -272,13 +272,7 @@ function FormularioDeAlocacao({
       >
         {titulo}
       </p>
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-        }}
-      >
+      <div className="bo-campos">
         <Campo htmlFor="a-eng" label="Engajamento">
           <select
             id="a-eng"

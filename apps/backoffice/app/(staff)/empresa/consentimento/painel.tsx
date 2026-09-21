@@ -508,14 +508,7 @@ export function Painel({
         }`}
         title="Aviso lido na abertura"
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 12,
-            marginBottom: 16,
-          }}
-        >
+        <div className="bo-tres-colunas" style={{ marginBottom: 16 }}>
           <Campo htmlFor="ferramenta" label="[ferramenta]">
             <input
               id="ferramenta"
@@ -558,14 +551,7 @@ export function Painel({
             {rotuloSalvar(salvando, sujo)}
           </BotaoPrimario>
         ) : null}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 12,
-            marginTop: 16,
-          }}
-        >
+        <div className="bo-duas-colunas" style={{ gap: 12, marginTop: 16 }}>
           {view.avisos.map((a) => (
             <div
               key={a.peca}

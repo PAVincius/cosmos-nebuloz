@@ -40,19 +40,13 @@ import type { Result } from "@/lib/safe-action";
  * título selecionado, mesma regra de `lancamento-dialog.tsx` — sem isso o
  * `useState` de rascunho vazaria de um título para o próximo.
  *
- * `Aviso` e `GRID_2` são exportados daqui porque os três diálogos os usam;
+ * `Aviso` é exportado daqui porque os três diálogos o usam;
  * `hojeIso`/`competenciaAtual` vêm de lib/empresa/periodo.ts (cópia única,
  * fix-wave D2) e cada arquivo os importa de lá direto.
  */
 
 type BaixarInput = Parameters<typeof baixarTitulo>[0];
 type CancelarInput = Parameters<typeof cancelarTitulo>[0];
-
-export const GRID_2 = {
-  display: "grid",
-  gap: 10,
-  gridTemplateColumns: "1fr 1fr",
-};
 
 /** Aviso não bloqueante (âmbar) — diferente de `Erro`: nada quebrou, é só a
  *  pessoa conferir antes de seguir. Mesmos tokens de clientes/novo/form.tsx. */
@@ -190,7 +184,7 @@ function FormularioBaixar({
         <Aviso>Data e competência em meses diferentes</Aviso>
       ) : null}
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="tt-baixa-data" label="Data">
           <input
             id="tt-baixa-data"

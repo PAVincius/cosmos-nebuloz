@@ -246,13 +246,7 @@ export function EditarServico({
         </output>
       ) : null}
 
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-        }}
-      >
+      <div className="bo-campos-largos">
         <Campo htmlFor="e-nome" label="Nome">
           <input
             disabled={travado}
@@ -388,13 +382,7 @@ export function EditarServico({
         />
       </Campo>
 
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-        }}
-      >
+      <div className="bo-campos-largos">
         <Campo
           hint="um por linha, até 20 — vira anexo da proposta"
           htmlFor="e-entregaveis"

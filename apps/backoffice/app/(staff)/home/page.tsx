@@ -98,13 +98,7 @@ function Conteudo({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint="na carteira"
           icon="building"

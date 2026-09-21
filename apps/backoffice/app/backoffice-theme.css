@@ -216,6 +216,12 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
+.bo-tres-colunas {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .bo-kpis {
   display: grid;
   gap: var(--gap);
@@ -230,8 +236,45 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+/* Fileiras de campos e de cartões que já se ajustam sozinhas — `auto-fit`
+   quebra a linha quando o mínimo não cabe. Vivem aqui pelo mesmo motivo das
+   irmãs acima: a regra inline estava copiada em nove arquivos, e o que é
+   layout do painel mora numa folha só. `campos` é o par de um formulário
+   (150px por campo); `campos-largos`, o de um editor com textarea (220px);
+   `cartoes`, a galeria de itens (240px, `auto-fill` para o cartão não esticar
+   quando a fileira tem um só). */
+.bo-campos {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.bo-campos-largos {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.bo-cartoes {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* Kanban do funil: quatro estágios lado a lado, cada um com largura mínima
+   de cartão. A largura mínima da fileira é o que faz o contêiner de fora
+   (`overflow-x: auto`, no board.tsx) rolar em vez de espremer as colunas —
+   medido a 375px sem isto, cada coluna virava 90px. */
+.bo-kanban {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  min-width: 880px;
+}
+
 @media (max-width: 1023px) {
-  .bo-duas-colunas {
+  .bo-duas-colunas,
+  .bo-tres-colunas {
     grid-template-columns: minmax(0, 1fr);
   }
 

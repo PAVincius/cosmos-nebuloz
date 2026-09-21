@@ -275,11 +275,9 @@ export function Catalogo({
           // `<form>` e não `<div>`: é o que faz Enter num campo submeter.
           <form
             aria-label="Novo serviço"
+            className="bo-campos"
             onSubmit={criar}
             style={{
-              display: "grid",
-              gap: 10,
-              gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
               paddingBottom: 14,
               marginBottom: 14,
               borderBottom: "1px solid var(--hairline)",
