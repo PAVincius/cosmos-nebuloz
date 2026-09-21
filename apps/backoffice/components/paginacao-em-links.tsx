@@ -12,7 +12,9 @@ import { TETO_DA_LISTA } from "@/lib/paginacao";
  * estão; só `pagina` muda.
  *
  * Na borda (primeira página sem anterior, última sem próxima) o link não
- * existe — não vira botão desabilitado nem link para a mesma página.
+ * existe — não vira botão desabilitado nem link para a mesma página. Com uma
+ * página só e sem legenda, nada é montado; com legenda (o total do Audit),
+ * ela fica mesmo sem link, porque é informação.
  */
 function hrefDaPagina(
   caminho: string,
@@ -58,7 +60,7 @@ export function PaginacaoEmLinks({
   legenda?: string;
   porPagina?: number;
 }) {
-  if (pagina <= 1 && !temMais) {
+  if (pagina <= 1 && !temMais && legenda === undefined) {
     return null;
   }
   return (
@@ -74,7 +76,7 @@ export function PaginacaoEmLinks({
     >
       {pagina > 1 ? (
         <Link href={hrefDaPagina(caminho, params, pagina - 1)} style={LINK}>
-          ← Anteriores
+          ← Anterior
         </Link>
       ) : null}
       <span
@@ -89,7 +91,7 @@ export function PaginacaoEmLinks({
       </span>
       {temMais ? (
         <Link href={hrefDaPagina(caminho, params, pagina + 1)} style={LINK}>
-          Próximos {porPagina} →
+          Próxima · {porPagina} →
         </Link>
       ) : null}
     </nav>

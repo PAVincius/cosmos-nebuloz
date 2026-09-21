@@ -4,10 +4,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import type { TenantOpcao } from "@/app/actions/audit";
 import { BotaoSecundario, Campo, INPUT } from "@/components/campo";
+import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
 import { ACOES, ENTIDADES } from "./rotulos";
 
 /**
- * Filtros do Audit Explorer.
+ * Filtros da trilha de auditoria.
  *
  * O estado mora na URL, não em `useState`. Um filtro de auditoria costuma
  * terminar colado num ticket ou num canal — com estado de cliente o link
@@ -154,6 +155,11 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
   );
 }
 
+/**
+ * Anterior e Próxima em link, não em botão com `router.push`: meio-clique
+ * abre em nova aba, a seta de voltar desfaz, e a página se cola num ticket
+ * — o que o botão só imitava pela metade. Os filtros ficam, só `pagina` muda.
+ */
 export function Paginacao({
   pagina,
   porPagina,
@@ -163,63 +169,19 @@ export function Paginacao({
   porPagina: number;
   total: number;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
   const ultima = Math.max(1, Math.ceil(total / porPagina));
 
-  const ir = (destino: number) => {
-    const novo = new URLSearchParams(params.toString());
-    novo.set("pagina", String(destino));
-    router.push(`${pathname}?${novo.toString()}`);
-  };
-
-  const botao = (rotulo: string, destino: number, ativo: boolean) => (
-    <button
-      className="btn"
-      disabled={!ativo}
-      onClick={() => ir(destino)}
-      style={{
-        padding: "6px 12px",
-        borderRadius: "var(--r-md)",
-        border: "1px solid var(--hairline)",
-        background: "var(--surface-2)",
-        color: ativo ? "var(--ink)" : "var(--ink-faint)",
-        fontSize: "var(--fs-base)",
-        fontWeight: 600,
-        cursor: ativo ? "pointer" : "not-allowed",
-        opacity: ativo ? 1 : 0.5,
-      }}
-      type="button"
-    >
-      {rotulo}
-    </button>
-  );
-
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        paddingTop: 12,
-        borderTop: "1px solid var(--hairline)",
-      }}
-    >
-      {botao("← Anterior", pagina - 1, pagina > 1)}
-      <span
-        className="mono"
-        style={{
-          flex: 1,
-          fontSize: "var(--fs-nota)",
-          color: "var(--ink-faint)",
-        }}
-      >
-        página {pagina} de {ultima} · {total}{" "}
-        {total === 1 ? "evento" : "eventos"}
-      </span>
-      {botao("Próxima →", pagina + 1, pagina < ultima)}
-    </div>
+    <PaginacaoEmLinks
+      caminho={pathname}
+      legenda={`página ${pagina} de ${ultima} · ${total} ${total === 1 ? "evento" : "eventos"}`}
+      pagina={pagina}
+      params={Object.fromEntries(params.entries())}
+      porPagina={porPagina}
+      temMais={pagina < ultima}
+    />
   );
 }

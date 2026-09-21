@@ -106,6 +106,19 @@ describe("listPlatformApprovals", () => {
     );
   });
 
+  it("DECIDIDOS é aprovado ou rejeitado — a fila separa o que ainda espera do que já foi", async () => {
+    await listPlatformApprovals("DECIDIDOS");
+
+    expect(mocks.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: "system",
+          status: { in: ["APPROVED", "REJECTED"] },
+        },
+      })
+    );
+  });
+
   it("filtra por status quando pedido", async () => {
     await listPlatformApprovals("PENDING_APPROVAL");
 
@@ -343,7 +356,7 @@ describe("decidePlatformApprovalAction — despacho da ação aprovada", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.assertCanWrite.mockImplementation(() => undefined);
+    mocks.assertCanWrite.mockImplementation(() => {});
     mocks.requirePlatformStaff.mockResolvedValue(admin);
     mocks.findFirst.mockResolvedValue(pedidoDeProposta);
     mocks.update.mockResolvedValue({});

@@ -230,7 +230,7 @@ const ROTAS: Rota[] = [
   },
   {
     falha: ["listAuditEvents"],
-    heading: "Audit Explorer",
+    heading: "Trilha de auditoria",
     importar: () => import("@/app/(staff)/audit/page"),
     ok: ["listAuditTenants"],
     props: { searchParams: Promise.resolve({}) },

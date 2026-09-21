@@ -49,7 +49,7 @@ const BENCH: Benchmark = {
   temMaisClientes: true,
 };
 
-const PROXIMA = new RegExp(`Próximos ${TETO_DA_LISTA}`);
+const PROXIMA = new RegExp(`Próxima · ${TETO_DA_LISTA}`);
 
 beforeEach(() => {
   mocks.listAccountHealth.mockReset();
@@ -77,7 +77,7 @@ describe("PaginacaoEmLinks", () => {
       screen.getByRole("link", { name: PROXIMA }).getAttribute("href")
     ).toBe("/contas?q=atlas&pagina=3");
     expect(
-      screen.getByRole("link", { name: /Anteriores/ }).getAttribute("href")
+      screen.getByRole("link", { name: /Anterior/ }).getAttribute("href")
     ).toBe("/contas?q=atlas&pagina=1");
     expect(screen.getByText(/página 2/)).toBeTruthy();
   });
@@ -85,7 +85,7 @@ describe("PaginacaoEmLinks", () => {
   it("na última página, só o link de anteriores", () => {
     render(<PaginacaoEmLinks caminho="/contas" pagina={3} temMais={false} />);
     expect(screen.queryByRole("link", { name: PROXIMA })).toBeNull();
-    expect(screen.getByRole("link", { name: /Anteriores/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Anterior/ })).toBeTruthy();
   });
 });
 

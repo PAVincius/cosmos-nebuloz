@@ -172,7 +172,7 @@ describe("plural real, não '(s)'", () => {
     expect(screen.getByText(/· 2 eventos$/)).toBeTruthy();
   });
 
-  it("aprovações: '1 pendente de 2' e '2 pendentes de 2'", async () => {
+  it("aprovações: '1 pendente' e '2 pendentes'", async () => {
     mocks.requirePlatformStaff.mockResolvedValue({ canWrite: false });
     const { default: Page } = await import("@/app/(staff)/aprovacoes/page");
     const pedido = (id: string, status: string): PlatformApprovalRow => ({
@@ -190,12 +190,14 @@ describe("plural real, não '(s)'", () => {
       status,
     });
 
+    // A fila lê só os pendentes (os decididos moram em ?estado=decididos),
+    // e o subtítulo conta o que está na tela.
     mocks.listPlatformApprovals.mockResolvedValue({
       ok: true,
-      data: [pedido("a", "PENDING_APPROVAL"), pedido("b", "APPROVED")],
+      data: [pedido("a", "PENDING_APPROVAL")],
     });
     const um = render(await Page());
-    expect(screen.getByText("1 pendente de 2")).toBeTruthy();
+    expect(screen.getByText("1 pendente")).toBeTruthy();
     expect(screen.queryAllByText(/\(s\)/)).toHaveLength(0);
     um.unmount();
 
@@ -204,7 +206,7 @@ describe("plural real, não '(s)'", () => {
       data: [pedido("a", "PENDING_APPROVAL"), pedido("b", "PENDING_APPROVAL")],
     });
     render(await Page());
-    expect(screen.getByText("2 pendentes de 2")).toBeTruthy();
+    expect(screen.getByText("2 pendentes")).toBeTruthy();
   });
 
   it("observabilidade: '1 tentativa recusada' e '2 tentativas recusadas'", async () => {

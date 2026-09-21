@@ -6,7 +6,7 @@ import {
   listAuditTenants,
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { itemDaRota, secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
 import { Filtros, Paginacao } from "./filtros";
 import { ACOES } from "./rotulos";
@@ -149,7 +149,7 @@ export default async function AuditPage({
       <PageHeader
         eyebrow={`${secaoDaRota("/audit")} · plataforma`}
         subtitle="Busca sobre o AuditLog de todos os clientes ao mesmo tempo. O filtro fica na URL — o link abre a mesma busca para quem receber."
-        title="Audit Explorer"
+        title={itemDaRota("/audit")?.label ?? "Trilha de auditoria"}
       />
 
       <SectionCard icon="filter" title="Filtro">
