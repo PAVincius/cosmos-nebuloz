@@ -87,14 +87,14 @@ export default function Erro({
               {pendente ? "Tentando…" : "Tentar de novo"}
             </button>
             <Link
-              href="/"
+              href="/home"
               style={{
                 fontSize: "var(--fs-base)",
                 fontWeight: 700,
                 color: "var(--accent-text)",
               }}
             >
-              Voltar para Clientes
+              Voltar para a Home
             </Link>
           </div>
         </div>

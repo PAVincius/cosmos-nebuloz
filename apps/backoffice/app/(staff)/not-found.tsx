@@ -39,7 +39,7 @@ export default function NaoEncontrado() {
           </li>
         </ul>
         <Link
-          href="/"
+          href="/home"
           style={{
             display: "inline-block",
             marginTop: 14,
@@ -48,7 +48,7 @@ export default function NaoEncontrado() {
             color: "var(--accent-text)",
           }}
         >
-          Voltar para Clientes
+          Voltar para a Home
         </Link>
       </SectionCard>
     </div>

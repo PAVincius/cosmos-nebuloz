@@ -216,35 +216,50 @@ function Topbar({
           flexShrink: 0,
         }}
       >
-        <span
+        {/* O wordmark leva para a casa, como em todo painel — e a casa é
+            `/home`, a mesma que o login e as saídas de erro usam. O nome
+            acessível diz o destino porque o texto some abaixo de 1024px. */}
+        <Link
+          aria-label="Nebuloz — ir para a Home"
+          href="/home"
           style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            display: "grid",
-            placeItems: "center",
-            background:
-              "linear-gradient(145deg,var(--accent),rgba(var(--accent-rgb),.55))",
-            boxShadow: "0 0 18px -4px rgba(var(--accent-rgb),.7)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            color: "inherit",
+            textDecoration: "none",
           }}
         >
-          <Icon
-            name="key"
-            size={14}
-            strokeWidth={2.1}
-            style={{ color: "var(--accent-fg)" }}
-          />
-        </span>
-        <span
-          className="display bo-so-largo"
-          style={{
-            fontSize: "var(--fs-forte)",
-            fontWeight: 700,
-            letterSpacing: ".1em",
-          }}
-        >
-          NEBULOZ
-        </span>
+          <span
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 8,
+              display: "grid",
+              placeItems: "center",
+              background:
+                "linear-gradient(145deg,var(--accent),rgba(var(--accent-rgb),.55))",
+              boxShadow: "0 0 18px -4px rgba(var(--accent-rgb),.7)",
+            }}
+          >
+            <Icon
+              name="key"
+              size={14}
+              strokeWidth={2.1}
+              style={{ color: "var(--accent-fg)" }}
+            />
+          </span>
+          <span
+            className="display bo-so-largo"
+            style={{
+              fontSize: "var(--fs-forte)",
+              fontWeight: 700,
+              letterSpacing: ".1em",
+            }}
+          >
+            NEBULOZ
+          </span>
+        </Link>
         <span
           className="mono bo-so-largo"
           style={{

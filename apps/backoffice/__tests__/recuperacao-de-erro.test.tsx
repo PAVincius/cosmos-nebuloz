@@ -80,9 +80,9 @@ describe("error.tsx do grupo (staff)", () => {
     expect(mocks.refresh).toHaveBeenCalledTimes(1);
     expect(
       screen
-        .getByRole("link", { name: "Voltar para Clientes" })
+        .getByRole("link", { name: "Voltar para a Home" })
         .getAttribute("href")
-    ).toBe("/");
+    ).toBe("/home");
   });
 
   it("sem mensagem no erro, não inventa uma", async () => {
@@ -99,7 +99,7 @@ describe("error.tsx do grupo (staff)", () => {
 });
 
 describe("not-found.tsx do grupo (staff)", () => {
-  it("diz que não encontrou, o que pode ter acontecido, e leva para /", async () => {
+  it("diz que não encontrou, o que pode ter acontecido, e leva para /home", async () => {
     const { default: NaoEncontrado } = await import("@/app/(staff)/not-found");
     render(<NaoEncontrado />);
 
@@ -109,9 +109,9 @@ describe("not-found.tsx do grupo (staff)", () => {
     expect(screen.getByText(/O link é antigo/)).toBeTruthy();
     expect(
       screen
-        .getByRole("link", { name: "Voltar para Clientes" })
+        .getByRole("link", { name: "Voltar para a Home" })
         .getAttribute("href")
-    ).toBe("/");
+    ).toBe("/home");
   });
 });
 
