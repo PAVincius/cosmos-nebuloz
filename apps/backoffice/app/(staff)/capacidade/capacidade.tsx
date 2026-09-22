@@ -18,6 +18,10 @@ import {
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import {
+  PerguntaAoFechar,
+  useFecharComRascunho,
+} from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarDataBr } from "@/lib/empresa/periodo";
@@ -373,6 +377,8 @@ export function Capacidade({
     texto: string;
   } | null>(null);
   const [nova, setNova] = useState(false);
+  const fecharNova = useCallback(() => setNova(false), []);
+  const guardaDaNova = useFecharComRascunho(fecharNova);
   const [alocando, setAlocando] = useState<string | null>(null);
   const [aloc, setAloc] = useState(ALOCACAO_VAZIA);
   const [pendente, iniciar] = useTransition();
@@ -449,10 +455,11 @@ export function Capacidade({
           podeEscrever ? (
             <BotaoPrimario
               full={false}
-              onClick={() => setNova((v) => !v)}
+              onClick={nova ? guardaDaNova.pedirFechar : () => setNova(true)}
               type="button"
             >
-              {/* "Fechar": só recolhe o formulário, não desfaz nada. */}
+              {/* "Fechar": só recolhe o formulário, não desfaz nada — com
+                  rascunho, pergunta antes de jogá-lo fora. */}
               {nova ? "Fechar" : "Nova pessoa"}
             </BotaoPrimario>
           ) : null
@@ -461,8 +468,10 @@ export function Capacidade({
         subtitle={subtituloDaEquipe}
         title="Equipe"
       >
+        <PerguntaAoFechar guarda={guardaDaNova} />
         {nova ? (
           <FormularioDeCapacidade
+            marcarSujo={guardaDaNova.marcarSujo}
             onCriada={async (nv) => {
               // Relê em vez de anexar a cópia local: a ocupação e a ordem vêm
               // do servidor, e outra aba já via a lista velha.

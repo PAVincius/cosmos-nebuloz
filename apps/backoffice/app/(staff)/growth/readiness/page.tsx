@@ -6,7 +6,7 @@ import { requirePlatformStaff } from "@/lib/guard";
 import { Lista } from "./lista";
 
 /**
- * Growth · AI readiness — a carteira de diagnósticos de maturidade.
+ * Growth · Maturidade de IA — a carteira de diagnósticos de maturidade.
  *
  * A rubrica (seis dimensões, cinco níveis) mora em `lib/growth/maturidade.ts`.
  * Esta tela lista o que existe e abre um; responder é na rota do id.
@@ -23,10 +23,12 @@ export default async function ReadinessPage() {
 
   const cabecalho = (meta?: React.ReactNode) => (
     <PageHeader
-      eyebrow={`${secaoDaRota("/growth/readiness")} · maturidade de IA`}
+      eyebrow={`${secaoDaRota("/growth/readiness")} · diagnóstico`}
       meta={meta}
       subtitle="Seis dimensões, cinco níveis. O diagnóstico é o degrau 01 da Escada — e é ele que diz por qual degrau o cliente entra."
-      title="AI readiness"
+      // O mesmo nome do menu: a tela não pode se chamar diferente do link
+      // que leva a ela.
+      title="Maturidade de IA"
       tone="purple"
     />
   );

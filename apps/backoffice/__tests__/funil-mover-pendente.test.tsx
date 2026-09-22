@@ -59,7 +59,7 @@ function montar(movendo: string | null) {
 }
 
 function arrastarPara(nomeDaColuna: string) {
-  const card = screen.getByRole("button", { name: "Abrir lead Meridian Corp" });
+  const card = screen.getByRole("button", { name: /^Abrir Meridian Corp/ });
   const coluna = screen.getByRole("group", { name: nomeDaColuna });
   fireEvent.dragStart(card, { dataTransfer: { effectAllowed: "" } });
   fireEvent.drop(coluna, { dataTransfer: {} });

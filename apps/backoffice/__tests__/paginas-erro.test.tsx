@@ -322,7 +322,7 @@ const ROTAS: Rota[] = [
   },
   {
     falha: ["listarAvaliacoes"],
-    heading: "AI readiness",
+    heading: "Maturidade de IA",
     importar: () => import("@/app/(staff)/growth/readiness/page"),
     rota: "/growth/readiness",
   },

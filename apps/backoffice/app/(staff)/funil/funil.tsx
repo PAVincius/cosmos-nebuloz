@@ -35,6 +35,7 @@ import {
   type Transicao,
   taxaLeadParaProposta,
 } from "@/lib/comercial/funil";
+import { formatarDataBr } from "@/lib/empresa/periodo";
 import { useParamState } from "@/lib/url-state";
 import { Barras, type LinhaBarra } from "./barras";
 import { Board } from "./board";
@@ -271,21 +272,23 @@ function AvisoListaVelha({
 function useMoverLead({
   leads,
   onErro,
+  onFalar,
   recarregar,
 }: {
   leads: { id: string; nome: string }[];
   onErro: (mensagem: string | null) => void;
+  /** A frase do funil (ver `Funil`), a mesma de toda escrita. */
+  onFalar: (frase: string | null) => void;
   recarregar: () => Promise<void>;
 }) {
   const [movendo, setMovendo] = useState<string | null>(null);
-  const [movido, setMovido] = useState<string | null>(null);
   const mover = useCallback(
     async (id: string, estagio: Estagio) => {
       if (movendo) {
         return { ok: false as const, error: "Aguarde a mudança anterior." };
       }
       onErro(null);
-      setMovido(null);
+      onFalar(null);
       setMovendo(id);
       try {
         const res = await moverEstagio({ id, estagio });
@@ -295,16 +298,20 @@ function useMoverLead({
         }
         await recarregar();
         const nome = leads.find((l) => l.id === id)?.nome ?? "Lead";
-        setMovido(`${nome} movido para ${INFO_ESTAGIO[estagio].rotulo}.`);
+        onFalar(`${nome} movido para ${INFO_ESTAGIO[estagio].rotulo}.`);
         return res;
       } finally {
         setMovendo(null);
       }
     },
-    [leads, movendo, onErro, recarregar]
+    [leads, movendo, onErro, onFalar, recarregar]
   );
-  const confirmacao = movido ? <Confirmacao>{movido}</Confirmacao> : null;
-  return { confirmacao, mover, movendo };
+  return { mover, movendo };
+}
+
+/** A frase da última escrita do funil, quando há. */
+function Fala({ texto }: { texto: string | null }) {
+  return texto ? <Confirmacao>{texto}</Confirmacao> : null;
 }
 
 export function Funil({
@@ -330,6 +337,11 @@ export function Funil({
   >(null);
   const [estagioAbertoId, setEstagioAbertoId] = useState<Estagio | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
+  // A frase de toda escrita do funil, nomeando o lead ou o estágio, dita só
+  // depois da releitura. Mora aqui e aparece no Pipeline — e dentro do
+  // diálogo aberto, porque com ele a página fica fora do alcance do leitor
+  // de tela. Abrir outra coisa apaga a frase da anterior.
+  const [fala, setFala] = useState<string | null>(null);
 
   const hoje = useMemo(() => new Date(dados.hoje), [dados.hoje]);
   const leadsFunil = useMemo(
@@ -337,39 +349,53 @@ export function Funil({
     [dados.leads]
   );
 
-  const { confirmacao, mover, movendo } = useMoverLead({
+  const { mover, movendo } = useMoverLead({
     leads: dados.leads,
     onErro: setErro,
+    onFalar: setFala,
     recarregar,
   });
+
+  const nomeDoLead = useCallback(
+    (id: string) => dados.leads.find((l) => l.id === id)?.nome ?? "Lead",
+    [dados.leads]
+  );
 
   const converter = useCallback(
     async (id: string) => {
       setErro(null);
+      setFala(null);
+      const nome = nomeDoLead(id);
       const res = await converterEmProposta({ id });
       if (!res.ok) {
         setErro(res.error);
         return res;
       }
       await recarregar();
+      setFala(`${nome} virou a proposta ${res.data.numero}.`);
       return res;
     },
-    [recarregar]
+    [recarregar, nomeDoLead]
   );
 
   const perderComMotivo = useCallback(
     async (id: string, motivo: MotivoPerda, nota: string) => {
+      setFala(null);
+      const nome = nomeDoLead(id);
       const res = await marcarPerdido({ id, motivo, nota });
       if (res.ok) {
         await recarregar();
+        setFala(`${nome} marcado como perdido — ${MOTIVOS_PERDA[motivo]}.`);
       }
       return res;
     },
-    [recarregar]
+    [recarregar, nomeDoLead]
   );
 
   const salvarProximaAcao = useCallback(
     async (id: string, texto: string, data: string) => {
+      setFala(null);
+      const nome = nomeDoLead(id);
       const res = await registrarProximaAcao({
         id,
         proximaAcao: texto,
@@ -377,10 +403,13 @@ export function Funil({
       });
       if (res.ok) {
         await recarregar();
+        setFala(
+          `Próxima ação de ${nome}: «${texto}» em ${formatarDataBr(data)}.`
+        );
       }
       return res;
     },
-    [recarregar]
+    [recarregar, nomeDoLead]
   );
 
   const criarNovoLead = useCallback(
@@ -396,6 +425,7 @@ export function Funil({
 
   const abrirLead = useCallback(
     (id: string) => {
+      setFala(null);
       setLeadAbertoId(id);
       setLeadAbertoModo(null);
     },
@@ -407,6 +437,7 @@ export function Funil({
   // morreu; só falta motivo e nota, não mais um clique para "achar" o botão.
   const abrirLeadEmModoPerda = useCallback(
     (id: string) => {
+      setFala(null);
       setLeadAbertoId(id);
       setLeadAbertoModo("perda");
     },
@@ -418,6 +449,7 @@ export function Funil({
   // lead), e o diálogo já perguntava — o board era o atalho que pulava isso.
   const abrirLeadEmModoConversao = useCallback(
     (id: string) => {
+      setFala(null);
       setLeadAbertoId(id);
       setLeadAbertoModo("conversao");
     },
@@ -429,7 +461,13 @@ export function Funil({
     setLeadAbertoModo(null);
   }, [setLeadAbertoId]);
 
+  const abrirNovoLead = useCallback(() => {
+    setFala(null);
+    setNovoAberto(true);
+  }, []);
+
   const abrirEstagio = useCallback((codigo: Estagio) => {
+    setFala(null);
     setEstagioAbertoId(codigo);
   }, []);
 
@@ -484,10 +522,7 @@ export function Funil({
           valor={q}
           visiveis={buscados.length}
         />
-        <WriteButton
-          canWrite={podeEscrever}
-          onClick={() => setNovoAberto(true)}
-        >
+        <WriteButton canWrite={podeEscrever} onClick={abrirNovoLead}>
           Novo lead
         </WriteButton>
       </div>
@@ -524,7 +559,7 @@ export function Funil({
       </div>
 
       <SectionCard as="h2" icon="kanban" title="Pipeline">
-        {confirmacao}
+        <Fala texto={fala} />
         <Board
           estagios={dados.estagios}
           hoje={hoje}
@@ -582,6 +617,7 @@ export function Funil({
       ) : null}
 
       <LeadDialog
+        confirmacao={fala}
         estagios={dados.estagios}
         hoje={hoje}
         lead={leadAberto}
@@ -597,15 +633,18 @@ export function Funil({
         aberto={novoAberto}
         canais={dados.canais}
         onClose={() => setNovoAberto(false)}
+        onCriado={setFala}
         onCriar={criarNovoLead}
       />
       <EstagioDialog
         codigo={estagioAbertoId}
+        confirmacao={fala}
         dados={dados}
         onAbrirLead={abrirLead}
         onClose={() => setEstagioAbertoId(null)}
         onFiltrar={setFiltro}
         onRecarregar={recarregar}
+        onSalvo={setFala}
         podeEscrever={podeEscrever}
       />
     </div>

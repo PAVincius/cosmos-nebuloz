@@ -173,3 +173,25 @@ export function useRascunhoReportado(
 export function rascunhoMudou<T extends object>(atual: T, inicial: T): boolean {
   return JSON.stringify(atual) !== JSON.stringify(inicial);
 }
+
+/** A pergunta de `useFecharComRascunho`, só enquanto ela está de pé — para
+ *  formulário inline (fora de diálogo) que "Fechar" desmonta. */
+export function PerguntaAoFechar({
+  guarda,
+}: {
+  guarda: Pick<
+    ReturnType<typeof useFecharComRascunho>,
+    "perguntando" | "descartar" | "voltar"
+  >;
+}) {
+  if (!guarda.perguntando) {
+    return null;
+  }
+  return (
+    <PerguntaDescartar
+      explicacao={EXPLICACAO_DO_DIALOGO}
+      onDescartar={guarda.descartar}
+      onVoltar={guarda.voltar}
+    />
+  );
+}

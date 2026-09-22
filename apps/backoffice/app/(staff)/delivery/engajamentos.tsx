@@ -15,11 +15,13 @@ import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { OQueFalta } from "@/components/o-que-falta";
+import { rascunhoMudou } from "@/components/pergunta-descartar";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { formatarData } from "@/lib/data";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
 import { TETO_DA_LISTA } from "@/lib/paginacao";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 const TOM: Record<string, Tone> = {
   PROPOSTO: "accent",
@@ -283,6 +285,9 @@ export function Engajamentos({
     texto: string;
   } | null>(null);
   const [form, setForm] = useState(FORM_VAZIO);
+  // "Fechar" só recolhe (o rascunho fica no estado e volta ao reabrir); é
+  // sair da tela que o perdia. Com rascunho, fechar a aba passa pelo aviso.
+  useAvisoAoSair(rascunhoMudou(form, FORM_VAZIO));
   // Duas transições separadas: criar e mudar status são escritas diferentes,
   // e o pendente de uma não pode travar a outra. `mudando` guarda id e alvo
   // para só a linha (e o botão) clicada dizer "Mudando…".

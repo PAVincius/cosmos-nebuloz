@@ -15,6 +15,7 @@ import {
   type MudancaRow,
 } from "@/app/actions/funil-config";
 import { BotaoSecundario, Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import {
   EXPLICACAO_DO_DIALOGO,
   PerguntaDescartar,
@@ -56,6 +57,11 @@ type Props = {
   onAbrirLead: (id: string) => void;
   onFiltrar: (codigo: Estagio) => void;
   onRecarregar: () => Promise<void>;
+  /** A frase de sucesso da edição, para o funil dizê-la (ver `Funil`). */
+  onSalvo?: (frase: string) => void;
+  /** A frase da última escrita do funil, dita também aqui dentro: com o
+   *  diálogo aberto a página fica fora do alcance do leitor de tela. */
+  confirmacao?: string | null;
 };
 
 export function EstagioDialog({
@@ -66,6 +72,8 @@ export function EstagioDialog({
   onAbrirLead,
   onFiltrar,
   onRecarregar,
+  onSalvo,
+  confirmacao = null,
 }: Props) {
   // Esc, clique fora e X chegam aqui; com edição pendente, a guarda pergunta
   // antes — o `dirty` de dentro era calculado e ignorado no fechamento.
@@ -98,6 +106,7 @@ export function EstagioDialog({
         {codigo ? (
           <Conteudo
             codigo={codigo}
+            confirmacao={confirmacao}
             dados={dados}
             key={codigo}
             marcarSujo={guarda.marcarSujo}
@@ -105,6 +114,7 @@ export function EstagioDialog({
             onClose={guarda.pedirFechar}
             onFiltrar={onFiltrar}
             onRecarregar={onRecarregar}
+            onSalvo={onSalvo}
             podeEscrever={podeEscrever}
           />
         ) : null}
@@ -123,6 +133,7 @@ function criteriosMudaram(texto: string, originais: string[]): boolean {
 
 function Conteudo({
   codigo,
+  confirmacao,
   dados,
   podeEscrever,
   marcarSujo,
@@ -130,8 +141,10 @@ function Conteudo({
   onAbrirLead,
   onFiltrar,
   onRecarregar,
+  onSalvo,
 }: {
   codigo: Estagio;
+  confirmacao: string | null;
   dados: DadosFunil;
   podeEscrever: boolean;
   marcarSujo: (sujo: boolean) => void;
@@ -140,6 +153,7 @@ function Conteudo({
   onAbrirLead: (id: string) => void;
   onFiltrar: (codigo: Estagio) => void;
   onRecarregar: () => Promise<void>;
+  onSalvo?: (frase: string) => void;
 }) {
   const podeEditar = podeEscrever;
   const hoje = new Date(dados.hoje);
@@ -228,6 +242,7 @@ function Conteudo({
     await onRecarregar();
     await carregar();
     setEditando(false);
+    onSalvo?.(`Estágio ${info.rotulo} atualizado.`);
   }
 
   const leadsDoEstagio = dados.leads
@@ -263,6 +278,7 @@ function Conteudo({
       </DialogHeader>
 
       {erroCarga ? <Erro>{erroCarga}</Erro> : null}
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
       <CartoesEstagio
         cfg={cfg}

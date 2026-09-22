@@ -7,6 +7,10 @@ import type { EngagementRow } from "@/app/actions/engagements";
 import { createIpAssetAction, type IpAssetRow } from "@/app/actions/ip-library";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, INPUT } from "@/components/campo";
+import {
+  rascunhoMudou,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { type Formulario, montarPayloadDeCriacao } from "@/lib/ip/formulario";
 import {
@@ -14,14 +18,13 @@ import {
   type Criterio,
   criteriosPendentes,
   LICENCAS,
-  type Licenca,
   MIN_DESCRICAO,
   maturidadeDe,
   PROCEDENCIAS,
-  type Procedencia,
   TIPOS_DE_ATIVO,
   type TipoDeAtivo,
 } from "@/lib/ip/regua";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 /**
  * Cadastro de ativo do catálogo de IP.
@@ -32,59 +35,15 @@ import {
  * listas, e a divergente seria justamente a que ela leu antes de clicar.
  */
 
-// Exportados porque `biblioteca.tsx` precisa dos mesmos rótulos nas badges da
-// linha do ativo — uma segunda cópia divergiria no primeiro ajuste de texto.
-export const ROTULO_MATURIDADE: Record<"RASCUNHO" | "COMPROVADO", string> = {
-  RASCUNHO: "Rascunho",
-  COMPROVADO: "Comprovado",
-};
-
-const ROTULO_TIPO: Record<TipoDeAtivo, string> = {
-  ACELERADOR: "Acelerador",
-  PLAYBOOK: "Playbook",
-  TEMPLATE: "Template",
-  EVAL_HARNESS: "Eval harness",
-  MODELO_BPMN: "Modelo BPMN",
-  DOCUMENTO: "Documento",
-};
-
-export const ROTULO_PROCEDENCIA: Record<Procedencia, string> = {
-  INTERNO: "Investimento interno",
-  ENGAJAMENTO: "Engajamento de cliente",
-  LAB: "LAB",
-  TERCEIRO: "Base de terceiro",
-};
-
-const NOTA_PROCEDENCIA: Record<Procedencia, string> = {
-  INTERNO: "Construído em tempo não faturado. Reuso livre.",
-  ENGAJAMENTO: "Nasceu em entrega paga. Exige cláusula de reuso no contrato.",
-  LAB: "Saída de pesquisa interna. Verificar licença do dataset de origem.",
-  TERCEIRO: "Adaptação de material de fora. A licença manda.",
-};
-
-export const ROTULO_LICENCA: Record<Licenca, string> = {
-  NENHUMA: "Nenhuma",
-  PERMISSIVA: "Permissiva",
-  COPYLEFT: "Copyleft",
-  COMERCIAL: "Licenciada",
-  NAO_RESOLVIDA: "Não resolvida",
-};
-
-const NOTA_LICENCA: Record<Licenca, string> = {
-  NENHUMA: "Nada de terceiro dentro do ativo.",
-  PERMISSIVA: "MIT, Apache-2.0, BSD. Reuso comercial liberado com atribuição.",
-  COPYLEFT:
-    "GPL, AGPL. Contamina o entregável do cliente — revisar antes de vender.",
-  COMERCIAL: "Metodologia ou software pago. Exige número de licença.",
-  NAO_RESOLVIDA:
-    "Bloqueia o registro. Sem licença conhecida não existe direito de reuso.",
-};
-
-/** As duas licenças que só valem com componente e versão escritos. */
-const PLACEHOLDER_REFERENCIA: Partial<Record<Licenca, string>> = {
-  COPYLEFT: "bpmn-js AGPL-3.0",
-  COMERCIAL: "Prosci ADKAR — LIC-2026-014",
-};
+import {
+  NOTA_LICENCA,
+  NOTA_PROCEDENCIA,
+  PLACEHOLDER_REFERENCIA,
+  ROTULO_LICENCA,
+  ROTULO_MATURIDADE,
+  ROTULO_PROCEDENCIA,
+  ROTULO_TIPO,
+} from "./rotulos";
 
 type Alterar = (patch: Partial<Formulario>) => void;
 
@@ -513,21 +472,35 @@ function PainelDaRegua({
   );
 }
 
+/** Sem quem pergunte ao fechar, o rascunho só avisa o navegador. */
+function semGuarda(): void {
+  // Nada a avisar: ninguém abriu este formulário com uma guarda.
+}
+
 export function RegistrarAtivo({
   onCriado,
   onErro,
   servicos,
   pessoas,
   engajamentos,
+  marcarSujo = semGuarda,
 }: {
   onCriado: (ativo: IpAssetRow) => void;
   onErro: (mensagem: string) => void;
   servicos: ServiceRow[];
   pessoas: PessoaCapacidade[];
   engajamentos: EngagementRow[];
+  /** Avisa quem abriu o formulário que há rascunho — é quem pergunta antes
+   *  de fechar (`useFecharComRascunho`). */
+  marcarSujo?: (sujo: boolean) => void;
 }) {
   const [form, setForm] = useState<Formulario>(VAZIO);
   const [salvando, setSalvando] = useState(false);
+  // Rascunho não some em silêncio: fechar a aba passa pelo navegador, e o
+  // "Fechar" da biblioteca pergunta.
+  const sujo = rascunhoMudou(form, VAZIO);
+  useAvisoAoSair(sujo);
+  useRascunhoReportado(sujo, marcarSujo);
 
   const alterar = useCallback<Alterar>((patch) => {
     setForm((f) => ({ ...f, ...patch }));

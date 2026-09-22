@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import type { LeadRow } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import {
   EXPLICACAO_DO_DIALOGO,
   PerguntaDescartar,
@@ -52,6 +53,9 @@ import {
 
 type Props = {
   lead: LeadRow | null;
+  /** A frase da última escrita do funil. Com o diálogo aberto a página fica
+   *  fora do alcance do leitor de tela, então ela aparece aqui também. */
+  confirmacao?: string | null;
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
@@ -76,6 +80,7 @@ type Props = {
 
 export function LeadDialog({
   lead,
+  confirmacao = null,
   estagios,
   hoje,
   podeEscrever,
@@ -116,6 +121,7 @@ export function LeadDialog({
         ) : null}
         {lead ? (
           <Conteudo
+            confirmacao={confirmacao}
             estagios={estagios}
             hoje={hoje}
             lead={lead}
@@ -164,6 +170,7 @@ function temRascunho({
 
 function Conteudo({
   lead,
+  confirmacao,
   estagios,
   hoje,
   podeEscrever,
@@ -176,6 +183,7 @@ function Conteudo({
   onProximaAcao,
 }: {
   lead: LeadRow;
+  confirmacao: string | null;
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
@@ -251,6 +259,7 @@ function Conteudo({
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
       <Stepper
         estagio={lead.estagio as Estagio}
