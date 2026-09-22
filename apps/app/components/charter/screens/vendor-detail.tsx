@@ -40,6 +40,7 @@ import { ModalProvider, useModal } from "../modal";
 import { VendorTierModal } from "../modals/vendor-tier";
 import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
+import { useUnsavedGuard } from "../use-unsaved-guard";
 
 const CASE_COLS = "minmax(0,1fr) 120px 130px";
 const SUBPROCESSOR_LIMIT = 5;
@@ -133,7 +134,14 @@ function VendorDetailView({
   const missing = data.library.filter(
     (c) => c.critical && !assigned.includes(c.code)
   );
+  // `sameSet` contra o que o servidor entregou: marcar e desmarcar a mesma
+  // cláusula volta a limpo e não pede confirmação nenhuma.
   const dirty = !sameSet(assigned, data.clauseCodes);
+  const guardUnsaved = useUnsavedGuard({
+    dirty,
+    what: "As cláusulas marcadas para este fornecedor",
+  });
+  const irPara = (href: string) => guardUnsaved(() => router.push(href));
 
   const toggle = (code: string) =>
     setAssigned((prev) =>
@@ -195,7 +203,7 @@ function VendorDetailView({
     <div className="fade-in">
       <BackLink
         label="Fornecedores"
-        onClick={() => router.push("/charter/vendors")}
+        onClick={() => irPara("/charter/vendors")}
       />
 
       <PageHeader
@@ -433,7 +441,7 @@ function VendorDetailView({
                   key={c.code}
                   label={`Abrir ${c.code}`}
                   last={i === data.linkedCases.length - 1}
-                  onClick={() => router.push(`/charter/case/${c.code}`)}
+                  onClick={() => irPara(`/charter/case/${c.code}`)}
                 >
                   <div style={{ minWidth: 0 }}>
                     <span

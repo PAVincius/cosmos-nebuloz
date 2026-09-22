@@ -33,7 +33,44 @@ import { DisclosurePanel } from "../disclosure-panel";
 import { ModalProvider, useModal } from "../modal";
 import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
+import { useUnsavedGuard } from "../use-unsaved-guard";
 import { RoleChangeModal } from "./settings-confirm-role";
+
+type WorkspaceServidor = {
+  industry: string | null;
+  geo: string | null;
+  posture: string;
+  employees: number | null;
+  logRetentionDays: number;
+};
+
+/** Os cinco campos em edição. `null` = campo intocado nesta sessão. */
+type WorkspaceRascunho = {
+  industry: string | null;
+  geo: string | null;
+  posture: string | null;
+  employees: string | null;
+  retention: number | null;
+};
+
+/** Sujo é DIVERGIR do que o servidor entregou, não "o usuário tocou no
+ *  campo" — digitar e desfazer não pode custar uma confirmação. */
+function workspaceDirty(
+  ws: WorkspaceServidor | undefined,
+  d: WorkspaceRascunho
+): boolean {
+  if (!ws) {
+    return false;
+  }
+  const employeesServidor = ws.employees === null ? "" : String(ws.employees);
+  return (
+    (d.industry !== null && d.industry !== (ws.industry ?? "")) ||
+    (d.geo !== null && d.geo !== (ws.geo ?? "")) ||
+    (d.posture !== null && d.posture !== ws.posture) ||
+    (d.employees !== null && d.employees !== employeesServidor) ||
+    (d.retention !== null && d.retention !== ws.logRetentionDays)
+  );
+}
 
 const ROLE_ORDER = [
   "COMPLIANCE",
@@ -58,6 +95,29 @@ function SettingsScreenInner() {
   const [posture, setPosture] = useState<string | null>(null);
   const [employees, setEmployees] = useState<string | null>(null);
   const [retention, setRetention] = useState<number | null>(null);
+
+  const guardUnsaved = useUnsavedGuard({
+    dirty: workspaceDirty(data?.workspace, {
+      industry,
+      geo,
+      posture,
+      employees,
+      retention,
+    }),
+    what: "As alterações do perfil organizacional",
+  });
+
+  /** Sair da aba descartando de verdade — senão o rascunho ressuscita ao
+   *  voltar, e o botão "Descartar" teria mentido. */
+  const trocarDeAba = (destino: string) =>
+    guardUnsaved(() => {
+      setIndustry(null);
+      setGeo(null);
+      setPosture(null);
+      setEmployees(null);
+      setRetention(null);
+      setTab(destino);
+    });
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -98,7 +158,7 @@ function SettingsScreenInner() {
       />
 
       <Tabs
-        onChange={setTab}
+        onChange={trocarDeAba}
         tabs={[
           { id: "workspace", label: "Workspace" },
           { id: "permissoes", label: "Papéis e permissões" },
