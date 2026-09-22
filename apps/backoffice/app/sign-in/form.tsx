@@ -19,7 +19,7 @@ export function SignInForm() {
 
   // Recarrega em vez de navegar pelo router: o cookie de sessão acabou de ser
   // emitido e quem precisa lê-lo é o servidor, no guard do layout.
-  const enter = () => window.location.assign("/home");
+  const enter = () => window.location.assign("/");
 
   // Registra e só então sai. Disparar sem esperar aqui perderia o registro,
   // porque a navegação cancela requisição em voo.

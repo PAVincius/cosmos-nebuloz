@@ -1,134 +1,272 @@
-import {
-  KpiCard,
-  PageHeader,
-  SectionCard,
-} from "@repo/design-system/cosmos/kit";
+import { Badge, KpiCard, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import { type ClientRow, listClients } from "@/app/actions/clients";
+import {
+  listPlatformHealth,
+  type SaudeDaPlataforma,
+} from "@/app/actions/access";
+import { listPlatformApprovals } from "@/app/actions/approvals";
+import { Erro } from "@/components/campo";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
-import { ClientesTabela, KpiAtencao } from "./clientes-tabela";
+import { formatarDataHora } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+
+/** Pendentes na fila, ou o motivo de não saber. Uma falha aqui não pode virar
+ *  zero: "Nada exige atenção" sobre dado que não veio é mentira. */
+type FilaDeAprovacoes = { pendentes: number } | { erro: string };
+
+/** "1 acesso recusado" / "3 acessos recusados" — plural real, não entre parênteses. */
+function plural(n: number, um: string, varios: string): string {
+  return `${n} ${n === 1 ? um : varios}`;
+}
+
+/** Sem o número não há como dizer verde: o "não sei" fica âmbar. */
+function tomDasAprovacoes(pendentes: number | null): "amber" | "green" {
+  if (pendentes === null || pendentes > 0) {
+    return "amber";
+  }
+  return "green";
+}
+
+/** O item de aprovações na lista do que exige atenção: o aviso de falha (com
+ *  o erro, `role=alert`) ou a contagem — nunca os dois, nunca nada quando
+ *  não se sabe. */
+function ItemDeAprovacoes({ aprovacoes }: { aprovacoes: FilaDeAprovacoes }) {
+  if ("erro" in aprovacoes) {
+    return (
+      <li>
+        <Erro>
+          {`Não foi possível carregar aprovações: ${aprovacoes.erro}`}
+        </Erro>
+        <Link href="/aprovacoes" style={ATALHO}>
+          Abrir a fila →
+        </Link>
+      </li>
+    );
+  }
+  if (aprovacoes.pendentes === 0) {
+    return null;
+  }
+  return (
+    <li>
+      <Badge dot tone="amber">
+        {plural(
+          aprovacoes.pendentes,
+          "aprovação pendente",
+          "aprovações pendentes"
+        )}
+      </Badge>
+      <Link href="/aprovacoes" style={ATALHO}>
+        Abrir a fila →
+      </Link>
+    </li>
+  );
+}
+
+const ATALHO = {
+  display: "inline-block",
+  marginTop: 10,
+  fontSize: "var(--fs-base)",
+  fontWeight: 700,
+  color: "var(--accent-text)",
+};
 
 /**
- * Carteira de clientes (`backoffice-tenant.jsx`).
+ * Home: o que exige atenção agora.
  *
- * Os quatro KPIs do protótipo saem todos de dado real: `ModuleStatus` já tem
- * ACTIVE, TRIAL, SUSPENDED e CANCELED no schema, então "trials em andamento" e
- * "exigem atenção" são contagens, não enfeite. Se algum deles dependesse de
- * campo inexistente, o certo seria não mostrar o card.
+ * Mora na raiz (`/`) desde a crítica rodada 5 — antes era `/home`, que agora
+ * só redireciona para cá. Não repete a carteira de clientes, que é a tela
+ * `/clientes`. O que esta responde é "preciso fazer alguma coisa hoje?", e por
+ * isso ela só mostra o que está pendente ou quebrado. Uma home que lista tudo obriga a procurar o problema no
+ * meio do que está bem.
  */
-function contar(clientes: ClientRow[]) {
-  const modulos = clientes.flatMap((c) => c.modules);
-  return {
-    tenants: clientes.length,
-    ativos: modulos.filter((m) => m.status === "ACTIVE").length,
-    trials: modulos.filter((m) => m.status === "TRIAL").length,
-    atencao: modulos.filter((m) => m.status === "SUSPENDED").length,
-  };
+function Conteudo({
+  saude,
+  aprovacoes,
+}: {
+  saude: SaudeDaPlataforma;
+  aprovacoes: FilaDeAprovacoes;
+}) {
+  const quebradas = saude.integracoes.length;
+  const pendentes = "pendentes" in aprovacoes ? aprovacoes.pendentes : null;
+  const tudoCalmo = quebradas === 0 && pendentes === 0 && saude.recusas === 0;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <div className="bo-kpis">
+        <KpiCard
+          hint="na carteira"
+          icon="building"
+          label="Clientes"
+          tone="blue"
+          value={saude.tenants}
+        />
+        <KpiCard
+          hint={pendentes === null ? "não carregou" : "esperando decisão"}
+          icon="approve"
+          label="Aprovações pendentes"
+          tone={tomDasAprovacoes(pendentes)}
+          value={pendentes ?? "—"}
+        />
+        <KpiCard
+          hint="em todos os clientes"
+          icon="eye"
+          label="Integrações com erro"
+          tone={quebradas > 0 ? "red" : "green"}
+          value={quebradas}
+        />
+        <KpiCard
+          hint="nas últimas 50 entradas"
+          icon="userCheck"
+          label="Acessos recusados"
+          tone={saude.recusas > 0 ? "amber" : "green"}
+          value={saude.recusas}
+        />
+      </div>
+
+      {tudoCalmo ? (
+        <Secao icon="check" title="Nada exige atenção" tone="green">
+          <Vazio>
+            Sem aprovação parada, sem integração com erro e sem acesso recusado.
+            Esta tela fica vazia quando está tudo bem — é o comportamento
+            pretendido, não falta de dado.
+          </Vazio>
+        </Secao>
+      ) : (
+        <Secao
+          icon="alert"
+          subtitle="o que está esperando alguém"
+          title="Exige atenção"
+          tone="amber"
+        >
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <ItemDeAprovacoes aprovacoes={aprovacoes} />
+            {quebradas > 0 ? (
+              <li>
+                <Badge dot tone="red">
+                  {plural(quebradas, "integração", "integrações")} com erro
+                </Badge>
+                <Link href="/observabilidade" style={ATALHO}>
+                  Ver quais →
+                </Link>
+              </li>
+            ) : null}
+            {saude.recusas > 0 ? (
+              <li>
+                <Badge dot tone="amber">
+                  {plural(
+                    saude.recusas,
+                    "acesso recusado",
+                    "acessos recusados"
+                  )}
+                </Badge>
+                <Link href="/observabilidade" style={ATALHO}>
+                  Ver a trilha →
+                </Link>
+              </li>
+            ) : null}
+          </ul>
+        </Secao>
+      )}
+
+      <Secao
+        icon="history"
+        subtitle="últimos 10 de todos os clientes"
+        title="Eventos de auditoria"
+      >
+        {saude.ultimosEventos.length === 0 ? (
+          <Vazio>Nada registrado ainda.</Vazio>
+        ) : (
+          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            {saude.ultimosEventos.map((e, i) => (
+              <li
+                key={e.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "8px 2px",
+                  borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
+                <span
+                  className="mono"
+                  style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
+                >
+                  {e.action}
+                </span>
+                <span
+                  style={{ flex: 1, minWidth: 0, color: "var(--ink-muted)" }}
+                >
+                  {e.alvo ?? "—"}
+                </span>
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: "var(--fs-nota)",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  {formatarDataHora(e.quando)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Link href="/audit" style={ATALHO}>
+          Abrir o Audit Explorer →
+        </Link>
+      </Secao>
+    </div>
+  );
 }
 
 export const metadata = { title: tituloDaAba("/") };
 
-export default async function ClientsPage() {
-  const result = await listClients();
+export default async function HomePage() {
+  const [saude, aprovacoes] = await Promise.all([
+    listPlatformHealth(),
+    listPlatformApprovals(),
+  ]);
 
-  // O cabeçalho fica nos dois caminhos: erro dentro da moldura do sucesso, não
-  // um parágrafo solto que faz a tela parecer outra.
-  const cabecalho = (
-    <PageHeader
-      eyebrow={`${secaoDaRota("/")} · carteira`}
-      subtitle="Todos os clientes provisionados, seus módulos e status de contratação."
-      title="Carteira de clientes"
-    >
-      <Link
-        className="btn"
-        href="/clientes/novo"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "9px 15px",
-          borderRadius: "var(--r-md)",
-          background: "var(--accent)",
-          color: "var(--accent-fg)",
-          border: "1px solid var(--accent)",
-          fontSize: "var(--fs-forte)",
-          fontWeight: 600,
-          textDecoration: "none",
-          boxShadow:
-            "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
-        }}
-      >
-        + Provisionar cliente
-      </Link>
-    </PageHeader>
-  );
-
-  if (!result.ok) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-        {cabecalho}
-        <FalhaAoCarregar
-          motivo={result.error}
-          titulo="Não foi possível carregar a carteira"
-        />
-      </div>
-    );
-  }
-
-  const clientes = result.data;
-  const kpi = contar(clientes);
+  // A falha de aprovações não derruba a Home nem vira zero: desce como erro
+  // e a tela mostra o aviso no lugar do número.
+  const filaDeAprovacoes = aprovacoes.ok
+    ? {
+        pendentes: aprovacoes.data.filter(
+          (a) => a.status === "PENDING_APPROVAL"
+        ).length,
+      }
+    : { erro: aprovacoes.error };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      {cabecalho}
-
-      <div className="bo-kpis">
-        <KpiCard
-          hint="clientes provisionados"
-          icon="building"
-          label="Clientes na carteira"
-          tone="blue"
-          value={kpi.tenants}
+      <PageHeader
+        eyebrow={`${secaoDaRota("/")} · visão geral`}
+        subtitle="O que exige atenção agora. A carteira de clientes fica em Clientes — esta tela responde se você precisa fazer alguma coisa hoje."
+        title="Home"
+      />
+      {saude.ok ? (
+        <Conteudo aprovacoes={filaDeAprovacoes} saude={saude.data} />
+      ) : (
+        <FalhaAoCarregar
+          motivo={saude.error}
+          titulo="Não foi possível carregar a saúde da plataforma"
         />
-        <KpiCard
-          hint="contratos vigentes"
-          icon="layers"
-          label="Módulos ativos"
-          tone="green"
-          value={kpi.ativos}
-        />
-        <KpiCard
-          hint="candidatos a conversão"
-          icon="activity"
-          label="Trials em andamento"
-          tone="accent"
-          value={kpi.trials}
-        />
-        {/* O único KPI que também filtra: pressionado, a tabela mostra só
-            quem tem módulo suspenso (`?atencao=1`). */}
-        <KpiAtencao valor={kpi.atencao} />
-      </div>
-
-      <SectionCard
-        as="h2"
-        icon="building"
-        subtitle="Todos os clientes da plataforma. O nome abre o detalhe."
-        title="Clientes"
-      >
-        {clientes.length === 0 ? (
-          <Vazio>
-            Nenhum cliente provisionado ainda. Comece pelo{" "}
-            <Link href="/clientes/novo" style={{ color: "var(--accent-text)" }}>
-              Provisionar cliente
-            </Link>
-            .
-          </Vazio>
-        ) : (
-          <ClientesTabela clientes={clientes} />
-        )}
-      </SectionCard>
+      )}
     </div>
   );
 }

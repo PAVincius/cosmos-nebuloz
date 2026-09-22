@@ -130,7 +130,7 @@ const FORNECEDOR: FornecedorDpaRow = {
   verificadoEm: "2026-09-01T00:00:00.000Z",
 };
 
-/** O que marca o `<Vazio>` do painel: a moldura tracejada do `Pendente`. */
+/** O que marca o `<Vazio>` do painel: a moldura tracejada. */
 function ehVazio(el: HTMLElement): boolean {
   return el.style.border.includes("dashed");
 }

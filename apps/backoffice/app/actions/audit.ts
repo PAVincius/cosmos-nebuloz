@@ -1,7 +1,14 @@
 "use server";
 
 import { database } from "@repo/database";
-import { z } from "zod";
+import {
+  type AuditEventoRow,
+  type FiltroAudit,
+  FiltroSchema,
+  montarWhere,
+  paraEventoRow,
+  SELECT_EVENTO,
+} from "@/lib/audit-filtro";
 import { requirePlatformStaff } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -23,33 +30,9 @@ import { type Result, safeAction } from "@/lib/safe-action";
 const MAX_POR_PAGINA = 200;
 const PADRAO_POR_PAGINA = 50;
 
-const FiltroSchema = z.object({
-  /** Ausente = todos os tenants. É o ponto da tela. */
-  tenantId: z.string().optional(),
-  action: z.string().optional(),
-  entityType: z.string().optional(),
-  /** ISO curto, "2026-08-01". */
-  de: z.string().optional(),
-  ate: z.string().optional(),
-  pagina: z.number().int().min(1).optional(),
-  porPagina: z.number().int().min(1).optional(),
-});
-
-export type FiltroAudit = z.input<typeof FiltroSchema>;
-
-export type AuditEventoRow = {
-  id: string;
-  tenantSlug: string;
-  tenantNome: string;
-  action: string;
-  entityType: string | null;
-  entityId: string | null;
-  alvo: string | null;
-  ator: string | null;
-  quando: string;
-  diff: unknown;
-  semDiff: boolean;
-};
+// Os tipos moram com o filtro (`lib/audit-filtro.ts`), que a rota de
+// exportação também usa; quem já os importava daqui continua importando.
+export type { AuditEventoRow, FiltroAudit } from "@/lib/audit-filtro";
 
 export type PaginaDeAudit = {
   eventos: AuditEventoRow[];
@@ -57,42 +40,6 @@ export type PaginaDeAudit = {
   pagina: number;
   porPagina: number;
 };
-
-/** Constrói o `where` a partir do filtro. Fora da action para poder ser lido
- *  de uma vez — é o pedaço que decide o que a tela mostra de quem. */
-function montarWhere(f: z.infer<typeof FiltroSchema>) {
-  const where: Record<string, unknown> = {};
-
-  // Só entra no where quando escolhido. Ausente significa "todos", e forçar
-  // um valor aqui transformaria a tela cross-tenant numa tela de um tenant só.
-  if (f.tenantId) {
-    where.tenantId = f.tenantId;
-  }
-  if (f.action) {
-    where.action = f.action;
-  }
-  if (f.entityType) {
-    where.entityType = f.entityType;
-  }
-
-  if (f.de || f.ate) {
-    const periodo: { gte?: Date; lte?: Date } = {};
-    if (f.de) {
-      periodo.gte = new Date(f.de);
-    }
-    if (f.ate) {
-      // Fim do dia, não meia-noite: filtrar "até 05/08" e perder o que
-      // aconteceu às 14h do dia 5 é um corte que ninguém percebe até
-      // procurar um evento que existe e não aparecer.
-      const fim = new Date(f.ate);
-      fim.setHours(23, 59, 59, 999);
-      periodo.lte = fim;
-    }
-    where.createdAt = periodo;
-  }
-
-  return where;
-}
 
 export async function listAuditEvents(
   filtro: FiltroAudit
@@ -116,16 +63,7 @@ export async function listAuditEvents(
         orderBy: { createdAt: "desc" },
         skip: (pagina - 1) * porPagina,
         take: porPagina,
-        select: {
-          id: true,
-          action: true,
-          entityType: true,
-          entityId: true,
-          diff: true,
-          metadata: true,
-          createdAt: true,
-          tenant: { select: { slug: true, name: true } },
-        },
+        select: SELECT_EVENTO,
       }),
       database.auditLog.count({ where }),
     ]);
@@ -134,26 +72,7 @@ export async function listAuditEvents(
       total,
       pagina,
       porPagina,
-      eventos: eventos.map((e) => {
-        const meta = (e.metadata ?? {}) as {
-          target?: string;
-          actorName?: string;
-        };
-        return {
-          id: e.id,
-          tenantSlug: e.tenant?.slug ?? "—",
-          tenantNome: e.tenant?.name ?? "—",
-          action: e.action,
-          entityType: e.entityType,
-          entityId: e.entityId,
-          alvo: meta.target ?? null,
-          ator: meta.actorName ?? null,
-          quando: e.createdAt.toISOString(),
-          diff: e.diff ?? null,
-          // Afirmação, não ausência silenciosa — mesma regra da aba do cliente.
-          semDiff: e.diff === null || e.diff === undefined,
-        };
-      }),
+      eventos: eventos.map(paraEventoRow),
     };
   });
 }

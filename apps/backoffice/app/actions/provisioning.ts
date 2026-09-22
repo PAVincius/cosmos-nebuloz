@@ -169,6 +169,9 @@ export async function provisionTenantAction(input: {
       }
     );
 
+    // A carteira mora em `/clientes` desde a rodada 5; `/` é a Home, que conta
+    // clientes e também muda com o provisionamento.
+    revalidatePath("/clientes");
     revalidatePath("/");
     return { slug: result.slug, ownerLinked: result.ownerLinked };
   });

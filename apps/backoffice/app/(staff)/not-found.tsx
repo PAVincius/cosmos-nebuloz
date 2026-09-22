@@ -40,7 +40,7 @@ export default function NaoEncontrado() {
           </li>
         </ul>
         <Link
-          href="/home"
+          href="/"
           style={{
             display: "inline-block",
             marginTop: 14,

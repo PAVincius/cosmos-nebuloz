@@ -86,9 +86,9 @@ beforeEach(() => {
 });
 
 describe("tenant → cliente", () => {
-  it("a carteira (/) não diz 'tenant' no subtítulo", async () => {
+  it("a carteira (/clientes) não diz 'tenant' no subtítulo", async () => {
     mocks.listClients.mockResolvedValue({ data: [], ok: true });
-    const { default: Page } = await import("@/app/(staff)/page");
+    const { default: Page } = await import("@/app/(staff)/clientes/page");
     render(await Page());
 
     expect(screen.queryByText(/tenants?\b/i)).toBeNull();
@@ -149,15 +149,6 @@ describe("tenant → cliente", () => {
 
     expect(screen.queryByText(/nascem ativos/)).toBeNull();
     expect(screen.getByText(/ativo ou trial/i)).toBeTruthy();
-  });
-
-  it("a tela pendente do shell volta para a Home", async () => {
-    const { Pendente } = await import("@/components/shell");
-    render(<Pendente rota="/rota-que-nao-existe" />);
-
-    expect(
-      screen.getByRole("link", { name: "Voltar para a Home" })
-    ).toBeTruthy();
   });
 });
 

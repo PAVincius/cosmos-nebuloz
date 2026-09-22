@@ -40,10 +40,10 @@ vi.mock("@/app/actions/empresa/fornecedores", () => ({
 vi.mock("@/lib/guard", () => ({
   requirePlatformStaff: mocks.requirePlatformStaff,
 }));
-// A carteira (`/`) guarda busca e filtro na URL (`lib/url-state.ts`), então
+// A carteira (`/clientes`) guarda busca e filtro na URL (`lib/url-state.ts`), então
 // o mock precisa dos três hooks que o `useParamState` lê.
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/",
+  usePathname: () => "/clientes",
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
 }));
@@ -107,12 +107,12 @@ describe("menu", () => {
     expect(secaoDaRota("/scaffold")).toBe("Delivery");
   });
 
-  it("/ se chama Clientes, que é o que a carteira é", () => {
-    expect(itemDaRota("/")?.label).toBe("Clientes");
+  it("/clientes se chama Clientes, que é o que a carteira é", () => {
+    expect(itemDaRota("/clientes")?.label).toBe("Clientes");
   });
 
   it("secaoDaRota devolve a seção do menu; rota fora do menu cai no nome do painel", () => {
-    expect(secaoDaRota("/")).toBe("Plataforma");
+    expect(secaoDaRota("/clientes")).toBe("Plataforma");
     expect(secaoDaRota("/empresa/financeiro")).toBe("Empresa");
     expect(secaoDaRota("/contas")).toBe("Comercial");
     expect(secaoDaRota("/nao-existe")).toBe("Nebuloz");
@@ -121,7 +121,7 @@ describe("menu", () => {
 
 describe("eyebrow = seção do menu", () => {
   const paginas: [string, () => Promise<{ default: unknown }>][] = [
-    ["/", () => import("@/app/(staff)/page")],
+    ["/clientes", () => import("@/app/(staff)/clientes/page")],
     [
       "/empresa/consentimento",
       () => import("@/app/(staff)/empresa/consentimento/page"),

@@ -9,7 +9,7 @@ import {
   listTenantAudit,
   listTenantIntegrations,
 } from "@/app/actions/tenant-observability";
-import { Confirmacao } from "@/components/confirmacao";
+import { ConfirmacaoDeUmaVez } from "@/components/confirmacao-de-uma-vez";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { tituloDaAba } from "@/components/nav";
 import { formatarData } from "@/lib/data";
@@ -38,7 +38,7 @@ export async function generateMetadata({
   return {
     title: res.ok
       ? `${res.data.name} — Cliente — Back-office Nebuloz`
-      : tituloDaAba("/"),
+      : tituloDaAba("/clientes"),
   };
 }
 
@@ -58,6 +58,8 @@ export default async function ClientDetailPage({
   const { slug } = await params;
   // `?criado=1` chega do provisionamento: a tela abre dizendo o nome do
   // cliente que acabou de nascer, em vez de o redirect terminar em silêncio.
+  // A `ConfirmacaoDeUmaVez` tira o param da URL depois de dizer — senão o F5
+  // repetia "provisionado".
   const recemCriado = (await searchParams)?.criado === "1";
   // Em paralelo: são leituras independentes, e serializá-las só somaria
   // latência numa tela que o operador abre o dia inteiro.
@@ -114,9 +116,10 @@ export default async function ClientDetailPage({
       style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
     >
       <div>
-        {/* Volta acima do cabeçalho, como no handoff. */}
+        {/* Volta acima do cabeçalho, como no handoff — para a carteira, que
+            mora em `/clientes` (`/` é a Home). */}
         <Link
-          href="/"
+          href="/clientes"
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -150,7 +153,9 @@ export default async function ClientDetailPage({
           tone={TOM_DO_PLANO[client.plan] ?? "accent"}
         />
         {recemCriado ? (
-          <Confirmacao>Cliente {client.name} provisionado.</Confirmacao>
+          <ConfirmacaoDeUmaVez param="criado">
+            Cliente {client.name} provisionado.
+          </ConfirmacaoDeUmaVez>
         ) : null}
       </div>
 

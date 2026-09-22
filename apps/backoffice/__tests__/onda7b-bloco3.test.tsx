@@ -190,6 +190,7 @@ describe("Menu — rótulos em português", () => {
 
   it("Home é o primeiro item do menu", async () => {
     const { BO_NAV } = await import("@/components/nav");
-    expect(BO_NAV[0]?.items[0]?.href).toBe("/home");
+    // A Home mora em `/` desde a rodada 5 (antes, `/home`).
+    expect(BO_NAV[0]?.items[0]?.href).toBe("/");
   });
 });

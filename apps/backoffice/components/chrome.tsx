@@ -3,10 +3,11 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, IconButton } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
   type CSSProperties,
+  type MouseEvent,
   type ReactNode,
   type RefObject,
   useCallback,
@@ -14,8 +15,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { useSaidaGuardada } from "@/lib/rascunho-sujo";
 import { MenuDoPerfil } from "./menu-do-perfil";
 import { BO_NAV, FORA_DO_PAINEL, type NavItem } from "./nav";
+import { type BuscarClientes, Paleta } from "./paleta";
+import { PerguntaDescartar } from "./pergunta-descartar";
 
 /**
  * Topbar e sidebar do back-office, fiéis ao `backoffice-shell.jsx` do handoff.
@@ -109,47 +113,86 @@ function Eyebrow({
 }
 
 /**
- * Se a rota atual pertence a este item de menu.
+ * Se a rota atual está dentro deste item de menu: a própria rota ou uma
+ * sub-rota dela. A raiz só casa consigo mesma — `/` é prefixo de tudo, e a
+ * Home acenderia em todas as telas.
+ */
+function combina(href: string, pathname: string): boolean {
+  if (href === "/") {
+    return pathname === "/";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/**
+ * O item que a rota atual abre, e a seção dele: entre os que combinam, o mais
+ * específico. `/clientes/novo` está dentro de Clientes e é Provisionar
+ * cliente; ganha o mais longo, e a sidebar acende um item só.
  *
  * Uma função só, usada pela trilha da topbar e pelo destaque da sidebar. Duas
  * cópias da mesma regra é o tipo de coisa que diverge quando alguém mexe numa
  * e esquece a outra — e o sintoma seria a topbar dizendo uma tela enquanto a
  * sidebar acende outra.
  */
-function combina(href: string, pathname: string): boolean {
-  if (href === "/") {
-    // `/clientes/novo` tem item próprio ("Provisionar cliente"); sem a
-    // exceção os dois acendiam juntos e a sidebar dizia duas telas.
-    return (
-      pathname === "/" ||
-      (pathname.startsWith("/clientes") && pathname !== "/clientes/novo")
-    );
-  }
-  return pathname.startsWith(href);
+function itemAtivo(
+  pathname: string
+): { item: NavItem; secao: string } | undefined {
+  const candidatos = BO_NAV.flatMap((grupo) =>
+    grupo.items
+      .filter((item) => combina(item.href, pathname))
+      .map((item) => ({ item, secao: grupo.section }))
+  );
+  return candidatos.sort((a, b) => b.item.href.length - a.item.href.length)[0];
 }
 
 /** Nome da tela quando o item é "Clientes" — o detalhe tem nome próprio.
- *  "Cliente" e "Provisionar cliente", como o menu e a carteira: a trilha dizia
- *  "Tenant" enquanto o item ao lado dizia "Clientes". */
+ *  "Cliente", como o menu e a carteira: a trilha dizia "Tenant" enquanto o
+ *  item ao lado dizia "Clientes". */
 function nomeDeClientes(pathname: string, label: string): string {
-  if (!pathname.startsWith("/clientes/")) {
-    return label;
-  }
-  return pathname === "/clientes/novo" ? "Provisionar cliente" : "Cliente";
+  return pathname.startsWith("/clientes/") ? "Cliente" : label;
 }
 
 /** Trilha "Seção › Tela" da topbar, derivada da rota atual. */
 function trilha(pathname: string): [string, string] {
-  for (const grupo of BO_NAV) {
-    const item = grupo.items.find((i) => combina(i.href, pathname));
-    if (item) {
-      return [
-        grupo.section,
-        item.href === "/" ? nomeDeClientes(pathname, item.label) : item.label,
-      ];
-    }
+  const ativo = itemAtivo(pathname);
+  if (!ativo) {
+    return ["Nebuloz", "Back-office"];
   }
-  return ["Nebuloz", "Back-office"];
+  return [
+    ativo.secao,
+    ativo.item.href === "/clientes"
+      ? nomeDeClientes(pathname, ativo.item.label)
+      : ativo.item.label,
+  ];
+}
+
+/** Clique que abre em outra aba ou janela (ctrl/⌘/shift/alt, botão do meio)
+ *  não troca a tela desta — nada a perder, nada a perguntar. */
+function abreEmOutraAba(evento: MouseEvent): boolean {
+  return (
+    evento.button !== 0 ||
+    evento.metaKey ||
+    evento.ctrlKey ||
+    evento.shiftKey ||
+    evento.altKey
+  );
+}
+
+/** `onClick` de um `<Link>` do shell: com rascunho sujo, segura o clique e a
+ *  pergunta entra no lugar da navegação; sem, o `<Link>` segue sozinho (com
+ *  histórico e pré-carregamento, que um `router.push` à mão não daria). */
+function cliqueGuardado(
+  href: string,
+  segurar: (destino: string) => boolean,
+  depois?: () => void
+): (evento: MouseEvent) => void {
+  return (evento) => {
+    if (!abreEmOutraAba(evento) && segurar(href)) {
+      evento.preventDefault();
+      return;
+    }
+    depois?.();
+  };
 }
 
 function Topbar({
@@ -157,11 +200,15 @@ function Topbar({
   aoAbrirNav,
   botaoRef,
   gavetaAberta,
+  segurar,
+  buscarClientes,
 }: {
   staff: { name: string | null; email: string; canWrite: boolean };
   aoAbrirNav: () => void;
   botaoRef: RefObject<HTMLButtonElement | null>;
   gavetaAberta: boolean;
+  segurar: (destino: string) => boolean;
+  buscarClientes?: BuscarClientes;
 }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [secao, tela] = trilha(usePathname());
@@ -220,11 +267,12 @@ function Topbar({
         }}
       >
         {/* O wordmark leva para a casa, como em todo painel — e a casa é
-            `/home`, a mesma que o login e as saídas de erro usam. O nome
+            `/`, a mesma que o login e as saídas de erro usam. O nome
             acessível diz o destino porque o texto some abaixo de 1024px. */}
         <Link
           aria-label="Nebuloz — ir para a Home"
-          href="/home"
+          href="/"
+          onClick={cliqueGuardado("/", segurar)}
           style={{
             display: "flex",
             alignItems: "center",
@@ -298,6 +346,8 @@ function Topbar({
 
       <div style={{ flex: 1 }} />
 
+      <Paleta buscarClientes={buscarClientes} telaAtual={tela} />
+
       {/* FR-0.4 — o operador precisa saber ANTES de clicar se a sessão dele
           escreve. MEMBER vendo botão apagado sem contexto acha que quebrou.
 
@@ -342,10 +392,12 @@ function ItemDeMenu({
   item,
   ativo,
   aoNavegar,
+  segurar,
 }: {
   item: NavItem;
   ativo: boolean;
   aoNavegar: () => void;
+  segurar: (destino: string) => boolean;
 }) {
   // Fora do JSX porque `aria-current` só aceita "page" ou ausência — inline, o
   // ternário com undefined é lido pelo lint como valor vazando para o render.
@@ -355,7 +407,7 @@ function ItemDeMenu({
       aria-current={atual}
       className="btn navitem"
       href={item.href}
-      onClick={aoNavegar}
+      onClick={cliqueGuardado(item.href, segurar, aoNavegar)}
       style={{
         display: "flex",
         alignItems: "center",
@@ -399,13 +451,15 @@ function ItemDeMenu({
 function Sidebar({
   aberta,
   aoFechar,
+  segurar,
 }: {
   // Abaixo de 1024px a nav vira gaveta; acima, `aberta` não tem efeito nenhum
   // porque as regras de posicionamento vivem dentro da media query.
   aberta: boolean;
   aoFechar: () => void;
+  segurar: (destino: string) => boolean;
 }) {
-  const pathname = usePathname();
+  const ativo = itemAtivo(usePathname())?.item.href;
 
   return (
     <nav
@@ -445,12 +499,14 @@ function Sidebar({
           {grupo.items.map((item) => (
             // Navegar fecha a gaveta. No `<Link>` e não no `<nav>` por
             // bubbling: assim um clique no espaço vazio da gaveta não a
-            // fecha, e o alvo é interativo de verdade.
+            // fecha, e o alvo é interativo de verdade. Clique segurado pelo
+            // rascunho não fecha: a pergunta aparece e a gaveta espera.
             <ItemDeMenu
               aoNavegar={aoFechar}
-              ativo={combina(item.href, pathname)}
+              ativo={item.href === ativo}
               item={item}
               key={item.href}
+              segurar={segurar}
             />
           ))}
         </div>
@@ -484,6 +540,32 @@ function Sidebar({
 }
 
 /**
+ * A pergunta "descartar?" quando o menu, o wordmark ou a paleta tentam sair
+ * de uma tela com rascunho sujo.
+ *
+ * Um lugar só, fixo abaixo da topbar, e não ao lado de quem foi clicado: o
+ * wordmark mora na topbar, onde um bloco a mais quebraria a linha, e abaixo
+ * de 1024px o menu é gaveta — a pergunta ao lado do Home de uma gaveta
+ * fechada ninguém veria. Acima da gaveta (z 60) para valer também quando o
+ * clique veio dela. O foco entra em "Voltar" e volta a quem clicou — é o
+ * comportamento da própria `PerguntaDescartar`.
+ */
+const BANDEJA_DA_PERGUNTA: CSSProperties = {
+  position: "fixed",
+  top: 72,
+  left: "50%",
+  transform: "translateX(-50%)",
+  zIndex: 70,
+  width: "min(440px, calc(100vw - 32px))",
+  borderRadius: "var(--r-md)",
+  background: "var(--surface)",
+  boxShadow: "var(--card-shadow)",
+};
+
+const EXPLICACAO_DA_SAIDA =
+  "O que você editou nesta tela e ainda não salvou some. Para manter, volte e salve antes de sair.";
+
+/**
  * Shell do Big Bang com a navegação colapsável.
  *
  * Cliente porque a gaveta tem estado, e esse estado atravessa a topbar (o botão
@@ -503,12 +585,21 @@ function Sidebar({
 export function ShellChrome({
   staff,
   children,
+  buscarClientes,
 }: {
   staff: { name: string | null; email: string; canWrite: boolean };
   children: ReactNode;
+  /** A busca de clientes da paleta, vinda do `Shell` (servidor) — este
+   *  componente é cliente e não importa action. Sem ela, a paleta lista só
+   *  as telas do menu. */
+  buscarClientes?: BuscarClientes;
 }) {
   const [aberta, setAberta] = useState(false);
   const botaoRef = useRef<HTMLButtonElement | null>(null);
+  const router = useRouter();
+  const [, tela] = trilha(usePathname());
+  const irPara = useCallback((href: string) => router.push(href), [router]);
+  const saida = useSaidaGuardada(irPara);
   // Devolver o foco ao gatilho acontece no efeito, depois do render que tira
   // o `inert` da topbar: `focus()` num elemento inerte é ignorado em
   // silêncio, e o teclado cairia no início do documento.
@@ -562,10 +653,25 @@ export function ShellChrome({
       <Topbar
         aoAbrirNav={() => setAberta(true)}
         botaoRef={botaoRef}
+        buscarClientes={buscarClientes}
         gavetaAberta={aberta}
+        segurar={saida.segurar}
         staff={staff}
       />
-      <Sidebar aberta={aberta} aoFechar={fechar} />
+      <Sidebar aberta={aberta} aoFechar={fechar} segurar={saida.segurar} />
+      {saida.pendente === null ? null : (
+        <div style={BANDEJA_DA_PERGUNTA}>
+          <PerguntaDescartar
+            explicacao={EXPLICACAO_DA_SAIDA}
+            nome={tela}
+            onDescartar={() => {
+              saida.descartar();
+              fechar();
+            }}
+            onVoltar={saida.voltar}
+          />
+        </div>
+      )}
       {aberta ? (
         <button
           aria-label="Fechar navegação"
