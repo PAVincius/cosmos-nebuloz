@@ -294,7 +294,7 @@ describe("jargão e rótulos", () => {
     render(
       <AbaResumo
         acoesDeModulo={null}
-        integracoes={[]}
+        integracoes={{ data: [], ok: true }}
         modulos={[{ expiresAt: null, module: "COSMOS", status: "ACTIVE" }]}
       />
     );

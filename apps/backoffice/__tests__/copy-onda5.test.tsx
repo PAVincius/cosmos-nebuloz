@@ -94,7 +94,7 @@ describe("tenant → cliente", () => {
     expect(screen.queryByText(/tenants?\b/i)).toBeNull();
   });
 
-  it("o detalhe do cliente leva 'cliente · slug' no eyebrow e 'Clientes' na volta", async () => {
+  it("o detalhe do cliente leva 'Plataforma · cliente' no eyebrow e 'Clientes' na volta", async () => {
     mocks.getClient.mockResolvedValue({
       data: {
         charter: {
@@ -124,7 +124,7 @@ describe("tenant → cliente", () => {
     );
     render(await Page({ params: Promise.resolve({ slug: "atlas" }) }));
 
-    expect(screen.getByText("cliente · atlas")).toBeTruthy();
+    expect(screen.getByText("Plataforma · cliente")).toBeTruthy();
     expect(screen.queryByText(/tenant · /)).toBeNull();
     expect(screen.getByRole("link", { name: /Clientes/ })).toBeTruthy();
   });

@@ -151,7 +151,7 @@ const ENG_ATIVO: EngagementRow = {
   valorCentavos: 1_200_000,
 };
 
-describe("Engajamentos — → Concluído", () => {
+describe("Engajamentos — Concluir", () => {
   beforeEach(() => {
     mocks.setEngagementStatusAction.mockResolvedValue({
       data: { id: "e1" },
@@ -174,10 +174,10 @@ describe("Engajamentos — → Concluído", () => {
     );
   }
 
-  it("o clique em → Concluído não muda o status e mostra o alvo", () => {
+  it("o clique em Concluir não muda o status e mostra o alvo", () => {
     montar();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Concluído" }));
+    fireEvent.click(screen.getByRole("button", { name: "Concluir" }));
 
     expect(mocks.setEngagementStatusAction).not.toHaveBeenCalled();
     expect(screen.getByText(/ENG-01 · Diagnóstico/)).toBeTruthy();
@@ -187,7 +187,7 @@ describe("Engajamentos — → Concluído", () => {
   it("Confirmar chama setEngagementStatusAction com CONCLUIDO", async () => {
     montar();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Concluído" }));
+    fireEvent.click(screen.getByRole("button", { name: "Concluir" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() =>
@@ -202,7 +202,7 @@ describe("Engajamentos — → Concluído", () => {
   it("Voltar não muda o status; → Pausado continua sem barreira", () => {
     montar();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Concluído" }));
+    fireEvent.click(screen.getByRole("button", { name: "Concluir" }));
     fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
 
     expect(mocks.setEngagementStatusAction).not.toHaveBeenCalled();

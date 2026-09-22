@@ -228,9 +228,8 @@ export function MermaidEditor({
       </div>
 
       <div
+        className="bo-editor-e-previa"
         style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0,1fr) minmax(0,1.2fr)",
           gap: 12,
           alignItems: "stretch",
         }}

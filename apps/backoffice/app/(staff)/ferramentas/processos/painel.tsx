@@ -8,8 +8,10 @@
  */
 import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
+import { useState } from "react";
 import type { LigacaoRow, ProcessoRow } from "@/app/actions/processos";
 import { BotaoSecundario } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { formatarData } from "@/lib/empresa/formato";
 import {
@@ -37,7 +39,8 @@ export type PainelProps = {
   onSelecionar: (id: string) => void;
   onEditar: () => void;
   onExcluirProcesso: (id: string) => void;
-  onExcluirLigacao: (id: string) => void;
+  /** Resolve `true` quando a ligação saiu — o painel diz qual. */
+  onExcluirLigacao: (id: string) => Promise<boolean>;
   onCriarLigacao: (paraId: string, rotulo: string) => Promise<Result<unknown>>;
 };
 
@@ -71,13 +74,12 @@ function linkDoModelador(p: ProcessoRow): { href: string; rotulo: string } {
  *  pelo `noLeakedRender` da Biome. */
 function onRemoverSeEscrever(
   podeEscrever: boolean,
-  onExcluirLigacao: (id: string) => void,
-  ligacaoId: string
+  remover: () => void
 ): (() => void) | undefined {
   if (!podeEscrever) {
     return;
   }
-  return () => onExcluirLigacao(ligacaoId);
+  return remover;
 }
 
 const BOTAO_SECUNDARIO_LINK = {
@@ -114,6 +116,28 @@ export function Painel({
     .filter((p) => p.id !== processo.id)
     .map((p) => ({ codigo: p.codigo, id: p.id, nome: p.nome }));
   const modelador = linkDoModelador(processo);
+  // O fim das ações de ligação, no painel onde elas acontecem. Vive aqui e
+  // não no `Mapa`: o painel remonta a cada processo (`key`), e a frase de um
+  // não pode aparecer no outro.
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  const removerLigacao = async (ligacaoId: string, nome: string) => {
+    setAviso(null);
+    if (await onExcluirLigacao(ligacaoId)) {
+      setAviso(`Ligação com ${nome} removida.`);
+    }
+  };
+
+  const criarLigacao = async (paraId: string, rotulo: string) => {
+    setAviso(null);
+    const res = await onCriarLigacao(paraId, rotulo);
+    if (res.ok) {
+      setAviso(
+        `Ligação com ${porId.get(paraId)?.nome ?? "o processo"} criada.`
+      );
+    }
+    return res;
+  };
 
   return (
     <aside
@@ -258,10 +282,8 @@ export function Painel({
                 dir={v.dir}
                 key={v.ligacaoId}
                 nome={outro.nome}
-                onRemover={onRemoverSeEscrever(
-                  podeEscrever,
-                  onExcluirLigacao,
-                  v.ligacaoId
+                onRemover={onRemoverSeEscrever(podeEscrever, () =>
+                  removerLigacao(v.ligacaoId, outro.nome)
                 )}
                 onSelecionar={() => onSelecionar(v.outro)}
                 rotulo={v.rotulo}
@@ -272,8 +294,13 @@ export function Painel({
         {podeEscrever ? (
           <FormularioNovaLigacao
             candidatos={candidatosLigacao}
-            onCriar={onCriarLigacao}
+            onCriar={criarLigacao}
           />
+        ) : null}
+        {aviso ? (
+          <div style={{ marginTop: 8 }}>
+            <Confirmacao>{aviso}</Confirmacao>
+          </div>
         ) : null}
       </div>
 

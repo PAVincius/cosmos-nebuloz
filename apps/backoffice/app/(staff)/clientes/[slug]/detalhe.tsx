@@ -6,7 +6,7 @@ import type {
   AuditRow,
   IntegracaoRow,
 } from "@/app/actions/tenant-observability";
-import { Erro } from "@/components/campo";
+import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { useParamState } from "@/lib/url-state";
 import { AbaResumo } from "./abas/resumo";
 import { AbaUsuarios } from "./abas/usuarios";
@@ -124,7 +124,7 @@ function FaixaDeAbas({
             role="tab"
             style={{
               padding: "8px 14px",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               fontWeight: 600,
               background: "transparent",
               border: "none",
@@ -184,8 +184,13 @@ export function DetalheDoTenant({
   // `loading.tsx` inteiro para mostrar o que já estava na página.
   const [aba, setAba] = useParamState("aba", "resumo");
 
-  const listaDeMembros = membros.ok ? membros.data : [];
-  const listaDeIntegracoes = integracoes.ok ? integracoes.data : [];
+  // Leitura que falhou não é lista vazia: "Usuários · 0" afirmaria que o
+  // cliente não tem ninguém quando só não deu para ler. A contagem vira "—" e
+  // o motivo vai no rótulo, como a aba de auditoria já fazia.
+  const contagem = (leitura: { ok: true; data: unknown[] } | { ok: false }) =>
+    leitura.ok ? String(leitura.data.length) : "—";
+  const motivoDe = (leitura: { ok: true } | { ok: false; error: string }) =>
+    leitura.ok ? undefined : leitura.error;
 
   const abas: Aba[] = [
     {
@@ -194,23 +199,28 @@ export function DetalheDoTenant({
       conteudo: (
         <AbaResumo
           acoesDeModulo={acoesDeModulo}
-          integracoes={listaDeIntegracoes}
+          integracoes={integracoes}
           modulos={modulos}
         />
       ),
     },
     {
       id: "usuarios",
-      label: `Usuários · ${listaDeMembros.length}`,
+      label: `Usuários · ${contagem(membros)}`,
+      motivo: motivoDe(membros),
       conteudo: membros.ok ? (
         <AbaUsuarios canWrite={canWrite} membros={membros.data} slug={slug} />
       ) : (
-        <Erro>{membros.error}</Erro>
+        <FalhaAoCarregar
+          motivo={membros.error}
+          titulo="Não foi possível ler os usuários"
+        />
       ),
     },
     {
       id: "integracoes",
-      label: `Integrações · ${listaDeIntegracoes.length}`,
+      label: `Integrações · ${contagem(integracoes)}`,
+      motivo: motivoDe(integracoes),
       conteudo: (
         <SecaoSimples
           icone="eye"
@@ -220,7 +230,10 @@ export function DetalheDoTenant({
           {integracoes.ok ? (
             <Integracoes integracoes={integracoes.data} />
           ) : (
-            <Erro>{integracoes.error}</Erro>
+            <FalhaAoCarregar
+              motivo={integracoes.error}
+              titulo="Não foi possível ler as integrações"
+            />
           )}
         </SecaoSimples>
       ),
@@ -235,8 +248,8 @@ export function DetalheDoTenant({
       id: "audit",
       // O nome do menu, não "Audit". E leitura que falhou não é zero evento:
       // "0" afirmaria que o cliente não tem trilha quando só não deu para ler.
-      label: `Trilha de auditoria · ${auditoria.ok ? auditoria.data.length : "—"}`,
-      motivo: auditoria.ok ? undefined : auditoria.error,
+      label: `Trilha de auditoria · ${contagem(auditoria)}`,
+      motivo: motivoDe(auditoria),
       conteudo: (
         <SecaoSimples
           icone="history"
@@ -246,7 +259,10 @@ export function DetalheDoTenant({
           {auditoria.ok ? (
             <AuditTimeline eventos={auditoria.data} />
           ) : (
-            <Erro>{auditoria.error}</Erro>
+            <FalhaAoCarregar
+              motivo={auditoria.error}
+              titulo="Não foi possível ler a trilha"
+            />
           )}
         </SecaoSimples>
       ),
@@ -277,6 +293,8 @@ export function DetalheDoTenant({
         aria-labelledby={`aba-${atual.id}`}
         id={`painel-${atual.id}`}
         role="tabpanel"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: padrão APG de abas — painel sem nada focável dentro (Resumo só lê, Integrações é tabela) ficava fora do Tab, e o Tab depois da faixa pulava o conteúdo inteiro
+        tabIndex={0}
       >
         {atual.conteudo}
       </div>

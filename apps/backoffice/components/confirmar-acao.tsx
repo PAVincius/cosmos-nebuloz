@@ -90,6 +90,8 @@ export function ConfirmarAcao({
   tom = "red",
   aberto = false,
   onVoltar,
+  nomeDoGatilho,
+  onAbrir,
 }: {
   /** O que o botão faz, em imperativo: "Cancelar COSMOS". */
   rotulo: string;
@@ -115,8 +117,23 @@ export function ConfirmarAcao({
   /** Chamado ao desistir. Quem montou com `aberto` usa isto para restaurar o
    *  valor anterior. */
   onVoltar?: () => void;
+  /** Nome acessível do gatilho, quando o rótulo sozinho se repete na tela —
+   *  cinco "Excluir" numa lista soam iguais para o leitor de tela. Deve
+   *  **conter** o rótulo visível ("Excluir lançamento Aluguel"), para quem
+   *  comanda por voz dizer o que vê. Sem a prop, o nome é o rótulo. */
+  nomeDoGatilho?: string;
+  /** Chamado quando o próprio gatilho abre a pergunta. Com `aberto` vindo de
+   *  fora, é o que deixa um pai manter uma pergunta por vez: abrir esta põe
+   *  `aberto={false}` na vizinha, e ela fecha. */
+  onAbrir?: () => void;
 }) {
   const [perguntando, setPerguntando] = useState(aberto);
+  // `aberto` que muda depois de montar fecha (ou abre) a pergunta — sem
+  // roubar foco: quem mudou foi o pai, não um clique aqui. Nos usos em que
+  // `aberto` é constante isto nunca dispara depois da montagem.
+  useEffect(() => {
+    setPerguntando(aberto);
+  }, [aberto]);
   const bloqueado = executando || desabilitado;
   const paleta = PALETA[tom];
   // O bloco aberto é um `fieldset` (group) nomeado pelo rótulo e descrito
@@ -150,11 +167,13 @@ export function ConfirmarAcao({
   if (!perguntando) {
     return (
       <button
+        aria-label={nomeDoGatilho}
         className="btn"
         disabled={bloqueado}
         onClick={() => {
           deveFocar.current = true;
           setPerguntando(true);
+          onAbrir?.();
         }}
         ref={gatilhoRef}
         style={{

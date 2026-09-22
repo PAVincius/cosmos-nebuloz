@@ -55,6 +55,7 @@ import {
   enterTenantContext,
   listGateQueue,
 } from "@/app/actions/scaffold-supervision";
+import { TETO_DA_LISTA } from "@/lib/paginacao";
 
 const STAFF = {
   userId: "u1",
@@ -302,5 +303,21 @@ describe("enterTenantContext — travessia explícita e logada", () => {
         ["accessLogId", "destination", "orgName"].sort()
       );
     }
+  });
+});
+
+describe("listGateQueue — a fila tem teto (onda 9b)", () => {
+  // `lib/paginacao.ts`: nenhuma listagem sai do banco sem `take`. A fila de
+  // gates saía — cresce com cada trilha ativa de cada cliente.
+  it("pede ao banco o teto mais um e devolve no máximo o teto", async () => {
+    h.phaseFindMany.mockResolvedValue(
+      Array.from({ length: TETO_DA_LISTA + 1 }, (_, i) =>
+        phase({ id: `pi${i}` })
+      )
+    );
+    const res = await listGateQueue({});
+
+    expect(h.phaseFindMany.mock.calls[0][0].take).toBe(TETO_DA_LISTA + 1);
+    expect(res.ok && res.data.length).toBe(TETO_DA_LISTA);
   });
 });

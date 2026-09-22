@@ -10,9 +10,11 @@ import { type FormEvent, useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { OQueFalta } from "@/components/o-que-falta";
 import { Secao } from "@/components/secao";
 import { MOTIVO_SOMENTE_LEITURA, WriteButton } from "@/components/write-button";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
+import { rotuloDoModulo } from "@/lib/rotulo-do-modulo";
 
 /**
  * Formulário de provisionamento.
@@ -42,6 +44,22 @@ const OPCOES_DE_STATUS: { valor: StatusInicial | ""; rotulo: string }[] = [
 function statusPadrao(modulos: ProductModule[]): Record<string, StatusInicial> {
   const inicial = modulos.includes("COSMOS") ? "COSMOS" : modulos[0];
   return inicial ? { [inicial]: "ACTIVE" } : {};
+}
+
+/** O submit cinza diz por quê — só o que ainda falta, para a frase
+ *  encurtar conforme o formulário se completa. */
+function oQueFaltaParaProvisionar(
+  nomeValido: boolean,
+  temModulo: boolean
+): string[] {
+  const falta: string[] = [];
+  if (!nomeValido) {
+    falta.push("nome com 2+ letras");
+  }
+  if (!temModulo) {
+    falta.push("ao menos um módulo");
+  }
+  return falta;
 }
 
 export function NewClientForm({
@@ -96,12 +114,19 @@ export function NewClientForm({
   // Com o cartão "sem dono" na tela o cliente já existe: um segundo submit
   // faria o servidor sufixar o slug e nasceria outro. O formulário trava até
   // a pessoa abrir o cliente criado.
+  const nomeValido = name.trim().length >= 2;
   const podeEnviar =
     canWrite &&
     !pending &&
     !pendingOwner &&
-    name.trim().length >= 2 &&
+    nomeValido &&
     escolhidos.length > 0;
+  // Somente leitura já tem o próprio aviso no topo, e com o cartão "sem
+  // dono" o motivo do botão cinza é outro.
+  const falta =
+    canWrite && !pendingOwner
+      ? oQueFaltaParaProvisionar(nomeValido, escolhidos.length > 0)
+      : [];
 
   const submit = () =>
     startTransition(async () => {
@@ -305,7 +330,7 @@ export function NewClientForm({
             const atual = status[module];
             return (
               <div
-                aria-label={`Status inicial de ${module}`}
+                aria-label={`Status inicial de ${rotuloDoModulo(module)}`}
                 key={module}
                 role="radiogroup"
                 style={{
@@ -328,7 +353,7 @@ export function NewClientForm({
                     fontWeight: 700,
                   }}
                 >
-                  {module}
+                  {rotuloDoModulo(module)}
                 </span>
                 {/* O estado atual em palavra, além da cor do badge. */}
                 {atual ? (
@@ -369,7 +394,14 @@ export function NewClientForm({
           })}
         </fieldset>
 
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: 6,
+          }}
+        >
           {/* Provisionar chega ao cliente em segundos e não tem desfazer — é
               o caso que `ConfirmarAcao` cita no próprio comentário. O alvo é
               o slug ao vivo: se o nome saiu errado, é aqui que se vê.
@@ -397,6 +429,7 @@ export function NewClientForm({
               Provisionar cliente
             </WriteButton>
           )}
+          {perguntando ? null : <OQueFalta itens={falta} verbo="provisionar" />}
         </div>
       </Secao>
     </form>

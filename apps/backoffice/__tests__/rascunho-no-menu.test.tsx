@@ -167,3 +167,38 @@ describe("sem rascunho sujo", () => {
     expect(pushMock).toHaveBeenCalledWith("/audit");
   });
 });
+
+describe("menu do perfil com rascunho sujo (onda 9b)", () => {
+  // O "Aplicativo autenticador" é um `<Link>` do shell como os do menu
+  // lateral, e pulava a guarda: a edição sumia calada no caminho de /seguranca.
+  async function abrirAutenticador() {
+    fireEvent.click(screen.getByRole("button", { name: "Conta de Ana" }));
+    fireEvent.click(
+      screen.getByRole("menuitem", { name: "Aplicativo autenticador" })
+    );
+  }
+
+  it("não navega e pergunta", async () => {
+    await montar(true);
+    await abrirAutenticador();
+
+    expect(pushMock).not.toHaveBeenCalled();
+    expect(screen.getByText(/Descartar alterações em/)).toBeTruthy();
+  });
+
+  it("Descartar leva a /seguranca", async () => {
+    await montar(true);
+    await abrirAutenticador();
+    fireEvent.click(screen.getByRole("button", { name: "Descartar" }));
+
+    expect(pushMock).toHaveBeenCalledWith("/seguranca");
+  });
+
+  it("sem rascunho, navega direto", async () => {
+    await montar(false);
+    await abrirAutenticador();
+
+    expect(pushMock).toHaveBeenCalledWith("/seguranca");
+    expect(screen.queryByText(/Descartar alterações/)).toBeNull();
+  });
+});
