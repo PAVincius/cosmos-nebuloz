@@ -158,8 +158,11 @@ export function Paleta({
         type="button"
       >
         <Icon name="search" size={15} />
+        {/* Abaixo de 1024px fica só a lupa: a topbar de 375px já é disputada
+            pelo selo de permissão, e atalho de teclado em tela de toque não
+            ajuda ninguém. O nome acessível segue inteiro no `aria-label`. */}
         <span className="bo-so-largo">Ir para…</span>
-        <kbd className="mono" style={TECLA}>
+        <kbd className="mono bo-so-largo" style={TECLA}>
           {rotuloDoAtalho}
         </kbd>
       </button>
