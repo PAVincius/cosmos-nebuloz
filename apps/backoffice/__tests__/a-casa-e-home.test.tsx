@@ -20,6 +20,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
 }));
+// O `Shell` (servidor) entrega a busca de clientes da paleta ao chrome; a
+// action puxa o banco no import, que o jsdom não carrega.
+vi.mock("@/app/actions/clientes-busca", () => ({ buscarClientes: vi.fn() }));
 vi.mock("next-themes", () => ({
   useTheme: () => ({ resolvedTheme: "dark", setTheme: vi.fn() }),
 }));
@@ -33,6 +36,10 @@ vi.mock("@repo/auth/client", () => ({
 vi.mock("@/app/actions/access", () => ({
   registrarAcesso: h.registrarAcesso,
 }));
+
+// O shell monta a paleta (diálogo Radix) — é o import, não o render, que
+// pesa; com a suíte em paralelo passa dos 5s padrão.
+vi.setConfig({ testTimeout: 20_000 });
 
 beforeEach(() => {
   vi.clearAllMocks();

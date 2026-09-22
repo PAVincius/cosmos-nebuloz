@@ -26,6 +26,9 @@ const mocks = vi.hoisted(() => ({
   requirePlatformStaff: vi.fn(),
 }));
 
+// O `Shell` (servidor) entrega a busca de clientes da paleta ao chrome; a
+// action puxa o banco no import, que o jsdom não carrega.
+vi.mock("@/app/actions/clientes-busca", () => ({ buscarClientes: vi.fn() }));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),

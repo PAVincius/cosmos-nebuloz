@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { buscarClientes } from "@/app/actions/clientes-busca";
 import { ShellChrome } from "./chrome";
 import { itemDaRota } from "./nav";
 
@@ -22,7 +23,14 @@ export function Shell({
   staff: { name: string | null; email: string; canWrite: boolean };
   children: ReactNode;
 }) {
-  return <ShellChrome staff={staff}>{children}</ShellChrome>;
+  // A busca de clientes da paleta atravessa como action: o `ShellChrome` é
+  // cliente, e importá-la lá puxaria o módulo de servidor para dentro de
+  // cada teste que monta o shell.
+  return (
+    <ShellChrome buscarClientes={buscarClientes} staff={staff}>
+      {children}
+    </ShellChrome>
+  );
 }
 
 /**

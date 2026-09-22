@@ -18,6 +18,7 @@ import {
 import { useSaidaGuardada } from "@/lib/rascunho-sujo";
 import { MenuDoPerfil } from "./menu-do-perfil";
 import { BO_NAV, FORA_DO_PAINEL, type NavItem } from "./nav";
+import { type BuscarClientes, Paleta } from "./paleta";
 import { PerguntaDescartar } from "./pergunta-descartar";
 
 /**
@@ -200,12 +201,14 @@ function Topbar({
   botaoRef,
   gavetaAberta,
   segurar,
+  buscarClientes,
 }: {
   staff: { name: string | null; email: string; canWrite: boolean };
   aoAbrirNav: () => void;
   botaoRef: RefObject<HTMLButtonElement | null>;
   gavetaAberta: boolean;
   segurar: (destino: string) => boolean;
+  buscarClientes?: BuscarClientes;
 }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [secao, tela] = trilha(usePathname());
@@ -342,6 +345,8 @@ function Topbar({
       </span>
 
       <div style={{ flex: 1 }} />
+
+      <Paleta buscarClientes={buscarClientes} telaAtual={tela} />
 
       {/* FR-0.4 — o operador precisa saber ANTES de clicar se a sessão dele
           escreve. MEMBER vendo botão apagado sem contexto acha que quebrou.
@@ -580,9 +585,14 @@ const EXPLICACAO_DA_SAIDA =
 export function ShellChrome({
   staff,
   children,
+  buscarClientes,
 }: {
   staff: { name: string | null; email: string; canWrite: boolean };
   children: ReactNode;
+  /** A busca de clientes da paleta, vinda do `Shell` (servidor) — este
+   *  componente é cliente e não importa action. Sem ela, a paleta lista só
+   *  as telas do menu. */
+  buscarClientes?: BuscarClientes;
 }) {
   const [aberta, setAberta] = useState(false);
   const botaoRef = useRef<HTMLButtonElement | null>(null);
@@ -643,6 +653,7 @@ export function ShellChrome({
       <Topbar
         aoAbrirNav={() => setAberta(true)}
         botaoRef={botaoRef}
+        buscarClientes={buscarClientes}
         gavetaAberta={aberta}
         segurar={saida.segurar}
         staff={staff}
