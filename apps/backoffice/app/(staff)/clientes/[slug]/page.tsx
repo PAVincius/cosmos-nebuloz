@@ -11,7 +11,7 @@ import {
 } from "@/app/actions/tenant-observability";
 import { ConfirmacaoDeUmaVez } from "@/components/confirmacao-de-uma-vez";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { tituloDaAba } from "@/components/nav";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { formatarData } from "@/lib/data";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
@@ -42,11 +42,25 @@ export async function generateMetadata({
   };
 }
 
+// O enum real (`SubscriptionPlan` em `tenant.prisma`). O mapa antigo tinha
+// SCALE/ENTERPRISE, que não existem: GALAXY, NEBULA e UNIVERSE caíam no neutro
+// e o selo mostrava o enum cru. A 9a consolida isto em `lib/rotulos.ts`.
 const TOM_DO_PLANO: Record<string, "green" | "amber" | "blue" | "purple"> = {
   ORBIT: "blue",
-  SCALE: "purple",
-  ENTERPRISE: "green",
+  GALAXY: "purple",
+  NEBULA: "amber",
+  UNIVERSE: "green",
 };
+
+const ROTULO_DO_PLANO: Record<string, string> = {
+  ORBIT: "Orbit",
+  GALAXY: "Galaxy",
+  NEBULA: "Nebula",
+  UNIVERSE: "Universe",
+};
+
+/** A seção do menu e a faceta, como as outras telas do painel. */
+const EYEBROW = `${secaoDaRota("/clientes")} · cliente`;
 
 export default async function ClientDetailPage({
   params,
@@ -81,7 +95,7 @@ export default async function ClientDetailPage({
       <div
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
-        <PageHeader eyebrow={`cliente · ${slug}`} title={slug} />
+        <PageHeader eyebrow={EYEBROW} title={slug} />
         <FalhaAoCarregar
           motivo={result.error}
           titulo="Não foi possível abrir o cliente"
@@ -136,11 +150,11 @@ export default async function ClientDetailPage({
         </Link>
 
         <PageHeader
-          eyebrow={`cliente · ${client.slug}`}
+          eyebrow={EYEBROW}
           meta={
             <>
               <Badge tone={TOM_DO_PLANO[client.plan] ?? "neutral"}>
-                {client.plan}
+                {ROTULO_DO_PLANO[client.plan] ?? client.plan}
               </Badge>
               <Badge tone="neutral">
                 {client.memberCount} membro
@@ -148,7 +162,7 @@ export default async function ClientDetailPage({
               </Badge>
             </>
           }
-          subtitle={`Cliente desde ${formatarData(client.createdAt)}`}
+          subtitle={`${client.slug} · cliente desde ${formatarData(client.createdAt)}`}
           title={client.name}
           tone={TOM_DO_PLANO[client.plan] ?? "accent"}
         />

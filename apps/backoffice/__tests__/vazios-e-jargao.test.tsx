@@ -316,7 +316,13 @@ describe("Readiness — vazio que ensina", () => {
 
 describe("Copy e plurais", () => {
   it("Resumo do cliente diz 'Saúde', não 'Health'", () => {
-    render(<AbaResumo acoesDeModulo={null} integracoes={[]} modulos={[]} />);
+    render(
+      <AbaResumo
+        acoesDeModulo={null}
+        integracoes={{ data: [], ok: true }}
+        modulos={[]}
+      />
+    );
     expect(screen.getByText("Saúde")).toBeTruthy();
     expect(screen.queryByText("Health")).toBeNull();
   });
