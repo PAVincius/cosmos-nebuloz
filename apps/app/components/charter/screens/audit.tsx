@@ -37,6 +37,13 @@ const PAGE_CAP = 200;
 
 // O que entra no pacote. Sem contagem: o conteúdo é decidido no modal de
 // exportação (período + categorias), não aqui.
+//
+// "diff campo a campo e aprovador" é promessa ao comprador, e até a PR #240 a
+// primeira metade era falsa: o pacote levava "Seções alteradas: — → 9". Hoje
+// `exportEvidence` deriva o diff dos snapshots e o aprovador é o ator da linha
+// "Publicou versão" (quem publica é quem aprova). Quem sustenta a frase é
+// `__tests__/charter/export-evidence-diff.test.ts` → "a promessa de
+// PACKAGE_CONTENT"; se aqueles testes caírem, é esta copy que muda.
 const PACKAGE_CONTENT: [string, string][] = [
   ["Versões de política", "cada versão com diff campo a campo e aprovador"],
   ["Decisões de caso de uso", "decisão, justificativa e condições aceitas"],

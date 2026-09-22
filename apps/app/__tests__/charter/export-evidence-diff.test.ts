@@ -330,3 +330,49 @@ describe("exportEvidence — diff derivado do snapshot", () => {
     );
   });
 });
+
+// A tela de auditoria promete ao comprador, em PACKAGE_CONTENT: "Versões de
+// política — cada versão com diff campo a campo e aprovador". Estes testes são
+// o que sustenta a frase; se um deles cair, a copy virou promessa vazia e é ela
+// que tem de mudar, não eles.
+describe("a promessa de PACKAGE_CONTENT", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requirePermissionContext.mockResolvedValue(ctx);
+    h.auditFindMany.mockResolvedValue([PUBLICACAO]);
+    h.auditCreate.mockResolvedValue({});
+    h.versionFindMany.mockResolvedValue(VERSOES);
+  });
+
+  it("'diff campo a campo': o pacote leva o texto da seção, não a contagem", async () => {
+    const celula =
+      parseCsv((await exportar("csv")).content)
+        .find((l) => l[0] === "ev-2")
+        ?.at(-1) ?? "";
+
+    expect(celula).toContain(`- ${RETENCAO_ANTES}`);
+    expect(celula).toContain(`+ ${RETENCAO_DEPOIS}`);
+  });
+
+  // Quem publica é quem aprova: `publishPolicyVersion` grava o mesmo `userId`
+  // em `approverId` da política, em `publishedById` da versão e no ator do
+  // evento. Na planilha o aprovador é a coluna `ator` da linha cuja `acao` é
+  // "Publicou versão".
+  it("'e aprovador': a linha da publicação nomeia quem publicou", async () => {
+    const csv = parseCsv((await exportar("csv")).content);
+    const cabecalho = csv[0];
+    const linha = csv.find((l) => l[0] === "ev-2") ?? [];
+
+    expect(linha[cabecalho.indexOf("ator")]).toBe("Bia Nunes");
+    expect(linha[cabecalho.indexOf("acao")]).toBe("Publicou versão");
+    expect(linha[cabecalho.indexOf("alvo")]).toBe("Política de IA · v1.1");
+  });
+
+  it("'cada versão': o aprovador também vai no JSON", async () => {
+    const rows = JSON.parse((await exportar("json")).content) as LinhaJson[];
+
+    expect(rows[0].actor).toBe("Bia Nunes");
+  });
+});
