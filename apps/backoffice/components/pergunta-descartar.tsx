@@ -71,8 +71,10 @@ export function PerguntaDescartar({
         minWidth: 0,
         padding: "10px 12px",
         borderRadius: "var(--r-md)",
-        border: "1px solid var(--red-border, var(--hairline-strong))",
-        background: "var(--red-soft, var(--surface-2))",
+        // Os tokens que o tema tem — os mesmos da `ConfirmarAcao` vermelha.
+        // `--red-border` não existia e caía sempre no fallback cinza.
+        border: "1px solid rgba(var(--red-rgb),.3)",
+        background: "var(--red-soft)",
       }}
     >
       <span

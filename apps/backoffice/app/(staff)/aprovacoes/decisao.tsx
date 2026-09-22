@@ -53,6 +53,12 @@ export function Decisao({
     null
   );
   const [pendente, iniciar] = useTransition();
+  // Uma pergunta por vez: com Aprovar e Rejeitar abertos juntos, os dois
+  // "Confirmar" ficavam lado a lado e o clique certo dependia de ler qual
+  // bloco era qual.
+  const [perguntando, setPerguntando] = useState<
+    "APPROVED" | "REJECTED" | null
+  >(null);
 
   const decidir = (outcome: "APPROVED" | "REJECTED") => {
     setErro(null);
@@ -112,18 +118,24 @@ export function Decisao({
         {canWrite ? (
           <>
             <ConfirmarAcao
+              aberto={perguntando === "APPROVED"}
               alvo={alvo ?? `pedido ${id}`}
               consequencia={CONSEQUENCIA.APPROVED}
               executando={pendente}
+              onAbrir={() => setPerguntando("APPROVED")}
               onConfirmar={() => decidir("APPROVED")}
+              onVoltar={() => setPerguntando(null)}
               rotulo={pendente ? "Decidindo…" : "Aprovar"}
               tom="accent"
             />
             <ConfirmarAcao
+              aberto={perguntando === "REJECTED"}
               alvo={alvo ?? `pedido ${id}`}
               consequencia={CONSEQUENCIA.REJECTED}
               executando={pendente}
+              onAbrir={() => setPerguntando("REJECTED")}
               onConfirmar={() => decidir("REJECTED")}
+              onVoltar={() => setPerguntando(null)}
               rotulo={pendente ? "Decidindo…" : "Rejeitar"}
               tom="red"
             />

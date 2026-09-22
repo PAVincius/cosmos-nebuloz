@@ -11,7 +11,7 @@ import NaoEncontradoRaiz from "@/app/not-found";
 import { FalhaGeral } from "@/components/falha-geral";
 
 describe("app/not-found.tsx — o 404 da raiz fala a língua do painel", () => {
-  it("diz em pt-BR que o endereço não existe e leva à Home", () => {
+  it("diz em pt-BR que o endereço não existe e leva à Home (/)", () => {
     render(<NaoEncontradoRaiz />);
 
     expect(
@@ -19,7 +19,7 @@ describe("app/not-found.tsx — o 404 da raiz fala a língua do painel", () => {
     ).toBeTruthy();
     expect(
       screen.getByRole("link", { name: "Ir para a Home" }).getAttribute("href")
-    ).toBe("/home");
+    ).toBe("/");
     expect(screen.queryByText(/could not be found/i)).toBeNull();
   });
 });

@@ -61,6 +61,14 @@ function periodo(inicio: string | null, fim: string | null): string {
  *  são terminais, e reabrir é criar outro. Concluído não sai da capacidade:
  *  as alocações não olham o status do engajamento, então não se promete
  *  isso aqui. */
+/** A transição sem volta em verbo: é o nome do gatilho e da pergunta. "→
+ *  Concluído" punha o glifo no nome acessível — o leitor de tela lia "seta
+ *  para a direita" antes do status. */
+const VERBO_TERMINAL: Record<"CANCELADO" | "CONCLUIDO", string> = {
+  CANCELADO: "Cancelar",
+  CONCLUIDO: "Concluir",
+};
+
 const CONSEQUENCIA_TERMINAL: Record<"CANCELADO" | "CONCLUIDO", string> = {
   CANCELADO:
     "O engajamento fecha como cancelado e não pode ser reaberto; para retomar, cria-se outro.",
@@ -188,7 +196,7 @@ function LinhaEngajamento({
                 executando={mudando === p}
                 key={p}
                 onConfirmar={() => onStatus(e.id, p)}
-                rotulo={`→ ${ROTULO_STATUS[p]}`}
+                rotulo={VERBO_TERMINAL[p]}
                 tom={p === "CANCELADO" ? "red" : "accent"}
               />
             ) : (

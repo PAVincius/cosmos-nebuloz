@@ -3,6 +3,7 @@
 import type { ScaffoldPhaseState } from "@repo/database";
 import { platformDb } from "@repo/provisioning";
 import { requirePlatformStaff, StaffAuthError } from "@/lib/guard";
+import { janela, listagem } from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 // Fila de supervisão do Scaffold — S-08, SN-06.
@@ -107,6 +108,10 @@ export async function listGateQueue(input: {
       // Do mais antigo para o mais novo: é fila de espera, e quem espera há
       // mais tempo aparece primeiro.
       orderBy: { openedAt: "asc" },
+      // Teto como toda listagem do painel (`lib/paginacao.ts`): a fila cresce
+      // com cada trilha ativa de cada cliente. O teto corta os mais novos —
+      // quem espera há mais tempo continua na tela.
+      ...janela(),
       select: {
         id: true,
         phase: true,
@@ -137,7 +142,7 @@ export async function listGateQueue(input: {
       },
     });
 
-    return rows.map((p): QueueEntry => {
+    const fila = rows.map((p): QueueEntry => {
       // Critérios DA FASE, não do template inteiro: contar todos faria a fila
       // mostrar "0 de 3" para um gate que já tem dois atendidos.
       const criteriaTotal = p.track.templateVersion.criteria.filter(
@@ -173,6 +178,7 @@ export async function listGateQueue(input: {
         kind: kindOf(p.state),
       };
     });
+    return listagem(fila, undefined);
   });
 }
 

@@ -383,7 +383,10 @@ function Topbar({
       {/* O protótipo troca de conta por aqui — era simulação. Com sessão de
           verdade, o que vale é quem está logado e o que dá para fazer com essa
           conta: ver o autenticador e sair. */}
-      <MenuDoPerfil staff={staff} />
+      <MenuDoPerfil
+        guardarClique={(href) => cliqueGuardado(href, segurar)}
+        staff={staff}
+      />
     </header>
   );
 }

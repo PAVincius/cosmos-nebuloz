@@ -4,7 +4,14 @@ import { authClient } from "@repo/auth/client";
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Avatar } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  type MouseEvent as CliqueReact,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 
 /**
  * Menu da conta, na ponta direita da topbar.
@@ -39,8 +46,13 @@ const ITEM: React.CSSProperties = {
 
 export function MenuDoPerfil({
   staff,
+  guardarClique,
 }: {
   staff: { name: string | null; email: string };
+  /** A guarda de rascunho do shell para um `<Link>` (`cliqueGuardado` do
+   *  `chrome.tsx`): com edição pendente, segura o clique e a pergunta de
+   *  descarte entra no lugar da navegação — como no menu lateral. */
+  guardarClique?: (href: string) => (evento: CliqueReact) => void;
 }) {
   const [aberto, setAberto] = useState(false);
   const [saindo, setSaindo] = useState(false);
@@ -246,7 +258,10 @@ export function MenuDoPerfil({
           <Link
             className="navitem"
             href="/seguranca"
-            onClick={() => fechar(false)}
+            onClick={(evento) => {
+              guardarClique?.("/seguranca")(evento);
+              fechar(false);
+            }}
             role="menuitem"
             style={ITEM}
           >

@@ -91,6 +91,7 @@ export function ConfirmarAcao({
   aberto = false,
   onVoltar,
   nomeDoGatilho,
+  onAbrir,
 }: {
   /** O que o botão faz, em imperativo: "Cancelar COSMOS". */
   rotulo: string;
@@ -121,8 +122,18 @@ export function ConfirmarAcao({
    *  **conter** o rótulo visível ("Excluir lançamento Aluguel"), para quem
    *  comanda por voz dizer o que vê. Sem a prop, o nome é o rótulo. */
   nomeDoGatilho?: string;
+  /** Chamado quando o próprio gatilho abre a pergunta. Com `aberto` vindo de
+   *  fora, é o que deixa um pai manter uma pergunta por vez: abrir esta põe
+   *  `aberto={false}` na vizinha, e ela fecha. */
+  onAbrir?: () => void;
 }) {
   const [perguntando, setPerguntando] = useState(aberto);
+  // `aberto` que muda depois de montar fecha (ou abre) a pergunta — sem
+  // roubar foco: quem mudou foi o pai, não um clique aqui. Nos usos em que
+  // `aberto` é constante isto nunca dispara depois da montagem.
+  useEffect(() => {
+    setPerguntando(aberto);
+  }, [aberto]);
   const bloqueado = executando || desabilitado;
   const paleta = PALETA[tom];
   // O bloco aberto é um `fieldset` (group) nomeado pelo rótulo e descrito
@@ -162,6 +173,7 @@ export function ConfirmarAcao({
         onClick={() => {
           deveFocar.current = true;
           setPerguntando(true);
+          onAbrir?.();
         }}
         ref={gatilhoRef}
         style={{

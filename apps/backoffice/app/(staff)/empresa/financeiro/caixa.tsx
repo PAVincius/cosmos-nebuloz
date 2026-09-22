@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { type CaixaView, salvarSemana } from "@/app/actions/empresa/financeiro";
 import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { Secao } from "@/components/secao";
 import {
   centavosParaCampo,
@@ -63,7 +64,12 @@ function Input({
   chave: CampoSemana;
   rotulo: string;
   podeEscrever: boolean;
-  gravar: (semanaInicio: string, chave: CampoSemana, texto: string) => void;
+  gravar: (
+    semanaInicio: string,
+    chave: CampoSemana,
+    texto: string,
+    rotulo: string
+  ) => void;
 }) {
   return (
     <input
@@ -73,9 +79,12 @@ function Input({
       }
       inputMode="decimal"
       onBlur={(e) => {
-        if (podeEscrever) {
-          gravar(s.semanaInicio, chave, e.target.value);
+        // Passar pela célula com Tab não é editar: sem mudança não grava — e
+        // não anuncia "gravado" a cada célula atravessada.
+        if (!podeEscrever || e.target.value === e.target.defaultValue) {
+          return;
         }
+        gravar(s.semanaInicio, chave, e.target.value, rotulo);
       }}
       readOnly={!podeEscrever}
       style={{
@@ -98,10 +107,18 @@ export function Caixa({
 }) {
   const [view, setView] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
+  // A última célula gravada, em prosa: o total da coluna mudava e mais nada.
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
 
   const gravar = useCallback(
-    async (semanaInicio: string, chave: CampoSemana, texto: string) => {
+    async (
+      semanaInicio: string,
+      chave: CampoSemana,
+      texto: string,
+      rotulo: string
+    ) => {
       setErro(null);
+      setConfirmacao(null);
       const res = await salvarSemana({
         semanaInicio,
         de: view.intervalo.de,
@@ -113,6 +130,9 @@ export function Caixa({
         return;
       }
       setView(res.data);
+      setConfirmacao(
+        `${rotulo} da semana de ${formatarDataBr(semanaInicio)} gravado.`
+      );
     },
     [view.intervalo]
   );
@@ -175,6 +195,11 @@ export function Caixa({
       title="Caixa rolante"
     >
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? (
+        <div style={{ marginBottom: 10 }}>
+          <Confirmacao>{confirmacao}</Confirmacao>
+        </div>
+      ) : null}
       <div style={{ overflowX: "auto" }}>
         <table style={{ borderCollapse: "collapse", minWidth: 1500 }}>
           <thead>

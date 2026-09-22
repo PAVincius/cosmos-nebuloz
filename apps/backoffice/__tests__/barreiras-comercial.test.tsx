@@ -115,7 +115,7 @@ function montarEngajamentos() {
   );
 }
 
-describe("Engajamentos — → Cancelado", () => {
+describe("Engajamentos — Cancelar", () => {
   beforeEach(() => {
     setStatusMock.mockReset();
     // `ok: false` de propósito: o sucesso faz `window.location.reload()`,
@@ -123,10 +123,10 @@ describe("Engajamentos — → Cancelado", () => {
     setStatusMock.mockResolvedValue({ error: "recusado", ok: false });
   });
 
-  it("o clique em → Cancelado não chama a action e mostra o alvo", () => {
+  it("o clique em Cancelar não chama a action e mostra o alvo", () => {
     montarEngajamentos();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Cancelado" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
 
     expect(setStatusMock).not.toHaveBeenCalled();
     expect(screen.getByText(/ENG-07 · Adoção assistida/)).toBeTruthy();
@@ -135,7 +135,7 @@ describe("Engajamentos — → Cancelado", () => {
   it("Confirmar chama setEngagementStatusAction com CANCELADO", async () => {
     montarEngajamentos();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Cancelado" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => expect(setStatusMock).toHaveBeenCalledTimes(1));
@@ -148,7 +148,7 @@ describe("Engajamentos — → Cancelado", () => {
   it("Voltar não chama", () => {
     montarEngajamentos();
 
-    fireEvent.click(screen.getByRole("button", { name: "→ Cancelado" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
     fireEvent.click(screen.getByRole("button", { name: "Voltar" }));
 
     expect(setStatusMock).not.toHaveBeenCalled();

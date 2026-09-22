@@ -101,7 +101,8 @@ function BlocoDeReuso({
   ativoId: string;
   engajamentos: EngagementRow[];
   onCancelar: () => void;
-  onRegistrado: (patch: PatchDeReuso) => void;
+  /** `onde`: "ENG-07 · Diagnóstico" — o engajamento escolhido, por extenso. */
+  onRegistrado: (patch: PatchDeReuso, onde: string) => void;
 }) {
   const idEngajamento = useId();
   const [engagementId, setEngagementId] = useState(engajamentos[0]?.id ?? "");
@@ -133,12 +134,18 @@ function BlocoDeReuso({
       setErro(res.error);
       return;
     }
-    onRegistrado({
-      horasPoupadas: res.data.horasPoupadas,
-      maturidade: res.data.maturidade,
-      reusos: res.data.reusos,
-    });
-  }, [ativoId, engagementId, horas, nota, onRegistrado]);
+    const engajamento = engajamentos.find((e) => e.id === engagementId);
+    onRegistrado(
+      {
+        horasPoupadas: res.data.horasPoupadas,
+        maturidade: res.data.maturidade,
+        reusos: res.data.reusos,
+      },
+      engajamento
+        ? `${engajamento.codigo} · ${engajamento.nome}`
+        : "engajamento"
+    );
+  }, [ativoId, engagementId, engajamentos, horas, nota, onRegistrado]);
 
   if (engajamentos.length === 0) {
     return (
@@ -227,6 +234,9 @@ function ExtraDoAtivo({
   onReusoRegistrado: (assetId: string, patch: PatchDeReuso) => void;
 }) {
   const [registrando, setRegistrando] = useState(false);
+  // O fim do registro, no lugar do bloco que fechou: sem isto só o contador
+  // de reusos mudava, e quem não olhou para o badge não sabia se gravou.
+  const [registrado, setRegistrado] = useState<string | null>(null);
 
   let acaoDeReuso: ReactNode = null;
   if (podeEscrever && registrando) {
@@ -235,17 +245,26 @@ function ExtraDoAtivo({
         ativoId={ativo.id}
         engajamentos={engajamentos}
         onCancelar={() => setRegistrando(false)}
-        onRegistrado={(patch) => {
+        onRegistrado={(patch, onde) => {
           onReusoRegistrado(ativo.id, patch);
           setRegistrando(false);
+          setRegistrado(`Reuso de ${ativo.nome} registrado em ${onde}.`);
         }}
       />
     );
   } else if (podeEscrever) {
     acaoDeReuso = (
-      <BotaoSecundario onClick={() => setRegistrando(true)}>
-        Registrar reuso
-      </BotaoSecundario>
+      <>
+        {registrado ? <Confirmacao>{registrado}</Confirmacao> : null}
+        <BotaoSecundario
+          onClick={() => {
+            setRegistrado(null);
+            setRegistrando(true);
+          }}
+        >
+          Registrar reuso
+        </BotaoSecundario>
+      </>
     );
   }
 
