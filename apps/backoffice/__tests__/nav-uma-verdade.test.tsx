@@ -40,8 +40,12 @@ vi.mock("@/app/actions/empresa/fornecedores", () => ({
 vi.mock("@/lib/guard", () => ({
   requirePlatformStaff: mocks.requirePlatformStaff,
 }));
+// A carteira (`/`) guarda busca e filtro na URL (`lib/url-state.ts`), então
+// o mock precisa dos três hooks que o `useParamState` lê.
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 // /empresa/financeiro: as abas são de outra onda e cada uma puxa as próprias

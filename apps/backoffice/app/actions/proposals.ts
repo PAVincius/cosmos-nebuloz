@@ -15,6 +15,12 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -43,13 +49,18 @@ export type ProposalRow = {
   criadoEm: string;
 };
 
-export async function listProposals(): Promise<Result<ProposalRow[]>> {
+/** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+export async function listProposals<
+  O extends OpcoesDePagina | undefined = undefined,
+>(opcoes?: O): Promise<Result<Listagem<ProposalRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
     const linhas = await database.proposal.findMany({
       where: { tenantId: SYSTEM_TENANT_ID },
       orderBy: { criadoEm: "desc" },
+      ...janela(opcoes),
       select: {
         id: true,
         numero: true,
@@ -63,7 +74,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
       },
     });
 
-    return linhas.map((p) => ({
+    const itens = linhas.map((p) => ({
       id: p.id,
       numero: p.numero,
       titulo: p.titulo,
@@ -76,6 +87,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
       acvCentavos: p.acvCentavos,
       criadoEm: p.criadoEm.toISOString(),
     }));
+    return listagem(itens, opcoes);
   });
 }
 

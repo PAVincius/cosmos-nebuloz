@@ -147,7 +147,10 @@ describe("Confirmação nasce junto do controle que agiu", () => {
       ok: true,
     });
     mocks.listEngagements.mockResolvedValue({
-      data: [{ ...ENG, proximos: ["PAUSADO"], status: "ATIVO" }],
+      data: {
+        itens: [{ ...ENG, proximos: ["PAUSADO"], status: "ATIVO" }],
+        temMais: false,
+      },
       ok: true,
     });
     render(

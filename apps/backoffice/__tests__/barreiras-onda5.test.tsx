@@ -157,7 +157,10 @@ describe("Engajamentos — → Concluído", () => {
       data: { id: "e1" },
       ok: true,
     });
-    mocks.listEngagements.mockResolvedValue({ data: [ENG_ATIVO], ok: true });
+    mocks.listEngagements.mockResolvedValue({
+      data: { itens: [ENG_ATIVO], temMais: false },
+      ok: true,
+    });
   });
 
   function montar() {

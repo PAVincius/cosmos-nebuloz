@@ -13,9 +13,11 @@ import {
   moverEstagio,
   registrarProximaAcao,
 } from "@/app/actions/leads";
+import { Busca, contemTexto } from "@/components/busca";
 import { Erro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
@@ -48,23 +50,89 @@ import { TabelaLeads } from "./tabela-leads";
  * demais entre si para reconstruir no cliente sem arriscar divergir do que a
  * action decidiu (mesmo raciocínio que já valia no funil anterior).
  *
- * Lead aberto e filtro de estágio moram em `?lead=` e `?estagio=` (chip
- * "Todos" = sem param): F5 devolve o mesmo diálogo, e "olha esse lead" vira
- * um link. Id ou estágio que não existe cai no estado padrão, sem erro.
+ * Lead aberto, filtro de estágio e busca moram em `?lead=`, `?estagio=`
+ * (chip "Todos" = sem param) e `?q=`: F5 devolve o mesmo diálogo, e "olha
+ * esse lead" vira um link. Id ou estágio que não existe cai no estado
+ * padrão, sem erro. A busca (nome, contato, dono) vale para o board e para a
+ * tabela; o chip de estágio, só para a tabela — o board já é por estágio.
  */
 
 export type DadosFunil = {
   leads: LeadRow[];
+  /** Há leads além dos desta página — ver `lib/paginacao.ts`. Opcional
+   *  porque só `listarFunil` o produz; quem monta o pacote à mão (testes)
+   *  não precisa saber de página. */
+  temMaisLeads?: boolean;
   estagios: ConfigEstagio[];
   canais: CanalRow[];
   historico: Transicao[];
   hoje: string;
 };
 
+/** Páginas do funil num pacote só: leads e histórico somam, o resto
+ *  (estágios, canais, hoje) é o da primeira, e "há mais" é o da última. */
+function juntar(paginas: DadosFunil[]): DadosFunil {
+  const primeira = paginas[0];
+  return {
+    ...primeira,
+    leads: paginas.flatMap((p) => p.leads),
+    historico: paginas.flatMap((p) => p.historico),
+    temMaisLeads: paginas.at(-1)?.temMaisLeads ?? false,
+  };
+}
+
+/**
+ * Os dados do funil e as duas formas de mudá-los: `recarregar` relê as
+ * páginas já carregadas depois de uma escrita; `mostrarMais` acrescenta a
+ * próxima. Cada página é um pacote inteiro (`listarFunil({ pagina })`), e
+ * `juntar` faz deles um só.
+ */
+function useDadosDoFunil(inicial: DadosFunil) {
+  const [dados, setDados] = useState(inicial);
+  // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
+  // escritas — a escrita deu certo, o que ficou velho foi a tela.
+  const [listaVelha, setListaVelha] = useState<string | null>(null);
+
+  const ler = useCallback(async (pagina: number) => {
+    const res = await listarFunil({ pagina });
+    if (!res.ok) {
+      return res;
+    }
+    return {
+      ok: true as const,
+      data: { itens: [res.data], temMais: res.data.temMaisLeads },
+    };
+  }, []);
+  const paginacao = usePaginas(ler, inicial.temMaisLeads ?? false);
+
+  const recarregar = useCallback(async () => {
+    const res = await paginacao.reler();
+    if (!res.ok) {
+      setListaVelha(res.error);
+      return;
+    }
+    setListaVelha(null);
+    setDados(juntar(res.data));
+  }, [paginacao.reler]);
+
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setDados((atual) => juntar([atual, ...mais]));
+    }
+  }, [paginacao.proxima]);
+
+  return { dados, listaVelha, mostrarMais, paginacao, recarregar };
+}
+
 /** "1 lead" / "12 leads" — fora do componente, que já está no teto de
  *  complexidade do lint. */
 function plural(n: number, um: string, varios: string): string {
   return `${n} ${n === 1 ? um : varios}`;
+}
+
+function leadBuscado(l: LeadRow, q: string): boolean {
+  return contemTexto([l.nome, l.contatoNome, l.contatoEmail, l.donoNome], q);
 }
 
 function leadVisivel(
@@ -246,8 +314,10 @@ export function Funil({
   inicial: DadosFunil;
   podeEscrever: boolean;
 }) {
-  const [dados, setDados] = useState(inicial);
+  const { dados, listaVelha, mostrarMais, paginacao, recarregar } =
+    useDadosDoFunil(inicial);
   const [filtroParam, setFiltro] = useParamState("estagio", "all");
+  const [q, setQ] = useParamState("q");
   // Estágio que não existe no param vale como Todos — link velho não pode
   // deixar a tabela vazia sem explicação.
   const filtro = FILTROS.some((f) => f.id === filtroParam)
@@ -266,19 +336,6 @@ export function Funil({
     () => dados.leads.map(paraLeadFunil),
     [dados.leads]
   );
-
-  // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
-  // escritas — a escrita deu certo, o que ficou velho foi a tela.
-  const [listaVelha, setListaVelha] = useState<string | null>(null);
-  const recarregar = useCallback(async () => {
-    const res = await listarFunil();
-    if (!res.ok) {
-      setListaVelha(res.error);
-      return;
-    }
-    setListaVelha(null);
-    setDados(res.data);
-  }, []);
 
   const { confirmacao, mover, movendo } = useMoverLead({
     leads: dados.leads,
@@ -397,7 +454,8 @@ export function Funil({
     }
   }
 
-  const visiveis = dados.leads.filter((l) =>
+  const buscados = dados.leads.filter((l) => leadBuscado(l, q));
+  const visiveis = buscados.filter((l) =>
     leadVisivel(l, filtro, dados.estagios, hoje)
   );
   const perdidos = dados.leads.filter((l) => l.situacao === "PERDIDO");
@@ -409,7 +467,23 @@ export function Funil({
       {erro ? <Erro>{erro}</Erro> : null}
       <AvisoListaVelha motivo={listaVelha} onTentar={recarregar} />
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexWrap: "wrap",
+          gap: 12,
+        }}
+      >
+        <Busca
+          id="busca-lead"
+          onMudar={setQ}
+          rotulo="Buscar lead"
+          total={dados.leads.length}
+          valor={q}
+          visiveis={buscados.length}
+        />
         <WriteButton
           canWrite={podeEscrever}
           onClick={() => setNovoAberto(true)}
@@ -418,13 +492,7 @@ export function Funil({
         </WriteButton>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 12,
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           icon="wallet"
           label="Pipeline ponderado"
@@ -460,7 +528,7 @@ export function Funil({
         <Board
           estagios={dados.estagios}
           hoje={hoje}
-          leads={dados.leads}
+          leads={buscados}
           movendo={movendo}
           onAbrirEstagio={abrirEstagio}
           onAbrirLead={abrirLead}
@@ -471,7 +539,7 @@ export function Funil({
         />
       </SectionCard>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div className="bo-duas-colunas">
         <SectionCard as="h2" title="Porta de entrada">
           <Barras linhas={linhasEntrada(dados.leads)} />
         </SectionCard>
@@ -497,6 +565,12 @@ export function Funil({
             hoje={hoje}
             leads={visiveis}
             onAbrirLead={abrirLead}
+          />
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
           />
         </div>
       </SectionCard>

@@ -302,7 +302,10 @@ describe("Engajamentos — recarregar que falha", () => {
     mocks.listEngagements
       .mockResolvedValueOnce({ error: "Banco indisponível.", ok: false })
       .mockResolvedValueOnce({
-        data: [{ ...ENG, proximos: [], status: "ATIVO" }],
+        data: {
+          itens: [{ ...ENG, proximos: [], status: "ATIVO" }],
+          temMais: false,
+        },
         ok: true,
       });
     render(

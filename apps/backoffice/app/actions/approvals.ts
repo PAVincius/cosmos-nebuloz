@@ -39,7 +39,27 @@ export type PlatformApprovalRow = {
   nota: string | null;
 };
 
-const StatusFiltro = z.enum(["PENDING_APPROVAL", "APPROVED", "REJECTED"]);
+/** `DECIDIDOS` é aprovado ou rejeitado: a tela separa o que ainda espera
+ *  decisão do que já foi decidido, e os dois lados são consultas próprias —
+ *  um `take` só sobre tudo cortava pendentes antigos quando os decididos
+ *  recentes enchiam a página. */
+const StatusFiltro = z.enum([
+  "PENDING_APPROVAL",
+  "APPROVED",
+  "REJECTED",
+  "DECIDIDOS",
+]);
+
+function whereDeStatus(status: string | undefined) {
+  const filtro = StatusFiltro.safeParse(status);
+  if (!filtro.success) {
+    return {};
+  }
+  if (filtro.data === "DECIDIDOS") {
+    return { status: { in: ["APPROVED", "REJECTED"] } };
+  }
+  return { status: filtro.data };
+}
 
 export async function listPlatformApprovals(
   status?: string
@@ -48,11 +68,10 @@ export async function listPlatformApprovals(
     // Sem assertCanWrite de propósito: leitura é de todo staff.
     await requirePlatformStaff();
 
-    const filtro = StatusFiltro.safeParse(status);
     const rows = await database.platformApproval.findMany({
       where: {
         tenantId: SYSTEM_TENANT_ID,
-        ...(filtro.success ? { status: filtro.data } : {}),
+        ...whereDeStatus(status),
       },
       orderBy: { criadoEm: "desc" },
       take: 200,

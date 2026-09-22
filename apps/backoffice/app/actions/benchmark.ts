@@ -2,6 +2,12 @@
 
 import { database } from "@repo/database";
 import { requirePlatformStaff, SYSTEM_TENANT_ID } from "@/lib/guard";
+import {
+  cortar,
+  janela,
+  type OpcoesDePagina,
+  TETO_DA_LISTA,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -41,6 +47,9 @@ export type ServicoBenchmark = {
 export type Benchmark = {
   clientes: ClienteBenchmark[];
   servicos: ServicoBenchmark[];
+  /** Há clientes além dos desta página — a tela diz que a comparação é
+   *  parcial e oferece a próxima. */
+  temMaisClientes: boolean;
 };
 
 /** Média inteira que não estoura em lista vazia. Sem esta guarda o ticket de
@@ -49,20 +58,36 @@ function media(total: number, quantidade: number): number {
   return quantidade === 0 ? 0 : Math.round(total / quantidade);
 }
 
-export async function listBenchmark(): Promise<Result<Benchmark>> {
+/**
+ * A página de clientes (até o teto de `lib/paginacao.ts`) e as agregações
+ * sobre ela: engajamentos e propostas são lidos só dos clientes da página,
+ * então nenhuma das quatro leituras cresce com a base inteira. O custo é que,
+ * quando há mais de uma página, "por serviço" soma o que os clientes desta
+ * página compraram — e a tela diz isso, em vez de somar tudo em silêncio.
+ */
+export async function listBenchmark(
+  opcoes?: OpcoesDePagina
+): Promise<Result<Benchmark>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
-    const [clientes, engajamentos, propostas, servicos] = await Promise.all([
-      database.tenant.findMany({
+    const pagina = cortar(
+      await database.tenant.findMany({
         // O tenant interno não é cliente — compará-lo com os outros não
         // significa nada.
         where: { isSystem: false },
         orderBy: { name: "asc" },
+        ...janela(opcoes),
         select: { id: true, slug: true, name: true },
       }),
+      opcoes
+    );
+    const clientes = pagina.itens;
+    const ids = clientes.map((c) => c.id);
+
+    const [engajamentos, propostas, servicos] = await Promise.all([
       database.engagement.findMany({
-        where: { tenantId: SYSTEM_TENANT_ID },
+        where: { tenantId: SYSTEM_TENANT_ID, clienteTenantId: { in: ids } },
         select: {
           clienteTenantId: true,
           status: true,
@@ -71,12 +96,13 @@ export async function listBenchmark(): Promise<Result<Benchmark>> {
         },
       }),
       database.proposal.findMany({
-        where: { tenantId: SYSTEM_TENANT_ID },
+        where: { tenantId: SYSTEM_TENANT_ID, clienteTenantId: { in: ids } },
         select: { clienteTenantId: true, status: true, descontoPercent: true },
       }),
       database.service.findMany({
         where: { tenantId: SYSTEM_TENANT_ID },
         orderBy: { codigo: "asc" },
+        take: TETO_DA_LISTA,
         select: { id: true, codigo: true, nome: true },
       }),
     ]);
@@ -121,6 +147,7 @@ export async function listBenchmark(): Promise<Result<Benchmark>> {
       servicos: linhasDeServico.sort(
         (a, b) => b.receitaCentavos - a.receitaCentavos
       ),
+      temMaisClientes: pagina.temMais,
     };
   });
 }

@@ -12,6 +12,7 @@ import {
 } from "@/app/actions/benchmark";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 
@@ -140,7 +141,10 @@ function LinhaServico({ s, maximo }: { s: ServicoBenchmark; maximo: number }) {
   );
 }
 
-function Conteudo({ dados }: { dados: Benchmark }) {
+function Conteudo({ dados, pagina }: { dados: Benchmark; pagina: number }) {
+  // Com mais de uma página, os números descrevem os clientes desta — e as
+  // legendas dizem isso, em vez de somar em silêncio o que não foi lido.
+  const parcial = pagina > 1 || dados.temMaisClientes;
   const maxCliente = dados.clientes[0]?.receitaCentavos ?? 0;
   const maxServico = dados.servicos[0]?.receitaCentavos ?? 0;
   const receita = dados.clientes.reduce((s, c) => s + c.receitaCentavos, 0);
@@ -148,13 +152,7 @@ function Conteudo({ dados }: { dados: Benchmark }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-        }}
-      >
+      <div className="bo-kpis bo-kpis-3">
         <KpiCard
           hint="engajamentos que contam"
           icon="chart"
@@ -179,8 +177,9 @@ function Conteudo({ dados }: { dados: Benchmark }) {
       </div>
 
       <SectionCard
+        as="h2"
         icon="building"
-        subtitle="maior receita primeiro · cancelado não entra na conta"
+        subtitle={`maior receita primeiro · cancelado não entra na conta${parcial ? " · clientes desta página" : ""}`}
         title="Por cliente"
       >
         {dados.clientes.length === 0 ? (
@@ -220,11 +219,17 @@ function Conteudo({ dados }: { dados: Benchmark }) {
             </tbody>
           </table>
         )}
+        <PaginacaoEmLinks
+          caminho="/benchmark"
+          pagina={pagina}
+          temMais={dados.temMaisClientes}
+        />
       </SectionCard>
 
       <SectionCard
+        as="h2"
         icon="briefcase"
-        subtitle="o que o catálogo realmente vendeu"
+        subtitle={`o que o catálogo realmente vendeu${parcial ? " · aos clientes desta página" : ""}`}
         title="Por serviço"
       >
         {dados.servicos.length === 0 ? (
@@ -265,8 +270,19 @@ function Conteudo({ dados }: { dados: Benchmark }) {
 
 export const metadata = { title: tituloDaAba("/benchmark") };
 
-export default async function BenchmarkPage() {
-  const res = await listBenchmark();
+/** `?pagina=` inválido ou ausente é a primeira. */
+function paginaDaUrl(valor: string | undefined): number {
+  const n = Number(valor);
+  return Number.isInteger(n) && n > 1 ? n : 1;
+}
+
+export default async function BenchmarkPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ pagina?: string }>;
+} = {}) {
+  const pagina = paginaDaUrl((await searchParams)?.pagina);
+  const res = await listBenchmark({ pagina });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -276,7 +292,7 @@ export default async function BenchmarkPage() {
         title="Benchmark"
       />
       {res.ok ? (
-        <Conteudo dados={res.data} />
+        <Conteudo dados={res.data} pagina={pagina} />
       ) : (
         <FalhaAoCarregar
           motivo={res.error}

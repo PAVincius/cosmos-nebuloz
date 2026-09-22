@@ -17,6 +17,12 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -40,13 +46,18 @@ export type EngagementRow = {
   proximos: string[];
 };
 
-export async function listEngagements(): Promise<Result<EngagementRow[]>> {
+/** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+export async function listEngagements<
+  O extends OpcoesDePagina | undefined = undefined,
+>(opcoes?: O): Promise<Result<Listagem<EngagementRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
     const linhas = await database.engagement.findMany({
       where: { tenantId: SYSTEM_TENANT_ID },
       orderBy: [{ status: "asc" }, { criadoEm: "desc" }],
+      ...janela(opcoes),
       select: {
         id: true,
         codigo: true,
@@ -69,7 +80,7 @@ export async function listEngagements(): Promise<Result<EngagementRow[]>> {
     });
     const porId = new Map(clientes.map((c) => [c.id, c]));
 
-    return linhas.map((e) => {
+    const itens = linhas.map((e) => {
       const c = porId.get(e.clienteTenantId);
       const status = e.status as StatusEngajamento;
       return {
@@ -87,6 +98,7 @@ export async function listEngagements(): Promise<Result<EngagementRow[]>> {
         proximos: TRANSICOES[status] ?? [],
       };
     });
+    return listagem(itens, opcoes);
   });
 }
 

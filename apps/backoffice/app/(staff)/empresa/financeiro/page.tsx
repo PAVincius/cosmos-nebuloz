@@ -161,7 +161,30 @@ function ariaCurrent(ativa: boolean): "page" | undefined {
   return ativa ? "page" : undefined;
 }
 
-function Abas({ aba }: { aba: Aba }) {
+/** O link da aba leva os params atuais — `de`, `ate`, `conta`, competência.
+ *  Antes cada aba montava `?aba=` seco, e trocar de aba zerava o período que
+ *  a pessoa tinha acabado de escolher. */
+function hrefDaAba(
+  id: Aba,
+  atuais: Record<string, string | undefined>
+): string {
+  const params = new URLSearchParams();
+  for (const [chave, valor] of Object.entries(atuais)) {
+    if (valor && chave !== "aba") {
+      params.set(chave, valor);
+    }
+  }
+  params.set("aba", id);
+  return `/empresa/financeiro?${params.toString()}`;
+}
+
+function Abas({
+  aba,
+  atuais,
+}: {
+  aba: Aba;
+  atuais: Record<string, string | undefined>;
+}) {
   return (
     // `flexWrap`: sete abas não cabem numa linha de 720px, e sem quebra a
     // última saía do cartão. `aria-current` é o que diz ao leitor de tela
@@ -170,7 +193,7 @@ function Abas({ aba }: { aba: Aba }) {
       {ABAS.map((a) => (
         <Link
           aria-current={ariaCurrent(aba === a.id)}
-          href={`/empresa/financeiro?aba=${a.id}`}
+          href={hrefDaAba(a.id, atuais)}
           key={a.id}
           style={abaStyle(aba === a.id)}
         >
@@ -548,13 +571,14 @@ export default async function FinanceiroPage({
     competencia?: string;
   }>;
 }) {
+  const atuais = await searchParams;
   const {
     aba: abaParam,
     de,
     ate,
     conta,
     competencia: competenciaParam,
-  } = await searchParams;
+  } = atuais;
   const aba = abaValida(abaParam);
   const hoje = new Date();
   const padrao =
@@ -599,7 +623,7 @@ export default async function FinanceiroPage({
           justifyContent: "space-between",
         }}
       >
-        <Abas aba={aba} />
+        <Abas aba={aba} atuais={atuais} />
         <SeletorDaPagina
           aba={aba}
           competencia={competencia}
