@@ -83,7 +83,7 @@ describe("Board", () => {
     const { onMover, onConverter, onPerder } = montar(true);
 
     const card = screen.getByRole("button", {
-      name: "Abrir lead Meridian Corp",
+      name: /^Abrir Meridian Corp/,
     });
     const coluna = screen.getByRole("group", { name: "Coluna Descoberta" });
 
@@ -99,7 +99,7 @@ describe("Board", () => {
     const { onConverter, onMover } = montar(true);
 
     const card = screen.getByRole("button", {
-      name: "Abrir lead Scaffold Ltda",
+      name: /^Abrir Scaffold Ltda/,
     });
     const coluna = screen.getByRole("group", { name: "Coluna Proposta" });
 
@@ -114,7 +114,7 @@ describe("Board", () => {
     const { onConverter, onMover } = montar(true);
 
     const card = screen.getByRole("button", {
-      name: "Abrir lead Meridian Corp",
+      name: /^Abrir Meridian Corp/,
     });
     const coluna = screen.getByRole("group", { name: "Coluna Proposta" });
 
@@ -128,14 +128,14 @@ describe("Board", () => {
     ).toBeTruthy();
   });
 
-  it("soltar em Ganho não chama nada e mostra a mensagem", () => {
+  it("soltar em Ganho não chama nada — a zona não é alvo de drop", () => {
     const { onMover, onConverter, onPerder } = montar(true);
 
     const card = screen.getByRole("button", {
-      name: "Abrir lead Meridian Corp",
+      name: /^Abrir Meridian Corp/,
     });
     const zonaDeGanho = screen.getByRole("group", {
-      name: "Soltar para marcar ganho",
+      name: "Ganho vem da proposta aceita",
     });
 
     fireEvent.dragStart(card, { dataTransfer: { effectAllowed: "" } });
@@ -144,14 +144,15 @@ describe("Board", () => {
     expect(onMover).not.toHaveBeenCalled();
     expect(onConverter).not.toHaveBeenCalled();
     expect(onPerder).not.toHaveBeenCalled();
-    expect(screen.getByText(/Ganho só via proposta aceita/)).toBeTruthy();
+    // Aceitar o arraste para recusar em seguida era o defeito (onda 8a).
+    expect(screen.queryByText(/Ganho só via proposta aceita/)).toBeNull();
   });
 
   it("soltar em Perdido chama onPerder", () => {
     const { onPerder } = montar(true);
 
     const card = screen.getByRole("button", {
-      name: "Abrir lead Meridian Corp",
+      name: /^Abrir Meridian Corp/,
     });
     const zonaDePerdido = screen.getByRole("group", {
       name: "Soltar para marcar perdido",
@@ -166,7 +167,7 @@ describe("Board", () => {
   it("sem podeEscrever nenhum card fica arrastável", () => {
     montar(false);
 
-    const cards = screen.getAllByRole("button", { name: /^Abrir lead / });
+    const cards = screen.getAllByRole("button", { name: /^Abrir (?!estágio)/ });
     expect(cards.length).toBeGreaterThan(0);
     for (const card of cards) {
       expect(card.getAttribute("draggable")).not.toBe("true");
@@ -202,12 +203,12 @@ describe("Board", () => {
     );
 
     const cardProposta = screen.getByRole("button", {
-      name: "Abrir lead Charter SA",
+      name: /^Abrir Charter SA/,
     });
     expect(cardProposta.getAttribute("draggable")).not.toBe("true");
 
     const cardLead = screen.getByRole("button", {
-      name: "Abrir lead Meridian Corp",
+      name: /^Abrir Meridian Corp/,
     });
     expect(cardLead.getAttribute("draggable")).toBe("true");
   });

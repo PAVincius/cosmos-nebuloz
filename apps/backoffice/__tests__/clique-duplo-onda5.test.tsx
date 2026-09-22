@@ -373,9 +373,9 @@ describe("Funil — recarregar que falha", () => {
       .mockResolvedValueOnce({ data: DADOS_FUNIL, ok: true });
     render(<Funil inicial={DADOS_FUNIL} podeEscrever />);
 
-    const card = screen.getAllByRole("button", {
-      name: "Abrir lead Meridian Corp",
-    })[0];
+    // O card do board se anuncia pelo conteúdo ("Abrir Meridian Corp …");
+    // "Abrir lead …" é o botão da tabela.
+    const card = screen.getByRole("button", { name: /^Abrir Meridian Corp/ });
     const coluna = screen.getByRole("group", { name: "Coluna Descoberta" });
     fireEvent.dragStart(card, { dataTransfer: { effectAllowed: "" } });
     fireEvent.drop(coluna, { dataTransfer: {} });

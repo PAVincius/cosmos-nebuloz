@@ -148,7 +148,9 @@ describe("Orcado", () => {
     montar();
 
     const linha = linhaDaConta("Publicidade paga");
-    const campo = within(linha).getByLabelText("Orçado 4.1 set 2026");
+    const campo = within(linha).getByLabelText(
+      "Orçado de Publicidade paga em set 2026"
+    );
     expect(campo).toHaveProperty("value", "1000,00");
     expect(within(linha).getByText(dinheiro(150_000))).toBeTruthy();
     expect(within(linha).getByText(dinheiro(50_000))).toBeTruthy();
@@ -183,7 +185,9 @@ describe("Orcado", () => {
     montar();
 
     const linha = linhaDaConta("Consultoria terceirizada");
-    const campo = within(linha).getByLabelText("Orçado 3.1 set 2026");
+    const campo = within(linha).getByLabelText(
+      "Orçado de Consultoria terceirizada em set 2026"
+    );
     expect(campo).toHaveProperty("value", "");
     expect(within(linha).getByText(dinheiro(40_000))).toBeTruthy();
     expect(within(linha).getByText("—")).toBeTruthy();
@@ -193,7 +197,9 @@ describe("Orcado", () => {
     montar();
 
     const linha = linhaDaConta("Consultoria terceirizada");
-    const campo = within(linha).getByLabelText("Orçado 3.1 set 2026");
+    const campo = within(linha).getByLabelText(
+      "Orçado de Consultoria terceirizada em set 2026"
+    );
     fireEvent.change(campo, { target: { value: "400,50" } });
     fireEvent.blur(campo);
 
@@ -210,7 +216,9 @@ describe("Orcado", () => {
     montar();
 
     const linha = linhaDaConta("Publicidade paga");
-    const campo = within(linha).getByLabelText("Orçado 4.1 set 2026");
+    const campo = within(linha).getByLabelText(
+      "Orçado de Publicidade paga em set 2026"
+    );
     fireEvent.change(campo, { target: { value: "" } });
     fireEvent.blur(campo);
 
@@ -238,12 +246,122 @@ describe("Orcado", () => {
     montar(false);
 
     const linha = linhaDaConta("Publicidade paga");
-    const campo = within(linha).getByLabelText("Orçado 4.1 set 2026");
+    const campo = within(linha).getByLabelText(
+      "Orçado de Publicidade paga em set 2026"
+    );
     expect(campo).toHaveProperty("readOnly", true);
 
     fireEvent.change(campo, { target: { value: "1,00" } });
     fireEvent.blur(campo);
 
     expect(salvarOrcamentoMock).not.toHaveBeenCalled();
+  });
+});
+
+// Onda 8a, bloco 1: o orçado não mente. Gravava no blur sem estado e, na
+// falha, a célula continuava mostrando o valor digitado com o erro longe, no
+// topo da tabela. Agora a célula diz "Salvando…" e "Salvo"; na falha volta ao
+// valor anterior e o erro fica ao lado dela, referenciado pelo campo.
+describe("Orcado — a célula não mente", () => {
+  function campoDe(nome: string): HTMLInputElement {
+    return within(linhaDaConta(nome)).getByLabelText(
+      `Orçado de ${nome} em set 2026`
+    ) as HTMLInputElement;
+  }
+
+  it("a célula se anuncia pelo nome da conta, não pelo código", () => {
+    montar();
+    expect(screen.queryByLabelText("Orçado 4.1 set 2026")).toBeNull();
+    expect(campoDe("Publicidade paga")).toBeTruthy();
+  });
+
+  it("gravando: 'Salvando…' na própria célula, depois 'Salvo'", async () => {
+    let resolver: (v: unknown) => void = () => {};
+    salvarOrcamentoMock.mockReturnValue(
+      new Promise((r) => {
+        resolver = r;
+      })
+    );
+    montar();
+    const campo = campoDe("Publicidade paga");
+    fireEvent.change(campo, { target: { value: "1.200,00" } });
+    fireEvent.blur(campo);
+
+    const linha = linhaDaConta("Publicidade paga");
+    expect(within(linha).getByRole("status").textContent).toBe("Salvando…");
+
+    resolver({ data: { competencia: COMPETENCIA, conta: "4.1" }, ok: true });
+    await waitFor(() =>
+      expect(within(linha).getByRole("status").textContent).toBe("Salvo")
+    );
+    expect(lerOrcadoMock).toHaveBeenCalled();
+  });
+
+  it("falha: a célula volta ao valor anterior e o erro fica junto dela", async () => {
+    salvarOrcamentoMock.mockResolvedValue({
+      error: "Valor acima do teto do centro de custo.",
+      ok: false,
+    });
+    montar();
+    const campo = campoDe("Publicidade paga");
+    fireEvent.change(campo, { target: { value: "9.999,00" } });
+    fireEvent.blur(campo);
+
+    const linha = linhaDaConta("Publicidade paga");
+    const erro = await within(linha).findByText(
+      /Valor acima do teto do centro de custo\./
+    );
+    expect(campoDe("Publicidade paga").value).toBe("1000,00");
+    expect(campoDe("Publicidade paga").getAttribute("aria-invalid")).toBe(
+      "true"
+    );
+    const descritoPor =
+      campoDe("Publicidade paga").getAttribute("aria-describedby");
+    expect(descritoPor).toBeTruthy();
+    expect(erro.id).toBe(descritoPor);
+    // A região viva continua lá (nasceu no blur), mas não diz "Salvo".
+    expect(within(linha).getByRole("status").textContent).toBe("");
+    expect(lerOrcadoMock).not.toHaveBeenCalled();
+  });
+
+  it("gravar de novo com sucesso limpa o erro da célula", async () => {
+    salvarOrcamentoMock.mockResolvedValueOnce({
+      error: "Valor acima do teto do centro de custo.",
+      ok: false,
+    });
+    montar();
+    const campo = campoDe("Publicidade paga");
+    fireEvent.change(campo, { target: { value: "9.999,00" } });
+    fireEvent.blur(campo);
+    const linha = linhaDaConta("Publicidade paga");
+    await within(linha).findByText(/Valor acima do teto/);
+
+    fireEvent.change(campo, { target: { value: "1.100,00" } });
+    fireEvent.blur(campo);
+    await waitFor(() =>
+      expect(within(linha).queryByText(/Valor acima do teto/)).toBeNull()
+    );
+    expect(campo.getAttribute("aria-invalid")).toBeNull();
+  });
+
+  it("desvio ruim tem palavra, não só cor — e a palavra inverte na receita", () => {
+    montar();
+
+    const desvioCusto = within(linhaDaConta("Publicidade paga"))
+      .getByText(dinheiro(50_000))
+      .closest("td");
+    expect(desvioCusto?.textContent).toContain("acima do orçado");
+
+    const desvioReceita = within(linhaDaConta("Receita SaaS"))
+      .getByText(dinheiro(-50_000))
+      .closest("td");
+    expect(desvioReceita?.textContent).toContain("abaixo do previsto");
+
+    // Desvio bom não ganha rótulo: a palavra marca o que pede atenção.
+    const desvioBom = within(linhaDaConta("Salários engenharia"))
+      .getByText(dinheiro(-20_000))
+      .closest("td");
+    expect(desvioBom?.textContent).not.toContain("acima do orçado");
+    expect(desvioBom?.textContent).not.toContain("abaixo do previsto");
   });
 });

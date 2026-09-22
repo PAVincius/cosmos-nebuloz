@@ -2,15 +2,15 @@
 
 import { Badge } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
-import type { ContaView } from "@/app/actions/empresa/financeiro";
 import {
   baixarTitulo,
   cancelarTitulo,
   criarTitulo,
-  listarTitulos,
 } from "@/app/actions/empresa/titulos";
 import { BotaoSecundario, Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { BotaoMostrarMais } from "@/components/mostrar-mais";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
@@ -29,6 +29,7 @@ import {
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { NovoTituloDialog } from "./titulo-dialog-novo";
 import { BaixarDialog, CancelarDialog } from "./titulo-dialogs";
+import { type TitulosPayload, useListaDeTitulos } from "./titulos-lista";
 
 /**
  * Aba "Títulos" (Task 6, spec 2026-09-06 §4): duas listas — a pagar e a
@@ -36,14 +37,11 @@ import { BaixarDialog, CancelarDialog } from "./titulo-dialogs";
  * baixar, cancelar). Sem intervalo: título é lista viva, não recorte de
  * período (é por isso que `page.tsx` não monta `SeletorDaAba` nesta aba).
  *
- * `useState(inicial)` + `recarregar()`: mesmo padrão de `lancamentos.tsx` —
- * toda escrita relê `listarTitulos` e substitui o estado inteiro.
+ * A lista vem até o teto, com "em aberto + últimos 90 dias" por padrão
+ * (`titulos-lista.ts`); toda escrita relê as páginas que já estavam na tela.
  */
 
-export type TitulosPayload = {
-  titulos: TituloRow[];
-  contas: ContaView[];
-};
+export type { TitulosPayload } from "./titulos-lista";
 
 const CHIPS_SITUACAO: { id: Situacao; label: string }[] = [
   { id: "ABERTO", label: "Abertos" },
@@ -237,6 +235,40 @@ function ListaDeTitulos({
   );
 }
 
+/** O que a lista mostra e o botão que liga os antigos — dito em texto, para a
+ *  ausência do título pago no ano passado não parecer sumiço. */
+function RecorteDosTitulos({
+  antigos,
+  carregando,
+  onAlternar,
+}: {
+  antigos: boolean;
+  carregando: boolean;
+  onAlternar: () => void;
+}) {
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <span style={{ color: "var(--ink-muted)", fontSize: "var(--fs-nota)" }}>
+        {antigos
+          ? "Todos os títulos, inclusive os pagos e cancelados há mais de 90 dias."
+          : "Em aberto e o que foi baixado ou cancelado nos últimos 90 dias."}
+      </span>
+      <BotaoSecundario disabled={carregando} onClick={onAlternar}>
+        {antigos
+          ? "Esconder pagos e cancelados antigos"
+          : "Mostrar pagos e cancelados antigos"}
+      </BotaoSecundario>
+    </div>
+  );
+}
+
 export function Titulos({
   inicial,
   podeEscrever,
@@ -255,9 +287,11 @@ export function Titulos({
   // é uma faixa de vencimento reclassificada no recarregamento seguinte, não
   // dado perdido.
   const hoje = useMemo(() => new Date(), []);
-  const [dados, setDados] = useState(inicial);
+  const lista = useListaDeTitulos(inicial);
+  const { dados } = lista;
   const [situacaoFiltro, setSituacaoFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
   const [tituloBaixando, setTituloBaixando] = useState<TituloRow | null>(null);
   const [tituloCancelando, setTituloCancelando] = useState<TituloRow | null>(
@@ -269,20 +303,28 @@ export function Titulos({
     [dados.titulos, hoje]
   );
 
+  const { recarregar: relerLista } = lista;
   const recarregar = useCallback(async () => {
-    const res = await listarTitulos({});
-    if (!res.ok) {
-      setErro(res.error);
-      return;
+    const falha = await relerLista();
+    if (falha !== null) {
+      setErro(falha);
     }
-    setDados(res.data);
-  }, []);
+  }, [relerLista]);
+
+  // A frase só depois da releitura, nomeando o título — mesmo padrão de
+  // `lancamentos.tsx`: confirma o que a tabela já mostra.
+  const descricaoDe = useCallback(
+    (id: string) =>
+      dados.titulos.find((t) => t.id === id)?.descricao ?? "selecionado",
+    [dados.titulos]
+  );
 
   const criar = useCallback(
     async (input: Parameters<typeof criarTitulo>[0]) => {
       const res = await criarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Título «${input.descricao}» criado.`);
       }
       return res;
     },
@@ -291,25 +333,46 @@ export function Titulos({
 
   const baixar = useCallback(
     async (input: Parameters<typeof baixarTitulo>[0]) => {
+      const descricao = descricaoDe(input.id);
       const res = await baixarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(
+          `Título «${descricao}» baixado em ${formatarDataBr(input.data)}.`
+        );
       }
       return res;
     },
-    [recarregar]
+    [recarregar, descricaoDe]
   );
 
   const cancelar = useCallback(
     async (input: Parameters<typeof cancelarTitulo>[0]) => {
+      const descricao = descricaoDe(input.id);
       const res = await cancelarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Título «${descricao}» cancelado.`);
       }
       return res;
     },
-    [recarregar]
+    [recarregar, descricaoDe]
   );
+
+  // Abrir outra escrita apaga a frase da anterior: ela fala do que acabou de
+  // acontecer, não fica como legenda da tela.
+  const abrirNovo = useCallback(() => {
+    setConfirmacao(null);
+    setNovoAberto(true);
+  }, []);
+  const abrirBaixa = useCallback((t: TituloRow) => {
+    setConfirmacao(null);
+    setTituloBaixando(t);
+  }, []);
+  const abrirCancelamento = useCallback((t: TituloRow) => {
+    setConfirmacao(null);
+    setTituloCancelando(t);
+  }, []);
 
   const titulosVisiveis = useMemo(() => {
     if (situacaoFiltro === "all") {
@@ -330,6 +393,7 @@ export function Titulos({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
       <div className="bo-kpis bo-kpis-5">
         {faixas.map((f) => (
@@ -352,10 +416,7 @@ export function Titulos({
           rotuloTodas="Todos"
           valor={situacaoFiltro}
         />
-        <WriteButton
-          canWrite={podeEscrever}
-          onClick={() => setNovoAberto(true)}
-        >
+        <WriteButton canWrite={podeEscrever} onClick={abrirNovo}>
           Novo título
         </WriteButton>
       </div>
@@ -363,8 +424,8 @@ export function Titulos({
       <ListaDeTitulos
         filtro={filtroAtivo}
         hoje={hoje}
-        onBaixar={setTituloBaixando}
-        onCancelar={setTituloCancelando}
+        onBaixar={abrirBaixa}
+        onCancelar={abrirCancelamento}
         podeEscrever={podeEscrever}
         tipo="PAGAR"
         titulos={aPagar}
@@ -372,11 +433,23 @@ export function Titulos({
       <ListaDeTitulos
         filtro={filtroAtivo}
         hoje={hoje}
-        onBaixar={setTituloBaixando}
-        onCancelar={setTituloCancelando}
+        onBaixar={abrirBaixa}
+        onCancelar={abrirCancelamento}
         podeEscrever={podeEscrever}
         tipo="RECEBER"
         titulos={aReceber}
+      />
+
+      <RecorteDosTitulos
+        antigos={lista.antigos}
+        carregando={lista.carregando}
+        onAlternar={lista.alternarAntigos}
+      />
+      <BotaoMostrarMais
+        carregando={lista.carregando}
+        erro={lista.erroDaLista}
+        onClick={lista.mostrarMais}
+        temMais={lista.temMais}
       />
 
       <NovoTituloDialog

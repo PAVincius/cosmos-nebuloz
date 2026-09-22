@@ -128,7 +128,11 @@ function QueueRow({
       <Celula>
         <span
           className="mono"
-          style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-text)" }}
+          style={{
+            fontSize: "var(--fs-nota)",
+            fontWeight: 700,
+            color: "var(--accent-text)",
+          }}
         >
           {entry.trackCode}
         </span>
@@ -137,7 +141,7 @@ function QueueRow({
         <span
           style={{
             display: "block",
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
             overflow: "hidden",
@@ -155,7 +159,7 @@ function QueueRow({
         <span
           className="mono"
           style={{
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color:
               entry.ageDays >= 14 ? "var(--red-text)" : "var(--ink-subtle)",
             fontWeight: entry.ageDays >= 14 ? 700 : 500,
@@ -168,7 +172,7 @@ function QueueRow({
         <span
           className="mono"
           style={{
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             fontWeight: 700,
             color: complete ? "var(--green-text)" : "var(--amber-text)",
           }}

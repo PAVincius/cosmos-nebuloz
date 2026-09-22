@@ -395,3 +395,128 @@ describe("Recorrente", () => {
     ).toBeNull();
   });
 });
+
+// Onda 8a, bloco 1: toda escrita da receita recorrente fala, nomeando o
+// cliente, depois da releitura (`listarRecorrente`).
+describe("Recorrente — toda escrita fala", () => {
+  function status(): string | null {
+    return (
+      screen.queryByRole("status")?.textContent?.replace(ESPACO_DURO, " ") ??
+      null
+    );
+  }
+
+  it("nova assinatura: o status nomeia o cliente", async () => {
+    listClientsMock.mockResolvedValue({
+      data: [{ name: "Cliente Z", slug: "c-z" }],
+      ok: true,
+    });
+    montar();
+    fireEvent.click(screen.getByRole("button", { name: "Nova assinatura" }));
+    await screen.findByRole("option", { name: "Cliente Z — c-z" });
+    fireEvent.change(screen.getByLabelText("Cliente"), {
+      target: { value: "c-z" },
+    });
+    fireEvent.change(screen.getByLabelText("Degrau"), {
+      target: { value: "scale" },
+    });
+    fireEvent.change(screen.getByLabelText("Valor mensal"), {
+      target: { value: "1.000,00" },
+    });
+    fireEvent.change(screen.getByLabelText("Créditos incluídos"), {
+      target: { value: "500" },
+    });
+    fireEvent.change(screen.getByLabelText("Preço do crédito extra"), {
+      target: { value: "0,10" },
+    });
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Contrato anual assinado." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+
+    await waitFor(() =>
+      expect(status()).toBe("Assinatura de Cliente Z criada.")
+    );
+    expect(listarRecorrenteMock).toHaveBeenCalled();
+  });
+
+  it("alterar valor: o status nomeia o cliente, o valor novo e a competência", async () => {
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Alterar valor — Cliente A" })
+    );
+    fireEvent.change(screen.getByLabelText("Novo valor mensal"), {
+      target: { value: "2.000,00" },
+    });
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Upgrade de degrau combinado com o cliente." },
+    });
+    fireEvent.change(screen.getByLabelText("Competência"), {
+      target: { value: "2026-06" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+
+    await waitFor(() =>
+      expect(status()).toBe(
+        `Assinatura de Cliente A passa a ${dinheiro(200_000)} a partir de 06/2026.`
+      )
+    );
+  });
+
+  it("encerrar: o status nomeia o cliente", async () => {
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Encerrar — Cliente A" })
+    );
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Cliente não renovou o contrato anual." },
+    });
+    fireEvent.change(screen.getByLabelText("Data do encerramento"), {
+      target: { value: "2026-05-31" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Encerrar assinatura" })
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+
+    await waitFor(() =>
+      expect(status()).toBe("Assinatura de Cliente A encerrada.")
+    );
+  });
+
+  it("crédito do mês: o status nomeia o cliente e a competência", async () => {
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Lançar consumo — Cliente A" })
+    );
+    fireEvent.change(screen.getByLabelText("Créditos consumidos no mês"), {
+      target: { value: "1200" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar consumo" }));
+
+    await waitFor(() =>
+      expect(status()).toBe("Consumo de Cliente A em 05/2026 salvo.")
+    );
+  });
+
+  it("escrita recusada não fala sucesso", async () => {
+    encerrarAssinaturaMock.mockResolvedValue({
+      error: "Assinatura já encerrada.",
+      ok: false,
+    });
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Encerrar — Cliente A" })
+    );
+    fireEvent.change(screen.getByLabelText("Motivo"), {
+      target: { value: "Cliente não renovou o contrato anual." },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Encerrar assinatura" })
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+
+    await screen.findByText("Assinatura já encerrada.");
+    expect(status()).toBeNull();
+  });
+});

@@ -6,17 +6,19 @@ import {
   aplicarAcaoDpa,
   exportarAoCharter,
   type FornecedorDpaRow,
+  listarFornecedoresDpa,
 } from "@/app/actions/empresa/fornecedores";
 import { Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { formatarData, ROTULO_ESTADO, TOM_ESTADO } from "@/lib/empresa/formato";
-import { contadores } from "@/lib/empresa/fornecedores";
+import { type Contadores, contadores } from "@/lib/empresa/fornecedores";
 
 /**
  * Inventário de fornecedores com o estado do DPA.
@@ -254,14 +256,38 @@ function LinhaFornecedor({
   );
 }
 
+/** A página seguinte na forma que `usePaginas` lê. */
+async function lerFornecedores(pagina: number) {
+  const res = await listarFornecedoresDpa({ pagina });
+  return res.ok
+    ? {
+        data: { itens: res.data.linhas, temMais: res.data.temMais },
+        ok: true as const,
+      }
+    : res;
+}
+
 export function Inventario({
   iniciais,
   podeEscrever,
+  temMais: temMaisInicial = false,
+  contadoresDoInventario,
 }: {
   iniciais: FornecedorDpaRow[];
   podeEscrever: boolean;
+  /** A primeira página parou no teto e há mais (`listarFornecedoresDpa`). */
+  temMais?: boolean;
+  /** Contagem do inventário inteiro, vinda do servidor. */
+  contadoresDoInventario?: Contadores;
 }) {
   const [linhas, setLinhas] = useState(iniciais);
+  const paginacao = usePaginas(lerFornecedores, temMaisInicial);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLinhas((atual) => [...atual, ...mais]);
+    }
+  }, [paginacao.proxima]);
   const [filtro, setFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -270,7 +296,16 @@ export function Inventario({
   // começa, para o segundo clique não exportar duas vezes.
   const [exportando, iniciarExportacao] = useTransition();
 
-  const kpis = useMemo(() => contadores(linhas), [linhas]);
+  // Tudo carregado: conta as linhas da tela, que acompanham cada ação. Com
+  // páginas por vir, a tela não tem o inventário inteiro — vale a contagem
+  // do servidor.
+  const kpis = useMemo(
+    () =>
+      paginacao.temMais && contadoresDoInventario
+        ? contadoresDoInventario
+        : contadores(linhas),
+    [linhas, paginacao.temMais, contadoresDoInventario]
+  );
 
   const visiveis = linhas.filter((l) => linhaVisivel(l, filtro));
   const algumaProvisoria = linhas.some((l) => l.classificacaoProvisoria);
@@ -450,6 +485,12 @@ export function Inventario({
               pôde ser lido (PDF sem camada de texto ou portal dinâmico).
             </p>
           ) : null}
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
         </div>
       </Secao>
     </>

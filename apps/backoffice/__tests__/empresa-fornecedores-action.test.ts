@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   logPlatformAudit: vi.fn(),
   revalidatePath: vi.fn(),
   findMany: vi.fn(),
+  groupBy: vi.fn(),
   findUnique: vi.fn(),
   update: vi.fn(),
   tenantFindUnique: vi.fn(),
@@ -42,6 +43,7 @@ vi.mock("@repo/database", () => ({
   database: {
     fornecedorDpa: {
       findMany: mocks.findMany,
+      groupBy: mocks.groupBy,
       findUnique: mocks.findUnique,
       update: mocks.update,
     },
@@ -101,6 +103,14 @@ function resetar() {
   for (const m of Object.values(mocks)) m.mockReset();
   mocks.requirePlatformStaff.mockResolvedValue(staff);
   mocks.findMany.mockResolvedValue([LINHA]);
+  // Os contadores saem do `groupBy` (inventário inteiro), não da página.
+  mocks.groupBy.mockResolvedValue([
+    {
+      estado: LINHA.estado,
+      bloqueiaVenda: LINHA.bloqueiaVenda,
+      _count: { _all: 1 },
+    },
+  ]);
   mocks.findUnique.mockResolvedValue(LINHA);
   mocks.update.mockImplementation(
     async (args: { data: Record<string, unknown> }) => ({

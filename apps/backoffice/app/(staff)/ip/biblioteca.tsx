@@ -15,6 +15,7 @@ import {
   getIpAsset,
   type IpAssetDetail,
   type IpAssetRow,
+  listIpAssets,
   registrarReusoAction,
   updateIpAssetAction,
 } from "@/app/actions/ip-library";
@@ -27,20 +28,26 @@ import {
   rotuloSalvar,
 } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
-import { PerguntaDescartar } from "@/components/pergunta-descartar";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
+import {
+  PerguntaAoFechar,
+  PerguntaDescartar,
+  useFecharComRascunho,
+} from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
+import { anexar, TETO_DA_LISTA } from "@/lib/paginacao";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState } from "@/lib/url-state";
+import { RegistrarAtivo } from "./registrar";
+import { KpisDoAcervo, LacunasDeIp } from "./resumo";
 import {
-  RegistrarAtivo,
   ROTULO_LICENCA,
   ROTULO_MATURIDADE,
   ROTULO_PROCEDENCIA,
-} from "./registrar";
-import { KpisDoAcervo, LacunasDeIp } from "./resumo";
+} from "./rotulos";
 
 /** O que a action `registrarReusoAction` devolve — os três campos já vêm
  *  prontos do servidor, nenhum é somado aqui. */
@@ -285,6 +292,23 @@ function ExtraDoAtivo({
   );
 }
 
+/** "Novo"/"Fechar" do acervo. Fechar com o cadastro pela metade pergunta
+ *  antes — desmontar o formulário jogava fora o que foi digitado. */
+function useCadastroDoAcervo() {
+  const [criando, setCriando] = useState(false);
+  const fechar = useCallback(() => setCriando(false), []);
+  const guarda = useFecharComRascunho(fechar);
+  const { pedirFechar } = guarda;
+  const alternar = useCallback(() => {
+    if (criando) {
+      pedirFechar();
+      return;
+    }
+    setCriando(true);
+  }, [criando, pedirFechar]);
+  return { alternar, criando, fechar, guarda };
+}
+
 export function Biblioteca({
   iniciais,
   engajamentos,
@@ -299,6 +323,15 @@ export function Biblioteca({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  // O acervo chega até o teto e cresce daqui, uma página por "Mostrar mais".
+  const ler = useCallback((pagina: number) => listIpAssets({ pagina }), []);
+  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => anexar(atual, mais));
+    }
+  }, [paginacao.proxima]);
   // O ativo aberto mora em `?ativo=<id>`: F5 reabre o mesmo e o link cola num
   // ticket. A URL é a fonte — clicar na lista escreve o param, e é o param
   // que dispara a leitura. Id fora da lista cai no estado vazio, sem erro.
@@ -306,7 +339,8 @@ export function Biblioteca({
   const [aberto, setAberto] = useState<IpAssetDetail | null>(null);
   const [rascunho, setRascunho] = useState("");
   const [nota, setNota] = useState("");
-  const [criando, setCriando] = useState(false);
+  const cadastro = useCadastroDoAcervo();
+  const { criando } = cadastro;
   const [erro, setErro] = useState<string | null>(null);
   const [confirmacao, setConfirmacao] = useState<string | null>(null);
   // O `pendente` trava o botão no mesmo render em que o envio começa — o
@@ -363,14 +397,15 @@ export function Biblioteca({
   // para `reusos` e `maturidade`, que são derivados e não campos. Criar leva
   // direto ao editor, como antes — pela URL, e o efeito acima busca o
   // `IpAssetDetail` que a lista sozinha não tem.
+  const { fechar: fecharCadastro } = cadastro;
   const aoCriar = useCallback(
     (novo: IpAssetRow) => {
       setErro(null);
       setLista((atual) => [novo, ...atual]);
-      setCriando(false);
+      fecharCadastro();
       setAtivoId(novo.id);
     },
-    [setAtivoId]
+    [setAtivoId, fecharCadastro]
   );
 
   const salvar = useCallback(() => {
@@ -459,7 +494,7 @@ export function Biblioteca({
           podeEscrever ? (
             <BotaoPrimario
               full={false}
-              onClick={() => setCriando((v) => !v)}
+              onClick={cadastro.alternar}
               type="button"
             >
               {criando ? "Fechar" : "Novo"}
@@ -468,13 +503,17 @@ export function Biblioteca({
         }
         formulario={
           criando ? (
-            <RegistrarAtivo
-              engajamentos={engajamentos}
-              onCriado={aoCriar}
-              onErro={setErro}
-              pessoas={pessoas}
-              servicos={servicos}
-            />
+            <>
+              <PerguntaAoFechar guarda={cadastro.guarda} />
+              <RegistrarAtivo
+                engajamentos={engajamentos}
+                marcarSujo={cadastro.guarda.marcarSujo}
+                onCriado={aoCriar}
+                onErro={setErro}
+                pessoas={pessoas}
+                servicos={servicos}
+              />
+            </>
           ) : null
         }
         icone="book"
@@ -485,6 +524,14 @@ export function Biblioteca({
         }))}
         onSelecionar={guarda.abrir}
         renderExtra={renderExtraDoAtivo}
+        rodape={
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
+        }
         selecionadoId={aberto?.id ?? null}
         titulo="Acervo"
         vazio="Acervo vazio. É aqui que fica o que dá para reusar no próximo cliente em vez de refazer."

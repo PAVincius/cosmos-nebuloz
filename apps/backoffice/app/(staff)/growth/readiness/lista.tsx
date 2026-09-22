@@ -3,15 +3,17 @@
 import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import type { AvaliacaoRow } from "@/app/actions/maturidade";
-import { criarAvaliacao } from "@/app/actions/maturidade";
+import { criarAvaliacao, listarAvaliacoes } from "@/app/actions/maturidade";
 import { Campo, Erro, INPUT, mensagemDeErro } from "@/components/campo";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { OQueFalta } from "@/components/o-que-falta";
 import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { CODIGOS_NIVEL, INFO_NIVEL, type Nivel } from "@/lib/growth/maturidade";
+import { anexar } from "@/lib/paginacao";
 
 const CABECALHO = {
   padding: "0 10px 7px",
@@ -103,15 +105,38 @@ function NovaAvaliacao({ podeEscrever }: { podeEscrever: boolean }) {
   );
 }
 
+/** A página seguinte na forma que `usePaginas` lê. */
+async function lerAvaliacoes(pagina: number) {
+  const res = await listarAvaliacoes({ pagina });
+  return res.ok
+    ? {
+        data: { itens: res.data.avaliacoes, temMais: res.data.temMais },
+        ok: true as const,
+      }
+    : res;
+}
+
 export function Lista({
-  avaliacoes,
+  avaliacoes: iniciais,
   podeEscrever,
+  temMais: temMaisInicial = false,
   totalDeCriterios,
 }: {
   avaliacoes: AvaliacaoRow[];
   podeEscrever: boolean;
+  /** A primeira página parou no teto e há mais (`listarAvaliacoes`). */
+  temMais?: boolean;
   totalDeCriterios: number;
 }) {
+  const [avaliacoes, setAvaliacoes] = useState(iniciais);
+  const paginacao = usePaginas(lerAvaliacoes, temMaisInicial);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setAvaliacoes((atual) => anexar(atual, mais));
+    }
+  }, [paginacao.proxima]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <NovaAvaliacao podeEscrever={podeEscrever} />
@@ -204,6 +229,12 @@ export function Lista({
             </tbody>
           </table>
         )}
+        <BotaoMostrarMais
+          carregando={paginacao.carregando}
+          erro={paginacao.erro}
+          onClick={mostrarMais}
+          temMais={paginacao.temMais}
+        />
       </Secao>
     </div>
   );

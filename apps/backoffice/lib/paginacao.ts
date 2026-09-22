@@ -97,3 +97,13 @@ export async function paginasCarregadas<T>(
     temMais: lidas.at(-1)?.temMais ?? false,
   };
 }
+
+/**
+ * Anexa a próxima página sem repetir o que já está na tela. Um item criado no
+ * topo empurra a janela do banco em um, e a página seguinte voltaria com o
+ * último da anterior — duas linhas com a mesma chave no React.
+ */
+export function anexar<T extends { id: string }>(atual: T[], mais: T[]): T[] {
+  const vistos = new Set(atual.map((a) => a.id));
+  return [...atual, ...mais.filter((m) => !vistos.has(m.id))];
+}

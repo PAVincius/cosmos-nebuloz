@@ -5,7 +5,7 @@
 // baixar, cancelar) e `podeEscrever={false}` escondendo as três escritas.
 // Relógio congelado em 2026-09-15T12:00:00Z — mesma data que `situacaoDoTitulo`
 // e `envelhecimento` usam para classificar os títulos ABERTO da fixture.
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Titulos } from "@/app/(staff)/empresa/financeiro/titulos";
 import type { ContaView } from "@/app/actions/empresa/financeiro";
@@ -317,5 +317,89 @@ describe("Titulos", () => {
     expect(
       screen.queryByRole("button", { name: "Cancelar — Hospedagem AWS" })
     ).toBeNull();
+  });
+});
+
+// Onda 8a, bloco 1: silêncio no Financeiro é lacuna — toda escrita fala. A
+// frase nomeia o alvo e só aparece depois da releitura (`listarTitulos`),
+// como na aba Lançamentos: confirma o que a tabela já mostra.
+describe("Titulos — toda escrita fala", () => {
+  function status(): string | null {
+    return screen.queryByRole("status")?.textContent ?? null;
+  }
+
+  it("criar: o status nomeia o título criado, depois da releitura", async () => {
+    montar();
+    fireEvent.click(screen.getByRole("button", { name: "Novo título" }));
+    fireEvent.change(screen.getByLabelText("Tipo"), {
+      target: { value: "PAGAR" },
+    });
+    fireEvent.change(screen.getByLabelText("Descrição"), {
+      target: { value: "Nova despesa" },
+    });
+    fireEvent.change(screen.getByLabelText("Contraparte"), {
+      target: { value: "Fornecedor Y" },
+    });
+    fireEvent.change(screen.getByLabelText("Conta"), {
+      target: { value: "5.1" },
+    });
+    fireEvent.change(screen.getByLabelText("Valor"), {
+      target: { value: "10,00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+
+    await waitFor(() => expect(status()).toBe("Título «Nova despesa» criado."));
+    expect(listarTitulosMock).toHaveBeenCalled();
+  });
+
+  it("baixar: o status nomeia o título e a data da baixa", async () => {
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Baixar — Hospedagem AWS" })
+    );
+    fireEvent.change(screen.getByLabelText("Data"), {
+      target: { value: "2026-09-22" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar baixa" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+
+    await waitFor(() =>
+      expect(status()).toBe("Título «Hospedagem AWS» baixado em 22/09/2026.")
+    );
+  });
+
+  it("cancelar: o status nomeia o título cancelado", async () => {
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cancelar — Hospedagem AWS" })
+    );
+    fireEvent.change(screen.getByLabelText("Motivo do cancelamento"), {
+      target: { value: "Duplicidade de cobrança identificada." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar título" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+
+    await waitFor(() =>
+      expect(status()).toBe("Título «Hospedagem AWS» cancelado.")
+    );
+  });
+
+  it("escrita recusada não fala sucesso", async () => {
+    cancelarTituloMock.mockResolvedValue({
+      error: "Título já baixado.",
+      ok: false,
+    });
+    montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cancelar — Hospedagem AWS" })
+    );
+    fireEvent.change(screen.getByLabelText("Motivo do cancelamento"), {
+      target: { value: "Duplicidade de cobrança identificada." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar título" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+
+    await screen.findByText("Título já baixado.");
+    expect(status()).toBeNull();
   });
 });

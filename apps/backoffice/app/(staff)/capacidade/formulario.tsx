@@ -7,8 +7,13 @@ import {
 } from "@/app/actions/capacity";
 import { BotaoPrimario, Campo, INPUT } from "@/components/campo";
 import { OQueFalta } from "@/components/o-que-falta";
+import {
+  rascunhoMudou,
+  useRascunhoReportado,
+} from "@/components/pergunta-descartar";
 import { horasNaJanela, semanasDaJanela } from "@/lib/capacidade/janela";
 import { formatarDataBr } from "@/lib/empresa/periodo";
+import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
 /**
  * Formulário de entrada de capacidade — pessoa ou terceiro.
@@ -183,23 +188,39 @@ function FaixaDaJanela({
  * tipo escolhido e as regras da janela — deixar isso em `Capacidade` misturava
  * a validação do cadastro com a da alocação, que não têm nada em comum.
  */
+const PESSOA_VAZIA = {
+  nome: "",
+  email: "",
+  habilidades: "",
+  horas: "40",
+  entraEm: "",
+  saiEm: "",
+  observacao: "",
+};
+
+/** Sem quem pergunte ao fechar, o rascunho só avisa o navegador. */
+function semGuarda(): void {
+  // Nada a avisar: ninguém abriu este formulário com uma guarda.
+}
+
 export function FormularioDeCapacidade({
   onCriada,
   onErro,
+  marcarSujo = semGuarda,
 }: {
   onCriada: (p: PessoaCapacidade) => void;
   onErro: (msg: string) => void;
+  /** Avisa quem abriu o formulário que há rascunho — é quem pergunta antes
+   *  de fechar (`useFecharComRascunho`). */
+  marcarSujo?: (sujo: boolean) => void;
 }) {
   const [tipo, setTipo] = useState<Tipo>("pessoa");
-  const [pessoa, setPessoa] = useState({
-    nome: "",
-    email: "",
-    habilidades: "",
-    horas: "40",
-    entraEm: "",
-    saiEm: "",
-    observacao: "",
-  });
+  const [pessoa, setPessoa] = useState(PESSOA_VAZIA);
+  // Rascunho não some em silêncio: fechar a aba passa pelo navegador, e o
+  // "Fechar" da equipe pergunta. Trocar só o tipo não é texto a perder.
+  const sujo = rascunhoMudou(pessoa, PESSOA_VAZIA);
+  useAvisoAoSair(sujo);
+  useRascunhoReportado(sujo, marcarSujo);
   // `useTransition` em vez de um `salvando` à mão: o `pendente` desabilita o
   // botão no mesmo render em que o envio começa, e é isso que faz o segundo
   // clique não criar uma segunda pessoa.

@@ -56,10 +56,10 @@ export const INFO_ESTAGIO: Record<
 
 export const MOTIVOS_PERDA = {
   PRECO: "Preço",
-  TIMING: "Timing / orçamento adiado",
-  SEM_SPONSOR: "Sem sponsor executivo",
+  TIMING: "Momento errado / orçamento adiado",
+  SEM_SPONSOR: "Sem patrocinador executivo",
   CONCORRENTE: "Concorrente ou solução interna",
-  SEM_FIT: "Sem fit com o método",
+  SEM_FIT: "Sem aderência ao método",
   OUTRO: "Outro",
 } as const;
 export type MotivoPerda = keyof typeof MOTIVOS_PERDA;

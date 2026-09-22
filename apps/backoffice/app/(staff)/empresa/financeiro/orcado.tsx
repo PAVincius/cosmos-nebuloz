@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useId, useMemo, useState } from "react";
 import {
   lerOrcado,
   type OrcadoContaView,
@@ -22,6 +22,7 @@ import {
   type Grupo,
   ROTULO_CENTRO,
 } from "@/lib/empresa/plano-de-contas";
+import { useSalvoHaPouco } from "@/lib/salvo-ha-pouco";
 
 /**
  * Aba "Orçado × realizado" (Task 4, spec 2026-09-06 §4): orçado editável por
@@ -116,46 +117,137 @@ const CEL = {
   whiteSpace: "nowrap",
 } as const;
 
+type Gravacao = { ok: true } | { ok: false; error: string };
+type Gravar = (
+  conta: string,
+  competencia: string,
+  texto: string
+) => Promise<Gravacao>;
+
+/**
+ * A célula do orçado, com o estado dela. Gravava no blur sem dizer nada e,
+ * na falha, continuava mostrando o valor digitado com o erro longe, no topo
+ * da tabela — a tela afirmava um orçado que o banco não tinha. Agora diz
+ * "Salvando…" e "Salvo" ali mesmo e, na falha, volta ao valor anterior com o
+ * motivo ao lado, amarrado ao campo por `aria-describedby`.
+ *
+ * O `<output>` nasce no primeiro blur e fica: região viva que já existe é a
+ * que o leitor de tela anuncia quando o texto muda.
+ */
 function CampoOrcado({
   conta,
+  nomeConta,
   competencia,
   valor,
   podeEscrever,
   gravar,
 }: {
   conta: string;
+  nomeConta: string;
   competencia: string;
   valor: number | null;
   podeEscrever: boolean;
-  gravar: (conta: string, competencia: string, texto: string) => void;
+  gravar: Gravar;
 }) {
+  const anterior = valor === null ? "" : centavosParaCampo(valor);
+  const [texto, setTexto] = useState(anterior);
+  const [visto, setVisto] = useState(anterior);
+  const [tocada, setTocada] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [gravacoes, setGravacoes] = useState(0);
+  const salvo = useSalvoHaPouco(gravacoes);
+  const idErro = useId();
+
+  // A releitura trouxe outro valor: a célula passa a mostrá-lo.
+  if (anterior !== visto) {
+    setVisto(anterior);
+    setTexto(anterior);
+  }
+
+  async function sair() {
+    // Sair cedo quando nada mudou: sem isso, passar o Tab pela grade
+    // inteira grava (e audita) cada célula, mesmo vazia.
+    if (!podeEscrever || texto === anterior) {
+      return;
+    }
+    setTocada(true);
+    setErro(null);
+    setSalvando(true);
+    const res = await gravar(conta, competencia, texto);
+    setSalvando(false);
+    if (!res.ok) {
+      setTexto(anterior);
+      setErro(res.error);
+      return;
+    }
+    setGravacoes((n) => n + 1);
+  }
+
+  // Fora do JSX: atributo ausente (não "false") quando não há erro.
+  const descritoPor = erro === null ? undefined : idErro;
+  const invalido = erro === null ? undefined : true;
+  let estado = "";
+  if (salvando) {
+    estado = "Salvando…";
+  } else if (salvo) {
+    estado = "Salvo";
+  }
+
   return (
-    <input
-      aria-label={`Orçado ${conta} ${rotuloMes(competencia)}`}
-      defaultValue={valor === null ? "" : centavosParaCampo(valor)}
-      inputMode="decimal"
-      key={`${conta}-${competencia}-${valor ?? ""}`}
-      onBlur={(e) => {
-        // Sair cedo quando nada mudou: sem isso, passar o Tab pela grade
-        // inteira grava (e audita) cada célula, mesmo vazia.
-        if (!podeEscrever) {
-          return;
-        }
-        if (e.target.value === e.target.defaultValue) {
-          return;
-        }
-        gravar(conta, competencia, e.target.value);
-      }}
-      readOnly={!podeEscrever}
+    <div
       style={{
-        ...INPUT,
-        padding: "4px 6px",
-        width: 96,
-        textAlign: "right",
-        fontSize: "var(--fs-nota)",
+        alignItems: "flex-end",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
       }}
-    />
+    >
+      <input
+        aria-describedby={descritoPor}
+        aria-invalid={invalido}
+        aria-label={`Orçado de ${nomeConta} em ${rotuloMes(competencia)}`}
+        inputMode="decimal"
+        onBlur={sair}
+        onChange={(e) => setTexto(e.target.value)}
+        readOnly={!podeEscrever}
+        style={{
+          ...INPUT,
+          padding: "4px 6px",
+          width: 96,
+          textAlign: "right",
+          fontSize: "var(--fs-nota)",
+          ...(erro ? { border: "1px solid rgba(var(--red-rgb),.6)" } : {}),
+        }}
+        value={texto}
+      />
+      {tocada ? (
+        <output aria-live="polite" style={{ color: "var(--ink-muted)" }}>
+          {estado}
+        </output>
+      ) : null}
+      {erro ? (
+        <span
+          id={idErro}
+          role="alert"
+          style={{
+            color: "var(--red-text)",
+            fontWeight: 600,
+            maxWidth: 180,
+            textAlign: "right",
+            whiteSpace: "normal",
+          }}
+        >
+          Não salvou: {erro}
+        </span>
+      ) : null}
+    </div>
   );
+}
+
+/** A palavra do desvio ruim — cor nunca sozinha (DESIGN.backoffice.md). */
+function vereditoDoDesvio(grupo: Grupo): string {
+  return grupo === 1 ? "abaixo do previsto" : "acima do orçado";
 }
 
 function CelulaDesvio({
@@ -185,6 +277,11 @@ function CelulaDesvio({
           ({desvioPercent}%)
         </span>
       )}
+      {ruim ? (
+        <span style={{ display: "block", fontWeight: 600 }}>
+          {vereditoDoDesvio(grupo)}
+        </span>
+      ) : null}
     </td>
   );
 }
@@ -198,7 +295,7 @@ function LinhaConta({
   c: OrcadoContaView;
   competencias: string[];
   podeEscrever: boolean;
-  gravar: (conta: string, competencia: string, texto: string) => void;
+  gravar: Gravar;
 }) {
   return (
     <tr>
@@ -217,6 +314,7 @@ function LinhaConta({
                 competencia={competencia}
                 conta={c.conta}
                 gravar={gravar}
+                nomeConta={c.nome}
                 podeEscrever={podeEscrever}
                 valor={linha?.orcado ?? null}
               />
@@ -359,8 +457,10 @@ export function Orcado({
     setDados(res.data);
   }, [intervalo.de, intervalo.ate]);
 
-  const gravar = useCallback(
-    async (conta: string, competencia: string, texto: string) => {
+  // A falha da gravação volta para a célula (ver `CampoOrcado`); o erro do
+  // topo fica só para a releitura, que é da tabela inteira.
+  const gravar = useCallback<Gravar>(
+    async (conta, competencia, texto) => {
       setErro(null);
       const valorCentavos = texto.trim() === "" ? null : paraCentavos(texto);
       const res = await salvarOrcamento({
@@ -369,10 +469,10 @@ export function Orcado({
         valorCentavos,
       });
       if (!res.ok) {
-        setErro(res.error);
-        return;
+        return res;
       }
       await recarregar();
+      return { ok: true };
     },
     [recarregar]
   );
@@ -419,7 +519,7 @@ export function Orcado({
 
   return (
     <Secao
-      subtitle="orçado editável por conta e competência, realizado somado do livro-razão, e o desvio entre os dois — vermelho quando é ruim para a conta"
+      subtitle="orçado editável por conta e competência, realizado somado do livro-razão, e o desvio entre os dois — em vermelho e dito por extenso quando é ruim para a conta"
       title="Orçado × realizado"
     >
       {erro ? <Erro>{erro}</Erro> : null}

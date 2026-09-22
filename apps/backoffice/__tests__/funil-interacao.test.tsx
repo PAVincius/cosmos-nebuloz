@@ -105,9 +105,9 @@ describe("Board — cursor e coluna vazia", () => {
       }),
     ]);
 
-    const emLead = screen.getByRole("button", { name: "Abrir lead Em Lead" });
+    const emLead = screen.getByRole("button", { name: /^Abrir Em Lead/ });
     const emProposta = screen.getByRole("button", {
-      name: "Abrir lead Em Proposta",
+      name: /^Abrir Em Proposta/,
     });
     expect(emLead.style.cursor).toBe("grab");
     expect(emProposta.style.cursor).not.toBe("grab");

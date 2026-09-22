@@ -271,7 +271,7 @@ describe("Funil — soltar o card em Proposta", () => {
       name: "Coluna Avaliação",
     });
     const card = within(colunaDeOrigem).getByRole("button", {
-      name: "Abrir lead Scaffold Ltda",
+      name: /^Abrir Scaffold Ltda/,
     });
     const coluna = screen.getByRole("group", { name: "Coluna Proposta" });
     fireEvent.dragStart(card, { dataTransfer: { effectAllowed: "" } });

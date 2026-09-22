@@ -18,6 +18,7 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import { cortar, janela } from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -80,25 +81,59 @@ function paraLinha(t: {
 
 const ListarTitulosSchema = z.object({
   tipo: z.enum(["PAGAR", "RECEBER"]).optional(),
+  /** Inclui baixados e cancelados mexidos há mais de 90 dias. */
+  antigos: z.boolean().optional(),
+  pagina: z.number().int().min(1).optional(),
 });
 
+const NOVENTA_DIAS_MS = 90 * 24 * 60 * 60 * 1000;
+
+/**
+ * Títulos até o teto (`lib/paginacao.ts`). A lista crescia para sempre: todo
+ * título baixado ou cancelado ficava na tela. Por padrão vem o que ainda pede
+ * ação — o que está em aberto — e o que foi baixado ou cancelado nos últimos
+ * 90 dias (`atualizadoEm`: é a baixa ou o cancelamento que o mexe por último);
+ * `antigos` tira o recorte. As duas formas param no teto, e `temMais` diz se
+ * há próxima página.
+ */
 export async function listarTitulos(
   input: z.input<typeof ListarTitulosSchema>
-): Promise<Result<{ titulos: TituloRow[]; contas: ContaView[] }>> {
+): Promise<
+  Result<{ titulos: TituloRow[]; contas: ContaView[]; temMais: boolean }>
+> {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    const { tipo } = ListarTitulosSchema.parse(input);
+    const { tipo, antigos, pagina } = ListarTitulosSchema.parse(input);
+    const opcoes = { pagina };
+    const recorte = antigos
+      ? {}
+      : {
+          OR: [
+            { status: "ABERTO" },
+            {
+              atualizadoEm: {
+                gte: new Date(Date.now() - NOVENTA_DIAS_MS),
+              },
+            },
+          ],
+        };
 
-    const [titulos, contas] = await Promise.all([
+    const [linhas, contas] = await Promise.all([
       database.titulo.findMany({
-        where: { tenantId: SYSTEM_TENANT_ID, ...(tipo ? { tipo } : {}) },
+        where: {
+          tenantId: SYSTEM_TENANT_ID,
+          ...(tipo ? { tipo } : {}),
+          ...recorte,
+        },
         orderBy: { vencimento: "asc" },
+        ...janela(opcoes),
         select: SELECT_TITULO,
       }),
       contasDoPlano(),
     ]);
 
-    return { titulos: titulos.map(paraLinha), contas };
+    const { itens, temMais } = cortar(linhas.map(paraLinha), opcoes);
+    return { titulos: itens, contas, temMais };
   });
 }
 

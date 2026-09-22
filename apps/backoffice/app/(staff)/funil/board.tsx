@@ -144,8 +144,11 @@ function CartaoLead({
   const podeArrastar = podeEscrever && codigo !== "PROPOSAL";
 
   return (
+    // Sem `aria-label`: ele substituía o conteúdo e o leitor de tela ouvia só
+    // o nome. O nome acessível agora é o card inteiro — lead, dias no
+    // estágio, "vencido", valor e próximo passo —, com "Abrir" em `sr-only` na
+    // frente, como nas propostas.
     <button
-      aria-label={`Abrir lead ${lead.nome}`}
       className="btn"
       draggable={podeArrastar}
       onClick={() => onAbrirLead(lead.id)}
@@ -170,12 +173,13 @@ function CartaoLead({
       }}
       type="button"
     >
+      <span className="sr-only">Abrir </span>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
         <span style={{ minWidth: 0 }}>
           <span
             style={{
               display: "block",
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -187,7 +191,7 @@ function CartaoLead({
           <span
             style={{
               display: "block",
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -197,11 +201,15 @@ function CartaoLead({
             {textoEntradaOrigem(lead)}
           </span>
         </span>
+        <span className="sr-only">
+          , {dias} d no estágio{vencido ? ", vencido" : ""},
+        </span>
         {vencido ? (
           <span
+            aria-hidden="true"
             className="mono"
             style={{
-              fontSize: 10,
+              fontSize: "var(--fs-micro)",
               fontWeight: 800,
               color: "var(--red-text)",
               flexShrink: 0,
@@ -222,7 +230,7 @@ function CartaoLead({
         <span
           className="mono"
           style={{
-            fontSize: 12,
+            fontSize: "var(--fs-nota)",
             fontWeight: 800,
             color: valorTexto === "—" ? "var(--ink-faint)" : "var(--ink)",
           }}
@@ -235,19 +243,23 @@ function CartaoLead({
               display: "inline-flex",
               alignItems: "center",
               gap: 4,
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
               fontWeight: 700,
               color: `var(--${tomPasso}-text)`,
             }}
           >
+            <span className="sr-only">, próximo passo </span>
             <Icon name={icone} size={11} strokeWidth={2.2} />
             {textoProximoPasso(lead)}
           </span>
-          <Avatar
-            name={lead.donoNome ?? undefined}
-            size={20}
-            tone={tomColuna}
-          />
+          {/* As iniciais do dono não dizem nada lidas em voz alta. */}
+          <span aria-hidden="true" style={{ display: "inline-flex" }}>
+            <Avatar
+              name={lead.donoNome ?? undefined}
+              size={20}
+              tone={tomColuna}
+            />
+          </span>
         </span>
       </div>
     </button>
@@ -369,7 +381,7 @@ function ColunaDoEstagio({
             />
             <span
               style={{
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 fontWeight: 700,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -381,14 +393,18 @@ function ColunaDoEstagio({
           </span>
           <span
             className="mono"
-            style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-faint)" }}
+            style={{
+              fontSize: "var(--fs-nota)",
+              fontWeight: 700,
+              color: "var(--ink-faint)",
+            }}
           >
             {coluna.leads.length}
           </span>
         </span>
         <span
           className="mono"
-          style={{ fontSize: 11, color: "var(--ink-muted)" }}
+          style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}
         >
           {formatarBRL(coluna.somaCentavos)}{" "}
           <span style={{ color: "var(--ink-faint)" }}>
@@ -415,7 +431,7 @@ function ColunaDoEstagio({
               placeItems: "center",
               border: "1px dashed var(--hairline)",
               borderRadius: 10,
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
               padding: 12,
               textAlign: "center",
@@ -527,12 +543,6 @@ export function Board({
     onMover(lead.id, codigo);
   }
 
-  function soltarEmGanho() {
-    setSobre(null);
-    setArrastando(null);
-    setMensagem("Ganho só via proposta aceita.");
-  }
-
   function soltarEmPerdido() {
     setSobre(null);
     if (!arrastando) {
@@ -578,32 +588,28 @@ export function Board({
 
       {podeEscrever ? (
         <div className="bo-duas-colunas">
-          {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: alvo nativo de drag-and-drop, mesmo motivo da coluna acima */}
+          {/* Não é alvo de drop: aceitava o arraste só para recusar em
+              seguida. Fica como aviso inerte — sem `onDragOver`, o navegador
+              não oferece soltar aqui — e a regra é dita de uma vez. */}
           <fieldset
-            aria-label="Soltar para marcar ganho"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              soltarEmGanho();
-            }}
+            aria-disabled="true"
+            aria-label="Ganho vem da proposta aceita"
             style={{
               margin: 0,
               padding: "10px 12px",
               borderRadius: 10,
-              border: "1px dashed rgba(var(--green-rgb),.35)",
+              border: "1px solid var(--hairline)",
               display: "flex",
               alignItems: "center",
               gap: 8,
-              fontSize: 12,
-              fontWeight: 700,
-              color: "var(--green-text)",
+              fontSize: "var(--fs-nota)",
+              fontWeight: 600,
+              color: "var(--ink-faint)",
+              cursor: "default",
             }}
           >
             <Icon name="check" size={13} />
-            <span>Ganho</span>
-            <span style={{ fontWeight: 500, color: "var(--ink-faint)" }}>
-              · só via proposta ganha
-            </span>
+            <span>Ganho vem da proposta aceita</span>
           </fieldset>
           {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: alvo nativo de drag-and-drop, mesmo motivo da coluna acima */}
           <fieldset
@@ -621,7 +627,7 @@ export function Board({
               display: "flex",
               alignItems: "center",
               gap: 8,
-              fontSize: 12,
+              fontSize: "var(--fs-nota)",
               fontWeight: 700,
               color: "var(--red-text)",
             }}
