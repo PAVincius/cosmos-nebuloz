@@ -72,10 +72,10 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("carteira de clientes (/)", () => {
+describe("carteira de clientes (/clientes)", () => {
   it("diz o que a lista é e que só o nome abre o detalhe", async () => {
     mocks.listClients.mockResolvedValue({ ok: true, data: [] });
-    const { default: Page } = await import("@/app/(staff)/page");
+    const { default: Page } = await import("@/app/(staff)/clientes/page");
     render(await Page());
 
     expect(screen.queryAllByText(VAZAMENTO)).toHaveLength(0);

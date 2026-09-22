@@ -109,47 +109,57 @@ function Eyebrow({
 }
 
 /**
- * Se a rota atual pertence a este item de menu.
+ * Se a rota atual está dentro deste item de menu: a própria rota ou uma
+ * sub-rota dela. A raiz só casa consigo mesma — `/` é prefixo de tudo, e a
+ * Home acenderia em todas as telas.
+ */
+function combina(href: string, pathname: string): boolean {
+  if (href === "/") {
+    return pathname === "/";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/**
+ * O item que a rota atual abre, e a seção dele: entre os que combinam, o mais
+ * específico. `/clientes/novo` está dentro de Clientes e é Provisionar
+ * cliente; ganha o mais longo, e a sidebar acende um item só.
  *
  * Uma função só, usada pela trilha da topbar e pelo destaque da sidebar. Duas
  * cópias da mesma regra é o tipo de coisa que diverge quando alguém mexe numa
  * e esquece a outra — e o sintoma seria a topbar dizendo uma tela enquanto a
  * sidebar acende outra.
  */
-function combina(href: string, pathname: string): boolean {
-  if (href === "/") {
-    // `/clientes/novo` tem item próprio ("Provisionar cliente"); sem a
-    // exceção os dois acendiam juntos e a sidebar dizia duas telas.
-    return (
-      pathname === "/" ||
-      (pathname.startsWith("/clientes") && pathname !== "/clientes/novo")
-    );
-  }
-  return pathname.startsWith(href);
+function itemAtivo(
+  pathname: string
+): { item: NavItem; secao: string } | undefined {
+  const candidatos = BO_NAV.flatMap((grupo) =>
+    grupo.items
+      .filter((item) => combina(item.href, pathname))
+      .map((item) => ({ item, secao: grupo.section }))
+  );
+  return candidatos.sort((a, b) => b.item.href.length - a.item.href.length)[0];
 }
 
 /** Nome da tela quando o item é "Clientes" — o detalhe tem nome próprio.
- *  "Cliente" e "Provisionar cliente", como o menu e a carteira: a trilha dizia
- *  "Tenant" enquanto o item ao lado dizia "Clientes". */
+ *  "Cliente", como o menu e a carteira: a trilha dizia "Tenant" enquanto o
+ *  item ao lado dizia "Clientes". */
 function nomeDeClientes(pathname: string, label: string): string {
-  if (!pathname.startsWith("/clientes/")) {
-    return label;
-  }
-  return pathname === "/clientes/novo" ? "Provisionar cliente" : "Cliente";
+  return pathname.startsWith("/clientes/") ? "Cliente" : label;
 }
 
 /** Trilha "Seção › Tela" da topbar, derivada da rota atual. */
 function trilha(pathname: string): [string, string] {
-  for (const grupo of BO_NAV) {
-    const item = grupo.items.find((i) => combina(i.href, pathname));
-    if (item) {
-      return [
-        grupo.section,
-        item.href === "/" ? nomeDeClientes(pathname, item.label) : item.label,
-      ];
-    }
+  const ativo = itemAtivo(pathname);
+  if (!ativo) {
+    return ["Nebuloz", "Back-office"];
   }
-  return ["Nebuloz", "Back-office"];
+  return [
+    ativo.secao,
+    ativo.item.href === "/clientes"
+      ? nomeDeClientes(pathname, ativo.item.label)
+      : ativo.item.label,
+  ];
 }
 
 function Topbar({
@@ -220,11 +230,11 @@ function Topbar({
         }}
       >
         {/* O wordmark leva para a casa, como em todo painel — e a casa é
-            `/home`, a mesma que o login e as saídas de erro usam. O nome
+            `/`, a mesma que o login e as saídas de erro usam. O nome
             acessível diz o destino porque o texto some abaixo de 1024px. */}
         <Link
           aria-label="Nebuloz — ir para a Home"
-          href="/home"
+          href="/"
           style={{
             display: "flex",
             alignItems: "center",
@@ -405,7 +415,7 @@ function Sidebar({
   aberta: boolean;
   aoFechar: () => void;
 }) {
-  const pathname = usePathname();
+  const ativo = itemAtivo(usePathname())?.item.href;
 
   return (
     <nav
@@ -448,7 +458,7 @@ function Sidebar({
             // fecha, e o alvo é interativo de verdade.
             <ItemDeMenu
               aoNavegar={aoFechar}
-              ativo={combina(item.href, pathname)}
+              ativo={item.href === ativo}
               item={item}
               key={item.href}
             />

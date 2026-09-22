@@ -21,12 +21,14 @@
  * para sempre. Nenhum item usa `pendente` hoje, e o campo fica: é o mecanismo
  * que o LAB vai usar ao voltar em fatias.
  *
- * O protótipo chamava o item de `/` de "Tenants". Aqui ele se chama
+ * O protótipo chamava o item da carteira de "Tenants". Aqui ele se chama
  * "Clientes" porque é o que a tela é — "Carteira de clientes", KPI "Clientes
  * na carteira" — e porque "tenant" é vocabulário de quem escreveu o schema,
- * não de quem abre o painel no primeiro dia. A rota continua `/clientes`
- * porque é a que existe, é a que os `revalidatePath` das actions apontam, e
- * renomear seria quebra sem ganho.
+ * não de quem abre o painel no primeiro dia.
+ *
+ * Desde a crítica rodada 5 a Home é `/` e a carteira é `/clientes`, a mesma
+ * raiz do detalhe (`/clientes/[slug]`) e do provisionar (`/clientes/novo`).
+ * `/home` ficou só como redirect para `/`.
  *
  * Rótulos em português, como o resto do menu: "Audit Explorer" e "AI
  * readiness" eram os dois únicos itens em inglês, e o operador não abre o
@@ -60,11 +62,11 @@ export const BO_NAV: NavSection[] = [
     section: "Plataforma",
     items: [
       {
-        href: "/home",
+        href: "/",
         icon: "gauge",
         label: "Home",
       },
-      { href: "/", icon: "building", label: "Clientes" },
+      { href: "/clientes", icon: "building", label: "Clientes" },
       { href: "/aprovacoes", icon: "approve", label: "Aprovações" },
       {
         href: "/observabilidade",

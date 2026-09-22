@@ -82,7 +82,7 @@ describe("error.tsx do grupo (staff)", () => {
       screen
         .getByRole("link", { name: "Voltar para a Home" })
         .getAttribute("href")
-    ).toBe("/home");
+    ).toBe("/");
   });
 
   it("sem mensagem no erro, não inventa uma", async () => {
@@ -99,7 +99,7 @@ describe("error.tsx do grupo (staff)", () => {
 });
 
 describe("not-found.tsx do grupo (staff)", () => {
-  it("diz que não encontrou, o que pode ter acontecido, e leva para /home", async () => {
+  it("diz que não encontrou, o que pode ter acontecido, e leva para /", async () => {
     const { default: NaoEncontrado } = await import("@/app/(staff)/not-found");
     render(<NaoEncontrado />);
 
@@ -111,17 +111,17 @@ describe("not-found.tsx do grupo (staff)", () => {
       screen
         .getByRole("link", { name: "Voltar para a Home" })
         .getAttribute("href")
-    ).toBe("/home");
+    ).toBe("/");
   });
 });
 
-describe("carteira de clientes (/) com falha de leitura", () => {
+describe("carteira de clientes (/clientes) com falha de leitura", () => {
   it("mantém o cabeçalho, nomeia o erro com role=alert e oferece Tentar de novo", async () => {
     mocks.listClients.mockResolvedValue({
       error: "Banco indisponível.",
       ok: false,
     });
-    const { default: Page } = await import("@/app/(staff)/page");
+    const { default: Page } = await import("@/app/(staff)/clientes/page");
     render(await Page());
 
     expect(
@@ -171,7 +171,7 @@ describe("Home com a leitura de aprovações rejeitada", () => {
       error: "Fila indisponível.",
       ok: false,
     });
-    const { default: Page } = await import("@/app/(staff)/home/page");
+    const { default: Page } = await import("@/app/(staff)/page");
     render(await Page());
 
     const aviso = screen.getByRole("alert");

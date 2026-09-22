@@ -86,9 +86,9 @@ beforeEach(() => {
 });
 
 describe("tenant → cliente", () => {
-  it("a carteira (/) não diz 'tenant' no subtítulo", async () => {
+  it("a carteira (/clientes) não diz 'tenant' no subtítulo", async () => {
     mocks.listClients.mockResolvedValue({ data: [], ok: true });
-    const { default: Page } = await import("@/app/(staff)/page");
+    const { default: Page } = await import("@/app/(staff)/clientes/page");
     render(await Page());
 
     expect(screen.queryByText(/tenants?\b/i)).toBeNull();

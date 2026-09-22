@@ -376,6 +376,8 @@ const FORA = new Set([
   "growth/readiness/[id]/page.tsx",
   "propostas/[id]/page.tsx",
   "empresa/cac/page.tsx",
+  // Só redireciona para `/` desde a rodada 5 — não tem tela, nem título.
+  "home/page.tsx",
 ]);
 
 function paginas(dir = RAIZ): string[] {

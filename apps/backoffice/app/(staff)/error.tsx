@@ -105,7 +105,7 @@ export default function Erro({
               {pendente ? "Tentando…" : "Tentar de novo"}
             </button>
             <Link
-              href="/home"
+              href="/"
               style={{
                 fontSize: "var(--fs-base)",
                 fontWeight: 700,

@@ -206,15 +206,15 @@ const ROTAS: Rota[] = [
   {
     falha: ["listClients"],
     heading: "Carteira de clientes",
-    importar: () => import("@/app/(staff)/page"),
-    rota: "/",
+    importar: () => import("@/app/(staff)/clientes/page"),
+    rota: "/clientes",
   },
   {
     falha: ["listPlatformHealth"],
     heading: "Home",
-    importar: () => import("@/app/(staff)/home/page"),
+    importar: () => import("@/app/(staff)/page"),
     ok: ["listPlatformApprovals"],
-    rota: "/home",
+    rota: "/",
   },
   {
     falha: ["listPlatformApprovals"],

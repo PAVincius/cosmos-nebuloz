@@ -143,7 +143,7 @@ describe("um nome por coisa", () => {
 
   it("a carteira vazia manda para Provisionar cliente", async () => {
     mocks.listClients.mockResolvedValue({ data: [], ok: true });
-    const { default: Page } = await import("@/app/(staff)/page");
+    const { default: Page } = await import("@/app/(staff)/clientes/page");
     render(await Page());
 
     expect(
@@ -160,7 +160,7 @@ describe("um nome por coisa", () => {
       ok: true,
     });
     mocks.listPlatformApprovals.mockResolvedValue({ data: [], ok: true });
-    const { default: Page } = await import("@/app/(staff)/home/page");
+    const { default: Page } = await import("@/app/(staff)/page");
     render(await Page());
 
     expect(screen.queryByText(/Tenants/)).toBeNull();
@@ -180,7 +180,7 @@ describe("plural real, não (s)", () => {
       ok: true,
     });
     mocks.listPlatformApprovals.mockResolvedValue({ data: [], ok: true });
-    const { default: Page } = await import("@/app/(staff)/home/page");
+    const { default: Page } = await import("@/app/(staff)/page");
     render(await Page());
 
     expect(screen.getByText("1 integração com erro")).toBeTruthy();
