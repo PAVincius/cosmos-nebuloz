@@ -20,6 +20,12 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import {
+  cortar,
+  janela,
+  type OpcoesDePagina,
+  TETO_DA_LISTA,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -76,9 +82,19 @@ export type CanalRow = {
 
 const NOVENTA_DIAS_MS = 90 * 24 * 60 * 60 * 1000;
 
-export async function listarFunil(): Promise<
+/**
+ * O pacote do funil. Os leads vêm até o teto de `lib/paginacao.ts` — com
+ * `{ pagina }`, a página pedida — e `temMaisLeads` diz se há próxima. O
+ * histórico é o dos leads lidos: as métricas do estágio (conversão 90 d,
+ * permanência) descrevem o que está na tela, e o número de linhas fica
+ * limitado pelo número de leads em vez de crescer com a base inteira.
+ * Estágios e canais são configuração — poucas linhas, mas com teto mesmo
+ * assim, para nenhuma leitura sair daqui sem um.
+ */
+export async function listarFunil(opcoes?: OpcoesDePagina): Promise<
   Result<{
     leads: LeadRow[];
+    temMaisLeads: boolean;
     estagios: ConfigEstagio[];
     canais: CanalRow[];
     historico: Transicao[];
@@ -91,10 +107,11 @@ export async function listarFunil(): Promise<
     const hoje = new Date();
     const desde = new Date(hoje.getTime() - NOVENTA_DIAS_MS);
 
-    const [leads, estagios, canais, historico] = await Promise.all([
+    const [paginaDeLeads, estagios, canais] = await Promise.all([
       database.lead.findMany({
         where: { tenantId: SYSTEM_TENANT_ID },
         orderBy: { criadoEm: "desc" },
+        ...janela(opcoes),
         select: {
           id: true,
           nome: true,
@@ -130,6 +147,7 @@ export async function listarFunil(): Promise<
       database.estagioDoFunil.findMany({
         where: { tenantId: SYSTEM_TENANT_ID },
         orderBy: { ordem: "asc" },
+        take: TETO_DA_LISTA,
         select: {
           codigo: true,
           pesoPercent: true,
@@ -140,16 +158,24 @@ export async function listarFunil(): Promise<
       database.canalDeLead.findMany({
         where: { tenantId: SYSTEM_TENANT_ID, ativo: true },
         orderBy: { ordem: "asc" },
+        take: TETO_DA_LISTA,
         select: { slug: true, nome: true, cacMedioCentavos: true },
       }),
-      database.historicoDeEstagio.findMany({
-        where: { tenantId: SYSTEM_TENANT_ID, em: { gte: desde } },
-        orderBy: { em: "asc" },
-        select: { leadId: true, de: true, para: true, em: true },
-      }),
     ]);
+    const { itens: leads, temMais } = cortar(paginaDeLeads, opcoes);
+
+    const historico = await database.historicoDeEstagio.findMany({
+      where: {
+        tenantId: SYSTEM_TENANT_ID,
+        em: { gte: desde },
+        leadId: { in: leads.map((l) => l.id) },
+      },
+      orderBy: { em: "asc" },
+      select: { leadId: true, de: true, para: true, em: true },
+    });
 
     return {
+      temMaisLeads: temMais,
       leads: leads.map((l) => {
         const perdidoEmIso = l.perdidoEm ? l.perdidoEm.toISOString() : null;
         return {

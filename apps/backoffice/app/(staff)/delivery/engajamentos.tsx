@@ -13,11 +13,13 @@ import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { OQueFalta } from "@/components/o-que-falta";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { formatarData } from "@/lib/data";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
+import { TETO_DA_LISTA } from "@/lib/paginacao";
 
 const TOM: Record<string, Tone> = {
   PROPOSTO: "accent",
@@ -291,21 +293,32 @@ export function Engajamentos({
     status: StatusEngajamento;
   } | null>(null);
 
+  // A lista chega até o teto e cresce daqui, uma página por "Mostrar mais".
+  const ler = useCallback((pagina: number) => listEngagements({ pagina }), []);
+  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => [...atual, ...mais]);
+    }
+  }, [paginacao.proxima]);
+
   // Relê a lista pela action em vez de `window.location.reload()`: as
   // transições possíveis vêm do mapa do servidor (recalculá-las aqui
-  // duplicaria o que já existe lá), e a tela não perde o scroll.
+  // duplicaria o que já existe lá), e a tela não perde o scroll. Relê as
+  // páginas que já estavam na tela, não só a primeira.
   // Releitura que falhou: aviso próprio, junto da lista, não o `erro` das
   // escritas — a escrita deu certo, o que ficou velho foi a tela.
   const [listaVelha, setListaVelha] = useState<string | null>(null);
   const recarregar = useCallback(async () => {
-    const res = await listEngagements();
+    const res = await paginacao.reler();
     if (!res.ok) {
       setListaVelha(res.error);
       return;
     }
     setListaVelha(null);
     setLista(res.data);
-  }, []);
+  }, [paginacao.reler]);
 
   const criar = useCallback(
     (event: FormEvent) => {
@@ -403,6 +416,7 @@ export function Engajamentos({
             </BotaoPrimario>
           ) : null
         }
+        as="h2"
         icon="handshake"
         subtitle={`${total} · escopo fechado`}
         title="Engajamentos"
@@ -582,6 +596,12 @@ export function Engajamentos({
             ))}
           </ul>
         )}
+        <BotaoMostrarMais
+          carregando={paginacao.carregando}
+          erro={paginacao.erro}
+          onClick={mostrarMais}
+          temMais={paginacao.temMais}
+        />
       </SectionCard>
     </div>
   );

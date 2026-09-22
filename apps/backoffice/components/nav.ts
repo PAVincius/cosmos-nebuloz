@@ -28,6 +28,11 @@
  * porque é a que existe, é a que os `revalidatePath` das actions apontam, e
  * renomear seria quebra sem ganho.
  *
+ * Rótulos em português, como o resto do menu: "Audit Explorer" e "AI
+ * readiness" eram os dois únicos itens em inglês, e o operador não abre o
+ * painel para traduzir o menu. "Maturidade de IA" é o nome que o eyebrow da
+ * própria tela já usava; "Trilha de auditoria" é o que a tela é.
+ *
  * Cada rota aparece uma vez só. O `/scaffold` chegou a estar em duas seções
  * ("Fila de gates" em Delivery e "Scaffold" em Comercial) e as duas acendiam
  * juntas; ficou a de Delivery, porque é o que a tela monta — a fila de gates
@@ -111,7 +116,7 @@ export const BO_NAV: NavSection[] = [
       {
         href: "/growth/readiness",
         icon: "gauge",
-        label: "AI readiness",
+        label: "Maturidade de IA",
       },
     ],
   },
@@ -181,7 +186,7 @@ export const BO_NAV: NavSection[] = [
   {
     section: "Auditoria",
     items: [
-      { href: "/audit", icon: "history", label: "Audit Explorer" },
+      { href: "/audit", icon: "history", label: "Trilha de auditoria" },
       { href: "/atividade", icon: "userCheck", label: "Atividade do staff" },
     ],
   },

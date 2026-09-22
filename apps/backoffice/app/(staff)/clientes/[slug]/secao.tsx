@@ -1,7 +1,7 @@
 import type { IconName } from "@repo/design-system/cosmos/icons";
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import type { ReactNode } from "react";
 import { Erro } from "@/components/campo";
+import { Secao as Cartao } from "@/components/secao";
 
 /**
  * Uma seção do detalhe do tenant, no formato do `backoffice-tenant-detail.jsx`.
@@ -30,9 +30,9 @@ export function Secao<T>({
   children: (dados: T) => ReactNode;
 }) {
   return (
-    <SectionCard icon={icone} subtitle={subtitulo} title={titulo}>
+    <Cartao icon={icone} subtitle={subtitulo} title={titulo}>
       {resultado.ok ? children(resultado.data) : <Erro>{resultado.error}</Erro>}
-    </SectionCard>
+    </Cartao>
   );
 }
 
@@ -49,8 +49,8 @@ export function SecaoSimples({
   children: ReactNode;
 }) {
   return (
-    <SectionCard icon={icone} subtitle={subtitulo} title={titulo}>
+    <Cartao icon={icone} subtitle={subtitulo} title={titulo}>
       {children}
-    </SectionCard>
+    </Cartao>
   );
 }

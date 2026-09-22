@@ -31,6 +31,9 @@ vi.mock("@/app/actions/capacity", () => ({
 vi.mock("@/app/actions/tenant-members", () => ({
   updateTenantMemberRoleAction: vi.fn(),
 }));
+// A tabela da carteira importa a action de "Mostrar mais"; sem o mock, o
+// módulo `"use server"` puxa o banco e o guard de env derruba a suíte.
+vi.mock("@/app/actions/clients", () => ({ listClients: vi.fn() }));
 vi.mock("next/navigation", () => import("../vitest-mocks/next-navigation"));
 
 vi.setConfig({ testTimeout: 30_000 });

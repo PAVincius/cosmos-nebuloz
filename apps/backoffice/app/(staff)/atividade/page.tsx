@@ -1,11 +1,8 @@
-import {
-  Avatar,
-  PageHeader,
-  SectionCard,
-} from "@repo/design-system/cosmos/kit";
+import { Avatar, PageHeader } from "@repo/design-system/cosmos/kit";
 import { listStaffActivity } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
 import { ACOES } from "../audit/rotulos";
@@ -23,13 +20,9 @@ export default async function ActivityPage() {
         title="Atividade do staff"
       />
 
-      <SectionCard
-        icon="userCheck"
-        subtitle="Mais recentes primeiro"
-        title="Trilha"
-      >
+      <Secao icon="userCheck" subtitle="Mais recentes primeiro" title="Trilha">
         {renderTrilha(result)}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

@@ -10,6 +10,13 @@ import {
   type Saude,
   type SinalDeSaude,
 } from "@/lib/health";
+import {
+  cortar,
+  forma,
+  janela,
+  type Listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -151,9 +158,13 @@ function avaliar(
   };
 }
 
-export async function listAccountHealth(
-  agora?: Date
-): Promise<Result<ContaComSaude[]>> {
+/** Sem `opcoes`, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. "Pior primeiro" vale
+ *  dentro da página: a ordem do banco é por nome, a de saúde é calculada
+ *  aqui sobre o que foi lido. */
+export async function listAccountHealth<
+  O extends OpcoesDePagina | undefined = undefined,
+>(agora?: Date, opcoes?: O): Promise<Result<Listagem<ContaComSaude, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
@@ -165,6 +176,7 @@ export async function listAccountHealth(
       database.tenant.findMany({
         where: { isSystem: false },
         orderBy: { name: "asc" },
+        ...janela(opcoes),
         select: {
           id: true,
           slug: true,
@@ -207,7 +219,10 @@ export async function listAccountHealth(
       }
     }
 
-    const linhas = clientes.map((c) =>
+    // A linha extra da janela sai antes de avaliar e ordenar: ela é sinal de
+    // "há mais", não uma conta desta página.
+    const pagina = cortar(clientes, opcoes);
+    const linhas = pagina.itens.map((c) =>
       avaliar(
         c,
         integracoes.filter((x) => x.tenantId === c.id),
@@ -215,7 +230,8 @@ export async function listAccountHealth(
         hoje
       )
     );
+    linhas.sort((a, b) => PESO[a.saude] - PESO[b.saude]);
 
-    return linhas.sort((a, b) => PESO[a.saude] - PESO[b.saude]);
+    return forma({ itens: linhas, temMais: pagina.temMais }, opcoes);
   });
 }

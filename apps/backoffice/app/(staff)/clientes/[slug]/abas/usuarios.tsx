@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Avatar } from "@repo/design-system/cosmos/kit";
 import { useState, useTransition } from "react";
 import {
   type TenantMemberRow,
@@ -10,6 +10,7 @@ import { Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 
@@ -61,7 +62,7 @@ const LARGURAS = [
  *  importa: é quem convida, remove e promove os outros. */
 function consequenciaDaTroca(nome: string, de: string, para: Papel): string {
   if (para === "ADMIN") {
-    return `${nome} passa a administrar o cliente: convida, remove e promove qualquer membro.`;
+    return `${nome} passa a administrar o cliente: convida e remove pessoas, troca papéis, e mexe em integrações, SSO e política de segurança.`;
   }
   if (de === "ADMIN") {
     return `${nome} deixa de administrar o cliente. Se for o último ADMIN, o servidor recusa.`;
@@ -220,17 +221,17 @@ export function AbaUsuarios({
 
   if (membros.length === 0) {
     return (
-      <SectionCard icon="userCheck" title="Usuários">
+      <Secao icon="userCheck" title="Usuários">
         <Vazio>
           Este cliente não tem membro algum. Quem foi convidado no
           provisionamento aparece aqui depois de criar a conta.
         </Vazio>
-      </SectionCard>
+      </Secao>
     );
   }
 
   return (
-    <SectionCard
+    <Secao
       action={
         <FiltroChips
           onMudar={setPapel}
@@ -375,6 +376,6 @@ export function AbaUsuarios({
           <Erro>{erro}</Erro>
         </div>
       ) : null}
-    </SectionCard>
+    </Secao>
   );
 }

@@ -1,5 +1,6 @@
-import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
+import { Secao } from "@/components/secao";
 
 /**
  * Não-encontrado do grupo `(staff)`.
@@ -18,7 +19,7 @@ export default function NaoEncontrado() {
         title="Não encontrado"
         tone="amber"
       />
-      <SectionCard icon="alert" title="O que pode ter acontecido" tone="amber">
+      <Secao icon="alert" title="O que pode ter acontecido" tone="amber">
         <ul
           style={{
             margin: 0,
@@ -39,7 +40,7 @@ export default function NaoEncontrado() {
           </li>
         </ul>
         <Link
-          href="/"
+          href="/home"
           style={{
             display: "inline-block",
             marginTop: 14,
@@ -48,9 +49,9 @@ export default function NaoEncontrado() {
             color: "var(--accent-text)",
           }}
         >
-          Voltar para Clientes
+          Voltar para a Home
         </Link>
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

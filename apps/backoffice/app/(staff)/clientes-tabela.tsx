@@ -1,7 +1,20 @@
-import { Avatar, Badge, type Tone } from "@repo/design-system/cosmos/kit";
+"use client";
+
+import {
+  Avatar,
+  Badge,
+  KpiCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import type { ClientRow } from "@/app/actions/clients";
+import { useCallback, useState } from "react";
+import { type ClientRow, listClients } from "@/app/actions/clients";
+import { Busca, contemTexto } from "@/components/busca";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
+import { Vazio } from "@/components/vazio";
 import { formatarData } from "@/lib/data";
+import { TETO_DA_LISTA } from "@/lib/paginacao";
+import { useParamState } from "@/lib/url-state";
 
 /**
  * Carteira de clientes — a tabela do `backoffice-tenant.jsx`.
@@ -13,7 +26,22 @@ import { formatarData } from "@/lib/data";
  *
  * O que entra no lugar é o que é real: plano, número de membros e o status de
  * cada módulo contratado.
+ *
+ * Cliente, não servidor: a lista chega até o teto (`lib/paginacao.ts`) e
+ * cresce daqui, uma página por "Mostrar mais". A busca (`?q=`, nome ou slug)
+ * e o filtro do KPI "Exigem atenção" (`?atencao=1`) moram na URL, no modo
+ * raso — F5 mantém, e a lista filtrada vira link.
  */
+
+/** `SubscriptionPlan` do schema é o nome do produto em caixa alta; a tela
+ *  mostra o nome como se escreve. Plano fora do mapa aparece como veio, em
+ *  vez de sumir. */
+const ROTULO_DO_PLANO: Record<string, string> = {
+  ORBIT: "Orbit",
+  GALAXY: "Galaxy",
+  NEBULA: "Nebula",
+  UNIVERSE: "Universe",
+};
 
 const TOM_DE_STATUS: Record<string, Tone> = {
   ACTIVE: "green",
@@ -46,7 +74,110 @@ const CELULA: React.CSSProperties = {
   verticalAlign: "middle",
 };
 
+function exigeAtencao(cliente: ClientRow): boolean {
+  return cliente.modules.some((m) => m.status === "SUSPENDED");
+}
+
+/** Fora do JSX: inline, o lint lê o ternário como valor vazando. */
+function anelDePressionado(ativo: boolean): string | undefined {
+  return ativo ? "0 0 0 2px rgba(var(--amber-rgb),.6)" : undefined;
+}
+
+/**
+ * O KPI "Exigem atenção" é o filtro: pressionado, a tabela mostra só quem tem
+ * módulo suspenso. Botão com `aria-pressed`, e o estado em `?atencao=1` —
+ * o mesmo param que a tabela lê. Mora aqui, e não em `page.tsx`, porque a
+ * página é servidor e o toggle precisa do hook de URL.
+ */
+export function KpiAtencao({ valor }: { valor: number }) {
+  const [atencao, setAtencao] = useParamState("atencao");
+  const ativo = atencao === "1";
+  return (
+    <button
+      aria-pressed={ativo}
+      className="btn"
+      onClick={() => setAtencao(ativo ? "" : "1")}
+      style={{
+        display: "block",
+        width: "100%",
+        padding: 0,
+        border: 0,
+        background: "none",
+        font: "inherit",
+        textAlign: "left",
+        cursor: "pointer",
+        borderRadius: "var(--r-xl)",
+        boxShadow: anelDePressionado(ativo),
+      }}
+      type="button"
+    >
+      <KpiCard
+        hint={
+          ativo
+            ? "filtrando a tabela · clique para ver todos"
+            : "módulos suspensos · clique para filtrar"
+        }
+        icon="alert"
+        label="Exigem atenção"
+        tone="amber"
+        value={valor}
+      />
+    </button>
+  );
+}
+
 export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
+  const [lista, setLista] = useState(clientes);
+  const [q, setQ] = useParamState("q");
+  const [atencao] = useParamState("atencao");
+  const ler = useCallback((pagina: number) => listClients({ pagina }), []);
+  const paginacao = usePaginas(ler, clientes.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => [...atual, ...mais]);
+    }
+  }, [paginacao.proxima]);
+
+  const visiveis = lista.filter(
+    (c) =>
+      (atencao !== "1" || exigeAtencao(c)) && contemTexto([c.name, c.slug], q)
+  );
+  // O vazio aqui é o do filtro — a carteira sem cliente nenhum é da página
+  // (`page.tsx`), que nem monta a tabela. Fora do JSX: inline, o lint lê o
+  // `&&` como valor vazando.
+  const filtroZerou = (q !== "" || atencao === "1") && visiveis.length === 0;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <Busca
+        id="busca-cliente"
+        onMudar={setQ}
+        rotulo="Buscar cliente"
+        total={lista.length}
+        valor={q}
+        visiveis={visiveis.length}
+      />
+      {filtroZerou ? (
+        <Vazio>
+          {q
+            ? `Nenhum cliente com “${q}”${atencao === "1" ? " entre os que exigem atenção" : ""}.`
+            : "Nenhum cliente exige atenção."}
+        </Vazio>
+      ) : (
+        <Tabela clientes={visiveis} />
+      )}
+      <BotaoMostrarMais
+        carregando={paginacao.carregando}
+        erro={paginacao.erro}
+        onClick={mostrarMais}
+        temMais={paginacao.temMais}
+      />
+    </div>
+  );
+}
+
+function Tabela({ clientes }: { clientes: ClientRow[] }) {
   return (
     <div style={{ overflowX: "auto" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -126,7 +257,7 @@ export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
               </td>
               <td style={CELULA}>
                 <Badge soft={false} tone="purple">
-                  {cliente.plan}
+                  {ROTULO_DO_PLANO[cliente.plan] ?? cliente.plan}
                 </Badge>
               </td>
               <td

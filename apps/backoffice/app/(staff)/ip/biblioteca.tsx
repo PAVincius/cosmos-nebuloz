@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import {
   type ReactNode,
   useCallback,
@@ -28,6 +28,7 @@ import {
 } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
+import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
@@ -499,7 +500,7 @@ export function Biblioteca({
                 onVoltar={guarda.voltar}
               />
             ) : null}
-            <SectionCard
+            <Secao
               icon="book"
               subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
               title={aberto.nome}
@@ -555,9 +556,9 @@ export function Biblioteca({
                   value={rascunho}
                 />
               </div>
-            </SectionCard>
+            </Secao>
 
-            <SectionCard
+            <Secao
               icon="history"
               subtitle="append-only — editar cria revisão, nunca sobrescreve"
               title="Histórico"
@@ -602,12 +603,12 @@ export function Biblioteca({
                   </li>
                 ))}
               </ul>
-            </SectionCard>
+            </Secao>
           </>
         ) : (
-          <SectionCard title="Nenhum ativo aberto">
+          <Secao title="Nenhum ativo aberto">
             <Vazio>Escolha um ativo na lista para ver e editar.</Vazio>
-          </SectionCard>
+          </Secao>
         )}
       </div>
     </div>

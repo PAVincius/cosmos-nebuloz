@@ -77,7 +77,7 @@ function TextoProximoPasso({
   vencido: boolean;
 }) {
   if (lead.situacao === "GANHO") {
-    return <span>Tenant {lead.proposta?.tenantProvisionadoSlug ?? "—"}</span>;
+    return <span>Cliente {lead.proposta?.tenantProvisionadoSlug ?? "—"}</span>;
   }
   if (lead.situacao === "PERDIDO") {
     const codigo = lead.motivoPerda as MotivoPerda | null;

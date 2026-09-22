@@ -2,7 +2,7 @@
 
 import type { ProductModule } from "@repo/database";
 import { Icon } from "@repo/design-system/cosmos/icons";
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { slugify } from "@repo/provisioning/src/slug";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { type FormEvent, useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Secao } from "@/components/secao";
 import { MOTIVO_SOMENTE_LEITURA, WriteButton } from "@/components/write-button";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
@@ -225,8 +226,7 @@ export function NewClientForm({
         </output>
       ) : null}
 
-      <SectionCard
-        as="h2"
+      <Secao
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 16 }}
         icon="building"
         title="Dados do cliente"
@@ -398,7 +398,7 @@ export function NewClientForm({
             </WriteButton>
           )}
         </div>
-      </SectionCard>
+      </Secao>
     </form>
   );
 }

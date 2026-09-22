@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  KpiCard,
-  SectionCard,
-  type Tone,
-} from "@repo/design-system/cosmos/kit";
+import { Badge, KpiCard, type Tone } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -17,6 +12,7 @@ import {
   salvarCreditoDoMes,
 } from "@/app/actions/empresa/recorrente";
 import { Erro, INPUT } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import { Sigla } from "@/components/sigla";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
@@ -617,14 +613,14 @@ export function Recorrente({
         />
       </div>
 
-      <SectionCard
+      <Secao
         subtitle="novo, expansão, reativação, contração e churn — o que entrou e o que saiu do MRR neste mês"
         title="Movimento do mês"
       >
         <CascataDoMes mov={mov} />
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
+      <Secao
         action={
           <WriteButton
             canWrite={podeEscrever}
@@ -677,7 +673,7 @@ export function Recorrente({
             </Tabela>
           </div>
         )}
-      </SectionCard>
+      </Secao>
 
       <FaixaServico valor={servicoCentavos} />
 

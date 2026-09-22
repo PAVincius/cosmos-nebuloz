@@ -354,7 +354,12 @@ describe("Engajamentos — mudar status", () => {
       ok: true,
     });
     mocks.listEngagements.mockResolvedValue({
-      data: [{ ...ENG, proximos: ["PAUSADO", "CONCLUIDO"], status: "ATIVO" }],
+      data: {
+        itens: [
+          { ...ENG, proximos: ["PAUSADO", "CONCLUIDO"], status: "ATIVO" },
+        ],
+        temMais: false,
+      },
       ok: true,
     });
     render(

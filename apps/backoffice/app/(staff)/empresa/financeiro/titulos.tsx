@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import type { ContaView } from "@/app/actions/empresa/financeiro";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/empresa/titulos";
 import { BotaoSecundario, Erro } from "@/components/campo";
 import { FiltroChips } from "@/components/filtro-chips";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
@@ -197,13 +198,13 @@ function ListaDeTitulos({
 }) {
   if (titulos.length === 0) {
     return (
-      <SectionCard subtitle="0 títulos" title={ROTULO_TIPO[tipo]}>
+      <Secao subtitle="0 títulos" title={ROTULO_TIPO[tipo]}>
         <VazioDeTitulos filtro={filtro} tipo={tipo} />
-      </SectionCard>
+      </Secao>
     );
   }
   return (
-    <SectionCard
+    <Secao
       subtitle={`${titulos.length} ${titulos.length === 1 ? "título" : "títulos"}`}
       title={ROTULO_TIPO[tipo]}
     >
@@ -232,7 +233,7 @@ function ListaDeTitulos({
           ))}
         </tbody>
       </Tabela>
-    </SectionCard>
+    </Secao>
   );
 }
 

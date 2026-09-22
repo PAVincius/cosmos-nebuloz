@@ -36,12 +36,6 @@ import type { Result } from "@/lib/safe-action";
 
 type CriarInput = Parameters<typeof criarAssinatura>[0];
 
-const GRID_2 = {
-  display: "grid",
-  gap: 10,
-  gridTemplateColumns: "1fr 1fr",
-} as const;
-
 type FormNova = {
   clienteSlug: string;
   clienteNome: string;
@@ -224,7 +218,7 @@ function FormularioNova({
         </select>
       </Campo>
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="rc-nv-plano" label="Degrau">
           <input
             id="rc-nv-plano"
@@ -249,7 +243,7 @@ function FormularioNova({
         </Campo>
       </div>
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="rc-nv-creditos" label="Créditos incluídos">
           <input
             id="rc-nv-creditos"
@@ -271,7 +265,7 @@ function FormularioNova({
         </Campo>
       </div>
 
-      <div style={GRID_2}>
+      <div className="bo-duas-colunas">
         <Campo
           hint="Vazio = sem teto (excedente todo reprimido)."
           htmlFor="rc-nv-teto"

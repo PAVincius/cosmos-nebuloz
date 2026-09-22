@@ -43,13 +43,11 @@ export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {
 
   return (
     <ul
+      className="bo-cartoes"
       style={{
         listStyle: "none",
         margin: 0,
         padding: 0,
-        display: "grid",
-        gap: 8,
-        gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
       }}
     >
       {integracoes.map((i) => (

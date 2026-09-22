@@ -2,14 +2,34 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getServiceDetail, type ServiceDetail } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { DetalheDoServico, ROTULO_UNIDADE, TRILHA } from "./detalhe";
 import { BotaoEditar, EdicaoDoServico } from "./editar";
 
 export const dynamic = "force-dynamic";
+
+// `cache` do React: `generateMetadata` e a página leem o mesmo serviço na
+// mesma requisição, e sem isto seriam duas idas ao banco.
+const lerServico = cache((codigo: string) => getServiceDetail(codigo));
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ codigo: string }>;
+}) {
+  const { codigo } = await params;
+  const res = await lerServico(decodeURIComponent(codigo));
+  return {
+    title: res.ok
+      ? `${res.data.nome} — Serviço — Back-office Nebuloz`
+      : tituloDaAba("/servicos"),
+  };
+}
 
 const RECORRENTE = new Set(["RETAINER"]);
 
@@ -55,7 +75,7 @@ export default async function ServicoPage({
   const { codigo } = await params;
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
-    getServiceDetail(decodeURIComponent(codigo)),
+    lerServico(decodeURIComponent(codigo)),
   ]);
   // Id que não existe não é falha de leitura: retry não resolve. O
   // `not-found.tsx` do grupo já existe — é ele que responde.

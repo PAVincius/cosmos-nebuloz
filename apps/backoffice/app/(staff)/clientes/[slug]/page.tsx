@@ -2,6 +2,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getClient } from "@/app/actions/clients";
 import { listTenantMembers } from "@/app/actions/tenant-members";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/app/actions/tenant-observability";
 import { Confirmacao } from "@/components/confirmacao";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { tituloDaAba } from "@/components/nav";
 import { formatarData } from "@/lib/data";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
@@ -20,6 +22,25 @@ import { ModuleForm } from "./module-form";
 import { faltaPreparar, ProntidaoDoModulo } from "./prontidao";
 
 export const dynamic = "force-dynamic";
+
+// `cache` do React: `generateMetadata` e a página leem o mesmo cliente na
+// mesma requisição, e sem isto seriam duas idas ao banco.
+const lerCliente = cache((slug: string) => getClient(slug));
+
+/** A aba diz qual cliente está aberto — trinta abas iguais não se acham. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const res = await lerCliente(slug);
+  return {
+    title: res.ok
+      ? `${res.data.name} — Cliente — Back-office Nebuloz`
+      : tituloDaAba("/"),
+  };
+}
 
 const TOM_DO_PLANO: Record<string, "green" | "amber" | "blue" | "purple"> = {
   ORBIT: "blue",
@@ -42,7 +63,7 @@ export default async function ClientDetailPage({
   // latência numa tela que o operador abre o dia inteiro.
   const [staff, result, membros, integracoes, auditoria] = await Promise.all([
     requirePlatformStaff(),
-    getClient(slug),
+    lerCliente(slug),
     listTenantMembers(slug),
     listTenantIntegrations(slug),
     listTenantAudit(slug),

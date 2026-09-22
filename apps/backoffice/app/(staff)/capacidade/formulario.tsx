@@ -286,13 +286,7 @@ export function FormularioDeCapacidade({
         }}
         tipo={tipo}
       />
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-        }}
-      >
+      <div className="bo-campos">
         <Campo htmlFor="p-nome" label="Nome">
           <input
             id="p-nome"

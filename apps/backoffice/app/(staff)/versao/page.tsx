@@ -1,8 +1,9 @@
-import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerEstadoDoDeploy } from "@/app/actions/versao";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { MetaCell } from "@/components/meta-cell";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
@@ -94,7 +95,7 @@ function ListaDeMigrations({
 function Veredito({ schema }: { schema: ComparacaoDeSchema }) {
   const tom = TOM_ESTADO[schema.estado];
   return (
-    <SectionCard
+    <Secao
       icon="gitBranch"
       subtitle={`${schema.totalAplicadas} de ${schema.totalDoCodigo} migrations aplicadas neste banco`}
       title={ROTULO_ESTADO[schema.estado]}
@@ -137,7 +138,7 @@ function Veredito({ schema }: { schema: ComparacaoDeSchema }) {
           />
         ) : null}
       </div>
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -189,7 +190,7 @@ export default async function VersaoPage() {
 
       <Veredito schema={schema} />
 
-      <SectionCard
+      <Secao
         icon="gitBranch"
         subtitle="metadado do build da Vercel — fora dela, vazio em vez de inventado"
         title="Código implantado"
@@ -208,9 +209,9 @@ export default async function VersaoPage() {
             {codigo.assunto ?? SEM_DADO}
           </MetaCell>
         </div>
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
+      <Secao
         bodyStyle={recentes.length === 0 ? undefined : { padding: 0 }}
         icon="layers"
         subtitle="as últimas registradas em _prisma_migrations, da mais recente para trás"
@@ -266,7 +267,7 @@ export default async function VersaoPage() {
             </tbody>
           </Tabela>
         )}
-      </SectionCard>
+      </Secao>
 
       <p
         className="mono"
