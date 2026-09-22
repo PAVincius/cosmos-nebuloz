@@ -250,7 +250,7 @@ function Formulario({
 
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo hint="PZ-01" htmlFor="pd-codigo" label="Código">
           <input
             id="pd-codigo"
@@ -286,7 +286,7 @@ function Formulario({
       <ChipsNivel onEscolher={(v) => mudar("nivel", v)} valor={form.nivel} />
       <ChipsTipo onEscolher={(v) => mudar("tipo", v)} valor={form.tipo} />
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo hint="opcional" htmlFor="pd-dono" label="Dono">
           <input
             id="pd-dono"
@@ -315,7 +315,7 @@ function Formulario({
         />
       </Campo>
 
-      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bo-duas-colunas">
         <Campo htmlFor="pd-diagrama" label="Diagrama BPMN">
           <CampoDiagrama
             diagramas={diagramas}

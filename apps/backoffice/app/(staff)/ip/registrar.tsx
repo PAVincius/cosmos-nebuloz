@@ -1,12 +1,13 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { type ReactNode, useCallback, useState } from "react";
 import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import { createIpAssetAction, type IpAssetRow } from "@/app/actions/ip-library";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, INPUT } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import { type Formulario, montarPayloadDeCriacao } from "@/lib/ip/formulario";
 import {
   avaliarRegua,
@@ -654,13 +655,13 @@ export function RegistrarAtivo({
         <BlocoDeLicenca alterar={alterar} form={form} />
       </div>
 
-      <SectionCard icon="ruler" title="Régua de aceitação">
+      <Secao icon="ruler" title="Régua de aceitação">
         <PainelDaRegua
           criterios={criterios}
           form={form}
           nomeDoDono={dono ? dono.nome : "Sem dono"}
         />
-      </SectionCard>
+      </Secao>
 
       <div
         style={{

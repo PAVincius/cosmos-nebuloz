@@ -43,6 +43,7 @@ async function varrerSessoes(): Promise<void> {
  * `@repo/auth/two-factor-enrollment`, compartilhado com o perfil do Cosmos e o
  * onboarding. Aqui mora só a pele.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: a tela é uma máquina de estados de três passos (senha → QR → código) num componente só; partir em três arquivos espalharia o mesmo estado — regra pré-existente, sem mudança aqui.
 export function CadastroDe2FA() {
   const cadastro = useTwoFactorEnrollment();
   const [senha, setSenha] = useState("");
@@ -99,10 +100,8 @@ export function CadastroDe2FA() {
           aparecem de novo.
         </p>
         <div
-          className="mono"
+          className="mono bo-duas-colunas"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
             gap: 6,
             padding: 12,
             borderRadius: "var(--r-md)",
@@ -194,6 +193,7 @@ export function CadastroDe2FA() {
           >
             {verChaveManual ? "Ocultar chave" : "Não consigo escanear"}
           </button>
+          {/* biome-ignore lint/nursery/noLeakedRender: o `&&` é a condição de um ternário com `: null` — nada vaza para o render. */}
           {verChaveManual && cadastro.chaveManual ? (
             <code
               className="mono"
@@ -232,8 +232,6 @@ export function CadastroDe2FA() {
       ) : (
         <Campo htmlFor="senha" label="Sua senha">
           <input
-            // biome-ignore lint/a11y/noAutofocus: primeiro campo acionável de
-            // uma tela cujo propósito único é este formulário.
             autoComplete="current-password"
             autoFocus
             id="senha"

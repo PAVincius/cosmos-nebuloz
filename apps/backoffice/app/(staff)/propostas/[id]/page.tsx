@@ -1,9 +1,11 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { listarCatalogoComercial } from "@/app/actions/catalogo-comercial";
 import { getPropostaParaEdicao } from "@/app/actions/proposta-escopo";
 import { listServices } from "@/app/actions/services";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Gerador } from "./gerador";
 
@@ -17,6 +19,29 @@ import { Gerador } from "./gerador";
  */
 export const dynamic = "force-dynamic";
 
+// `cache` do React: `generateMetadata` e a página leem a mesma proposta na
+// mesma requisição, e sem isto seriam duas idas ao banco.
+const lerProposta = cache((id: string) => getPropostaParaEdicao(id));
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  if (id === "nova") {
+    return { title: "Nova proposta — Back-office Nebuloz" };
+  }
+  const res = await lerProposta(id);
+  // Sem cliente ainda (rascunho recém-criado), o título é o da lista.
+  return {
+    title:
+      res.ok && res.data.clienteNome
+        ? `${res.data.clienteNome} — Proposta — Back-office Nebuloz`
+        : tituloDaAba("/propostas"),
+  };
+}
+
 export default async function GeradorPage({
   params,
 }: {
@@ -29,7 +54,7 @@ export default async function GeradorPage({
     requirePlatformStaff(),
     listarCatalogoComercial(),
     listServices(),
-    nova ? Promise.resolve(null) : getPropostaParaEdicao(id),
+    nova ? Promise.resolve(null) : lerProposta(id),
   ]);
 
   // Id que não existe não é falha de leitura: retry não resolve. O

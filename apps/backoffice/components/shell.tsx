@@ -82,7 +82,7 @@ function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
         {motivo}
       </p>
       <Link
-        href="/"
+        href="/home"
         style={{
           display: "inline-block",
           marginTop: 20,
@@ -91,7 +91,7 @@ function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
           color: "var(--accent-text)",
         }}
       >
-        Voltar para Clientes
+        Voltar para a Home
       </Link>
     </div>
   );

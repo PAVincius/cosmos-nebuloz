@@ -1,6 +1,7 @@
 import { Carregando } from "@/components/carregando";
 
-// Inventário de 18 fornecedores é uma tabela — sem grade de KPIs antes dela.
+// O inventário abre com a fileira de KPIs (assinados, pendentes, bloqueiam
+// venda…) e só depois a tabela — a forma `kpis` é a que não pula.
 export default function Loading() {
-  return <Carregando corpo="tabela" />;
+  return <Carregando corpo="kpis" />;
 }

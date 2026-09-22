@@ -3,7 +3,7 @@
 import type { ProductModule } from "@repo/database";
 import { useState, useTransition } from "react";
 import { contractModuleAction } from "@/app/actions/provisioning";
-import { BotaoSecundario, Erro } from "@/components/campo";
+import { Erro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { MOTIVO_SOMENTE_LEITURA } from "@/components/write-button";
@@ -22,11 +22,21 @@ function rotuloDe(status: string): string {
   return ROTULO_STATUS[status as (typeof STATUSES)[number]] ?? status;
 }
 
-/** Liberar acesso é reversível e barato de errar: segue como clique direto.
- *  Cortar acesso chega ao cliente em segundos e não tem desfazer. */
+/** Cortar acesso chega ao cliente em segundos e não tem desfazer — tom
+ *  vermelho. Liberar é reversível, mas também chega ao cliente em segundos e
+ *  vai para a auditoria com o nome de quem clicou: decisão do dono, passa pela
+ *  mesma barreira, em tom accent. */
 const CORTAM_O_CLIENTE = new Set(["SUSPENDED", "CANCELED"]);
 
-const CONSEQUENCIA: Record<string, string> = {
+/** O que `contractModule` faz de verdade (packages/provisioning): grava o
+ *  status, invalida o cache do gate (o acesso muda na próxima requisição) e
+ *  registra na auditoria. Não há cobrança automática nem prazo: `expiresAt`
+ *  fica nulo, então um trial não expira sozinho. */
+const CONSEQUENCIA: Record<(typeof STATUSES)[number], string> = {
+  ACTIVE:
+    "O cliente ganha acesso ao módulo na próxima requisição, sem cobrança automática; fica na auditoria com o seu nome.",
+  TRIAL:
+    "O cliente ganha acesso ao módulo na próxima requisição. O trial não expira sozinho: encerrá-lo é outra troca aqui.",
   SUSPENDED:
     "O cliente perde acesso ao módulo agora. Quem estiver usando é interrompido na próxima requisição.",
   CANCELED:
@@ -130,27 +140,19 @@ export function ModuleForm({
                       if (status === "CANCELED" && !podeCancelar) {
                         return null;
                       }
-                      return CORTAM_O_CLIENTE.has(status) ? (
+                      return (
                         <ConfirmarAcao
                           alvo={`${module} · ${slug}`}
                           consequencia={CONSEQUENCIA[status]}
-                          desabilitado={!canWrite}
+                          // O status vigente não é pergunta: o botão dele
+                          // fica cinza, como antes.
+                          desabilitado={!canWrite || current?.status === status}
                           executando={pending}
                           key={status}
                           onConfirmar={() => apply(module, status)}
                           rotulo={ROTULO_STATUS[status]}
+                          tom={CORTAM_O_CLIENTE.has(status) ? "red" : "accent"}
                         />
-                      ) : (
-                        <BotaoSecundario
-                          disabled={
-                            !canWrite || pending || current?.status === status
-                          }
-                          key={status}
-                          onClick={() => apply(module, status)}
-                          rotulo={`Definir ${module} como ${ROTULO_STATUS[status]}`}
-                        >
-                          {ROTULO_STATUS[status]}
-                        </BotaoSecundario>
                       );
                     })}
                   </span>

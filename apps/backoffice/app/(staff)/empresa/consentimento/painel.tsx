@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { type FocusEvent, useCallback, useEffect, useState } from "react";
 import {
   type ConsentimentoView,
@@ -16,7 +16,9 @@ import {
   INPUT,
   rotuloSalvar,
 } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Secao } from "@/components/secao";
 import { WriteButton } from "@/components/write-button";
 import { useAvisoAoSair } from "@/lib/rascunho-sujo";
 
@@ -52,6 +54,20 @@ function rotuloStanding(v: boolean | null): string {
     return "sem resposta";
   }
   return v ? "sim" : "não";
+}
+
+/** A frase de sucesso de `salvarDecisao`, pelo campo que o patch carrega. */
+function fraseDaDecisao(patch: {
+  baseLegal?: keyof typeof ROTULO_BASE;
+  standingHabilitavel?: boolean | null;
+}): string {
+  if (patch.baseLegal) {
+    return `Base legal registrada: ${ROTULO_BASE[patch.baseLegal]}.`;
+  }
+  if (patch.standingHabilitavel !== undefined) {
+    return `Resposta registrada: consentimento permanente habilitável — ${rotuloStanding(patch.standingHabilitavel)}.`;
+  }
+  return "Decisão registrada.";
 }
 
 /** A cláusula ocupa as duas colunas; os demais avisos ficam lado a lado. */
@@ -352,6 +368,13 @@ export function Painel({
   });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // A última decisão gravada, em prosa, no cartão em que foi tomada: base
+  // legal e resposta 4 terminavam em silêncio, e o avanço do parecer só
+  // trocava a cor do selo.
+  const [confirmacao, setConfirmacao] = useState<{
+    onde: "decisao" | "parecer";
+    texto: string;
+  } | null>(null);
   const sujo =
     form.ferramenta !== (view.decisao.ferramenta ?? "") ||
     form.prazoRetencao !== (view.decisao.prazoRetencao ?? "") ||
@@ -389,12 +412,14 @@ export function Painel({
   const decidir = useCallback(
     async (patch: Parameters<typeof salvarDecisao>[0]) => {
       setErro(null);
+      setConfirmacao(null);
       const res = await salvarDecisao(patch);
       if (!res.ok) {
         setErro(res.error);
         return;
       }
       await recarregar();
+      setConfirmacao({ onde: "decisao", texto: fraseDaDecisao(patch) });
     },
     [recarregar]
   );
@@ -418,12 +443,17 @@ export function Painel({
   const parecer = useCallback(
     async (status: "ENVIADO" | "RECEBIDO") => {
       setErro(null);
+      setConfirmacao(null);
       const res = await marcarParecer({ status });
       if (!res.ok) {
         setErro(res.error);
         return;
       }
       await recarregar();
+      setConfirmacao({
+        onde: "parecer",
+        texto: `Parecer marcado como “${ROTULO_PARECER[status]}”.`,
+      });
     },
     [recarregar]
   );
@@ -465,10 +495,12 @@ export function Painel({
           />
         ) : null}
       </div>
+      {confirmacao?.onde === "parecer" ? (
+        <Confirmacao>{confirmacao.texto}</Confirmacao>
+      ) : null}
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
-        as="h2"
+      <Secao
         subtitle={`${view.camposEmAberto.length} campos em aberto${
           view.camposEmAberto.length
             ? `: ${view.camposEmAberto.join(" · ")}`
@@ -476,14 +508,7 @@ export function Painel({
         }`}
         title="Aviso lido na abertura"
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 12,
-            marginBottom: 16,
-          }}
-        >
+        <div className="bo-tres-colunas" style={{ marginBottom: 16 }}>
           <Campo htmlFor="ferramenta" label="[ferramenta]">
             <input
               id="ferramenta"
@@ -526,14 +551,7 @@ export function Painel({
             {rotuloSalvar(salvando, sujo)}
           </BotaoPrimario>
         ) : null}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 12,
-            marginTop: 16,
-          }}
-        >
+        <div className="bo-duas-colunas" style={{ gap: 12, marginTop: 16 }}>
           {view.avisos.map((a) => (
             <div
               key={a.peca}
@@ -571,11 +589,10 @@ export function Painel({
             </div>
           ))}
         </div>
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
-        as="h2"
-        subtitle="A escolha é do responsável jurídico. Até lá, nenhum tenant habilita o consentimento permanente."
+      <Secao
+        subtitle="A escolha é do responsável jurídico. Até lá, nenhum cliente habilita o consentimento permanente."
         title="Base legal"
       >
         <EscolhaDeBaseLegal
@@ -588,10 +605,14 @@ export function Painel({
           onDecidir={(standingHabilitavel) => decidir({ standingHabilitavel })}
           podeEscrever={podeEscrever}
         />
-      </SectionCard>
+        {confirmacao?.onde === "decisao" ? (
+          <div style={{ marginTop: 12 }}>
+            <Confirmacao>{confirmacao.texto}</Confirmacao>
+          </div>
+        ) : null}
+      </Secao>
 
-      <SectionCard
-        as="h2"
+      <Secao
         subtitle={`${view.abertas} abertas · ${
           view.perguntas.length - view.abertas
         } respondidas`}
@@ -631,7 +652,7 @@ export function Painel({
             </li>
           ))}
         </ol>
-      </SectionCard>
+      </Secao>
     </>
   );
 }

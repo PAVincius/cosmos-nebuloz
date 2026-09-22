@@ -1,6 +1,5 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import type { ContaView } from "@/app/actions/empresa/financeiro";
@@ -14,6 +13,7 @@ import { BotaoSecundario, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
@@ -298,7 +298,7 @@ export function Lancamentos({
   const hrefSemConta = `/empresa/financeiro?aba=lancamentos&de=${encodeURIComponent(intervalo.de)}&ate=${encodeURIComponent(intervalo.ate)}`;
 
   return (
-    <SectionCard
+    <Secao
       subtitle={`${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)} · ${linhasFiltradas.length} de ${dados.linhas.length} ${dados.linhas.length === 1 ? "lançamento" : "lançamentos"}`}
       title="Lançamentos"
     >
@@ -420,6 +420,6 @@ export function Lancamentos({
         onClose={fecharDialogo}
         onCriar={criar}
       />
-    </SectionCard>
+    </Secao>
   );
 }

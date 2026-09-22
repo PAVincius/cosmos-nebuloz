@@ -1,6 +1,7 @@
 import { Carregando } from "@/components/carregando";
 
-// Biblioteca: lista de ativos à esquerda, ficha à direita — a forma do editor.
+// A biblioteca abre com três KPIs (resumo.tsx) antes da lista e da ficha:
+// `kpis` é a forma que casa com o topo; o resto chega depois.
 export default function Loading() {
-  return <Carregando corpo="documento" />;
+  return <Carregando corpo="kpis" />;
 }

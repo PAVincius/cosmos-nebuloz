@@ -1,18 +1,21 @@
 "use client";
 
-import { Badge, Progress, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, Progress } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import type { AvaliacaoDetalhe } from "@/app/actions/maturidade";
 import { concluirAvaliacao, responder } from "@/app/actions/maturidade";
 import { Erro, INPUT, mensagemDeErro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { Secao } from "@/components/secao";
 import { WriteButton } from "@/components/write-button";
 import { PORTAS } from "@/lib/comercial/funil";
 import {
   CODIGOS_NIVEL,
   type Criterio,
   DIMENSOES,
+  type Dimensao,
   INFO_DIMENSAO,
   INFO_NIVEL,
   NIVEIS,
@@ -23,6 +26,7 @@ import {
   rubricaDe,
   type ScoreDaDimensao,
 } from "@/lib/growth/maturidade";
+import { useSalvoHaPouco } from "@/lib/salvo-ha-pouco";
 
 type Estado = Record<string, { nivel: number; nota: string | null }>;
 
@@ -85,9 +89,38 @@ function OpcaoDeNivel({
   );
 }
 
+/** "Salvo" discreto do autosave: aparece por alguns segundos ao lado do
+ *  score da dimensão do critério que acabou de gravar, e no cartão dela. */
+function Salvo() {
+  // `<output>`, como a `Confirmacao`: é resultado da ação, e o leitor de tela
+  // anuncia sem a pessoa precisar sair do critério.
+  return (
+    <output
+      aria-live="polite"
+      className="mono"
+      style={{
+        marginRight: 10,
+        fontSize: "var(--fs-micro)",
+        fontWeight: 700,
+        letterSpacing: ".08em",
+        color: "var(--green-text)",
+      }}
+    >
+      Salvo
+    </output>
+  );
+}
+
 /** Uma barra por dimensão, com o peso à vista: sem ele o leitor não tem como
  *  saber por que 60 em Dados dói mais do que 60 em Cultura. */
-function BarraDaDimensao({ d }: { d: ScoreDaDimensao }) {
+function BarraDaDimensao({
+  d,
+  salvo,
+}: {
+  d: ScoreDaDimensao;
+  /** A última gravação foi de um critério desta dimensão, há poucos segundos. */
+  salvo: boolean;
+}) {
   const info = INFO_DIMENSAO[d.dimensao];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
@@ -108,6 +141,7 @@ function BarraDaDimensao({ d }: { d: ScoreDaDimensao }) {
           </span>
         </span>
         <span className="mono" style={{ color: "var(--ink-muted)" }}>
+          {salvo ? <Salvo /> : null}
           {d.score ?? `— · ${d.respondidos}/${d.total}`}
         </span>
       </div>
@@ -258,15 +292,21 @@ function PainelDeResultado({
   inicial,
   resultado,
   concluida,
+  concluidaAgora,
   podeEscrever,
   salvando,
+  salvoNa,
   onConcluir,
 }: {
   inicial: AvaliacaoDetalhe;
   resultado: Resultado;
   concluida: boolean;
+  /** O score que o fecho congelou nesta sessão — a frase de sucesso. */
+  concluidaAgora: number | null;
   podeEscrever: boolean;
   salvando: boolean;
+  /** Dimensão do critério gravado há pouco, para o "Salvo" ao lado do score. */
+  salvoNa: Dimensao | null;
   onConcluir: () => void;
 }) {
   const scoreExibido = concluida ? inicial.scoreGeral : resultado.scoreGeral;
@@ -292,7 +332,7 @@ function PainelDeResultado({
   });
 
   return (
-    <SectionCard
+    <Secao
       action={acaoDeConcluir}
       subtitle={
         faltam === 0
@@ -326,10 +366,19 @@ function PainelDeResultado({
         </div>
 
         {resultado.porDimensao.map((d) => (
-          <BarraDaDimensao d={d} key={d.dimensao} />
+          <BarraDaDimensao
+            d={d}
+            key={d.dimensao}
+            salvo={salvoNa === d.dimensao}
+          />
         ))}
+        {concluidaAgora === null ? null : (
+          <Confirmacao>
+            {`Avaliação concluída — score congelado em ${concluidaAgora}.`}
+          </Confirmacao>
+        )}
       </div>
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -359,6 +408,17 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
     mensagem: string;
   } | null>(null);
   const [salvando, iniciar] = useTransition();
+  // A última gravação que deu certo: a dimensão, para o "Salvo" aparecer
+  // onde a pessoa está, e um contador para o relógio reiniciar a cada uma.
+  const [ultimaGravacao, setUltimaGravacao] = useState<{
+    dimensao: Dimensao | null;
+    n: number;
+  }>({ dimensao: null, n: 0 });
+  const salvoHaPouco = useSalvoHaPouco(ultimaGravacao.n);
+  const salvoNa = salvoHaPouco ? ultimaGravacao.dimensao : null;
+  // O score que o fecho acabou de congelar. `router.refresh()` preserva o
+  // estado do cliente, então a frase sobrevive à releitura do servidor.
+  const [concluidaAgora, setConcluidaAgora] = useState<number | null>(null);
 
   // Desfaz o otimismo: deixar a tela mostrando um nível que o servidor recusou
   // é pior do que não ter clicado.
@@ -377,7 +437,12 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
     });
   }
 
-  function gravar(criterioId: string, nivel: number, nota: string | null) {
+  function gravar(
+    criterioId: string,
+    dimensao: Dimensao,
+    nivel: number,
+    nota: string | null
+  ) {
     const anterior = estado[criterioId];
     setEstado((s) => ({ ...s, [criterioId]: { nivel, nota } }));
     setErroDoCriterio(null);
@@ -389,7 +454,9 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
           nivel,
           nota: nota ?? undefined,
         });
-        if (!r.ok) {
+        if (r.ok) {
+          setUltimaGravacao((u) => ({ dimensao, n: u.n + 1 }));
+        } else {
           reverter(criterioId, anterior);
           setErroDoCriterio({ criterioId, mensagem: r.error });
         }
@@ -405,6 +472,7 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
       try {
         const r = await concluirAvaliacao({ avaliacaoId: inicial.id });
         if (r.ok) {
+          setConcluidaAgora(r.data.scoreGeral);
           router.refresh();
         } else {
           setErro(r.error);
@@ -415,7 +483,16 @@ function useRespostas(inicial: AvaliacaoDetalhe) {
     });
   }
 
-  return { estado, erro, erroDoCriterio, salvando, gravar, concluir };
+  return {
+    estado,
+    erro,
+    erroDoCriterio,
+    salvando,
+    salvoNa,
+    concluidaAgora,
+    gravar,
+    concluir,
+  };
 }
 
 export function Avaliacao({
@@ -425,8 +502,16 @@ export function Avaliacao({
   inicial: AvaliacaoDetalhe;
   podeEscrever: boolean;
 }) {
-  const { estado, erro, erroDoCriterio, salvando, gravar, concluir } =
-    useRespostas(inicial);
+  const {
+    estado,
+    erro,
+    erroDoCriterio,
+    salvando,
+    salvoNa,
+    concluidaAgora,
+    gravar,
+    concluir,
+  } = useRespostas(inicial);
 
   const concluida = inicial.status === "CONCLUIDA";
   const travado = concluida || !podeEscrever;
@@ -459,11 +544,13 @@ export function Avaliacao({
 
       <PainelDeResultado
         concluida={concluida}
+        concluidaAgora={concluidaAgora}
         inicial={inicial}
         onConcluir={concluir}
         podeEscrever={podeEscrever}
         resultado={resultado}
         salvando={salvando}
+        salvoNa={salvoNa}
       />
 
       {erro ? <Erro>{erro}</Erro> : null}
@@ -474,7 +561,8 @@ export function Avaliacao({
           (c) => c.dimensao === dimensao
         );
         return (
-          <SectionCard
+          <Secao
+            action={salvoNa === dimensao ? <Salvo /> : null}
             key={dimensao}
             subtitle={info.descricao}
             title={info.rotulo}
@@ -490,13 +578,15 @@ export function Avaliacao({
                       : null
                   }
                   key={c.id}
-                  onGravar={(nivel, nota) => gravar(c.id, nivel, nota)}
+                  onGravar={(nivel, nota) =>
+                    gravar(c.id, dimensao, nivel, nota)
+                  }
                   resposta={estado[c.id]}
                   travado={travado}
                 />
               ))}
             </div>
-          </SectionCard>
+          </Secao>
         );
       })}
     </div>

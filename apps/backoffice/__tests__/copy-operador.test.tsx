@@ -122,7 +122,11 @@ describe("aprovações", () => {
 
     expect(screen.queryAllByText(VAZAMENTO)).toHaveLength(0);
     expect(screen.getByText("Nada pendente")).toBeTruthy();
-    expect(screen.getByText(/proposta com desconto acima de 15%/)).toBeTruthy();
+    // Subtítulo e vazio dizem a mesma coisa — o subtítulo listava cinco
+    // operações e o vazio dizia que só uma passa (crítica rodada 4).
+    expect(
+      screen.getAllByText(/proposta com desconto acima de 15%/)
+    ).toHaveLength(2);
   });
 });
 

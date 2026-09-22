@@ -1,9 +1,9 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState } from "react";
 import { type CaixaView, salvarSemana } from "@/app/actions/empresa/financeiro";
 import { Erro, INPUT } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import {
   centavosParaCampo,
   formatarBRL,
@@ -166,7 +166,7 @@ export function Caixa({
   );
 
   return (
-    <SectionCard
+    <Secao
       subtitle={`S1 = ${formatarDataBr(view.semanas[0]?.semanaInicio ?? view.intervalo.de)} · atualizado toda segunda · pipeline ponderado de referência: ${
         view.referenciaPipelineCentavos === null
           ? "sem taxa de conversão registrada na tela de CAC"
@@ -212,6 +212,6 @@ export function Caixa({
           </tbody>
         </table>
       </div>
-    </SectionCard>
+    </Secao>
   );
 }
