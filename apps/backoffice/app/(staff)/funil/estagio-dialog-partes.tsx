@@ -18,6 +18,7 @@ import {
   SEM_PROXIMO_PASSO,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { formatarData } from "@/lib/data";
 import { tomCss } from "@/lib/tom";
 
 /**
@@ -53,9 +54,7 @@ function Rotulo({ children, tone }: { children: string; tone?: Tone }) {
 
 function textoProximoPasso(l: LeadRow): string {
   if (l.proximaAcao) {
-    const data = l.proximaAcaoEm
-      ? ` · ${new Date(l.proximaAcaoEm).toLocaleDateString("pt-BR")}`
-      : "";
+    const data = l.proximaAcaoEm ? ` · ${formatarData(l.proximaAcaoEm)}` : "";
     return `${l.proximaAcao}${data}`;
   }
   if (l.proposta) {
@@ -457,7 +456,7 @@ function CorpoRegistro({
             }}
           >
             {m.autorNome ? `${m.autorNome} · ` : ""}
-            {new Date(m.criadoEm).toLocaleDateString("pt-BR")}
+            {formatarData(m.criadoEm)}
           </span>
         </div>
       ))}

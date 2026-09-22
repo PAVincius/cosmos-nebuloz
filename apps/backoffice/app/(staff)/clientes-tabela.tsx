@@ -12,6 +12,7 @@ import { type ClientRow, listClients } from "@/app/actions/clients";
 import { Busca, contemTexto } from "@/components/busca";
 import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { Vazio } from "@/components/vazio";
+import { formatarData } from "@/lib/data";
 import { TETO_DA_LISTA } from "@/lib/paginacao";
 import { useParamState } from "@/lib/url-state";
 
@@ -273,7 +274,7 @@ function Tabela({ clientes }: { clientes: ClientRow[] }) {
                   fontSize: "var(--fs-base)",
                 }}
               >
-                {new Date(cliente.createdAt).toLocaleDateString("pt-BR")}
+                {formatarData(cliente.createdAt)}
               </td>
             </tr>
           ))}

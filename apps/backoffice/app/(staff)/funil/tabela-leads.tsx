@@ -17,6 +17,7 @@ import {
   textoEntradaOrigem,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { formatarData } from "@/lib/data";
 
 /**
  * Tabela de leads (spec §4, colunas do design). Ordena estagnados primeiro —
@@ -93,7 +94,7 @@ function TextoProximoPasso({
     );
   }
   const dataTexto = lead.proximaAcaoEm
-    ? ` — ${new Date(lead.proximaAcaoEm).toLocaleDateString("pt-BR")}`
+    ? ` — ${formatarData(lead.proximaAcaoEm)}`
     : "";
   return (
     <span style={{ color: vencido ? "var(--red-text)" : "var(--ink-muted)" }}>
@@ -113,17 +114,11 @@ function TempoCelula({
   vencido: boolean;
 }) {
   if (lead.situacao === "PERDIDO") {
-    const texto = lead.perdidoEm
-      ? new Date(lead.perdidoEm).toLocaleDateString("pt-BR")
-      : "—";
+    const texto = lead.perdidoEm ? formatarData(lead.perdidoEm) : "—";
     return <span className="mono">{texto}</span>;
   }
   if (lead.situacao === "GANHO") {
-    return (
-      <span className="mono">
-        {new Date(lead.estagioDesde).toLocaleDateString("pt-BR")}
-      </span>
-    );
+    return <span className="mono">{formatarData(lead.estagioDesde)}</span>;
   }
   return (
     <span

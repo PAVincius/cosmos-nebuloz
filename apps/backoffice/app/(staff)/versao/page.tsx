@@ -7,6 +7,7 @@ import { Secao } from "@/components/secao";
 import { StatusDot } from "@/components/status-dot";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 import {
   type ComparacaoDeSchema,
   EXPLICACAO_ESTADO,
@@ -38,7 +39,7 @@ function formatarQuando(iso: string | null): string {
   if (!iso) {
     return SEM_DADO;
   }
-  return new Date(iso).toLocaleString("pt-BR");
+  return formatarDataHora(iso);
 }
 
 /** Lista de nomes de migration. Mono e uma por linha: são identificadores que
@@ -276,8 +277,8 @@ export default async function VersaoPage() {
           color: "var(--ink-faint)",
         }}
       >
-        lido em {new Date(lidoEm).toLocaleString("pt-BR")} · a lista do código
-        vem de MIGRATIONS_DO_CODIGO, congelada no build
+        lido em {formatarDataHora(lidoEm)} · a lista do código vem de
+        MIGRATIONS_DO_CODIGO, congelada no build
       </p>
     </div>
   );

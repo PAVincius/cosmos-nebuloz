@@ -31,6 +31,7 @@ import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState } from "@/lib/url-state";
 import {
@@ -597,8 +598,7 @@ export function Biblioteca({
                         color: "var(--ink-faint)",
                       }}
                     >
-                      {h.autorNome ?? "—"} ·{" "}
-                      {new Date(h.criadoEm).toLocaleString("pt-BR")}
+                      {h.autorNome ?? "—"} · {formatarDataHora(h.criadoEm)}
                     </span>
                   </li>
                 ))}

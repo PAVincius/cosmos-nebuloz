@@ -11,6 +11,7 @@ import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
 import { Vazio } from "@/components/vazio";
+import { formatarData } from "@/lib/data";
 import {
   DIAS_PARA_RENOVACAO,
   DIAS_SEM_ATIVIDADE,
@@ -98,7 +99,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
           style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
         >
           {c.ultimaAtividade
-            ? `ativo em ${new Date(c.ultimaAtividade).toLocaleDateString("pt-BR")}`
+            ? `ativo em ${formatarData(c.ultimaAtividade)}`
             : "sem atividade registrada"}
         </span>
       </div>

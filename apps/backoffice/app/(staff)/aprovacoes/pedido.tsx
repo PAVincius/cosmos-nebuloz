@@ -1,5 +1,6 @@
 import { Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import type { ReactNode } from "react";
+import { formatarDataHora } from "@/lib/data";
 
 const TOM: Record<string, Tone> = {
   PENDING_APPROVAL: "amber",
@@ -14,7 +15,7 @@ const ROTULO: Record<string, string> = {
 };
 
 function formatar(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR");
+  return formatarDataHora(iso);
 }
 
 export type PedidoView = {

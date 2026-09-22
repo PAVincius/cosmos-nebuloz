@@ -8,6 +8,7 @@ import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,7 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
             style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {i.ultimoSync
-              ? `último sync ${new Date(i.ultimoSync).toLocaleString("pt-BR")}`
+              ? `último sync ${formatarDataHora(i.ultimoSync)}`
               : "nunca sincronizou"}
           </span>
           <Badge dot tone="red">
@@ -118,7 +119,7 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
             className="mono"
             style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
-            {a.ip ?? "sem ip"} · {new Date(a.quando).toLocaleString("pt-BR")}
+            {a.ip ?? "sem ip"} · {formatarDataHora(a.quando)}
           </span>
         </li>
       ))}

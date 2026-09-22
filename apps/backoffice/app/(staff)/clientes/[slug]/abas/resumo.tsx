@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { IntegracaoRow } from "@/app/actions/tenant-observability";
 import { MetaCell } from "@/components/meta-cell";
 import { Secao } from "@/components/secao";
+import { formatarData } from "@/lib/data";
 import { rotuloDoModulo } from "@/lib/rotulo-do-modulo";
 
 /**
@@ -104,8 +105,7 @@ export function AbaResumo({
                       color: "var(--ink-faint)",
                     }}
                   >
-                    expira em{" "}
-                    {new Date(m.expiresAt).toLocaleDateString("pt-BR")}
+                    expira em {formatarData(m.expiresAt)}
                   </span>
                 ) : null}
               </span>

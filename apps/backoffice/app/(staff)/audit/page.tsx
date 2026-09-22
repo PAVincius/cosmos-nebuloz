@@ -7,7 +7,9 @@ import {
 } from "@/app/actions/audit";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { itemDaRota, secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 import { Filtros, Paginacao } from "./filtros";
 import { ACOES } from "./rotulos";
 
@@ -63,7 +65,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             className="mono"
             style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
-            {new Date(evento.quando).toLocaleString("pt-BR")}
+            {formatarDataHora(evento.quando)}
             {evento.ator ? ` · ${evento.ator}` : ""}
           </span>
         </summary>

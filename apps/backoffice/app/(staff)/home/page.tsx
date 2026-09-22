@@ -10,6 +10,7 @@ import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
+import { formatarDataHora } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -218,7 +219,7 @@ function Conteudo({
                     color: "var(--ink-faint)",
                   }}
                 >
-                  {new Date(e.quando).toLocaleString("pt-BR")}
+                  {formatarDataHora(e.quando)}
                 </span>
               </li>
             ))}

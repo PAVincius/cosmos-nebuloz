@@ -19,6 +19,7 @@ import {
   textoEntradaOrigem,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { formatarData } from "@/lib/data";
 import { tomCss } from "@/lib/tom";
 
 /**
@@ -99,7 +100,7 @@ function iconeProximoPasso(codigo: Estagio, tom: Tone): IconName {
 
 function textoProximoPasso(l: LeadRow): string {
   if (l.proximaAcaoEm) {
-    return new Date(l.proximaAcaoEm).toLocaleDateString("pt-BR");
+    return formatarData(l.proximaAcaoEm);
   }
   if (l.estagio === "PROPOSAL" && l.proposta) {
     return `lê ${l.proposta.numero}`;
