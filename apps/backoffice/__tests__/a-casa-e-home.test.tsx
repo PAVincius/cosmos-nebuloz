@@ -20,9 +20,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
 }));
-// O `Shell` (servidor) entrega a busca de clientes da paleta ao chrome; a
-// action puxa o banco no import, que o jsdom não carrega.
-vi.mock("@/app/actions/clientes-busca", () => ({ buscarClientes: vi.fn() }));
 vi.mock("next-themes", () => ({
   useTheme: () => ({ resolvedTheme: "dark", setTheme: vi.fn() }),
 }));
@@ -93,17 +90,6 @@ describe("saídas de erro voltam para a Home", () => {
   it("not-found.tsx", async () => {
     const { default: NaoEncontrado } = await import("@/app/(staff)/not-found");
     render(<NaoEncontrado />);
-
-    expect(
-      screen
-        .getByRole("link", { name: "Voltar para a Home" })
-        .getAttribute("href")
-    ).toBe("/");
-  });
-
-  it("tela pendente do shell", async () => {
-    const { Pendente } = await import("@/components/shell");
-    render(<Pendente rota="/rota-que-nao-existe" />);
 
     expect(
       screen

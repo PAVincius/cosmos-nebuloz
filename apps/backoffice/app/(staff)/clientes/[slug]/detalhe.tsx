@@ -44,6 +44,9 @@ type Aba = {
   id: string;
   label: string;
   conteudo: ReactNode;
+  /** A leitura da aba falhou: o rótulo diz "—" em vez de uma contagem, e o
+   *  motivo vai junto — no `title` e para o leitor de tela. */
+  motivo?: string;
 };
 
 /**
@@ -54,12 +57,18 @@ type Aba = {
  * ARIA inválido. A aparência é a do kit, literal — quando ele ganhar os
  * papéis, isto volta a ser `<Tabs>`.
  */
+/** O `title` da aba cuja leitura falhou. Função, e não ternário no JSX: o
+ *  lint lê o ternário inline como valor vazando para o render. */
+function dicaDaAba(motivo: string | undefined): string | undefined {
+  return motivo ? `Não carregou: ${motivo}` : undefined;
+}
+
 function FaixaDeAbas({
   abas,
   ativa,
   onMudar,
 }: {
-  abas: { id: string; label: string }[];
+  abas: { id: string; label: string; motivo?: string }[];
   ativa: string;
   onMudar: (id: string) => void;
 }) {
@@ -126,9 +135,13 @@ function FaixaDeAbas({
               cursor: "pointer",
             }}
             tabIndex={selecionada ? 0 : -1}
+            title={dicaDaAba(t.motivo)}
             type="button"
           >
             {t.label}
+            {t.motivo ? (
+              <span className="sr-only"> (não carregou: {t.motivo})</span>
+            ) : null}
           </button>
         );
       })}
@@ -220,7 +233,10 @@ export function DetalheDoTenant({
       : []),
     {
       id: "audit",
-      label: `Audit · ${auditoria.ok ? auditoria.data.length : 0}`,
+      // O nome do menu, não "Audit". E leitura que falhou não é zero evento:
+      // "0" afirmaria que o cliente não tem trilha quando só não deu para ler.
+      label: `Trilha de auditoria · ${auditoria.ok ? auditoria.data.length : "—"}`,
+      motivo: auditoria.ok ? undefined : auditoria.error,
       conteudo: (
         <SecaoSimples
           icone="history"
@@ -252,7 +268,7 @@ export function DetalheDoTenant({
           O envelope rola em vez de cortar. */}
       <div className="scroll" style={{ overflowX: "auto", marginBottom: 16 }}>
         <FaixaDeAbas
-          abas={abas.map(({ id, label }) => ({ id, label }))}
+          abas={abas.map(({ id, label, motivo }) => ({ id, label, motivo }))}
           ativa={atual.id}
           onMudar={setAba}
         />

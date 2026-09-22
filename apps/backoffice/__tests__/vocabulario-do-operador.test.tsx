@@ -371,7 +371,6 @@ describe("WriteButton bloqueado continua no Tab", () => {
 const RAIZ = path.resolve(__dirname, "../app/(staff)");
 const FORA = new Set([
   "clientes/[slug]/page.tsx",
-  "empresa/financeiro/page.tsx",
   "servicos/[codigo]/page.tsx",
   "growth/readiness/[id]/page.tsx",
   "propostas/[id]/page.tsx",

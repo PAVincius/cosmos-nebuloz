@@ -10,7 +10,9 @@ import { listarLancamentos } from "@/app/actions/empresa/livro";
 import { lerOrcado } from "@/app/actions/empresa/orcamento";
 import { listarRecorrente } from "@/app/actions/empresa/recorrente";
 import { listarTitulos } from "@/app/actions/empresa/titulos";
+import { LinkExportarCsv } from "@/components/exportar-csv";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
   competenciaAtual,
@@ -539,7 +541,9 @@ function ConteudoDaAba({
 
 /** O controle de período no cabeçalho: `SeletorDaAba` (intervalo) para as
  *  abas que recortam por período, o seletor de competência única para
- *  Receita recorrente, e nenhum para Plano/Títulos — que são listas vivas. */
+ *  Receita recorrente, e nenhum para Plano/Títulos — que são listas vivas.
+ *  Em Títulos o lugar fica com "Exportar CSV": a lista inteira, a pagar e a
+ *  receber, na planilha. */
 function SeletorDaPagina({
   aba,
   intervalo,
@@ -551,7 +555,10 @@ function SeletorDaPagina({
   competencia: string;
   extraDoSeletor: Record<string, string> | undefined;
 }) {
-  if (aba === "plano" || aba === "titulos") {
+  if (aba === "titulos") {
+    return <LinkExportarCsv href="/empresa/financeiro/titulos/exportar" />;
+  }
+  if (aba === "plano") {
     return null;
   }
   if (aba === "recorrente") {
@@ -559,6 +566,8 @@ function SeletorDaPagina({
   }
   return <SeletorDaAba aba={aba} extra={extraDoSeletor} valor={intervalo} />;
 }
+
+export const metadata = { title: tituloDaAba("/empresa/financeiro") };
 
 export default async function FinanceiroPage({
   searchParams,
@@ -610,7 +619,7 @@ export default async function FinanceiroPage({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
-        eyebrow="Empresa · Base financeira"
+        eyebrow={`${secaoDaRota("/empresa/financeiro")} · Base financeira`}
         subtitle={subtitleDaAba(aba, intervalo, competencia)}
         title="Financeiro"
       />

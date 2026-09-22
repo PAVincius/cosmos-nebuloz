@@ -7,9 +7,9 @@ import type { ReactNode } from "react";
  * cópia em Tailwind. Três cópias divergem, e divergiram: mesma moldura, três
  * paddings e dois tons de texto diferentes.
  *
- * O tracejado é o mesmo do `Pendente` do shell, e por escolha: ele já significa
- * "moldura sem conteúdo" no resto do painel. Reusar o sinal custa menos que
- * ensinar um novo.
+ * O tracejado era o mesmo da antiga tela `Pendente` do shell (removida na
+ * rodada 5, sem uso), e por escolha: ele já significava "moldura sem
+ * conteúdo" no painel. Reusar o sinal custa menos que ensinar um novo.
  */
 export function Vazio({ children }: { children: ReactNode }) {
   return (

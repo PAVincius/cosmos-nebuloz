@@ -5,6 +5,7 @@ import {
   listAuditEvents,
   listAuditTenants,
 } from "@/app/actions/audit";
+import { LinkExportarCsv } from "@/components/exportar-csv";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { itemDaRota, secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Secao } from "@/components/secao";
@@ -128,6 +129,21 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
 
 export const metadata = { title: tituloDaAba("/audit") };
 
+/** O filtro da tela na URL da exportação, nos mesmos nomes. A página
+ *  (`?pagina=`) fica de fora: o arquivo leva o filtro inteiro, não os 50 que
+ *  estão à vista. */
+function hrefDaExportacao(q: Busca): string {
+  const params = new URLSearchParams();
+  for (const chave of ["tenant", "acao", "entidade", "de", "ate"] as const) {
+    const valor = q[chave];
+    if (valor) {
+      params.set(chave, valor);
+    }
+  }
+  const consulta = params.toString();
+  return consulta ? `/audit/exportar?${consulta}` : "/audit/exportar";
+}
+
 export default async function AuditPage({
   searchParams,
 }: {
@@ -166,6 +182,7 @@ export default async function AuditPage({
       </Secao>
 
       <Secao
+        action={<LinkExportarCsv href={hrefDaExportacao(q)} />}
         icon="history"
         subtitle={
           pagina.ok

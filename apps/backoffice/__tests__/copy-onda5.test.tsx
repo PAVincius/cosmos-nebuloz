@@ -26,9 +26,6 @@ const mocks = vi.hoisted(() => ({
   requirePlatformStaff: vi.fn(),
 }));
 
-// O `Shell` (servidor) entrega a busca de clientes da paleta ao chrome; a
-// action puxa o banco no import, que o jsdom não carrega.
-vi.mock("@/app/actions/clientes-busca", () => ({ buscarClientes: vi.fn() }));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
@@ -152,15 +149,6 @@ describe("tenant → cliente", () => {
 
     expect(screen.queryByText(/nascem ativos/)).toBeNull();
     expect(screen.getByText(/ativo ou trial/i)).toBeTruthy();
-  });
-
-  it("a tela pendente do shell volta para a Home", async () => {
-    const { Pendente } = await import("@/components/shell");
-    render(<Pendente rota="/rota-que-nao-existe" />);
-
-    expect(
-      screen.getByRole("link", { name: "Voltar para a Home" })
-    ).toBeTruthy();
   });
 });
 
