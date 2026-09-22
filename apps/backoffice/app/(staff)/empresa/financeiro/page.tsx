@@ -13,6 +13,10 @@ import { listarTitulos } from "@/app/actions/empresa/titulos";
 import { LinkExportarCsv } from "@/components/exportar-csv";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import {
+  ABAS_DO_FINANCEIRO,
+  type AbaDoFinanceiro,
+} from "@/lib/empresa/abas-do-financeiro";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
   competenciaAtual,
@@ -76,14 +80,7 @@ async function carregarDados(
 
 export const dynamic = "force-dynamic";
 
-type Aba =
-  | "dre"
-  | "caixa"
-  | "plano"
-  | "lancamentos"
-  | "titulos"
-  | "orcado"
-  | "recorrente";
+type Aba = AbaDoFinanceiro;
 
 function abaValida(aba: string | undefined): Aba {
   if (
@@ -148,15 +145,9 @@ function ErroDaAba({ erro }: { erro: string | null }) {
   );
 }
 
-const ABAS: { id: Aba; rotulo: string }[] = [
-  { id: "dre", rotulo: "DRE mensal" },
-  { id: "lancamentos", rotulo: "Lançamentos" },
-  { id: "titulos", rotulo: "Títulos" },
-  { id: "orcado", rotulo: "Orçado × realizado" },
-  { id: "recorrente", rotulo: "Receita recorrente" },
-  { id: "caixa", rotulo: "Caixa" },
-  { id: "plano", rotulo: "Plano de contas" },
-];
+/** A lista mora em `lib/empresa/abas-do-financeiro.ts` — a paleta (Ctrl+K)
+ *  oferece as mesmas abas como destino. */
+const ABAS = ABAS_DO_FINANCEIRO;
 
 /** Fora do JSX: inline, o lint lê o ternário como valor vazando. */
 function ariaCurrent(ativa: boolean): "page" | undefined {
