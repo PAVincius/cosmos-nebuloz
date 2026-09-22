@@ -90,6 +90,7 @@ export function ConfirmarAcao({
   tom = "red",
   aberto = false,
   onVoltar,
+  nomeDoGatilho,
 }: {
   /** O que o botão faz, em imperativo: "Cancelar COSMOS". */
   rotulo: string;
@@ -115,6 +116,11 @@ export function ConfirmarAcao({
   /** Chamado ao desistir. Quem montou com `aberto` usa isto para restaurar o
    *  valor anterior. */
   onVoltar?: () => void;
+  /** Nome acessível do gatilho, quando o rótulo sozinho se repete na tela —
+   *  cinco "Excluir" numa lista soam iguais para o leitor de tela. Deve
+   *  **conter** o rótulo visível ("Excluir lançamento Aluguel"), para quem
+   *  comanda por voz dizer o que vê. Sem a prop, o nome é o rótulo. */
+  nomeDoGatilho?: string;
 }) {
   const [perguntando, setPerguntando] = useState(aberto);
   const bloqueado = executando || desabilitado;
@@ -150,6 +156,7 @@ export function ConfirmarAcao({
   if (!perguntando) {
     return (
       <button
+        aria-label={nomeDoGatilho}
         className="btn"
         disabled={bloqueado}
         onClick={() => {

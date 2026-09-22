@@ -231,11 +231,11 @@ describe("status inicial por módulo é um grupo de rádio", () => {
     ).toHaveLength(6);
     // Um marcado por grupo: COSMOS nasce Ativo (default histórico), CHARTER
     // nasce Fora — e "Fora" também é uma escolha com nome, não ausência.
-    const cosmos = within(screen.getByRole("radiogroup", { name: /COSMOS/ }));
+    const cosmos = within(screen.getByRole("radiogroup", { name: /Cosmos/ }));
     expect(cosmos.getByRole("radio", { checked: true })).toBe(
       cosmos.getByRole("radio", { name: "Ativo" })
     );
-    const charter = within(screen.getByRole("radiogroup", { name: /CHARTER/ }));
+    const charter = within(screen.getByRole("radiogroup", { name: /Charter/ }));
     expect(charter.getByRole("radio", { checked: true })).toBe(
       charter.getByRole("radio", { name: "Fora" })
     );
@@ -255,8 +255,8 @@ describe("status inicial por módulo é um grupo de rádio", () => {
       target: { value: "dono@atlas.com" },
     });
 
-    const cosmos = screen.getByRole("radiogroup", { name: /COSMOS/ });
-    const charter = screen.getByRole("radiogroup", { name: /CHARTER/ });
+    const cosmos = screen.getByRole("radiogroup", { name: /Cosmos/ });
+    const charter = screen.getByRole("radiogroup", { name: /Charter/ });
     fireEvent.click(
       Array.from(cosmos.querySelectorAll("input")).find(
         (i) => i.value === "TRIAL"
