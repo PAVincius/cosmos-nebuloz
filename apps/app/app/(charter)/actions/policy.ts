@@ -4,6 +4,7 @@ import { type CharterSectionStatus, withTenantDb } from "@repo/database";
 import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { diffTexto, type Segmento } from "@/lib/charter/diff";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
@@ -440,11 +441,43 @@ type SnapshotSection = {
   status: string;
 };
 
+/**
+ * Uma linha do diff. Carrega os segmentos do `lib/charter/diff` em vez do par
+ * de excertos de 180 caracteres que existia aqui: o recorte fazia mudança em
+ * parágrafo distante devolver dois blocos idênticos sob "Antes" e "Depois", e
+ * concatenava `…` mesmo em seção que cabia inteira.
+ */
+export type VersionDiffRow = {
+  field: string;
+  segmentos: Segmento[];
+  /** Seção que não existia na versão anterior — todo o corpo é adicionado. */
+  nova: boolean;
+  /** Texto grande demais para comparar inteiro; a UI precisa dizer isso. */
+  truncado: boolean;
+  linhasOmitidas: number;
+};
+
 export type VersionDiff = {
   version: string;
   previous: string | null;
-  rows: { field: string; before: string; after: string }[];
+  rows: VersionDiffRow[];
 };
+
+function linhaDeDiff(
+  field: string,
+  antes: string,
+  depois: string,
+  nova = false
+): VersionDiffRow {
+  const d = diffTexto(antes, depois);
+  return {
+    field,
+    segmentos: d.segmentos,
+    nova,
+    truncado: d.truncado,
+    linhasOmitidas: d.linhasOmitidas,
+  };
+}
 
 export async function getVersionDiff(
   versionId: string
@@ -478,28 +511,17 @@ export async function getVersionDiff(
 
       const rows: VersionDiff["rows"] = [];
       for (const s of currentSections) {
+        const ordinal = String(s.ordinal).padStart(2, "0");
         const b = previousByOrdinal.get(s.ordinal);
         if (!b) {
-          rows.push({
-            field: `S${String(s.ordinal).padStart(2, "0")} · ${s.name}`,
-            before: "— (seção nova)",
-            after: `${s.body.slice(0, 180)}…`,
-          });
+          rows.push(linhaDeDiff(`S${ordinal} · ${s.name}`, "", s.body, true));
           continue;
         }
         if (b.body !== s.body) {
-          rows.push({
-            field: `S${String(s.ordinal).padStart(2, "0")} · ${s.name}`,
-            before: `${b.body.slice(0, 180)}…`,
-            after: `${s.body.slice(0, 180)}…`,
-          });
+          rows.push(linhaDeDiff(`S${ordinal} · ${s.name}`, b.body, s.body));
         }
         if (b.name !== s.name) {
-          rows.push({
-            field: `Nome de S${String(s.ordinal).padStart(2, "0")}`,
-            before: b.name,
-            after: s.name,
-          });
+          rows.push(linhaDeDiff(`Nome de S${ordinal}`, b.name, s.name));
         }
       }
 
