@@ -38,9 +38,6 @@ vi.mock("@/app/actions/agregados", () => ({
   agregadoDoFunil: mocks.agregadoDoFunil,
 }));
 vi.mock("@/app/actions/clients", () => ({ listClients: mocks.listClients }));
-vi.mock("@/app/actions/clientes-busca", () => ({
-  buscarNaCarteira: vi.fn(),
-}));
 vi.mock("@/app/actions/accounts", () => ({
   listAccountHealth: mocks.listAccountHealth,
 }));

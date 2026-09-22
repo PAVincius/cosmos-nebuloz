@@ -24,6 +24,7 @@ vi.mock("@/app/actions/proposals", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/propostas",
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => paramsMock(),
 }));

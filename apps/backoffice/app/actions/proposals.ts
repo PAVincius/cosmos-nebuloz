@@ -49,16 +49,40 @@ export type ProposalRow = {
   criadoEm: string;
 };
 
+export type OpcoesDasPropostas = OpcoesDePagina & {
+  /** Título ou cliente, sem caixa. Vazio é busca nenhuma. */
+  busca?: string;
+};
+
+const BUSCA = z.string().trim().max(160, "Busca longa demais.");
+
 /** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
- *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. `busca` filtra no banco:
+ *  no navegador, só achava o que já estava carregado. */
 export async function listProposals<
-  O extends OpcoesDePagina | undefined = undefined,
+  O extends OpcoesDasPropostas | undefined = undefined,
 >(opcoes?: O): Promise<Result<Listagem<ProposalRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
+    const busca = BUSCA.parse(opcoes?.busca ?? "");
     const linhas = await database.proposal.findMany({
-      where: { tenantId: SYSTEM_TENANT_ID },
+      where: {
+        tenantId: SYSTEM_TENANT_ID,
+        ...(busca
+          ? {
+              OR: [
+                { titulo: { contains: busca, mode: "insensitive" as const } },
+                {
+                  clienteNome: {
+                    contains: busca,
+                    mode: "insensitive" as const,
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
       orderBy: { criadoEm: "desc" },
       ...janela(opcoes),
       select: {

@@ -9,14 +9,21 @@ import {
   type ProposalRow,
   submitProposalAction,
 } from "@/app/actions/proposals";
+import { Busca, contemTexto } from "@/components/busca";
 import { BotaoPrimario, Erro } from "@/components/campo";
-import { Confirmacao } from "@/components/confirmacao";
+import { ConfirmacaoDeUmaVez } from "@/components/confirmacao-de-uma-vez";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { Vazio } from "@/components/vazio";
+import {
+  SituacaoDaBusca,
+  useBuscaNoServidor,
+  visiveisDaBusca,
+} from "@/lib/busca-no-servidor";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { TETO_DA_LISTA } from "@/lib/paginacao";
+import { useParamState } from "@/lib/url-state";
 
 const TOM: Record<string, Tone> = {
   RASCUNHO: "neutral",
@@ -145,7 +152,11 @@ function LinhaProposta({
       ) : null}
       {confirmacao ? (
         <span style={{ flexBasis: "100%" }}>
-          <Confirmacao>{confirmacao}</Confirmacao>
+          {/* Dita a frase, `?enviada=` sai da URL: com o param parado lá,
+              cada F5 repetia "enviada" sobre uma proposta de dias atrás. */}
+          <ConfirmacaoDeUmaVez param="enviada">
+            {confirmacao}
+          </ConfirmacaoDeUmaVez>
         </span>
       ) : null}
     </li>
@@ -179,11 +190,14 @@ export function Propostas({
   iniciais,
   podeEscrever,
   total = null,
+  temMais = iniciais.length >= TETO_DA_LISTA,
 }: {
   iniciais: ProposalRow[];
   podeEscrever: boolean;
   /** Todas as propostas, contadas no banco (`actions/agregados.ts`). */
   total?: number | null;
+  /** Há propostas além das carregadas. */
+  temMais?: boolean;
 }) {
   const router = useRouter();
   const [lista, setLista] = useState(iniciais);
@@ -191,17 +205,23 @@ export function Propostas({
   // A proposta cuja chamada está no ar: segundo clique no Confirmar da
   // barreira não chama de novo (o botão trava e diz "Executando…").
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
+  // Status que mudou aqui, por id. Vale para a lista carregada e para a
+  // resposta da busca no servidor, que não passa por `lista`.
+  const [statusAqui, setStatusAqui] = useState<Record<string, string>>({});
 
   // O gerador chega aqui com `?enviada=<id>` depois de enviar; enviar pela
   // própria linha marca o mesmo id. A confirmação nasce na linha dessa
-  // proposta — e para um id que não está na lista, nada.
-  const enviadaPeloGerador = useSearchParams().get("enviada");
+  // proposta — e para um id que não está na lista, nada. Lido uma vez: a
+  // linha tira o param da URL depois de dizer (`ConfirmacaoDeUmaVez`), e a
+  // frase não pode sumir junto.
+  const params = useSearchParams();
+  const [enviadaPeloGerador] = useState(() => params.get("enviada"));
   const [enviadaAqui, setEnviadaAqui] = useState<string | null>(null);
   const enviadaId = enviadaAqui ?? enviadaPeloGerador;
 
   // A lista chega até o teto e cresce daqui, uma página por "Mostrar mais".
   const ler = useCallback((pagina: number) => listProposals({ pagina }), []);
-  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const paginacao = usePaginas(ler, temMais);
   const mostrarMais = useCallback(async () => {
     const mais = await paginacao.proxima();
     if (mais) {
@@ -209,17 +229,30 @@ export function Propostas({
     }
   }, [paginacao.proxima]);
 
+  // `?q=` por título ou cliente. Com todas na tela, filtra aqui; com mais do
+  // que está na tela, pergunta ao servidor (`lib/busca-no-servidor.tsx`).
+  const [q, setQ] = useParamState("q");
+  const buscarNoServidor = useCallback(
+    (termo: string) => listProposals({ busca: termo, pagina: 1 }),
+    []
+  );
+  const busca = useBuscaNoServidor(
+    q,
+    paginacao.temMais ? buscarNoServidor : null
+  );
+  const carregadas = lista.filter((p) => contemTexto([p.titulo, p.cliente], q));
+  const visiveis = visiveisDaBusca(busca, carregadas).map((p) =>
+    statusAqui[p.id] ? { ...p, status: statusAqui[p.id] } : p
+  );
+  const buscaNoServidor = paginacao.temMais && q.trim() !== "";
+
   const enviar = useCallback(async (id: string) => {
     setErro(null);
     setEnviandoId(id);
     try {
       const res = await submitProposalAction({ id });
       if (res.ok) {
-        setLista((atual) =>
-          atual.map((p) =>
-            p.id === id ? { ...p, status: res.data.status } : p
-          )
-        );
+        setStatusAqui((atual) => ({ ...atual, [id]: res.data.status }));
         setEnviadaAqui(id);
       } else {
         setErro(res.error);
@@ -258,26 +291,49 @@ export function Propostas({
             aprovação.
           </Vazio>
         ) : (
-          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-            {lista.map((p, i) => (
-              <LinhaProposta
-                confirmacao={p.id === enviadaId ? fraseDeEnvio(p) : null}
-                enviando={enviandoId === p.id}
-                key={p.id}
-                onEnviar={enviar}
-                p={p}
-                podeEscrever={podeEscrever}
-                primeira={i === 0}
-              />
-            ))}
-          </ul>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <Busca
+              id="busca-proposta"
+              onMudar={setQ}
+              rotulo="Buscar proposta"
+              total={
+                total === null ? lista.length : Math.max(total, lista.length)
+              }
+              valor={q}
+              visiveis={visiveis.length}
+            />
+            <SituacaoDaBusca
+              busca={busca}
+              onde="todas as propostas"
+              termo={q}
+            />
+            {visiveis.length === 0 && busca.estado !== "buscando" ? (
+              <Vazio>Nenhuma proposta com “{q}” no título ou no cliente.</Vazio>
+            ) : (
+              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                {visiveis.map((p, i) => (
+                  <LinhaProposta
+                    confirmacao={p.id === enviadaId ? fraseDeEnvio(p) : null}
+                    enviando={enviandoId === p.id}
+                    key={p.id}
+                    onEnviar={enviar}
+                    p={p}
+                    podeEscrever={podeEscrever}
+                    primeira={i === 0}
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
         )}
-        <BotaoMostrarMais
-          carregando={paginacao.carregando}
-          erro={paginacao.erro}
-          onClick={mostrarMais}
-          temMais={paginacao.temMais}
-        />
+        {buscaNoServidor ? null : (
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
+        )}
       </SectionCard>
     </div>
   );

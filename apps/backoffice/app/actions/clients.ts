@@ -1,6 +1,7 @@
 "use server";
 
 import { ProvisioningError, platformDb } from "@repo/provisioning";
+import { z } from "zod";
 import { clientDetailArgs, clientListArgs } from "@/lib/client-queries";
 import { requirePlatformStaff } from "@/lib/guard";
 import {
@@ -22,19 +23,52 @@ export type ClientRow = {
   modules: { module: string; status: string; expiresAt: string | null }[];
 };
 
+export type OpcoesDaCarteira = OpcoesDePagina & {
+  /** Nome (sem caixa) ou slug. Vazio é busca nenhuma. */
+  busca?: string;
+  /** Só quem tem módulo suspenso — o corte do KPI "Exigem atenção". */
+  atencao?: boolean;
+};
+
+const BUSCA = z.string().trim().max(80, "Busca longa demais.");
+
+/** O `where` da carteira com os filtros da tela. A base é a de
+ *  `clientListArgs` — o tenant interno fica fora em qualquer combinação. */
+function ondeNaCarteira(opcoes?: OpcoesDaCarteira) {
+  const busca = BUSCA.parse(opcoes?.busca ?? "");
+  return {
+    ...clientListArgs().where,
+    ...(opcoes?.atencao
+      ? { modules: { some: { status: "SUSPENDED" as const } } }
+      : {}),
+    ...(busca
+      ? {
+          OR: [
+            { name: { contains: busca, mode: "insensitive" as const } },
+            { slug: { contains: busca.toLowerCase() } },
+          ],
+        }
+      : {}),
+  };
+}
+
 /**
  * Sem opções, a lista de sempre (até o teto de `lib/paginacao.ts`); com
  * `{ pagina }`, `{ itens, temMais }` para a carteira mostrar mais. A forma do
  * retorno segue o argumento — ver `Listagem`.
+ *
+ * `busca` e `atencao` filtram no banco: com mais clientes que o teto, filtrar
+ * no navegador só achava quem já estava carregado.
  */
 export async function listClients<
-  O extends OpcoesDePagina | undefined = undefined,
+  O extends OpcoesDaCarteira | undefined = undefined,
 >(opcoes?: O): Promise<Result<Listagem<ClientRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
     const rows = await platformDb.tenant.findMany({
       ...clientListArgs(),
+      where: ondeNaCarteira(opcoes),
       ...janela(opcoes),
     });
 

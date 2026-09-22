@@ -235,7 +235,10 @@ describe("Confirmação nasce junto do controle que agiu", () => {
       <Propostas iniciais={[{ ...PROPOSTA, status: "ENVIADA" }]} podeEscrever />
     );
 
-    const status = screen.getByRole("status");
+    // O contador da busca também é `status`; a confirmação é a da linha.
+    const status = screen
+      .getAllByRole("status")
+      .find((s) => s.closest("li")) as HTMLElement;
     expect(status.getAttribute("aria-live")).toBe("polite");
     expect(status.closest("li")?.textContent).toContain("P-0001");
   });

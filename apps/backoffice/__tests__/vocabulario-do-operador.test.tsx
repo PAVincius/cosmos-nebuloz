@@ -134,7 +134,11 @@ describe("Sucesso dito em texto, no lugar", () => {
     fireEvent.click(screen.getByRole("button", { name: "Enviar" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
-    const status = await screen.findByRole("status");
+    // O contador da busca também é `status`; a confirmação é a da linha.
+    await screen.findByText(/«Atlas — plataforma» enviada/);
+    const status = screen
+      .getAllByRole("status")
+      .find((s) => s.closest("li")) as HTMLElement;
     expect(status.textContent).toContain("Atlas — plataforma");
     expect(status.textContent).toMatch(/enviada/);
     expect(status.closest("li")?.textContent).toContain("P-0001");

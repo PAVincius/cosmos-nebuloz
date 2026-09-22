@@ -8,10 +8,11 @@ import {
   type AgregadoDaCarteira,
   agregadoDaCarteira,
 } from "@/app/actions/agregados";
-import { listClients } from "@/app/actions/clients";
+import { type ClientRow, listClients } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Vazio } from "@/components/vazio";
+import { type Pagina, TETO_DA_LISTA } from "@/lib/paginacao";
 import type { Result } from "@/lib/safe-action";
 import { ClientesTabela, KpiAtencao } from "../clientes-tabela";
 
@@ -72,9 +73,34 @@ function Kpis({ agregado }: { agregado: Result<AgregadoDaCarteira> }) {
 
 export const metadata = { title: tituloDaAba("/clientes") };
 
-export default async function ClientsPage() {
+/** A primeira página da carteira. Com `?atencao=1` o filtro é do banco —
+ *  filtrado no navegador, o suspenso da página 2 não aparecia. Sem ele, a
+ *  chamada de sempre, e "há mais" é a página ter vindo cheia
+ *  (`components/mostrar-mais.tsx`). */
+async function lerCarteira(
+  soAtencao: boolean
+): Promise<Result<Pagina<ClientRow>>> {
+  if (soAtencao) {
+    return await listClients({ atencao: true, pagina: 1 });
+  }
+  const res = await listClients();
+  if (!res.ok) {
+    return { code: res.code, error: res.error, ok: false };
+  }
+  return {
+    data: { itens: res.data, temMais: res.data.length >= TETO_DA_LISTA },
+    ok: true,
+  };
+}
+
+export default async function ClientsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ atencao?: string }>;
+} = {}) {
+  const soAtencao = (await searchParams)?.atencao === "1";
   const [result, agregado] = await Promise.all([
-    listClients(),
+    lerCarteira(soAtencao),
     agregadoDaCarteira(),
   ]);
 
@@ -122,7 +148,10 @@ export default async function ClientsPage() {
     );
   }
 
-  const clientes = result.data;
+  const { itens: clientes, temMais } = result.data;
+  // Vazio com o filtro ligado é "ninguém exige atenção", e quem diz é a
+  // tabela — não "nenhum cliente provisionado".
+  const carteiraVazia = !soAtencao && clientes.length === 0;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -136,7 +165,7 @@ export default async function ClientsPage() {
         subtitle="Todos os clientes da plataforma. O nome abre o detalhe."
         title="Clientes"
       >
-        {clientes.length === 0 ? (
+        {carteiraVazia ? (
           <Vazio>
             Nenhum cliente provisionado ainda. Comece pelo{" "}
             <Link href="/clientes/novo" style={{ color: "var(--accent-text)" }}>
@@ -145,7 +174,14 @@ export default async function ClientsPage() {
             .
           </Vazio>
         ) : (
-          <ClientesTabela clientes={clientes} />
+          // A chave troca com o filtro: a tabela guarda a lista e as páginas
+          // carregadas, e a lista filtrada é outra lista.
+          <ClientesTabela
+            clientes={clientes}
+            key={soAtencao ? "atencao" : "todos"}
+            temMais={temMais}
+            total={agregado.ok ? agregado.data.clientes : null}
+          />
         )}
       </SectionCard>
     </div>
