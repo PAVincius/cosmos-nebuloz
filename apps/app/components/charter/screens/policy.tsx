@@ -25,24 +25,20 @@ import {
 } from "@/app/(charter)/actions/policy";
 import { SECTION_STATUS_LABEL, SECTION_STATUS_TONE } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
-import {
-  ScreenError,
-  SkeletonCard,
-  SmartEmptyState,
-  Tabs,
-  Textarea,
-} from "../base";
+import { ScreenError, SkeletonCard, SmartEmptyState, Tabs } from "../base";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DiffModal } from "../modals/diff";
 import { PublishVersionModal } from "../modals/publish-version";
 import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
+import { useUnsavedGuard } from "../use-unsaved-guard";
 import { GatedFooterAction } from "./gated-footer-action";
 import { ReopenSectionModal } from "./policy-confirm-reopen";
 import { DERIVED_RULES, VERSION_DISCIPLINE } from "./policy-copy";
 import { PolicyDraftPreview } from "./policy-draft-preview";
 import PolicyScope from "./policy-scope";
+import { PolicySectionEditor } from "./policy-section-editor";
 
 const fmt = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
@@ -68,6 +64,14 @@ function PolicyInner() {
   const [selId, setSelId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
+  // Corpo e nome da seção como o servidor os entregou quando a edição começou.
+  // Sujo é divergir DISSO, não "tocou no campo": digitar e desfazer não pode
+  // custar uma confirmação.
+  const [editBase, setEditBase] = useState({ body: "", name: "" });
+  const guardUnsaved = useUnsavedGuard({
+    dirty: editing && draft !== editBase.body,
+    what: `O texto editado da seção ${editBase.name}`,
+  });
 
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getPolicy(), [])
@@ -225,7 +229,7 @@ function PolicyInner() {
       </PageHeader>
 
       <Tabs
-        onChange={setTab}
+        onChange={(t) => guardUnsaved(() => setTab(t))}
         tabs={[
           { id: "sections", label: "Seções", count: data.sections.length },
           {
@@ -261,10 +265,12 @@ function PolicyInner() {
                   aria-current={on ? "true" : undefined}
                   className="btn navitem"
                   key={s.id}
-                  onClick={() => {
-                    setSelId(s.id);
-                    setEditing(false);
-                  }}
+                  onClick={() =>
+                    guardUnsaved(() => {
+                      setSelId(s.id);
+                      setEditing(false);
+                    })
+                  }
                   style={{
                     display: "flex",
                     width: "100%",
@@ -352,62 +358,29 @@ function PolicyInner() {
                 tone={SECTION_STATUS_TONE[sel.status]}
               >
                 {editing ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 10,
-                    }}
-                  >
-                    <Textarea
-                      onChange={(e) => setDraft(e.target.value)}
-                      style={{ minHeight: 190, fontSize: FS.base }}
-                      value={draft}
-                    />
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <Button
-                        onClick={() => setEditing(false)}
-                        size="sm"
-                        variant="ghost"
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        icon="check"
-                        onClick={() =>
-                          startTransition(async () => {
-                            const res = await runWithToast(
-                              () =>
-                                editSection({
-                                  sectionId: sel.id,
-                                  body: draft,
-                                }),
-                              {
-                                loading: "Salvando seção…",
-                                success: (d) =>
-                                  d.status === "REVIEW"
-                                    ? "Seção salva e rebaixada para revisão"
-                                    : "Seção salva",
-                              }
-                            );
-                            if (res.ok) {
-                              setEditing(false);
-                              reload();
-                            }
-                          })
+                  <PolicySectionEditor
+                    draft={draft}
+                    onCancel={() => guardUnsaved(() => setEditing(false))}
+                    onDraftChange={setDraft}
+                    onSave={() =>
+                      startTransition(async () => {
+                        const res = await runWithToast(
+                          () => editSection({ sectionId: sel.id, body: draft }),
+                          {
+                            loading: "Salvando seção…",
+                            success: (d) =>
+                              d.status === "REVIEW"
+                                ? "Seção salva e rebaixada para revisão"
+                                : "Seção salva",
+                          }
+                        );
+                        if (res.ok) {
+                          setEditing(false);
+                          reload();
                         }
-                        size="sm"
-                      >
-                        Salvar
-                      </Button>
-                    </div>
-                    <div
-                      style={{ fontSize: FS.nota, color: "var(--ink-faint)" }}
-                    >
-                      Editar uma seção publicada a rebaixa automaticamente para
-                      revisão — o texto alterado não é mais o texto aprovado.
-                    </div>
-                  </div>
+                      })
+                    }
+                  />
                 ) : (
                   <>
                     <div
@@ -459,6 +432,7 @@ function PolicyInner() {
                         icon="sliders"
                         onClick={() => {
                           setDraft(sel.body);
+                          setEditBase({ body: sel.body, name: sel.name });
                           setEditing(true);
                         }}
                         reason="Somente Legal ou Compliance edita seção"
