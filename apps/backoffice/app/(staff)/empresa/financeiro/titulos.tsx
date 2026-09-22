@@ -2,16 +2,15 @@
 
 import { Badge } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
-import type { ContaView } from "@/app/actions/empresa/financeiro";
 import {
   baixarTitulo,
   cancelarTitulo,
   criarTitulo,
-  listarTitulos,
 } from "@/app/actions/empresa/titulos";
 import { BotaoSecundario, Erro } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { BotaoMostrarMais } from "@/components/mostrar-mais";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
@@ -30,6 +29,7 @@ import {
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { NovoTituloDialog } from "./titulo-dialog-novo";
 import { BaixarDialog, CancelarDialog } from "./titulo-dialogs";
+import { type TitulosPayload, useListaDeTitulos } from "./titulos-lista";
 
 /**
  * Aba "Títulos" (Task 6, spec 2026-09-06 §4): duas listas — a pagar e a
@@ -37,14 +37,11 @@ import { BaixarDialog, CancelarDialog } from "./titulo-dialogs";
  * baixar, cancelar). Sem intervalo: título é lista viva, não recorte de
  * período (é por isso que `page.tsx` não monta `SeletorDaAba` nesta aba).
  *
- * `useState(inicial)` + `recarregar()`: mesmo padrão de `lancamentos.tsx` —
- * toda escrita relê `listarTitulos` e substitui o estado inteiro.
+ * A lista vem até o teto, com "em aberto + últimos 90 dias" por padrão
+ * (`titulos-lista.ts`); toda escrita relê as páginas que já estavam na tela.
  */
 
-export type TitulosPayload = {
-  titulos: TituloRow[];
-  contas: ContaView[];
-};
+export type { TitulosPayload } from "./titulos-lista";
 
 const CHIPS_SITUACAO: { id: Situacao; label: string }[] = [
   { id: "ABERTO", label: "Abertos" },
@@ -238,6 +235,40 @@ function ListaDeTitulos({
   );
 }
 
+/** O que a lista mostra e o botão que liga os antigos — dito em texto, para a
+ *  ausência do título pago no ano passado não parecer sumiço. */
+function RecorteDosTitulos({
+  antigos,
+  carregando,
+  onAlternar,
+}: {
+  antigos: boolean;
+  carregando: boolean;
+  onAlternar: () => void;
+}) {
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <span style={{ color: "var(--ink-muted)", fontSize: "var(--fs-nota)" }}>
+        {antigos
+          ? "Todos os títulos, inclusive os pagos e cancelados há mais de 90 dias."
+          : "Em aberto e o que foi baixado ou cancelado nos últimos 90 dias."}
+      </span>
+      <BotaoSecundario disabled={carregando} onClick={onAlternar}>
+        {antigos
+          ? "Esconder pagos e cancelados antigos"
+          : "Mostrar pagos e cancelados antigos"}
+      </BotaoSecundario>
+    </div>
+  );
+}
+
 export function Titulos({
   inicial,
   podeEscrever,
@@ -256,7 +287,8 @@ export function Titulos({
   // é uma faixa de vencimento reclassificada no recarregamento seguinte, não
   // dado perdido.
   const hoje = useMemo(() => new Date(), []);
-  const [dados, setDados] = useState(inicial);
+  const lista = useListaDeTitulos(inicial);
+  const { dados } = lista;
   const [situacaoFiltro, setSituacaoFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
   const [confirmacao, setConfirmacao] = useState<string | null>(null);
@@ -271,14 +303,13 @@ export function Titulos({
     [dados.titulos, hoje]
   );
 
+  const { recarregar: relerLista } = lista;
   const recarregar = useCallback(async () => {
-    const res = await listarTitulos({});
-    if (!res.ok) {
-      setErro(res.error);
-      return;
+    const falha = await relerLista();
+    if (falha !== null) {
+      setErro(falha);
     }
-    setDados(res.data);
-  }, []);
+  }, [relerLista]);
 
   // A frase só depois da releitura, nomeando o título — mesmo padrão de
   // `lancamentos.tsx`: confirma o que a tabela já mostra.
@@ -407,6 +438,18 @@ export function Titulos({
         podeEscrever={podeEscrever}
         tipo="RECEBER"
         titulos={aReceber}
+      />
+
+      <RecorteDosTitulos
+        antigos={lista.antigos}
+        carregando={lista.carregando}
+        onAlternar={lista.alternarAntigos}
+      />
+      <BotaoMostrarMais
+        carregando={lista.carregando}
+        erro={lista.erroDaLista}
+        onClick={lista.mostrarMais}
+        temMais={lista.temMais}
       />
 
       <NovoTituloDialog

@@ -67,24 +67,32 @@ export type Contadores = {
 export function contadores(
   lista: { estado: EstadoDpa; bloqueiaVenda: boolean }[]
 ): Contadores {
+  return contadoresDosGrupos(lista.map((f) => ({ ...f, quantidade: 1 })));
+}
+
+/** Os mesmos contadores a partir de um `groupBy` por estado e bloqueio: o
+ *  inventário inteiro sem ler as linhas, que agora vêm paginadas. */
+export function contadoresDosGrupos(
+  grupos: { estado: EstadoDpa; bloqueiaVenda: boolean; quantidade: number }[]
+): Contadores {
   const c: Contadores = {
     embutidos: 0,
     aAssinar: 0,
     semDocumento: 0,
     bloqueiamVenda: 0,
   };
-  for (const f of lista) {
-    if (f.estado === "EMBUTIDO") {
-      c.embutidos += 1;
+  for (const g of grupos) {
+    if (g.estado === "EMBUTIDO") {
+      c.embutidos += g.quantidade;
     }
-    if (f.estado === "A_ASSINAR") {
-      c.aAssinar += 1;
+    if (g.estado === "A_ASSINAR") {
+      c.aAssinar += g.quantidade;
     }
-    if (f.estado === "SEM_DOCUMENTO") {
-      c.semDocumento += 1;
+    if (g.estado === "SEM_DOCUMENTO") {
+      c.semDocumento += g.quantidade;
     }
-    if (f.bloqueiaVenda && f.estado !== "ASSINADO") {
-      c.bloqueiamVenda += 1;
+    if (g.bloqueiaVenda && g.estado !== "ASSINADO") {
+      c.bloqueiamVenda += g.quantidade;
     }
   }
   return c;

@@ -43,7 +43,7 @@ export default async function ReadinessPage() {
     );
   }
 
-  const { avaliacoes, totalDeCriterios } = res.data;
+  const { avaliacoes, totalDeCriterios, temMais } = res.data;
   const concluidas = avaliacoes.filter((a) => a.status === "CONCLUIDA");
   const comScore = concluidas.filter((a) => a.scoreGeral !== null);
   // Média só com o que tem número. Nenhuma concluída = "—", não zero: zero é
@@ -60,7 +60,11 @@ export default async function ReadinessPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {cabecalho(
         <>
-          <Badge tone="neutral">{avaliacoes.length} avaliações</Badge>
+          {/* Com mais páginas, a contagem é da primeira — o "+" diz isso. */}
+          <Badge tone="neutral">
+            {avaliacoes.length}
+            {temMais ? "+" : ""} avaliações
+          </Badge>
           {concluidas.length > 0 ? (
             <Badge tone="green">{concluidas.length} concluídas</Badge>
           ) : null}
@@ -73,6 +77,7 @@ export default async function ReadinessPage() {
       <Lista
         avaliacoes={avaliacoes}
         podeEscrever={staff.canWrite}
+        temMais={temMais}
         totalDeCriterios={totalDeCriterios}
       />
     </div>

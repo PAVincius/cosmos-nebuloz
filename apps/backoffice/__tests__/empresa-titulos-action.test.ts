@@ -127,7 +127,8 @@ describe("listarTitulos", () => {
   it("filtra por tenant e ordena por vencimento asc", async () => {
     const res = await listarTitulos({});
     expect(res.ok).toBe(true);
-    expect(mocks.tituloFindMany.mock.calls[0][0].where).toEqual({
+    // O recorte de 90 dias e o teto moram em teto-das-leituras-onda8.test.ts.
+    expect(mocks.tituloFindMany.mock.calls[0][0].where).toMatchObject({
       tenantId: "system",
     });
     expect(mocks.tituloFindMany.mock.calls[0][0].orderBy).toEqual({
@@ -137,7 +138,7 @@ describe("listarTitulos", () => {
 
   it("com tipo, também filtra por tipo", async () => {
     await listarTitulos({ tipo: "RECEBER" });
-    expect(mocks.tituloFindMany.mock.calls[0][0].where).toEqual({
+    expect(mocks.tituloFindMany.mock.calls[0][0].where).toMatchObject({
       tenantId: "system",
       tipo: "RECEBER",
     });

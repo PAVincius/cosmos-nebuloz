@@ -32,7 +32,12 @@ export default async function FornecedoresPage() {
         }
       />
       {res.ok ? (
-        <Inventario iniciais={res.data.linhas} podeEscrever={staff.canWrite} />
+        <Inventario
+          contadoresDoInventario={res.data.contadores}
+          iniciais={res.data.linhas}
+          podeEscrever={staff.canWrite}
+          temMais={res.data.temMais}
+        />
       ) : (
         <FalhaAoCarregar
           motivo={res.error}

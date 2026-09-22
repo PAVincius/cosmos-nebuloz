@@ -1,8 +1,9 @@
 "use client";
 
 import { Avatar } from "@repo/design-system/cosmos/kit";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import {
+  listTenantMembers,
   type TenantMemberRow,
   updateTenantMemberRoleAction,
 } from "@/app/actions/tenant-members";
@@ -10,9 +11,11 @@ import { Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import { FiltroChips } from "@/components/filtro-chips";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
+import { anexar, TETO_DA_LISTA } from "@/lib/paginacao";
 
 const PAPEIS = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"] as const;
 type Papel = (typeof PAPEIS)[number];
@@ -162,13 +165,28 @@ function CelulaDePapel({
  */
 export function AbaUsuarios({
   slug,
-  membros,
+  membros: primeiraPagina,
   canWrite,
 }: {
   slug: string;
   membros: TenantMemberRow[];
   canWrite: boolean;
 }) {
+  // A primeira página continua vindo do servidor (a troca de papel revalida a
+  // rota); as seguintes, pedidas em "Mostrar mais", moram aqui.
+  const [maisMembros, setMaisMembros] = useState<TenantMemberRow[]>([]);
+  const ler = useCallback(
+    (pagina: number) => listTenantMembers(slug, { pagina }),
+    [slug]
+  );
+  const paginacao = usePaginas(ler, primeiraPagina.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setMaisMembros((atual) => [...atual, ...mais]);
+    }
+  }, [paginacao.proxima]);
+  const membros = anexar(primeiraPagina, maisMembros);
   const [erro, setErro] = useState<string | null>(null);
   const [papel, setPapel] = useState("all");
   const [pendente, iniciar] = useTransition();
@@ -202,6 +220,11 @@ export function AbaUsuarios({
       if (res.ok) {
         const m = membros.find((x) => x.id === memberId);
         const nome = m?.nome ?? m?.email ?? memberId;
+        // A revalidação só refaz a primeira página; nas outras, a troca é
+        // aplicada aqui.
+        setMaisMembros((atual) =>
+          atual.map((x) => (x.id === memberId ? { ...x, role } : x))
+        );
         setEscolha(null);
         setConfirmacao({ memberId, texto: `Papel de ${nome} agora é ${role}` });
       } else {
@@ -370,6 +393,17 @@ export function AbaUsuarios({
           })}
         </tbody>
       </Tabela>
+
+      {paginacao.temMais ? (
+        <div style={{ padding: 16 }}>
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
+        </div>
+      ) : null}
 
       {erro ? (
         <div style={{ padding: 16 }}>

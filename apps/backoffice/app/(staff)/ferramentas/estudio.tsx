@@ -9,17 +9,20 @@ import {
   type DiagramRow,
   definirClienteDoDiagramaAction,
   getDiagram,
+  listDiagrams,
   updateDiagramAction,
 } from "@/app/actions/diagrams";
 import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
+import { anexar, TETO_DA_LISTA } from "@/lib/paginacao";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState, useSubstituirParams } from "@/lib/url-state";
 
@@ -335,6 +338,18 @@ export function Estudio({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  // A lista chega até o teto e cresce daqui, uma página por "Mostrar mais".
+  const ler = useCallback(
+    (pagina: number) => listDiagrams(kind, { pagina }),
+    [kind]
+  );
+  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => anexar(atual, mais));
+    }
+  }, [paginacao.proxima]);
   const [diagramaId, setDiagramaId] = useParamState("diagrama");
   // `?novo=<nome>` vem de "Criar diagrama para {processo}" no mapa: abre o
   // formulário já com o nome. Só o estado inicial lê o param — depois disso
@@ -519,6 +534,14 @@ export function Estudio({
           detalhe: `${d.slug} · v${d.versoes}`,
         }))}
         onSelecionar={guarda.abrir}
+        rodape={
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
+        }
         selecionadoId={aberto?.id ?? null}
         subtitulo={`${lista.length} ${lista.length === 1 ? "diagrama" : "diagramas"}`}
         titulo="Diagramas"

@@ -20,6 +20,12 @@ import {
   PROCEDENCIAS,
   TIPOS_DE_ATIVO,
 } from "@/lib/ip/regua";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 import { slugificar } from "@/lib/slug";
 
@@ -117,19 +123,24 @@ function paraLinha(a: LinhaBruta): IpAssetRow {
   };
 }
 
-export async function listIpAssets(): Promise<Result<IpAssetRow[]>> {
+/** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+export async function listIpAssets<
+  O extends OpcoesDePagina | undefined = undefined,
+>(opcoes?: O): Promise<Result<Listagem<IpAssetRow, O>>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
     const linhas = await database.ipAsset.findMany({
       where: { tenantId: SYSTEM_TENANT_ID },
       orderBy: { atualizadoEm: "desc" },
+      ...janela(opcoes),
       // `conteudo` fora do select: um playbook tem dezenas de KB e a lista não
       // renderiza nenhum deles.
       select: CAMPOS_LINHA,
     });
 
-    return linhas.map(paraLinha);
+    return listagem(linhas.map(paraLinha), opcoes);
   });
 }
 

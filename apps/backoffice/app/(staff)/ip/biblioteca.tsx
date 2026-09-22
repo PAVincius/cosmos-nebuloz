@@ -15,6 +15,7 @@ import {
   getIpAsset,
   type IpAssetDetail,
   type IpAssetRow,
+  listIpAssets,
   registrarReusoAction,
   updateIpAssetAction,
 } from "@/app/actions/ip-library";
@@ -27,11 +28,13 @@ import {
   rotuloSalvar,
 } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import { BotaoMostrarMais, usePaginas } from "@/components/mostrar-mais";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
 import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
+import { anexar, TETO_DA_LISTA } from "@/lib/paginacao";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
 import { useParamState } from "@/lib/url-state";
 import {
@@ -299,6 +302,15 @@ export function Biblioteca({
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
+  // O acervo chega até o teto e cresce daqui, uma página por "Mostrar mais".
+  const ler = useCallback((pagina: number) => listIpAssets({ pagina }), []);
+  const paginacao = usePaginas(ler, iniciais.length >= TETO_DA_LISTA);
+  const mostrarMais = useCallback(async () => {
+    const mais = await paginacao.proxima();
+    if (mais) {
+      setLista((atual) => anexar(atual, mais));
+    }
+  }, [paginacao.proxima]);
   // O ativo aberto mora em `?ativo=<id>`: F5 reabre o mesmo e o link cola num
   // ticket. A URL é a fonte — clicar na lista escreve o param, e é o param
   // que dispara a leitura. Id fora da lista cai no estado vazio, sem erro.
@@ -485,6 +497,14 @@ export function Biblioteca({
         }))}
         onSelecionar={guarda.abrir}
         renderExtra={renderExtraDoAtivo}
+        rodape={
+          <BotaoMostrarMais
+            carregando={paginacao.carregando}
+            erro={paginacao.erro}
+            onClick={mostrarMais}
+            temMais={paginacao.temMais}
+          />
+        }
         selecionadoId={aberto?.id ?? null}
         titulo="Acervo"
         vazio="Acervo vazio. É aqui que fica o que dá para reusar no próximo cliente em vez de refazer."

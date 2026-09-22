@@ -17,6 +17,7 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import { cortar, janela, type OpcoesDePagina } from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -56,8 +57,13 @@ export type RespostaRow = {
 
 export type AvaliacaoDetalhe = AvaliacaoRow & { respostas: RespostaRow[] };
 
-export async function listarAvaliacoes(): Promise<
-  Result<{ avaliacoes: AvaliacaoRow[]; totalDeCriterios: number }>
+/** Até o teto (`lib/paginacao.ts`); `temMais` diz se há próxima página. */
+export async function listarAvaliacoes(opcoes?: OpcoesDePagina): Promise<
+  Result<{
+    avaliacoes: AvaliacaoRow[];
+    totalDeCriterios: number;
+    temMais: boolean;
+  }>
 > {
   return await safeAction(async () => {
     await requirePlatformStaff();
@@ -65,6 +71,7 @@ export async function listarAvaliacoes(): Promise<
     const linhas = await database.avaliacaoDeMaturidade.findMany({
       where: { tenantId: SYSTEM_TENANT_ID },
       orderBy: { criadoEm: "desc" },
+      ...janela(opcoes),
       select: {
         id: true,
         organizacao: true,
@@ -81,8 +88,10 @@ export async function listarAvaliacoes(): Promise<
       },
     });
 
+    const { itens, temMais } = cortar(linhas, opcoes);
     return {
-      avaliacoes: linhas.map((a) => ({
+      temMais,
+      avaliacoes: itens.map((a) => ({
         id: a.id,
         organizacao: a.organizacao,
         leadId: a.leadId,

@@ -118,6 +118,7 @@ export function SeletorDeAcervo({
   acao,
   formulario,
   renderExtra,
+  rodape,
 }: {
   itens: ItemDoAcervo[];
   selecionadoId: string | null;
@@ -136,6 +137,8 @@ export function SeletorDeAcervo({
   /** Conteúdo extra por item (badges, ações), pelo id do item. Opcional —
    *  quem não passar mantém a lista como sempre foi (ex.: `estudio.tsx`). */
   renderExtra?: (id: string) => ReactNode;
+  /** No pé da lista aberta — o "Mostrar mais" de quem pagina. */
+  rodape?: ReactNode;
 }) {
   const [reabertoManual, setReabertoManual] = useState(false);
 
@@ -185,6 +188,7 @@ export function SeletorDeAcervo({
               ))}
             </div>
           )}
+          {rodape}
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

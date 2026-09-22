@@ -9,6 +9,12 @@ import {
   requirePlatformStaff,
   StaffAuthError,
 } from "@/lib/guard";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -47,9 +53,11 @@ async function tenantPorSlug(slug: string) {
   return tenant;
 }
 
-export async function listTenantMembers(
-  slug: string
-): Promise<Result<TenantMemberRow[]>> {
+/** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+export async function listTenantMembers<
+  O extends OpcoesDePagina | undefined = undefined,
+>(slug: string, opcoes?: O): Promise<Result<Listagem<TenantMemberRow, O>>> {
   return await safeAction(async () => {
     // Sem assertCanWrite: leitura é de todo staff (FR-0.4).
     await requirePlatformStaff();
@@ -57,7 +65,10 @@ export async function listTenantMembers(
 
     const membros = await database.tenantMember.findMany({
       where: { tenantId: tenant.id },
-      orderBy: { createdAt: "asc" },
+      // `id` desempata: sem ele, dois membros criados no mesmo instante
+      // podiam trocar de página entre uma leitura e outra.
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      ...janela(opcoes),
       select: {
         id: true,
         role: true,
@@ -66,13 +77,14 @@ export async function listTenantMembers(
       },
     });
 
-    return membros.map((m) => ({
+    const itens = membros.map((m) => ({
       id: m.id,
       nome: m.user.name,
       email: m.user.email,
       role: m.role,
       desde: m.createdAt.toISOString(),
     }));
+    return listagem(itens, opcoes);
   });
 }
 

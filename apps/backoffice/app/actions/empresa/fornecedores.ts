@@ -13,7 +13,7 @@ import {
   acoesDisponiveis,
   aplicarAcao,
   type Contadores,
-  contadores,
+  contadoresDosGrupos,
   type EstadoDpa,
 } from "@/lib/empresa/fornecedores";
 import {
@@ -22,6 +22,7 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import { cortar, janela, type OpcoesDePagina } from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -114,17 +115,47 @@ async function buscar(codigo: string): Promise<Linha> {
   return l;
 }
 
-export async function listarFornecedoresDpa(): Promise<
-  Result<{ linhas: FornecedorDpaRow[]; contadores: Contadores }>
+/**
+ * Inventário até o teto (`lib/paginacao.ts`); `temMais` diz se há próxima.
+ * Os contadores do topo falam do inventário inteiro, não da página: saem de
+ * um `groupBy` por estado e bloqueio — poucas linhas, qualquer que seja o
+ * tamanho do inventário —, em paralelo com a página.
+ */
+export async function listarFornecedoresDpa(opcoes?: OpcoesDePagina): Promise<
+  Result<{
+    linhas: FornecedorDpaRow[];
+    contadores: Contadores;
+    temMais: boolean;
+  }>
 > {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    const linhas = await database.fornecedorDpa.findMany({
-      where: { tenantId: SYSTEM_TENANT_ID },
-      orderBy: { codigo: "asc" },
-      select: SELECT,
-    });
-    return { linhas: linhas.map(paraRow), contadores: contadores(linhas) };
+    const where = { tenantId: SYSTEM_TENANT_ID };
+    const [linhas, grupos] = await Promise.all([
+      database.fornecedorDpa.findMany({
+        where,
+        orderBy: { codigo: "asc" },
+        ...janela(opcoes),
+        select: SELECT,
+      }),
+      database.fornecedorDpa.groupBy({
+        by: ["estado", "bloqueiaVenda"],
+        where,
+        _count: { _all: true },
+      }),
+    ]);
+    const { itens, temMais } = cortar(linhas, opcoes);
+    return {
+      linhas: itens.map(paraRow),
+      contadores: contadoresDosGrupos(
+        grupos.map((g) => ({
+          estado: g.estado,
+          bloqueiaVenda: g.bloqueiaVenda,
+          quantidade: g._count._all,
+        }))
+      ),
+      temMais,
+    };
   });
 }
 

@@ -10,6 +10,12 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import {
+  janela,
+  type Listagem,
+  listagem,
+  type OpcoesDePagina,
+} from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 import { slugificar } from "@/lib/slug";
 
@@ -37,9 +43,11 @@ export type DiagramRow = {
   criadoPorNome: string | null;
 };
 
-export async function listDiagrams(
-  kind: DiagramKind
-): Promise<Result<DiagramRow[]>> {
+/** Sem opções, a lista de sempre (até o teto); com `{ pagina }`,
+ *  `{ itens, temMais }` — ver `lib/paginacao.ts`. */
+export async function listDiagrams<
+  O extends OpcoesDePagina | undefined = undefined,
+>(kind: DiagramKind, opcoes?: O): Promise<Result<Listagem<DiagramRow, O>>> {
   return await safeAction(async () => {
     // Sem assertCanWrite: leitura é de todo staff (FR-0.4).
     await requirePlatformStaff();
@@ -47,6 +55,7 @@ export async function listDiagrams(
     const linhas = await database.staffDiagram.findMany({
       where: { tenantId: SYSTEM_TENANT_ID, kind },
       orderBy: { atualizadoEm: "desc" },
+      ...janela(opcoes),
       // `source` fica de fora: a lista não renderiza diagrama nenhum, e um XML
       // BPMN de processo real tem dezenas de KB. Trazer todos para montar uma
       // tabela é payload que ninguém olha.
@@ -62,7 +71,7 @@ export async function listDiagrams(
       },
     });
 
-    return linhas.map((d) => ({
+    const itens = linhas.map((d) => ({
       id: d.id,
       kind: d.kind,
       name: d.name,
@@ -72,6 +81,7 @@ export async function listDiagrams(
       atualizadoEm: d.atualizadoEm.toISOString(),
       criadoPorNome: d.criadoPorNome,
     }));
+    return listagem(itens, opcoes);
   });
 }
 
