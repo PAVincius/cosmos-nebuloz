@@ -12,6 +12,7 @@ import {
   salvarCreditoDoMes,
 } from "@/app/actions/empresa/recorrente";
 import { Erro, INPUT } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { Secao } from "@/components/secao";
 import { Sigla } from "@/components/sigla";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -70,6 +71,12 @@ function competenciaAnterior(competencia: string): string {
   const [ano, mes] = competencia.split("-").map(Number);
   const d = new Date(Date.UTC(ano, mes - 2, 1));
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+/** "2026-06" → "06/2026", para a frase de confirmação. */
+function mesAno(competencia: string): string {
+  const [ano, mes] = competencia.split("-");
+  return `${mes}/${ano}`;
 }
 
 /** Ponte cliente entre o `<input type="month">` e a URL — mesma ideia de
@@ -484,6 +491,7 @@ export function Recorrente({
 }) {
   const [dados, setDados] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [novaAberta, setNovaAberta] = useState(false);
   const [alterando, setAlterando] = useState<AssinaturaRow | null>(null);
   const [encerrando, setEncerrando] = useState<AssinaturaRow | null>(null);
@@ -500,11 +508,21 @@ export function Recorrente({
     setDados(res.data);
   }, [competencia]);
 
+  // A frase só depois da releitura, nomeando o cliente — mesmo padrão de
+  // `lancamentos.tsx`. O nome sai da lista de antes da escrita: é o cliente
+  // em que a pessoa clicou.
+  const clienteDe = useCallback(
+    (achar: (a: AssinaturaRow) => boolean) =>
+      dados.assinaturas.find(achar)?.clienteNome ?? "cliente",
+    [dados.assinaturas]
+  );
+
   const criar = useCallback(
     async (input: Parameters<typeof criarAssinatura>[0]) => {
       const res = await criarAssinatura(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Assinatura de ${input.clienteNome} criada.`);
       }
       return res;
     },
@@ -513,36 +531,55 @@ export function Recorrente({
 
   const alterar = useCallback(
     async (input: Parameters<typeof alterarValor>[0]) => {
+      const cliente = clienteDe((a) => a.id === input.id);
       const res = await alterarValor(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(
+          `Assinatura de ${cliente} passa a ${formatarBRL(input.valorCentavos)} a partir de ${mesAno(input.competencia)}.`
+        );
       }
       return res;
     },
-    [recarregar]
+    [recarregar, clienteDe]
   );
 
   const encerrar = useCallback(
     async (input: Parameters<typeof encerrarAssinatura>[0]) => {
+      const cliente = clienteDe((a) => a.id === input.id);
       const res = await encerrarAssinatura(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Assinatura de ${cliente} encerrada.`);
       }
       return res;
     },
-    [recarregar]
+    [recarregar, clienteDe]
   );
 
   const salvarCredito = useCallback(
     async (input: Parameters<typeof salvarCreditoDoMes>[0]) => {
+      const cliente = clienteDe((a) => a.clienteSlug === input.clienteSlug);
       const res = await salvarCreditoDoMes(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(
+          `Consumo de ${cliente} em ${mesAno(input.competencia)} salvo.`
+        );
       }
       return res;
     },
-    [recarregar]
+    [recarregar, clienteDe]
   );
+
+  // Abrir outra escrita apaga a frase da anterior: ela fala do que acabou de
+  // acontecer, não fica como legenda da tela.
+  function abrindo<T>(abrirDeFato: (alvo: T) => void) {
+    return (alvo: T) => {
+      setConfirmacao(null);
+      abrirDeFato(alvo);
+    };
+  }
 
   const creditoPorCliente = useMemo(() => {
     const mapa = new Map<string, CreditoRow>();
@@ -584,6 +621,7 @@ export function Recorrente({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
       <div className="bo-kpis">
         <KpiCard
@@ -624,7 +662,7 @@ export function Recorrente({
         action={
           <WriteButton
             canWrite={podeEscrever}
-            onClick={() => setNovaAberta(true)}
+            onClick={() => abrindo(setNovaAberta)(true)}
           >
             Nova assinatura
           </WriteButton>
@@ -663,9 +701,9 @@ export function Recorrente({
                     credito={creditoPorCliente.get(a.clienteSlug)}
                     key={a.id}
                     mudancas={dados.mudancas}
-                    onAlterar={setAlterando}
-                    onCredito={setLancandoCredito}
-                    onEncerrar={setEncerrando}
+                    onAlterar={abrindo(setAlterando)}
+                    onCredito={abrindo(setLancandoCredito)}
+                    onEncerrar={abrindo(setEncerrando)}
                     podeEscrever={podeEscrever}
                   />
                 ))}

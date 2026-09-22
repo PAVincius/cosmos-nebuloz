@@ -12,6 +12,7 @@ import {
   Erro,
   INPUT,
 } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { ROTULO_CENTRO } from "@/lib/empresa/plano-de-contas";
@@ -177,14 +178,19 @@ export function Plano({
 }) {
   const [contas, setContas] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
 
-  const aplicar = useCallback((res: Resultado): boolean => {
+  // A frase só quando a lista nova já está na tela, nomeando a conta pelo
+  // código e pelo nome — mesmo padrão de `lancamentos.tsx`.
+  const aplicar = useCallback((res: Resultado, frase: string): boolean => {
     if (!res.ok) {
+      setConfirmacao(null);
       setErro(res.error);
       return false;
     }
     setErro(null);
     setContas(res.data);
+    setConfirmacao(frase);
     return true;
   }, []);
 
@@ -198,7 +204,10 @@ export function Plano({
       if (!atual || nome === "" || nome === atual.nome) {
         return;
       }
-      aplicar(await atualizarConta({ conta, nome }));
+      aplicar(
+        await atualizarConta({ conta, nome }),
+        `Conta ${conta} renomeada para «${nome}».`
+      );
     },
     [contas, podeEscrever, aplicar]
   );
@@ -208,14 +217,21 @@ export function Plano({
       if (!podeEscrever) {
         return;
       }
-      aplicar(await atualizarConta({ conta, ativa }));
+      const nome = contas.find((c) => c.conta === conta)?.nome ?? "";
+      aplicar(
+        await atualizarConta({ conta, ativa }),
+        `Conta ${conta} «${nome}» ${ativa ? "reativada" : "desativada"}.`
+      );
     },
-    [podeEscrever, aplicar]
+    [contas, podeEscrever, aplicar]
   );
 
   const criar = useCallback(
     async (input: { conta: string; nome: string }) =>
-      aplicar(await criarConta(input)),
+      aplicar(
+        await criarConta(input),
+        `Conta ${input.conta} «${input.nome}» criada.`
+      ),
     [aplicar]
   );
 
@@ -234,6 +250,11 @@ export function Plano({
       title="Plano de contas"
     >
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? (
+        <div style={{ marginBottom: 12 }}>
+          <Confirmacao>{confirmacao}</Confirmacao>
+        </div>
+      ) : null}
       {grupos.map((g) => (
         <div key={g.grupo} style={{ marginBottom: 20 }}>
           <h3

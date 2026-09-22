@@ -10,6 +10,7 @@ import {
   listarTitulos,
 } from "@/app/actions/empresa/titulos";
 import { BotaoSecundario, Erro } from "@/components/campo";
+import { Confirmacao } from "@/components/confirmacao";
 import { FiltroChips } from "@/components/filtro-chips";
 import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
@@ -258,6 +259,7 @@ export function Titulos({
   const [dados, setDados] = useState(inicial);
   const [situacaoFiltro, setSituacaoFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmacao, setConfirmacao] = useState<string | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
   const [tituloBaixando, setTituloBaixando] = useState<TituloRow | null>(null);
   const [tituloCancelando, setTituloCancelando] = useState<TituloRow | null>(
@@ -278,11 +280,20 @@ export function Titulos({
     setDados(res.data);
   }, []);
 
+  // A frase só depois da releitura, nomeando o título — mesmo padrão de
+  // `lancamentos.tsx`: confirma o que a tabela já mostra.
+  const descricaoDe = useCallback(
+    (id: string) =>
+      dados.titulos.find((t) => t.id === id)?.descricao ?? "selecionado",
+    [dados.titulos]
+  );
+
   const criar = useCallback(
     async (input: Parameters<typeof criarTitulo>[0]) => {
       const res = await criarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Título «${input.descricao}» criado.`);
       }
       return res;
     },
@@ -291,25 +302,46 @@ export function Titulos({
 
   const baixar = useCallback(
     async (input: Parameters<typeof baixarTitulo>[0]) => {
+      const descricao = descricaoDe(input.id);
       const res = await baixarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(
+          `Título «${descricao}» baixado em ${formatarDataBr(input.data)}.`
+        );
       }
       return res;
     },
-    [recarregar]
+    [recarregar, descricaoDe]
   );
 
   const cancelar = useCallback(
     async (input: Parameters<typeof cancelarTitulo>[0]) => {
+      const descricao = descricaoDe(input.id);
       const res = await cancelarTitulo(input);
       if (res.ok) {
         await recarregar();
+        setConfirmacao(`Título «${descricao}» cancelado.`);
       }
       return res;
     },
-    [recarregar]
+    [recarregar, descricaoDe]
   );
+
+  // Abrir outra escrita apaga a frase da anterior: ela fala do que acabou de
+  // acontecer, não fica como legenda da tela.
+  const abrirNovo = useCallback(() => {
+    setConfirmacao(null);
+    setNovoAberto(true);
+  }, []);
+  const abrirBaixa = useCallback((t: TituloRow) => {
+    setConfirmacao(null);
+    setTituloBaixando(t);
+  }, []);
+  const abrirCancelamento = useCallback((t: TituloRow) => {
+    setConfirmacao(null);
+    setTituloCancelando(t);
+  }, []);
 
   const titulosVisiveis = useMemo(() => {
     if (situacaoFiltro === "all") {
@@ -330,6 +362,7 @@ export function Titulos({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
+      {confirmacao ? <Confirmacao>{confirmacao}</Confirmacao> : null}
 
       <div className="bo-kpis bo-kpis-5">
         {faixas.map((f) => (
@@ -352,10 +385,7 @@ export function Titulos({
           rotuloTodas="Todos"
           valor={situacaoFiltro}
         />
-        <WriteButton
-          canWrite={podeEscrever}
-          onClick={() => setNovoAberto(true)}
-        >
+        <WriteButton canWrite={podeEscrever} onClick={abrirNovo}>
           Novo título
         </WriteButton>
       </div>
@@ -363,8 +393,8 @@ export function Titulos({
       <ListaDeTitulos
         filtro={filtroAtivo}
         hoje={hoje}
-        onBaixar={setTituloBaixando}
-        onCancelar={setTituloCancelando}
+        onBaixar={abrirBaixa}
+        onCancelar={abrirCancelamento}
         podeEscrever={podeEscrever}
         tipo="PAGAR"
         titulos={aPagar}
@@ -372,8 +402,8 @@ export function Titulos({
       <ListaDeTitulos
         filtro={filtroAtivo}
         hoje={hoje}
-        onBaixar={setTituloBaixando}
-        onCancelar={setTituloCancelando}
+        onBaixar={abrirBaixa}
+        onCancelar={abrirCancelamento}
         podeEscrever={podeEscrever}
         tipo="RECEBER"
         titulos={aReceber}
