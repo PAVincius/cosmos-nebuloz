@@ -4,13 +4,17 @@ import { type CharterSectionStatus, withTenantDb } from "@repo/database";
 import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { diffTexto, type Segmento } from "@/lib/charter/diff";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
   StateConflictError,
 } from "@/lib/charter/guards";
 import { policyPublishBlockers } from "@/lib/charter/rules";
+import {
+  diffDeSnapshots,
+  snapshotSections,
+  type VersionDiffRow,
+} from "@/lib/charter/version-diff";
 import { type Result, safeAction } from "../../actions/_base";
 import {
   buildDiff,
@@ -434,50 +438,17 @@ export async function publishPolicyVersion(
 
 // ── Diff entre versões (FR-2.6) ───────────────────────────────────────────────
 
-type SnapshotSection = {
-  ordinal: number;
-  name: string;
-  body: string;
-  status: string;
-};
-
-/**
- * Uma linha do diff. Carrega os segmentos do `lib/charter/diff` em vez do par
- * de excertos de 180 caracteres que existia aqui: o recorte fazia mudança em
- * parágrafo distante devolver dois blocos idênticos sob "Antes" e "Depois", e
- * concatenava `…` mesmo em seção que cabia inteira.
- */
-export type VersionDiffRow = {
-  field: string;
-  segmentos: Segmento[];
-  /** Seção que não existia na versão anterior — todo o corpo é adicionado. */
-  nova: boolean;
-  /** Texto grande demais para comparar inteiro; a UI precisa dizer isso. */
-  truncado: boolean;
-  linhasOmitidas: number;
-};
+// Re-export de tipo (apagado na compilação, então não viola a regra de que um
+// módulo "use server" só exporta função async): o DiffModal importa a linha do
+// diff daqui desde a PR #236, e mover o tipo para lib/ não é motivo para
+// mexer na tela.
+export type { VersionDiffRow };
 
 export type VersionDiff = {
   version: string;
   previous: string | null;
   rows: VersionDiffRow[];
 };
-
-function linhaDeDiff(
-  field: string,
-  antes: string,
-  depois: string,
-  nova = false
-): VersionDiffRow {
-  const d = diffTexto(antes, depois);
-  return {
-    field,
-    segmentos: d.segmentos,
-    nova,
-    truncado: d.truncado,
-    linhasOmitidas: d.linhasOmitidas,
-  };
-}
 
 export async function getVersionDiff(
   versionId: string
@@ -499,31 +470,12 @@ export async function getVersionDiff(
         orderBy: { publishedAt: "desc" },
       });
 
-      const currentSections =
-        (version.snapshot as unknown as SnapshotSection[]) ?? [];
-      // Nome deliberado: uma variável chamada `before` faz o linter ler
-      // `before.map(...)` como hook de teste com callback.
-      const previousSections =
-        (previous?.snapshot as unknown as SnapshotSection[] | undefined) ?? [];
-      const previousByOrdinal = new Map(
-        previousSections.map((s) => [s.ordinal, s])
+      // A montagem mora em lib/ porque o pacote de evidência precisa da mesma
+      // — a tela e o CSV do auditor não podem divergir.
+      const rows = diffDeSnapshots(
+        snapshotSections(previous?.snapshot),
+        snapshotSections(version.snapshot)
       );
-
-      const rows: VersionDiff["rows"] = [];
-      for (const s of currentSections) {
-        const ordinal = String(s.ordinal).padStart(2, "0");
-        const b = previousByOrdinal.get(s.ordinal);
-        if (!b) {
-          rows.push(linhaDeDiff(`S${ordinal} · ${s.name}`, "", s.body, true));
-          continue;
-        }
-        if (b.body !== s.body) {
-          rows.push(linhaDeDiff(`S${ordinal} · ${s.name}`, b.body, s.body));
-        }
-        if (b.name !== s.name) {
-          rows.push(linhaDeDiff(`Nome de S${ordinal}`, b.name, s.name));
-        }
-      }
 
       return {
         version: version.version,
