@@ -94,3 +94,32 @@ export function diffDeSnapshots(
   }
   return rows;
 }
+
+function blocoDeSecao(row: VersionDiffRow): string {
+  const linhas = row.segmentos
+    .filter((s) => s.tipo !== "igual")
+    .map((s) => `${s.tipo === "removida" ? "-" : "+"} ${s.texto}`);
+  // O teto é do `diffTexto` e este módulo não acrescenta outro. Quando ele
+  // vale, o próprio texto exportado diz o que ficou de fora — pacote de
+  // evidência que corta em silêncio é pior do que pacote sem o texto.
+  const aviso = row.truncado
+    ? [
+        `(${row.linhasOmitidas} linhas omitidas: texto longo demais para comparar inteiro)`,
+      ]
+    : [];
+  return [
+    row.nova ? `${row.field} (seção nova)` : row.field,
+    ...linhas,
+    ...aviso,
+  ].join("\n");
+}
+
+/**
+ * As linhas de diff em texto corrido, para quem lê o pacote em planilha:
+ * nome da seção como cabeçalho do bloco, `-` para linha removida e `+` para
+ * adicionada. Linha igual não entra — um diff que repete o que não mudou
+ * esconde o que mudou.
+ */
+export function diffSecoesParaTexto(rows: readonly VersionDiffRow[]): string {
+  return rows.map(blocoDeSecao).join("\n\n");
+}

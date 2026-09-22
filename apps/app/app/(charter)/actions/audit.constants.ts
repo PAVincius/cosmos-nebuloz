@@ -48,3 +48,11 @@ export const AUDIT_CATEGORY: Record<string, string> = AUDIT_CATEGORY_BY_ENTITY;
 export const CHARTER_ENTITY_TYPES = Object.keys(
   AUDIT_CATEGORY_BY_ENTITY
 ) as CharterEntity[];
+
+/**
+ * Ação gravada por `publishPolicyVersion`. Vive aqui porque tem dois leitores:
+ * quem grava (policy.ts) e quem, no pacote de evidência, precisa reconhecer a
+ * linha para derivar o diff de seções dos snapshots. Duas literais soltas
+ * divergiriam em silêncio e o pacote voltaria a sair sem diff.
+ */
+export const ACAO_PUBLICOU_VERSAO = "Publicou versão";

@@ -22,6 +22,7 @@ import {
   GovernanceError,
   logCharterAudit,
 } from "./_shared";
+import { ACAO_PUBLICOU_VERSAO } from "./audit.constants";
 
 // Política — FR-2. As três abas (Seções, Versões, Escopo) leem de getPolicy().
 
@@ -418,14 +419,19 @@ export async function publishPolicyVersion(
       }
 
       await logCharterAudit(db, ctx, {
-        action: "Publicou versão",
+        action: ACAO_PUBLICOU_VERSAO,
         entityType: "charter.policy",
         entityId: policy.id,
         target: `${policy.name} · ${version}`,
         note: data.summary,
+        // Sem "Seções alteradas": era `policy.sections.length`, o total de
+        // seções, sob um rótulo que prometia as alteradas — falso mesmo como
+        // contagem. O que de fato mudou sai do snapshot na exportação
+        // (`exportEvidence`), sem gravar o texto uma terceira vez no banco.
+        // "Trilhas para reatribuir" fica: é efeito colateral da publicação,
+        // não está em snapshot nenhum e some se não for registrado aqui.
         diff: [
           [FIELD_LABELS.version, policy.version ?? "—", version],
-          ["Seções alteradas", "—", String(policy.sections.length)],
           ["Trilhas para reatribuir", "—", String(trackIds.length)],
         ],
       });
