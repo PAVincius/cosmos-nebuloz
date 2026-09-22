@@ -4,6 +4,7 @@ import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { clientListArgs } from "@/lib/client-queries";
 import { requirePlatformStaff, SYSTEM_TENANT_ID } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -142,7 +143,8 @@ export async function listPlatformHealth(): Promise<Result<SaudeDaPlataforma>> {
           createdAt: true,
         },
       }),
-      database.tenant.count({ where: { isSystem: false } }),
+      // O filtro da carteira: a Home e `/clientes` dão o mesmo número.
+      database.tenant.count({ where: clientListArgs().where }),
     ]);
 
     return {

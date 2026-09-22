@@ -27,6 +27,7 @@ vi.mock("next-themes", () => ({
   useTheme: () => ({ resolvedTheme: "dark", setTheme: vi.fn() }),
 }));
 vi.mock("@repo/auth/client", () => ({ authClient: { signOut: vi.fn() } }));
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/clients", () => ({ listClients: mocks.listClients }));
 vi.mock("@/app/actions/access", () => ({
   listPlatformHealth: mocks.listPlatformHealth,

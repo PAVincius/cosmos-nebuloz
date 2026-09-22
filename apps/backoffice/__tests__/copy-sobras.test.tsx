@@ -39,6 +39,7 @@ vi.mock("next-themes", () => ({
 vi.mock("@repo/auth/client", () => ({
   authClient: { signOut: vi.fn() },
 }));
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/accounts", () => ({
   listAccountHealth: mocks.listAccountHealth,
 }));

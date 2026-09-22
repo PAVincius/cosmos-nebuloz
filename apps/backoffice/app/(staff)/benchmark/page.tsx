@@ -5,6 +5,10 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import {
+  type AgregadoDoBenchmark,
+  agregadoDoBenchmark,
+} from "@/app/actions/agregados";
+import {
   type Benchmark,
   type ClienteBenchmark,
   listBenchmark,
@@ -15,6 +19,7 @@ import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
 import { Vazio } from "@/components/vazio";
 import { formatarBRL } from "@/lib/comercial/formato";
+import type { Result } from "@/lib/safe-action";
 
 export const dynamic = "force-dynamic";
 
@@ -141,40 +146,64 @@ function LinhaServico({ s, maximo }: { s: ServicoBenchmark; maximo: number }) {
   );
 }
 
-function Conteudo({ dados, pagina }: { dados: Benchmark; pagina: number }) {
-  // Com mais de uma página, os números descrevem os clientes desta — e as
+/** Os KPIs são da carteira inteira (`actions/agregados.ts`). Somados sobre a
+ *  página, "Clientes · na carteira" era o teto da lista. Sem a contagem,
+ *  nenhum número — o da página seria dito como o da carteira. */
+function Kpis({ agregado }: { agregado: Result<AgregadoDoBenchmark> }) {
+  if (!agregado.ok) {
+    return (
+      <FalhaAoCarregar
+        motivo={agregado.error}
+        titulo="Não foi possível somar a carteira"
+      />
+    );
+  }
+  const { clientes, receitaCentavos, semContrato } = agregado.data;
+  return (
+    <div className="bo-kpis bo-kpis-3">
+      <KpiCard
+        hint="engajamentos que contam"
+        icon="chart"
+        label="Receita contratada"
+        tone="green"
+        value={formatarBRL(receitaCentavos)}
+      />
+      <KpiCard
+        hint="na carteira"
+        icon="building"
+        label="Clientes"
+        tone="blue"
+        value={clientes}
+      />
+      <KpiCard
+        hint="nenhum engajamento ainda"
+        icon="alert"
+        label="Sem contrato"
+        tone={semContrato > 0 ? "amber" : "green"}
+        value={semContrato}
+      />
+    </div>
+  );
+}
+
+function Conteudo({
+  dados,
+  pagina,
+  agregado,
+}: {
+  dados: Benchmark;
+  pagina: number;
+  agregado: Result<AgregadoDoBenchmark>;
+}) {
+  // Com mais de uma página, as tabelas descrevem os clientes desta — e as
   // legendas dizem isso, em vez de somar em silêncio o que não foi lido.
   const parcial = pagina > 1 || dados.temMaisClientes;
   const maxCliente = dados.clientes[0]?.receitaCentavos ?? 0;
   const maxServico = dados.servicos[0]?.receitaCentavos ?? 0;
-  const receita = dados.clientes.reduce((s, c) => s + c.receitaCentavos, 0);
-  const semNada = dados.clientes.filter((c) => c.engajamentos === 0).length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div className="bo-kpis bo-kpis-3">
-        <KpiCard
-          hint="engajamentos que contam"
-          icon="chart"
-          label="Receita contratada"
-          tone="green"
-          value={formatarBRL(receita)}
-        />
-        <KpiCard
-          hint="na carteira"
-          icon="building"
-          label="Clientes"
-          tone="blue"
-          value={dados.clientes.length}
-        />
-        <KpiCard
-          hint="nenhum engajamento ainda"
-          icon="alert"
-          label="Sem contrato"
-          tone={semNada > 0 ? "amber" : "green"}
-          value={semNada}
-        />
-      </div>
+      <Kpis agregado={agregado} />
 
       <SectionCard
         as="h2"
@@ -282,7 +311,10 @@ export default async function BenchmarkPage({
   searchParams?: Promise<{ pagina?: string }>;
 } = {}) {
   const pagina = paginaDaUrl((await searchParams)?.pagina);
-  const res = await listBenchmark({ pagina });
+  const [res, agregado] = await Promise.all([
+    listBenchmark({ pagina }),
+    agregadoDoBenchmark(),
+  ]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -292,7 +324,7 @@ export default async function BenchmarkPage({
         title="Benchmark"
       />
       {res.ok ? (
-        <Conteudo dados={res.data} pagina={pagina} />
+        <Conteudo agregado={agregado} dados={res.data} pagina={pagina} />
       ) : (
         <FalhaAoCarregar
           motivo={res.error}

@@ -152,6 +152,22 @@ function LinhaProposta({
   );
 }
 
+/** "100 de 140 propostas": a lista para no teto, e o subtítulo não pode
+ *  chamar de total o que é só o carregado. Sem o total contado, diz que é o
+ *  que está à vista. */
+function contagemDoPipeline(carregadas: number, total: number | null): string {
+  if (total === null) {
+    return `${carregadas} ${carregadas === 1 ? "proposta" : "propostas"} à vista`;
+  }
+  // A contagem e a lista são duas leituras: uma proposta criada entre elas
+  // não pode fazer o total ficar menor que o carregado.
+  const todas = Math.max(total, carregadas);
+  const nome = todas === 1 ? "proposta" : "propostas";
+  return carregadas < todas
+    ? `${carregadas} de ${todas} ${nome}`
+    : `${todas} ${nome}`;
+}
+
 /** A frase de envio, pelo título — "enviado com sucesso" não diz qual saiu. */
 function fraseDeEnvio(p: ProposalRow): string {
   const destino =
@@ -162,9 +178,12 @@ function fraseDeEnvio(p: ProposalRow): string {
 export function Propostas({
   iniciais,
   podeEscrever,
+  total = null,
 }: {
   iniciais: ProposalRow[];
   podeEscrever: boolean;
+  /** Todas as propostas, contadas no banco (`actions/agregados.ts`). */
+  total?: number | null;
 }) {
   const router = useRouter();
   const [lista, setLista] = useState(iniciais);
@@ -228,7 +247,7 @@ export function Propostas({
         }
         as="h2"
         icon="tag"
-        subtitle={`${lista.length} ${lista.length === 1 ? "proposta" : "propostas"}`}
+        subtitle={contagemDoPipeline(lista.length, total)}
         title="Pipeline"
       >
         {lista.length === 0 ? (

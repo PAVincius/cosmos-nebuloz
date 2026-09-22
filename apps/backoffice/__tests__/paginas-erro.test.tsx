@@ -74,6 +74,7 @@ vi.mock("@/lib/guard", () => ({
 // Lê o enum do Prisma via `@repo/database`, que sob jsdom tropeça no guard de
 // env do @t3-oss antes de a página renderizar.
 vi.mock("@/lib/modulos", () => ({ MODULOS_DA_PLATAFORMA: [] }));
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/access", () => ({
   listPlatformHealth: mocks.listPlatformHealth,
 }));

@@ -7,6 +7,10 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { type ContaComSaude, listAccountHealth } from "@/app/actions/accounts";
+import {
+  type AgregadoDasContas,
+  agregadoDasContas,
+} from "@/app/actions/agregados";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { PaginacaoEmLinks } from "@/components/paginacao-em-links";
@@ -18,6 +22,7 @@ import {
   ROTULO_SAUDE,
   type Saude,
 } from "@/lib/health";
+import type { Result } from "@/lib/safe-action";
 
 export const dynamic = "force-dynamic";
 
@@ -151,6 +156,53 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
   );
 }
 
+/** Os KPIs são da carteira inteira (`actions/agregados.ts`): contados sobre a
+ *  lista, na página 2 eles viravam os números da página 2. Sem a contagem,
+ *  nenhum número — o da lista seria o da página. */
+function Kpis({ agregado }: { agregado: Result<AgregadoDasContas> }) {
+  if (!agregado.ok) {
+    return (
+      <FalhaAoCarregar
+        motivo={agregado.error}
+        titulo="Não foi possível contar a saúde da carteira"
+      />
+    );
+  }
+  const { risco, atencao, renovando, semSinal } = agregado.data;
+  return (
+    <div className="bo-kpis">
+      <KpiCard
+        hint="módulo suspenso, cancelado ou renovação vencida"
+        icon="alert"
+        label="Em risco"
+        tone={risco > 0 ? "red" : "green"}
+        value={risco}
+      />
+      <KpiCard
+        hint="algo para acompanhar"
+        icon="eye"
+        label="Atenção"
+        tone={atencao > 0 ? "amber" : "green"}
+        value={atencao}
+      />
+      <KpiCard
+        hint={`nos próximos ${DIAS_PARA_RENOVACAO} dias`}
+        icon="clock"
+        label="Renovando"
+        tone="blue"
+        value={renovando}
+      />
+      <KpiCard
+        hint="sem módulo contratado"
+        icon="ban"
+        label="Sem sinal"
+        tone={semSinal > 0 ? "amber" : "green"}
+        value={semSinal}
+      />
+    </div>
+  );
+}
+
 function Conteudo({
   contas,
   pagina,
@@ -160,65 +212,24 @@ function Conteudo({
   pagina: number;
   temMais: boolean;
 }) {
-  const risco = contas.filter((c) => c.saude === "RISCO").length;
-  const atencao = contas.filter((c) => c.saude === "ATENCAO").length;
-  const semSinal = contas.filter((c) => c.saude === "SEM_SINAL").length;
-  const renovando = contas.filter(
-    (c) =>
-      c.diasParaRenovar !== null && c.diasParaRenovar <= DIAS_PARA_RENOVACAO
-  ).length;
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div className="bo-kpis">
-        <KpiCard
-          hint="módulo suspenso, cancelado ou renovação vencida"
-          icon="alert"
-          label="Em risco"
-          tone={risco > 0 ? "red" : "green"}
-          value={risco}
-        />
-        <KpiCard
-          hint="algo para acompanhar"
-          icon="eye"
-          label="Atenção"
-          tone={atencao > 0 ? "amber" : "green"}
-          value={atencao}
-        />
-        <KpiCard
-          hint={`nos próximos ${DIAS_PARA_RENOVACAO} dias`}
-          icon="clock"
-          label="Renovando"
-          tone="blue"
-          value={renovando}
-        />
-        <KpiCard
-          hint="sem módulo contratado"
-          icon="ban"
-          label="Sem sinal"
-          tone={semSinal > 0 ? "amber" : "green"}
-          value={semSinal}
-        />
-      </div>
-
-      <SectionCard
-        as="h2"
-        icon="heart"
-        subtitle="pior primeiro · saúde derivada do que a plataforma já grava"
-        title="Contas"
-      >
-        {contas.length === 0 ? (
-          <Vazio>Nenhum cliente na carteira ainda.</Vazio>
-        ) : (
-          <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-            {contas.map((c, i) => (
-              <Conta c={c} key={c.slug} primeira={i === 0} />
-            ))}
-          </ul>
-        )}
-        <PaginacaoEmLinks caminho="/contas" pagina={pagina} temMais={temMais} />
-      </SectionCard>
-    </div>
+    <SectionCard
+      as="h2"
+      icon="heart"
+      subtitle="pior primeiro · saúde derivada do que a plataforma já grava"
+      title="Contas"
+    >
+      {contas.length === 0 ? (
+        <Vazio>Nenhum cliente na carteira ainda.</Vazio>
+      ) : (
+        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {contas.map((c, i) => (
+            <Conta c={c} key={c.slug} primeira={i === 0} />
+          ))}
+        </ul>
+      )}
+      <PaginacaoEmLinks caminho="/contas" pagina={pagina} temMais={temMais} />
+    </SectionCard>
   );
 }
 
@@ -236,7 +247,10 @@ export default async function ContasPage({
   searchParams?: Promise<{ pagina?: string }>;
 } = {}) {
   const pagina = paginaDaUrl((await searchParams)?.pagina);
-  const res = await listAccountHealth(undefined, { pagina });
+  const [res, agregado] = await Promise.all([
+    listAccountHealth(undefined, { pagina }),
+    agregadoDasContas(),
+  ]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -245,6 +259,7 @@ export default async function ContasPage({
         subtitle={`Saúde derivada do que a plataforma já grava: status de módulo, renovação, integração com erro e silêncio de mais de ${DIAS_SEM_ATIVIDADE} dias. Não há campo marcado à mão — ele envelheceria sem ninguém perceber.`}
         title="Saúde e renovação"
       />
+      <Kpis agregado={agregado} />
       {res.ok ? (
         <Conteudo
           contas={res.data.itens}
