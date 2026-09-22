@@ -957,10 +957,9 @@ const AUDIT: {
     note: "Classificação de dados reescrita; PHI movido para Restrito.",
     role: "COMPLIANCE",
     actor: "Marina Alves",
-    diff: [
-      ["Versão", "v3.1", "v3.2"],
-      ["Seções alteradas", "—", "6"],
-    ],
+    // Sem "Seções alteradas": o que mudou sai do snapshot na exportação
+    // (`exportEvidence`), não de uma contagem gravada no evento.
+    diff: [["Versão", "v3.1", "v3.2"]],
   },
 ];
 
