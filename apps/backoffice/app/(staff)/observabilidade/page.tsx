@@ -1,4 +1,4 @@
-import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import {
   type AcessoRow,
   type IntegracaoQuebrada,
@@ -6,6 +6,7 @@ import {
 } from "@/app/actions/access";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
@@ -142,16 +143,16 @@ export default async function ObservabilidadePage() {
         <>
           {/* NFR-1.7: a credencial é write-only — a query não a seleciona, e a
               tela diz isso na língua do operador, não do SQL. */}
-          <SectionCard
+          <Secao
             icon="eye"
             subtitle="Nome, fonte e erro de cada integração — a credencial não chega a esta tela."
             title="Integrações com falha"
           >
             <Integracoes linhas={res.data.integracoes} />
-          </SectionCard>
+          </Secao>
 
           {/* FR-30: registro de acesso ao painel. */}
-          <SectionCard
+          <Secao
             icon="userCheck"
             subtitle={
               res.data.recusas > 0
@@ -161,7 +162,7 @@ export default async function ObservabilidadePage() {
             title="Acessos ao Big Bang"
           >
             <Acessos linhas={res.data.acessos} />
-          </SectionCard>
+          </Secao>
         </>
       ) : (
         <FalhaAoCarregar

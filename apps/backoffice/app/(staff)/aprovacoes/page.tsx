@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listPlatformApprovals } from "@/app/actions/approvals";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
 import { requirePlatformStaff } from "@/lib/guard";
@@ -70,7 +71,11 @@ export default async function AprovacoesPage({
   const cabecalho = (
     <PageHeader
       eyebrow={`${secaoDaRota("/aprovacoes")} · governança`}
-      subtitle="Operação sensível não executa no clique — ela entra aqui. Remoção de cliente, escrita de agentes de IA nos dados do cliente, desconto acima de 15%, export sensível e mudança grande de plano."
+      // O que passa por aqui hoje, de verdade: só o envio de proposta com
+      // desconto acima do limite (proposals.ts). As outras quatro operações
+      // do PRD §6.3 ainda não chamam `requestPlatformApproval` — prometer
+      // que entram aqui é mentir para quem procura a remoção de um cliente.
+      subtitle={`Operação sensível não executa no clique — ela entra aqui. Hoje: envio de proposta com desconto acima de ${LIMITE_DESCONTO_SEM_APROVACAO}%. Remoção de cliente, escrita de agentes de IA, export sensível e mudança de plano ainda não passam pela fila.`}
       title="Aprovações"
       tone="amber"
     />

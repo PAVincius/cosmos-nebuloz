@@ -151,12 +151,12 @@ describe("tenant → cliente", () => {
     expect(screen.getByText(/ativo ou trial/i)).toBeTruthy();
   });
 
-  it("a tela pendente do shell volta para Clientes", async () => {
+  it("a tela pendente do shell volta para a Home", async () => {
     const { Pendente } = await import("@/components/shell");
     render(<Pendente rota="/rota-que-nao-existe" />);
 
     expect(
-      screen.getByRole("link", { name: "Voltar para Clientes" })
+      screen.getByRole("link", { name: "Voltar para a Home" })
     ).toBeTruthy();
   });
 });

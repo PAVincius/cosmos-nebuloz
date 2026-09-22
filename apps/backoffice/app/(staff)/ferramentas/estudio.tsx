@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { useCallback, useEffect, useState } from "react";
 import {
   createDiagramAction,
@@ -16,6 +16,7 @@ import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
+import { Secao } from "@/components/secao";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 import { Vazio } from "@/components/vazio";
 import { useGuardaDeRascunho } from "@/lib/rascunho-sujo";
@@ -209,7 +210,7 @@ function SeletorDeCliente({
  *  complexidade do lint; nada muda no que aparece. */
 function Historico({ revisoes }: { revisoes: DiagramDetail["historico"] }) {
   return (
-    <SectionCard
+    <Secao
       icon="history"
       subtitle="append-only — editar cria revisão, nunca sobrescreve"
       title="Histórico"
@@ -259,7 +260,7 @@ function Historico({ revisoes }: { revisoes: DiagramDetail["historico"] }) {
           </li>
         ))}
       </ul>
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -534,7 +535,7 @@ export function Estudio({
                 onVoltar={guarda.voltar}
               />
             ) : null}
-            <SectionCard
+            <Secao
               action={
                 <SeletorDeCliente
                   clientes={clientes}
@@ -568,14 +569,14 @@ export function Estudio({
                 />
               )}
               <ConfirmacaoDoEditor texto={confirmacao} />
-            </SectionCard>
+            </Secao>
 
             <Historico revisoes={aberto.historico} />
           </>
         ) : (
-          <SectionCard title="Nenhum diagrama aberto">
+          <Secao title="Nenhum diagrama aberto">
             <Vazio>Escolha um diagrama na lista para editar.</Vazio>
-          </SectionCard>
+          </Secao>
         )}
       </div>
     </div>

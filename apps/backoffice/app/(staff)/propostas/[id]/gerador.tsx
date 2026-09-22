@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import type { CatalogoComercial } from "@/app/actions/catalogo-comercial";
@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/proposta-escopo";
 import type { ServiceRow } from "@/app/actions/services";
 import { Campo, Erro, INPUT } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { planoPadrao } from "@/lib/comercial/plano-padrao";
 import {
@@ -311,24 +312,15 @@ export function Gerador({
 
   return (
     <form
+      className="bo-duas-colunas"
       onSubmit={salvar}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "var(--gap)",
-        alignItems: "start",
-      }}
+      style={{ gap: "var(--gap)", alignItems: "start" }}
     >
       {/* ── configuração ─────────────────────────────────────────────── */}
       <div
         style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
       >
-        <SectionCard
-          as="h2"
-          bodyStyle={{ padding: 14 }}
-          icon="building"
-          title="Cliente"
-        >
+        <Secao bodyStyle={{ padding: 14 }} icon="building" title="Cliente">
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Campo htmlFor="g-titulo" label="Título da proposta">
               <input
@@ -366,14 +358,9 @@ export function Gerador({
               />
             </Campo>
           </div>
-        </SectionCard>
+        </Secao>
 
-        <SectionCard
-          as="h2"
-          bodyStyle={{ padding: 14 }}
-          icon="layers"
-          title="Escopo"
-        >
+        <Secao bodyStyle={{ padding: 14 }} icon="layers" title="Escopo">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo htmlFor="g-plano" label="Plano">
               <div id="g-plano" style={TROCA}>
@@ -547,11 +534,10 @@ export function Gerador({
               </Campo>
             )}
           </div>
-        </SectionCard>
+        </Secao>
 
         {servicos.length > 0 && (
-          <SectionCard
-            as="h2"
+          <Secao
             bodyStyle={{ padding: 14 }}
             icon="briefcase"
             subtitle="Entram como linha própria na proposta"
@@ -616,15 +602,10 @@ export function Gerador({
                 );
               })}
             </div>
-          </SectionCard>
+          </Secao>
         )}
 
-        <SectionCard
-          as="h2"
-          bodyStyle={{ padding: 14 }}
-          icon="tag"
-          title="Comercial"
-        >
+        <Secao bodyStyle={{ padding: 14 }} icon="tag" title="Comercial">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
               hint={dicaDoTermo}
@@ -686,7 +667,7 @@ export function Gerador({
               </div>
             </Campo>
           </div>
-        </SectionCard>
+        </Secao>
       </div>
 
       {/* ── documento ────────────────────────────────────────────────── */}
@@ -712,12 +693,7 @@ export function Gerador({
         />
 
         {avisos.length > 0 && (
-          <SectionCard
-            as="h2"
-            bodyStyle={{ padding: 14 }}
-            icon="alert"
-            title="Validações"
-          >
+          <Secao bodyStyle={{ padding: 14 }} icon="alert" title="Validações">
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {avisos.map((a) => (
                 <span
@@ -733,14 +709,13 @@ export function Gerador({
                 </span>
               ))}
             </div>
-          </SectionCard>
+          </Secao>
         )}
 
         {erro ? <Erro>{erro}</Erro> : null}
 
         {somenteLeitura ? (
-          <SectionCard
-            as="h2"
+          <Secao
             bodyStyle={{ padding: 14 }}
             icon="lock"
             title={`Proposta ${ROTULO_DE_STATUS[proposta.status] ?? proposta.status}`}
@@ -756,7 +731,7 @@ export function Gerador({
               editável — o que ele recebeu precisa continuar valendo. Para mudar
               preço ou escopo, monte uma proposta nova.
             </span>
-          </SectionCard>
+          </Secao>
         ) : null}
 
         <PainelDeEnvio

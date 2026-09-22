@@ -1,5 +1,5 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
-import { Badge, PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import {
   type AuditEventoRow,
   listAuditEvents,
@@ -152,7 +152,7 @@ export default async function AuditPage({
         title={itemDaRota("/audit")?.label ?? "Trilha de auditoria"}
       />
 
-      <SectionCard icon="filter" title="Filtro">
+      <Secao icon="filter" title="Filtro">
         {tenants.ok ? (
           <Filtros tenants={tenants.data} />
         ) : (
@@ -161,9 +161,9 @@ export default async function AuditPage({
             titulo="Não foi possível carregar os clientes do filtro"
           />
         )}
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
+      <Secao
         icon="history"
         subtitle={
           pagina.ok
@@ -173,7 +173,7 @@ export default async function AuditPage({
         title="Eventos"
       >
         {renderEventos(pagina)}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

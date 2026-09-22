@@ -1,9 +1,10 @@
 "use client";
 
-import { PageHeader, SectionCard } from "@repo/design-system/cosmos/kit";
+import { PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { Secao } from "@/components/secao";
 
 /**
  * Fronteira de erro do grupo `(staff)`.
@@ -44,7 +45,7 @@ export default function Erro({
         title="Não deu para carregar esta tela"
         tone="red"
       />
-      <SectionCard icon="alert" title="O que aconteceu" tone="red">
+      <Secao icon="alert" title="O que aconteceu" tone="red">
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {error.message ? (
             <p
@@ -61,6 +62,23 @@ export default function Erro({
               }}
             >
               {error.message}
+            </p>
+          ) : null}
+          {/* O `digest` é o que o Next grava no log do servidor para esta
+              falha: com ele o suporte acha a linha; sem ele, procura por
+              horário. Em produção a mensagem some e o digest é tudo. */}
+          {error.digest ? (
+            <p
+              style={{
+                margin: 0,
+                fontSize: "var(--fs-nota)",
+                color: "var(--ink-muted)",
+              }}
+            >
+              Código para o suporte:{" "}
+              <span className="mono" style={{ fontWeight: 700 }}>
+                {error.digest}
+              </span>
             </p>
           ) : null}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -87,18 +105,18 @@ export default function Erro({
               {pendente ? "Tentando…" : "Tentar de novo"}
             </button>
             <Link
-              href="/"
+              href="/home"
               style={{
                 fontSize: "var(--fs-base)",
                 fontWeight: 700,
                 color: "var(--accent-text)",
               }}
             >
-              Voltar para Clientes
+              Voltar para a Home
             </Link>
           </div>
         </div>
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

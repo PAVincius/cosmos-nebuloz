@@ -1,6 +1,5 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
 import {
   atualizarConta,
@@ -13,6 +12,7 @@ import {
   Erro,
   INPUT,
 } from "@/components/campo";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { ROTULO_CENTRO } from "@/lib/empresa/plano-de-contas";
 
@@ -229,7 +229,7 @@ export function Plano({
   );
 
   return (
-    <SectionCard
+    <Secao
       subtitle="código, nome, centro de custo e situação; sem excluir — desativar cobre o caso"
       title="Plano de contas"
     >
@@ -265,6 +265,6 @@ export function Plano({
         </div>
       ))}
       <FormularioNovaConta onCriar={criar} podeEscrever={podeEscrever} />
-    </SectionCard>
+    </Secao>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -8,6 +8,7 @@ import type { AvaliacaoRow } from "@/app/actions/maturidade";
 import { criarAvaliacao } from "@/app/actions/maturidade";
 import { Campo, Erro, INPUT, mensagemDeErro } from "@/components/campo";
 import { OQueFalta } from "@/components/o-que-falta";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { WriteButton } from "@/components/write-button";
 import { CODIGOS_NIVEL, INFO_NIVEL, type Nivel } from "@/lib/growth/maturidade";
@@ -65,7 +66,7 @@ function NovaAvaliacao({ podeEscrever }: { podeEscrever: boolean }) {
   }
 
   return (
-    <SectionCard
+    <Secao
       subtitle="A organização não precisa ser cliente — o diagnóstico é o que se faz antes."
       title="Nova avaliação"
     >
@@ -98,7 +99,7 @@ function NovaAvaliacao({ podeEscrever }: { podeEscrever: boolean }) {
       </form>
       <OQueFalta itens={nome.length < 2 ? ["organização"] : []} verbo="criar" />
       {erro ? <Erro>{erro}</Erro> : null}
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -115,7 +116,7 @@ export function Lista({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <NovaAvaliacao podeEscrever={podeEscrever} />
 
-      <SectionCard
+      <Secao
         subtitle={`${totalDeCriterios} critérios por avaliação. Score só sai com todos respondidos.`}
         title="Avaliações"
       >
@@ -203,7 +204,7 @@ export function Lista({
             </tbody>
           </table>
         )}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

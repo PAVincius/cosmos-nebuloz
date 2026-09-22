@@ -73,11 +73,15 @@ export function NovoLeadDialog({
   canais,
   onClose,
   onCriar,
+  onCriado,
 }: {
   aberto: boolean;
   canais: CanalRow[];
   onClose: () => void;
   onCriar: (input: CriarLeadInput) => Promise<Result<{ id: string }>>;
+  /** A frase de sucesso, para quem abriu o diálogo mostrar na tela do funil:
+   *  o diálogo fecha em seguida e não tem onde dizê-la. */
+  onCriado?: (mensagem: string) => void;
 }) {
   // Esc, clique fora e X chegam aqui; com rascunho, a guarda pergunta antes.
   const guarda = useFecharComRascunho(onClose);
@@ -111,6 +115,7 @@ export function NovoLeadDialog({
             canais={canais}
             marcarSujo={guarda.marcarSujo}
             onClose={onClose}
+            onCriado={onCriado}
             onCriar={onCriar}
           />
         ) : null}
@@ -191,11 +196,13 @@ function Formulario({
   marcarSujo,
   onClose,
   onCriar,
+  onCriado,
 }: {
   canais: CanalRow[];
   marcarSujo: (sujo: boolean) => void;
   onClose: () => void;
   onCriar: (input: CriarLeadInput) => Promise<Result<{ id: string }>>;
+  onCriado?: (mensagem: string) => void;
 }) {
   const [form, setForm] = useState<FormNovoLead>(() => formInicial(canais));
   const [pendente, setPendente] = useState(false);
@@ -227,6 +234,7 @@ function Formulario({
       setErro(res.error);
       return;
     }
+    onCriado?.(`Lead ${form.nome.trim()} criado em Lead.`);
     onClose();
   }
 

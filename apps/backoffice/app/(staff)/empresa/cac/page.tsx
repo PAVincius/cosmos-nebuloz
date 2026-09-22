@@ -1,7 +1,7 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { lerCac } from "@/app/actions/empresa/cac";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
-import { secaoDaRota } from "@/components/nav";
+import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import {
   intervaloPadraoCompetencia,
   lerIntervaloDaUrl,
@@ -10,6 +10,8 @@ import { requirePlatformStaff } from "@/lib/guard";
 import { Painel } from "./painel";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = { title: tituloDaAba("/empresa/cac") };
 
 export default async function CacPage({
   searchParams,

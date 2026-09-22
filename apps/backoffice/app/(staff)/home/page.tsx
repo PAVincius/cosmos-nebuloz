@@ -1,9 +1,4 @@
-import {
-  Badge,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-} from "@repo/design-system/cosmos/kit";
+import { Badge, KpiCard, PageHeader } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import {
   listPlatformHealth,
@@ -13,6 +8,7 @@ import { listPlatformApprovals } from "@/app/actions/approvals";
 import { Erro } from "@/components/campo";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 
 export const dynamic = "force-dynamic";
@@ -98,13 +94,7 @@ function Conteudo({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))",
-        }}
-      >
+      <div className="bo-kpis">
         <KpiCard
           hint="na carteira"
           icon="building"
@@ -136,15 +126,15 @@ function Conteudo({
       </div>
 
       {tudoCalmo ? (
-        <SectionCard icon="check" title="Nada exige atenção" tone="green">
+        <Secao icon="check" title="Nada exige atenção" tone="green">
           <Vazio>
             Sem aprovação parada, sem integração com erro e sem acesso recusado.
             Esta tela fica vazia quando está tudo bem — é o comportamento
             pretendido, não falta de dado.
           </Vazio>
-        </SectionCard>
+        </Secao>
       ) : (
-        <SectionCard
+        <Secao
           icon="alert"
           subtitle="o que está esperando alguém"
           title="Exige atenção"
@@ -186,10 +176,10 @@ function Conteudo({
               </li>
             ) : null}
           </ul>
-        </SectionCard>
+        </Secao>
       )}
 
-      <SectionCard
+      <Secao
         icon="history"
         subtitle="últimos 10 de todos os clientes"
         title="Eventos de auditoria"
@@ -237,7 +227,7 @@ function Conteudo({
         <Link href="/audit" style={ATALHO}>
           Abrir o Audit Explorer →
         </Link>
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

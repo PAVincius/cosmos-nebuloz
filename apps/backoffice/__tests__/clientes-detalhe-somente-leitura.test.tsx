@@ -122,6 +122,8 @@ describe("ModuleForm — sucesso nomeado junto da linha", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: /Trial/ }));
+    // Ativar também passa pela barreira (crítica rodada 4).
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     const status = await screen.findByRole("status");
     expect(status.textContent).toBe("COSMOS de acme agora está Trial");

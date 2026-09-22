@@ -176,9 +176,19 @@ export function ConfirmarAcao({
   };
 
   return (
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: o fieldset é o grupo da pergunta; o Esc chega por bubbling dos dois botões, que são os interativos.
     <fieldset
       aria-describedby={`${idDoAlvo} ${idDaConsequencia}`}
       aria-labelledby={idDoRotulo}
+      // Esc é Voltar: quem chegou à pergunta por teclado sai dela como sai de
+      // qualquer diálogo, sem ter de achar o botão. Só com o foco dentro do
+      // bloco — um Esc solto na página não desiste de nada.
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.stopPropagation();
+          voltar();
+        }
+      }}
       style={{
         display: "flex",
         flexDirection: "column",

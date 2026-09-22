@@ -1,6 +1,7 @@
-import { KpiCard, SectionCard } from "@repo/design-system/cosmos/kit";
+import { KpiCard } from "@repo/design-system/cosmos/kit";
 import type { IpAssetRow } from "@/app/actions/ip-library";
 import type { ServiceRow } from "@/app/actions/services";
+import { Secao } from "@/components/secao";
 
 /**
  * O resumo do acervo — KPIs e lacunas — fora de `biblioteca.tsx`.
@@ -16,13 +17,7 @@ export function KpisDoAcervo({ lista }: { lista: IpAssetRow[] }) {
   const horas = lista.reduce((soma, a) => soma + a.horasPoupadas, 0);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: 12,
-        gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
-      }}
-    >
+    <div className="bo-kpis bo-kpis-3">
       <KpiCard
         hint={`${comprovados} ${comprovados === 1 ? "comprovado" : "comprovados"} em campo`}
         icon="book"
@@ -59,7 +54,7 @@ export function LacunasDeIp({
   const lacunas = servicos.filter((s) => s.ativo && !comAtivo.has(s.id));
 
   return (
-    <SectionCard
+    <Secao
       icon="alert"
       subtitle={`${lacunas.length} ${lacunas.length === 1 ? "serviço" : "serviços"} sem ativo vinculado`}
       title="Lacunas de IP"
@@ -122,6 +117,6 @@ export function LacunasDeIp({
           mesa — e sinal de que alguém está reescrevendo o mesmo material.
         </p>
       </div>
-    </SectionCard>
+    </Secao>
   );
 }

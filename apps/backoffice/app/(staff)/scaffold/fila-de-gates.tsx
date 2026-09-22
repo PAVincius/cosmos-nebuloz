@@ -19,12 +19,7 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
-import {
-  Badge,
-  Button,
-  Card,
-  SectionCard,
-} from "@repo/design-system/cosmos/kit";
+import { Badge, Button, Card } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   enterTenantContext,
@@ -38,6 +33,7 @@ import {
   useFecharComRascunho,
   useRascunhoReportado,
 } from "@/components/pergunta-descartar";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { Vazio } from "@/components/vazio";
 
@@ -285,7 +281,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
       {grouped
         .filter((g) => g.rows.length > 0)
         .map((g) => (
-          <SectionCard
+          <Secao
             action={<Badge tone={g.tone}>{g.rows.length}</Badge>}
             as="h2"
             bodyStyle={{ padding: 0 }}
@@ -317,7 +313,7 @@ export function FilaDeGates({ iniciais }: { iniciais: QueueEntry[] }) {
                 ))}
               </tbody>
             </Tabela>
-          </SectionCard>
+          </Secao>
         ))}
 
       {/* A travessia é o momento em que a fronteira aparece: até aqui, nada do

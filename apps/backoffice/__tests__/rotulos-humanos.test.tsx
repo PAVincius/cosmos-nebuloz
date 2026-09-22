@@ -6,7 +6,7 @@
 // contrato de módulo, tenant_member como opção de filtro do audit, e o
 // plural "(s)" onde a contagem já é conhecida. O valor que vai para a action
 // ou para a URL não muda — só o que a pessoa lê.
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AcessoRow } from "@/app/actions/access";
 import type { PlatformApprovalRow } from "@/app/actions/approvals";
@@ -92,7 +92,9 @@ describe("contrato de módulo", () => {
     mocks.contractModuleAction.mockResolvedValue({ ok: true, data: {} });
     await montar("ACTIVE");
 
-    screen.getByRole("button", { name: /Trial/ }).click();
+    fireEvent.click(screen.getByRole("button", { name: /Trial/ }));
+    // Ativar também passa pela barreira (crítica rodada 4).
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await vi.waitFor(() => {
       expect(mocks.contractModuleAction).toHaveBeenCalledWith({

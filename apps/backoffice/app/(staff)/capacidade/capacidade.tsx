@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
+import { Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import {
   type FormEvent,
   type ReactNode,
@@ -18,6 +18,7 @@ import {
 import type { EngagementRow } from "@/app/actions/engagements";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
+import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 import { FormularioDeCapacidade } from "./formulario";
@@ -272,13 +273,7 @@ function FormularioDeAlocacao({
       >
         {titulo}
       </p>
-      <div
-        style={{
-          display: "grid",
-          gap: 10,
-          gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-        }}
-      >
+      <div className="bo-campos">
         <Campo htmlFor="a-eng" label="Engajamento">
           <select
             id="a-eng"
@@ -449,7 +444,7 @@ export function Capacidade({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
+      <Secao
         action={
           podeEscrever ? (
             <BotaoPrimario
@@ -468,8 +463,14 @@ export function Capacidade({
       >
         {nova ? (
           <FormularioDeCapacidade
-            onCriada={(nv) => {
-              setLista((atual) => [...atual, nv]);
+            onCriada={async (nv) => {
+              // Relê em vez de anexar a cópia local: a ocupação e a ordem vêm
+              // do servidor, e outra aba já via a lista velha.
+              await recarregar();
+              setConfirmacao({
+                personId: nv.id,
+                texto: `Pessoa ${nv.nome} cadastrada.`,
+              });
               setNova(false);
             }}
             onErro={setErro}
@@ -512,7 +513,7 @@ export function Capacidade({
             ))}
           </ul>
         )}
-      </SectionCard>
+      </Secao>
     </div>
   );
 }

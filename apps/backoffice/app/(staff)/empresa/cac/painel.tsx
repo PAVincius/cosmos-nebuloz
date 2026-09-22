@@ -1,6 +1,5 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
@@ -13,6 +12,7 @@ import {
 import { BotaoPrimario, Erro, INPUT, rotuloSalvar } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { PerguntaDescartar } from "@/components/pergunta-descartar";
+import { Secao } from "@/components/secao";
 import { SeletorDePeriodo } from "@/components/seletor-de-periodo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import {
@@ -253,8 +253,7 @@ function ResultadoDoCac({
 }) {
   const faltam = r.total - r.preenchidas;
   return (
-    <SectionCard
-      as="h2"
+    <Secao
       title="CAC totalmente carregado"
       tone={r.cacCentavos === null ? "amber" : "green"}
     >
@@ -318,7 +317,7 @@ function ResultadoDoCac({
         O ticket do diagnóstico e o preço do pacote S do Scaffold esperam este
         resultado. Preencher as parcelas é a decisão; o cálculo é automático.
       </p>
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -529,8 +528,7 @@ export function Painel({
       )}
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <SectionCard
-        as="h2"
+      <Secao
         subtitle={`${r.preenchidas} de ${r.total} preenchidas · as seis primeiras vêm do livro-razão (aba Lançamentos)`}
         title="Parcelas do período"
       >
@@ -593,11 +591,10 @@ export function Painel({
             ))}
           </tbody>
         </Tabela>
-      </SectionCard>
+      </Secao>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <SectionCard
-          as="h2"
+      <div className="bo-duas-colunas" style={{ gap: 12 }}>
+        <Secao
           subtitle={
             view.editavel
               ? "o Meridian é a porta de entrada; o custo dele segue para quem ele puxa"
@@ -659,10 +656,9 @@ export function Painel({
               salvando={salvandoPesos}
             />
           ) : null}
-        </SectionCard>
+        </Secao>
 
-        <SectionCard
-          as="h2"
+        <Secao
           subtitle={
             view.editavel
               ? "Pondera as horas de discovery que não viraram cliente. Lê-se do funil quando houver volume; até lá, entra à mão."
@@ -709,7 +705,7 @@ export function Painel({
               salvando={salvandoConv}
             />
           ) : null}
-        </SectionCard>
+        </Secao>
       </div>
     </>
   );

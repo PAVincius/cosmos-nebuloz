@@ -1,12 +1,14 @@
 "use client";
 
-import { SectionCard } from "@repo/design-system/cosmos/kit";
+import type { ReactNode } from "react";
 import type {
   AddOnRow,
   PlanoRow,
   TermoRow,
 } from "@/app/actions/catalogo-comercial";
 import type { ServiceRow } from "@/app/actions/services";
+import { Secao } from "@/components/secao";
+import { Sigla } from "@/components/sigla";
 import { formatarBRL } from "@/lib/comercial/formato";
 import type { Preco } from "@/lib/comercial/precificar";
 
@@ -41,7 +43,7 @@ export function PreviewDaProposta({
   desconto: number;
 }) {
   return (
-    <SectionCard
+    <Secao
       bodyStyle={{ padding: 14 }}
       icon="fileCode"
       subtitle="Preview do documento que o cliente recebe"
@@ -143,9 +145,27 @@ export function PreviewDaProposta({
           </div>
 
           <div className="bo-kpis bo-kpis-3" style={{ gap: 10, marginTop: 12 }}>
-            <Celula rotulo="ACV" valor={formatarBRL(preco.acvCentavos)} />
             <Celula
-              rotulo={`TCV (${preco.meses}m)`}
+              rotulo={
+                <Sigla
+                  expandida
+                  sigla="ACV"
+                  significado="valor anual do contrato"
+                />
+              }
+              valor={formatarBRL(preco.acvCentavos)}
+            />
+            <Celula
+              rotulo={
+                <>
+                  <Sigla
+                    expandida
+                    sigla="TCV"
+                    significado="valor total do contrato"
+                  />{" "}
+                  ({preco.meses}m)
+                </>
+              }
               valor={formatarBRL(preco.tcvCentavos)}
             />
             <Celula
@@ -157,7 +177,7 @@ export function PreviewDaProposta({
           </div>
         </div>
       ) : null}
-    </SectionCard>
+    </Secao>
   );
 }
 
@@ -216,7 +236,7 @@ function LinhaDoDocumento({
   );
 }
 
-function Celula({ rotulo, valor }: { rotulo: string; valor: string }) {
+function Celula({ rotulo, valor }: { rotulo: ReactNode; valor: string }) {
   return (
     <div
       style={{

@@ -1,6 +1,6 @@
-import { SectionCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import type { DreView } from "@/app/actions/empresa/financeiro";
+import { Secao } from "@/components/secao";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { formatarBRL } from "@/lib/comercial/formato";
 import { intervaloDaCompetencia } from "@/lib/empresa/periodo";
@@ -89,7 +89,7 @@ export function Dre({ inicial: view }: { inicial: DreView }) {
 
   return (
     <>
-      <SectionCard
+      <Secao
         subtitle="receita por frente · custo de entrega · margem bruta · EBITDA"
         title="DRE por competência"
       >
@@ -120,9 +120,9 @@ export function Dre({ inicial: view }: { inicial: DreView }) {
             ))}
           </tbody>
         </Tabela>
-      </SectionCard>
+      </Secao>
 
-      <SectionCard
+      <Secao
         subtitle="uma célula por conta e mês; abre a aba Lançamentos filtrada por conta e competência"
         title="Plano de contas"
       >
@@ -140,7 +140,7 @@ export function Dre({ inicial: view }: { inicial: DreView }) {
             ))}
           </tbody>
         </Tabela>
-      </SectionCard>
+      </Secao>
     </>
   );
 }

@@ -1,7 +1,9 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { lerAvaliacao } from "@/app/actions/maturidade";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
+import { tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Avaliacao } from "./avaliacao";
 
@@ -14,6 +16,24 @@ import { Avaliacao } from "./avaliacao";
  */
 export const dynamic = "force-dynamic";
 
+// `cache` do React: `generateMetadata` e a página leem a mesma avaliação na
+// mesma requisição, e sem isto seriam duas idas ao banco.
+const lerUmaAvaliacao = cache((id: string) => lerAvaliacao(id));
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const res = await lerUmaAvaliacao(id);
+  return {
+    title: res.ok
+      ? `${res.data.organizacao} — Readiness — Back-office Nebuloz`
+      : tituloDaAba("/growth/readiness"),
+  };
+}
+
 export default async function AvaliacaoPage({
   params,
 }: {
@@ -22,7 +42,7 @@ export default async function AvaliacaoPage({
   const { id } = await params;
   const [staff, res] = await Promise.all([
     requirePlatformStaff(),
-    lerAvaliacao(id),
+    lerUmaAvaliacao(id),
   ]);
 
   // Id que não existe não é falha de leitura: retry não resolve. O
