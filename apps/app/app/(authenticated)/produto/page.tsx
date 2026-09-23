@@ -35,9 +35,7 @@ const ICONES: Record<ProdutoNoPainel["modulo"], ElementType> = {
   SCAFFOLD: LayersIcon,
 };
 
-/** Tom por estado. `SEM_ROTA` fica neutro de propósito: é promessa da
- *  plataforma, não pendência do cliente — pintar de alerta cobraria dele uma
- *  ação que não existe. */
+/** Tom por estado. */
 const BADGE: Record<
   EstadoDoProduto,
   {
@@ -50,7 +48,6 @@ const BADGE: Record<
   SUSPENSO: { rotulo: "Suspenso", variante: "destructive" },
   CANCELADO: { rotulo: "Cancelado", variante: "destructive" },
   EXPIRADO: { rotulo: "Vencido", variante: "destructive" },
-  SEM_ROTA: { rotulo: "Em breve aqui", variante: "secondary" },
 };
 
 function formatarData(iso: string): string {

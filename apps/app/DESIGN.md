@@ -346,7 +346,7 @@ As sombras dos cartões portados foram afinadas para o escuro (preto a 80–95%)
 
 ### Chips
 - **Style:** o `Badge` de tom de `components/cosmos/badge.tsx` (pílula de 3px 9px, 11.5px em peso 700, +0.01em, fundo `-soft`, texto `-text`, borda do tom a 22%), usado em `/settings/workspace`; e o `Badge` do shadcn (`rounded-full`, 12px em peso 500, variantes `default`, `secondary`, `outline` e `destructive`).
-- **State:** em `/produto`, o estado do contrato escolhe a variante: Ativo usa `default`, Não contratado usa `outline`, Suspenso, Cancelado e Vencido usam `destructive`, e "Em breve aqui" usa `secondary`. Nas palavras do código, `SEM_ROTA` "fica neutro de propósito: é promessa da plataforma, não pendência do cliente".
+- **State:** em `/produto`, o estado do contrato escolhe a variante: Ativo usa `default`, Não contratado usa `outline`, Suspenso, Cancelado e Vencido usam `destructive`.
 - **RelationChip:** link em pílula para entidade relacionada, em `surface-2` com fio `hairline`, 11.5px em peso 600 e `ink-muted`; eyebrow mono de 9px em maiúsculas e ícone num círculo tingido de 20px. No hover, sobe 1px e passa a `hairline-strong`, `surface-3` e `ink`.
 
 ### Cards / Containers

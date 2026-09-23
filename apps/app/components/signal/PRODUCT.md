@@ -38,7 +38,7 @@ Sucesso: 8 critérios de aceite na spec e metas de p95 (visão geral abaixo de 1
 - Sem tela, só action testada: conexões, sync e saúde de fonte; mapeamento de evento para métrica; versão de fórmula de ROI; pontuação de confiança; rascunho de relatório. Sem ação nenhuma: gravar adoção e resultado (só o seed grava) e incluir membro no Signal.
 - Integrações: nenhuma real — sem conector, webhook, agendador ou notificação; saúde e alertas só mudam quando alguém chama a action.
 - Guard em cinco portões em toda action: sessão → módulo → papel → permissão → posse da iniciativa; 403 manda pedir acesso, 422 nomeia a regra, 409 lista os bloqueios; código de outro tenant responde "não encontrado". A auditoria grava na mesma transação da escrita e, se falha, a escrita falha.
-- Entradas: switchers do Charter e do Meridian e URL direta; o Cosmos não tem link, e `/produto` ainda diz que o Signal não tem tela.
+- Entradas: switchers do Charter e do Meridian, o cartão de `/produto` e URL direta; o Cosmos não tem link.
 
 ## Capabilities and Constraints
 
@@ -58,7 +58,7 @@ Sucesso: 8 critérios de aceite na spec e metas de p95 (visão geral abaixo de 1
 
 ## Brand Commitments
 
-- Nome "Signal". O descritor diverge: "Adoção e valor de iniciativas de IA" na casca, "Valor entregue e medição" nos switchers do Charter e do Meridian, "Métrica de carteira que exige pipeline de dados" em `/produto`. Unificar é pendência.
+- Nome "Signal". Descritor único, aprovado pelo dono em 2026-09-23: "Valor realizado de IA", a cabeça da coluna "O que faz" do mapa. É o mesmo nos switchers e no topo de `/signal-indisponivel`; em `/produto` segue "— adoção, ROI com confiança, veredito".
 - Voz firme e didática: cada regra vem com o porquê, em contraste curto. "Número sem origem não é baseline, é lembrança."; "Retorno sem custo não é múltiplo, é ausência de dado."; "Ausência de número não é retorno zero."; "Um mês ruim é ruído, não alerta."; "Ordenado por urgência de decisão, não por tamanho"; "Nada é resumido: esta é a tela onde um resultado se contesta."
 - Regras de conteúdo (`specs/003-signal-measure/contracts/ui-contract.md` §6): ROI nunca sozinho; adoção e resultado juntos; todo número com fonte; alerta com próximo passo e dono; erro de conexão com o conserto e o impacto; veredito antes da métrica; encerramento diz quem decidiu, quando e por quê.
 - Nunca "0,0×" para custo ausente; nenhum seletor de persona ("escalada de privilégio por dropdown"); "o produto mede adoção, não pessoas".

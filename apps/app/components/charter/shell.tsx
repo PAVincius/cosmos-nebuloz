@@ -54,7 +54,7 @@ const MODULE_META: Record<
     label: "Signal",
     href: "/signal",
     icon: "trendingUp",
-    blurb: "Valor entregue e medição",
+    blurb: "Valor realizado de IA",
   },
 };
 

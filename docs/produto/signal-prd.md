@@ -205,7 +205,7 @@ Riscos de engenharia (cache de papel, casca, trilha, relatório): [SRD](./signal
 | DEPENDE DE | PAPEL NO MAPA | ESTADO NA MAIN |
 |---|---|---|
 | Scaffold | Dono do baseline (costura 1); recebe a lição de encerramento (costura 5) | Contrato v2 emitido, sem consumidor (`specs/002-scaffold-adoption/contracts/signal-baseline-export.md`) |
-| Cosmos | Dono da iniciativa, da hierarquia e do WSJF (costuras 2 e 3) | Nenhuma troca; `/produto` mostra SIGNAL "sem tela" (`app/actions/produtos/index.ts:70-74`) |
+| Cosmos | Dono da iniciativa, da hierarquia e do WSJF (costuras 2 e 3) | Nenhuma troca |
 | Meridian | Dono da escala de confiança e da avaliação (costura 4) | Gap promovido a `SIGNAL` fica com `targetEntityId` nulo (`packages/database/prisma/schema/meridian.prisma:101-104`) |
 | Charter | Dono de papel, política e formato da trilha (costura 6) | Trilha no formato dele; papel próprio (gap S-21); UI reusa primitivas do Charter (`components/signal/base.tsx:10-65`) |
 | Back-office (Big Bang) | Vender e operar | Contrata `TenantModule{SIGNAL}`; não cria `SignalMember` nem `SignalSettings` (`packages/provisioning/src/modules.ts:52-60`) |

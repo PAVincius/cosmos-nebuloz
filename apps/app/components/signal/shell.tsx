@@ -59,7 +59,7 @@ const MODULE_META: Record<
     label: "Signal",
     href: "/signal",
     icon: "signal",
-    blurb: "Adoção e valor de iniciativas de IA",
+    blurb: "Valor realizado de IA",
   },
 };
 
