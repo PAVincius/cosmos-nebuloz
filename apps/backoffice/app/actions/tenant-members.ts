@@ -42,9 +42,12 @@ export type TenantMemberRow = {
   desde: string;
 };
 
+/** `isSystem: false`: o tenant interno não é cliente, e papel de staff não
+ *  muda pela aba Usuários — sem o filtro, um ADMIN do painel promovia ou
+ *  rebaixava outro staff chamando a action com o slug interno. */
 async function tenantPorSlug(slug: string) {
   const tenant = await database.tenant.findFirst({
-    where: { slug },
+    where: { slug, isSystem: false },
     select: { id: true, slug: true, name: true },
   });
   if (!tenant) {

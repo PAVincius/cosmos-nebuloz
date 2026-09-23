@@ -3,7 +3,6 @@
 import { authClient } from "@repo/auth/client";
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { registrarAcesso } from "@/app/actions/access";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 
 const TOTP_LENGTH = 6;
@@ -19,14 +18,10 @@ export function SignInForm() {
 
   // Recarrega em vez de navegar pelo router: o cookie de sessão acabou de ser
   // emitido e quem precisa lê-lo é o servidor, no guard do layout.
+  //
+  // A trilha de acesso (FR-30) não passa por aqui: a rota de auth grava o
+  // desfecho do login no servidor (lib/registro-de-acesso.ts).
   const enter = () => window.location.assign("/");
-
-  // Registra e só então sai. Disparar sem esperar aqui perderia o registro,
-  // porque a navegação cancela requisição em voo.
-  const entrarRegistrando = async (quem: string) => {
-    await registrarAcesso({ email: quem, evento: "LOGIN" });
-    enter();
-  };
 
   const submitCredentials = async (event: FormEvent) => {
     event.preventDefault();
@@ -39,14 +34,6 @@ export function SignInForm() {
     });
 
     if (result.error) {
-      // FR-30 — a tentativa recusada é a linha mais interessante da trilha:
-      // sem ela, o log responde "quem usou o painel" e não "quem tentou".
-      // Não é await de propósito: a mensagem de erro não espera o registro.
-      registrarAcesso({
-        email,
-        evento: "RECUSADO",
-        motivo: "credencial inválida",
-      });
       setError("E-mail ou senha incorretos.");
       setPending(false);
       return;
@@ -63,7 +50,7 @@ export function SignInForm() {
       return;
     }
 
-    await entrarRegistrando(email.trim().toLowerCase());
+    enter();
   };
 
   const submitTotp = async (event: FormEvent) => {
@@ -88,7 +75,7 @@ export function SignInForm() {
       return;
     }
 
-    await entrarRegistrando(email.trim().toLowerCase());
+    enter();
   };
 
   if (needsTotp) {

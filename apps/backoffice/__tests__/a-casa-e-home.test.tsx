@@ -10,7 +10,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   irPara: vi.fn(),
-  registrarAcesso: vi.fn(),
   signInEmail: vi.fn(),
   verifyTotp: vi.fn(),
 }));
@@ -30,9 +29,6 @@ vi.mock("@repo/auth/client", () => ({
     twoFactor: { verifyTotp: h.verifyTotp },
   },
 }));
-vi.mock("@/app/actions/access", () => ({
-  registrarAcesso: h.registrarAcesso,
-}));
 
 // O shell monta a paleta (diálogo Radix) — é o import, não o render, que
 // pesa; com a suíte em paralelo passa dos 5s padrão.
@@ -40,7 +36,6 @@ vi.setConfig({ testTimeout: 20_000 });
 
 beforeEach(() => {
   vi.clearAllMocks();
-  h.registrarAcesso.mockResolvedValue(undefined);
   // `window.location.assign` real lança "not implemented" no jsdom.
   Object.defineProperty(window, "location", {
     configurable: true,

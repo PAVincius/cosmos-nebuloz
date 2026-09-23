@@ -194,6 +194,31 @@ describe("updateTenantMemberRoleAction — guard de último ADMIN", () => {
     expect(mocks.memberUpdate).not.toHaveBeenCalled();
   });
 
+  // PRD do back-office: papel de staff muda por SQL, não pelo painel. Sem o
+  // filtro, um ADMIN promovia ou rebaixava outro staff chamando esta action
+  // com o slug do tenant interno.
+  it("recusa o tenant interno — papel de staff não muda por aqui", async () => {
+    // Como o banco responde: sem `isSystem: false` no filtro, o slug do tenant
+    // interno acha o tenant interno.
+    mocks.tenantFindFirst.mockImplementation(
+      async (args: { where: { slug: string; isSystem?: boolean } }) =>
+        args.where.isSystem === false
+          ? null
+          : { id: "system", slug: "nebuloz", name: "Nebuloz" }
+    );
+    mocks.memberCount.mockResolvedValue(2);
+
+    const res = await updateTenantMemberRoleAction({
+      slug: "nebuloz",
+      memberId: "tm-1",
+      role: "MEMBER",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.memberUpdate).not.toHaveBeenCalled();
+    expect(mocks.logPlatformAudit).not.toHaveBeenCalled();
+  });
+
   it("audita a mudança com papel anterior e novo", async () => {
     mocks.memberCount.mockResolvedValue(2);
 

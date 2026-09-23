@@ -23,7 +23,13 @@ export const LIMITE_STAFF_POR_MINUTO = 120;
  *  prática, teto nenhum para isto. */
 export const LIMITE_PROVISIONAMENTO_POR_HORA = 10;
 
-export type EscopoDeLimite = "staff" | "provisionamento";
+/** Linhas da trilha de acesso (lib/registro-de-acesso.ts). Aqui a chave é a
+ *  pessoa quando o login cria sessão, e o IP quando é recusado — a tentativa
+ *  recusada não tem outra. Folgado para quem erra a senha, curto para quem
+ *  martela o formulário e encheria a tabela. */
+export const LIMITE_ACESSO_POR_HORA = 30;
+
+export type EscopoDeLimite = "staff" | "provisionamento" | "acesso";
 
 const ESCOPOS: Record<
   EscopoDeLimite,
@@ -37,6 +43,11 @@ const ESCOPOS: Record<
   provisionamento: {
     prefixo: "bo:provisionamento",
     quantidade: LIMITE_PROVISIONAMENTO_POR_HORA,
+    janela: "1 h",
+  },
+  acesso: {
+    prefixo: "bo:acesso",
+    quantidade: LIMITE_ACESSO_POR_HORA,
     janela: "1 h",
   },
 };
@@ -70,9 +81,7 @@ export async function assertDentroDoLimite(
 
   let resultado: { success: boolean; reset: number };
   try {
-    const { createRateLimiter, fixedWindow } = await import(
-      "@repo/rate-limit"
-    );
+    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
     const limiter = createRateLimiter({
       limiter: fixedWindow(quantidade, janela),
       prefix: prefixo,

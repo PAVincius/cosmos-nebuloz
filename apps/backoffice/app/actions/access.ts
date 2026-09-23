@@ -1,9 +1,6 @@
 "use server";
 
 import { database } from "@repo/database";
-import { log } from "@repo/observability/log";
-import { headers } from "next/headers";
-import { z } from "zod";
 import { clientListArgs } from "@/lib/client-queries";
 import { mensagemDeErro } from "@/lib/erro-de-integracao";
 import { requirePlatformStaff, SYSTEM_TENANT_ID } from "@/lib/guard";
@@ -16,58 +13,15 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * FEZ num tenant; este registra o acesso ao painel em si, inclusive tentativa
  * recusada. Juntar os dois encheria a trilha de um cliente de linha de login
  * que não tem nada a ver com ele.
+ *
+ * Aqui só se LÊ a trilha. Quem grava é `lib/registro-de-acesso.ts`, chamado
+ * pela rota de auth — nunca uma export deste arquivo: todo export de módulo
+ * `"use server"` é RPC pública, e a action que gravava daqui não tinha sessão
+ * nem teto.
  */
-
-const EVENTOS = ["LOGIN", "LOGOUT", "RECUSADO"] as const;
 
 /** Quantas integrações quebradas a tela lista. A contagem é à parte. */
 const LIMITE_DE_QUEBRADAS = 50;
-
-const AcessoSchema = z.object({
-  email: z.string().min(3).max(200),
-  evento: z.enum(EVENTOS),
-  motivo: z.string().max(300).optional(),
-  userId: z.string().optional(),
-});
-
-/**
- * Registra uma passagem pelo portão de entrada.
- *
- * **Não exige sessão**, porque roda no momento em que a sessão ainda não
- * existe — inclusive quando a tentativa é recusada, que é justamente a linha
- * mais interessante da trilha.
- *
- * **Nunca lança.** Se gravar falhar, a pessoa ainda entra: auditoria que
- * bloqueia autenticação transforma um problema de log num incidente de acesso.
- * A falha vai para o logger, que é onde ela deve aparecer.
- */
-export async function registrarAcesso(
-  input: z.input<typeof AcessoSchema>
-): Promise<void> {
-  try {
-    const dados = AcessoSchema.parse(input);
-    const h = await headers();
-
-    await database.accessLog.create({
-      data: {
-        tenantId: SYSTEM_TENANT_ID,
-        userId: dados.userId ?? null,
-        // Normalizado: trilha com "Ana@" e "ana@" separaria a mesma pessoa em
-        // duas e cada metade pareceria ter entrado menos vezes.
-        email: dados.email.trim().toLowerCase(),
-        evento: dados.evento,
-        motivo: dados.motivo ?? null,
-        ip:
-          h.get?.("x-forwarded-for")?.split(",")[0]?.trim() ??
-          h.get?.("x-real-ip") ??
-          null,
-        userAgent: h.get?.("user-agent") ?? null,
-      },
-    });
-  } catch (e) {
-    log.error("[backoffice] falha ao registrar acesso", { error: String(e) });
-  }
-}
 
 export type AcessoRow = {
   id: string;

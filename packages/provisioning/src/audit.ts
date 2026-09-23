@@ -11,6 +11,11 @@ export type PlatformAuditEntry = {
   target: string;
   note?: string;
   diff?: AuditDiff;
+  /** `false` quando quem age é o próprio cliente — o autocadastro do app usa
+   *  `provisionTenant` também. Omitido é staff: todo outro chamador é.
+   *  ponytail: opcional com padrão staff; obrigatório quando surgir o segundo
+   *  caminho de autosserviço. */
+  platformStaff?: boolean;
 };
 
 /** Sintaxe de método pelo mesmo motivo do `ModuleDb`: bivariância deixa o
@@ -40,7 +45,7 @@ export async function logPlatformAudit(
         target: entry.target,
         note: entry.note ?? null,
         actorName: entry.actorName ?? null,
-        platformStaff: true,
+        platformStaff: entry.platformStaff ?? true,
       },
     },
   });
