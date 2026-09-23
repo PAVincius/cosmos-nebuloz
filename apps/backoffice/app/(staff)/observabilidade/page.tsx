@@ -1,4 +1,5 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import {
   type AcessoRow,
   type IntegracaoQuebrada,
@@ -25,6 +26,31 @@ const ROTULO_EVENTO: Record<string, string> = {
   RECUSADO: "Recusado",
 };
 
+/** Quanto da mensagem cabe na linha. O resto fica no `title` e, inteiro, para
+ *  o leitor de tela — a mensagem de provedor passa de 500 caracteres. */
+const MENSAGEM_NA_LINHA = 140;
+
+function MensagemDeErro({ texto }: { texto: string }) {
+  const estilo = {
+    flexBasis: "100%",
+    margin: 0,
+    fontSize: "var(--fs-nota)",
+    color: "var(--red-text)",
+    overflowWrap: "anywhere" as const,
+  };
+  if (texto.length <= MENSAGEM_NA_LINHA) {
+    return <p style={estilo}>{texto}</p>;
+  }
+  return (
+    <p style={estilo} title={texto}>
+      <span aria-hidden="true">
+        {`${texto.slice(0, MENSAGEM_NA_LINHA - 1).trimEnd()}…`}
+      </span>
+      <span className="sr-only">{texto}</span>
+    </p>
+  );
+}
+
 function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
   if (linhas.length === 0) {
     // Vazio aqui é boa notícia, e a tela precisa dizer isso — "nenhum
@@ -40,12 +66,25 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 12,
+            flexWrap: "wrap",
+            gap: "6px 12px",
             padding: "10px 2px",
             borderTop: idx === 0 ? "none" : "1px solid var(--hairline)",
           }}
         >
-          <Badge tone="blue">{i.tenantSlug}</Badge>
+          {/* O cliente citado é saída: a aba Integrações dele tem o
+              histórico de sync. "—" é integração sem tenant — sem destino. */}
+          {i.tenantSlug === "—" ? (
+            <Badge tone="blue">{i.tenantSlug}</Badge>
+          ) : (
+            <Link
+              href={`/clientes/${i.tenantSlug}?aba=integracoes`}
+              style={{ textDecoration: "none" }}
+            >
+              <span className="sr-only">Integrações de </span>
+              <Badge tone="blue">{i.tenantSlug}</Badge>
+            </Link>
+          )}
           <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
             {i.name}
             <span
@@ -70,10 +109,21 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
           <Badge dot tone="red">
             Erro
           </Badge>
+          <MensagemDeErro texto={i.mensagem} />
         </li>
       ))}
     </ul>
   );
+}
+
+/** A lista para em 50; a contagem é do banco. Quando há mais quebradas que
+ *  linhas, o subtítulo diz — antes, 50 parecia ser tudo. */
+function legendaDasIntegracoes(total: number, linhas: number): string {
+  const promessa =
+    "Nome, fonte e erro de cada integração — a credencial não chega a esta tela.";
+  return total > linhas
+    ? `${total} integrações com erro; aqui, as ${linhas} de sincronização mais recente. ${promessa}`
+    : promessa;
 }
 
 function Acessos({ linhas }: { linhas: AcessoRow[] }) {
@@ -146,7 +196,10 @@ export default async function ObservabilidadePage() {
               tela diz isso na língua do operador, não do SQL. */}
           <Secao
             icon="eye"
-            subtitle="Nome, fonte e erro de cada integração — a credencial não chega a esta tela."
+            subtitle={legendaDasIntegracoes(
+              res.data.integracoesComErro,
+              res.data.integracoes.length
+            )}
             title="Integrações com falha"
           >
             <Integracoes linhas={res.data.integracoes} />

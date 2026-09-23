@@ -9,6 +9,7 @@ import {
   type Listagem,
   listagem,
   type OpcoesDePagina,
+  TETO_DA_LISTA,
 } from "@/lib/paginacao";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -163,9 +164,14 @@ export type ActivityRow = {
   target: string;
   actorName: string | null;
   createdAt: string;
+  /** O cliente em que o ato foi gravado — a saída da linha para o detalhe.
+   *  Nulo no tenant interno, que não tem detalhe de cliente. */
+  clienteSlug: string | null;
 };
 
-const ACTIVITY_LIMIT = 100;
+/** O teto das listas — a tela de Atividade diz "os 100 mais recentes" com
+ *  o mesmo número. */
+const ACTIVITY_LIMIT = TETO_DA_LISTA;
 
 /** `platformStaff` é o campo que `logPlatformAudit` grava em todo ato de
  *  staff — é o que separa trilha de staff de ato do próprio cliente. */
@@ -179,7 +185,14 @@ export async function listStaffActivity(
       where: { metadata: { path: ["platformStaff"], equals: true } },
       orderBy: { createdAt: "desc" },
       take: limit,
-      select: { id: true, action: true, metadata: true, createdAt: true },
+      select: {
+        id: true,
+        action: true,
+        metadata: true,
+        createdAt: true,
+        // `logPlatformAudit` grava no tenant do cliente: é dele a linha.
+        tenant: { select: { slug: true, isSystem: true } },
+      },
     });
 
     return rows.map((row) => {
@@ -195,6 +208,7 @@ export async function listStaffActivity(
         target,
         actorName,
         createdAt: row.createdAt.toISOString(),
+        clienteSlug: row.tenant.isSystem ? null : row.tenant.slug,
       };
     });
   });

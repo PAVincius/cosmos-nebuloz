@@ -136,8 +136,9 @@ describe("listAccountHealth", () => {
       return;
     }
     expect(res.data[0].saude).toBe("RISCO");
-    // Badge vermelho sem razão não diz a ninguém o que fazer em seguida.
-    expect(res.data[0].sinais[0].texto).toContain("COSMOS");
+    // Badge vermelho sem razão não diz a ninguém o que fazer em seguida. E o
+    // módulo pelo nome, não pelo enum (`lib/rotulos.ts`).
+    expect(res.data[0].sinais[0].texto).toBe("Módulo Cosmos está suspenso.");
   });
 
   it("renovação vencida é RISCO; renovação próxima é ATENCAO", async () => {

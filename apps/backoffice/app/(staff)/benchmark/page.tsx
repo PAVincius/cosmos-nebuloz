@@ -76,7 +76,13 @@ function LinhaCliente({ c, maximo }: { c: ClienteBenchmark; maximo: number }) {
   return (
     <tr>
       <td style={CELULA}>
-        <span style={{ fontWeight: 600 }}>{c.nome}</span>
+        {/* O cliente citado é saída: comparar pede abrir quem pesa. */}
+        <Link
+          href={`/clientes/${c.slug}`}
+          style={{ color: "var(--ink)", fontWeight: 600 }}
+        >
+          {c.nome}
+        </Link>
         <span
           className="mono"
           style={{

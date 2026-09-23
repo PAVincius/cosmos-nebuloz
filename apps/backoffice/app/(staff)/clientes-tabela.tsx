@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Avatar,
-  Badge,
-  KpiCard,
-  type Tone,
-} from "@repo/design-system/cosmos/kit";
+import { Avatar, Badge, KpiCard } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import {
@@ -23,6 +18,7 @@ import {
 } from "@/lib/busca-no-servidor";
 import { formatarData } from "@/lib/data";
 import { TETO_DA_LISTA } from "@/lib/paginacao";
+import { plano, rotuloDoModulo, statusDoModulo } from "@/lib/rotulos";
 import { useParamState } from "@/lib/url-state";
 
 /**
@@ -43,30 +39,6 @@ import { useParamState } from "@/lib/url-state";
  * página relê a lista); a busca filtra aqui quando a carteira inteira está na
  * tela e pergunta ao servidor quando não está (`lib/busca-no-servidor.tsx`).
  */
-
-/** `SubscriptionPlan` do schema é o nome do produto em caixa alta; a tela
- *  mostra o nome como se escreve. Plano fora do mapa aparece como veio, em
- *  vez de sumir. */
-const ROTULO_DO_PLANO: Record<string, string> = {
-  ORBIT: "Orbit",
-  GALAXY: "Galaxy",
-  NEBULA: "Nebula",
-  UNIVERSE: "Universe",
-};
-
-const TOM_DE_STATUS: Record<string, Tone> = {
-  ACTIVE: "green",
-  TRIAL: "blue",
-  SUSPENDED: "amber",
-  CANCELED: "red",
-};
-
-const ROTULO_DE_STATUS: Record<string, string> = {
-  ACTIVE: "Ativo",
-  TRIAL: "Trial",
-  SUSPENDED: "Suspenso",
-  CANCELED: "Cancelado",
-};
 
 const CABECALHO: React.CSSProperties = {
   padding: "0 14px 8px",
@@ -303,21 +275,20 @@ function Tabela({ clientes }: { clientes: ClientRow[] }) {
                   </span>
                 ) : (
                   <span style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                    {cliente.modules.map((m) => (
-                      <Badge
-                        dot
-                        key={m.module}
-                        tone={TOM_DE_STATUS[m.status] ?? "neutral"}
-                      >
-                        {m.module} · {ROTULO_DE_STATUS[m.status] ?? m.status}
-                      </Badge>
-                    ))}
+                    {cliente.modules.map((m) => {
+                      const status = statusDoModulo(m.status);
+                      return (
+                        <Badge dot key={m.module} tone={status.tom}>
+                          {rotuloDoModulo(m.module)} · {status.rotulo}
+                        </Badge>
+                      );
+                    })}
                   </span>
                 )}
               </td>
               <td style={CELULA}>
-                <Badge soft={false} tone="purple">
-                  {ROTULO_DO_PLANO[cliente.plan] ?? cliente.plan}
+                <Badge soft={false} tone={plano(cliente.plan).tom}>
+                  {plano(cliente.plan).rotulo}
                 </Badge>
               </td>
               <td

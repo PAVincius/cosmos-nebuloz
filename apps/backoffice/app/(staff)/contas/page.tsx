@@ -22,6 +22,7 @@ import {
   ROTULO_SAUDE,
   type Saude,
 } from "@/lib/health";
+import { plano } from "@/lib/rotulos";
 import type { Result } from "@/lib/safe-action";
 
 export const dynamic = "force-dynamic";
@@ -84,7 +85,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
             className="mono"
             style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
-            {c.slug} · {c.plano}
+            {c.slug} · {plano(c.plano).rotulo}
           </span>
         </Link>
         <span
