@@ -7,6 +7,7 @@
 // ModalCard, e teclado é a diferença entre a tela ser operável sem mouse ou
 // não. O provider trata Escape e o foco; o card declara a semântica de
 // diálogo. Quem escreve um modal novo herda tudo sem saber que existe.
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   createContext,
   type ReactNode,
@@ -17,7 +18,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { createPortal } from "react-dom";
+import { CosmosPortal } from "./cosmos-portal";
 
 const ModalCtx = createContext<{
   open: (n: ReactNode) => void;
@@ -138,15 +139,15 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalCtx.Provider value={{ open, close }}>
       {children}
-      {aberto &&
-        createPortal(
+      {aberto && (
+        <CosmosPortal>
           <div
             onClick={close}
             style={{
               position: "fixed",
               inset: 0,
               zIndex: 400,
-              background: "rgba(4,6,14,.6)",
+              background: "var(--scrim)",
               backdropFilter: "blur(6px)",
               display: "flex",
               alignItems: "flex-start",
@@ -165,9 +166,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
                 {node}
               </ModalDialogNodeCtx.Provider>
             </div>
-          </div>,
-          document.body
-        )}
+          </div>
+        </CosmosPortal>
+      )}
     </ModalCtx.Provider>
   );
 }
@@ -255,7 +256,7 @@ export function ModalCard({
             id={tituloId}
             style={{
               color: "var(--ink)",
-              fontSize: 16.5,
+              fontSize: "var(--fs-forte)",
               fontWeight: 700,
               letterSpacing: "-.01em",
             }}
@@ -267,7 +268,7 @@ export function ModalCard({
               id={subtituloId}
               style={{
                 color: "var(--ink-subtle)",
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 lineHeight: 1.4,
                 marginTop: 3,
                 maxWidth: 520,
@@ -294,13 +295,11 @@ export function ModalCard({
             display: "grid",
             placeItems: "center",
             cursor: "pointer",
-            fontSize: 18,
-            lineHeight: 1,
           }}
           title="Fechar (Esc)"
           type="button"
         >
-          ×
+          <Icon name="x" size={16} strokeWidth={2.1} />
         </button>
       </div>
       <div
@@ -363,7 +362,7 @@ export function ModalSplit({
             alignItems: "center",
             color: "var(--ink-faint)",
             display: "flex",
-            fontSize: 10,
+            fontSize: "var(--fs-micro)",
             fontWeight: 700,
             gap: 6,
             letterSpacing: ".1em",
@@ -408,7 +407,7 @@ export function ModalShortcutHint({ salvar = "salvar" }: { salvar?: string }) {
       style={{
         color: "var(--ink-faint)",
         fontFamily: "var(--font-mono, ui-monospace, monospace)",
-        fontSize: 11,
+        fontSize: "var(--fs-nota)",
         letterSpacing: ".02em",
       }}
     >

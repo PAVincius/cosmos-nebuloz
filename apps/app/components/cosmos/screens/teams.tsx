@@ -16,11 +16,9 @@ import {
   SectionCard,
   useAction,
   useNav,
-  useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   type EntityOption,
   searchEntities,
@@ -31,6 +29,7 @@ import {
   listTeams,
   type TeamListView,
 } from "@/app/(cosmos)/actions/teams";
+import { CosmosPortal } from "../cosmos-portal";
 import { EntityLinkField as EntitySearchField } from "../entity-link-field";
 import {
   ModalCard,
@@ -567,7 +566,6 @@ function ArtFilterPopover({
   onChange: (next: Set<string>) => void;
   btnRect: DOMRect;
 }) {
-  const themeName = useThemeName();
   const toggle = (id: string) => {
     const next = new Set(selected);
     if (next.has(id)) {
@@ -577,71 +575,71 @@ function ArtFilterPopover({
     }
     onChange(next);
   };
-  return createPortal(
-    <div
-      data-team-art-filter
-      data-theme={themeName}
-      style={{
-        position: "fixed",
-        top: btnRect.bottom + 8,
-        left: Math.max(8, btnRect.right - 240),
-        zIndex: 400,
-        width: 240,
-        background: "var(--surface-3)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
-        padding: 14,
-      }}
-    >
+  return (
+    <CosmosPortal>
       <div
+        data-team-art-filter
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 10,
+          position: "fixed",
+          top: btnRect.bottom + 8,
+          left: Math.max(8, btnRect.right - 240),
+          zIndex: 400,
+          width: 240,
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-md)",
+          boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+          padding: 14,
         }}
       >
-        <span
+        <div
           style={{
-            fontSize: "var(--fs-base)",
-            fontWeight: 700,
-            color: "var(--ink)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 10,
           }}
         >
-          Filtrar por ART
-        </span>
-        {selected.size > 0 && (
-          <button
-            onClick={() => onChange(new Set())}
+          <span
             style={{
-              fontSize: "var(--fs-nota)",
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
-              color: "var(--accent)",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
+              color: "var(--ink)",
             }}
-            type="button"
           >
-            Limpar
-          </button>
-        )}
+            Filtrar por ART
+          </span>
+          {selected.size > 0 && (
+            <button
+              onClick={() => onChange(new Set())}
+              style={{
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+                color: "var(--accent)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+              }}
+              type="button"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {options.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => toggle(o.id)}
+              style={chipStyle(selected.has(o.id))}
+              type="button"
+            >
+              {o.name}
+            </button>
+          ))}
+        </div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-        {options.map((o) => (
-          <button
-            key={o.id}
-            onClick={() => toggle(o.id)}
-            style={chipStyle(selected.has(o.id))}
-            type="button"
-          >
-            {o.name}
-          </button>
-        ))}
-      </div>
-    </div>,
-    document.body
+    </CosmosPortal>
   );
 }
 

@@ -11,7 +11,6 @@ import {
   Skel,
   useAction,
   useNav,
-  useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
@@ -24,7 +23,6 @@ import {
 // listEpics server action, so the board shows live tenant data once
 // authenticated. Filter popover, drag affordance, NewEpic modal + Copilot bar
 // are self-contained.
-import { createPortal } from "react-dom";
 import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
 import {
   createEpic,
@@ -40,6 +38,7 @@ import {
   updateWipLimitAction,
 } from "@/app/actions/portfolio-kanban";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
+import { CosmosPortal } from "../cosmos-portal";
 import { EmptyState } from "../empty-state";
 import {
   ModalCard,
@@ -1197,7 +1196,6 @@ function KanbanFilterPopover({
   onClose: () => void;
   btnRect: DOMRect;
 }) {
-  const themeName = useThemeName();
   const artOptions = [
     ...new Set(epics.map((e) => e.art).filter(Boolean) as string[]),
   ];
@@ -1211,74 +1209,102 @@ function KanbanFilterPopover({
     onChange({ ...filters, [key]: set });
   };
 
-  return createPortal(
-    <div
-      data-kanban-filter
-      data-theme={themeName}
-      style={{
-        position: "fixed",
-        top: btnRect.bottom + 8,
-        left: Math.max(8, btnRect.right - 320),
-        zIndex: 400,
-        width: 320,
-        background: "var(--surface-3)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
-        padding: 16,
-        maxHeight: 480,
-        overflowY: "auto",
-      }}
-    >
+  return (
+    <CosmosPortal>
       <div
+        data-kanban-filter
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 12,
+          position: "fixed",
+          top: btnRect.bottom + 8,
+          left: Math.max(8, btnRect.right - 320),
+          zIndex: 400,
+          width: 320,
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-md)",
+          boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+          padding: 16,
+          maxHeight: 480,
+          overflowY: "auto",
         }}
       >
-        <span
+        <div
           style={{
-            fontSize: "var(--fs-base)",
-            fontWeight: 700,
-            color: "var(--ink)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 12,
           }}
         >
-          Filtros
-        </span>
-        <button
-          onClick={() =>
-            onChange({
-              arts: new Set(),
-              themes: new Set(),
-              owners: new Set(),
-              hotOnly: false,
-              minWsjf: 0,
-            })
-          }
-          style={{
-            fontSize: "var(--fs-nota)",
-            fontWeight: 700,
-            color: "var(--accent)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Limpar tudo
-        </button>
-      </div>
-      {(
-        [
-          ["ART", "arts", artOptions],
-          ["Tema estratégico", "themes", themeOptions],
-          ["Owner", "owners", ownerOptions],
-        ] as const
-      ).map(([label, key, opts]) => (
-        <div key={key} style={{ marginBottom: 14 }}>
+          <span
+            style={{
+              fontSize: "var(--fs-base)",
+              fontWeight: 700,
+              color: "var(--ink)",
+            }}
+          >
+            Filtros
+          </span>
+          <button
+            onClick={() =>
+              onChange({
+                arts: new Set(),
+                themes: new Set(),
+                owners: new Set(),
+                hotOnly: false,
+                minWsjf: 0,
+              })
+            }
+            style={{
+              fontSize: "var(--fs-nota)",
+              fontWeight: 700,
+              color: "var(--accent)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Limpar tudo
+          </button>
+        </div>
+        {(
+          [
+            ["ART", "arts", artOptions],
+            ["Tema estratégico", "themes", themeOptions],
+            ["Owner", "owners", ownerOptions],
+          ] as const
+        ).map(([label, key, opts]) => (
+          <div key={key} style={{ marginBottom: 14 }}>
+            <div
+              style={{
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+                letterSpacing: ".05em",
+                textTransform: "uppercase",
+                color: "var(--ink-faint)",
+                marginBottom: 7,
+              }}
+            >
+              {label}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {opts.map((o) => (
+                <button
+                  key={o}
+                  onClick={() => toggle(key, o)}
+                  style={chipStyle(filters[key].has(o))}
+                >
+                  {o}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div style={{ marginBottom: 14 }}>
           <div
             style={{
+              display: "flex",
+              justifyContent: "space-between",
               fontSize: "var(--fs-nota)",
               fontWeight: 700,
               letterSpacing: ".05em",
@@ -1287,85 +1313,59 @@ function KanbanFilterPopover({
               marginBottom: 7,
             }}
           >
-            {label}
+            <span>WSJF mínimo</span>
+            <span className="mono" style={{ color: "var(--accent-text)" }}>
+              {filters.minWsjf}
+            </span>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {opts.map((o) => (
-              <button
-                key={o}
-                onClick={() => toggle(key, o)}
-                style={chipStyle(filters[key].has(o))}
-              >
-                {o}
-              </button>
-            ))}
-          </div>
+          <input
+            max={25}
+            min={0}
+            onChange={(e) =>
+              onChange({ ...filters, minWsjf: Number(e.target.value) })
+            }
+            step={1}
+            style={{
+              width: "100%",
+              accentColor: "var(--accent)",
+              cursor: "pointer",
+            }}
+            type="range"
+            value={filters.minWsjf}
+          />
         </div>
-      ))}
-      <div style={{ marginBottom: 14 }}>
-        <div
+        <label
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            fontSize: "var(--fs-nota)",
-            fontWeight: 700,
-            letterSpacing: ".05em",
-            textTransform: "uppercase",
-            color: "var(--ink-faint)",
-            marginBottom: 7,
-          }}
-        >
-          <span>WSJF mínimo</span>
-          <span className="mono" style={{ color: "var(--accent-text)" }}>
-            {filters.minWsjf}
-          </span>
-        </div>
-        <input
-          max={25}
-          min={0}
-          onChange={(e) =>
-            onChange({ ...filters, minWsjf: Number(e.target.value) })
-          }
-          step={1}
-          style={{
-            width: "100%",
-            accentColor: "var(--accent)",
+            alignItems: "center",
+            gap: 8,
             cursor: "pointer",
-          }}
-          type="range"
-          value={filters.minWsjf}
-        />
-      </div>
-      <label
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          cursor: "pointer",
-          marginBottom: 14,
-        }}
-      >
-        <input
-          checked={filters.hotOnly}
-          onChange={(e) => onChange({ ...filters, hotOnly: e.target.checked })}
-          style={{ accentColor: "var(--accent)", cursor: "pointer" }}
-          type="checkbox"
-        />
-        <span
-          style={{
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-            color: "var(--ink)",
+            marginBottom: 14,
           }}
         >
-          Somente itens quentes 🔥
-        </span>
-      </label>
-      <Button full onClick={onClose} size="sm" variant="secondary">
-        Fechar
-      </Button>
-    </div>,
-    document.body
+          <input
+            checked={filters.hotOnly}
+            onChange={(e) =>
+              onChange({ ...filters, hotOnly: e.target.checked })
+            }
+            style={{ accentColor: "var(--accent)", cursor: "pointer" }}
+            type="checkbox"
+          />
+          <span
+            style={{
+              fontSize: "var(--fs-base)",
+              fontWeight: 600,
+              color: "var(--ink)",
+            }}
+          >
+            Somente itens quentes 🔥
+          </span>
+        </label>
+        <Button full onClick={onClose} size="sm" variant="secondary">
+          Fechar
+        </Button>
+      </div>
+    </CosmosPortal>
   );
 }
 
