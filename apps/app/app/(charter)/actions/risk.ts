@@ -8,7 +8,7 @@ import {
   requireCharterContext,
   requireCharterPermissionContext,
 } from "@/lib/charter/guards";
-import { riskScore } from "@/lib/charter/rules";
+import { caseRisk, SEM_PONTUACAO } from "@/lib/charter/rules";
 import { type Result, safeAction } from "../../actions/_base";
 import { logCharterAudit, nextCode } from "./_shared";
 
@@ -39,13 +39,15 @@ export type RiskBoard = {
   heatmap: HeatCell[];
   categories: { id: string; total: number; max: number }[];
   mitigations: MitigationRow[];
+  /** Todos os casos ativos; sem pontuação, os números são null e o caso fica
+   *  fora do heatmap e da exposição por categoria. */
   cases: {
     code: string;
     title: string;
     dataClass: CharterDataClass;
-    severity: number;
-    likelihood: number;
-    score: number;
+    severity: number | null;
+    likelihood: number | null;
+    score: number | null;
     label: string;
     tone: string;
     status: string;
@@ -75,10 +77,11 @@ export async function getRiskBoard(): Promise<Result<RiskBoard>> {
           riskIp: true,
           riskOperational: true,
           riskReputational: true,
+          riskScoredAt: true,
         },
       });
 
-      const scored = cases.map((c) => {
+      const rows = cases.map((c) => {
         const risks = {
           privacy: c.riskPrivacy,
           regulatory: c.riskRegulatory,
@@ -88,9 +91,11 @@ export async function getRiskBoard(): Promise<Result<RiskBoard>> {
           operational: c.riskOperational,
           reputational: c.riskReputational,
         };
-        const r = riskScore(risks);
-        return { ...c, risks, ...r };
+        return { ...c, risks, r: caseRisk(risks, c.riskScoredAt) };
       });
+      // Heatmap e exposição por categoria só com risco que alguém avaliou: o
+      // default 1 do intake cairia na célula 1×1 como "Baixo" medido.
+      const scored = rows.flatMap((c) => (c.r ? [{ ...c, ...c.r }] : []));
 
       const heatmap: HeatCell[] = [];
       for (let sev = 5; sev >= 1; sev--) {
@@ -148,15 +153,15 @@ export async function getRiskBoard(): Promise<Result<RiskBoard>> {
       return {
         heatmap,
         categories,
-        cases: scored.map((s) => ({
+        cases: rows.map((s) => ({
           code: s.code,
           title: s.title,
           dataClass: s.dataClass,
-          severity: s.severity,
-          likelihood: s.likelihood,
-          score: s.score,
-          label: s.label,
-          tone: s.tone,
+          severity: s.r?.severity ?? null,
+          likelihood: s.r?.likelihood ?? null,
+          score: s.r?.score ?? null,
+          label: s.r?.label ?? SEM_PONTUACAO,
+          tone: s.r?.tone ?? "accent",
           status: s.status,
         })),
         mitigations: mitigations

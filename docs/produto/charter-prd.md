@@ -132,10 +132,10 @@ a célula traz as duas versões, e vale o código. Prefixos: `A/` =
 | FR-2 | Políticas: nove seções, edição rebaixa para revisão, publicação barrada por nome, resumo e versão, aceites invalidados, diff, rascunho por IA | implementado | Abas no código: Seções, Histórico de versões e Prontidão, com o escopo em painel (`C/screens/policy.tsx:231-241`). Diff por linha desde #236 (`L/diff.ts`). `changeCount` grava o total de seções, não as alteradas (`A/policy.ts:365`) |
 | FR-3 | Casos de uso: inventário, filtros, SLA consumido com "vencido", linha navegável, CTA de intake | implementado | `A/cases.ts:159-214`, `C/screens/cases.tsx:279-401`. Sem paginação (NFR-3 no SRD) |
 | FR-4 | Intake: avalia ao vivo, mostra a regra, barra fornecedor inelegível, notifica revisores | parcial | Cálculo e gate ok (`L/rules.ts:80-183`, `A/cases.ts:320-341`); o fornecedor é obrigatório na submissão. Notificação ausente (ADR-0011). O intake não pede perfil de risco |
-| FR-5 | Detalhe do caso: perfil de risco 7×(1–5) com heatmap, restrição, bloqueio ou ajuste por status, mitigações, decisão, trilha | parcial | A tela renderiza tudo (`C/screens/case-detail.tsx`). Pontuar risco não tem tela: `rescoreCase` existe e nada o chama (`A/cases.ts:646-714`). Caso criado pela tela fica com os sete eixos em 1: score 1, "Baixo" |
+| FR-5 | Detalhe do caso: perfil de risco 7×(1–5) com heatmap, restrição, bloqueio ou ajuste por status, mitigações, decisão, trilha | implementado | A tela renderiza tudo (`C/screens/case-detail.tsx`; aba Risco em `C/screens/case-risk.tsx`). A reavaliação (`C/modals/rescore.tsx`) pontua os sete eixos por `rescoreCase`, com justificativa e trilha. Caso que ninguém pontuou diz "sem pontuação", não score 1 "Baixo" (`L/rules.ts`, `caseRisk`). O intake não pede risco: a pontuação é da revisão |
 | FR-6 | Decisão: quatro desfechos, justificativa sempre, ≥ 1 condição, ajuste volta ao requester, bloqueio sai do SLA, notifica | parcial | Regras ok (`A/cases.ts:504-628`); bloquear zera o SLA (:585). O requester não reenvia depois do ajuste (ADR-0005:60-63). Sem notificação e sem pendência de aceite das condições (ADR-0011:39-46) |
-| FR-7 | Matriz de risco: heatmap clicável, 7 categorias com tom fixo, atrasadas primeiro, criar mitigação | parcial | Tela ok (`C/parts.tsx:143-185`, `A/risk.ts:173-180`). Sem pontuação (FR-5), todo caso criado pela tela cai na célula 1×1. Dono e prazo são obrigatórios só no formulário (`C/modals/mitigation.tsx:50-53`; `A/risk.ts:199-201`) |
-| FR-8 | Fornecedores: tier, região, DPA, retenção, subprocessadores, teto, casos; score 0–100; cadastro; tier com justificativa reavalia todos os casos | parcial | Cadastro e tier ok (`A/vendors.ts:211-398`). O score nunca é calculado: default 50 (`packages/database/prisma/schema/charter.prisma:282`), exibido como "maior = pior" (`C/screens/vendor-detail.tsx:250-257`). DPA, retenção e região não se editam no Charter depois do cadastro |
+| FR-7 | Matriz de risco: heatmap clicável, 7 categorias com tom fixo, atrasadas primeiro, criar mitigação | parcial | Tela ok (`C/parts.tsx:143-185`, `A/risk.ts`). Caso sem pontuação fica fora do heatmap e da exposição por categoria e aparece nomeado sob o mapa, com o caminho para pontuar (`C/screens/risk.tsx`). Dono e prazo são obrigatórios só no formulário (`C/modals/mitigation.tsx:50-53`; `A/risk.ts:199-201`) |
+| FR-8 | Fornecedores: tier, região, DPA, retenção, subprocessadores, teto, casos; score 0–100; cadastro; tier com justificativa reavalia todos os casos | parcial | Cadastro e tier ok (`A/vendors.ts:211-398`). O score não tem regra nos docs nem escrita que o calcule: a coluna guarda o default 50 (`packages/database/prisma/schema/charter.prisma:282`), e o detalhe mostra "sem medição" (`C/screens/vendor-detail.tsx:241-247`). DPA, retenção e região não se editam no Charter depois do cadastro |
 | FR-9 | Detalhe do fornecedor: postura, teto derivado com raciocínio, cláusulas recalculam, casos com aviso, biblioteca | parcial | Derivação ok (`P/charter-rules.ts:37-82`). Biblioteca vazia em tenant provisionado: o bootstrap não cria `CharterClause` (`P/charter.ts:67-158`); só o seed de demo cria (`apps/app/scripts/seed-charter.ts:1177`). Sem CL-01, o teto para em Público |
 | FR-10 | Onboarding: trilhas, cobertura, pendentes por atraso, publicação presa à versão, reatribuição ao publicar | parcial | Leitura e publicação ok (`A/onboarding.ts:49-237`). Nada limpa `needsReassignment` nem reatribui. Todo aceite é registrado por terceiro, com justificativa (`A/onboarding.ts:255-285`), e não troca `policyVersionId` quando a versão muda (`A/policy.ts:410-413`) |
 | FR-11 | Auditoria: entradas com diff, filtros, append-only, pacote CSV/JSON que grava a si mesmo | parcial | Trilha e pacote ok (`A/audit.ts:160-217`, ADR-0009). O filtro por ator roda em memória depois do teto de 200 linhas (`A/audit.ts:44`, `:92-95`) |
@@ -162,7 +162,7 @@ O que o texto promete e o código não faz. Vale o código.
 
 - A montagem fecha quando o primeiro caso é decidido: o Charter "deixa de ser documento e vira registro" (spec de onboarding, :54).
 - Um tenant provisionado pelo back-office decide um caso Interno sem SQL e sem seed. Hoje não passa (FR-9).
-- Nenhum número de risco aparece antes de alguém pontuar. Hoje não passa (FR-5).
+- Nenhum número de risco aparece antes de alguém pontuar. Passa: sem pontuação, as telas dizem "sem pontuação" (FR-5).
 - Toda linha "Atende" do mapa aponta capacidade que relê o registro (spec de conformidade, :251).
 - Existe um export do Charter da Nebuloz com política publicada, dezoito fornecedores e nove casos decididos (`docs/runbooks/charter-nebuloz.md:273-277`). Os nove casos já estão no tenant `nebuloz` (banco de produção, consulta de 2026-09-22); o repo não registra que foram decididos nem que o export saiu (`INDEX-MESTRE.md:122`).
 - SLA estourado não chega por e-mail do auditor. Hoje só vale para quem abre a Visão Geral (ADR-0011:62-64).
@@ -176,7 +176,7 @@ Nenhum critério é medido hoje.
 | RISCO | MITIGAÇÃO |
 |---|---|
 | Biblioteca de cláusulas vazia: nenhum caso acima de Público passa no gate | Decidir se o bootstrap cria CL-01 a CL-08 (questão 1) |
-| Risco exibido sem pontuação: todo caso criado pela tela lê "Baixo" | Tela sobre `rescoreCase`, ou estado "sem pontuação" até alguém pontuar |
+| Score de fornecedor sem regra: o FR-8 promete 0–100 e o detalhe diz "sem medição" | Definir a regra (questão 10) ou tirar o score do FR-8 |
 | Nenhum cliente usa o Charter: os 7 tenants com o módulo são internos ou de teste, e todo caso de produção é do dogfood `nebuloz` (banco de produção, consulta de 2026-09-22) | O dogfood é a única prova de uso; fechar FR-5 e FR-9 antes do primeiro cliente |
 | RLS anulada pela conexão superuser (ADR-0012) | Papel `cosmos_app` sem `BYPASSRLS`, antes do segundo cliente (`docs/runbooks/charter-em-producao.md:200`) |
 | Promessa pública e texto de tela maiores que o código | Ligar ou remover (§5, Promessa × código) |
@@ -225,7 +225,7 @@ SG-05. O site mantém a jornada comercial, com o Charter no degrau "Governar"
 ## 9. Questões em aberto
 
 1. **Cláusulas no bootstrap.** CL-01 a CL-08 nascem em todo tenant? Sem elas, nada acima de Público passa no gate.
-2. **Pontuação de risco.** No intake, na revisão ou nos dois? Sem tela para `rescoreCase`, todo caso criado pela tela lê "Baixo".
+2. **Pontuação de risco.** Decidido em 2026-09-23: na revisão, pela reavaliação na aba Risco; o intake segue sem pedir risco, e o caso diz "sem pontuação" até alguém pontuar. Em aberto: exigir pontuação antes de decidir?
 3. **Promessa pública.** "Política em minutos" e os quatro "artefatos gerados" (`pt.json:375-383`) ficam, ou a copy volta ao código?
 4. **Primeiro cliente.** Nenhum dos 7 tenants com o módulo é de cliente (banco de produção, consulta de 2026-09-22). Quando entra o primeiro? O export da Nebuloz já saiu?
 5. **ADR-0012.** Quando a aplicação passa a conectar como `cosmos_app`? Antes do segundo cliente?
@@ -233,6 +233,7 @@ SG-05. O site mantém a jornada comercial, com o Charter no degrau "Governar"
 7. **Gaps do Mapa.** Em que ordem o Charter assume tenant, identidade e formato de auditoria? Cada passo move código de plataforma.
 8. **Prova de venda.** O playbook promete um caso bloqueado no export (`docs/comercial/playbook-de-vendas.md:106`); o runbook registra o UC-07 como `RESTRICTED` (`docs/runbooks/charter-nebuloz.md:216`). E o V-05 é Neon ou Supabase?
 9. **Fora do V1.** Notificação, job de SLA e enforcement seguem fora? Que evidência reabre cada um?
+10. **Score do fornecedor.** Que regra calcula o 0–100 do FR-8? Até existir, o detalhe diz "sem medição" e a coluna guarda o default 50.
 
 ---
 

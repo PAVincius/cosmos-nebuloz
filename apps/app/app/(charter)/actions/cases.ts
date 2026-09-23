@@ -8,7 +8,7 @@ import {
   type CharterUseCaseStatus,
   withTenantDb,
 } from "@repo/database";
-import { hasCharterPermission } from "@repo/rbac";
+import { denialReason, hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -16,9 +16,12 @@ import {
   requireCharterPermissionContext,
 } from "@/lib/charter/guards";
 import {
+  caseRisk,
   type PathRecommendation,
+  type RiskProfile,
   recommendPath,
   riskScore,
+  SEM_PONTUACAO,
   slaRemaining,
   type VendorGateInput,
   vendorEligibility,
@@ -51,7 +54,8 @@ export type UseCaseRow = {
   exposure: string;
   dataClass: CharterDataClass;
   status: CharterUseCaseStatus;
-  score: number;
+  /** Null = ninguém pontuou; `riskLabel` diz "sem pontuação" e o tom é accent. */
+  score: number | null;
   riskLabel: string;
   riskTone: string;
   slaRemaining: number | null;
@@ -73,9 +77,10 @@ export type UseCaseDetail = UseCaseRow & {
   vendorMaxClass: CharterDataClass | null;
   vendorIneligible: boolean;
   submittedAt: string | null;
-  severity: number;
-  likelihood: number;
-  risks: Record<string, number>;
+  severity: number | null;
+  likelihood: number | null;
+  /** Null sem pontuação: o default 1 do intake não é valor declarado. */
+  risks: RiskProfile | null;
   restrictions: string[];
   blockReason: string | null;
   changeRequest: string | null;
@@ -99,10 +104,12 @@ export type UseCaseDetail = UseCaseRow & {
   }[];
   /** Permissão do papel da sessão. O cliente não pode importar @repo/rbac
    *  (server-only), então a matriz é resolvida aqui. */
-  can: { decide: boolean };
+  can: { decide: boolean; score: boolean };
+  /** Motivo nominal que a tela escreve quando `can.score` é falso. */
+  scoreDenial: string;
 };
 
-function riskProfile(uc: CharterUseCase) {
+function riskProfile(uc: CharterUseCase): RiskProfile {
   return {
     privacy: uc.riskPrivacy,
     regulatory: uc.riskRegulatory,
@@ -111,6 +118,19 @@ function riskProfile(uc: CharterUseCase) {
     ip: uc.riskIp,
     operational: uc.riskOperational,
     reputational: uc.riskReputational,
+  };
+}
+
+/** Inverso de riskProfile: os sete eixos com o nome da coluna. */
+function riskColumns(r: RiskProfile) {
+  return {
+    riskPrivacy: r.privacy,
+    riskRegulatory: r.regulatory,
+    riskSecurity: r.security,
+    riskBias: r.bias,
+    riskIp: r.ip,
+    riskOperational: r.operational,
+    riskReputational: r.reputational,
   };
 }
 
@@ -124,7 +144,7 @@ function toRow(
   uc: CharterUseCase & { vendor?: { name: string; tier?: string } | null },
   feriados?: ReadonlySet<string>
 ): UseCaseRow {
-  const r = riskScore(riskProfile(uc));
+  const r = caseRisk(riskProfile(uc), uc.riskScoredAt);
   const slaLive = SLA_RUNNING.includes(uc.status);
   return {
     id: uc.id,
@@ -137,9 +157,9 @@ function toRow(
     exposure: uc.exposure,
     dataClass: uc.dataClass,
     status: uc.status,
-    score: r.score,
-    riskLabel: r.label,
-    riskTone: r.tone,
+    score: r?.score ?? null,
+    riskLabel: r?.label ?? SEM_PONTUACAO,
+    riskTone: r?.tone ?? "accent",
     slaRemaining: slaLive
       ? slaRemaining(uc.submittedAt, uc.slaTotal, new Date(), feriados)
       : null,
@@ -240,7 +260,7 @@ export async function getCase(
       if (!uc) {
         return null;
       }
-      const r = riskScore(riskProfile(uc));
+      const r = caseRisk(riskProfile(uc), uc.riskScoredAt);
       const now = Date.now();
       const feriados = await feriadosAbertos();
       return {
@@ -259,10 +279,14 @@ export async function getCase(
         vendorMaxClass: uc.vendor?.maxClass ?? null,
         vendorIneligible: uc.vendorIneligible,
         submittedAt: uc.submittedAt?.toISOString() ?? null,
-        can: { decide: hasCharterPermission(ctx.charterRole, "case.decide") },
-        severity: r.severity,
-        likelihood: r.likelihood,
-        risks: riskProfile(uc),
+        can: {
+          decide: hasCharterPermission(ctx.charterRole, "case.decide"),
+          score: hasCharterPermission(ctx.charterRole, "risk.score"),
+        },
+        scoreDenial: denialReason("risk.score"),
+        severity: r?.severity ?? null,
+        likelihood: r?.likelihood ?? null,
+        risks: r ? riskProfile(uc) : null,
         restrictions: uc.restrictions,
         blockReason: uc.blockReason,
         changeRequest: uc.changeRequest,
@@ -640,7 +664,9 @@ const RescoreSchema = z.object({
     operational: z.number().int().min(1).max(5),
     reputational: z.number().int().min(1).max(5),
   }),
-  note: z.string().trim().max(1000).optional(),
+  // Obrigatória como na decisão: a reavaliação vira evidência, e evidência
+  // sem o porquê não sustenta auditoria.
+  note: z.string().trim().min(1, "Justificativa é obrigatória").max(1000),
 });
 
 export async function rescoreCase(
@@ -658,20 +684,12 @@ export async function rescoreCase(
         throw new GovernanceError("case.unknown", "Caso não encontrado.");
       }
 
-      const before = riskScore(riskProfile(uc));
+      const before = caseRisk(riskProfile(uc), uc.riskScoredAt);
       const after = riskScore(data.risks);
 
       await db.charterUseCase.update({
         where: { id: uc.id },
-        data: {
-          riskPrivacy: data.risks.privacy,
-          riskRegulatory: data.risks.regulatory,
-          riskSecurity: data.risks.security,
-          riskBias: data.risks.bias,
-          riskIp: data.risks.ip,
-          riskOperational: data.risks.operational,
-          riskReputational: data.risks.reputational,
-        },
+        data: { ...riskColumns(data.risks), riskScoredAt: new Date() },
       });
 
       await logCharterAudit(db, ctx, {
@@ -680,26 +698,19 @@ export async function rescoreCase(
         entityId: uc.id,
         target: `${uc.code} · ${uc.title}`,
         note: data.note,
+        // Sem pontuação anterior, os eixos antigos eram default: saem como
+        // "—", e a primeira pontuação registra os sete valores mesmo se
+        // todos ficarem em 1.
         diff: buildDiff(
+          before
+            ? {
+                ...riskColumns(riskProfile(uc)),
+                severity: before.severity,
+                score: before.score,
+              }
+            : { score: SEM_PONTUACAO },
           {
-            riskPrivacy: uc.riskPrivacy,
-            riskRegulatory: uc.riskRegulatory,
-            riskSecurity: uc.riskSecurity,
-            riskBias: uc.riskBias,
-            riskIp: uc.riskIp,
-            riskOperational: uc.riskOperational,
-            riskReputational: uc.riskReputational,
-            severity: before.severity,
-            score: before.score,
-          },
-          {
-            riskPrivacy: data.risks.privacy,
-            riskRegulatory: data.risks.regulatory,
-            riskSecurity: data.risks.security,
-            riskBias: data.risks.bias,
-            riskIp: data.risks.ip,
-            riskOperational: data.risks.operational,
-            riskReputational: data.risks.reputational,
+            ...riskColumns(data.risks),
             severity: after.severity,
             score: after.score,
           },

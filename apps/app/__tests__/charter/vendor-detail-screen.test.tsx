@@ -31,7 +31,6 @@ function baseVendor(linkedCasesCount: number) {
       retention: "Zero",
       subprocessors: 2,
       maxClass: "CONFIDENTIAL",
-      score: 20,
       cases: linkedCasesCount,
       renewalAt: null,
       notes: null,
@@ -73,5 +72,18 @@ describe("VendorDetailScreen", () => {
     const hint = await screen.findByText(/e mais 9/);
     expect(hint.textContent).not.toContain("UC-004");
     expect(hint.textContent).toContain("e mais 9");
+  });
+
+  // O score 0–100 é uma coluna com default 50 que nenhuma escrita calcula
+  // (SRD §3). Mostrar o número era mostrar o default como medição.
+  it("score do fornecedor diz 'sem medição' no lugar do número", async () => {
+    getVendorMock.mockResolvedValue(baseVendor(0));
+
+    render(<VendorDetailScreen param="FOR-01" />);
+
+    await screen.findByText("Fornecedor Teste");
+    expect(screen.getByText("sem medição")).toBeTruthy();
+    expect(screen.getByText(/nenhuma regra calcula/i)).toBeTruthy();
+    expect(screen.queryByText("/100")).toBeNull();
   });
 });

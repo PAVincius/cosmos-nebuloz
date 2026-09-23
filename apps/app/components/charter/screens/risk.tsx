@@ -46,6 +46,77 @@ function scoreTone(score: number): Tone {
   return "green";
 }
 
+/** Casos fora do mapa por falta de pontuação. Fio tracejado = ainda não
+ *  medido, a mesma leitura das sugestões de condição no modal de decisão. */
+function UnscoredCases({
+  cases,
+  onOpen,
+}: {
+  cases: { code: string; title: string }[];
+  onOpen: (code: string) => void;
+}) {
+  return (
+    <div
+      style={{
+        marginTop: 16,
+        paddingTop: 14,
+        borderTop: "1px solid var(--hairline)",
+      }}
+    >
+      <div
+        style={{
+          fontSize: FS.nota,
+          color: "var(--ink-muted)",
+          lineHeight: 1.5,
+          marginBottom: 9,
+        }}
+      >
+        {cases.length}{" "}
+        {cases.length === 1
+          ? "caso sem pontuação fica fora do mapa"
+          : "casos sem pontuação ficam fora do mapa"}{" "}
+        até alguém pontuar o risco na aba Risco do caso.
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+        {cases.map((c) => (
+          <button
+            className="btn"
+            key={c.code}
+            onClick={() => onOpen(c.code)}
+            style={{
+              display: "inline-flex",
+              gap: 6,
+              maxWidth: 280,
+              padding: "5px 10px",
+              borderRadius: 99,
+              fontSize: FS.nota,
+              fontWeight: 600,
+              border: "1px dashed var(--hairline-strong)",
+              background: "transparent",
+              color: "var(--ink-muted)",
+              cursor: "pointer",
+            }}
+            type="button"
+          >
+            <span className="mono" style={{ color: "var(--ink)" }}>
+              {c.code}
+            </span>
+            <span
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {c.title}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function RiskInner() {
   const router = useRouter();
   const { open, close } = useModal();
@@ -61,8 +132,13 @@ function RiskInner() {
   }
 
   const cases = data?.cases ?? [];
-  const critical = cases.filter((c) => c.score >= 16);
-  const elevated = cases.filter((c) => c.score >= 9 && c.score < 16);
+  const critical = cases.filter((c) => (c.score ?? 0) >= 16);
+  const elevated = cases.filter(
+    (c) => c.score !== null && c.score >= 9 && c.score < 16
+  );
+  // Caso que ninguém pontuou fica fora do mapa (getRiskBoard), mas não some:
+  // é nomeado embaixo, com o caminho para pontuar.
+  const unscored = cases.filter((c) => c.score === null);
   const mitigations = data?.mitigations ?? [];
   const openMits = mitigations.filter((m) => m.status !== "DONE");
   const overdue = mitigations.filter((m) => m.overdue);
@@ -211,8 +287,21 @@ function RiskInner() {
               title="Nenhum caso de uso ainda"
               tone="accent"
             />
+          ) : unscored.length === cases.length ? (
+            <SmartEmptyState
+              icon="target"
+              subtitle="Nenhum caso ativo tem risco pontuado. O mapa só posiciona o que alguém avaliou — o padrão do intake não entra."
+              title="Nenhum risco avaliado ainda"
+              tone="accent"
+            />
           ) : (
             <Heatmap cells={data.heatmap} onSelect={setCell} selected={cell} />
+          )}
+          {data && unscored.length > 0 && (
+            <UnscoredCases
+              cases={unscored}
+              onOpen={(code) => router.push(`/charter/case/${code}`)}
+            />
           )}
         </SectionCard>
 
@@ -283,11 +372,11 @@ function RiskInner() {
                     style={{
                       fontSize: FS.base,
                       fontWeight: 800,
-                      color: `var(--${scoreTone(c.score)}-text)`,
+                      color: `var(--${scoreTone(c.score ?? 0)}-text)`,
                       textAlign: "right",
                     }}
                   >
-                    {c.score}
+                    {c.score ?? "—"}
                   </span>
                 </TableRow>
               ))

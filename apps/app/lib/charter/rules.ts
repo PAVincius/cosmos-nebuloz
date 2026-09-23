@@ -260,6 +260,38 @@ export function riskScore(risks: RiskProfile): RiskResult {
   return { severity, likelihood, score, label, tone: TONE_BY_LABEL[label] };
 }
 
+/** O que a tela escreve onde ninguém pontuou — como o Cosmos diz "sem sinal". */
+export const SEM_PONTUACAO = "sem pontuação";
+
+/**
+ * Risco do caso, ou null quando ninguém pontuou. O intake grava 1 em cada
+ * eixo por default, e default lido como "1 · Baixo" é medição que não
+ * aconteceu (SRD §7). Pontuado = `riskScoredAt` preenchido (rescoreCase) ou
+ * algum eixo fora de 1: seed e dogfood gravaram risco antes de a coluna
+ * existir, sem data.
+ */
+export function caseRisk(
+  risks: RiskProfile,
+  scoredAt: Date | null
+): RiskResult | null {
+  if (scoredAt === null && Object.values(risks).every((v) => v === 1)) {
+    return null;
+  }
+  return riskScore(risks);
+}
+
+/** Tom de um eixo lido sozinho — não o tom fixo da categoria (esse compara
+ *  casos) nem o do composto (esse sai de riskScore). */
+export function riskAxisTone(value: number): Tone {
+  if (value >= 4) {
+    return "red";
+  }
+  if (value >= 3) {
+    return "amber";
+  }
+  return "green";
+}
+
 export const RISK_CATEGORY_LABEL = {
   PRIVACY: "Privacidade",
   REGULATORY: "Regulatório",

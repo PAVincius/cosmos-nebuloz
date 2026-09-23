@@ -2,7 +2,7 @@ import "server-only";
 import { withTenantDb } from "@repo/database";
 import { CHARTER_ENTITY_TYPES } from "@/app/(charter)/actions/audit.constants";
 import { severidade } from "@/lib/charter/risk-matrix";
-import { scoreLabel } from "@/lib/charter/rules";
+import { caseRisk, scoreLabel } from "@/lib/charter/rules";
 
 /**
  * Catálogo do que o Charter consegue **provar**.
@@ -199,25 +199,57 @@ export const CAPABILITIES: readonly Capability[] = [
     label: "Risco pontuado por impacto em 7 dimensões",
     evidencia: (tenantId) =>
       withTenantDb(tenantId, async (db) => {
-        const total = await db.charterUseCase.count({ where: { tenantId } });
         const rows = await db.charterUseCase.findMany({
           where: { tenantId },
           orderBy: { code: "asc" },
-          take: 3,
-          select: { code: true, riskPrivacy: true, probPrivacy: true },
+          select: {
+            code: true,
+            title: true,
+            riskPrivacy: true,
+            riskRegulatory: true,
+            riskSecurity: true,
+            riskBias: true,
+            riskIp: true,
+            riskOperational: true,
+            riskReputational: true,
+            riskScoredAt: true,
+            probPrivacy: true,
+          },
         });
+        // Caso nos sete eixos default que ninguém pontuou é lacuna, não
+        // evidência: contá-lo era o mapa afirmando avaliação que não houve.
+        const pontuado = (r: (typeof rows)[number]) =>
+          caseRisk(
+            {
+              privacy: r.riskPrivacy,
+              regulatory: r.riskRegulatory,
+              security: r.riskSecurity,
+              bias: r.riskBias,
+              ip: r.riskIp,
+              operational: r.riskOperational,
+              reputational: r.riskReputational,
+            },
+            r.riskScoredAt
+          ) !== null;
+        const cobertos = rows.filter(pontuado);
         return {
-          total,
+          total: cobertos.length,
+          de: rows.length,
           // scoreLabel() (lib/charter/rules.ts) — nunca nivel()
           // (risk-matrix.ts): são duas tabelas de limiares diferentes (16/9/4
           // vs 15/9/4) e só uma é a que o resto do Charter (tela de risco,
           // caso de uso) mostra ao cliente. Um mapa que fala a palavra errada
           // de severidade para o comprador é o defeito que a review final
           // achou aqui.
-          amostra: rows.map(
-            (r) =>
-              `${r.code} · privacidade ${scoreLabel(severidade(r.riskPrivacy, r.probPrivacy))}`
-          ),
+          amostra: cobertos
+            .slice(0, 3)
+            .map(
+              (r) =>
+                `${r.code} · privacidade ${scoreLabel(severidade(r.riskPrivacy, r.probPrivacy))}`
+            ),
+          lacunas: rows
+            .filter((r) => !pontuado(r))
+            .map((r) => `${r.code} · ${r.title}`),
           href: "/charter/risk",
         };
       }),
