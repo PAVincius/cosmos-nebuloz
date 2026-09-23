@@ -525,10 +525,9 @@ export function RegistrarAtivo({
 
   return (
     <div
+      className="bo-form-e-lateral"
       style={{
-        display: "grid",
         gap: 14,
-        gridTemplateColumns: "minmax(0,1.7fr) minmax(0,1fr)",
         alignItems: "start",
       }}
     >

@@ -227,7 +227,7 @@ function Conteudo({
           </ul>
         )}
         <Link href="/audit" style={ATALHO}>
-          Abrir o Audit Explorer →
+          Abrir a Trilha de auditoria →
         </Link>
       </Secao>
     </div>

@@ -269,6 +269,8 @@ export function Lancamentos({
       setErro(null);
       setConfirmacao(null);
       setExcluindoId(id);
+      // A descrição sai antes: depois da releitura a linha não existe mais.
+      const descricao = dados.linhas.find((l) => l.id === id)?.descricao;
       const res = await excluirLancamento({ id });
       setExcluindoId(null);
       if (!res.ok) {
@@ -276,9 +278,13 @@ export function Lancamentos({
         return;
       }
       await recarregar();
-      setConfirmacao("Lançamento excluído.");
+      setConfirmacao(
+        descricao
+          ? `Lançamento «${descricao}» excluído.`
+          : "Lançamento excluído."
+      );
     },
-    [recarregar]
+    [dados.linhas, recarregar]
   );
 
   const abrirNovo = useCallback(() => {

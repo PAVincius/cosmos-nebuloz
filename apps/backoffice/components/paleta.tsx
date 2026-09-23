@@ -18,6 +18,7 @@ import {
 import type { ClienteAchado } from "@/app/actions/clientes-busca";
 import { useSaidaGuardada } from "@/lib/rascunho-sujo";
 import type { Result } from "@/lib/safe-action";
+import { type Destino, lembrarRecente } from "./paleta-destinos";
 import { ListaDaPaleta } from "./paleta-lista";
 
 /**
@@ -215,14 +216,28 @@ function CorpoDaPaleta({
   buscarClientes?: BuscarClientes;
   telaAtual: string;
 }) {
-  const saida = useSaidaGuardada(aoIr);
-  const escolher = useCallback(
+  // O destino escolhido fica guardado até a ida acontecer de fato: com
+  // rascunho sujo a guarda segura o href, e só o "Descartar" navega. Recente
+  // é para onde a pessoa foi, não o que ela apontou e desistiu.
+  const escolhido = useRef<Destino | null>(null);
+  const irDeFato = useCallback(
     (href: string) => {
-      if (!saida.segurar(href)) {
-        aoIr(href);
+      if (escolhido.current?.href === href) {
+        lembrarRecente(escolhido.current);
+      }
+      aoIr(href);
+    },
+    [aoIr]
+  );
+  const saida = useSaidaGuardada(irDeFato);
+  const escolher = useCallback(
+    (destino: Destino) => {
+      escolhido.current = destino;
+      if (!saida.segurar(destino.href)) {
+        irDeFato(destino.href);
       }
     },
-    [saida.segurar, aoIr]
+    [saida.segurar, irDeFato]
   );
 
   return (

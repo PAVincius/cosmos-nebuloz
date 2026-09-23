@@ -30,22 +30,42 @@ const ROTULO_MODULO: Record<string, string> = {
   CANCELED: "Cancelado",
 };
 
+function saudeDe(leu: boolean, temErro: boolean): "red" | "green" | undefined {
+  if (!leu) {
+    return;
+  }
+  return temErro ? "red" : "green";
+}
+
 export function AbaResumo({
   modulos,
   integracoes,
   acoesDeModulo,
 }: {
   modulos: { module: string; status: string; expiresAt: string | null }[];
-  integracoes: IntegracaoRow[];
+  /** A leitura inteira, não a lista: integração que não carregou não é
+   *  "OK 0 · Com erro 0" em verde — é "—", e o motivo à vista. */
+  integracoes:
+    | { ok: true; data: IntegracaoRow[] }
+    | { ok: false; error: string };
   /** O formulário de contratação vem de fora: ele é cliente e esta aba não. */
   acoesDeModulo: ReactNode;
 }) {
-  const erros = integracoes.filter((i) => i.status === "ERROR").length;
-  const ok = integracoes.filter((i) => i.status === "ACTIVE").length;
-  const inativas = integracoes.filter((i) => i.status === "INACTIVE").length;
-  const tomDaSaude = erros > 0 ? "red" : "green";
+  const lista = integracoes.ok ? integracoes.data : [];
+  const contar = (status: string) =>
+    integracoes.ok ? lista.filter((i) => i.status === status).length : "—";
+  const erros = contar("ERROR");
+  const ok = contar("ACTIVE");
+  const inativas = contar("INACTIVE");
   // Fora do JSX: o lint lê ternário inline como valor vazando para o render.
-  const tomDoErro: "red" | undefined = erros > 0 ? "red" : undefined;
+  // Sem leitura não há saúde a afirmar: nem verde, nem vermelho.
+  const temErro = typeof erros === "number" && erros > 0;
+  const tomDaSaude = saudeDe(integracoes.ok, temErro);
+  const tomDoErro: "red" | undefined = temErro ? "red" : undefined;
+  const tomDoOk: "green" | undefined = integracoes.ok ? "green" : undefined;
+  const subtitulo = integracoes.ok
+    ? "Integrações e sincronização"
+    : `Integrações não carregaram: ${integracoes.error}`;
 
   return (
     <div
@@ -115,14 +135,9 @@ export function AbaResumo({
         </div>
       </Secao>
 
-      <Secao
-        icon="eye"
-        subtitle="Integrações e sincronização"
-        title="Saúde"
-        tone={tomDaSaude}
-      >
+      <Secao icon="eye" subtitle={subtitulo} title="Saúde" tone={tomDaSaude}>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-          <MetaCell label="OK" mono tone="green">
+          <MetaCell label="OK" mono tone={tomDoOk}>
             {ok}
           </MetaCell>
           <MetaCell label="Com erro" mono tone={tomDoErro}>

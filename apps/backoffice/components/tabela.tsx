@@ -11,7 +11,14 @@ import type { CSSProperties, ReactNode } from "react";
  * As larguras vêm por `<colgroup>` com `table-layout: fixed`, que é o
  * equivalente honesto do `grid-template-columns` do desenho: uma declaração por
  * tabela, e as células herdam.
+ *
+ * No estreito a tabela rola em vez de espremer (mobile é cortesia, decisão do
+ * dono): `fixed` a 100% dividia 343px entre seis colunas e o texto quebrava
+ * letra a letra. O contêiner mora aqui, uma vez, e cobre todos os usos; a
+ * largura mínima é a de uma tabela de cinco ou seis colunas legíveis.
  */
+
+const LARGURA_MINIMA = 640;
 
 const CELULA: CSSProperties = {
   padding: "10px 16px",
@@ -31,20 +38,23 @@ export function Tabela({
   children: ReactNode;
 }) {
   return (
-    <table
-      style={{
-        width: "100%",
-        borderCollapse: "collapse",
-        tableLayout: "fixed",
-      }}
-    >
-      <colgroup>
-        {larguras.map((c) => (
-          <col key={c.id} style={{ width: c.largura }} />
-        ))}
-      </colgroup>
-      {children}
-    </table>
+    <div className="scroll" style={{ overflowX: "auto" }}>
+      <table
+        style={{
+          width: "100%",
+          minWidth: LARGURA_MINIMA,
+          borderCollapse: "collapse",
+          tableLayout: "fixed",
+        }}
+      >
+        <colgroup>
+          {larguras.map((c) => (
+            <col key={c.id} style={{ width: c.largura }} />
+          ))}
+        </colgroup>
+        {children}
+      </table>
+    </div>
   );
 }
 

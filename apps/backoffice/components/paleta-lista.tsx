@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   type CSSProperties,
   type KeyboardEvent,
@@ -9,9 +9,13 @@ import {
   useState,
 } from "react";
 import type { ClienteAchado } from "@/app/actions/clientes-busca";
-import { contemTexto } from "./busca";
-import { BO_NAV } from "./nav";
 import type { BuscarClientes } from "./paleta";
+import {
+  type Destino,
+  destinosDoCliente,
+  lerRecentes,
+  telasDaBusca,
+} from "./paleta-destinos";
 import { PerguntaDescartar } from "./pergunta-descartar";
 
 /**
@@ -23,23 +27,6 @@ import { PerguntaDescartar } from "./pergunta-descartar";
  * o que o leitor de tela anuncia. Clicar numa opção também vai, sem roubar o
  * foco do campo no caminho.
  */
-
-type Destino = {
-  href: string;
-  rotulo: string;
-  /** Seção do menu, ou o slug do cliente. */
-  detalhe: string;
-  icone: IconName;
-};
-
-const TELAS: Destino[] = BO_NAV.flatMap((grupo) =>
-  grupo.items.map((item) => ({
-    detalhe: grupo.section,
-    href: item.href,
-    icone: item.icon,
-    rotulo: item.label,
-  }))
-);
 
 const MINIMO_PARA_CLIENTE = 2;
 /** Uma busca por pausa na digitação, não uma por tecla: cada uma passa pelo
@@ -89,15 +76,6 @@ function useClientes(
     };
   }, [termo, buscar]);
   return busca;
-}
-
-function paraDestino(cliente: ClienteAchado): Destino {
-  return {
-    detalhe: cliente.slug,
-    href: `/clientes/${cliente.slug}`,
-    icone: "building",
-    rotulo: cliente.name,
-  };
 }
 
 /** A linha de estado sob a lista — o que a busca está fazendo, dito. */
@@ -154,12 +132,14 @@ const ROTULO_DE_GRUPO: CSSProperties = {
   color: "var(--ink-faint)",
 };
 
-function estiloDaOpcao(ativa: boolean): CSSProperties {
+function estiloDaOpcao(ativa: boolean, filho: boolean): CSSProperties {
   return {
     display: "flex",
     alignItems: "center",
     gap: 10,
-    padding: "8px 12px",
+    // O sub-destino recua sob o pai: é assim que "Títulos" se lê como aba do
+    // Financeiro sem precisar de outro grupo.
+    padding: filho ? "6px 12px 6px 34px" : "8px 12px",
     borderRadius: "var(--r-sm)",
     cursor: "pointer",
     background: ativa ? "var(--accent-soft)" : "transparent",
@@ -199,7 +179,7 @@ function Opcao({
       onMouseDown={(evento) => evento.preventDefault()}
       onMouseMove={onApontar}
       role="option"
-      style={estiloDaOpcao(ativa)}
+      style={estiloDaOpcao(ativa, destino.filho === true)}
       tabIndex={-1}
     >
       <Icon name={destino.icone} size={15} />
@@ -218,6 +198,53 @@ function Opcao({
   );
 }
 
+/** Um grupo nomeado da lista. `inicio` é a posição do primeiro item na
+ *  lista inteira — as setas andam por todos os grupos como uma lista só. */
+function GrupoDeOpcoes({
+  titulo,
+  destinos,
+  inicio,
+  ativa,
+  mono = false,
+  idDaOpcao,
+  onApontar,
+  onEscolher,
+}: {
+  titulo: string;
+  destinos: Destino[];
+  inicio: number;
+  ativa: number;
+  mono?: boolean;
+  idDaOpcao: (i: number) => string;
+  onApontar: (i: number) => void;
+  onEscolher: (destino: Destino) => void;
+}) {
+  if (destinos.length === 0) {
+    return null;
+  }
+  return (
+    <fieldset style={GRUPO}>
+      <legend className="mono" style={ROTULO_DE_GRUPO}>
+        {titulo}
+      </legend>
+      {destinos.map((destino, j) => {
+        const i = inicio + j;
+        return (
+          <Opcao
+            ativa={i === ativa}
+            destino={destino}
+            id={idDaOpcao(i)}
+            key={destino.href}
+            mono={mono}
+            onApontar={() => onApontar(i)}
+            onEscolher={() => onEscolher(destino)}
+          />
+        );
+      })}
+    </fieldset>
+  );
+}
+
 export function ListaDaPaleta({
   buscarClientes,
   telaAtual,
@@ -231,7 +258,7 @@ export function ListaDaPaleta({
   /** Destino segurado pela guarda de rascunho — a pergunta entra no lugar da
    *  lista. */
   pendente: string | null;
-  onEscolher: (href: string) => void;
+  onEscolher: (destino: Destino) => void;
   onDescartar: () => void;
   onVoltar: () => void;
 }) {
@@ -239,11 +266,16 @@ export function ListaDaPaleta({
   const [ativo, setAtivo] = useState(0);
   const clientes = useClientes(termo, buscarClientes);
   const base = useId();
+  // Lidos uma vez por abertura: a lista monta com a paleta aberta.
+  const [lembrados] = useState(lerRecentes);
 
-  const telas = TELAS.filter((t) => contemTexto([t.rotulo, t.detalhe], termo));
+  const recentes = termo.trim() === "" ? lembrados : [];
+  const telas = telasDaBusca(termo);
   const achados =
-    clientes.estado === "pronta" ? clientes.clientes.map(paraDestino) : [];
-  const opcoes = [...telas, ...achados];
+    clientes.estado === "pronta"
+      ? clientes.clientes.flatMap(destinosDoCliente)
+      : [];
+  const opcoes = [...recentes, ...telas, ...achados];
   const indice = opcoes.length === 0 ? -1 : Math.min(ativo, opcoes.length - 1);
   const idDaOpcao = (i: number) => `${base}-opcao-${i}`;
   const idDaLista = `${base}-lista`;
@@ -266,7 +298,7 @@ export function ListaDaPaleta({
       setAtivo((indice - 1 + total) % total);
     } else if (evento.key === "Enter" && indice >= 0) {
       evento.preventDefault();
-      onEscolher(opcoes[indice].href);
+      onEscolher(opcoes[indice]);
     }
   };
 
@@ -330,45 +362,34 @@ export function ListaDaPaleta({
         role="listbox"
         style={{ maxHeight: "52vh", overflowY: "auto", padding: "4px 6px" }}
       >
-        {telas.length > 0 ? (
-          <fieldset style={GRUPO}>
-            <legend className="mono" style={ROTULO_DE_GRUPO}>
-              Telas
-            </legend>
-            {telas.map((destino, i) => (
-              <Opcao
-                ativa={i === indice}
-                destino={destino}
-                id={idDaOpcao(i)}
-                key={destino.href}
-                mono={false}
-                onApontar={() => setAtivo(i)}
-                onEscolher={() => onEscolher(destino.href)}
-              />
-            ))}
-          </fieldset>
-        ) : null}
-        {achados.length > 0 ? (
-          <fieldset style={GRUPO}>
-            <legend className="mono" style={ROTULO_DE_GRUPO}>
-              Clientes
-            </legend>
-            {achados.map((destino, j) => {
-              const i = telas.length + j;
-              return (
-                <Opcao
-                  ativa={i === indice}
-                  destino={destino}
-                  id={idDaOpcao(i)}
-                  key={destino.href}
-                  mono
-                  onApontar={() => setAtivo(i)}
-                  onEscolher={() => onEscolher(destino.href)}
-                />
-              );
-            })}
-          </fieldset>
-        ) : null}
+        <GrupoDeOpcoes
+          ativa={indice}
+          destinos={recentes}
+          idDaOpcao={idDaOpcao}
+          inicio={0}
+          onApontar={setAtivo}
+          onEscolher={onEscolher}
+          titulo="Recentes"
+        />
+        <GrupoDeOpcoes
+          ativa={indice}
+          destinos={telas}
+          idDaOpcao={idDaOpcao}
+          inicio={recentes.length}
+          onApontar={setAtivo}
+          onEscolher={onEscolher}
+          titulo="Telas"
+        />
+        <GrupoDeOpcoes
+          ativa={indice}
+          destinos={achados}
+          idDaOpcao={idDaOpcao}
+          inicio={recentes.length + telas.length}
+          mono
+          onApontar={setAtivo}
+          onEscolher={onEscolher}
+          titulo="Clientes"
+        />
       </div>
 
       <p

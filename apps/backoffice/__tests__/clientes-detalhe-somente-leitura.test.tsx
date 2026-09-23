@@ -38,12 +38,14 @@ function estaDesabilitado(b: HTMLElement) {
   );
 }
 
-function botoesHabilitados() {
-  return screen.getAllByRole("button").filter((b) => !estaDesabilitado(b));
+// Onda 9b: o status do módulo é um `<select>` por módulo (não mais um botão
+// por status) que abre a barreira já aberta.
+function selectDoCosmos() {
+  return screen.getByRole("combobox", { name: /Cosmos/ }) as HTMLSelectElement;
 }
 
 describe("ModuleForm — somente leitura", () => {
-  it("com canWrite=false nenhum botão de escrita fica habilitado e o motivo está escrito", () => {
+  it("com canWrite=false o select fica desabilitado e o motivo está escrito", () => {
     render(
       <ModuleForm
         canWrite={false}
@@ -53,11 +55,12 @@ describe("ModuleForm — somente leitura", () => {
       />
     );
 
-    expect(botoesHabilitados()).toHaveLength(0);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+    expect(selectDoCosmos().disabled).toBe(true);
     expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
   });
 
-  it("com canWrite=true os botões de troca ficam vivos e o motivo não aparece", () => {
+  it("com canWrite=true o select fica vivo e o motivo não aparece", () => {
     render(
       <ModuleForm
         canWrite
@@ -67,32 +70,21 @@ describe("ModuleForm — somente leitura", () => {
       />
     );
 
-    expect(botoesHabilitados().length).toBeGreaterThan(0);
+    expect(selectDoCosmos().disabled).toBe(false);
     expect(screen.queryByText(MOTIVO_SOMENTE_LEITURA)).toBeNull();
   });
 });
 
 describe("ModuleForm — Cancelado só quando faz sentido", () => {
-  it("não contratado: sem botão Cancelado", () => {
+  const opcoes = () => Array.from(selectDoCosmos().options).map((o) => o.text);
+
+  it("não contratado: sem opção Cancelado", () => {
     render(
       <ModuleForm canWrite modules={[]} modulos={["COSMOS"]} slug="acme" />
     );
 
-    expect(screen.queryByRole("button", { name: "Cancelado" })).toBeNull();
-    expect(screen.getByRole("button", { name: /Ativo/ })).toBeTruthy();
-  });
-
-  it("já cancelado: sem botão Cancelado", () => {
-    render(
-      <ModuleForm
-        canWrite
-        modules={[{ expiresAt: null, module: "COSMOS", status: "CANCELED" }]}
-        modulos={["COSMOS"]}
-        slug="acme"
-      />
-    );
-
-    expect(screen.queryByRole("button", { name: "Cancelado" })).toBeNull();
+    expect(opcoes()).not.toContain("Cancelado");
+    expect(opcoes()).toContain("Ativo");
   });
 
   it("ativo: Cancelado aparece", () => {
@@ -105,12 +97,12 @@ describe("ModuleForm — Cancelado só quando faz sentido", () => {
       />
     );
 
-    expect(screen.getByRole("button", { name: "Cancelado" })).toBeTruthy();
+    expect(opcoes()).toContain("Cancelado");
   });
 });
 
 describe("ModuleForm — sucesso nomeado junto da linha", () => {
-  it("após Trial, a linha diz 'COSMOS de acme agora está Trial'", async () => {
+  it("após Trial, a linha diz 'Cosmos de acme agora está Trial'", async () => {
     mocks.contractModuleAction.mockResolvedValue({ data: {}, ok: true });
     render(
       <ModuleForm
@@ -121,15 +113,15 @@ describe("ModuleForm — sucesso nomeado junto da linha", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /Trial/ }));
+    fireEvent.change(selectDoCosmos(), { target: { value: "TRIAL" } });
     // Ativar também passa pela barreira (crítica rodada 4).
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     const status = await screen.findByRole("status");
-    expect(status.textContent).toBe("COSMOS de acme agora está Trial");
+    expect(status.textContent).toBe("Cosmos de acme agora está Trial");
   });
 
-  it("após Suspenso confirmado, a linha diz 'COSMOS de acme agora está Suspenso'", async () => {
+  it("após Suspenso confirmado, a linha diz 'Cosmos de acme agora está Suspenso'", async () => {
     mocks.contractModuleAction.mockResolvedValue({ data: {}, ok: true });
     render(
       <ModuleForm
@@ -140,7 +132,7 @@ describe("ModuleForm — sucesso nomeado junto da linha", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Suspenso" }));
+    fireEvent.change(selectDoCosmos(), { target: { value: "SUSPENDED" } });
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() =>
@@ -151,7 +143,7 @@ describe("ModuleForm — sucesso nomeado junto da linha", () => {
       })
     );
     const status = await screen.findByRole("status");
-    expect(status.textContent).toBe("COSMOS de acme agora está Suspenso");
+    expect(status.textContent).toBe("Cosmos de acme agora está Suspenso");
   });
 });
 
