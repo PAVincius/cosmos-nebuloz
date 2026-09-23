@@ -390,7 +390,7 @@ Gradiente de `surface-3` a `surface-2` (45%) e a `surface`, fio `hairline` embai
 
 ### Do:
 - **Do** compor página autenticada com `appDesign.shell` → `PageHeader` → `appDesign.bodyScroll`, e empilhar as seções com `gap-6` (24px).
-- **Do** escrever a copy de produto em PT-BR; metadado pode ficar em inglês **(vigente)**. Hoje escorregam o título "Settings" de `/settings/workspace`, o banner de beta ("Beta feature now available") e o `<html lang="en">` de `app/layout.tsx`, que faz leitor de tela ler PT-BR com voz em inglês.
+- **Do** escrever a copy de produto em PT-BR; metadado pode ficar em inglês **(vigente)**. Hoje escorregam o título "Settings" de `/settings/workspace` e o banner de beta ("Beta feature now available"). O `<html>` de `app/layout.tsx` e o de `app/global-error.tsx` declaram `lang="pt-BR"` desde 2026-09-23; antes o "en" fazia leitor de tela ler PT-BR com voz em inglês.
 - **Do** usar token, nunca hex, fora do painel de marca: `bg-primary`/`text-primary` no shadcn, `var(--accent-c)` no estilo inline e `var(--on-accent, #fff)` sobre acento sólido.
 - **Do** separar erro de vazio. Em `/produto`: "afirmar carteira vazia sobre uma consulta que falhou é mentira com cara de estado vazio".
 - **Do** explicar porta fechada: o motivo e quem resolve, como nas páginas-portão e no motivo do cartão de produto.
