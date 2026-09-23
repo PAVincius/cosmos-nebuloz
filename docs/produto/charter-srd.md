@@ -21,8 +21,9 @@ SSO (`@repo/auth`), envio de notificação (ADR-0011) e bloqueio de uso em runti
 **Fontes.** SRD & Data Model do Charter (projeto de design, ago/2026): norma de
 telas e dados. [Mapa de fronteiras](./mapa-de-fronteiras.md) (Arquitetura de
 produto, ago/2026 v1): alvo de propriedade entre produtos. `main` em `ea512044`
-(2026-09-22): o estado. Cada requisito diz **implementado**, **parcial** ou
-**ausente**, com evidência. Divergência com o SRD & Data Model traz as duas
+(2026-09-22): o estado; a reavaliação de risco e o "sem medição" do fornecedor
+(2026-09-23), no código que os entrega. Cada requisito diz **implementado**,
+**parcial** ou **ausente**, com evidência. Divergência com o SRD & Data Model traz as duas
 versões, e vale o código; divergência com o Mapa é gap. Prefixos: `A/` =
 `apps/app/app/(charter)/actions/`, `C/` = `apps/app/components/charter/`, `L/` =
 `apps/app/lib/charter/`, `P/` = `packages/provisioning/src/`, `R/` =
@@ -96,7 +97,7 @@ Tenant ──1:1── CharterSettings                      perfil, postura, ret
 
 | ENTIDADE | CAMPOS-CHAVE |
 |---|---|
-| `CharterUseCase` | `dataClass`, `exposure`, `criticality`, `vendorId`, `status`, `approvalPath`, `slaTotal`, `hitl`, `submittedAt`, 7 `risk*`, 7 `prob*`, `restrictions`, `blockReason`, `changeRequest`, `vendorIneligible` |
+| `CharterUseCase` | `dataClass`, `exposure`, `criticality`, `vendorId`, `status`, `approvalPath`, `slaTotal`, `hitl`, `submittedAt`, 7 `risk*`, 7 `prob*`, `riskScoredAt`, `restrictions`, `blockReason`, `changeRequest`, `vendorIneligible` |
 | `CharterDecision` | `outcome`, `rationale`, `conditions`, `deciderId`, `deciderRole`, `previousStatus` |
 | `CharterVendor` | `tier`, `dpa`, `retention`, `region`, `subprocessors`, `score`, `maxClass` (cache derivado), `notes` |
 | `CharterPolicyVersion` | `version`, `summary`, `snapshot`, `changeCount`, `status` (`PUBLISHED` ou `SUPERSEDED`) |
@@ -114,8 +115,8 @@ e vigência resolvida de norma saem da leitura (`L/rules.ts:416-426`,
 | Auditoria | `AuditEntry` própria, `A-####` | `AuditLog` da plataforma, `entityType charter.*`, id cuid (ADR-0009) |
 | Permissões | 10 | 12: mais `compliance.map` e `compliance.edit` (`R/charter-matrix.ts:15-27`) |
 | Mitigação | `overdue` é status | Derivado de `dueDate`; o enum tem OPEN, PROGRESS e DONE |
-| Score do fornecedor | 0–100, maior é pior | Coluna com default 50 que nenhuma escrita calcula (`S/charter.prisma:282`) |
-| Risco do caso | 7 eixos de 1 a 5 | 7 de impacto e 7 de probabilidade; nenhuma tela escreve os 14 |
+| Score do fornecedor | 0–100, maior é pior | Coluna com default 50 que nenhuma escrita calcula (`S/charter.prisma:282`); sem regra definida, o detalhe mostra "sem medição" (`C/screens/vendor-detail.tsx:241-247`) |
+| Risco do caso | 7 eixos de 1 a 5 | 7 de impacto e 7 de probabilidade; a reavaliação (`C/modals/rescore.tsx`) escreve os 7 de impacto, e nenhuma tela escreve os de probabilidade |
 | Estados do caso | `changes` volta a `review`; `archived` ao fim | Nenhuma action grava `REVIEW` nem `ARCHIVED`; `CHANGES` não tem reenvio |
 | Fornecedor do caso | Exatamente um | `vendorId` opcional; obrigatório só na submissão (`A/cases.ts:320-341`) |
 | Aceite | `AckPending` | Uma linha por pessoa e trilha; publicar zera status e data e mantém o `policyVersionId` antigo (`A/policy.ts:410-413`) |
@@ -205,15 +206,17 @@ senão                        → RESTRICTED
 - `P/charter-rules.ts:37-82`, com o raciocínio degrau a degrau. O SRD & Data Model manda derivar e mostrar sem dar o algoritmo; a escada é decisão de engenharia sem aval de Legal e Segurança (ADR-0003:92-94). Recalcula no cadastro, no tier e nas cláusulas, marcando `vendorIneligible` nos casos vinculados sem bloqueá-los (`A/vendors.ts:211-254`); o export do back-office recalcula só o teto.
 - **Pré-condição que falha em tenant criado pelo bootstrap:** as cláusulas vêm da biblioteca do tenant (`A/vendors.ts:431-434`), e o bootstrap não cria biblioteca (`P/charter.ts:67-158`). Sem CL-01, o teto para em `PUBLIC`.
 
-### 5.5 Score de risco — FR-5, FR-7 · regra implementada, entrada ausente
+### 5.5 Score de risco — FR-5, FR-7 · implementado
 ```text
 severidade    = max(privacy, regulatory, security, bias, ip, operational, reputational)
 probabilidade = max(1, round(média dos mesmos 7))
 score         = severidade × probabilidade                  // 1..25
 rótulo        = ≥ 16 Crítico (red) · ≥ 9 Elevado (amber) · ≥ 4 Moderado (green) · < 4 Baixo (green)
+sem pontuação = riskScoredAt nulo e os 7 eixos em 1 (o default do intake) → sem score
 ```
-- `L/rules.ts:215-261`, igual ao SRD & Data Model; severidade é máximo de propósito. Nenhuma tela chama `rescoreCase` (`A/cases.ts:646-714`, `risk.score`, auditado) e o intake não pede risco: em caso criado pela tela, todo eixo nasce 1, score 1, "Baixo". Fora `rescoreCase`, só os seeds escrevem risco.
-- As 7 colunas `prob*` (`S/charter.prisma:376-382`) só são lidas pela capacidade RISK_SCORING (`L/capabilities.ts:189-224`). `nivel()` (`L/risk-matrix.ts:19-30`) usa 15/9/4 e só aparece em teste; a escala que vale é a de cima.
+- `L/rules.ts:215-281`, igual ao SRD & Data Model; severidade é máximo de propósito. `caseRisk()` (`L/rules.ts:273-281`) devolve null para caso sem pontuação: lista, detalhe, decisão e fila da Visão Geral escrevem "sem pontuação"; a matriz o deixa fora do heatmap e da exposição por categoria e o nomeia à parte (`A/risk.ts:98`); RISK_SCORING o conta como lacuna. Caso com eixo fora de 1 e sem data (seed, dogfood) segue pontuado.
+- A reavaliação (`C/modals/rescore.tsx`, aberta na aba Risco do detalhe) chama `rescoreCase` (`A/cases.ts:672-725`, `risk.score`): justificativa obrigatória, grava `riskScoredAt` e a trilha com os eixos que mudaram — na primeira pontuação, os sete, a partir de "sem pontuação". O intake segue sem pedir risco.
+- As 7 colunas `prob*` (`S/charter.prisma:376-382`) só são lidas pela capacidade RISK_SCORING (`L/capabilities.ts:190`). `nivel()` (`L/risk-matrix.ts:19-30`) usa 15/9/4 e só aparece em teste; a escala que vale é a de cima.
 
 ### 5.6 Bloqueio de publicação — FR-2 · implementado
 ```text
@@ -243,7 +246,7 @@ O SRD & Data Model sugere REST; o código usa server actions. Nos dois, o tenant
 | `POST /versions` (409) | `publishPolicyVersion` | `policy.publish` | implementado; o 409 não chega ao cliente |
 | `POST /cases` (422) | `submitCase`, `submitDraftCase` | `case.submit` | implementado; o 422 também não |
 | `POST /cases/:id/decision` | `decideCase` | `case.decide` | implementado |
-| `/risks`, `/mitigations` | `rescoreCase`; `createMitigation`, `setMitigationStatus` | `risk.score` | parcial: `rescoreCase` sem tela |
+| `/risks`, `/mitigations` | `rescoreCase`; `createMitigation`, `setMitigationStatus` | `risk.score` | implementado; `rescoreCase` pela reavaliação (`C/modals/rescore.tsx`) |
 | `/vendors`, `/vendors/:id/tier` | `listVendors`, `getVendor`, `createVendor`, `setVendorTier` | `vendor.approve` na escrita | implementado |
 | `/clauses`, `/vendors/:id/clauses` | `getClauseLibrary`, `setVendorClauses` | `clause.manage` na escrita | parcial: biblioteca só por seed |
 | `/onboarding/tracks` | `getOnboarding`, `publishTrack`, `acknowledge` | `onboarding.publish`; papel no aceite | implementado |
@@ -259,7 +262,7 @@ O SRD & Data Model sugere REST; o código usa server actions. Nos dois, o tenant
 | Decidir notifica; restrição abre pendência de aceite das condições | ausente | ADR-0011:39-46 |
 | Publicar invalida aceites e marca reatribuição | implementado | `A/policy.ts:396-414`; nada limpa a marca depois |
 | Mudar tier reavalia todos os casos vinculados | implementado | `A/vendors.ts:211-254` |
-| Repontuar recalcula e reposiciona | parcial | Action pronta, sem tela |
+| Repontuar recalcula e reposiciona | implementado | A reavaliação recalcula ao vivo com a regra à vista (`C/modals/rescore.tsx`); gravada, a matriz reposiciona o caso (`A/risk.ts`) |
 | Exportar grava a si mesmo | implementado | `A/audit.ts:200-207`; `A/compliance-export.ts:96-104` |
 | SLA vencido alerta revisor e Compliance por job | ausente | Só alerta na leitura da Visão Geral (ADR-0011:42-43) |
 
@@ -297,9 +300,10 @@ O Mapa é o alvo normativo e o código é o estado. Cada linha abaixo é gap.
 | NFR-8 | LGPD: nome de pessoa alcançado pela eliminação de titular (do repo) | ausente | `CharterUseCase.ownerName` fica fora (`docs/compliance/lgpd-ropa-e-lacunas.md:157`); `personName` e `CharterMitigation.ownerName` nem entram na tabela; o nome também vai para o alvo imutável da trilha |
 
 > **CUIDADO COM VALOR PADRÃO**
-> Coluna com default que a tela mostra como fato lê como medição: score 50 do
-> fornecedor, risco 1 do caso. Onde ninguém mediu, a tela deve dizer "sem
-> pontuação", como o Cosmos diz "sem sinal".
+> Coluna com default que a tela mostra como fato lê como medição. Onde ninguém
+> mediu, a tela diz, como o Cosmos diz "sem sinal": "sem pontuação" no risco do
+> caso (os sete eixos no default 1, `caseRisk()`) e "sem medição" no score do
+> fornecedor (default 50, sem regra que o calcule).
 
 ---
 
@@ -322,7 +326,7 @@ O Mapa é o alvo normativo e o código é o estado. Cada linha abaixo é gap.
 - Escrita cuja entrada de auditoria falha não persiste. **Atende** por construção (`A/_shared.ts:56-71`).
 - Conjunto `REFERENCIA` nunca guarda texto de norma. **Atende** (`apps/app/__tests__/charter/licenca-copyright.test.ts`).
 - Tenant provisionado pelo back-office submete caso Interno sem SQL nem seed. **Não atende** (§5.4).
-- Caso sem pontuação não mostra score. **Não atende** (§5.5).
+- Caso sem pontuação não mostra score. **Atende** (`apps/app/__tests__/charter/cases-risk-view.test.ts`, `case-detail-risk.test.tsx`, `risk-board.test.ts`, `dashboard-queue-risk.test.ts`).
 - `verify:charter` passa sem as duas falhas de `BYPASSRLS`. **Não atende** (ADR-0012).
 - axe sem violação nas 11 telas, nos dois temas. **Não existe** o teste.
 - Todo escritor de `AuditLog` usa o formato de evento do Charter. **Não atende** (§6.3).
