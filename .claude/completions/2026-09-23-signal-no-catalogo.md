@@ -1,6 +1,6 @@
 # Signal entra pelo catálogo; um descritor só
 
-**Data:** 2026-09-23 · **Branch:** `claude/sweet-albattani-ec15c9`
+**Data:** 2026-09-23 · **Branch:** `fix/signal-no-catalogo`
 
 O Signal está em produção (`app.nebuloz.ai/signal`), mas `/produto` ainda o
 mostrava como "Em breve aqui": o catálogo tinha `href: null` e o resumo
@@ -22,6 +22,10 @@ mostrava como "Em breve aqui": o catálogo tinha `href: null` e o resumo
 - `__tests__/actions/produtos.test.ts` — o caso "SIGNAL não vira link" virou
   "SIGNAL contratado vira link para /signal". Nenhum outro teste lê esses
   textos.
+- Documentos que a #243 trouxe e esta mudança desmentia: `PRODUCT.md` do
+  Signal (Entradas; Brand Commitments, onde "Unificar é pendência" vira o
+  descritor aprovado), `docs/produto/signal-prd.md` §8 (linha do Cosmos) e
+  `apps/app/DESIGN.md` (Chips → State, que citava o "Em breve aqui").
 
 ## SV-12 "Minecraft Server Hosting" (back-office, produção)
 
@@ -44,10 +48,6 @@ deixar como está. Nenhuma escrita em produção.
 
 ## Pendências
 
-- `apps/app/components/signal/PRODUCT.md` (branch `docs/kb-consolidacao`)
-  fica velho quando esta mudança entrar: "Unificar é pendência" (Brand
-  Commitments) e "`/produto` ainda diz que o Signal não tem tela" (Operating
-  Context).
 - O comentário sobre `ORDEM` em `produtos/index.ts` descreve a ordem do funil
   (Meridian → Scaffold → Charter → Cosmos → Signal), mas o array segue outra.
   Divergência anterior a esta mudança; não mexi.
