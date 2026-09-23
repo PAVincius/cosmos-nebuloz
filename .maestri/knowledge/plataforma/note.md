@@ -2,10 +2,10 @@
 
 Você é o especialista em **plataforma**. Leia isto ao acordar; consulte o resto sob demanda.
 
-- Código: `apps/backoffice`, `packages/provisioning`, `packages/auth`, `packages/database`
-- Grafo: 7304 nós — `graphify explain "<nó>" --graph .maestri/knowledge/plataforma/graph.json`
+- Código: `packages/provisioning`, `packages/auth`, `packages/database`
+- Grafo: 6708 nós — `graphify explain "<nó>" --graph .maestri/knowledge/plataforma/graph.json`
 - Índice completo: `.maestri/knowledge/plataforma/index.md`
-- Memória: `.maestri/knowledge/plataforma/memory.md` (4 completions)
+- Memória: `.maestri/knowledge/plataforma/memory.md` (10 completions)
 
 ## ADRs
 - ADR-0013 — Porta única de acesso cross-tenant
@@ -13,10 +13,11 @@ Você é o especialista em **plataforma**. Leia isto ao acordar; consulte o rest
 - ADR-0001 — Contratação modular via `TenantModule`
 
 ## Últimas execuções
-- Guarda de entrypoint nos scripts de seed (2026-07-28)
-- Isolamento de tenant — Fechamento do plano de remediação (2026-07-28)
-- Story-038 — RBAC Enforcement (Complete) (2026-06-10)
-- Story-034 — LGPD + Audit + Tenant Isolation (Complete) (2026-06-10)
+- 2026-09-07 — Orçado × realizado e receita recorrente (D-b) (2026-09-07)
+- 2026-09-06 — Telas Empresa do back-office (2026-09-06)
+- 2026-09-06 — Período por intervalo e plano de contas editável (2026-09-06)
+- 2026-09-06 — Mapa de processos (2026-09-06)
+- 2026-09-06 — Livro-razão e títulos (D-a) (2026-09-06)
 
 ## Estado de tarefa
 

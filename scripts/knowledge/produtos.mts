@@ -6,6 +6,7 @@ export const PRODUTOS: Produto[] = [
   "scaffold",
   "cosmos",
   "plataforma",
+  "backoffice",
   "signal",
 ];
 
@@ -39,12 +40,8 @@ export const PREFIXOS: Record<Produto, string[]> = {
     "apps/app/lib/inngest",
     "packages/safe-engine",
   ],
-  plataforma: [
-    "apps/backoffice",
-    "packages/provisioning",
-    "packages/auth",
-    "packages/database",
-  ],
+  plataforma: ["packages/provisioning", "packages/auth", "packages/database"],
+  backoffice: ["apps/backoffice"],
   signal: [],
 };
 
@@ -67,6 +64,8 @@ export const PALAVRAS_CHAVE: Array<{ produto: Produto; termos: string[] }> = [
   { produto: "scaffold", termos: ["scaffold"] },
   { produto: "charter", termos: ["charter"] },
   { produto: "meridian", termos: ["meridian"] },
+  { produto: "signal", termos: ["signal"] },
+  { produto: "backoffice", termos: ["backoffice"] },
   {
     produto: "plataforma",
     termos: [
@@ -76,7 +75,6 @@ export const PALAVRAS_CHAVE: Array<{ produto: Produto; termos: string[] }> = [
       "tenant",
       "rls",
       "platformdb",
-      "backoffice",
       "seed",
     ],
   },

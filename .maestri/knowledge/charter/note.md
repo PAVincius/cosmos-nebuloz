@@ -5,7 +5,7 @@ Você é o especialista em **charter**. Leia isto ao acordar; consulte o resto s
 - Código: `apps/app/app/(charter)`, `apps/app/lib/charter`, `packages/database/prisma/schema/charter.prisma`, `packages/rbac/src/charter`
 - Grafo: 1662 nós — `graphify explain "<nó>" --graph .maestri/knowledge/charter/graph.json`
 - Índice completo: `.maestri/knowledge/charter/index.md`
-- Memória: `.maestri/knowledge/charter/memory.md` (2 completions)
+- Memória: `.maestri/knowledge/charter/memory.md` (15 completions)
 
 ## ADRs
 - ADR-0010 — Tema próprio do Charter reusando o kit do Cosmos
@@ -17,8 +17,11 @@ Você é o especialista em **charter**. Leia isto ao acordar; consulte o resto s
 - ADR-0002 — Papel de governança ortogonal ao papel SAFe
 
 ## Últimas execuções
-- Charter — E2E dos 5 fluxos prioritários — Complete (2026-07-30)
-- Charter — CaseDetail e Risk portados contra o protótipo — Complete (2026-07-30)
+- Charter — trabalho digitado não é mais descartado sem perguntar (onda 7b) (2026-09-22)
+- Charter — diff de versão de política que diz o que mudou (onda 7a) (2026-09-22)
+- Charter — o diff real chega ao pacote de evidência (onda 8) (2026-09-22)
+- Charter — tipografia na escala do cosmos, barrel fora, polish (crítica de design, onda 6) (2026-09-18)
+- Charter — observações menores de conformidade (crítica de design, onda 5b) (2026-09-17)
 
 ## Estado de tarefa
 

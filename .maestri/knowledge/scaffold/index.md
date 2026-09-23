@@ -25,4 +25,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/scaffold/graph.json
 - [ADR-0014 — Promoção para Scaffold materializa no back-office](../../../docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md)
 
 ## Memória de execução
-- 8 completions em `memory.md`
+- 9 completions em `memory.md`

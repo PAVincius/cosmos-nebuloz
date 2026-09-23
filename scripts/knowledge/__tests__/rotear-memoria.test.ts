@@ -20,6 +20,8 @@ const casos: [string, string][] = [
   ["2026-07-28-seed-entrypoint-guard.md", "plataforma"],
   ["2026-06-10-ci-green-step-c.md", "compartilhado"],
   ["2026-05-31-ux-lab-cosmos.md", "cosmos"],
+  ["2026-09-16-backoffice-financeiro.md", "backoffice"],
+  ["2026-09-02-signal-fundacao.md", "signal"],
 ];
 
 describe("rotear", () => {

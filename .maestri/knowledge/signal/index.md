@@ -19,4 +19,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/signal/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 0 completions em `memory.md`
+- 2 completions em `memory.md`

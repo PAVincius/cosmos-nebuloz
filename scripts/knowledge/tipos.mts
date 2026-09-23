@@ -4,6 +4,7 @@ export type Produto =
   | "scaffold"
   | "cosmos"
   | "plataforma"
+  | "backoffice"
   | "signal";
 
 export type Destino = Produto | "compartilhado";
