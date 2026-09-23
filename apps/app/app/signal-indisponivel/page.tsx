@@ -58,7 +58,7 @@ export default async function SignalUnavailablePage() {
           marginBottom: 10,
         }}
       >
-        Signal · Adoção e valor de IA
+        Signal · Valor realizado de IA
       </div>
 
       <h1

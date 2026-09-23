@@ -41,7 +41,7 @@ export default function HorizonDetailClient({
           background: "none",
           border: "none",
           color: "var(--ink-muted)",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           fontWeight: 600,
           cursor: "pointer",
           marginBottom: 14,
@@ -94,7 +94,7 @@ export default function HorizonDetailClient({
           label="Orçamento total no horizonte"
           tone="accent"
           unit="$"
-          value={totalAllocated.toLocaleString()}
+          value={totalAllocated}
         />
         <KpiCard
           hint="neste horizonte de investimento"
@@ -142,7 +142,7 @@ export default function HorizonDetailClient({
                 <div style={{ minWidth: 0 }}>
                   <div
                     style={{
-                      fontSize: 13.5,
+                      fontSize: "var(--fs-base)",
                       fontWeight: 600,
                       color: "var(--ink)",
                     }}
@@ -151,7 +151,10 @@ export default function HorizonDetailClient({
                   </div>
                   <span
                     className="mono"
-                    style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                    style={{
+                      fontSize: "var(--fs-nota)",
+                      color: "var(--ink-faint)",
+                    }}
                   >
                     ${v.budgetAllocated.toLocaleString()} alocado
                   </span>

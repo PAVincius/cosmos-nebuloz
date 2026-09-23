@@ -137,7 +137,7 @@ function Radar({
                 onMouseEnter={() => onHover(i)}
                 onMouseLeave={() => onHover(null)}
                 style={{
-                  fontSize: 10,
+                  fontSize: "var(--fs-micro)",
                   fontWeight: hot ? 800 : 600,
                   fill: hot ? "var(--accent)" : "var(--ink-muted)",
                 }}
@@ -221,7 +221,7 @@ function Radar({
 
 const fieldLabelStyle: CSSProperties = {
   display: "block",
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 700,
   letterSpacing: ".04em",
   textTransform: "uppercase",
@@ -232,7 +232,7 @@ const fieldLabelStyle: CSSProperties = {
 const inputStyle: CSSProperties = {
   width: "100%",
   padding: "10px 12px",
-  fontSize: 14,
+  fontSize: "var(--fs-forte)",
   borderRadius: "var(--r-md)",
   border: "1px solid var(--hairline-strong)",
   background: "var(--surface)",
@@ -453,7 +453,12 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -521,7 +526,10 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
               >
                 <span
                   className="mono"
-                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                  style={{
+                    color: "var(--ink-faint)",
+                    fontSize: "var(--fs-nota)",
+                  }}
                 >
                   AÇÃO DE MELHORIA
                 </span>
@@ -532,7 +540,7 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
               <div
                 className="display"
                 style={{
-                  fontSize: 14.5,
+                  fontSize: "var(--fs-forte)",
                   fontWeight: 700,
                   lineHeight: 1.35,
                   marginBottom: 14,
@@ -543,7 +551,7 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
               <div
                 style={{
                   color: "var(--ink-faint)",
-                  fontSize: 10,
+                  fontSize: "var(--fs-micro)",
                   fontWeight: 700,
                   letterSpacing: ".06em",
                   marginBottom: 4,
@@ -555,7 +563,7 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
               <div
                 style={{
                   color: team ? "var(--ink)" : "var(--ink-faint)",
-                  fontSize: 12,
+                  fontSize: "var(--fs-base)",
                 }}
               >
                 {team?.name ?? "Nenhum time escolhido ainda"}
@@ -627,12 +635,24 @@ function ImprovementActionsCard({
         <ErrorState message="Não foi possível carregar as ações de melhoria." />
       )}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
       {!(error || loading) && (data?.items.length ?? 0) === 0 && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Nenhuma ação de melhoria aberta.
         </div>
       )}
@@ -654,7 +674,7 @@ function ImprovementActionsCard({
               <span
                 style={{
                   flex: 1,
-                  fontSize: 13,
+                  fontSize: "var(--fs-base)",
                   fontWeight: 600,
                   color: "var(--ink)",
                   minWidth: 0,
@@ -723,7 +743,7 @@ function RadarCard({ rows }: { rows: CompetencyScoreView[] }) {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 7,
-                fontSize: 12,
+                fontSize: "var(--fs-base)",
                 color: "var(--ink-muted)",
                 fontWeight: 600,
               }}
@@ -747,7 +767,7 @@ function RadarCard({ rows }: { rows: CompetencyScoreView[] }) {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 7,
-                  fontSize: 12,
+                  fontSize: "var(--fs-base)",
                   color: "var(--ink-faint)",
                   fontWeight: 600,
                 }}
@@ -772,13 +792,13 @@ function RadarCard({ rows }: { rows: CompetencyScoreView[] }) {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 6,
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
               }}
             >
               <span
                 style={{
-                  fontSize: 10.5,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 700,
                   letterSpacing: ".04em",
                 }}
@@ -871,9 +891,10 @@ function MeasureBody() {
             }}
           >
             <KpiCard
+              decimals={1}
               delta={
                 avgDelta !== null
-                  ? `${avgDelta > 0 ? "+" : ""}${avgDelta.toFixed(1)}`
+                  ? `${avgDelta > 0 ? "+" : ""}${avgDelta.toFixed(1).replace(".", ",")}`
                   : undefined
               }
               deltaTone="accent"
@@ -882,11 +903,7 @@ function MeasureBody() {
               label="Maturidade média"
               tone="accent"
               unit={avgMaturity !== null ? "/5" : undefined}
-              value={
-                avgMaturity !== null
-                  ? avgMaturity.toFixed(1).replace(".", ",")
-                  : "—"
-              }
+              value={avgMaturity ?? "—"}
             />
             <KpiCard
               hint={
@@ -901,22 +918,22 @@ function MeasureBody() {
               value={withDelta.length > 0 ? improved : "—"}
             />
             <KpiCard
+              decimals={1}
               hint={strongest?.competencyLabel ?? "sem avaliação"}
               icon="star"
               label="Mais forte"
               tone="blue"
-              value={
-                strongest ? strongest.score.toFixed(1).replace(".", ",") : "—"
-              }
+              value={strongest ? strongest.score : "—"}
             />
             <KpiCard
+              decimals={1}
               delta={weakest ? "foco" : undefined}
               deltaTone="amber"
               hint={weakest?.competencyLabel ?? "sem avaliação"}
               icon="alert"
               label="Maior oportunidade"
               tone="amber"
-              value={weakest ? weakest.score.toFixed(1).replace(".", ",") : "—"}
+              value={weakest ? weakest.score : "—"}
             />
           </div>
 
@@ -934,7 +951,7 @@ function MeasureBody() {
                     style={{
                       padding: 16,
                       color: "var(--ink-muted)",
-                      fontSize: 13,
+                      fontSize: "var(--fs-base)",
                     }}
                   >
                     Carregando...
@@ -944,7 +961,7 @@ function MeasureBody() {
                     style={{
                       padding: 16,
                       color: "var(--ink-muted)",
-                      fontSize: 13,
+                      fontSize: "var(--fs-base)",
                     }}
                   >
                     Nenhuma avaliação encontrada.
@@ -967,7 +984,7 @@ function MeasureBody() {
                   style={{
                     padding: 16,
                     color: "var(--ink-muted)",
-                    fontSize: 13,
+                    fontSize: "var(--fs-base)",
                   }}
                 >
                   Carregando...
@@ -977,7 +994,7 @@ function MeasureBody() {
                   style={{
                     padding: 16,
                     color: "var(--ink-muted)",
-                    fontSize: 13,
+                    fontSize: "var(--fs-base)",
                   }}
                 >
                   Nenhuma avaliação encontrada.
@@ -1004,7 +1021,7 @@ function MeasureBody() {
                         <span
                           style={{
                             flex: 1,
-                            fontSize: 13,
+                            fontSize: "var(--fs-base)",
                             fontWeight: 600,
                             color: "var(--ink)",
                             minWidth: 0,
@@ -1018,7 +1035,7 @@ function MeasureBody() {
                         {row.score === null ? (
                           <span
                             style={{
-                              fontSize: 12.5,
+                              fontSize: "var(--fs-base)",
                               color: "var(--ink-muted)",
                             }}
                           >
@@ -1038,7 +1055,7 @@ function MeasureBody() {
                               style={{
                                 width: 34,
                                 textAlign: "right",
-                                fontSize: 14,
+                                fontSize: "var(--fs-forte)",
                                 fontWeight: 800,
                                 color: "var(--ink)",
                               }}
@@ -1050,7 +1067,7 @@ function MeasureBody() {
                               style={{
                                 width: 42,
                                 textAlign: "right",
-                                fontSize: 11.5,
+                                fontSize: "var(--fs-nota)",
                                 fontWeight: 700,
                                 color:
                                   row.delta === null
