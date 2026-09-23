@@ -69,7 +69,13 @@ function AgingWipPanel() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -90,7 +96,7 @@ function AgingWipPanel() {
                   justifyContent: "space-between",
                   alignItems: "baseline",
                   marginBottom: 6,
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   gap: 8,
                 }}
               >
@@ -192,7 +198,13 @@ function DoraSection() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -271,7 +283,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
     <div>
       <div
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: "var(--ink-muted)",
           marginBottom: 10,
@@ -305,7 +317,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 700,
                   color: "var(--ink-muted)",
                 }}
@@ -324,7 +336,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
               />
               <span
                 style={{
-                  fontSize: 10.5,
+                  fontSize: "var(--fs-nota)",
                   color: "var(--ink-faint)",
                   fontWeight: 600,
                   textAlign: "center",
@@ -367,7 +379,7 @@ function CfdChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
     <div>
       <div
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: "var(--ink-muted)",
           marginBottom: 10,
@@ -399,10 +411,10 @@ function CfdChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
           marginTop: 4,
         }}
       >
-        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {cumulative[0]?.label}
         </span>
-        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {cumulative.at(-1)?.label}
         </span>
       </div>
@@ -424,7 +436,13 @@ function FlowHistorySection() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -473,12 +491,24 @@ export default function FlowScreen() {
       />
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
       {!(error || loading) && data === null && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Nenhuma métrica de flow registrada ainda.
         </div>
       )}
@@ -544,7 +574,7 @@ export default function FlowScreen() {
                     justifyContent: "space-between",
                     padding: "10px 16px",
                     borderTop: "1px solid var(--hairline)",
-                    fontSize: 13,
+                    fontSize: "var(--fs-base)",
                   }}
                 >
                   <span style={{ color: "var(--ink-muted)" }}>{type}</span>

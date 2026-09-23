@@ -45,7 +45,7 @@ export default function ValueStreamDetailClient({
           background: "none",
           border: "none",
           color: "var(--ink-muted)",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           fontWeight: 600,
           cursor: "pointer",
           marginBottom: 14,
@@ -163,7 +163,7 @@ export default function ValueStreamDetailClient({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   marginBottom: 8,
                 }}
               >
@@ -210,7 +210,7 @@ export default function ValueStreamDetailClient({
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   marginBottom: 8,
                 }}
               >
@@ -286,7 +286,7 @@ export default function ValueStreamDetailClient({
                   <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: "var(--fs-base)",
                         fontWeight: 600,
                         color: "var(--ink)",
                       }}
@@ -296,7 +296,10 @@ export default function ValueStreamDetailClient({
                     {e.wsjf !== null && (
                       <span
                         className="mono"
-                        style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                        style={{
+                          fontSize: "var(--fs-nota)",
+                          color: "var(--ink-faint)",
+                        }}
                       >
                         WSJF {e.wsjf}
                       </span>

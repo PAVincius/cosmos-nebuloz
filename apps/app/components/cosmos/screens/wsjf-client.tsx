@@ -66,7 +66,7 @@ function HeadCell({
   return (
     <div
       style={{
-        fontSize: 10.5,
+        fontSize: "var(--fs-nota)",
         fontWeight: 700,
         letterSpacing: ".05em",
         textTransform: "uppercase",
@@ -84,7 +84,7 @@ function NumCell({ children }: { children: ReactNode }) {
     <div
       className="mono"
       style={{
-        fontSize: 13,
+        fontSize: "var(--fs-base)",
         fontWeight: 700,
         color: "var(--ink-muted)",
         textAlign: "center",
@@ -139,7 +139,7 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         <span
           className="mono"
           style={{
-            fontSize: 15,
+            fontSize: "var(--fs-forte)",
             fontWeight: 800,
             color: item.rank <= 3 ? "var(--accent-text)" : "var(--ink-muted)",
           }}
@@ -162,7 +162,7 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
             <span
               className="mono"
               style={{
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 fontWeight: 800,
                 color: artTone ? `var(--${artTone}-text)` : "var(--ink-muted)",
                 background: artTone
@@ -184,7 +184,7 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         </div>
         <div
           style={{
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
             whiteSpace: "nowrap",
@@ -207,7 +207,7 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         <div
           className="mono"
           style={{
-            fontSize: 15,
+            fontSize: "var(--fs-forte)",
             fontWeight: 800,
             color: `var(--${tone}-text)`,
             textAlign: "center",
@@ -278,7 +278,7 @@ function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
       <div style={{ minWidth: 0 }}>
         <div
           style={{
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
             whiteSpace: "nowrap",
@@ -288,7 +288,7 @@ function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
         >
           {move.title}
         </div>
-        <div style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+        <div style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {LIFECYCLE_COLUMN_LABEL[move.lifecycleStatus] ?? move.lifecycleStatus}
         </div>
       </div>
@@ -298,7 +298,7 @@ function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
           display: "flex",
           alignItems: "center",
           gap: 6,
-          fontSize: 12.5,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: rose ? "var(--green-text)" : "var(--amber-text)",
           whiteSpace: "nowrap",
@@ -375,7 +375,13 @@ function RebalanceModal() {
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {loading && (
-          <p style={{ margin: 0, fontSize: 13, color: "var(--ink-muted)" }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "var(--fs-base)",
+              color: "var(--ink-muted)",
+            }}
+          >
             Calculando ranking WSJF...
           </p>
         )}
@@ -384,7 +390,7 @@ function RebalanceModal() {
           <p
             style={{
               margin: 0,
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               color: "var(--red-text)",
               lineHeight: 1.5,
             }}
@@ -425,7 +431,7 @@ function RebalanceModal() {
           <p
             style={{
               margin: 0,
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--amber-text)",
               lineHeight: 1.5,
             }}
@@ -438,7 +444,7 @@ function RebalanceModal() {
         <p
           style={{
             margin: 0,
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color: "var(--ink-faint)",
             lineHeight: 1.5,
           }}
@@ -504,7 +510,7 @@ function ScenarioComponentSlider({
         style={{
           display: "flex",
           justifyContent: "space-between",
-          fontSize: 11.5,
+          fontSize: "var(--fs-nota)",
           color: "var(--ink-muted)",
           marginBottom: 4,
         }}
@@ -635,7 +641,13 @@ function ScenarioSimulatorModal({
         )}
 
         {featureId && loading && (
-          <p style={{ margin: 0, fontSize: 13, color: "var(--ink-muted)" }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "var(--fs-base)",
+              color: "var(--ink-muted)",
+            }}
+          >
             Carregando componentes WSJF da feature...
           </p>
         )}
@@ -644,7 +656,7 @@ function ScenarioSimulatorModal({
           <p
             style={{
               margin: 0,
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               color: "var(--red-text)",
               lineHeight: 1.5,
             }}
@@ -698,7 +710,7 @@ function ScenarioSimulatorModal({
               <div>
                 <div
                   style={{
-                    fontSize: 10.5,
+                    fontSize: "var(--fs-nota)",
                     fontWeight: 700,
                     letterSpacing: ".04em",
                     textTransform: "uppercase",
@@ -710,7 +722,7 @@ function ScenarioSimulatorModal({
                 <div
                   className="mono"
                   style={{
-                    fontSize: 22,
+                    fontSize: "var(--fs-display)",
                     fontWeight: 800,
                     color: "var(--accent-text)",
                   }}
@@ -721,7 +733,7 @@ function ScenarioSimulatorModal({
               <div style={{ textAlign: "right" }}>
                 <div
                   style={{
-                    fontSize: 10.5,
+                    fontSize: "var(--fs-nota)",
                     fontWeight: 700,
                     letterSpacing: ".04em",
                     textTransform: "uppercase",
@@ -730,7 +742,7 @@ function ScenarioSimulatorModal({
                 >
                   Score atual · Δ
                 </div>
-                <div style={{ fontSize: 13 }}>
+                <div style={{ fontSize: "var(--fs-base)" }}>
                   <span className="mono" style={{ color: "var(--ink-muted)" }}>
                     {storedScore?.toFixed(2)}
                   </span>{" "}
@@ -756,7 +768,7 @@ function ScenarioSimulatorModal({
             <p
               style={{
                 margin: 0,
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
                 lineHeight: 1.5,
               }}
@@ -782,7 +794,7 @@ function ScenarioSimulatorModal({
 // ── settings modal (Task 16) ──
 const settingsFieldLabelStyle: CSSProperties = {
   display: "block",
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 700,
   letterSpacing: ".04em",
   textTransform: "uppercase",
@@ -793,7 +805,7 @@ const settingsFieldLabelStyle: CSSProperties = {
 const settingsSelectStyle: CSSProperties = {
   width: "100%",
   padding: "10px 12px",
-  fontSize: 14,
+  fontSize: "var(--fs-forte)",
   borderRadius: "var(--r-md)",
   border: "1px solid var(--hairline-strong)",
   background: "var(--surface)",
@@ -834,7 +846,7 @@ function WeightSlider({
         style={{
           display: "flex",
           justifyContent: "space-between",
-          fontSize: 11.5,
+          fontSize: "var(--fs-nota)",
           color: "var(--ink-muted)",
           marginBottom: 4,
         }}
@@ -918,7 +930,7 @@ function WsjfSettingsModal({
         <div>
           <div
             style={{
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
               color: "var(--ink)",
               marginBottom: 3,
@@ -928,7 +940,7 @@ function WsjfSettingsModal({
           </div>
           <div
             style={{
-              fontSize: 12,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-faint)",
               marginBottom: 12,
             }}
@@ -1049,7 +1061,7 @@ function WsjfSettingsModal({
             <span
               className="mono"
               style={{
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 color: "var(--accent-text)",
                 minWidth: 60,
               }}
@@ -1227,7 +1239,7 @@ function WsjfBody({
               style={{
                 padding: 20,
                 textAlign: "center",
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 color: "var(--ink-faint)",
               }}
             >
@@ -1240,7 +1252,7 @@ function WsjfBody({
         <p
           style={{
             margin: "10px 16px 0",
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color: "var(--ink-faint)",
             lineHeight: 1.5,
           }}

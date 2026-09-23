@@ -108,7 +108,12 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -183,11 +188,16 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                 <div style={{ minWidth: 0 }}>
                   <div
                     className="display"
-                    style={{ fontSize: 14.5, fontWeight: 700 }}
+                    style={{ fontSize: "var(--fs-forte)", fontWeight: 700 }}
                   >
                     {name || "Nome do time"}
                   </div>
-                  <div style={{ color: "var(--ink-faint)", fontSize: 11.5 }}>
+                  <div
+                    style={{
+                      color: "var(--ink-faint)",
+                      fontSize: "var(--fs-nota)",
+                    }}
+                  >
                     {art?.label ?? "Sem ART"}
                   </div>
                 </div>
@@ -205,7 +215,7 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                     border: "1px solid rgba(var(--amber-rgb),.3)",
                     borderRadius: "var(--r-md)",
                     color: "var(--amber-text)",
-                    fontSize: 11.5,
+                    fontSize: "var(--fs-nota)",
                     lineHeight: 1.5,
                     padding: "9px 11px",
                   }}
@@ -218,7 +228,7 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                 style={{
                   borderTop: "1px solid var(--hairline)",
                   color: "var(--ink-faint)",
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   lineHeight: 1.6,
                   marginTop: 14,
                   paddingTop: 12,
@@ -353,7 +363,7 @@ function UnassignedTeamsSection({
                 style={{
                   color: "var(--ink)",
                   flex: 1,
-                  fontSize: 13,
+                  fontSize: "var(--fs-base)",
                   fontWeight: 600,
                 }}
               >
@@ -419,7 +429,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
           <div
             className="display"
             style={{
-              fontSize: 15,
+              fontSize: "var(--fs-forte)",
               fontWeight: 700,
               letterSpacing: "-.01em",
               color: "var(--ink)",
@@ -432,7 +442,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
           <div
             style={{
               marginTop: 3,
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-subtle)",
             }}
           >
@@ -448,7 +458,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              fontSize: 11,
+              fontSize: "var(--fs-nota)",
               marginBottom: 6,
             }}
           >
@@ -458,7 +468,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
                 letterSpacing: ".04em",
                 textTransform: "uppercase",
                 color: "var(--ink-faint)",
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
               }}
             >
               Capacidade
@@ -509,7 +519,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             <div
               className="mono"
               style={{
-                fontSize: 17,
+                fontSize: "var(--fs-forte)",
                 fontWeight: 800,
                 letterSpacing: "-.02em",
                 color: "var(--ink)",
@@ -519,7 +529,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             </div>
             <div
               style={{
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-subtle)",
                 fontWeight: 600,
                 letterSpacing: ".03em",
@@ -536,7 +546,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
 }
 
 const chipStyle = (on: boolean): CSSProperties => ({
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 600,
   padding: "5px 10px",
   borderRadius: 99,
@@ -592,14 +602,20 @@ function ArtFilterPopover({
           marginBottom: 10,
         }}
       >
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink)" }}>
+        <span
+          style={{
+            fontSize: "var(--fs-base)",
+            fontWeight: 700,
+            color: "var(--ink)",
+          }}
+        >
           Filtrar por ART
         </span>
         {selected.size > 0 && (
           <button
             onClick={() => onChange(new Set())}
             style={{
-              fontSize: 11,
+              fontSize: "var(--fs-nota)",
               fontWeight: 700,
               color: "var(--accent)",
               background: "none",
@@ -796,12 +812,24 @@ function TeamsBody() {
         </div>
       )}
       {!(error || loading) && teams.length === 0 && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Nenhum time encontrado.
         </div>
       )}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -811,7 +839,7 @@ function TeamsBody() {
             padding: "40px 20px",
             textAlign: "center",
             color: "var(--ink-faint)",
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
           }}
         >
           Nenhum time corresponde ao filtro selecionado.

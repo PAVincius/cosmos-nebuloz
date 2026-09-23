@@ -51,7 +51,7 @@ function HBars({
               display: "flex",
               justifyContent: "space-between",
               marginBottom: 5,
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
             }}
           >
             <span
@@ -501,7 +501,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
                     <span
                       className="mono"
                       style={{
-                        fontSize: 11,
+                        fontSize: "var(--fs-nota)",
                         fontWeight: 800,
                         color: `var(--${artTone}-text)`,
                         background: `rgba(var(--${artTone}-rgb),.14)`,
@@ -526,7 +526,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: "var(--fs-base)",
                         fontWeight: 600,
                         color: "var(--ink)",
                         whiteSpace: "nowrap",
@@ -543,7 +543,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
                   <span
                     className="mono"
                     style={{
-                      fontSize: 12,
+                      fontSize: "var(--fs-base)",
                       fontWeight: 700,
                       color: "var(--ink-subtle)",
                       flexShrink: 0,
@@ -558,7 +558,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
               <span
                 style={{
                   color: "var(--ink-subtle)",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   paddingTop: 2,
                 }}
               >

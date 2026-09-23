@@ -50,7 +50,7 @@ function utilizationTone(pct: number | null): "green" | "amber" | "red" {
 
 const fieldLabelStyle: CSSProperties = {
   display: "block",
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 700,
   letterSpacing: ".04em",
   textTransform: "uppercase",
@@ -61,7 +61,7 @@ const fieldLabelStyle: CSSProperties = {
 const inputStyle: CSSProperties = {
   width: "100%",
   padding: "10px 12px",
-  fontSize: 14,
+  fontSize: "var(--fs-forte)",
   borderRadius: "var(--r-md)",
   border: "1px solid var(--hairline-strong)",
   background: "var(--surface)",
@@ -164,7 +164,7 @@ function GuardrailsModal({
           </div>
         </div>
         {!splitValid && (
-          <div style={{ fontSize: 12, color: "var(--red-text)" }}>
+          <div style={{ fontSize: "var(--fs-base)", color: "var(--red-text)" }}>
             CapEx % + OpEx % devem somar 100.
           </div>
         )}
@@ -237,10 +237,16 @@ function BudgetRow({
       }}
     >
       <div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)" }}>
+        <div
+          style={{
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+            color: "var(--ink)",
+          }}
+        >
           {b.name}
         </div>
-        <div style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+        <div style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {b.themeName ?? "Sem tema"} · {b.period}
         </div>
         {b.artId && (
@@ -263,7 +269,7 @@ function BudgetRow({
       </div>
       <span
         className="mono"
-        style={{ fontSize: 12.5, color: "var(--ink-muted)" }}
+        style={{ fontSize: "var(--fs-base)", color: "var(--ink-muted)" }}
       >
         ${b.spent.toLocaleString()} / ${b.amount.toLocaleString()}
       </span>
@@ -351,7 +357,12 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -419,7 +430,11 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
               </Badge>
               <div
                 className="display"
-                style={{ fontSize: 15.5, fontWeight: 700, margin: "10px 0" }}
+                style={{
+                  fontSize: "var(--fs-forte)",
+                  fontWeight: 700,
+                  margin: "10px 0",
+                }}
               >
                 {name || "Nome do orçamento"}
               </div>
@@ -433,7 +448,7 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
                 <div
                   style={{
                     display: "flex",
-                    fontSize: 12.5,
+                    fontSize: "var(--fs-base)",
                     justifyContent: "space-between",
                     marginBottom: 6,
                   }}
@@ -453,7 +468,7 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
               <div
                 style={{
                   color: "var(--ink-faint)",
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   lineHeight: 1.6,
                   marginTop: 12,
                 }}
@@ -464,7 +479,7 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
               <div
                 style={{
                   color: "var(--ink-faint)",
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   lineHeight: 1.6,
                   marginTop: 6,
                 }}

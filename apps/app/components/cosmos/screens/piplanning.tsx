@@ -126,7 +126,9 @@ function ConfidenceVoteCard({
     >
       {vote === null ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+          <span
+            style={{ fontSize: "var(--fs-base)", color: "var(--ink-subtle)" }}
+          >
             Nenhuma rodada de confidence vote aberta. Quem facilita a cerimônia
             abre a rodada; o voto é de todo o ART.
           </span>
@@ -150,11 +152,21 @@ function ConfidenceVoteCard({
               {vote.totalVotes} de {vote.participantCount} já votaram
             </Badge>
             {vote.revealed ? (
-              <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+              <span
+                style={{
+                  fontSize: "var(--fs-base)",
+                  color: "var(--ink-muted)",
+                }}
+              >
                 Placar {vote.aggregateScore?.toFixed(1) ?? "—"} de 5
               </span>
             ) : (
-              <span style={{ fontSize: 12, color: "var(--ink-subtle)" }}>
+              <span
+                style={{
+                  fontSize: "var(--fs-base)",
+                  color: "var(--ink-subtle)",
+                }}
+              >
                 Resultado escondido até a revelação
               </span>
             )}
@@ -164,7 +176,7 @@ function ConfidenceVoteCard({
             <div>
               <div
                 style={{
-                  fontSize: 11.5,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 700,
                   letterSpacing: ".04em",
                   textTransform: "uppercase",
@@ -183,7 +195,7 @@ function ConfidenceVoteCard({
                     <span
                       className="mono"
                       style={{
-                        fontSize: 12,
+                        fontSize: "var(--fs-base)",
                         fontWeight: 700,
                         color: "var(--ink-muted)",
                         width: 14,
@@ -203,7 +215,10 @@ function ConfidenceVoteCard({
                     </div>
                     <span
                       className="mono"
-                      style={{ fontSize: 12, color: "var(--ink-subtle)" }}
+                      style={{
+                        fontSize: "var(--fs-base)",
+                        color: "var(--ink-subtle)",
+                      }}
                     >
                       {count} voto{count === 1 ? "" : "s"}
                     </span>
@@ -372,7 +387,9 @@ function CompromissoCard({
       title="Compromisso do PI"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+        <span
+          style={{ fontSize: "var(--fs-base)", color: "var(--ink-subtle)" }}
+        >
           {emPlanejamento &&
             "Com os objetivos escritos, os riscos no ROAM e a confiança revelada, o ART assume o compromisso."}
           {comprometido &&
@@ -388,7 +405,7 @@ function CompromissoCard({
               border: "1px solid rgba(var(--amber-rgb),.3)",
               borderRadius: "var(--r-md)",
               color: "var(--amber-text)",
-              fontSize: 12,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.55,
               padding: "9px 11px",
             }}
@@ -658,7 +675,7 @@ export default function PiPlanningScreen() {
                       </div>
                       <div
                         style={{
-                          fontSize: 13.5,
+                          fontSize: "var(--fs-base)",
                           fontWeight: 600,
                           color: "var(--ink)",
                           lineHeight: 1.35,
@@ -672,7 +689,7 @@ export default function PiPlanningScreen() {
                       <div
                         className="mono"
                         style={{
-                          fontSize: 21,
+                          fontSize: "var(--fs-display)",
                           fontWeight: 800,
                           color: o.isStretch
                             ? "var(--ink-faint)"
@@ -684,7 +701,7 @@ export default function PiPlanningScreen() {
                       </div>
                       <div
                         style={{
-                          fontSize: 10,
+                          fontSize: "var(--fs-micro)",
                           color: "var(--ink-subtle)",
                           fontWeight: 700,
                           letterSpacing: ".06em",
@@ -696,7 +713,12 @@ export default function PiPlanningScreen() {
                   </div>
                 ))}
                 {plan.objectives.length === 0 && (
-                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      color: "var(--ink-subtle)",
+                    }}
+                  >
                     Nenhum objetivo cadastrado.
                   </span>
                 )}
@@ -737,7 +759,7 @@ export default function PiPlanningScreen() {
                     </div>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: "var(--fs-base)",
                         fontWeight: 500,
                         color: "var(--ink)",
                         lineHeight: 1.4,
@@ -749,7 +771,12 @@ export default function PiPlanningScreen() {
                   </div>
                 ))}
                 {plan.risks.length === 0 && (
-                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      color: "var(--ink-subtle)",
+                    }}
+                  >
                     Nenhum risco cadastrado.
                   </span>
                 )}
@@ -810,7 +837,7 @@ export default function PiPlanningScreen() {
                           style={{
                             flex: 1,
                             minWidth: 0,
-                            fontSize: 12,
+                            fontSize: "var(--fs-base)",
                             color: "var(--ink-muted)",
                             whiteSpace: "nowrap",
                             overflow: "hidden",
@@ -823,7 +850,7 @@ export default function PiPlanningScreen() {
                           className="mono"
                           style={{
                             flexShrink: 0,
-                            fontSize: 12,
+                            fontSize: "var(--fs-base)",
                             fontWeight: 800,
                             color: hit
                               ? "var(--green-text)"
@@ -838,7 +865,12 @@ export default function PiPlanningScreen() {
                   );
                 })}
                 {plan.objectives.length === 0 && (
-                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      color: "var(--ink-subtle)",
+                    }}
+                  >
                     Nenhum objetivo cadastrado.
                   </span>
                 )}
