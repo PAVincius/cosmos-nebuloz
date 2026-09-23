@@ -105,9 +105,7 @@ describe("listarProdutos", () => {
     expect(p.get("COSMOS")?.estado).toBe("EXPIRADO");
   });
 
-  it("SIGNAL contratado não vira link — não há tela", async () => {
-    // Dizer "disponível" e não ter para onde ir é pior que dizer que falta:
-    // vira 404 com cara de bug.
+  it("SIGNAL contratado vira link para /signal", async () => {
     h.listModules.mockResolvedValue(["SIGNAL"]);
     h.findMany.mockResolvedValue([
       { module: "SIGNAL", status: "ACTIVE", expiresAt: null, seats: null },
@@ -115,8 +113,8 @@ describe("listarProdutos", () => {
 
     const p = await produtos();
 
-    expect(p.get("SIGNAL")?.estado).toBe("SEM_ROTA");
-    expect(p.get("SIGNAL")?.href).toBeNull();
+    expect(p.get("SIGNAL")?.estado).toBe("DISPONIVEL");
+    expect(p.get("SIGNAL")?.href).toBe("/signal");
   });
 
   it("disponível carrega href e nenhum motivo", async () => {
