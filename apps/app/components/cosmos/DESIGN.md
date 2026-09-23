@@ -227,7 +227,7 @@ components:
 
 **Creative North Star: "O Painel de Sinal Vivo"**
 
-O Cosmos é a mesa onde RTE, LPM, PO e SM operam o SAFe: portfólio, ART, time e analytics lendo o mesmo banco de fatos. O desenho é o de um painel de instrumentos, escuro por padrão (canvas azul-naval `#070b14`, não preto) e denso, com o número como protagonista e a moldura em silêncio. "Sinal vivo" é o nome que o próprio código dá à assinatura do tema escuro (`kit.tsx:867-869`): a grade de pontos e a marca-d'água gravada que acordam quando o cursor entra num KPI, e a varredura de ECG que o código desenha mas que hoje não chega à tela (ver Components, KPI Card). É também o compromisso de conteúdo do produto. Todo número é leitura derivada, e onde falta o fato a tela diz "sem sinal" em vez de desenhar um zero.
+O Cosmos é a mesa onde RTE, LPM, PO e SM operam o SAFe: portfólio, ART, time e analytics lendo o mesmo banco de fatos. O desenho é o de um painel de instrumentos, escuro por padrão (canvas azul-naval `#070b14`, não preto) e denso, com o número como protagonista e a moldura em silêncio. "Sinal vivo" é o nome que o próprio código dá à assinatura do tema escuro (`kit.tsx:883-887`): a grade de pontos e a marca-d'água gravada que acordam quando o cursor entra num KPI, e a varredura de ECG que corre na base do cartão (ver Components, KPI Card). É também o compromisso de conteúdo do produto. Todo número é leitura derivada, e onde falta o fato a tela diz "sem sinal" em vez de desenhar um zero.
 
 A cor fala pouco e com precisão. A lavanda é o único acento de marca e marca três coisas: onde você está (item de navegação ativo), o que fazer (CTA primário) e onde está o foco (anel de 2px). Verde, vermelho, âmbar, azul e roxo são vocabulário de dado e sempre vêm com palavra. Profundidade vem de camada tonal e de um fio de 7,5% de branco. Brilho e gradiente radial ficam restritos a superfícies de dado (KPI, cabeçalho de seção com tom, cartão de épico quente) e somem no tema claro, que é limpo por decisão.
 
@@ -275,7 +275,7 @@ Cada tom existe como sólido (barra, ponto, trilho de progresso, ícone de KPI),
 
 **The Tone-Plus-Word Rule.** Tom de estado nunca aparece sozinho. Vem num `Badge` com texto, ou com `dot`/`pulse` quando é status vivo. Verde, vermelho e âmbar são exclusivos de superfície de dado e não pintam navegação, formulário nem ornamento.
 
-**The Scope Rule.** Os tokens do Cosmos só existem dentro de `.cosmos-root`. Fora dele, `--accent` é a superfície neutra do shadcn (`oklch(0.23 0.009 280)` no escuro, `oklch(0.94 0.003 280)` no claro), e `--r-*`, `--pad`, `--gap`, `--scrim`, `--on-accent` e `--fs-*` não existem. Todo portal monta sob um wrapper `.cosmos-root`, como a paleta ⌘K já faz (`command-palette.tsx:75-89`).
+**The Scope Rule.** Os tokens do Cosmos só existem dentro de `.cosmos-root`. Fora dele, `--accent` é a superfície neutra do shadcn (`oklch(0.23 0.009 280)` no escuro, `oklch(0.94 0.003 280)` no claro), e `--r-*`, `--pad`, `--gap`, `--scrim`, `--on-accent` e `--fs-*` não existem. Todo portal monta sob um wrapper `.cosmos-root`: `CosmosPortal` (`cosmos-portal.tsx`) porta para o `body` dentro de um `.cosmos-root` com `display: contents`, que dá o escopo sem dar caixa, e é o que o modal e os popovers de filtro de Kanban, Times e Dependências usam. A paleta ⌘K monta o próprio wrapper em tela cheia (`command-palette.tsx:75-89`). O tema chega sozinho: `data-theme` mora no `<html>`.
 
 ### Contraste
 Razões que o código documenta:
@@ -286,7 +286,8 @@ Razões que o código documenta:
 
 Cálculo desta revisão, para quem for mexer na escala de tinta:
 - No claro, `ink-subtle` #65748b dá 4,75:1 e `ink-faint` #656d7d dá 5,20:1 sobre #ffffff. Os dois passam, mas o "faint" ficou mais escuro que o "subtle": a escala foi corrigida para AA, não para hierarquia, e os dois degraus hoje se distinguem mais por matiz que por valor.
-- Fora de `.cosmos-root` valem os valores globais de `globals.css`, que no claro reprovam: `--ink-subtle` #8b94a4 dá 3,06:1 e `--ink-faint` #aeb6c2 dá 2,04:1 sobre branco. É o que um modal portado para `document.body` herda hoje (ver Components, Modal).
+- **Dívida medida (2026-09-23):** a calibração foi contra branco, e fora do branco `ink-subtle` reprova: 4,43:1 sobre `surface-2` (o fundo do modal, onde mora o subtítulo), 4,35:1 sobre `canvas`, 4,27:1 sobre `chip-bg` e 4,16:1 sobre `surface-3`. `ink-faint` passa em todas (4,56:1 ou mais). Um `ink-subtle` claro em #5d6b80 passa em todas as superfícies claras (4,74:1 sobre `surface-3`, 5,41:1 sobre branco) e ainda devolve a ordem muted › subtle › faint. O token mora no `cosmos.css`, que o back-office também importa: a troca muda os dois produtos.
+- Fora de `.cosmos-root` valem os valores globais de `globals.css`, que no claro reprovam: `--ink-subtle` #8b94a4 dá 3,06:1 e `--ink-faint` #aeb6c2 dá 2,04:1 sobre branco. Era o que o modal e os popovers portados para `document.body` herdavam até montarem sob `CosmosPortal` (ver The Scope Rule).
 
 ## Typography
 
@@ -310,7 +311,7 @@ Dois tamanhos vivem dentro do kit, fora da escala, e não se reproduzem à mão:
 ### Named Rules
 **The Mono-for-Data Rule.** Todo identificador, número, percentual, data e código vai em `.mono` (139 usos na raiz). Manrope num id é perder a pista de que aquilo é dado.
 
-**The Six Steps Rule.** Tamanho novo sai da escala. Hoje nenhuma tela do Cosmos consome `var(--fs-*)` [grep]: a raiz tem 720 `fontSize` numéricos em 23 valores, 78% deles entre 11 e 13px (13, 12, 12.5, 11 e 11.5 lideram). Código novo usa os tokens. Ao tocar uma tela, migre pelo mapa do commit `1ed1dc01`: 10.5, 11 e 11.5 viram nota; 12, 12.5 e 13 viram base; 14 e 15 viram forte; 18 e 19 viram título; 21 e 22 viram display. Meio pixel não separa rótulo de título.
+**The Six Steps Rule.** Tamanho novo sai da escala. A migração começou em 2026-09-23: o modal e 11 telas (Kanban, Times, Dependências, Budgets, Horizon, Value Stream, Visão Geral, Flow, Measure & Grow, PI Planning e WSJF) consomem `var(--fs-*)` em 171 pontos, e o resto da raiz ainda tem 548 `fontSize` numéricos em 21 valores [grep]. Código novo usa os tokens. Ao tocar uma tela, migre pelo mapa do commit `1ed1dc01`: 8.5, 9, 9.5 e 10 viram micro; 10.5, 11 e 11.5 viram nota; 12, 12.5 e 13 viram base; 14 e 15 viram forte; 18 e 19 viram título; 21 e 22 viram display. Para o que o mapa não cobre, a primeira migração decidiu: 13.5 vira base; 14.5, 15.5, 16.5 e 17 viram forte. Meio pixel não separa rótulo de título. Fica fora só o numeral de dado, na família do `kpi-numeral`: o WSJF de 30px em mono no preview do novo épico (`kanban.tsx`). O kit segue fora da escala, como o `1ed1dc01` decidiu: migrá-lo muda os cinco produtos e o back-office de uma vez.
 
 ## Layout
 
@@ -347,7 +348,7 @@ Híbrido. Camada tonal e fio fazem quase todo o trabalho; a sombra é baixa e, n
 
 **The Glow-Is-Data Rule.** Brilho colorido só aparece em superfície de dado (KPI, barra de tom, trilho de progresso, switch ligado, épico quente) ou no CTA primário. Nunca em navegação, campo ou texto.
 
-**The Clean-Light Rule.** Textura (grade de pontos, marca-d'água gravada, ECG em destaque, lavagem radial de tom) é assinatura do escuro. No claro, `.kpi .wm`, `.dots` e `.sig` ficam em `display: none`, e o `SectionCard` não desenha textura.
+**The Clean-Light Rule.** Textura (grade de pontos, marca-d'água gravada, ECG em destaque, lavagem radial de tom) é assinatura do escuro. No claro, `.kpi .wm`, `.dots` e `.sig` ficam em `display: none`, e o `SectionCard` não desenha textura. O Cosmos não tem o grão fractal de tela inteira da suíte de IA (`.grain::after` em Charter, Meridian, Signal e Scaffold): nem o `cosmos.css`, nem o histórico dele, nem o handoff (`apps/app/.design-ref/cosmos-jsx`) o trazem [grep, `git log -S grain`]. A textura do escuro aqui mora no dado.
 
 ## Shapes
 
@@ -403,16 +404,17 @@ Firmes e discretos: peso 600, sem caixa alta, ícone opcional à esquerda ou à 
 - **Mobile:** gaveta abaixo de 1024px (ver Layout).
 
 ### Modal
-- `ModalCard` (460px, no máximo 92vw, altura até 100vh − 140px): fundo `surface-2`, borda `hairline-strong`, raio `xl` e sombra flutuante. O cabeçalho (20px 22px) tem lavagem radial no tom da entidade e ícone tingido de 40×40; o título é Space Grotesk 16.5px/700; o rodapé fixo leva as ações e a dica mono "esc cancelar · ⌘↵ salvar". `ModalSplit` põe um preview ao vivo de 300px à esquerda, sob o rótulo micro "Preview ao vivo" com ponto de acento.
+- `ModalCard` (460px, no máximo 92vw, altura até 100vh − 140px): fundo `surface-2`, borda `hairline-strong`, raio `xl` e sombra flutuante. O cabeçalho (20px 22px) tem lavagem radial no tom da entidade e ícone tingido de 40×40; o título é Space Grotesk 700 em `forte` (15px), o subtítulo é `base` em `ink-subtle`, e o fechar é o ícone `x` do kit num alvo de 30×30; o rodapé fixo leva as ações e a dica mono "esc cancelar · ⌘↵ salvar". `ModalSplit` põe um preview ao vivo de 300px à esquerda, sob o rótulo micro "Preview ao vivo" com ponto de acento.
 - Escape, trap de Tab e devolução de foco vivem no provider. ⌘↵ ou Ctrl+Enter dispara a ação principal.
-- **Dívida:** o `ModalProvider` porta para `document.body` sem o wrapper `.cosmos-root` (`modal.tsx:141-170`). Pela The Scope Rule, dentro do modal `--r-xl` e `--r-md` não existem (os cantos caem para 0), o botão primário lê o `--accent` neutro do shadcn, e `ink-subtle` e `ink-faint` voltam aos valores globais, que no claro reprovam AA. Verificado no código, não medido em tela. A paleta ⌘K já resolve isso com o wrapper, e o modal deve seguir o mesmo caminho.
+- O provider porta pelo `CosmosPortal`, então o modal lê os tokens do Cosmos: cantos `xl` e `md`, botão primário em lavanda, cortina `--scrim` e a tinta do tema. Medido no claro: dica em `ink-faint` a 4,85:1 e primário a 4,70:1; o subtítulo em `ink-subtle` fica em 4,43:1 sobre `surface-2`, lacuna da paleta (ver Contraste). Até 2026-09-23 ele portava para `document.body` sem o wrapper, e lá dentro `--r-*` não existia (canto zero), o primário lia o `--accent` neutro do shadcn e `ink-subtle`/`ink-faint` caíam nos valores globais, que no claro reprovam AA.
 
 ### KPI Card (assinatura)
 - Altura mínima de 150px (168px no `big`), padding de 18px 20px e raio `xl`. Rótulo de 13px/600 em `ink-muted` à esquerda, ícone num quadrado de 34×34 no tom à direita, valor em `kpi-numeral` e rodapé com o Badge de delta (`trendingUp`/`trendingDown`) e uma dica de 12px em `ink-subtle`.
-- **Escuro:** fundo em gradiente próprio por tom (`TONES` no kit), borda do tom a 20% e quatro camadas decorativas dentro de `.kpi-clip` (overflow hidden, raio herdado): a marca-d'água gravada (letterpress), a mesma marca com glow, a grade de pontos com máscara radial e a sparkline de ECG varrendo em 3s. No hover, o cartão sobe 3px em 400ms, borda e sombra acendem no tom, a gravação apaga para 20%, o glow acende a 90%, os pontos chegam a 45% em 550ms e o ECG a 100%. Tudo é multiplicado por `--fx`.
-- **Dívida verificada:** o ECG não aparece. O `linearGradient` do traço usa `x2="312"` em unidades de bounding box, que são o padrão (`kit.tsx:1016-1021`, igual ao handoff em `cosmos-kit.jsx:163`), e o traço inteiro cai no primeiro 0,3% do gradiente, onde a opacidade é 0. O mesmo SVG isolado num navegador some; com `gradientUnits="userSpaceOnUse"`, aparece. A animação roda sobre um traço invisível.
-- **Claro:** superfície lisa, borda `hairline` e valor em `ink`. O "eco" de entrada que o kit calcula no claro (`echo-ping` e `kpi-echo-edge`, `kit.tsx:866-895` e `994`) não tem nenhuma regra de CSS no repositório [grep]. É fiação sem efeito visível.
-- O valor conta de 0 até o número em 900ms na entrada, uma vez. Sob reduced-motion, aparece direto.
+- **Escuro:** fundo em gradiente próprio por tom (`TONES` no kit), borda do tom a 20% e quatro camadas decorativas dentro de `.kpi-clip` (overflow hidden, raio herdado): a marca-d'água gravada (letterpress), a mesma marca com glow, a grade de pontos com máscara radial e a sparkline de ECG varrendo em 3s. No hover, o cartão sobe 3px em 400ms, a gravação apaga para 20%, o glow acende a 90%, os pontos chegam a 45% em 550ms e o ECG a 100%. Tudo é multiplicado por `--fx`. **Dívida medida:** a borda e a sombra no tom, que o `cosmos.css` declara no `:hover`, não acendem. O kit põe `border` e `boxShadow` no estilo inline, e inline vence folha de estilo: no navegador, borda e sombra ficam iguais em repouso e em hover.
+- **Tema:** fundo, borda e cor do valor dependem do tema e o kit os decide em JS (`useThemeName`), em estilo inline. O servidor não sabe o tema (ele mora no `localStorage`) e renderiza escuro; desde 2026-09-23 o hook devolve escuro durante a hidratação e o tema real logo depois (`kit.tsx:49-64`), porque antes o claro divergia do HTML do servidor e o React mantinha o fundo escuro no tema claro. Sobra um lampejo escuro até hidratar nos KPIs que vêm do servidor. Levar o visual por tema para o CSS resolve o lampejo e o hover de uma vez.
+- **ECG:** o `linearGradient` do traço usa `gradientUnits="userSpaceOnUse"` (`kit.tsx:1020-1027`), então `x2="312"` é a largura do viewBox e o traço some nas pontas e acende no meio. O handoff (`cosmos-kit.jsx:163`) deixava a unidade no padrão, `objectBoundingBox`, em que 312 são larguras do próprio traço: ele caía inteiro no primeiro 0,3% do gradiente, onde a opacidade é zero, e a animação rodou invisível até 2026-09-23.
+- **Claro:** superfície lisa, borda `hairline` e valor em `ink`. O "eco" de entrada que o kit calcula no claro (`echo-ping` e `kpi-echo-edge`, `kit.tsx:883-912` e `992`) não tem nenhuma regra de CSS no repositório [grep]. É fiação sem efeito visível.
+- **Valor:** número conta de 0 até o alvo em 900ms na entrada, uma vez, e sai em pt-BR pelo próprio kit (`toLocaleString("pt-BR")`), com milhar e com as casas que `decimals` pedir (padrão 0). String sai como veio, sem conta e sem parse. Sob reduced-motion, o número aparece direto.
 
 ### Estados de vazio, erro e carregamento
 - **Vazio** (`EmptyState`, 26 telas): círculo de 48px em acento a 12%, ícone de 22px, título em `forte`, descrição de até 320px em `ink-faint` e CTA pequeno. A copy diz por que está vazio e qual é o primeiro passo ("Nenhum ART ainda." e "O ART é o primeiro passo: dele saem os times, o PI Plan e os sprints.").
@@ -428,7 +430,7 @@ A especificação compartilhada Big Bang · Charter · Cosmos (PDF "Big Bang —
 | Tokens | `--ease-out-soft` (.2,.7,.3,1), `--ease-pulse` (.4,0,.6,1), `--dur-*`, `--fx` | As curvas existem como literais (`.kpi`, `.card-in`, `.pulse-dot`); o Tailwind expõe a primeira como `--ease-spring`. `--dur-*`: **especificado, não implementado**. `--fx`: implementado |
 | M1 | Entrada de tela: opacidade 0→1 e y 7→0 em 450ms | **Parcial:** `.fade-in` move 7px em 450ms, sem opacidade e com curva `ease` |
 | M2 | Lift de cartão: y −2, borda forte, 250ms | Implementado (`.lift`) |
-| M3 | KPI: y −3 e quatro camadas, 400/550ms, só no escuro | Implementado, menos o ECG, que não renderiza (ver KPI Card) |
+| M3 | KPI: y −3 e quatro camadas, 400/550ms, só no escuro | **Parcial:** lift, marca-d'água, pontos e ECG (visível desde 2026-09-23) respondem; borda e sombra no tom não, porque o estilo inline do kit vence o `:hover` (ver KPI Card) |
 | M4 | Hover de navegação: `surface-2` e `ink`, 150ms | Implementado (`.navitem`) |
 | M5 | Pressão de botão: y +0.5, 100ms | Implementado (`.btn:active`) |
 | M6 | Shimmer de skeleton, 1,4s | Implementado |
@@ -437,7 +439,7 @@ A especificação compartilhada Big Bang · Charter · Cosmos (PDF "Big Bang —
 | M9 | Flash de badge em mudança real | Implementado |
 | M10 | Anel de pulso, 1,8s | Implementado (`LivePulse`, Badge com `pulse`) |
 | M11 | Progresso 0→valor em cerca de 400ms | **Parcial:** 750ms, `cubic-bezier(.2,.8,.3,1)` |
-| M12 | Count-up do KPI em cerca de 600ms, uma vez, recebendo número | **Parcial:** 900ms, e o kit aceita string (ver Don't) |
+| M12 | Count-up do KPI em cerca de 600ms, uma vez, recebendo número | **Parcial:** 900ms. Só número conta, e sai em pt-BR; string sai sem conta (ver KPI Card) |
 | M13 | Tooltip: fade e y, 120ms | Implementado (`cosmos-tipIn`) |
 | M14 | Ícone de vazio pulsando devagar | **Especificado, não implementado:** `cosmos-emptyPulse` existe sem uso |
 | M15 | Barra de tom de 3px com brilho; pulso radial no cursor, uma vez | Implementado, com um pulso por entrada do cursor |
@@ -445,7 +447,7 @@ A especificação compartilhada Big Bang · Charter · Cosmos (PDF "Big Bang —
 | M17 | Teste de conexão inline (testando → ok/falha) | **Especificado, não implementado:** o Cosmos usa toast de carregamento ("Testando conexão...") |
 | M18 | Anel de foco de 2px em `accent`, offset de 2px | Implementado |
 
-Reduced motion: o `cosmos.css` desliga o ECG, o lift, o fade-in, o card-in e a transição da gaveta; o kit pula o pulso de cabeçalho e o count-up; o `globals.css` encurta todo o resto para 0,01ms. Ressalva: `.cosmos-root` redeclara `--fx: 1` (`cosmos.css:22`), o que sombreia o `--fx: 0` que o `globals.css` aplica no `:root` sob reduced-motion.
+Reduced motion: o `cosmos.css` para a varredura do ECG (o traço fica parado) e desliga o lift, o fade-in, o card-in e a transição da gaveta; o kit pula o pulso de cabeçalho e o count-up; o `globals.css` encurta todo o resto para 0,01ms. Ressalva: `.cosmos-root` redeclara `--fx: 1` (`cosmos.css:22`), o que sombreia o `--fx: 0` que o `globals.css` aplica no `:root` sob reduced-motion.
 
 ## Do's and Don'ts
 
@@ -458,7 +460,7 @@ Reduced motion: o `cosmos.css` desliga o ECG, o lift, o fade-in, o card-in e a t
 - **Do** dar `title` a todo controle só de ícone (o `IconButton` o exige e o transforma em `aria-label`).
 - **Do** usar `var(--gap)` entre blocos, `var(--pad)` dentro de cartão e os tamanhos `--fs-*` em texto novo.
 - **Do** guardar toda animação por gesto com `useReducedMotion`, como fazem o `SectionCard` e o `KpiCard`, e todo `@keyframes` novo com `@media (prefers-reduced-motion: reduce)`.
-- **Do** montar sob `.cosmos-root` qualquer portal (modal, popover, paleta), como `command-palette.tsx` faz.
+- **Do** montar sob `.cosmos-root` qualquer portal (modal, popover, paleta): use `CosmosPortal` (`cosmos-portal.tsx`) em vez de `createPortal(…, document.body)`.
 
 ### Don't:
 - **Don't** usar o canvas de marketing `#010102` em tela operacional; ele pertence ao site (decisão do antigo `DESIGN.app.md`).
@@ -471,6 +473,6 @@ Reduced motion: o `cosmos.css` desliga o ECG, o lift, o fade-in, o card-in e a t
 - **Don't** pôr texto branco sobre fill sólido verde ou âmbar no claro (3,3:1 e 3,2:1).
 - **Don't** criar tamanho de fonte fora dos seis degraus, e muito menos um meio pixel novo.
 - **Don't** mostrar zero, média ou estimativa onde falta o fato. A tela diz "sem sinal" ou "sem dados" e explica por quê.
-- **Don't** passar string formatada como `value` do `KpiCard`. O count-up lê o "." como decimal, e "1.250.000" vira "1". Passe o número: hoje `budgets.tsx:579` e `586`, `horizon-detail-client.tsx:97` e `vs-detail-client.tsx:108` e `116` passam `toLocaleString()`.
-- **Don't** criar cartão clicável como `div` com `onClick`. O cartão de épico faz isso (`kanban.tsx:690-694`) e fica fora do alcance do teclado.
+- **Don't** passar string formatada como `value` do `KpiCard` quando o dado é número. String sai como veio, sem conta e sem o formato pt-BR do kit; passe o número e, se tiver casas, `decimals`. String é para o que não é número: "—", fração "3/5", moeda com prefixo. Até 2026-09-23 o kit fazia parse da string e lia o ponto de milhar como decimal: "1.250.000" virava "1" em Budgets, Horizon e Value Stream, e 3.7 de confiança virava "4".
+- **Don't** criar cartão clicável como `div` com `onClick`. O cartão de épico faz isso (`kanban.tsx:713-717`) e fica fora do alcance do teclado.
 - **Don't** usar accordion para configuração que precisa ficar sempre visível; prefira seção fixa com cabeçalho (decisão do antigo `DESIGN.app.md`).
