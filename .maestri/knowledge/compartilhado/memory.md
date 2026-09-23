@@ -1,5 +1,10 @@
 # compartilhado — memória de execução
 
+## Base de conhecimento dos seis produtos — consolidada
+[2026-09-22-kb-consolidacao.md](../../../.claude/completions/2026-09-22-kb-consolidacao.md) · roteado por "sem palavra-chave"
+
+**Data:** 2026-09-22 · **Branch:** `docs/kb-consolidacao` Origem: pedido do dono — consolidar a base de conhecimento dos seis produtos, usando o `/impeccable` em todos, com o prompt dos agentes otimizado para o Opus 5.5 (guia "Explore context in multi-app workflows"), usando Vercel, Supabase e os demais conectores. Três PDFs do dono entraram como fonte: o SRD & Data Model de governança, o PRD & SRD do painel interno e o Mapa de fronteiras. Entrega transversal: vale para todos os especialistas, não para um só. - **O Mapa de fronteiras é o alvo normativo.** Donos de entidade e costuras valem para docs internos e prompts; onde o código diverge, é gap. O site segue com a jornada comercial (Diagnosticar → … → Operar). - **O Meridian é operado pela consultoria Nebuloz**: vários clientes a partir de um tenant; o cliente responde por link. - **O back-office documenta operação de clientes + sistema interno** da Nebuloz (Growth, Funil, Empresa/Financeiro…). PRD/SRD reescritos (v2.0). - Passes do Impeccable: `teach` e `document`, em todos. Formato completo: PRD/SRD que faltavam. Entrega: commit + PR. **Fundação do Maestri** (`scripts/knowledge`, `.maestri/knowledge/`) — é a base que os especialistas leem. - Back-office virou produto (saiu de `plataforma`); Signal ganhou prefixos …
+
 ## Estágio de Intent — /speckit-intent + gate before_specify
 [2026-08-28-add-intent-stage.md](../../../.claude/completions/2026-08-28-add-intent-stage.md) · roteado por "sem palavra-chave"
 

@@ -2,15 +2,27 @@
 
 Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não editar à mão.
 
+## Contexto do produto
+- CONTRATAR, "O que foi prometido?" — engajamento faseado por template: trilhas, gates com assinatura, caso de negócio e baseline assinados
+- Verdade de produto e sistema visual: `apps/app/components/scaffold/PRODUCT.md` e `apps/app/components/scaffold/DESIGN.md` — UI passa por `/impeccable` com alvo `apps/app/components/scaffold`
+- `docs/produto/scaffold-prd.md`
+- `docs/produto/scaffold-srd.md`
+- `specs/002-scaffold-adoption/spec.md`
+- Fronteiras com os outros produtos (dono de cada entidade compartilhada): `docs/produto/mapa-de-fronteiras.md`
+- Produção: https://app.nebuloz.ai/scaffold
+
 ## Onde o código vive
 - `apps/app/app/(scaffold)`
+- `apps/app/components/scaffold`
 - `apps/app/lib/scaffold`
 - `apps/app/lib/inngest/scaffold-`
+- `apps/backoffice/app/(staff)/scaffold`
+- `apps/backoffice/app/actions/scaffold`
 - `packages/database/prisma/schema/scaffold.prisma`
 - `packages/rbac/src/scaffold-`
 
 ## Grafo
-- 1426 nós, 4809 arestas (recorte do mestre com 2 hops)
+- 1847 nós, 7537 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -25,4 +37,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/scaffold/graph.json
 - [ADR-0014 — Promoção para Scaffold materializa no back-office](../../../docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md)
 
 ## Memória de execução
-- 8 completions em `memory.md`
+- 9 completions em `memory.md`

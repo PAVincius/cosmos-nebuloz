@@ -2,14 +2,25 @@
 
 Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não editar à mão.
 
+## Contexto do produto
+- GOVERNAR (transversal), "É permitido? Sob qual risco?" — risco e política multi-tenant: casos de uso, política versionada, fornecedores e trilha de auditoria
+- Verdade de produto e sistema visual: `apps/app/components/charter/PRODUCT.md` e `apps/app/components/charter/DESIGN.md` — UI passa por `/impeccable` com alvo `apps/app/components/charter`
+- `docs/produto/charter-prd.md`
+- `docs/produto/charter-srd.md`
+- `docs/runbooks/charter-em-producao.md`
+- Fronteiras com os outros produtos (dono de cada entidade compartilhada): `docs/produto/mapa-de-fronteiras.md`
+- Produção: https://app.nebuloz.ai/charter
+
 ## Onde o código vive
 - `apps/app/app/(charter)`
+- `apps/app/components/charter`
 - `apps/app/lib/charter`
 - `packages/database/prisma/schema/charter.prisma`
 - `packages/rbac/src/charter`
+- `packages/provisioning/src/charter`
 
 ## Grafo
-- 1662 nós, 5506 arestas (recorte do mestre com 2 hops)
+- 2094 nós, 7787 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -27,4 +38,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/charter/graph.json
 - [ADR-0002 — Papel de governança ortogonal ao papel SAFe](../../../docs/adr/0002-papel-governanca-ortogonal-safe.md)
 
 ## Memória de execução
-- 2 completions em `memory.md`
+- 14 completions em `memory.md`

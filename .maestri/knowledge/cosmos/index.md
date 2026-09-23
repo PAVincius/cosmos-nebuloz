@@ -2,6 +2,15 @@
 
 Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não editar à mão.
 
+## Contexto do produto
+- EXECUTAR, "O que estamos fazendo?" — portfólio SAFe: hierarquia, WSJF, PI e gates de ciclo de vida sobre um único banco de fatos
+- Verdade de produto e sistema visual: `apps/app/components/cosmos/PRODUCT.md` e `apps/app/components/cosmos/DESIGN.md` — UI passa por `/impeccable` com alvo `apps/app/components/cosmos`
+- `docs/produto/cosmos-prd.md`
+- `docs/produto/cosmos-srd.md`
+- `docs/cliente/index.md`
+- Fronteiras com os outros produtos (dono de cada entidade compartilhada): `docs/produto/mapa-de-fronteiras.md`
+- Produção: https://app.nebuloz.ai/cosmos
+
 ## Onde o código vive
 - `apps/app/app/(cosmos)`
 - `apps/app/components/cosmos`
