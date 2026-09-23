@@ -20,6 +20,7 @@ const mocks = vi.hoisted(() => ({
   accessCreate: vi.fn(),
   assertDentroDoLimite: vi.fn(),
   logError: vi.fn(),
+  logWarn: vi.fn(),
   authHandler: vi.fn(),
 }));
 
@@ -32,7 +33,7 @@ vi.mock("@/lib/rate-limit", () => ({
   RateLimitError: class RateLimitError extends Error {},
 }));
 vi.mock("@repo/observability/log", () => ({
-  log: { error: mocks.logError, warn: vi.fn(), info: vi.fn() },
+  log: { error: mocks.logError, warn: mocks.logWarn, info: vi.fn() },
 }));
 vi.mock("@repo/auth/server", () => ({ auth: { handler: mocks.authHandler } }));
 
@@ -136,6 +137,20 @@ describe("registrarDesfechoDoLogin", () => {
     );
 
     expect(mocks.accessCreate).not.toHaveBeenCalled();
+    // É o caminho normal de todo staff — não é motivo de aviso.
+    expect(mocks.logWarn).not.toHaveBeenCalled();
+  });
+
+  // Sem usuário e sem 2FA pendente, a lib mudou de formato: a trilha pararia
+  // de gravar LOGIN sem ninguém saber.
+  it("login respondido num formato que a trilha não reconhece avisa no log", async () => {
+    await registrarDesfechoDoLogin(
+      pedido("/sign-in/email", { email: "ana@nebuloz.com", password: "p" }),
+      resposta(200, { token: "t", conta: ANA })
+    );
+
+    expect(mocks.accessCreate).not.toHaveBeenCalled();
+    expect(mocks.logWarn).toHaveBeenCalledTimes(1);
   });
 
   it("código do autenticador aceito, com o desafio do login, vira LOGIN", async () => {
@@ -171,7 +186,10 @@ describe("registrarDesfechoDoLogin", () => {
     expect(mocks.accessCreate).not.toHaveBeenCalled();
   });
 
-  it("acima do teto não grava — e não enche o log com a mesma origem em laço", async () => {
+  // O teto limita a tabela, não o login: a tentativa acontece de qualquer
+  // jeito. Por isso o estouro não pode ser mudo — é justamente quando alguém
+  // insiste.
+  it("acima do teto não grava, mas avisa no log qual origem estourou", async () => {
     mocks.assertDentroDoLimite.mockRejectedValue(
       new RateLimitError("Muitas requisições.")
     );
@@ -184,6 +202,10 @@ describe("registrarDesfechoDoLogin", () => {
     ).resolves.toBeUndefined();
     expect(mocks.accessCreate).not.toHaveBeenCalled();
     expect(mocks.logError).not.toHaveBeenCalled();
+    expect(mocks.logWarn).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ chave: "ip:203.0.113.7" })
+    );
   });
 
   it("falha ao gravar não derruba o login — vai para o log", async () => {

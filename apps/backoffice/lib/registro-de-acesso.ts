@@ -21,11 +21,13 @@ import { assertDentroDoLimite, RateLimitError } from "./rate-limit";
 /** Só o e-mail tentado. O parse descarta o resto do corpo, senha inclusive. */
 const Tentativa = z.object({ email: z.string().min(3).max(200) });
 
-/** O que a lib devolve quando o login fecha. Senha certa com 2FA pendente
- *  responde `{ twoFactorRedirect }`, sem `user` — ainda não entrou. */
+/** O que a lib devolve quando o login fecha. */
 const Entrou = z.object({
   user: z.object({ id: z.string(), email: z.string().max(200) }),
 });
+
+/** Senha certa com 2FA pendente: ainda não entrou. É o caminho de todo staff. */
+const PendenteDe2FA = z.object({ twoFactorRedirect: z.literal(true) });
 
 type Linha = {
   userId: string | null;
@@ -64,8 +66,14 @@ async function lerDesfecho(
   }
 
   if ((senha || codigo) && resposta.ok) {
-    const lido = Entrou.safeParse(await resposta.json().catch(() => null));
+    const corpo: unknown = await resposta.json().catch(() => null);
+    const lido = Entrou.safeParse(corpo);
     if (!lido.success) {
+      // Sem usuário e sem 2FA pendente, a lib mudou de formato — e a trilha
+      // pararia de gravar LOGIN sem ninguém saber.
+      if (!PendenteDe2FA.safeParse(corpo).success) {
+        log.warn("[backoffice] login sem usuário; trilha não gravou", { rota });
+      }
       return null;
     }
     return {
@@ -83,6 +91,7 @@ export async function registrarDesfechoDoLogin(
   pedido: Request,
   resposta: Response
 ): Promise<void> {
+  let chave: string | null = null;
   try {
     const linha = await lerDesfecho(pedido, resposta);
     if (!linha) {
@@ -90,13 +99,17 @@ export async function registrarDesfechoDoLogin(
     }
 
     const h = pedido.headers;
+    // Na Vercel, x-forwarded-for é reescrito na borda e não repassa IP de
+    // fora (https://vercel.com/docs/headers/request-headers) — o cliente não
+    // escolhe a própria chave de teto.
     const ip =
       h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       h.get("x-real-ip") ||
       null;
 
     // Com sessão a chave é a pessoa; na recusa, só resta o IP.
-    await assertDentroDoLimite("acesso", linha.userId ?? `ip:${ip}`);
+    chave = linha.userId ?? `ip:${ip}`;
+    await assertDentroDoLimite("acesso", chave);
 
     await database.accessLog.create({
       data: {
@@ -109,9 +122,12 @@ export async function registrarDesfechoDoLogin(
       },
     });
   } catch (e) {
-    // Acima do teto é a mesma origem em laço; logar cada uma devolveria ao
-    // log o volume que o teto tirou da tabela.
+    // O teto limita a tabela, não o login — a tentativa acontece de qualquer
+    // jeito. Por isso o estouro avisa: é justamente quando alguém insiste.
     if (e instanceof RateLimitError) {
+      log.warn("[backoffice] trilha de acesso no teto; linha não gravada", {
+        chave,
+      });
       return;
     }
     log.error("[backoffice] falha ao registrar acesso", { error: String(e) });
