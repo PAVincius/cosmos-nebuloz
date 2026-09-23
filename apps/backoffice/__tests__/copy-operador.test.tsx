@@ -40,7 +40,6 @@ vi.mock("@/app/actions/approvals", () => ({
 }));
 vi.mock("@/app/actions/access", () => ({
   listPlatformHealth: mocks.listPlatformHealth,
-  registrarAcesso: vi.fn(),
 }));
 vi.mock("@/app/actions/scaffold-supervision", () => ({
   enterTenantContext: vi.fn(),

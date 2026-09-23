@@ -1,15 +1,12 @@
-// access.test.ts — registro de acesso ao painel (FR-30) e observabilidade
-// cruzada.
+// access.test.ts — leitura da trilha de acesso ao painel (FR-30) e
+// observabilidade cruzada. A gravação da trilha mora em
+// registro-de-acesso.test.ts.
 //
 // O que merece teste aqui:
 //
-// 1. Tentativa RECUSADA é registrada. Uma trilha que só guarda quem entrou
-//    responde "quem usou o painel" e não responde "quem tentou" — que é a
-//    pergunta de segurança.
-// 2. O registro NÃO derruba o login. Se gravar a trilha falhar, a pessoa
-//    ainda entra: auditoria que bloqueia autenticação transforma um problema
-//    de log num incidente de acesso.
-// 3. A visão cruzada não vaza credencial de integração, igual à aba por
+// 1. Nenhuma export deste módulo grava a trilha sem sessão — export de
+//    `"use server"` é RPC pública.
+// 2. A visão cruzada não vaza credencial de integração, igual à aba por
 //    tenant (NFR-1.7).
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -31,6 +28,8 @@ vi.mock("@/lib/guard", () => ({
   SYSTEM_TENANT_ID: "system",
   StaffAuthError: class extends Error {},
 }));
+// Nenhuma export lê headers() hoje; o mock fica para que uma action que volte
+// a gravar sem sessão falhe abaixo por gravar, e não por falta de requisição.
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
 vi.mock("@repo/database", () => ({
   database: {
@@ -44,7 +43,7 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
-import { listPlatformHealth, registrarAcesso } from "../app/actions/access";
+import { listPlatformHealth } from "../app/actions/access";
 
 function resetar() {
   for (const m of Object.values(mocks)) {
@@ -65,52 +64,31 @@ function resetar() {
   mocks.headers.mockResolvedValue(new Map());
 }
 
-describe("registrarAcesso", () => {
+describe("trilha de acesso sem sessão", () => {
   beforeEach(resetar);
 
-  it("grava o login", async () => {
-    await registrarAcesso({ email: "ana@nebuloz.com", evento: "LOGIN" });
+  // A falha de 2026-09-22: `registrarAcesso` era export deste módulo — RPC
+  // pública — sem sessão nem teto, e qualquer um gravava "LOGIN de fulano"
+  // com um POST. Quem grava a trilha agora é o servidor, no fluxo de login
+  // (lib/registro-de-acesso.ts).
+  it("nenhuma action deste módulo grava AccessLog, nem com payload forjado", async () => {
+    mocks.requirePlatformStaff.mockRejectedValue(new Error("Sessão ausente."));
+    const forjado = {
+      email: "ceo@nebuloz.ai",
+      evento: "LOGIN",
+      userId: "u-ceo",
+    };
 
-    expect(mocks.accessCreate).toHaveBeenCalled();
-    expect(mocks.accessCreate.mock.calls[0][0].data.evento).toBe("LOGIN");
-  });
-
-  it("grava a tentativa recusada com o motivo", async () => {
-    await registrarAcesso({
-      email: "estranho@fora.com",
-      evento: "RECUSADO",
-      motivo: "não é membro do tenant system",
-    });
-
-    const d = mocks.accessCreate.mock.calls[0][0].data;
-    // Sem a recusa, a trilha responde "quem usou" e não "quem tentou" — que é
-    // a pergunta de segurança.
-    expect(d.evento).toBe("RECUSADO");
-    expect(d.motivo).toContain("membro");
-  });
-
-  it("normaliza o e-mail — trilha com maiúscula e minúscula separa a mesma pessoa", async () => {
-    await registrarAcesso({ email: "  Ana@Nebuloz.COM ", evento: "LOGIN" });
-
-    expect(mocks.accessCreate.mock.calls[0][0].data.email).toBe(
-      "ana@nebuloz.com"
+    const actions: Record<string, unknown> = await import(
+      "../app/actions/access"
     );
-  });
+    for (const action of Object.values(actions)) {
+      if (typeof action === "function") {
+        await Promise.resolve(action(forjado)).catch(() => null);
+      }
+    }
 
-  it("NÃO derruba o login quando gravar falha", async () => {
-    mocks.accessCreate.mockRejectedValue(new Error("banco fora"));
-
-    // Auditoria que bloqueia autenticação transforma problema de log em
-    // incidente de acesso.
-    await expect(
-      registrarAcesso({ email: "ana@nebuloz.com", evento: "LOGIN" })
-    ).resolves.toBeUndefined();
-  });
-
-  it("não exige sessão — o login ainda não aconteceu quando isso roda", async () => {
-    await registrarAcesso({ email: "ana@nebuloz.com", evento: "RECUSADO" });
-
-    expect(mocks.requirePlatformStaff).not.toHaveBeenCalled();
+    expect(mocks.accessCreate).not.toHaveBeenCalled();
   });
 });
 
