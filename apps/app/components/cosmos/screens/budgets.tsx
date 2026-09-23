@@ -591,14 +591,14 @@ function BudgetsBody() {
           label="Total alocado"
           tone="accent"
           unit="$"
-          value={totalAmount.toLocaleString()}
+          value={totalAmount}
         />
         <KpiCard
           icon="trendingUp"
           label="Total consumido"
           tone="green"
           unit="$"
-          value={totalSpent.toLocaleString()}
+          value={totalSpent}
         />
       </div>
       {error && (

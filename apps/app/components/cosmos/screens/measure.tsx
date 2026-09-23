@@ -891,9 +891,10 @@ function MeasureBody() {
             }}
           >
             <KpiCard
+              decimals={1}
               delta={
                 avgDelta !== null
-                  ? `${avgDelta > 0 ? "+" : ""}${avgDelta.toFixed(1)}`
+                  ? `${avgDelta > 0 ? "+" : ""}${avgDelta.toFixed(1).replace(".", ",")}`
                   : undefined
               }
               deltaTone="accent"
@@ -902,11 +903,7 @@ function MeasureBody() {
               label="Maturidade média"
               tone="accent"
               unit={avgMaturity !== null ? "/5" : undefined}
-              value={
-                avgMaturity !== null
-                  ? avgMaturity.toFixed(1).replace(".", ",")
-                  : "—"
-              }
+              value={avgMaturity ?? "—"}
             />
             <KpiCard
               hint={
@@ -921,22 +918,22 @@ function MeasureBody() {
               value={withDelta.length > 0 ? improved : "—"}
             />
             <KpiCard
+              decimals={1}
               hint={strongest?.competencyLabel ?? "sem avaliação"}
               icon="star"
               label="Mais forte"
               tone="blue"
-              value={
-                strongest ? strongest.score.toFixed(1).replace(".", ",") : "—"
-              }
+              value={strongest ? strongest.score : "—"}
             />
             <KpiCard
+              decimals={1}
               delta={weakest ? "foco" : undefined}
               deltaTone="amber"
               hint={weakest?.competencyLabel ?? "sem avaliação"}
               icon="alert"
               label="Maior oportunidade"
               tone="amber"
-              value={weakest ? weakest.score.toFixed(1).replace(".", ",") : "—"}
+              value={weakest ? weakest.score : "—"}
             />
           </div>
 

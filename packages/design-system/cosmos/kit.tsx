@@ -841,6 +841,7 @@ export function KpiCard({
   tone = "green",
   label,
   value,
+  decimals = 0,
   unit,
   delta,
   deltaTone,
@@ -850,7 +851,10 @@ export function KpiCard({
   icon: IconName;
   tone?: Tone;
   label: ReactNode;
+  /** Número conta e sai em pt-BR; string sai como veio, sem conta. */
   value: string | number;
+  /** Casas decimais do `value` numérico. */
+  decimals?: number;
   unit?: string;
   delta?: string;
   deltaTone?: Tone;
@@ -896,73 +900,54 @@ export function KpiCard({
 
   const T = TONES[tone] || TONES.green;
 
-  const rawNum = Number.parseFloat(String(value).replace(",", "."));
-  const isNum =
-    !Number.isNaN(rawNum) &&
-    !!String(value)
-      .trim()
-      .match(/^[\d.,]+$/);
+  // Só número conta. String não passa por parse: em pt-BR o ponto é de
+  // milhar, e "1.250.000" lido como decimal virava "1" na tela. Quem tem o
+  // número passa o número, e a formatação pt-BR é daqui.
+  const alvo = typeof value === "number" ? value : null;
+  const formatar = (n: number) =>
+    n.toLocaleString("pt-BR", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
   const [countVal, setCountVal] = useState(0);
   useEffect(() => {
-    if (!isNum) {
+    if (alvo === null) {
       return;
     }
     // A contagem de 0 até o valor é decoração de entrada, não a informação
     // em si — o valor final já é conhecido no primeiro render. Sob reduced
     // motion o número aparece direto, sem perder nenhum estado.
     if (reduceMotion) {
-      setCountVal(rawNum);
+      setCountVal(alvo);
       return;
     }
     let start: number | null = null;
     const dur = 900;
     let raf = 0;
-    function step(ts: number) {
+    const step = (ts: number) => {
       if (!start) {
         start = ts;
       }
       const p = Math.min((ts - start) / dur, 1);
       const ease = 1 - (1 - p) ** 3;
-      setCountVal(ease * rawNum);
+      setCountVal(ease * alvo);
       if (p < 1) {
         raf = requestAnimationFrame(step);
       }
-    }
+    };
     raf = requestAnimationFrame(step);
-    const fallback = setTimeout(() => setCountVal(rawNum), dur + 150);
+    const fallback = setTimeout(() => setCountVal(alvo), dur + 150);
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(fallback);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNum, rawNum, reduceMotion]);
+  }, [alvo, reduceMotion]);
 
-  function formatCount(n: number, orig: string | number) {
-    const origStr = String(orig);
-    const hasDecimalComma = origStr.includes(",");
-    const decimals = hasDecimalComma ? origStr.split(",")[1]?.length || 1 : 0;
-    if (decimals > 0) {
-      return n.toFixed(decimals).replace(".", ",");
-    }
-    return Math.round(n).toString();
-  }
-
-  const len = String(value).length;
-  const bigFs = isNum
-    ? big
-      ? 42
-      : 37
-    : len > 10
-      ? big
-        ? 24
-        : 21
-      : len > 6
-        ? big
-          ? 32
-          : 28
-        : big
-          ? 42
-          : 37;
+  // O tamanho sai do texto final, não do que está contando: o número não
+  // encolhe no meio da contagem, e "1.250.000" mede como o que é.
+  const len = (alvo === null ? String(value) : formatar(alvo)).length;
+  const bigFs =
+    len > 10 ? (big ? 24 : 21) : len > 6 ? (big ? 32 : 28) : big ? 42 : 37;
   const sigId = `cosmos_sig_${tone}_${icon}`;
 
   return (
@@ -1007,6 +992,7 @@ export function KpiCard({
           strokeWidth={1.15}
         />
         <svg
+          aria-hidden="true"
           className="sig"
           height="44"
           preserveAspectRatio="none"
@@ -1014,7 +1000,18 @@ export function KpiCard({
           width="100%"
         >
           <defs>
-            <linearGradient id={sigId} x1="0" x2="312" y1="0" y2="0">
+            {/* userSpaceOnUse: 312 é a largura do viewBox. Na unidade padrão
+                (objectBoundingBox) eram 312 larguras do traço, que caía
+                inteiro no primeiro 0,3% do gradiente, onde a opacidade é
+                zero — a varredura rodava invisível. */}
+            <linearGradient
+              gradientUnits="userSpaceOnUse"
+              id={sigId}
+              x1="0"
+              x2="312"
+              y1="0"
+              y2="0"
+            >
               <stop offset="0" stopColor="var(--tone)" stopOpacity="0" />
               <stop offset=".5" stopColor="var(--tone)" stopOpacity=".9" />
               <stop offset="1" stopColor="var(--tone)" stopOpacity="0" />
@@ -1097,7 +1094,7 @@ export function KpiCard({
             maxWidth: "100%",
           }}
         >
-          {isNum ? formatCount(countVal, value) : value}
+          {alvo === null ? value : formatar(countVal)}
         </span>
         {unit && (
           <span

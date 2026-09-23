@@ -589,16 +589,13 @@ export default function PiPlanningScreen() {
               value={stretchBV}
             />
             <KpiCard
+              decimals={1}
               hint="fist-of-five"
               icon="gauge"
               label="Confiança média"
               tone="accent"
               unit="/5"
-              value={
-                plan.confidenceAvg === null
-                  ? "—"
-                  : plan.confidenceAvg.toFixed(1)
-              }
+              value={plan.confidenceAvg ?? "—"}
             />
             <KpiCard
               hint={`${plan.risks.length} no ROAM`}

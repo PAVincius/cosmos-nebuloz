@@ -105,7 +105,7 @@ export default function ValueStreamDetailClient({
           label="Orçamento alocado"
           tone="accent"
           unit="$"
-          value={initial.budgetAllocated.toLocaleString()}
+          value={initial.budgetAllocated}
         />
         <KpiCard
           hint={`${initial.utilizationPct}% do orçamento`}
@@ -113,7 +113,7 @@ export default function ValueStreamDetailClient({
           label="Gasto até agora"
           tone="blue"
           unit="$"
-          value={initial.spent.toLocaleString()}
+          value={initial.spent}
         />
         <KpiCard
           hint={

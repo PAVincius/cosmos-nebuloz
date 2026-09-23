@@ -1108,10 +1108,11 @@ function WsjfBody({
   const { navigate } = useNav();
   const modal = useModal();
   const [settings, setSettings] = useState(initialSettings);
+  // Backlog vazio não tem média: "—", não um zero que a tela inventou.
   const avg =
     items.length === 0
-      ? "0.0"
-      : (items.reduce((s, i) => s + i.wsjf, 0) / items.length).toFixed(1);
+      ? "—"
+      : items.reduce((s, i) => s + i.wsjf, 0) / items.length;
   const top = items[0];
 
   const headStyle: CSSProperties = {
@@ -1173,6 +1174,7 @@ function WsjfBody({
         }}
       >
         <KpiCard
+          decimals={1}
           hint={`${items.length} itens`}
           icon="trendingUp"
           label="WSJF médio (backlog)"
@@ -1180,11 +1182,12 @@ function WsjfBody({
           value={avg}
         />
         <KpiCard
+          decimals={1}
           hint={top?.id ?? "—"}
           icon="target"
           label="Top épico"
           tone="green"
-          value={top ? top.wsjf.toString() : "—"}
+          value={top ? top.wsjf : "—"}
         />
       </div>
 

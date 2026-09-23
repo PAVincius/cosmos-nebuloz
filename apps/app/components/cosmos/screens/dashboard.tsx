@@ -116,17 +116,7 @@ function wsjfTone(wsjf: number): Tone {
 
 const THEME_ALLOC_TONES = ["accent", "blue", "purple", "green", "amber"];
 
-// `.toFixed(1).replace(".", ",")` acertava a vírgula decimal e perdia o
-// agrupamento de milhar: US$ 1234,5k em vez de US$ 1.234,5k.
-const COST_FORMAT = new Intl.NumberFormat("pt-BR", {
-  maximumFractionDigits: 1,
-  minimumFractionDigits: 1,
-});
 const THOUSANDS_FORMAT = new Intl.NumberFormat("pt-BR");
-
-function formatCostK(usd: number): string {
-  return COST_FORMAT.format(usd / 1000);
-}
 
 function formatThousands(value: number): string {
   return THOUSANDS_FORMAT.format(value);
@@ -325,7 +315,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           icon="layers"
           label="Épicos em progresso"
           tone={epicsFailed ? "neutral" : "accent"}
-          value={epicsFailed ? "—" : String(inProgress.length)}
+          value={epicsFailed ? "—" : inProgress.length}
         />
         <KpiCard
           delta={
@@ -352,6 +342,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           value={latestSprintVelocity !== null ? latestSprintVelocity : "—"}
         />
         <KpiCard
+          decimals={1}
           delta={
             cloudCostDeltaPct !== null
               ? `${cloudCostDeltaPct >= 0 ? "+" : ""}${cloudCostDeltaPct}%`
@@ -373,7 +364,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           label="Custo de nuvem · MTD"
           tone={cloudCostUsd !== null ? "amber" : "neutral"}
           unit={cloudCostUsd !== null ? "k" : undefined}
-          value={cloudCostUsd !== null ? formatCostK(cloudCostUsd) : "—"}
+          value={cloudCostUsd !== null ? cloudCostUsd / 1000 : "—"}
         />
       </div>
 

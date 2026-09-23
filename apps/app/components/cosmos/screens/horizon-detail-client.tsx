@@ -94,7 +94,7 @@ export default function HorizonDetailClient({
           label="Orçamento total no horizonte"
           tone="accent"
           unit="$"
-          value={totalAllocated.toLocaleString()}
+          value={totalAllocated}
         />
         <KpiCard
           hint="neste horizonte de investimento"
