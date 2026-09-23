@@ -1,5 +1,10 @@
 # scaffold — memória de execução
 
+## Scaffold — as mutações ganham botão
+[2026-09-16-scaffold-ui-wiring.md](../../../.claude/completions/2026-09-16-scaffold-ui-wiring.md) · roteado por "scaffold"
+
+**Data**: 2026-09-16 **Branch**: `feat/scaffold-ui-wiring` **Origem**: `/code-review-graph:review-delta` sobre o Scaffold, 13 dias depois do merge do #168 |---| | `closePhase` `overridePhase` `reopenPhase` | o gate engine — "o produto", nas palavras do SRD — não fechava | | `createTrackFromGap` `createTrack` | promoção do Meridian gravava `targetEntityId` nulo; trilha nenhuma nascia | | `signBusinessCase` `contestBusinessCase` | caso ia para AWAITING e ficava; sem assinatura, SG-04 nunca soltava a ASSESS | | `attachArtefact` `readArtefact` `cancelTrack` | passo dizia qual artefato esperava e não havia como anexar | | `exportBusinessCase` | contrato do Signal existia como action, não como arquivo | | `evaluateGate` `publishVersion` `saveOverlay` `getTemplate` | ver "deliberadamente fora" | 301 testes verdes por cima, porque cada action era testada isolada. A suíte provava que o servidor recusava pelo motivo certo; nenhum teste perguntava se existia um botão que chegasse até ele. O `GatePanel` era a imagem disso: renderizava os critérios com `met: false` fixo e "Sem decisão registrada". Nunca poderia dizer outra coisa. --- Seis commits, uma fatia cada, um teste de tela por fatia. **Gate engine** (`gate-panel.tsx`, extraído de `track-detail.tsx`). Em GATE_READY ou BLOCKED, cada critério vira checkbox nativo e "Fechar gate" chama `closePhase` com os fatos e o dono do …
+
 ## Scaffold — US7: Charter, observação e export (T112–T123)
 [2026-09-02-scaffold-us7-charter-observacao-export.md](../../../.claude/completions/2026-09-02-scaffold-us7-charter-observacao-export.md) · roteado por "scaffold"
 

@@ -1,0 +1,1462 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T23:59:00-03:00",
+  "title": "Design System: Signal",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Papel Frio",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Branco de Leitura",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Branco Gelo",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface-3": {
+        "role": "neutral",
+        "displayName": "Cinza Gelo",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Branco de Margem",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Fio Claro",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242529",
+          "#404246",
+          "#5f6165",
+          "#808287",
+          "#a3a5aa",
+          "#c7c9ce",
+          "#eceef3"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Fio Firme",
+        "tonalRamp": [
+          "#090b10",
+          "#22252b",
+          "#3f4248",
+          "#5e6168",
+          "#7f828a",
+          "#a1a5ad",
+          "#c5c9d1",
+          "#eaeff7"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Nanquim",
+        "tonalRamp": [
+          "#080b12",
+          "#22252d",
+          "#3e424a",
+          "#5d616a",
+          "#7e828c",
+          "#a1a5af",
+          "#c4c9d4",
+          "#eaeef9"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "tonalRamp": [
+          "#060b17",
+          "#1e2533",
+          "#3b4251",
+          "#596171",
+          "#7a8394",
+          "#9ca5b7",
+          "#c0c9dc",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle": {
+        "role": "neutral",
+        "displayName": "Grafite Médio",
+        "tonalRamp": [
+          "#050b17",
+          "#1e2533",
+          "#3a4251",
+          "#596271",
+          "#798393",
+          "#9ca6b7",
+          "#bfcadc",
+          "#e6efff"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Ardósia Calibrada",
+        "tonalRamp": [
+          "#050b16",
+          "#1e2532",
+          "#3a4250",
+          "#596270",
+          "#7a8392",
+          "#9ca6b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "chip-bg": {
+        "role": "neutral",
+        "displayName": "Cinza de Chip",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Cerúleo Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#00476b",
+          "#1a6895",
+          "#428ab9",
+          "#66aede",
+          "#91d2ff",
+          "#dff1ff"
+        ]
+      },
+      "accent-soft": { "role": "primary", "displayName": "Véu Cerúleo" },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Cerúleo Noturno",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#024769",
+          "#2d678c",
+          "#5089af",
+          "#72add4",
+          "#96d1fa",
+          "#dff2ff"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "Tinta sobre Accent",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Azul Baby Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#002840",
+          "#00476c",
+          "#09689a",
+          "#398abf",
+          "#5faee4",
+          "#93d1ff",
+          "#e0f1ff"
+        ]
+      },
+      "blue-soft": { "role": "secondary", "displayName": "Véu Azul" },
+      "blue-text": {
+        "role": "secondary",
+        "displayName": "Azul Tinta",
+        "tonalRamp": [
+          "#000c19",
+          "#002742",
+          "#00466f",
+          "#286693",
+          "#4c88b8",
+          "#6eacdd",
+          "#97d0ff",
+          "#e1f1ff"
+        ]
+      },
+      "purple": {
+        "role": "secondary",
+        "displayName": "Lilás Frio",
+        "tonalRamp": [
+          "#0d002c",
+          "#280068",
+          "#432792",
+          "#604bb8",
+          "#7f6ede",
+          "#a193ff",
+          "#c5c1ff",
+          "#edecff"
+        ]
+      },
+      "purple-soft": { "role": "secondary", "displayName": "Véu Lilás" },
+      "purple-text": {
+        "role": "secondary",
+        "displayName": "Lilás Profundo",
+        "tonalRamp": [
+          "#0c002d",
+          "#26006a",
+          "#402695",
+          "#5d4bba",
+          "#7c6ee1",
+          "#9e95ff",
+          "#c4c2ff",
+          "#ececff"
+        ]
+      },
+      "green": {
+        "role": "semantic",
+        "displayName": "Verde Confirmação",
+        "tonalRamp": [
+          "#000f06",
+          "#002e18",
+          "#00502e",
+          "#007446",
+          "#229962",
+          "#50be84",
+          "#77e3a7",
+          "#c4ffda"
+        ]
+      },
+      "green-soft": { "role": "semantic", "displayName": "Véu Verde" },
+      "green-text": {
+        "role": "semantic",
+        "displayName": "Verde Floresta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#1c724a",
+          "#44956a",
+          "#69b98c",
+          "#8ddeaf",
+          "#c3ffdb"
+        ]
+      },
+      "amber": {
+        "role": "semantic",
+        "displayName": "Ocre",
+        "tonalRamp": [
+          "#110a00",
+          "#312200",
+          "#553e00",
+          "#7c5b00",
+          "#a27c21",
+          "#c69f4a",
+          "#ecc36f",
+          "#ffecc8"
+        ]
+      },
+      "amber-soft": { "role": "semantic", "displayName": "Véu Ocre" },
+      "amber-text": {
+        "role": "semantic",
+        "displayName": "Ocre Queimado",
+        "tonalRamp": [
+          "#110a00",
+          "#322200",
+          "#563d00",
+          "#7b5c15",
+          "#9d7d3c",
+          "#c1a05f",
+          "#e7c482",
+          "#ffecca"
+        ]
+      },
+      "red": {
+        "role": "semantic",
+        "displayName": "Framboesa",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b0019",
+          "#7e002f",
+          "#b30a48",
+          "#dc4067",
+          "#ff6d8b",
+          "#ffb0bb",
+          "#ffe8ea"
+        ]
+      },
+      "red-soft": { "role": "semantic", "displayName": "Véu Framboesa" },
+      "red-text": {
+        "role": "semantic",
+        "displayName": "Framboesa Escura",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b001a",
+          "#7e0030",
+          "#aa274c",
+          "#d14e6c",
+          "#fa728e",
+          "#ffb0bc",
+          "#ffe8eb"
+        ]
+      },
+      "neutral": {
+        "role": "neutral",
+        "displayName": "Cinza Neutro",
+        "tonalRamp": [
+          "#060b16",
+          "#1e2532",
+          "#3a4250",
+          "#596270",
+          "#7a8392",
+          "#9ca5b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "neutral-soft": { "role": "neutral", "displayName": "Véu Neutro" },
+      "neutral-text": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto",
+        "tonalRamp": [
+          "#060b16",
+          "#1e2532",
+          "#3b4250",
+          "#596170",
+          "#7a8392",
+          "#9da5b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "scrim": { "role": "overlay", "displayName": "Cortina Noturna" },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Preto Nebuloz",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Noite Tinta",
+        "tonalRamp": [
+          "#080b13",
+          "#21252e",
+          "#3e424c",
+          "#5d616c",
+          "#7e828d",
+          "#a0a5b0",
+          "#c4c9d5",
+          "#e9eefb"
+        ]
+      },
+      "surface-2-dark": {
+        "role": "neutral",
+        "displayName": "Noite Índigo",
+        "tonalRamp": [
+          "#080a15",
+          "#212430",
+          "#3e414f",
+          "#5c616f",
+          "#7d8291",
+          "#a0a4b4",
+          "#c4c9d9",
+          "#e9eeff"
+        ]
+      },
+      "surface-3-dark": {
+        "role": "neutral",
+        "displayName": "Ardósia Noturna",
+        "tonalRamp": [
+          "#070a18",
+          "#1f2434",
+          "#3c4152",
+          "#5a6173",
+          "#7b8295",
+          "#9da5b9",
+          "#c1c9dd",
+          "#e8eeff"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "Margem Noturna",
+        "tonalRamp": [
+          "#090b13",
+          "#22252e",
+          "#3f424c",
+          "#5e616b",
+          "#7f828d",
+          "#a1a5b0",
+          "#c5c9d5",
+          "#eaeefb"
+        ]
+      },
+      "hairline-dark": { "role": "neutral", "displayName": "Fio de Luz" },
+      "hairline-strong-dark": {
+        "role": "neutral",
+        "displayName": "Fio de Luz Firme"
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Branco Estelar",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "ink-muted-dark": {
+        "role": "neutral",
+        "displayName": "Prata",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2531",
+          "#3c424f",
+          "#5a616f",
+          "#7b8291",
+          "#9da5b5",
+          "#c1c9d9",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle-dark": {
+        "role": "neutral",
+        "displayName": "Prata Fosca",
+        "tonalRamp": [
+          "#050b18",
+          "#1d2534",
+          "#3a4253",
+          "#586173",
+          "#798396",
+          "#9ba5b9",
+          "#bfc9de",
+          "#e7efff"
+        ]
+      },
+      "ink-faint-dark": {
+        "role": "neutral",
+        "displayName": "Cinza Lunar",
+        "tonalRamp": [
+          "#050b19",
+          "#1d2535",
+          "#394253",
+          "#586174",
+          "#798396",
+          "#9ba5ba",
+          "#bfc9df",
+          "#e7efff"
+        ]
+      },
+      "chip-bg-dark": { "role": "neutral", "displayName": "Véu de Chip" },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Sky",
+        "tonalRamp": [
+          "#000d16",
+          "#00293c",
+          "#004866",
+          "#006993",
+          "#308cba",
+          "#58b0e0",
+          "#89d4ff",
+          "#ddf2ff"
+        ]
+      },
+      "accent-soft-dark": { "role": "primary", "displayName": "Véu Sky" },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Sky Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#16485d",
+          "#38687e",
+          "#598aa1",
+          "#7badc5",
+          "#9fd2ea",
+          "#dbf3ff"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "primary",
+        "displayName": "Canvas sobre Sky",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "blue-dark": {
+        "role": "secondary",
+        "displayName": "Baby",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#004962",
+          "#206a87",
+          "#468cab",
+          "#6aafcf",
+          "#8ed4f5",
+          "#dbf3ff"
+        ]
+      },
+      "blue-soft-dark": { "role": "secondary", "displayName": "Véu Baby" },
+      "blue-text-dark": {
+        "role": "secondary",
+        "displayName": "Baby Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#032938",
+          "#234757",
+          "#436777",
+          "#63899a",
+          "#85acbe",
+          "#a9d0e3",
+          "#daf3ff"
+        ]
+      },
+      "purple-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Estelar",
+        "tonalRamp": [
+          "#0d002b",
+          "#280e5d",
+          "#433180",
+          "#6152a4",
+          "#8273c9",
+          "#a496ef",
+          "#c7c0ff",
+          "#eeecff"
+        ]
+      },
+      "purple-soft-dark": {
+        "role": "secondary",
+        "displayName": "Véu Lilás Estelar"
+      },
+      "purple-text-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Névoa",
+        "tonalRamp": [
+          "#0d0424",
+          "#261e42",
+          "#433b62",
+          "#625a84",
+          "#837ba7",
+          "#a59ecc",
+          "#c9c2f2",
+          "#eeecff"
+        ]
+      },
+      "green-dark": {
+        "role": "semantic",
+        "displayName": "Verde Sinal",
+        "tonalRamp": [
+          "#001005",
+          "#002e16",
+          "#00502b",
+          "#007541",
+          "#009c58",
+          "#16c472",
+          "#53ea96",
+          "#c5ffd8"
+        ]
+      },
+      "green-soft-dark": {
+        "role": "semantic",
+        "displayName": "Véu Verde Sinal"
+      },
+      "green-text-dark": {
+        "role": "semantic",
+        "displayName": "Verde Menta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#007447",
+          "#229963",
+          "#50be85",
+          "#77e3a8",
+          "#c3ffdb"
+        ]
+      },
+      "amber-dark": {
+        "role": "semantic",
+        "displayName": "Butter Dourado",
+        "tonalRamp": [
+          "#0f0b00",
+          "#2e2400",
+          "#4f4100",
+          "#745f00",
+          "#9b8000",
+          "#bfa33a",
+          "#e4c862",
+          "#ffefb4"
+        ]
+      },
+      "amber-soft-dark": { "role": "semantic", "displayName": "Véu Butter" },
+      "amber-text-dark": {
+        "role": "semantic",
+        "displayName": "Butter",
+        "tonalRamp": [
+          "#0e0c00",
+          "#2a2600",
+          "#484319",
+          "#676339",
+          "#888459",
+          "#aba77b",
+          "#d0cc9e",
+          "#f5f1c2"
+        ]
+      },
+      "red-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Alerta",
+        "tonalRamp": [
+          "#1e0007",
+          "#4b001c",
+          "#7d0034",
+          "#b3004e",
+          "#dd3b6e",
+          "#ff6c92",
+          "#ffb0bf",
+          "#ffe8eb"
+        ]
+      },
+      "red-soft-dark": { "role": "semantic", "displayName": "Véu Rosa" },
+      "red-text-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Claro",
+        "tonalRamp": [
+          "#1d0009",
+          "#4a0021",
+          "#6f213e",
+          "#93425d",
+          "#b9647d",
+          "#df86a0",
+          "#ffafc5",
+          "#ffe8ed"
+        ]
+      },
+      "neutral-dark": {
+        "role": "neutral",
+        "displayName": "Cinza Neutro Noturno",
+        "tonalRamp": [
+          "#040b18",
+          "#1c2534",
+          "#394253",
+          "#576273",
+          "#788395",
+          "#9aa6b9",
+          "#becade",
+          "#e5efff"
+        ]
+      },
+      "neutral-soft-dark": {
+        "role": "neutral",
+        "displayName": "Véu Neutro Noturno"
+      },
+      "neutral-text-dark": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto Noturno",
+        "tonalRamp": [
+          "#050b18",
+          "#1d2534",
+          "#3a4253",
+          "#586173",
+          "#798396",
+          "#9ba5b9",
+          "#bfc9de",
+          "#e7efff"
+        ]
+      },
+      "hairline-hc": {
+        "role": "neutral",
+        "displayName": "Fio Claro (alto contraste)",
+        "tonalRamp": [
+          "#080b13",
+          "#21252e",
+          "#3d424c",
+          "#5c616c",
+          "#7d828e",
+          "#9fa5b1",
+          "#c3c9d5",
+          "#e8effb"
+        ]
+      },
+      "hairline-strong-hc": {
+        "role": "neutral",
+        "displayName": "Fio Firme (alto contraste)",
+        "tonalRamp": [
+          "#060b16",
+          "#1f2532",
+          "#3b4250",
+          "#5a6171",
+          "#7b8293",
+          "#9da5b6",
+          "#c1c9db",
+          "#e7efff"
+        ]
+      },
+      "ink-muted-hc": {
+        "role": "neutral",
+        "displayName": "Grafite (alto contraste)",
+        "tonalRamp": [
+          "#060b17",
+          "#1f2533",
+          "#3b4251",
+          "#5a6172",
+          "#7b8294",
+          "#9da5b7",
+          "#c1c9dc",
+          "#e7eeff"
+        ]
+      },
+      "ink-subtle-hc": {
+        "role": "neutral",
+        "displayName": "Grafite Médio (alto contraste)",
+        "tonalRamp": [
+          "#070b16",
+          "#202531",
+          "#3c4250",
+          "#5b6170",
+          "#7c8292",
+          "#9ea5b5",
+          "#c2c9da",
+          "#e8eeff"
+        ]
+      },
+      "ink-faint-hc": {
+        "role": "neutral",
+        "displayName": "Ardósia Calibrada (alto contraste)",
+        "tonalRamp": [
+          "#070b16",
+          "#1f2532",
+          "#3c4250",
+          "#5a6171",
+          "#7b8293",
+          "#9da5b6",
+          "#c1c9db",
+          "#e7eeff"
+        ]
+      },
+      "chip-bg-hc": {
+        "role": "neutral",
+        "displayName": "Cinza de Chip (alto contraste)",
+        "tonalRamp": [
+          "#090b10",
+          "#22252a",
+          "#3f4248",
+          "#5e6167",
+          "#7f8289",
+          "#a1a5ac",
+          "#c5c9d0",
+          "#ebeff6"
+        ]
+      },
+      "accent-text-hc": {
+        "role": "primary",
+        "displayName": "Cerúleo Noturno (alto contraste)",
+        "tonalRamp": [
+          "#000c19",
+          "#002841",
+          "#154667",
+          "#376689",
+          "#5888ad",
+          "#7aabd2",
+          "#9ed0f8",
+          "#e0f1ff"
+        ]
+      },
+      "blue-text-hc": {
+        "role": "secondary",
+        "displayName": "Azul Tinta (alto contraste)",
+        "tonalRamp": [
+          "#000c19",
+          "#002841",
+          "#06466c",
+          "#2f668e",
+          "#5188b2",
+          "#73acd7",
+          "#97d0fd",
+          "#e0f1ff"
+        ]
+      },
+      "purple-text-hc": {
+        "role": "secondary",
+        "displayName": "Lilás Profundo (alto contraste)",
+        "tonalRamp": [
+          "#0b002d",
+          "#260169",
+          "#3f2c8d",
+          "#5c4fb2",
+          "#7b71d9",
+          "#9d95ff",
+          "#c3c2ff",
+          "#ecedff"
+        ]
+      },
+      "green-text-hc": {
+        "role": "semantic",
+        "displayName": "Verde Floresta (alto contraste)",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#28714d",
+          "#4c936d",
+          "#70b78f",
+          "#94dcb2",
+          "#c3ffdb"
+        ]
+      },
+      "amber-text-hc": {
+        "role": "semantic",
+        "displayName": "Ocre Queimado (alto contraste)",
+        "tonalRamp": [
+          "#110a00",
+          "#322200",
+          "#563d00",
+          "#785c22",
+          "#9b7e45",
+          "#bfa167",
+          "#e4c58a",
+          "#ffecc9"
+        ]
+      },
+      "red-text-hc": {
+        "role": "semantic",
+        "displayName": "Framboesa Escura (alto contraste)",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b001a",
+          "#7d0230",
+          "#a4314e",
+          "#cb556f",
+          "#f27990",
+          "#ffb0bc",
+          "#ffe8eb"
+        ]
+      },
+      "neutral-text-hc": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto (alto contraste)",
+        "tonalRamp": [
+          "#060b17",
+          "#1f2533",
+          "#3b4251",
+          "#5a6172",
+          "#7a8294",
+          "#9da5b7",
+          "#c1c9dc",
+          "#e7efff"
+        ]
+      },
+      "hairline-dark-hc": {
+        "role": "neutral",
+        "displayName": "Fio de Luz (alto contraste)"
+      },
+      "hairline-strong-dark-hc": {
+        "role": "neutral",
+        "displayName": "Fio de Luz Firme (alto contraste)"
+      },
+      "ink-muted-dark-hc": {
+        "role": "neutral",
+        "displayName": "Prata (alto contraste)",
+        "tonalRamp": [
+          "#080b11",
+          "#22252c",
+          "#3e4249",
+          "#5d6169",
+          "#7e828b",
+          "#a1a5ae",
+          "#c4c9d2",
+          "#eaeff8"
+        ]
+      },
+      "ink-subtle-dark-hc": {
+        "role": "neutral",
+        "displayName": "Prata Fosca (alto contraste)",
+        "tonalRamp": [
+          "#070b13",
+          "#20252e",
+          "#3d424c",
+          "#5b626c",
+          "#7c838e",
+          "#9fa5b1",
+          "#c3cad5",
+          "#e8effb"
+        ]
+      },
+      "ink-faint-dark-hc": {
+        "role": "neutral",
+        "displayName": "Cinza Lunar (alto contraste)",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2530",
+          "#3c424e",
+          "#5a616f",
+          "#7b8390",
+          "#9ea5b4",
+          "#c1c9d8",
+          "#e7effe"
+        ]
+      },
+      "chip-bg-dark-hc": {
+        "role": "neutral",
+        "displayName": "Véu de Chip (alto contraste)"
+      },
+      "accent-text-dark-hc": {
+        "role": "primary",
+        "displayName": "Sky Claro (alto contraste)",
+        "tonalRamp": [
+          "#000d16",
+          "#0b2837",
+          "#2a4655",
+          "#486676",
+          "#698798",
+          "#8baabc",
+          "#aecfe1",
+          "#ddf2ff"
+        ]
+      },
+      "blue-text-dark-hc": {
+        "role": "secondary",
+        "displayName": "Baby Claro (alto contraste)",
+        "tonalRamp": [
+          "#000d16",
+          "#132832",
+          "#304551",
+          "#4e6571",
+          "#6f8693",
+          "#91a9b6",
+          "#b4cedb",
+          "#dcf3ff"
+        ]
+      },
+      "purple-text-dark-hc": {
+        "role": "secondary",
+        "displayName": "Lilás Névoa (alto contraste)",
+        "tonalRamp": [
+          "#0d061d",
+          "#26203a",
+          "#433d59",
+          "#625c7a",
+          "#837d9d",
+          "#a6a0c1",
+          "#cac4e6",
+          "#efecff"
+        ]
+      },
+      "green-text-dark-hc": {
+        "role": "semantic",
+        "displayName": "Verde Menta (alto contraste)",
+        "tonalRamp": [
+          "#000f07",
+          "#002e1b",
+          "#004f32",
+          "#19734d",
+          "#42956d",
+          "#67b98f",
+          "#8bdeb3",
+          "#c2ffdd"
+        ]
+      },
+      "amber-text-dark-hc": {
+        "role": "semantic",
+        "displayName": "Butter (alto contraste)",
+        "tonalRamp": [
+          "#0e0b00",
+          "#2b2506",
+          "#484324",
+          "#686242",
+          "#898363",
+          "#aca684",
+          "#d0caa7",
+          "#f6f0cc"
+        ]
+      },
+      "red-text-dark-hc": {
+        "role": "semantic",
+        "displayName": "Rosa Claro (alto contraste)",
+        "tonalRamp": [
+          "#1d000a",
+          "#401323",
+          "#613040",
+          "#834f5f",
+          "#a77080",
+          "#cc92a3",
+          "#f2b6c7",
+          "#ffe7ed"
+        ]
+      },
+      "neutral-text-dark-hc": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto Noturno (alto contraste)",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2530",
+          "#3c424e",
+          "#5a616f",
+          "#7b8390",
+          "#9ea5b4",
+          "#c1c9d8",
+          "#e7effe"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "micro": {
+        "displayName": "Micro (--fs-micro)",
+        "purpose": "Eyebrow e carimbo mono em caixa alta; o piso da escala."
+      },
+      "nota": {
+        "displayName": "Nota (--fs-nota)",
+        "purpose": "Meta, dica, legenda, contador, chip de filtro, rótulo de campo."
+      },
+      "base": {
+        "displayName": "Base (--fs-base)",
+        "purpose": "Corpo, rótulo, tab, input e botão do base.tsx, em Inter com cv05 e cv11."
+      },
+      "forte": {
+        "displayName": "Forte (--fs-forte)",
+        "purpose": "Número-chave e título de estado vazio e de erro."
+      },
+      "titulo": {
+        "displayName": "Título (--fs-titulo)",
+        "purpose": "Título de modal, em Inter Tight."
+      },
+      "display": {
+        "displayName": "Display (--fs-display)",
+        "purpose": "Contagem grande e título de tela \"Em breve\"; o .display do Signal aperta a entreletra para -.035em."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow",
+        "purpose": "Único dispositivo de caixa alta; rótulo de quadrante da matriz e do cartão de portfólio."
+      },
+      "page-title": {
+        "displayName": "Título de página",
+        "purpose": "PageHeader do kit; fora da escala."
+      },
+      "section-title": {
+        "displayName": "Título de seção",
+        "purpose": "Cabeçalho de SectionCard; fora da escala."
+      },
+      "hero-figure": {
+        "displayName": "Número-herói",
+        "purpose": "Retorno agregado e valor em risco no cartão de portfólio da visão geral; fora da escala."
+      },
+      "value-multiple": {
+        "displayName": "Múltiplo",
+        "purpose": "Múltiplo do ValueReading (16px em compact) e do cartão de portfólio da sidebar, com algarismos tabulares."
+      },
+      "verdict": {
+        "displayName": "Veredito",
+        "purpose": "Pílula de veredito, contagem por veredito e chip de saúde das fontes, em mono."
+      },
+      "button": {
+        "displayName": "Botão",
+        "purpose": "Button do kit (13px em sm); fora da escala."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-shadow (claro)",
+        "value": "0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1)",
+        "purpose": "Todo cartão em repouso no tema claro, e a paleta ⌘K."
+      },
+      {
+        "name": "card-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px rgba(0, 0, 0, 0.9)",
+        "purpose": "Todo cartão em repouso no tema escuro."
+      },
+      {
+        "name": "hover-shadow (claro)",
+        "value": "0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px rgba(var(--accent-rgb), 0.3)",
+        "purpose": "Hover de cartão (.lift) no claro."
+      },
+      {
+        "name": "hover-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px rgba(var(--accent-rgb), 0.5)",
+        "purpose": "Hover de cartão no escuro."
+      },
+      {
+        "name": "modal",
+        "value": "0 50px 90px -24px rgba(0, 0, 0, 0.7)",
+        "purpose": "ModalShell."
+      },
+      {
+        "name": "confirmação",
+        "value": "0 24px 48px -16px rgba(0, 0, 0, 0.6)",
+        "purpose": "alertdialog \"Descartar alterações?\"."
+      },
+      {
+        "name": "primary-glow",
+        "value": "0 1px 2px rgba(var(--accent-rgb), 0.4), 0 6px 16px -8px rgba(var(--accent-rgb), 0.6)",
+        "purpose": "Botão primário do kit."
+      },
+      {
+        "name": "tone-bar-glow",
+        "value": "0 0 10px 2px rgba(var(--tone-rgb), 0.7), 0 0 22px 4px rgba(var(--tone-rgb), 0.3)",
+        "purpose": "Barra de 3px do cabeçalho de SectionCard com tom."
+      },
+      {
+        "name": "status-glow",
+        "value": "0 0 8px rgba(var(--tone-rgb), 0.6)",
+        "purpose": "Ponto do StatusDot."
+      },
+      {
+        "name": "lift (escuro)",
+        "value": "0 18px 40px -28px rgba(0, 0, 0, 0.9)",
+        "purpose": ".lift:hover no escuro; no claro, --hover-shadow."
+      },
+      {
+        "name": "tooltip",
+        "value": "0 12px 26px -10px rgba(0, 0, 0, 0.45)",
+        "purpose": ".chart-tip."
+      },
+      {
+        "name": "skip-link",
+        "value": "0 10px 30px -10px rgba(0, 0, 0, 0.6)",
+        "purpose": ".skip ao receber foco."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fade-in",
+        "value": "450ms cubic-bezier(0.16, 1, 0.3, 1); opacity 0 → 1, translateY(7px) → 0",
+        "purpose": "Entrada de tela."
+      },
+      {
+        "name": "nav-hover",
+        "value": "150ms ease",
+        "purpose": "Fundo e cor do .navitem e transições do .btn."
+      },
+      {
+        "name": "btn-tap",
+        "value": "100ms ease; scale(0.985)",
+        "purpose": ".btn:active. Não há :hover em .btn por decisão do sistema."
+      },
+      {
+        "name": "lift",
+        "value": "250ms ease; translateY(-2px)",
+        "purpose": "Hover de cartão navegável (.lift)."
+      },
+      {
+        "name": "bubble-in",
+        "value": "500ms cubic-bezier(0.2, 0.8, 0.3, 1); scale(0.4) → 1",
+        "purpose": "Entrada da bolha da matriz a partir do centro; acima dos 450ms — dívida."
+      },
+      {
+        "name": "bubble-hover",
+        "value": "200ms ease; brightness(1.15)",
+        "purpose": "Hover da bolha."
+      },
+      {
+        "name": "skeleton-shimmer",
+        "value": "1.4s ease-in-out infinite",
+        "purpose": "Carregamento; laço."
+      },
+      {
+        "name": "pulse-ring",
+        "value": "1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Chip de saúde das fontes; sob reduced motion vira anel fixo de 3px."
+      },
+      {
+        "name": "tooltip-in",
+        "value": "120ms ease",
+        "purpose": "Entrada do .chart-tip (de -109% a -115%)."
+      },
+      {
+        "name": "skip",
+        "value": "180ms ease",
+        "purpose": "O skip link desce ao receber foco."
+      },
+      {
+        "name": "reduced-motion (produto)",
+        "value": "animation 0.001ms, transition 0.001ms",
+        "purpose": "data-motion=\"reduced\" no <html>, escolha explícita do usuário."
+      },
+      {
+        "name": "reduced-motion (sistema)",
+        "value": "animation 0.01ms, transition 60ms",
+        "purpose": "prefers-reduced-motion: desliga entrada, skeleton, bolha e varredura."
+      },
+      {
+        "name": "header-pulse",
+        "value": "700ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Pulso radial único do cabeçalho de SectionCard com onActivate (kit)."
+      }
+    ],
+    "breakpoints": [{ "name": "pointer-coarse", "value": "(pointer: coarse)" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação primária do kit em Inter: accent sólido com tinta --on-accent, toque em scale(.985), anel de foco com offset de 3px e alvo de 44px em ponteiro grosso. Sem :hover por decisão do sistema.",
+      "html": "<button class='ds-btn-primary' type='button'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M5 12h14'/><path d='M12 5v14'/></svg>Nova iniciativa</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1;font-size:14px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--accent-fg, #ffffff);background:var(--accent, #1d6a97);border:1px solid var(--accent, #1d6a97);border-radius:var(--r-md, 10px);box-shadow:0 1px 2px rgba(var(--accent-rgb, 29, 106, 151), .4), 0 6px 16px -8px rgba(var(--accent-rgb, 29, 106, 151), .6);cursor:pointer;transition:background .15s ease, border-color .15s ease, transform .1s ease, box-shadow .15s ease}.ds-btn-primary:active{transform:scale(.985)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}@media (pointer: coarse){.ds-btn-primary{min-height:44px}}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "A variante mais usada nas telas do Signal: transparente com tinta ink-muted, tamanho sm.",
+      "html": "<button class='ds-btn-ghost' type='button'>Abrir evidência<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M7 7h10v10'/><path d='M7 17 17 7'/></svg></button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:7px 12px;font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1;font-size:13px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--ink-muted, #565e6e);background:transparent;border:1px solid transparent;border-radius:var(--r-md, 10px);cursor:pointer;transition:background .15s ease, border-color .15s ease, transform .1s ease}.ds-btn-ghost:active{transform:scale(.985)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}@media (pointer: coarse){.ds-btn-ghost{min-height:44px}}"
+    },
+    {
+      "name": "Value Reading",
+      "kind": "custom",
+      "refersTo": "verdict-pill-proven",
+      "description": "Assinatura do Signal: veredito primeiro, depois o múltiplo com a versão da fórmula, a confiança e a adoção. Sem lastro, o múltiplo aparece tachado em ink-faint com \"sem lastro\" — nunca escondido.",
+      "html": "<div class='ds-vr-list'><div class='ds-vr'><span class='ds-vr-verdict ds-vr-green'>Provado</span><span class='ds-vr-multi' title='Múltiplo de retorno sobre investimento.'><span class='ds-vr-num'>4,2×</span><span class='ds-vr-formula'>fórmula v3</span></span><span class='ds-vr-meta'>confiança 82<span class='ds-vr-faint'> · Alta</span></span><span class='ds-vr-meta'>adoção 76%</span><span class='ds-vr-action'><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M7 7h10v10'/><path d='M7 17 17 7'/></svg>Escalar orçamento</span></div><div class='ds-vr'><span class='ds-vr-verdict ds-vr-neutral'>Candidata a parada</span><span class='ds-vr-multi' title='Retorno sem lastro: falta fórmula versionada ou o score de confiança é zero.'><span class='ds-vr-num ds-vr-unbacked'>1,1×</span><span class='ds-vr-nolastro'>sem lastro</span></span><span class='ds-vr-meta'>confiança 0<span class='ds-vr-faint'> · Sem dado</span></span><span class='ds-vr-meta'>adoção 12%</span><span class='ds-vr-action'><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M7 7h10v10'/><path d='M7 17 17 7'/></svg>Levar ao comitê</span></div></div>",
+      "css": ".ds-vr-list{display:flex;flex-direction:column;gap:14px;font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1}.ds-vr{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.ds-vr-verdict{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--r-pill, 999px);font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:11px;font-weight:700}.ds-vr-green{background:var(--green-soft, rgba(18, 145, 90, .1));color:var(--green-text, #0c6941);border:1px solid rgba(var(--green-rgb, 18, 145, 90), .28)}.ds-vr-neutral{background:var(--neutral-soft, rgba(138, 147, 163, .12));color:var(--neutral-text, #596170);border:1px solid rgba(var(--neutral-rgb, 138, 147, 163), .28)}.ds-vr-multi{display:inline-flex;align-items:baseline;gap:6px}.ds-vr-num{font-family:var(--font-inter-tight, Inter Tight), var(--font-inter, Inter), sans-serif;font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink, #0d1017)}.ds-vr-unbacked{color:var(--ink-faint, #636c7b);text-decoration:line-through}.ds-vr-formula{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10.5px;color:var(--ink-faint, #636c7b)}.ds-vr-nolastro{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10.5px;font-weight:700;color:var(--red-text, #a7244a)}.ds-vr-meta{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:11px;color:var(--ink-muted, #565e6e)}.ds-vr-faint{color:var(--ink-faint, #636c7b)}.ds-vr-action{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--ink-subtle, #5f6878)}"
+    },
+    {
+      "name": "Adoption × Value Matrix",
+      "kind": "custom",
+      "refersTo": "matrix-plane",
+      "description": "As quatro decisões do portfólio: réguas por tenant, quadrantes rotulados no tom e bolhas que são botões posicionados em porcentagem, com entrada a partir do centro e texto completo em sr-only.",
+      "html": "<div class='ds-matrix'><div class='ds-mx-plane'><div class='ds-mx-rule-v' style='left:50%'></div><div class='ds-mx-rule-h'></div><div class='ds-mx-q ds-mx-tl'><div class='ds-mx-eyebrow ds-mx-amber'>Promessa parada</div><div class='ds-mx-hint'>rende, mas não escalou</div></div><div class='ds-mx-q ds-mx-tr'><div class='ds-mx-eyebrow ds-mx-green'>Provado</div><div class='ds-mx-hint'>usa e rende</div></div><div class='ds-mx-q ds-mx-bl'><div class='ds-mx-eyebrow ds-mx-neutral'>Candidata a parada</div><div class='ds-mx-hint'>nem uso nem retorno</div></div><div class='ds-mx-q ds-mx-br'><div class='ds-mx-eyebrow ds-mx-red'>Uso sem valor</div><div class='ds-mx-hint'>usa e não rende</div></div><button class='ds-mx-bubble ds-mx-b-green' type='button' style='left:74%;bottom:78%;width:48px;height:48px' title='IN-014 — Provado'>014<span class='ds-sr'>IN-014: Provado. Adoção 76%, retorno 4,2×.</span></button><button class='ds-mx-bubble ds-mx-b-amber' type='button' style='left:28%;bottom:70%;width:34px;height:34px' title='IN-031 — Promessa parada'>031<span class='ds-sr'>IN-031: Promessa parada. Adoção 22%, retorno 2,6×.</span></button><button class='ds-mx-bubble ds-mx-b-red' type='button' style='left:68%;bottom:24%;width:40px;height:40px' title='IN-022 — Uso sem valor'>022<span class='ds-sr'>IN-022: Uso sem valor. Adoção 71%, retorno 0,6×.</span></button><button class='ds-mx-bubble ds-mx-b-neutral' type='button' style='left:22%;bottom:18%;width:20px;height:20px' title='IN-007 — Candidata a parada'><span class='ds-sr'>IN-007: Candidata a parada. Adoção 12%, retorno 0,4×.</span></button></div><div class='ds-mx-axes'><span>← menos adoção</span><span>réguas: adoção 50% · retorno 1,0×</span><span>mais adoção →</span></div></div>",
+      "css": ".ds-matrix{max-width:560px;font-family:var(--font-inter, Inter), system-ui, sans-serif}.ds-mx-plane{position:relative;height:340px;border-radius:var(--r-md, 10px);border:1px solid var(--hairline, #e5e7ec);background:var(--surface-2, #f7f8fa);overflow:hidden}.ds-mx-rule-v{position:absolute;top:0;bottom:0;width:1px;background:var(--hairline-strong, #d4d8e0)}.ds-mx-rule-h{position:absolute;top:50%;left:0;right:0;height:1px;background:var(--hairline-strong, #d4d8e0)}.ds-mx-q{position:absolute;max-width:45%;padding:9px 12px}.ds-mx-tl{top:0;left:0}.ds-mx-tr{top:0;right:0;text-align:right}.ds-mx-bl{bottom:0;left:0}.ds-mx-br{bottom:0;right:0;text-align:right}.ds-mx-eyebrow{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.ds-mx-amber{color:var(--amber-text, #76570e)}.ds-mx-green{color:var(--green-text, #0c6941)}.ds-mx-neutral{color:var(--neutral-text, #596170)}.ds-mx-red{color:var(--red-text, #a7244a)}.ds-mx-hint{font-size:10.5px;color:var(--ink-faint, #636c7b)}.ds-mx-bubble{position:absolute;display:grid;place-items:center;padding:0;border-radius:99px;font-family:var(--font-jetbrains-mono, JetBrains Mono), monospace;font-size:9.5px;font-weight:700;cursor:pointer;transform:translate(-50%, 50%);animation:ds-bubble-in .5s cubic-bezier(.2, .8, .3, 1) backwards;transition:filter .2s ease, box-shadow .2s ease}.ds-mx-bubble:hover{filter:brightness(1.15)}.ds-mx-bubble:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-mx-b-green{background:var(--green-soft, rgba(18, 145, 90, .1));color:var(--green-text, #0c6941);border:1.5px solid rgba(var(--green-rgb, 18, 145, 90), .55)}.ds-mx-b-amber{background:var(--amber-soft, rgba(154, 116, 21, .13));color:var(--amber-text, #76570e);border:1.5px solid rgba(var(--amber-rgb, 154, 116, 21), .55)}.ds-mx-b-red{background:var(--red-soft, rgba(214, 58, 99, .1));color:var(--red-text, #a7244a);border:1.5px solid rgba(var(--red-rgb, 214, 58, 99), .55)}.ds-mx-b-neutral{background:var(--neutral-soft, rgba(138, 147, 163, .12));color:var(--neutral-text, #596170);border:1.5px solid rgba(var(--neutral-rgb, 138, 147, 163), .55)}.ds-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ds-mx-axes{display:flex;justify-content:space-between;gap:8px;margin-top:7px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10.5px;color:var(--ink-faint, #636c7b)}@keyframes ds-bubble-in{from{opacity:0;transform:translate(-50%, 50%) scale(.4)}to{opacity:1;transform:translate(-50%, 50%) scale(1)}}@media (prefers-reduced-motion: reduce){.ds-mx-bubble{animation:none}}"
+    },
+    {
+      "name": "Sparkline",
+      "kind": "custom",
+      "refersTo": "verdict-pill-proven",
+      "description": "Série em SVG puro de 140×36px, escalada contra ela mesma; o zero que importa (o break-even do múltiplo) entra como linha de referência tracejada.",
+      "html": "<div class='ds-spark'><svg class='ds-spark-svg' width='140' height='36' viewBox='0 0 140 36' role='img' aria-label='Múltiplo de ROI nos últimos seis meses: de 0,8× a 1,6×; break-even em 1,0×'><defs><linearGradient id='ds-spark-grad' x1='0' y1='0' x2='0' y2='1'><stop offset='0' class='ds-spark-stop-top'/><stop offset='1' class='ds-spark-stop-bottom'/></linearGradient></defs><line class='ds-spark-ref' x1='0' x2='140' y1='25.5' y2='25.5' stroke-width='1' stroke-dasharray='3 3'/><polygon points='0,33 28,29.25 56,21.75 84,14.25 112,10.5 140,3 140,36 0,36' fill='url(#ds-spark-grad)'/><polyline class='ds-spark-line' points='0,33 28,29.25 56,21.75 84,14.25 112,10.5 140,3' fill='none' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/><circle class='ds-spark-dot' cx='140' cy='3' r='3' stroke-width='1.4'/></svg><span class='ds-spark-val'>1,6×</span></div>",
+      "css": ".ds-spark{display:inline-flex;align-items:center;gap:10px}.ds-spark-svg{overflow:visible}.ds-spark-ref{stroke:var(--hairline-strong, #d4d8e0)}.ds-spark-line{stroke:var(--green, #12915a)}.ds-spark-stop-top{stop-color:var(--green, #12915a);stop-opacity:.22}.ds-spark-stop-bottom{stop-color:var(--green, #12915a);stop-opacity:0}.ds-spark-dot{fill:var(--green, #12915a);stroke:var(--surface, #ffffff)}.ds-spark-val{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-muted, #565e6e)}"
+    },
+    {
+      "name": "Sources Chip",
+      "kind": "chip",
+      "refersTo": "sources-chip",
+      "description": "Chip de saúde das fontes no topbar: pulso verde \"Fontes ok\" ou vermelho com a contagem de fontes com problema, levando a conexões — quem lê sabe se o número congelou sem procurar.",
+      "html": "<div class='ds-sources-row'><a class='ds-sources' href='#'><span class='ds-sources-dot'></span><span class='ds-sources-label'>Fontes ok</span></a><a class='ds-sources ds-sources-bad' href='#'><span class='ds-sources-dot'></span><span class='ds-sources-label'>2 fontes com problema</span></a></div>",
+      "css": ".ds-sources-row{display:flex;flex-wrap:wrap;gap:10px}.ds-sources{--ds-pulse:var(--green-rgb, 18, 145, 90);display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:var(--r-pill, 999px);border:1px solid var(--hairline-strong, #d4d8e0);background:var(--surface, #ffffff);text-decoration:none;cursor:pointer;transition:transform .1s ease}.ds-sources:active{transform:scale(.985)}.ds-sources:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-sources-bad{--ds-pulse:var(--red-rgb, 214, 58, 99);border-color:rgba(var(--red-rgb, 214, 58, 99), .35);background:var(--red-soft, rgba(214, 58, 99, .1))}.ds-sources-dot{width:7px;height:7px;flex-shrink:0;border-radius:99px;background:rgb(var(--ds-pulse));animation:ds-pulse-ring 1.8s cubic-bezier(.4, 0, .6, 1) infinite}.ds-sources-label{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:11px;font-weight:700;white-space:nowrap;color:var(--ink-muted, #565e6e)}.ds-sources-bad .ds-sources-label{color:var(--red-text, #a7244a)}@keyframes ds-pulse-ring{0%{box-shadow:0 0 0 0 rgba(var(--ds-pulse), .55)}70%{box-shadow:0 0 0 6px rgba(var(--ds-pulse), 0)}100%{box-shadow:0 0 0 0 rgba(var(--ds-pulse), 0)}}@media (prefers-reduced-motion: reduce){.ds-sources-dot{animation:none;box-shadow:0 0 0 3px rgba(var(--ds-pulse), .3)}}"
+    },
+    {
+      "name": "Portfolio Card",
+      "kind": "card",
+      "refersTo": "portfolio-card",
+      "description": "Rodapé da sidebar: o múltiplo agregado em display tabular (verde acima da régua, âmbar abaixo) e, separado por fio tracejado, o valor em risco — a outra metade da decisão.",
+      "html": "<div class='ds-portfolio'><div class='ds-pf-eyebrow'>Portfólio FY26</div><div class='ds-pf-multi'>2,4×</div><div class='ds-pf-sub'>R$ 1,9 mi sobre R$ 780 mil</div><div class='ds-pf-risk'><span class='ds-pf-risk-row'><span class='ds-pf-risk-dot'></span>R$ 210 mil em risco</span><div class='ds-pf-risk-note'>Iniciativas sem prova de valor.</div></div></div>",
+      "css": ".ds-portfolio{width:212px;padding:12px 13px;border-radius:var(--r-md, 10px);background:var(--surface-2, #f7f8fa);border:1px solid var(--hairline, #e5e7ec);font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1}.ds-pf-eyebrow{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint, #636c7b)}.ds-pf-multi{margin-top:5px;font-family:var(--font-inter-tight, Inter Tight), var(--font-inter, Inter), sans-serif;font-size:22px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--green-text, #0c6941)}.ds-pf-sub{margin-top:4px;font-size:11px;line-height:1.4;color:var(--ink-faint, #636c7b)}.ds-pf-risk{margin-top:9px;padding-top:9px;border-top:1px dashed var(--hairline, #e5e7ec)}.ds-pf-risk-row{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--red-text, #a7244a)}.ds-pf-risk-dot{width:7px;height:7px;flex-shrink:0;border-radius:99px;background:var(--red, #d63a63)}.ds-pf-risk-note{margin-top:3px;font-size:10.5px;line-height:1.4;color:var(--ink-faint, #636c7b)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Seção da sidebar do Signal: item de 8.5×10px com cantos de 9px, ativo com borda a 18% e barra luminosa de 3px; o contador só ganha tom quando o número é problema.",
+      "html": "<nav class='ds-nav' aria-label='Navegação do Signal'><div class='ds-nav-eyebrow'>Valor</div><a class='ds-nav-item' href='#' aria-current='page'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M2 20h.01'/><path d='M7 20v-4'/><path d='M12 20v-8'/><path d='M17 20V8'/></svg>Visão geral</a><a class='ds-nav-item' href='#'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='10'/><circle cx='12' cy='12' r='6'/><circle cx='12' cy='12' r='2'/></svg>Iniciativas<span class='ds-nav-count'>8</span></a><a class='ds-nav-item' href='#'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/><path d='M12 9v4'/><path d='M12 17h.01'/></svg>Alertas<span class='ds-nav-count ds-nav-count-red'>3</span></a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:3px;width:232px;padding:16px 10px;background:var(--sidebar, #fbfbfd);font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1}.ds-nav-eyebrow{padding:0 10px 5px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint, #636c7b)}.ds-nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:8.5px 10px;border-radius:9px;border:1px solid transparent;font-size:13px;font-weight:600;color:var(--ink-muted, #565e6e);text-decoration:none;transition:background .15s ease, color .15s ease}.ds-nav-item:hover{background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017)}.ds-nav-item[aria-current='page']{background:var(--accent-soft, rgba(29, 106, 151, .1));color:var(--accent-text, #145275);font-weight:700;border-color:rgba(var(--accent-rgb, 29, 106, 151), .18)}.ds-nav-item[aria-current='page']::before{content:'';position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:99px;background:var(--accent, #1d6a97);box-shadow:0 0 10px 1px rgba(var(--accent-rgb, 29, 106, 151), .7)}.ds-nav-item:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-nav-count{margin-left:auto;padding:1px 7px;border-radius:99px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;background:var(--chip-bg, #eff1f5);color:var(--ink-faint, #636c7b)}.ds-nav-count-red{background:var(--red-soft, rgba(214, 58, 99, .1));color:var(--red-text, #a7244a)}@media (pointer: coarse){.ds-nav-item{min-height:44px}}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Field + Input do base.tsx no Signal: mesmo controle da família, em Inter, com o cursor de texto em accent.",
+      "html": "<div class='ds-field'><label class='ds-label' for='ds-hypothesis'>Hipótese<span class='ds-req' aria-hidden='true'>*</span></label><input class='ds-input' id='ds-hypothesis' placeholder='O que muda, em quanto e até quando' /></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;max-width:380px;font-family:var(--font-inter, Inter), system-ui, sans-serif;font-feature-settings:'cv05' 1, 'cv11' 1}.ds-label{display:flex;gap:5px;align-items:center;font-size:var(--fs-nota, 11.5px);font-weight:700;color:var(--ink-muted, #565e6e)}.ds-req{color:var(--red-text, #a7244a)}.ds-input{width:100%;padding:9px 11px;border-radius:var(--r-sm, 8px);border:1px solid var(--hairline, #e5e7ec);background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017);caret-color:var(--accent, #1d6a97);font-family:inherit;font-size:var(--fs-base, 13px);font-weight:600}.ds-input::placeholder{color:var(--ink-faint, #636c7b);font-weight:500}.ds-input:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-input[aria-invalid='true']{border-color:var(--red, #d63a63)}"
+    },
+    {
+      "name": "Skip Link",
+      "kind": "custom",
+      "refersTo": "skip-link",
+      "description": "WCAG 2.4.1: fora da tela em top: -60px (não display: none, que não recebe foco) e revelado em top: 12px no foco — use Tab dentro da moldura.",
+      "html": "<div class='ds-skip-demo'><a class='ds-skip' href='#ds-skip-target'>Pular para o conteúdo</a><span class='ds-skip-note' id='ds-skip-target'>Tab para revelar</span></div>",
+      "css": ".ds-skip-demo{position:relative;height:64px;max-width:360px;overflow:hidden;border-radius:var(--r-md, 10px);border:1px dashed var(--hairline-strong, #d4d8e0);background:var(--canvas, #f5f6f8)}.ds-skip{position:absolute;left:12px;top:-60px;z-index:4;padding:9px 15px;border-radius:var(--r-sm, 8px);font-family:var(--font-inter, Inter), system-ui, sans-serif;font-size:13px;font-weight:700;text-decoration:none;background:var(--accent, #1d6a97);color:var(--on-accent, #ffffff);box-shadow:0 10px 30px -10px rgba(0, 0, 0, .6);transition:top .18s ease}.ds-skip:focus{top:12px}.ds-skip:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:3px}.ds-skip-note{position:absolute;right:12px;bottom:10px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10.5px;color:var(--ink-faint, #636c7b)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Observatório Noturno",
+    "overview": "O sistema é um observatório: canvas quase preto, instrumentos que só acendem quando alguém os observa e cada leitura catalogada com a sua origem. O escuro é a assinatura — é o tema padrão da plataforma (`defaultTheme=\"dark\"`) e o único com textura; o claro é o mesmo observatório de dia, limpo por decisão e com a tinta calibrada contra as seis superfícies reais. A densidade é de instrumento de trabalho: tabela, painel e formulário para quem decide, nunca vitrine.\n\nA cor não decora. Accent, blue e purple nomeiam ação e categoria; vermelho, âmbar e verde só aparecem quando há um fato negativo, de atenção ou positivo a mostrar, e sempre ao lado de uma palavra ou de um número. Todo identificador e toda medida saem em mono. O movimento informa estado e cabe em 450ms; o que passa disso é laço (pulso, varredura, shimmer) ou dívida registrada.\n\n**Base compartilhada.** Charter, Meridian, Scaffold e Signal usam a mesma paleta (sky `#5CB4E4` → baby `#89CFF0` → butter `#F6F2C3` sobre canvas `#07080c`), a mesma escala de raio, as mesmas sombras de cartão e as mesmas primitivas: `@repo/design-system/cosmos/kit` e `components/charter/base.tsx`, que Meridian, Scaffold e Signal reexportam. Cada produto tem raiz escopada própria (`.charter-root`, `.meridian-root`, `.scaffold-root`, `.signal-root`) e um `.css` próprio — o do Meridian é cópia reescopada do Charter, o do Signal é cópia do Meridian, o do Scaffold foi portado do próprio handoff. Não existe arquivo comum (dívida registrada em `signal.css:11-14` e em `specs/003-signal-measure/plan.md`). **Mudar um token exige mudar os quatro `.css`** (`charter.css`, `meridian.css`, `scaffold.css`, `signal.css`). As cópias já divergem; cada divergência está marcada neste arquivo como tal e não deve ser propagada sem decisão.\n\nNo frontmatter, a chave é o nome da custom property sem o `--`. Sem sufixo, é o valor do tema claro; o sufixo `-dark` marca o mesmo token no tema escuro.\n\nNo Signal, os sufixos `-hc` (claro) e `-dark-hc` (escuro) marcam o reforço de alto contraste, ligado por `data-contrast=\"high\"` no `<html>`.\n\n**No Signal**, o observatório é telemetria de valor: veredito antes da métrica, múltiplo sempre com lastro, adoção e resultado no mesmo quadro, e a saúde das fontes no topbar para quem lê saber se o número congelou. O `signal.css` é cópia reescopada do `meridian.css` — \"a quarta cópia\", dívida registrada no próprio arquivo — e a raiz mais completa em acessibilidade: skip link, alvo de 44px em ponteiro grosso, alto contraste e movimento reduzido como escolha do usuário. A tipografia é a do handoff `signal.html` (Inter, Inter Tight e JetBrains Mono), com a mesma paleta: \"nenhum valor foi alterado na porta\".",
+    "keyCharacteristics": [
+      "Escuro por padrão, claro limpo: a textura (grade de 64px e camadas do KPI) só existe no escuro.",
+      "Neutros frios em cinco degraus de superfície; tinta clara calibrada a no mínimo 4.60:1 nas seis superfícies claras.",
+      "Um único accent que troca de polaridade: `#1d6a97` com tinta branca no claro, sky `#5cb4e4` com tinta canvas no escuro.",
+      "Cor de estado sempre com palavra ou número; categoria em accent, blue ou purple.",
+      "JetBrains Mono para identificador, contagem, data, versão e medida.",
+      "Raio suave e constante (6 → 18px, pílula em chip e badge); cartão com sombra mínima que só se aprofunda no hover.",
+      "Inter no corpo, Inter Tight no `.display` e mono tabular: mais seco que o par Manrope e Space Grotesk dos irmãos.",
+      "Veredito antes da métrica: a matriz adoção × valor nomeia a decisão, e o múltiplo nunca aparece sem fórmula, confiança e adoção.",
+      "Alto contraste (`data-contrast=\"high\"`) e movimento reduzido (`data-motion=\"reduced\"`) por escolha do usuário, somados ao `prefers-reduced-motion`."
+    ],
+    "rules": [
+      {
+        "name": "The Colored Fact Rule",
+        "body": "Vermelho, âmbar e verde são reservados a informação de fato: negativo, crítico ou bloqueado; atenção ou dinheiro; positivo. Categoria, papel e decoração usam accent, blue ou purple. O código já recusa o atalho: o tom de papel do Charter é \"Categoria, não estado — por isso nada de verde, âmbar ou vermelho\" (`packages/rbac/src/charter-matrix.ts:71-72`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Color-Plus-Word Rule",
+        "body": "Estado nunca vai só na cor: `StatusDot` leva rótulo, célula de mapa de calor leva o número, prazo vencido escreve \"vencido\", gráfico leva legenda. É requisito de acessibilidade (NFR-2), não escolha estética.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four-Slot Rule",
+        "body": "Todo tom existe como `--x`, `--x-rgb`, `--x-soft` e `--x-text`. Texto colorido usa `-text`; fundo usa `-soft`; borda usa `rgba(var(--x-rgb), .2–.35)`; o tom sólido fica para ponto, barra, traço e preenchimento. No claro, o tom sólido como texto reprova AA — verde 3.49:1, âmbar 3.74:1, vermelho 3.93:1 sobre `surface-3`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Polarity Rule",
+        "body": "Glifo sobre preenchimento sólido usa a tinta do tema (`--accent-fg`): branco no claro, canvas no escuro. Branco sobre o sky cai para 2.2:1, e um check branco sobre o butter some.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-for-Measure Rule",
+        "body": "Todo identificador e toda medida — código de caso, iniciativa, trilha ou fornecedor, contagem, data, versão, percentual — saem em JetBrains Mono (`.mono`); prosa nunca sai em mono. É a regra da especificação visual do Charter, e as primitivas a seguem: `MetaCell mono`, contador de navegação e de tab, cabeçalho de tabela, valor de `BarRow`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Six-Step Rule",
+        "body": "Tamanho de texto só nos seis degraus da suíte: `--fs-micro` 10px, `--fs-nota` 11.5px, `--fs-base` 13px, `--fs-forte` 15px, `--fs-titulo` 19px, `--fs-display` 22px. Tamanho novo é degrau novo, \"e degrau novo é como os quinze apareceram\" (`cosmos.css:60-61`). Ao migrar um literal: degrau mais próximo, empate para baixo.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single-Uppercase Rule",
+        "body": "Caixa alta só no `Eyebrow` e nos carimbos mono (cabeçalho de tabela, chip de versão), sempre com entreletra aberta; \"qualquer outro uso de uppercase na UI é erro de porte\" (`components/charter/base.tsx:38-39`). O wordmark do produto é a exceção de marca.",
+        "section": "typography"
+      },
+      {
+        "name": "The One-Cols Rule",
+        "body": "Cabeçalho e linha de tabela compartilham um único `cols` — sem isso, \"a coluna do header desliza em relação à da linha no primeiro ajuste\" (`components/charter/base.tsx:454-455`). Linha clicável é `<button>`, com \"Abrir X\" em `.sr-only` antes do conteúdo das células.",
+        "section": "layout"
+      },
+      {
+        "name": "The Verdict-First Rule",
+        "body": "Na leitura executiva, o veredito vem antes da métrica: rótulo e ação sugerida primeiro, os números que o sustentam depois, e o múltiplo nunca sem a versão da fórmula, o score de confiança e a adoção. `ValueReading` existe para tornar a regra \"estrutural em vez de disciplinar\" — não há componente que mostre só o múltiplo (`components/signal/verdict-badge.tsx:3-6`).",
+        "section": "layout"
+      },
+      {
+        "name": "The Own-Scale Rule",
+        "body": "Série se desenha contra ela mesma (min..max), nunca a partir de zero: uma adoção entre 71% e 78% \"ficaria uma reta se o eixo começasse em zero\". Onde zero importa — o múltiplo de ROI contra o break-even —, ele entra como linha de referência tracejada (`components/signal/charts.tsx:8-12`).",
+        "section": "layout"
+      },
+      {
+        "name": "The Responding-Glow Rule",
+        "body": "Em repouso, cartão só tem `--card-shadow`. A profundidade extra — subir 2px (`.lift`) ou 3px (`.kpi`), `--hover-shadow`, brilho do tom — é resposta a hover, e as camadas decorativas do KPI só acordam no escuro.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Night-Texture Rule",
+        "body": "Grão fractal (`feTurbulence`, opacidade .035, `mix-blend-mode: overlay`, fixo no viewport) e grade de 64px (`rgba(255, 255, 255, 0.022)`) existem só no escuro; no claro \"viram sujeira, não textura\" (`scaffold.css:131`). A intensidade global de efeito é `--fx` (0 a 1.6, padrão 1).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do escrever estado como cor + palavra ou número: `StatusDot` com rótulo, célula com contagem, \"vencido\" por extenso.",
+      "Do pôr todo identificador, contagem, data, versão e medida em JetBrains Mono (`.mono`); prosa fica no corpo.",
+      "Do usar o tom pelos quatro slots: texto em `--x-text`, fundo em `--x-soft`, borda em `rgba(var(--x-rgb), .2–.35)`, sólido só em ponto, barra, traço e preenchimento.",
+      "Do usar `--accent-fg` para glifo sobre preenchimento sólido — branco no claro, canvas no escuro.",
+      "Do desabilitar a ação sem permissão com `disabled` real e o motivo escrito (\"Requer papel X — ação\"), no rodapé quando for modal.",
+      "Do mostrar skeleton com a forma do conteúdo real, só depois de 300ms, e vazio com um CTA que resolve o vazio.",
+      "Do dar a todo gráfico legenda centralizada e `role=\"img\"` com `aria-label` que diga os números.",
+      "Do manter o anel de foco de 2px em accent e marcar seleção com `box-shadow`, que não apaga o anel.",
+      "Do respeitar `prefers-reduced-motion`: desligar varredura, shimmer, pulso e translate e manter o fade.",
+      "Do pôr o veredito primeiro e o múltiplo sempre com a versão da fórmula, a confiança e a adoção (`ValueReading`).",
+      "Do manter o skip link como primeiro Tab e oferecer alto contraste e movimento reduzido como escolha explícita, somados à preferência do sistema."
+    ],
+    "donts": [
+      "Don't usar vermelho, âmbar ou verde como categoria, papel ou decoração — são fato; categoria usa accent, blue ou purple.",
+      "Don't comunicar estado só com cor, nem deixar a justificativa só no hover: motivo de bloqueio e \"por que isso importa\" ficam na tela (`Callout`, rodapé do modal), não em `title`.",
+      "Don't pôr grão, grade ou camadas do KPI no tema claro.",
+      "Don't animar entrada ou transição acima de 450ms fora de laço; as exceções do kit (contagem do KPI em 900ms, `Progress` em 750ms, pulso do cabeçalho em 700ms) são dívida, não precedente.",
+      "Don't escrever `outline: none` inline num controle, nem usar `outline` como anel de seleção.",
+      "Don't criar tamanho de fonte fora dos seis degraus.",
+      "Don't usar caixa alta fora do `Eyebrow` e dos carimbos mono.",
+      "Don't pôr branco sobre o sky ou sobre qualquer tom sólido no escuro (2.2:1 no sky; some no butter).",
+      "Don't mostrar zero no lugar de ausência: número que não existe aparece como \"—\", \"aguardando\" ou tachado com o motivo — zero num painel se lê como \"medimos e deu zero\".",
+      "Don't gatear com `span` de opacidade ou `pointer-events: none`, que não impede Tab + Enter, nem esconder o controle que o papel não permite.",
+      "Don't trazer o lavanda do Cosmos (`#5e6ad2`) nem importar `cosmos.css` nestas raízes: cada raiz é autossuficiente (ADR-0010).",
+      "Don't portar o seletor de persona do protótipo: o papel vem da sessão, e trocar de papel no topbar seria escalada de privilégio (ADR-0004).",
+      "Don't usar spinner para carregar tela.",
+      "Don't mostrar o múltiplo de ROI sozinho, nem esconder o número sem lastro: tachado, em `ink-faint`, com \"sem lastro\".",
+      "Don't ancorar sparkline em zero: a série se mede contra ela mesma, e o zero que importa entra como linha de referência.",
+      "Don't desenhar bolha de matriz como `<circle>` de SVG: a bolha navega, recebe foco e responde a Enter, então é `<button>`.",
+      "Don't mostrar \"0,0×\" para custo ausente: retorno sem custo \"não é múltiplo, é ausência de dado\"."
+    ]
+  }
+}

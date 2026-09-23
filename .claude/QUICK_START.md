@@ -17,9 +17,12 @@ cd apps/app && pnpm typecheck
 # Lint + format check (Biome)
 pnpm check
 
-# Autofix lint + format
-pnpm fix
+# Autofix lint + format — only the files you touched
+npx biome check --write <arquivos>
 ```
+
+`pnpm fix` na raiz reformata 100+ arquivos que ninguém tocou; o diff vira ruído
+e esconde a mudança real.
 
 ## Testing
 
@@ -36,17 +39,21 @@ cd apps/app && pnpm test:e2e:ui       # interactive UI
 cd apps/app && pnpm test:e2e:headed   # headed browser
 
 # Run single test file
-cd apps/app && pnpm test __tests__/actions/epics/create-epic.test.ts
+cd apps/app && npx vitest run __tests__/actions/epics/create-epic.test.ts
+
+# Maestri knowledge exporter (scripts/knowledge)
+pnpm test:knowledge
+pnpm knowledge:refresh   # regenerates .maestri/knowledge/ from the master graph
 ```
 
 ## Database
 
 ```bash
-# Full migration flow (format + generate + push)
+# Full migration flow (format + generate + migrate deploy)
 pnpm migrate
 
-# Schema location
-packages/database/generated/schema.prisma
+# Schema location — one file per domain
+packages/database/prisma/schema/*.prisma
 
 # Seed scripts (from apps/app)
 pnpm seed:admin
@@ -92,7 +99,7 @@ pnpm clean          # git clean node_modules
 4. Run `pnpm test` → green
 
 **Schema change:**
-1. Edit `packages/database/generated/schema.prisma`
+1. Edit the domain file in `packages/database/prisma/schema/` and add a versioned migration
 2. `pnpm migrate`
 3. Regenerate types: Prisma client auto-updates
 
@@ -105,4 +112,4 @@ pnpm test        # vitest
 
 ---
 
-**Last Updated**: 2026-05-31
+**Last Updated**: 2026-09-22

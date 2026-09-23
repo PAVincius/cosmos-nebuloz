@@ -1,13 +1,45 @@
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { EXCLUSOES, PALAVRAS_CHAVE, PREFIXOS, PRODUTOS } from "../produtos.mts";
+import {
+  CONTEXTO,
+  EXCLUSOES,
+  MAPA_DE_FRONTEIRAS,
+  PALAVRAS_CHAVE,
+  PREFIXOS,
+  PRODUTOS,
+} from "../produtos.mts";
+
+const RAIZ = fileURLToPath(new URL("../../../", import.meta.url));
 
 describe("tabelas de produto", () => {
-  it("todo produto exceto signal tem ao menos um prefixo", () => {
+  it("todo produto tem ao menos um prefixo", () => {
     for (const p of PRODUTOS) {
-      if (p === "signal") {
-        expect(PREFIXOS[p]).toEqual([]);
-      } else {
-        expect(PREFIXOS[p].length).toBeGreaterThan(0);
+      expect(PREFIXOS[p].length, p).toBeGreaterThan(0);
+    }
+  });
+
+  it("back-office é produto próprio; plataforma fica com os pacotes compartilhados", () => {
+    expect(PRODUTOS).toContain("backoffice");
+    expect(PREFIXOS.backoffice).toContain("apps/backoffice");
+    expect(PREFIXOS.plataforma).not.toContain("apps/backoffice");
+  });
+
+  it("todo caminho de contexto que a note cita existe no repositório", () => {
+    expect(existsSync(`${RAIZ}${MAPA_DE_FRONTEIRAS}`), MAPA_DE_FRONTEIRAS).toBe(
+      true
+    );
+    for (const p of PRODUTOS) {
+      const ctx = CONTEXTO[p];
+      expect(ctx.resumo.length, p).toBeGreaterThan(0);
+      const caminhos = [
+        ...ctx.docs,
+        ...(ctx.impeccable
+          ? [`${ctx.impeccable}/PRODUCT.md`, `${ctx.impeccable}/DESIGN.md`]
+          : []),
+      ];
+      for (const c of caminhos) {
+        expect(existsSync(`${RAIZ}${c}`), `${p}: ${c}`).toBe(true);
       }
     }
   });

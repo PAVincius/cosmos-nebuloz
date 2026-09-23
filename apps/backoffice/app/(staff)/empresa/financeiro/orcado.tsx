@@ -245,7 +245,7 @@ function CampoOrcado({
   );
 }
 
-/** A palavra do desvio ruim — cor nunca sozinha (DESIGN.backoffice.md). */
+/** A palavra do desvio ruim — cor nunca sozinha (apps/backoffice/DESIGN.md). */
 function vereditoDoDesvio(grupo: Grupo): string {
   return grupo === 1 ? "abaixo do previsto" : "acima do orçado";
 }

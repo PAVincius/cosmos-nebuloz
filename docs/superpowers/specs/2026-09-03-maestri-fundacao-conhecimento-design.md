@@ -199,3 +199,39 @@ contra o repositório e conferir o `index.md` de cada produto.
   decidir depois de os especialistas usarem por uma semana.
 - Se o Signal, sem código, deve ter especialista ou só uma note dizendo
   "spec em `specs/003-signal-measure`" — sub-projeto 2.
+
+## 8. Emenda de 2026-09-22 — consolidação da base
+
+- **Back-office é produto.** Saiu de `plataforma` e ganhou especialista: tem
+  usuário, UI e `DESIGN.md` próprios, e as completions das áreas dele (funil,
+  financeiro, catálogo de IP…) caíam em `compartilhado` porque nenhuma diz
+  "backoffice" no nome — as palavras-chave agora são as áreas. `plataforma`
+  fica com `packages/provisioning`, `packages/auth` e `packages/database`, a
+  infra que os seis usam. A supervisão do Scaffold mora em `apps/backoffice`
+  mas é do Scaffold, por exclusão explícita.
+- **Signal tem código** desde 2026-09-04 (#182) e, portanto, especialista —
+  o que responde o último item do §7. Ganhou prefixos e palavra-chave; o
+  recorte segue vazio até o grafo mestre, de 2026-09-03, ser atualizado.
+- **Prefixos corrigidos.** Charter e Scaffold não recortavam os próprios
+  `components/`; Meridian e Charter ganharam o RBAC e o provisionamento deles.
+- **A note aponta a verdade de produto.** A tabela `CONTEXTO` em
+  `produtos.mts` dá a cada produto um resumo de uma linha, a raiz Impeccable
+  (`PRODUCT.md` + `DESIGN.md`), PRD, SRD ou spec e o endereço de produção;
+  toda note cita também o mapa de fronteiras. `produtos.test.ts` falha se
+  algum caminho não existir. O mapa do Maestro ganhou o resumo por produto e
+  a regra de roteamento: tarefa que toca mais de um produto vai a todos eles.
+- **A note é prompt para o Opus 5.5.** Três partes vêm do
+  [guia de prompting do modelo](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5):
+  "Antes de agir" manda explorar as fontes — inclusive as que a tarefa não
+  cita — antes de mudar qualquer coisa, porque o modelo começa a agir rápido
+  em tarefa pouco especificada; o texto lido é declarado dado, não instrução,
+  porque a exploração o faz agir sobre o que lê; e "Como trabalhar" nomeia a
+  parada precoce a evitar (encerrar o turno anunciando o próximo passo), as
+  paradas que valem, e manda manter as partes da tarefa em
+  `## Estado de tarefa`.
+- **§3.5, passo 1, revogado.** `graphify update .` (v0.9.20, só AST)
+  reconstruiu o mestre de 35 243 para 23 697 nós, descartou os nós semânticos
+  de documentação e sobrescreveu `graph.json`; a guarda de "menos nós" citada
+  aqui não disparou. A rotina só recorta o mestre versionado. Atualizar o
+  mestre é passo manual com `/graphify --update`, conferindo a contagem de
+  nós antes de commitar — ver `docs/runbooks/maestri-conhecimento.md`.

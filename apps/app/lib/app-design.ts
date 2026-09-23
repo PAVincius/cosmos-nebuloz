@@ -1,5 +1,5 @@
 /**
- * Classes Tailwind alinhadas a DESIGN.app.md — telas piloto da app autenticada.
+ * Classes Tailwind alinhadas a apps/app/DESIGN.md — telas piloto da app autenticada.
  */
 export const appDesign = {
   shell: "flex w-full min-w-0 flex-col",
