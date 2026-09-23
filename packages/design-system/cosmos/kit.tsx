@@ -14,6 +14,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 /**
@@ -43,11 +44,23 @@ export type Tone =
 
 // ── Theme + Nav context (screens read these) ──
 // Theme is owned by next-themes (data-theme on <html>); default to the app's dark
-// until mounted to avoid a hydration flip. Prefer CSS-driven dark styling where
+// until hydrated to avoid a hydration flip. Prefer CSS-driven dark styling where
 // possible so components need no JS theme read at all.
+const semAssinatura = () => () => {};
+
 export const useThemeName = (): "light" | "dark" => {
   const { resolvedTheme } = useTheme();
-  return resolvedTheme === "light" ? "light" : "dark";
+  // O servidor não sabe o tema (ele mora no localStorage) e renderiza escuro.
+  // Lido já na hidratação, o claro divergia do HTML do servidor, e o React
+  // mantinha os atributos do servidor: o KPI ficava com fundo escuro no tema
+  // claro até a próxima troca. `false` só durante a hidratação; quem monta
+  // depois lê o tema no primeiro render.
+  const hidratado = useSyncExternalStore(
+    semAssinatura,
+    () => true,
+    () => false
+  );
+  return hidratado && resolvedTheme === "light" ? "light" : "dark";
 };
 
 // ── Shared fetch-state hook (loading | error | data) for real-data screens ──

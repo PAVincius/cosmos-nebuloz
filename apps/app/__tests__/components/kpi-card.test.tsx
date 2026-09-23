@@ -3,12 +3,21 @@
 // mostrava "1", e o ECG do escuro rodava num gradiente que não cobria o traço.
 import { KpiCard } from "@repo/design-system/cosmos/kit";
 import { render, screen } from "@testing-library/react";
+import { act } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 // Sob reduced motion o valor final aparece direto, sem a contagem de 900ms.
 vi.mock("framer-motion", async (importOriginal) => ({
   ...(await importOriginal<typeof import("framer-motion")>()),
   useReducedMotion: () => true,
+}));
+
+// O tema que o next-themes devolve; o servidor real não tem nenhum.
+const tema = vi.hoisted(() => ({ atual: "dark" }));
+vi.mock("next-themes", () => ({
+  useTheme: () => ({ resolvedTheme: tema.atual }),
 }));
 
 describe("KpiCard", () => {
@@ -31,5 +40,30 @@ describe("KpiCard", () => {
         .getElementById("cosmos_sig_blue_clock")
         ?.getAttribute("gradientUnits")
     ).toBe("userSpaceOnUse");
+  });
+
+  it("hidrata no claro sem ficar com o fundo escuro do servidor", async () => {
+    const erros = vi.spyOn(console, "error").mockImplementation(() => {});
+    const ui = <KpiCard icon="dollar" label="Total alocado" value={10} />;
+    const raiz = document.createElement("div");
+    raiz.innerHTML = renderToString(ui);
+    tema.atual = "light";
+    try {
+      await act(async () => {
+        hydrateRoot(raiz, ui);
+      });
+      // React não conserta atributo divergente na hidratação: se o cliente
+      // lesse o claro já ali, o estilo escuro do servidor ficava no cartão. A
+      // cor do valor é a prova porque é propriedade simples; o jsdom não
+      // aplica var() nos atalhos background e border, que o navegador aplica.
+      const valor = raiz.querySelector<HTMLElement>(".kpi .mono");
+      expect(valor?.style.color).toBe("var(--ink)");
+      expect(
+        erros.mock.calls.some((c) => String(c[0]).includes("didn't match"))
+      ).toBe(false);
+    } finally {
+      tema.atual = "dark";
+      erros.mockRestore();
+    }
   });
 });
