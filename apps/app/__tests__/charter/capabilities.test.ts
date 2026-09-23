@@ -114,6 +114,39 @@ describe("catálogo de capacidades", () => {
     expect(cap?.label).not.toMatch(/probabilidade/i);
   });
 
+  // "O modo de falha que importa é o mapa mentir": contar o caso que nasceu
+  // com os sete eixos no default 1 como "risco pontuado" é o mapa afirmando
+  // uma avaliação que ninguém fez.
+  it("RISK_SCORING só conta caso pontuado e nomeia os que faltam", async () => {
+    const eixos = (n: number) => ({
+      riskPrivacy: n,
+      riskRegulatory: n,
+      riskSecurity: n,
+      riskBias: n,
+      riskIp: n,
+      riskOperational: n,
+      riskReputational: n,
+      probPrivacy: 1,
+    });
+    dbStub.charterUseCase.findMany.mockResolvedValueOnce([
+      { code: "UC-001", title: "Triagem", ...eixos(3), riskScoredAt: null },
+      { code: "UC-002", title: "Sumarizador", ...eixos(1), riskScoredAt: null },
+      {
+        code: "UC-003",
+        title: "Classificador",
+        ...eixos(1),
+        riskScoredAt: new Date("2026-09-20"),
+      },
+    ]);
+
+    const ev = await getCapability("RISK_SCORING")?.evidencia("t-1");
+
+    expect(ev?.total).toBe(2);
+    expect(ev?.de).toBe(3);
+    expect(ev?.lacunas).toEqual(["UC-002 · Sumarizador"]);
+    expect(ev?.amostra.join(" ")).not.toContain("UC-002");
+  });
+
   it("POLICY_LINK reporta cobertura com denominador e nomeia o que falta", async () => {
     // O stub precisa ter caso vinculado E caso solto. Com listas vazias, `de` e
     // `lacunas` nunca são exercitados e o teste passaria sem provar nada — foi

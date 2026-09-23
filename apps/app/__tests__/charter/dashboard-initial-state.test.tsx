@@ -210,4 +210,31 @@ describe("DashboardScreen no estado inicial", () => {
     fireEvent.click(screen.getByRole("button", { name: /Submeter caso/ }));
     expect(pushMock).toHaveBeenCalledWith("/charter/cases");
   });
+
+  it("caso na fila sem pontuação: a coluna Risco escreve 'sem pontuação', sem número nem separador solto", async () => {
+    getDashboardMock.mockResolvedValue({
+      ok: true,
+      data: {
+        ...nuncaPublicada(),
+        queue: [
+          {
+            code: "UC-004",
+            title: "Classificador de chamados",
+            status: "SUBMITTED",
+            dataClass: "INTERNAL",
+            score: null,
+            riskLabel: "sem pontuação",
+            riskTone: "accent",
+            reviewerName: null,
+            sla: 3,
+            slaTotal: 3,
+          },
+        ],
+      },
+    });
+    render(<DashboardScreen />);
+
+    expect(await screen.findByText("sem pontuação")).toBeTruthy();
+    expect(screen.queryByText(/·\s*sem pontuação/)).toBeNull();
+  });
 });

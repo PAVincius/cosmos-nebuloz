@@ -93,7 +93,8 @@ export function DecisionModal({
   caseTitle: string;
   approvalPath: string | null;
   dataClass: DataClass;
-  score: number;
+  /** Null = ninguém pontuou; a célula mostra só `riskLabel`. */
+  score: number | null;
   riskLabel: string;
   riskTone: string;
   vendorName: string | null;
@@ -144,7 +145,7 @@ export function DecisionModal({
           label="Risco composto"
           mono
           tone={riskTone as Tone}
-          value={`${score} · ${riskLabel}`}
+          value={score === null ? riskLabel : `${score} · ${riskLabel}`}
         />
       ),
     },

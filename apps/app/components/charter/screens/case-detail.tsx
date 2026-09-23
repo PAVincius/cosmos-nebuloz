@@ -16,6 +16,7 @@ import { listAuditForEntity } from "@/app/(charter)/actions/audit";
 import {
   decideCase,
   getCase,
+  rescoreCase,
   submitDraftCase,
 } from "@/app/(charter)/actions/cases";
 import {
@@ -29,8 +30,6 @@ import {
   DATA_CLASS_TONE,
   dataClassWeight,
   HITL_LABEL,
-  RISK_CATEGORY_DESC,
-  RISK_CATEGORY_LABEL,
   recommendPath,
   slaTone,
   type Tone,
@@ -38,7 +37,6 @@ import {
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { BackLink } from "../back-link";
 import {
-  BarRow,
   MetaCell,
   ScreenError,
   SkeletonCard,
@@ -49,9 +47,11 @@ import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DecisionModal } from "../modals/decision";
 import { MitigationModal } from "../modals/mitigation";
-import { AuditList, MitigationTable, RiskMiniMatrix } from "../parts";
+import { RescoreModal } from "../modals/rescore";
+import { AuditList, MitigationTable } from "../parts";
 import { FS } from "../type-scale";
 import { useCharterData } from "../use-charter-data";
+import { CaseRiskPanel } from "./case-risk";
 import { GatedFooterAction } from "./gated-footer-action";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
@@ -77,18 +77,6 @@ const CRIT_LABEL: Record<string, string> = {
 
 const DECIDABLE = ["SUBMITTED", "REVIEW", "CHANGES"];
 const HAS_TRAIL_SHORTCUT = ["APPROVED", "RESTRICTED", "BLOCKED"];
-
-/** Tom por severidade declarada da própria categoria — não o tom fixo da
- *  categoria (esse é para comparar entre casos, este é para ler este caso). */
-function riskValueTone(value: number): Tone {
-  if (value >= 4) {
-    return "red";
-  }
-  if (value >= 3) {
-    return "amber";
-  }
-  return "green";
-}
 
 function CaseDetailInner({ param }: { param?: string }) {
   const router = useRouter();
@@ -137,6 +125,14 @@ function CaseDetailInner({ param }: { param?: string }) {
     data.vendorMaxClass !== null &&
     dataClassWeight(data.vendorMaxClass) >= dataClassWeight(data.dataClass);
   const lastDecider = data.decisions[0]?.deciderRole ?? "—";
+  // Quem registra, lido da sessão: a trilha grava nome e papel, então os
+  // modais de decisão e de reavaliação mostram os dois antes de gravar.
+  const actorName =
+    settings.data?.members.find((m) => m.userId === settings.data?.activeUserId)
+      ?.name ?? "Você";
+  const actorRole =
+    settings.data?.roles.find((r) => r.id === settings.data?.activeRole)
+      ?.label ?? "—";
   const mitigationRows: MitigationTableRow[] = data.mitigations.map((m) => ({
     id: m.id,
     code: m.code,
@@ -157,15 +153,8 @@ function CaseDetailInner({ param }: { param?: string }) {
         caseCode={data.code}
         caseTitle={data.title}
         dataClass={data.dataClass}
-        deciderName={
-          settings.data?.members.find(
-            (m) => m.role === settings.data?.activeRole
-          )?.name ?? "Você"
-        }
-        deciderRole={
-          settings.data?.roles.find((r) => r.id === settings.data?.activeRole)
-            ?.label ?? "—"
-        }
+        deciderName={actorName}
+        deciderRole={actorRole}
         onClose={close}
         onSubmit={(input) =>
           startTransition(async () => {
@@ -207,6 +196,35 @@ function CaseDetailInner({ param }: { param?: string }) {
         setGateError(res.error);
       }
     });
+
+  const openRescore = () =>
+    open(
+      <RescoreModal
+        actorName={actorName}
+        actorRole={actorRole}
+        caseCode={data.code}
+        caseTitle={data.title}
+        current={data.risks}
+        onClose={close}
+        onSubmit={(input) =>
+          startTransition(async () => {
+            const res = await runWithToast(
+              () => rescoreCase({ code: data.code, ...input }),
+              {
+                loading: "Registrando pontuação…",
+                success: (d) => `Risco registrado: ${d.score} · ${d.label}`,
+              }
+            );
+            if (res.ok) {
+              close();
+              reload();
+              audit.reload();
+            }
+          })
+        }
+        pending={pending}
+      />
+    );
 
   const openMitigation = () =>
     open(
@@ -258,7 +276,10 @@ function CaseDetailInner({ param }: { param?: string }) {
               {DATA_CLASS_LABEL[data.dataClass]}
             </Badge>
             <Badge tone={data.riskTone as Tone}>
-              Risco {data.score} · {data.riskLabel}
+              Risco{" "}
+              {data.score === null
+                ? data.riskLabel
+                : `${data.score} · ${data.riskLabel}`}
             </Badge>
             {data.hitl && (
               <Badge tone="accent">
@@ -323,11 +344,15 @@ function CaseDetailInner({ param }: { param?: string }) {
         }}
       >
         <KpiCard
-          hint={`sev ${data.severity} × prob ${data.likelihood}`}
+          hint={
+            data.score === null
+              ? data.riskLabel
+              : `sev ${data.severity} × prob ${data.likelihood}`
+          }
           icon="target"
           label="Risco composto"
           tone={data.riskTone as Tone}
-          value={data.score}
+          value={data.score ?? "—"}
         />
         <KpiCard
           hint={DATA_CLASS_RULE[data.dataClass]}
@@ -605,106 +630,7 @@ function CaseDetailInner({ param }: { param?: string }) {
         </div>
       )}
 
-      {tab === "risk" && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1.3fr 1fr",
-            gap: "var(--gap)",
-            alignItems: "start",
-          }}
-        >
-          <SectionCard
-            icon="target"
-            subtitle="Severidade declarada de 1 a 5 · o composto usa a maior severidade"
-            title="Perfil de risco por categoria"
-            tone="red"
-          >
-            <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              {(
-                Object.entries(RISK_CATEGORY_LABEL) as [
-                  keyof typeof RISK_CATEGORY_LABEL,
-                  string,
-                ][]
-              ).map(([id, label]) => {
-                const key = id.toLowerCase() as keyof typeof data.risks;
-                const val = data.risks[key] ?? 1;
-                return (
-                  <BarRow
-                    hint={RISK_CATEGORY_DESC[id]}
-                    key={id}
-                    label={label}
-                    max={5}
-                    suffix="/5"
-                    tone={riskValueTone(val)}
-                    value={val}
-                  />
-                );
-              })}
-            </div>
-          </SectionCard>
-          <SectionCard
-            icon="gauge"
-            subtitle="Severidade × probabilidade"
-            title="Posição na matriz"
-            tone={data.riskTone as Tone}
-          >
-            <RiskMiniMatrix lik={data.likelihood} sev={data.severity} />
-            <div
-              style={{
-                marginTop: 16,
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
-                gap: 10,
-              }}
-            >
-              <div
-                style={{
-                  padding: "10px 12px",
-                  borderRadius: 9,
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--hairline)",
-                }}
-              >
-                <MetaCell
-                  label="Severidade"
-                  mono
-                  value={`${data.severity}/5`}
-                />
-              </div>
-              <div
-                style={{
-                  padding: "10px 12px",
-                  borderRadius: 9,
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--hairline)",
-                }}
-              >
-                <MetaCell
-                  label="Probabilidade"
-                  mono
-                  value={`${data.likelihood}/5`}
-                />
-              </div>
-              <div
-                style={{
-                  padding: "10px 12px",
-                  borderRadius: 9,
-                  background: `rgba(var(--${data.riskTone}-rgb),.09)`,
-                  border: `1px solid rgba(var(--${data.riskTone}-rgb),.22)`,
-                }}
-              >
-                <MetaCell
-                  label="Composto"
-                  mono
-                  tone={data.riskTone as Tone}
-                  value={data.score}
-                />
-              </div>
-            </div>
-          </SectionCard>
-        </div>
-      )}
+      {tab === "risk" && <CaseRiskPanel data={data} onRescore={openRescore} />}
 
       {tab === "mitigations" && (
         <SectionCard

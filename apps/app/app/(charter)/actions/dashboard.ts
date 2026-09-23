@@ -8,8 +8,9 @@ import {
 } from "@repo/database";
 import { requireCharterContext } from "@/lib/charter/guards";
 import {
+  caseRisk,
   policyPublishBlockers,
-  riskScore,
+  SEM_PONTUACAO,
   slaRemaining,
 } from "@/lib/charter/rules";
 import { feriadosAbertos } from "@/lib/feriados";
@@ -36,7 +37,8 @@ export type QueueRow = {
   title: string;
   status: CharterUseCaseStatus;
   dataClass: CharterDataClass;
-  score: number;
+  /** Null = ninguém pontuou; `riskLabel` diz "sem pontuação". */
+  score: number | null;
   riskLabel: string;
   riskTone: string;
   reviewerName: string | null;
@@ -150,17 +152,20 @@ export async function getDashboard(): Promise<Result<DashboardData>> {
       const pending = cases.filter((c) => OPEN_STATUSES.includes(c.status));
 
       const scored = (c: (typeof cases)[number]) =>
-        riskScore({
-          privacy: c.riskPrivacy,
-          regulatory: c.riskRegulatory,
-          security: c.riskSecurity,
-          bias: c.riskBias,
-          ip: c.riskIp,
-          operational: c.riskOperational,
-          reputational: c.riskReputational,
-        });
+        caseRisk(
+          {
+            privacy: c.riskPrivacy,
+            regulatory: c.riskRegulatory,
+            security: c.riskSecurity,
+            bias: c.riskBias,
+            ip: c.riskIp,
+            operational: c.riskOperational,
+            reputational: c.riskReputational,
+          },
+          c.riskScoredAt
+        );
 
-      const highRisk = active.filter((c) => scored(c).score >= 16);
+      const highRisk = active.filter((c) => (scored(c)?.score ?? 0) >= 16);
 
       // Uma busca por render, cacheada por 30 dias e compartilhada por toda
       // a fila: o SLA de cada linha usa o mesmo calendário.
@@ -174,9 +179,9 @@ export async function getDashboard(): Promise<Result<DashboardData>> {
             title: c.title,
             status: c.status,
             dataClass: c.dataClass,
-            score: r.score,
-            riskLabel: r.label,
-            riskTone: r.tone,
+            score: r?.score ?? null,
+            riskLabel: r?.label ?? SEM_PONTUACAO,
+            riskTone: r?.tone ?? "accent",
             reviewerName: c.reviewerId
               ? (reviewerName.get(c.reviewerId) ?? null)
               : null,

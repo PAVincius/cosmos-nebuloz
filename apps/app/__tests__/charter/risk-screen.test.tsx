@@ -100,6 +100,55 @@ describe("RiskScreen", () => {
     expect(await screen.findByText("0 mitigações atrasadas")).toBeTruthy();
   });
 
+  const caso = (
+    code: string,
+    pontuado: boolean
+  ): RiskBoard["cases"][number] => ({
+    code,
+    title: `Caso ${code}`,
+    dataClass: "INTERNAL",
+    status: "SUBMITTED",
+    ...(pontuado
+      ? {
+          severity: 2,
+          likelihood: 2,
+          score: 4,
+          label: "Moderado",
+          tone: "green",
+        }
+      : {
+          severity: null,
+          likelihood: null,
+          score: null,
+          label: "sem pontuação",
+          tone: "accent",
+        }),
+  });
+
+  it("caso sem pontuação fica fora do mapa, nomeado, com o caminho para pontuar", async () => {
+    getRiskBoardMock.mockResolvedValue({
+      ok: true,
+      data: board({ cases: [caso("UC-1", true), caso("UC-7", false)] }),
+    });
+    render(<RiskScreen />);
+
+    expect(await screen.findByText(/1 caso sem pontuação/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: /UC-7/ }));
+    expect(pushMock).toHaveBeenCalledWith("/charter/case/UC-7");
+  });
+
+  it("nenhum caso pontuado: o mapa diz que não há risco avaliado em vez de uma grade vazia", async () => {
+    getRiskBoardMock.mockResolvedValue({
+      ok: true,
+      data: board({ cases: [caso("UC-7", false), caso("UC-8", false)] }),
+    });
+    render(<RiskScreen />);
+
+    expect(await screen.findByText("Nenhum risco avaliado ainda")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /Severidade 1/ })).toBeNull();
+    expect(screen.getByText(/2 casos sem pontuação/)).toBeTruthy();
+  });
+
   it("mapa de calor e rastreador de mitigações mostram estado vazio honesto com link para casos de uso", async () => {
     getRiskBoardMock.mockResolvedValue({ ok: true, data: board() });
     render(<RiskScreen />);

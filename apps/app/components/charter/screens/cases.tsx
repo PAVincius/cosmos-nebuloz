@@ -365,22 +365,22 @@ function CasesInner() {
                     )}
                   </div>
                   <div>
+                    {/* Sem pontuação não há número: o rótulo fica sozinho. */}
+                    {u.score !== null && (
+                      <span
+                        className="mono"
+                        style={{
+                          fontSize: FS.base,
+                          fontWeight: 800,
+                          color: `var(--${u.riskTone}-text)`,
+                          marginRight: 5,
+                        }}
+                      >
+                        {u.score}
+                      </span>
+                    )}
                     <span
-                      className="mono"
-                      style={{
-                        fontSize: FS.base,
-                        fontWeight: 800,
-                        color: `var(--${u.riskTone}-text)`,
-                      }}
-                    >
-                      {u.score}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: FS.micro,
-                        color: "var(--ink-faint)",
-                        marginLeft: 5,
-                      }}
+                      style={{ fontSize: FS.micro, color: "var(--ink-faint)" }}
                     >
                       {u.riskLabel}
                     </span>
