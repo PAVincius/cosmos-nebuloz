@@ -20,6 +20,14 @@ const casos: [string, string][] = [
   ["2026-07-28-seed-entrypoint-guard.md", "plataforma"],
   ["2026-06-10-ci-green-step-c.md", "compartilhado"],
   ["2026-05-31-ux-lab-cosmos.md", "cosmos"],
+  // Nomes reais de 2026-09-22: Signal ganhou código e back-office virou produto.
+  ["2026-09-02-signal-fundacao.md", "signal"],
+  ["2026-09-02-signal-measure.md", "signal"],
+  ["2026-09-06-funil-v2.md", "backoffice"],
+  ["2026-09-06-livro-razao-e-titulos.md", "backoffice"],
+  ["2026-09-06-periodo-e-plano-de-contas.md", "backoffice"],
+  ["2026-09-07-catalogo-de-ip.md", "backoffice"],
+  ["2026-09-07-orcado-e-receita-recorrente.md", "backoffice"],
 ];
 
 describe("rotear", () => {
