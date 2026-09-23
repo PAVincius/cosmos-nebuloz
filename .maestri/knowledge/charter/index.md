@@ -38,4 +38,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/charter/graph.json
 - [ADR-0002 — Papel de governança ortogonal ao papel SAFe](../../../docs/adr/0002-papel-governanca-ortogonal-safe.md)
 
 ## Memória de execução
-- 14 completions em `memory.md`
+- 15 completions em `memory.md`

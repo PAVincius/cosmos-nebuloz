@@ -154,7 +154,7 @@ O que o texto promete e o código não faz. Vale o código.
 - **Trilha:** "Exigir quiz e aceite formal" só soma 5 minutos à estimativa; não há quiz no schema (`C/modals/publish-track.tsx:59-65`).
 - **Capacidade:** POLICY_ATTESTATION fala em "aceite individual", mas o aceite é sempre registrado por terceiro (`L/capabilities.ts:74-75`).
 - **Política vazia:** a tela diz que o seed cria a estrutura; quem cria é o bootstrap (`C/screens/policy.tsx:97`).
-- **Pacote:** promete versão "com diff campo a campo" e leva só a trilha (`C/screens/audit.tsx:41`); a correção está em `fix/charter-diff-no-pacote`.
+- **Pacote:** prometia versão "com diff campo a campo" e levava uma contagem ("Seções alteradas: — → 9", o total sob o rótulo de alteradas). Resolvido na #240 (2026-09-22): o diff das versões de política agora é derivado dos snapshots e vai no pacote (`apps/app/lib/charter/version-diff.ts`, `.claude/completions/2026-09-22-charter-diff-no-pacote.md`).
 
 ---
 

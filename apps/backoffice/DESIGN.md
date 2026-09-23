@@ -361,6 +361,9 @@ A topbar atravessa as duas colunas; a sidebar rola sozinha; o `<main>` tem `padd
 | `.bo-duas-colunas` | 2 × `minmax(0, 1fr)`, gap 10px | 1 coluna |
 | `.bo-tres-colunas` | 3 × `minmax(0, 1fr)`, gap 12px | 1 coluna |
 | `.bo-kpis` (+ `-3`, `-5`) | 4 (3, 5) placas, gap 16px | 2 colunas |
+| `.bo-com-painel` | `minmax(0, 1fr) 300px`, altura 560px (canvas BPMN + painel de propriedades) | 1 coluna: canvas com 420px, painel embaixo |
+| `.bo-editor-e-previa` | `minmax(0, 1fr) minmax(0, 1.2fr)` (Mermaid e prévia) | 1 coluna |
+| `.bo-form-e-lateral` | `minmax(0, 1.7fr) minmax(0, 1fr)` (registrar ativo de IP) | 1 coluna |
 | `.bo-campos` / `.bo-campos-largos` | `auto-fit`, mínimo 150px / 220px | quebra sozinha |
 | `.bo-cartoes` | `auto-fill`, mínimo 240px, gap 8px | quebra sozinha |
 | `.bo-kanban` | 4 × `minmax(210px, 1fr)`, `min-width: 880px` | rola de lado num contêiner `overflow-x: auto` |
@@ -509,7 +512,7 @@ Registradas aqui porque um documento de design honesto inclui o que falta.
 1. **Hovers que o inline anula.** O cosmos.css declara hover para `.navitem` (fundo `surface-2`, tinta `ink`), para a borda e o brilho do `.kpi` e para a borda do `.lift`. Nos três casos o componente escreve `background`, `color`, `border` ou `boxShadow` inline, e inline vence a folha. Resultado: item da sidebar, botão de menu e `IconButton` não reagem ao hover; o KPI sobe sem acender a borda; o pedido de aprovação sobe sem trocar a borda. É a mesma armadilha que já tirou o grid e os paddings do `style`.
 2. **O kit fora da paleta.** O `KpiCard` pinta o fundo escuro com gradientes fixos (`TONES` em `kit.tsx`) calculados sobre a paleta do Cosmos: o tom `accent` leva lavanda (`rgba(124,135,255,.14)`) e o verde leva `#34d399`. Carteira, Funil e Biblioteca de IP usam KPI em `accent`. O tom `neutral` não existe como token (`--neutral`, `--neutral-rgb`), e o KPI de Fornecedores que o usa perde borda e fundo tonal.
 3. **Movimento reduzido incompleto.** Desligam com `prefers-reduced-motion`: sinal ECG, `.lift`, entrada de tela, gaveta, chevron, pulso do cabeçalho, contagem do KPI. Não desligam: shimmer do esqueleto, subida de 3px do KPI, piscada do badge e o anel pulsante (este sem uso no painel).
-4. **Responsivo pela metade.** Tabelas sem `overflow-x` abaixo de 1024px; três editores com grade fixa inline (BPMN `1fr 300px`, Mermaid, registrar ativo de IP); restam 9 `gridTemplateColumns` inline. "Abaixo de 1024px é requisito ou cortesia?" segue sem resposta do dono.
+4. **Responsivo quase inteiro.** Desde a #241 as tabelas rolam num contêiner com `overflow-x` e os três editores (BPMN, Mermaid, registrar ativo de IP) empilham pelas classes acima; restam 7 `gridTemplateColumns` inline, em funil, auditoria, delivery e mapa de processos. "Abaixo de 1024px é requisito ou cortesia?" segue sem resposta do dono.
 5. **Consolidação pela metade.** Botão primário copiado em vários arquivos, dois dialetos de tabela, estilo de diálogo repetido por arquivo, eyebrows fora do padrão (`Growth · maturidade de IA` escrito à mão, `Nebuloz · erro`) e um `fontSize` numérico.
 6. **Token fantasma.** `PerguntaDescartar` pede `--red-border`, que não existe; cai em `hairline-strong`, e a pergunta de descarte sai sem o vermelho da barreira.
 7. **Branco sobre sólido no claro.** A inicial do nó no Mapa de processos usa `--on-solid` (branco no claro) sobre o sólido do tom: 3,5:1 a 4,5:1. É a única peça que escreve sobre sólido de tom.
