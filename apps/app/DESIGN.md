@@ -270,7 +270,7 @@ Razões que o código documenta:
 - O QA de julho (`apps/app/.design-ref/QA_REPORT.md`) registrou `color-contrast` sério em 28 de 29 rotas da UI anterior ao `/cosmos`. É histórico: as rotas foram removidas.
 
 Cálculo desta revisão (WCAG 2.x):
-- No claro, os tokens curtos globais reprovam para texto: `--ink-subtle` #8b94a4 dá 3,06:1 e `--ink-faint` #aeb6c2 dá 2,04:1 sobre #fff. O `cosmos.css` corrigiu os dois só dentro de `.cosmos-root` (#65748b e #656d7d), e a casca não herdou a correção. As páginas-portão escrevem `var(--ink-faint, #636c7b)` esperando cerca de 5:1 e recebem #aeb6c2.
+- No claro, os tokens curtos globais reprovam para texto: `--ink-subtle` #8b94a4 dá 3,06:1 e `--ink-faint` #aeb6c2 dá 2,04:1 sobre #fff. O `cosmos.css` corrigiu os dois só dentro de `.cosmos-root` (#5d6b80 e #656d7d), e a casca não herdou a correção. As páginas-portão escrevem `var(--ink-faint, #636c7b)` esperando cerca de 5:1 e recebem #aeb6c2.
 - `primary-foreground` sobre `primary`: 4,91:1 no escuro e 5,52:1 no claro.
 - `text-primary` como texto corrido: 4,05:1 sobre o `background` escuro e 3,71:1 sobre o canvas do reskin, abaixo de AA.
 - `muted-foreground`: 7,19:1 no escuro e 5,66:1 no claro, sobre `background`.

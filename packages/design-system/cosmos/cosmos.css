@@ -104,7 +104,10 @@
   --hairline-strong: #d8dbe2;
   --ink: #11151f;
   --ink-muted: #586173;
-  --ink-subtle: #65748b;
+  /* Calibrado contra a superfície clara mais escura em que aparece
+     (surface-3, 4,74:1), não contra o branco: #65748b dava 4,75:1 no branco
+     e reprovava no surface-2 do modal (4,43:1) e no canvas (4,35:1). */
+  --ink-subtle: #5d6b80;
   --ink-faint: #656d7d;
   --chip-bg: #f1f3f7;
   --card-shadow:

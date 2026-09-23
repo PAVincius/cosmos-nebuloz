@@ -2,7 +2,7 @@
 
 **Data:** 2026-09-23 · **Branch:** `claude/reverent-satoshi-38612c`, empilhada
 sobre `docs/kb-consolidacao` (PR #243, que traz o DESIGN.md e o PRODUCT.md do
-Cosmos). Nada foi enviado ao remoto.
+Cosmos). PR empilhado sobre o #243.
 
 Origem: pedido do dono — com `/impeccable` e `apps/app/components/cosmos` como
 alvo, fechar as lacunas que o DESIGN.md do Cosmos registrava: a varredura de
@@ -10,7 +10,7 @@ ECG do KPI (e conferir a textura do escuro), o modal portado fora de
 `.cosmos-root`, telas sem `var(--fs-*)`, `KpiCard` recebendo string formatada e
 `<html lang="en">`. Verificar no navegador, claro e escuro.
 
-## O que mudou (6 commits)
+## O que mudou (7 commits)
 
 1. `refactor(cosmos)` — as 11 telas tocadas usam a escala: 167 literais viram
    `var(--fs-*)` pelo mapa do `1ed1dc01`. Fora do mapa: 9 → micro; 13.5 →
@@ -31,6 +31,11 @@ ECG do KPI (e conferir a textura do escuro), o modal portado fora de
    enquanto hidrata (`useSyncExternalStore`).
 6. `docs(cosmos)` — DESIGN.md descreve o estado atual e registra o que a
    verificação achou.
+7. `fix(design-system)` — com o aval do dono, `ink-subtle` claro passa de
+   #65748b a #5d6b80. O antigo foi calibrado só contra o branco e reprovava AA
+   no `surface-2` do modal (4,43:1), no `canvas`, no `chip-bg` e no
+   `surface-3`; o novo fica entre 4,74:1 e 5,41:1 em todas as superfícies
+   claras. Vale para o Cosmos e o back-office, que importa o `cosmos.css`.
 
 **Grão do escuro:** o Cosmos nunca teve (nem `cosmos.css`, nem o histórico,
 nem o handoff). Nos outros quatro produtos o `.grain::after` não renderiza —
@@ -43,13 +48,10 @@ no mesmo nó (já registrado no DESIGN.md do Charter).
   inline vencem o `:hover` do CSS. Mesma raiz do lampejo escuro que sobra no
   SSR em tema claro. Correção: levar o visual por tema do `KpiCard` para CSS,
   nas cinco folhas (cosmos, charter, meridian, signal, scaffold).
-- `ink-subtle` claro (#65748b) reprova AA fora do branco: 4,43:1 sobre
-  `surface-2` (subtítulo do modal), 4,35:1 sobre `canvas`, 4,27:1 sobre
-  `chip-bg`, 4,16:1 sobre `surface-3`. #5d6b80 passa em todas; o token vem do
-  `cosmos.css`, que o back-office também importa — decisão do dono.
 - Decimal com ponto fora do `KpiCard`: tabela do WSJF (`toFixed(1)`), "Placar
   3.7 de 5" no PI Planning, WSJF do preview do épico (`toFixed(2)`).
-- Sidecar `.impeccable/design.json` do Cosmos mais velho que o DESIGN.md
+- Sidecar `.impeccable/design.json` do Cosmos mais velho que o DESIGN.md: ainda
+  traz o `ink-subtle` claro antigo (#65748b) na rampa "Ardósia"
   (`/impeccable document` regenera).
 - 548 `fontSize` literais em 21 valores nas telas não tocadas; o kit segue fora
   da escala por decisão do `1ed1dc01`.

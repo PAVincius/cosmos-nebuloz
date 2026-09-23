@@ -47,7 +47,7 @@ colors:
   light-hairline-strong: "#d8dbe2"
   light-ink: "#11151f"
   light-ink-muted: "#586173"
-  light-ink-subtle: "#65748b"
+  light-ink-subtle: "#5d6b80"
   light-ink-faint: "#656d7d"
   light-chip-bg: "#f1f3f7"
   light-green: "#16a34a"
@@ -259,7 +259,7 @@ Um azul-naval quase preto em quatro degraus, uma lavanda de sinal e cinco tons d
 - **Casco Alto** (#18223a; #eef0f4): trilho de progresso, tooltip, pílula "Em breve" e topo do gradiente do `PageHeader`.
 - **Trilho Noturno** (#0a0f1b; #fbfbfd): sidebar.
 - **Fio de Luz** e **Fio Firme** (branco a 7,5% e a 15%; #e7e9ee e #d8dbe2 no claro): o primeiro separa, o segundo delimita o que é interativo (campo, botão secundário, hover de cartão).
-- **Branco Gelo** (#eef2f8; **Tinta Naval**, #11151f, no claro): texto principal. **Aço Claro** (#93a1b3; #586173): texto secundário e navegação em repouso. **Aço** (#8b94a4; #65748b) e **Aço Azulado** (#8593ac; #656d7d): subtítulo, metadado, rótulo de campo e ícone de apoio.
+- **Branco Gelo** (#eef2f8; **Tinta Naval**, #11151f, no claro): texto principal. **Aço Claro** (#93a1b3; #586173): texto secundário e navegação em repouso. **Aço** (#8b94a4; #5d6b80) e **Aço Azulado** (#8593ac; #656d7d): subtítulo, metadado, rótulo de campo e ícone de apoio.
 - **Chip de Vidro** (branco a 5%; #f1f3f7): fundo do Badge neutro.
 - **Cortina Naval** (`scrim`): atrás da gaveta e da paleta ⌘K.
 
@@ -285,8 +285,8 @@ Razões que o código documenta:
 **Dívida documentada:** no claro, branco sobre verde #16a34a (3,3:1) e sobre âmbar #d97706 (3,2:1) reprova AA, e o arquivo registra isso como lacuna conhecida (`cosmos.css:9-13`). O comentário afirma que uma tinta escura também reprovaria. O cálculo desta revisão (WCAG 2.x) não confirma: #11151f sobre #16a34a dá 5,54:1, e sobre #d97706 dá 5,73:1. O que impede a troca é outro fato: `--on-solid` é um token único para todos os tons, e tinta escura reprova sobre vermelho, azul, roxo e acento claros (3,2 a 3,9:1). A saída continua sendo ajuste de paleta ou foreground por tom.
 
 Cálculo desta revisão, para quem for mexer na escala de tinta:
-- No claro, `ink-subtle` #65748b dá 4,75:1 e `ink-faint` #656d7d dá 5,20:1 sobre #ffffff. Os dois passam, mas o "faint" ficou mais escuro que o "subtle": a escala foi corrigida para AA, não para hierarquia, e os dois degraus hoje se distinguem mais por matiz que por valor.
-- **Dívida medida (2026-09-23):** a calibração foi contra branco, e fora do branco `ink-subtle` reprova: 4,43:1 sobre `surface-2` (o fundo do modal, onde mora o subtítulo), 4,35:1 sobre `canvas`, 4,27:1 sobre `chip-bg` e 4,16:1 sobre `surface-3`. `ink-faint` passa em todas (4,56:1 ou mais). Um `ink-subtle` claro em #5d6b80 passa em todas as superfícies claras (4,74:1 sobre `surface-3`, 5,41:1 sobre branco) e ainda devolve a ordem muted › subtle › faint. O token mora no `cosmos.css`, que o back-office também importa: a troca muda os dois produtos.
+- No claro, a tinta é calibrada contra a superfície mais escura em que aparece, não contra o branco. `ink-subtle` #5d6b80 dá 5,41:1 sobre branco, 5,05:1 sobre `surface-2` (o fundo do modal), 4,96:1 sobre `canvas`, 4,87:1 sobre `chip-bg` e 4,74:1 sobre `surface-3`; `ink-faint` #656d7d, de 5,20:1 a 4,56:1 nas mesmas superfícies. A ordem de valor é muted › subtle › faint (6,23, 5,41 e 5,20:1 sobre branco).
+- Até 2026-09-23 o `ink-subtle` claro era #65748b, calibrado só contra o branco (4,75:1): reprovava sobre `surface-2` (4,43:1), `canvas` (4,35:1), `chip-bg` (4,27:1) e `surface-3` (4,16:1), e ficava mais claro que o `ink-faint`. O token mora no `cosmos.css`, que o back-office também importa: a troca valeu para os dois produtos.
 - Fora de `.cosmos-root` valem os valores globais de `globals.css`, que no claro reprovam: `--ink-subtle` #8b94a4 dá 3,06:1 e `--ink-faint` #aeb6c2 dá 2,04:1 sobre branco. Era o que o modal e os popovers portados para `document.body` herdavam até montarem sob `CosmosPortal` (ver The Scope Rule).
 
 ## Typography
@@ -406,7 +406,7 @@ Firmes e discretos: peso 600, sem caixa alta, ícone opcional à esquerda ou à 
 ### Modal
 - `ModalCard` (460px, no máximo 92vw, altura até 100vh − 140px): fundo `surface-2`, borda `hairline-strong`, raio `xl` e sombra flutuante. O cabeçalho (20px 22px) tem lavagem radial no tom da entidade e ícone tingido de 40×40; o título é Space Grotesk 700 em `forte` (15px), o subtítulo é `base` em `ink-subtle`, e o fechar é o ícone `x` do kit num alvo de 30×30; o rodapé fixo leva as ações e a dica mono "esc cancelar · ⌘↵ salvar". `ModalSplit` põe um preview ao vivo de 300px à esquerda, sob o rótulo micro "Preview ao vivo" com ponto de acento.
 - Escape, trap de Tab e devolução de foco vivem no provider. ⌘↵ ou Ctrl+Enter dispara a ação principal.
-- O provider porta pelo `CosmosPortal`, então o modal lê os tokens do Cosmos: cantos `xl` e `md`, botão primário em lavanda, cortina `--scrim` e a tinta do tema. Medido no claro: dica em `ink-faint` a 4,85:1 e primário a 4,70:1; o subtítulo em `ink-subtle` fica em 4,43:1 sobre `surface-2`, lacuna da paleta (ver Contraste). Até 2026-09-23 ele portava para `document.body` sem o wrapper, e lá dentro `--r-*` não existia (canto zero), o primário lia o `--accent` neutro do shadcn e `ink-subtle`/`ink-faint` caíam nos valores globais, que no claro reprovam AA.
+- O provider porta pelo `CosmosPortal`, então o modal lê os tokens do Cosmos: cantos `xl` e `md`, botão primário em lavanda, cortina `--scrim` e a tinta do tema. Medido no claro: subtítulo em `ink-subtle` a 5,05:1 sobre `surface-2` (era 4,43:1 com o valor antigo, ver Contraste), dica em `ink-faint` a 4,85:1 e primário a 4,70:1. Até 2026-09-23 ele portava para `document.body` sem o wrapper, e lá dentro `--r-*` não existia (canto zero), o primário lia o `--accent` neutro do shadcn e `ink-subtle`/`ink-faint` caíam nos valores globais, que no claro reprovam AA.
 
 ### KPI Card (assinatura)
 - Altura mínima de 150px (168px no `big`), padding de 18px 20px e raio `xl`. Rótulo de 13px/600 em `ink-muted` à esquerda, ícone num quadrado de 34×34 no tom à direita, valor em `kpi-numeral` e rodapé com o Badge de delta (`trendingUp`/`trendingDown`) e uma dica de 12px em `ink-subtle`.
