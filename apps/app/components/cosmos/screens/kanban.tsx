@@ -11,7 +11,6 @@ import {
   Skel,
   useAction,
   useNav,
-  useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
@@ -24,7 +23,6 @@ import {
 // listEpics server action, so the board shows live tenant data once
 // authenticated. Filter popover, drag affordance, NewEpic modal + Copilot bar
 // are self-contained.
-import { createPortal } from "react-dom";
 import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
 import {
   createEpic,
@@ -40,6 +38,7 @@ import {
   updateWipLimitAction,
 } from "@/app/actions/portfolio-kanban";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
+import { CosmosPortal } from "../cosmos-portal";
 import { EmptyState } from "../empty-state";
 import {
   ModalCard,
@@ -135,7 +134,7 @@ function computeLiveWsjf(
 }
 
 const fieldLabelStyle: CSSProperties = {
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 700,
   letterSpacing: ".04em",
   textTransform: "uppercase",
@@ -144,7 +143,7 @@ const fieldLabelStyle: CSSProperties = {
 const fieldInputStyle: CSSProperties = {
   width: "100%",
   padding: "10px 12px",
-  fontSize: 14,
+  fontSize: "var(--fs-forte)",
   borderRadius: 10,
   border: "1px solid var(--hairline-strong)",
   background: "var(--surface)",
@@ -241,11 +240,21 @@ function WipConfigModal({
     >
       <div
         className="display"
-        style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)" }}
+        style={{
+          fontSize: "var(--fs-forte)",
+          fontWeight: 700,
+          color: "var(--ink)",
+        }}
       >
         Limites de WIP
       </div>
-      <div style={{ fontSize: 12.5, color: "var(--ink-faint)", marginTop: 4 }}>
+      <div
+        style={{
+          fontSize: "var(--fs-base)",
+          color: "var(--ink-faint)",
+          marginTop: 4,
+        }}
+      >
         Coluna no limite para de aceitar épico. Deixe vazio para não limitar.
       </div>
 
@@ -309,7 +318,7 @@ const EPIC_TONE = "accent";
 
 const previewLabelStyle: CSSProperties = {
   color: "var(--ink-faint)",
-  fontSize: 11,
+  fontSize: "var(--fs-nota)",
   fontWeight: 700,
   letterSpacing: ".06em",
   marginBottom: 6,
@@ -404,7 +413,12 @@ function NewEpicModal({
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -485,7 +499,10 @@ function NewEpicModal({
                 />
                 <span
                   className="mono"
-                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                  style={{
+                    color: "var(--ink-faint)",
+                    fontSize: "var(--fs-nota)",
+                  }}
                 >
                   {colLabel}
                 </span>
@@ -493,7 +510,7 @@ function NewEpicModal({
               <div
                 className="display"
                 style={{
-                  fontSize: 15,
+                  fontSize: "var(--fs-forte)",
                   fontWeight: 700,
                   lineHeight: 1.3,
                   marginBottom: 14,
@@ -518,7 +535,7 @@ function NewEpicModal({
               <div
                 style={{
                   color: "var(--ink-faint)",
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   marginBottom: 14,
                 }}
               >
@@ -531,7 +548,7 @@ function NewEpicModal({
               <div
                 style={{
                   color: "var(--ink-muted)",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   lineHeight: 1.55,
                   marginBottom: 14,
                 }}
@@ -555,7 +572,12 @@ function NewEpicModal({
                     size={13}
                     style={{ color: `var(--${EPIC_TONE}-text)` }}
                   />
-                  <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>
+                  <span
+                    style={{
+                      color: "var(--ink-muted)",
+                      fontSize: "var(--fs-base)",
+                    }}
+                  >
                     {tema.label}
                   </span>
                 </div>
@@ -613,7 +635,7 @@ function NewEpicModal({
             <div
               style={{
                 color: "var(--ink-subtle)",
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 fontWeight: 700,
                 marginBottom: 10,
               }}
@@ -734,7 +756,7 @@ function EpicCard({
             display: "inline-flex",
             alignItems: "center",
             gap: 5,
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color: "var(--ink-subtle)",
             fontWeight: 500,
           }}
@@ -752,7 +774,7 @@ function EpicCard({
             display: "inline-flex",
             alignItems: "center",
             gap: 4,
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             fontWeight: 700,
             color: `var(--${priTone}-text)`,
             background: `var(--${priTone}-soft)`,
@@ -767,7 +789,7 @@ function EpicCard({
 
       <div
         style={{
-          fontSize: 14,
+          fontSize: "var(--fs-forte)",
           fontWeight: 700,
           color: "var(--ink)",
           lineHeight: 1.35,
@@ -787,7 +809,7 @@ function EpicCard({
               display: "flex",
               justifyContent: "space-between",
               marginBottom: 5,
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
             }}
           >
             <span
@@ -828,7 +850,7 @@ function EpicCard({
                 borderRadius: 99,
                 display: "grid",
                 placeItems: "center",
-                fontSize: 9.5,
+                fontSize: "var(--fs-micro)",
                 fontWeight: 800,
                 background: `var(--${tone}-soft)`,
                 color: `var(--${tone}-text)`,
@@ -848,7 +870,7 @@ function EpicCard({
                 borderRadius: 99,
                 display: "grid",
                 placeItems: "center",
-                fontSize: 9,
+                fontSize: "var(--fs-micro)",
                 fontWeight: 800,
                 background: "var(--surface-3)",
                 color: "var(--ink-muted)",
@@ -873,7 +895,7 @@ function EpicCard({
           {epic.art && (
             <span
               style={{
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-subtle)",
                 fontWeight: 600,
               }}
@@ -884,7 +906,7 @@ function EpicCard({
           {epic.theme && (
             <span
               style={{
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
                 fontWeight: 500,
               }}
@@ -916,7 +938,7 @@ function AddEpicRow({ onAdd }: { onAdd: () => void }) {
         border: `1px dashed ${hov ? "var(--accent)" : "var(--hairline-strong)"}`,
         background: hov ? "var(--accent-soft)" : "transparent",
         color: hov ? "var(--accent-text)" : "var(--ink-faint)",
-        fontSize: 12.5,
+        fontSize: "var(--fs-base)",
         fontWeight: 600,
         cursor: "pointer",
         transition: "all .15s ease",
@@ -1001,7 +1023,7 @@ function KanbanColumn({
         />
         <span
           style={{
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 700,
             color: "var(--ink)",
             letterSpacing: "-.01em",
@@ -1012,7 +1034,7 @@ function KanbanColumn({
         <span
           className="mono"
           style={{
-            fontSize: 11,
+            fontSize: "var(--fs-nota)",
             fontWeight: 700,
             color: `var(--${colTone}-text)`,
             background: `var(--${colTone}-soft)`,
@@ -1084,7 +1106,7 @@ function KanbanColumn({
             style={{
               padding: 20,
               textAlign: "center",
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-faint)",
             }}
           >
@@ -1151,7 +1173,7 @@ function useKanbanFilters() {
 }
 
 const chipStyle = (on: boolean): CSSProperties => ({
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 600,
   padding: "5px 10px",
   borderRadius: 99,
@@ -1174,7 +1196,6 @@ function KanbanFilterPopover({
   onClose: () => void;
   btnRect: DOMRect;
 }) {
-  const themeName = useThemeName();
   const artOptions = [
     ...new Set(epics.map((e) => e.art).filter(Boolean) as string[]),
   ];
@@ -1188,69 +1209,103 @@ function KanbanFilterPopover({
     onChange({ ...filters, [key]: set });
   };
 
-  return createPortal(
-    <div
-      data-kanban-filter
-      data-theme={themeName}
-      style={{
-        position: "fixed",
-        top: btnRect.bottom + 8,
-        left: Math.max(8, btnRect.right - 320),
-        zIndex: 400,
-        width: 320,
-        background: "var(--surface-3)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
-        padding: 16,
-        maxHeight: 480,
-        overflowY: "auto",
-      }}
-    >
+  return (
+    <CosmosPortal>
       <div
+        data-kanban-filter
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 12,
+          position: "fixed",
+          top: btnRect.bottom + 8,
+          left: Math.max(8, btnRect.right - 320),
+          zIndex: 400,
+          width: 320,
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-md)",
+          boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+          padding: 16,
+          maxHeight: 480,
+          overflowY: "auto",
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>
-          Filtros
-        </span>
-        <button
-          onClick={() =>
-            onChange({
-              arts: new Set(),
-              themes: new Set(),
-              owners: new Set(),
-              hotOnly: false,
-              minWsjf: 0,
-            })
-          }
+        <div
           style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: "var(--accent)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 12,
           }}
         >
-          Limpar tudo
-        </button>
-      </div>
-      {(
-        [
-          ["ART", "arts", artOptions],
-          ["Tema estratégico", "themes", themeOptions],
-          ["Owner", "owners", ownerOptions],
-        ] as const
-      ).map(([label, key, opts]) => (
-        <div key={key} style={{ marginBottom: 14 }}>
+          <span
+            style={{
+              fontSize: "var(--fs-base)",
+              fontWeight: 700,
+              color: "var(--ink)",
+            }}
+          >
+            Filtros
+          </span>
+          <button
+            onClick={() =>
+              onChange({
+                arts: new Set(),
+                themes: new Set(),
+                owners: new Set(),
+                hotOnly: false,
+                minWsjf: 0,
+              })
+            }
+            style={{
+              fontSize: "var(--fs-nota)",
+              fontWeight: 700,
+              color: "var(--accent)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Limpar tudo
+          </button>
+        </div>
+        {(
+          [
+            ["ART", "arts", artOptions],
+            ["Tema estratégico", "themes", themeOptions],
+            ["Owner", "owners", ownerOptions],
+          ] as const
+        ).map(([label, key, opts]) => (
+          <div key={key} style={{ marginBottom: 14 }}>
+            <div
+              style={{
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+                letterSpacing: ".05em",
+                textTransform: "uppercase",
+                color: "var(--ink-faint)",
+                marginBottom: 7,
+              }}
+            >
+              {label}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {opts.map((o) => (
+                <button
+                  key={o}
+                  onClick={() => toggle(key, o)}
+                  style={chipStyle(filters[key].has(o))}
+                >
+                  {o}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div style={{ marginBottom: 14 }}>
           <div
             style={{
-              fontSize: 10.5,
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "var(--fs-nota)",
               fontWeight: 700,
               letterSpacing: ".05em",
               textTransform: "uppercase",
@@ -1258,79 +1313,59 @@ function KanbanFilterPopover({
               marginBottom: 7,
             }}
           >
-            {label}
+            <span>WSJF mínimo</span>
+            <span className="mono" style={{ color: "var(--accent-text)" }}>
+              {filters.minWsjf}
+            </span>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {opts.map((o) => (
-              <button
-                key={o}
-                onClick={() => toggle(key, o)}
-                style={chipStyle(filters[key].has(o))}
-              >
-                {o}
-              </button>
-            ))}
-          </div>
+          <input
+            max={25}
+            min={0}
+            onChange={(e) =>
+              onChange({ ...filters, minWsjf: Number(e.target.value) })
+            }
+            step={1}
+            style={{
+              width: "100%",
+              accentColor: "var(--accent)",
+              cursor: "pointer",
+            }}
+            type="range"
+            value={filters.minWsjf}
+          />
         </div>
-      ))}
-      <div style={{ marginBottom: 14 }}>
-        <div
+        <label
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            fontSize: 10.5,
-            fontWeight: 700,
-            letterSpacing: ".05em",
-            textTransform: "uppercase",
-            color: "var(--ink-faint)",
-            marginBottom: 7,
+            alignItems: "center",
+            gap: 8,
+            cursor: "pointer",
+            marginBottom: 14,
           }}
         >
-          <span>WSJF mínimo</span>
-          <span className="mono" style={{ color: "var(--accent-text)" }}>
-            {filters.minWsjf}
+          <input
+            checked={filters.hotOnly}
+            onChange={(e) =>
+              onChange({ ...filters, hotOnly: e.target.checked })
+            }
+            style={{ accentColor: "var(--accent)", cursor: "pointer" }}
+            type="checkbox"
+          />
+          <span
+            style={{
+              fontSize: "var(--fs-base)",
+              fontWeight: 600,
+              color: "var(--ink)",
+            }}
+          >
+            Somente itens quentes 🔥
           </span>
-        </div>
-        <input
-          max={25}
-          min={0}
-          onChange={(e) =>
-            onChange({ ...filters, minWsjf: Number(e.target.value) })
-          }
-          step={1}
-          style={{
-            width: "100%",
-            accentColor: "var(--accent)",
-            cursor: "pointer",
-          }}
-          type="range"
-          value={filters.minWsjf}
-        />
+        </label>
+        <Button full onClick={onClose} size="sm" variant="secondary">
+          Fechar
+        </Button>
       </div>
-      <label
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          cursor: "pointer",
-          marginBottom: 14,
-        }}
-      >
-        <input
-          checked={filters.hotOnly}
-          onChange={(e) => onChange({ ...filters, hotOnly: e.target.checked })}
-          style={{ accentColor: "var(--accent)", cursor: "pointer" }}
-          type="checkbox"
-        />
-        <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}>
-          Somente itens quentes 🔥
-        </span>
-      </label>
-      <Button full onClick={onClose} size="sm" variant="secondary">
-        Fechar
-      </Button>
-    </div>,
-    document.body
+    </CosmosPortal>
   );
 }
 
@@ -1459,7 +1494,9 @@ function KanbanBody() {
       <PageHeader
         eyebrow="Portfolio · Lifecycle SAFe"
         meta={
-          <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+          <span
+            style={{ fontSize: "var(--fs-base)", color: "var(--ink-subtle)" }}
+          >
             <strong style={{ color: "var(--ink)" }}>{visible.length}</strong> de{" "}
             {epics.length} épicos{activeCount > 0 ? " (filtrado)" : ""}
           </span>
@@ -1492,7 +1529,7 @@ function KanbanBody() {
             alignItems: "center",
             gap: 8,
             padding: "9px 15px",
-            fontSize: 14,
+            fontSize: "var(--fs-forte)",
             fontWeight: 600,
             fontFamily: "inherit",
             borderRadius: "var(--r-md)",
@@ -1507,7 +1544,7 @@ function KanbanBody() {
             <span
               className="mono"
               style={{
-                fontSize: 11,
+                fontSize: "var(--fs-nota)",
                 fontWeight: 700,
                 color: "var(--accent-fg)",
                 background: "var(--accent)",

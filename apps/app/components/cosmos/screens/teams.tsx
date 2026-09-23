@@ -16,11 +16,9 @@ import {
   SectionCard,
   useAction,
   useNav,
-  useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   type EntityOption,
   searchEntities,
@@ -31,6 +29,7 @@ import {
   listTeams,
   type TeamListView,
 } from "@/app/(cosmos)/actions/teams";
+import { CosmosPortal } from "../cosmos-portal";
 import { EntityLinkField as EntitySearchField } from "../entity-link-field";
 import {
   ModalCard,
@@ -108,7 +107,12 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -183,11 +187,16 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                 <div style={{ minWidth: 0 }}>
                   <div
                     className="display"
-                    style={{ fontSize: 14.5, fontWeight: 700 }}
+                    style={{ fontSize: "var(--fs-forte)", fontWeight: 700 }}
                   >
                     {name || "Nome do time"}
                   </div>
-                  <div style={{ color: "var(--ink-faint)", fontSize: 11.5 }}>
+                  <div
+                    style={{
+                      color: "var(--ink-faint)",
+                      fontSize: "var(--fs-nota)",
+                    }}
+                  >
                     {art?.label ?? "Sem ART"}
                   </div>
                 </div>
@@ -205,7 +214,7 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                     border: "1px solid rgba(var(--amber-rgb),.3)",
                     borderRadius: "var(--r-md)",
                     color: "var(--amber-text)",
-                    fontSize: 11.5,
+                    fontSize: "var(--fs-nota)",
                     lineHeight: 1.5,
                     padding: "9px 11px",
                   }}
@@ -218,7 +227,7 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
                 style={{
                   borderTop: "1px solid var(--hairline)",
                   color: "var(--ink-faint)",
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   lineHeight: 1.6,
                   marginTop: 14,
                   paddingTop: 12,
@@ -353,7 +362,7 @@ function UnassignedTeamsSection({
                 style={{
                   color: "var(--ink)",
                   flex: 1,
-                  fontSize: 13,
+                  fontSize: "var(--fs-base)",
                   fontWeight: 600,
                 }}
               >
@@ -419,7 +428,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
           <div
             className="display"
             style={{
-              fontSize: 15,
+              fontSize: "var(--fs-forte)",
               fontWeight: 700,
               letterSpacing: "-.01em",
               color: "var(--ink)",
@@ -432,7 +441,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
           <div
             style={{
               marginTop: 3,
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-subtle)",
             }}
           >
@@ -448,7 +457,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              fontSize: 11,
+              fontSize: "var(--fs-nota)",
               marginBottom: 6,
             }}
           >
@@ -458,7 +467,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
                 letterSpacing: ".04em",
                 textTransform: "uppercase",
                 color: "var(--ink-faint)",
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
               }}
             >
               Capacidade
@@ -509,7 +518,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             <div
               className="mono"
               style={{
-                fontSize: 17,
+                fontSize: "var(--fs-forte)",
                 fontWeight: 800,
                 letterSpacing: "-.02em",
                 color: "var(--ink)",
@@ -519,7 +528,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             </div>
             <div
               style={{
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-subtle)",
                 fontWeight: 600,
                 letterSpacing: ".03em",
@@ -536,7 +545,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
 }
 
 const chipStyle = (on: boolean): CSSProperties => ({
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 600,
   padding: "5px 10px",
   borderRadius: 99,
@@ -557,7 +566,6 @@ function ArtFilterPopover({
   onChange: (next: Set<string>) => void;
   btnRect: DOMRect;
 }) {
-  const themeName = useThemeName();
   const toggle = (id: string) => {
     const next = new Set(selected);
     if (next.has(id)) {
@@ -567,65 +575,71 @@ function ArtFilterPopover({
     }
     onChange(next);
   };
-  return createPortal(
-    <div
-      data-team-art-filter
-      data-theme={themeName}
-      style={{
-        position: "fixed",
-        top: btnRect.bottom + 8,
-        left: Math.max(8, btnRect.right - 240),
-        zIndex: 400,
-        width: 240,
-        background: "var(--surface-3)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
-        padding: 14,
-      }}
-    >
+  return (
+    <CosmosPortal>
       <div
+        data-team-art-filter
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 10,
+          position: "fixed",
+          top: btnRect.bottom + 8,
+          left: Math.max(8, btnRect.right - 240),
+          zIndex: 400,
+          width: 240,
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-md)",
+          boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+          padding: 14,
         }}
       >
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink)" }}>
-          Filtrar por ART
-        </span>
-        {selected.size > 0 && (
-          <button
-            onClick={() => onChange(new Set())}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 10,
+          }}
+        >
+          <span
             style={{
-              fontSize: 11,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
-              color: "var(--accent)",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
+              color: "var(--ink)",
             }}
-            type="button"
           >
-            Limpar
-          </button>
-        )}
+            Filtrar por ART
+          </span>
+          {selected.size > 0 && (
+            <button
+              onClick={() => onChange(new Set())}
+              style={{
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+                color: "var(--accent)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+              }}
+              type="button"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {options.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => toggle(o.id)}
+              style={chipStyle(selected.has(o.id))}
+              type="button"
+            >
+              {o.name}
+            </button>
+          ))}
+        </div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-        {options.map((o) => (
-          <button
-            key={o.id}
-            onClick={() => toggle(o.id)}
-            style={chipStyle(selected.has(o.id))}
-            type="button"
-          >
-            {o.name}
-          </button>
-        ))}
-      </div>
-    </div>,
-    document.body
+    </CosmosPortal>
   );
 }
 
@@ -796,12 +810,24 @@ function TeamsBody() {
         </div>
       )}
       {!(error || loading) && teams.length === 0 && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Nenhum time encontrado.
         </div>
       )}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -811,7 +837,7 @@ function TeamsBody() {
             padding: "40px 20px",
             textAlign: "center",
             color: "var(--ink-faint)",
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
           }}
         >
           Nenhum time corresponde ao filtro selecionado.
