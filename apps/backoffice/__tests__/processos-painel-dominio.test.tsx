@@ -2,7 +2,7 @@
 // processos-painel-dominio.test.tsx — o domínio do processo no painel é um
 // ponto de cor ao lado do rótulo, não uma borda grossa.
 //
-// `borderLeft: 3px solid` era o warning do detector, e o DESIGN.backoffice.md
+// `borderLeft: 3px solid` era o warning do detector, e o apps/backoffice/DESIGN.md
 // é explícito: "cartões são superfícies elevadas por hairline e sombra baixa,
 // nunca por borda grossa". A cor do domínio já vinha no eyebrow; o ponto ao
 // lado dele mantém o sinal sem a borda.

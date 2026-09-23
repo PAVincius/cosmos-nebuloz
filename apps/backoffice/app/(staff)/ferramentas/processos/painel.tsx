@@ -169,7 +169,7 @@ export function Painel({
           }}
         >
           {/* A cor do domínio, num ponto ao lado do rótulo — não numa borda
-              grossa no cartão (DESIGN.backoffice.md: hairline, nunca borda
+              grossa no cartão (apps/backoffice/DESIGN.md: hairline, nunca borda
               grossa). O nome do domínio já está no texto; o ponto é só cor. */}
           <span
             aria-hidden="true"

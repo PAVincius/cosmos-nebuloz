@@ -1,0 +1,566 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T00:30:00Z",
+  "title": "Design System: Big Bang",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Azul-céu Nebuloz",
+        "tonalRamp": [
+          "#145275",
+          "#1d6a97",
+          "#2a6f9e",
+          "#2a86bb",
+          "#3f8fc4",
+          "#5cb4e4",
+          "#89cff0",
+          "#a8dbf4"
+        ]
+      },
+      "accent-text": { "role": "primary", "displayName": "Céu de Leitura" },
+      "accent-soft": { "role": "primary", "displayName": "Véu de Céu" },
+      "accent-fg": { "role": "primary", "displayName": "Tinta sobre o Céu" },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Quase-preto da Sala de Máquinas",
+        "tonalRamp": [
+          "#07080c",
+          "#0a0c14",
+          "#0c0f17",
+          "#10131e",
+          "#181d2c",
+          "#8b95a9",
+          "#b8c0d0",
+          "#f5f7fb"
+        ]
+      },
+      "sidebar": { "role": "neutral", "displayName": "Grafite da Moldura" },
+      "surface": { "role": "neutral", "displayName": "Grafite Azulado" },
+      "surface-2": { "role": "neutral", "displayName": "Grafite de Campo" },
+      "surface-3": { "role": "neutral", "displayName": "Ardósia Alta" },
+      "hairline": { "role": "neutral", "displayName": "Fio" },
+      "hairline-strong": { "role": "neutral", "displayName": "Fio Forte" },
+      "chip-bg": { "role": "neutral", "displayName": "Véu Neutro" },
+      "ink": { "role": "neutral", "displayName": "Branco Gelo" },
+      "ink-muted": { "role": "neutral", "displayName": "Névoa" },
+      "ink-subtle": { "role": "neutral", "displayName": "Névoa Funda" },
+      "ink-faint": { "role": "neutral", "displayName": "Cinza de Rótulo" },
+      "green": {
+        "role": "semantic",
+        "displayName": "Verde Operacional",
+        "tonalRamp": [
+          "#022a14",
+          "#024726",
+          "#046639",
+          "#04884d",
+          "#11aa63",
+          "#2bcd7b",
+          "#59ee9a",
+          "#c6ffd8"
+        ]
+      },
+      "green-text": { "role": "semantic", "displayName": "Verde de Leitura" },
+      "green-soft": { "role": "semantic", "displayName": "Véu Verde" },
+      "amber": {
+        "role": "semantic",
+        "displayName": "Âmbar Manteiga",
+        "tonalRamp": [
+          "#292101",
+          "#473900",
+          "#65540a",
+          "#867010",
+          "#a88d1b",
+          "#c8ac44",
+          "#e8cc66",
+          "#ffefb5"
+        ]
+      },
+      "amber-text": { "role": "semantic", "displayName": "Manteiga" },
+      "amber-soft": { "role": "semantic", "displayName": "Véu Âmbar" },
+      "red": {
+        "role": "semantic",
+        "displayName": "Rosa-alarme",
+        "tonalRamp": [
+          "#44021a",
+          "#70012e",
+          "#9f0045",
+          "#c9235e",
+          "#ed4a7b",
+          "#fe809e",
+          "#feb7c5",
+          "#ffe8eb"
+        ]
+      },
+      "red-text": { "role": "semantic", "displayName": "Rosa de Leitura" },
+      "red-soft": { "role": "semantic", "displayName": "Véu Rosa" },
+      "blue": {
+        "role": "semantic",
+        "displayName": "Azul-bebê",
+        "tonalRamp": [
+          "#012634",
+          "#014157",
+          "#0e5d7a",
+          "#347b99",
+          "#5499b8",
+          "#73b8d9",
+          "#93d9fa",
+          "#dbf3ff"
+        ]
+      },
+      "blue-text": {
+        "role": "semantic",
+        "displayName": "Azul-bebê de Leitura"
+      },
+      "blue-soft": { "role": "semantic", "displayName": "Véu Azul" },
+      "purple": {
+        "role": "semantic",
+        "displayName": "Lilás de Estado",
+        "tonalRamp": [
+          "#250858",
+          "#3c2877",
+          "#564596",
+          "#7162b6",
+          "#8e80d7",
+          "#ad9ff9",
+          "#ccc6fd",
+          "#eeecff"
+        ]
+      },
+      "purple-text": { "role": "semantic", "displayName": "Lilás de Leitura" },
+      "purple-soft": { "role": "semantic", "displayName": "Véu Lilás" },
+      "scrim": { "role": "overlay", "displayName": "Scrim da Gaveta" },
+      "texture-grid": {
+        "role": "decorative",
+        "displayName": "Grade de Textura"
+      },
+      "canvas-grid": { "role": "decorative", "displayName": "Grade de Canvas" },
+      "light-accent": {
+        "role": "primary",
+        "displayName": "Azul Profundo (claro)"
+      },
+      "light-accent-text": {
+        "role": "primary",
+        "displayName": "Céu de Leitura (claro)"
+      },
+      "light-accent-soft": {
+        "role": "primary",
+        "displayName": "Véu de Céu (claro)"
+      },
+      "light-canvas": {
+        "role": "neutral",
+        "displayName": "Névoa de Papel (claro)",
+        "tonalRamp": [
+          "#0d1017",
+          "#565e6e",
+          "#636c7b",
+          "#d4d8e0",
+          "#e5e7ec",
+          "#edeff3",
+          "#f5f6f8",
+          "#ffffff"
+        ]
+      },
+      "light-sidebar": { "role": "neutral", "displayName": "Moldura (claro)" },
+      "light-surface": { "role": "neutral", "displayName": "Branco (claro)" },
+      "light-surface-2": { "role": "neutral", "displayName": "Campo (claro)" },
+      "light-surface-3": {
+        "role": "neutral",
+        "displayName": "Ardósia (claro)"
+      },
+      "light-hairline": { "role": "neutral", "displayName": "Fio (claro)" },
+      "light-hairline-strong": {
+        "role": "neutral",
+        "displayName": "Fio Forte (claro)"
+      },
+      "light-chip-bg": {
+        "role": "neutral",
+        "displayName": "Véu Neutro (claro)"
+      },
+      "light-ink": { "role": "neutral", "displayName": "Tinta (claro)" },
+      "light-ink-muted": { "role": "neutral", "displayName": "Névoa (claro)" },
+      "light-ink-subtle": {
+        "role": "neutral",
+        "displayName": "Névoa Funda (claro)"
+      },
+      "light-ink-faint": {
+        "role": "neutral",
+        "displayName": "Cinza de Rótulo (claro)"
+      },
+      "light-green": {
+        "role": "semantic",
+        "displayName": "Verde Operacional (claro)"
+      },
+      "light-green-text": {
+        "role": "semantic",
+        "displayName": "Verde de Leitura (claro)"
+      },
+      "light-green-soft": {
+        "role": "semantic",
+        "displayName": "Véu Verde (claro)"
+      },
+      "light-amber": { "role": "semantic", "displayName": "Âmbar (claro)" },
+      "light-amber-text": {
+        "role": "semantic",
+        "displayName": "Âmbar de Leitura (claro)"
+      },
+      "light-amber-soft": {
+        "role": "semantic",
+        "displayName": "Véu Âmbar (claro)"
+      },
+      "light-red": { "role": "semantic", "displayName": "Rosa-alarme (claro)" },
+      "light-red-text": {
+        "role": "semantic",
+        "displayName": "Rosa de Leitura (claro)"
+      },
+      "light-red-soft": {
+        "role": "semantic",
+        "displayName": "Véu Rosa (claro)"
+      },
+      "light-blue": { "role": "semantic", "displayName": "Azul (claro)" },
+      "light-blue-text": {
+        "role": "semantic",
+        "displayName": "Azul de Leitura (claro)"
+      },
+      "light-blue-soft": {
+        "role": "semantic",
+        "displayName": "Véu Azul (claro)"
+      },
+      "light-purple": { "role": "semantic", "displayName": "Lilás (claro)" },
+      "light-purple-text": {
+        "role": "semantic",
+        "displayName": "Lilás de Leitura (claro)"
+      },
+      "light-purple-soft": {
+        "role": "semantic",
+        "displayName": "Véu Lilás (claro)"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display · --fs-display",
+        "purpose": "Título das telas fora do shell (sign-in, segurança) em Space Grotesk; número grande em mono."
+      },
+      "headline": {
+        "displayName": "Headline · --fs-titulo",
+        "purpose": "Título das outras telas fora do shell (404 da raiz, bloqueios, falha geral); número secundário em mono."
+      },
+      "title": {
+        "displayName": "Title · --fs-forte",
+        "purpose": "Texto do botão primário, título de diálogo, wordmark NEBULOZ."
+      },
+      "body": {
+        "displayName": "Body · --fs-base",
+        "purpose": "Corpo, célula de tabela, item de menu, campo, confirmação, barreira."
+      },
+      "label": {
+        "displayName": "Label · --fs-nota",
+        "purpose": "Metadado, dica, badge, botão secundário, trilha da topbar, id em linha de lista."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow · --fs-micro",
+        "purpose": "Rótulo de seção, de campo e de coluna em mono maiúsculo; o piso de 10px só vale assim."
+      },
+      "mono": {
+        "displayName": "Mono de dado",
+        "purpose": "Identificador, valor, data (dd/mm/aaaa hh:mm) e código: é o que faz um id parecer um id."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-dark",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px rgba(0, 0, 0, 0.9)",
+        "purpose": "--card-shadow no escuro: cartão, cabeçalho de página, KPI, diálogo, menu. A luz vem de cima."
+      },
+      {
+        "name": "card-light",
+        "value": "0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1)",
+        "purpose": "--card-shadow no claro."
+      },
+      {
+        "name": "lift-hover-light",
+        "value": "0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px rgba(var(--accent-rgb), 0.3)",
+        "purpose": "--hover-shadow: só o .lift do claro a lê."
+      },
+      {
+        "name": "lift-hover-dark",
+        "value": "0 18px 40px -28px rgba(0, 0, 0, 0.9)",
+        "purpose": "Hover do .lift no escuro (linhas da carteira, pedidos de aprovação)."
+      },
+      {
+        "name": "primary-glow",
+        "value": "0 1px 2px rgba(var(--accent-rgb), 0.4), 0 6px 16px -8px rgba(var(--accent-rgb), 0.6)",
+        "purpose": "Botão primário e skip link visível."
+      },
+      {
+        "name": "brand-glow",
+        "value": "0 0 18px -4px rgba(var(--accent-rgb), 0.7)",
+        "purpose": "Ladrilho da chave na topbar (20px de raio no sign-in)."
+      },
+      {
+        "name": "state-dot-glow",
+        "value": "0 0 7px 1px rgba(var(--tone-rgb), 0.5)",
+        "purpose": "Ponto do StatusDot, no tom do estado."
+      },
+      {
+        "name": "drawer",
+        "value": "0 0 60px -12px rgba(0, 0, 0, 0.5)",
+        "purpose": "Gaveta de navegação abaixo de 1024px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "tap",
+        "value": "transform 0.1s ease; translateY(0.5px)",
+        "purpose": ".btn:active: o botão afunda meio pixel no clique."
+      },
+      {
+        "name": "hover-nav",
+        "value": "background 0.15s ease, color 0.15s ease",
+        "purpose": ".navitem; declarado no cosmos.css, anulado hoje pelo estilo inline do item."
+      },
+      {
+        "name": "chevron",
+        "value": "transform 0.15s ease; rotate(90deg)",
+        "purpose": ".bo-chevron de <details> aberto; some com prefers-reduced-motion."
+      },
+      {
+        "name": "lift",
+        "value": "0.25s ease; translateY(-2px)",
+        "purpose": ".lift de cartões e linhas navegáveis; o deslocamento some com prefers-reduced-motion."
+      },
+      {
+        "name": "drawer",
+        "value": "transform 0.26s cubic-bezier(0.2, 0.8, 0.3, 1)",
+        "purpose": "Gaveta de navegação; scrim entra com fade de 0.2s."
+      },
+      {
+        "name": "kpi-lift",
+        "value": "transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1); translateY(-3px)",
+        "purpose": "Hover do cartão de KPI; não some com prefers-reduced-motion (lacuna)."
+      },
+      {
+        "name": "kpi-layers",
+        "value": "opacity 0.5s–0.55s ease, escaladas por --fx: 1",
+        "purpose": "Marca d'água, brilho e grade de pontos do KPI no escuro, dessincronizados."
+      },
+      {
+        "name": "screen-in",
+        "value": "cosmos-fadeIn 0.45s ease; translateY(7px) → none",
+        "purpose": "Entrada do <main> a cada tela; sem fade de opacidade."
+      },
+      {
+        "name": "count-up",
+        "value": "900ms, ease-out cúbico",
+        "purpose": "Valor do KPI de 0 ao número; direto sob prefers-reduced-motion."
+      },
+      {
+        "name": "shimmer",
+        "value": "cosmos-shimmer 1.4s ease-in-out infinite",
+        "purpose": "Esqueleto de carregamento; não some com prefers-reduced-motion (lacuna)."
+      },
+      {
+        "name": "ecg-sweep",
+        "value": "cosmos-ecgsweep 3s linear infinite",
+        "purpose": "Sinal do KPI no escuro; parado com prefers-reduced-motion."
+      },
+      {
+        "name": "badge-flash",
+        "value": "cosmos-badgeFlash 0.35s ease; scale(1.18) brightness(1.3)",
+        "purpose": "Badge pisca uma vez quando o tom muda; não respeita prefers-reduced-motion (lacuna)."
+      },
+      {
+        "name": "header-pulse",
+        "value": "0.7s cubic-bezier(0.22, 1, 0.36, 1); scale 0 → 16, opacity 0.5 → 0",
+        "purpose": "Pulso radial do cabeçalho do SectionCard, uma vez por mouseenter; desligado com prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "estreito",
+        "value": "1023px",
+        "purpose": "max-width: sidebar vira gaveta, grades .bo-* empilham, topbar enxuga. O único corte do painel."
+      },
+      {
+        "name": "dialog-sm",
+        "value": "640px",
+        "purpose": "min-width do Tailwind usado só nas larguras de diálogo (sm:max-w-*)."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "BotaoPrimario: a ação principal de uma área, em azul-céu com texto na cor do canvas. Sem troca de cor no hover; afunda 0,5px no clique e mostra o anel de foco global.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">+ Provisionar cliente</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;border:1px solid var(--accent,#5cb4e4);border-radius:var(--r-md,10px);background:var(--accent,#5cb4e4);color:var(--accent-fg,#07080c);font-family:var(--font-manrope),Manrope,system-ui,sans-serif;font-size:var(--fs-forte,15px);font-weight:600;box-shadow:0 1px 2px rgba(var(--accent-rgb,92,180,228),.4),0 6px 16px -8px rgba(var(--accent-rgb,92,180,228),.6);cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .1s ease,box-shadow .15s ease}.ds-btn-primary:active{transform:translateY(.5px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}.ds-btn-primary:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação que não é a principal da tela (Exportar CSV, Tentar de novo): superfície de campo, fio forte, texto em névoa. O exportar é link com download, não fetch.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\" download><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/></svg>Exportar CSV</a>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border:1px solid var(--hairline-strong,rgba(255,255,255,.14));border-radius:var(--r-sm,8px);background:var(--surface-2,#10131e);color:var(--ink-muted,#b8c0d0);font-family:var(--font-manrope),Manrope,system-ui,sans-serif;font-size:var(--fs-nota,11.5px);font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .1s ease}.ds-btn-secondary svg{width:14px;height:14px;flex-shrink:0}.ds-btn-secondary:active{transform:translateY(.5px)}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}"
+    },
+    {
+      "name": "Escrita bloqueada por papel",
+      "kind": "button",
+      "refersTo": "button-readonly",
+      "description": "WriteButton para MEMBER: aria-disabled (continua no Tab), com o motivo no DOM ligado por aria-describedby e repetido no title. Padrão para toda ação bloqueada por papel.",
+      "html": "<span class=\"ds-readonly\" title=\"Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa fazer esta ação.\"><button class=\"ds-btn-readonly\" type=\"button\" aria-disabled=\"true\" aria-describedby=\"ds-readonly-motivo\">+ Provisionar cliente</button><span class=\"ds-sr-only\" id=\"ds-readonly-motivo\">Somente leitura: seu papel no back-office é MEMBER. Um ADMIN precisa fazer esta ação.</span></span>",
+      "css": ".ds-readonly{display:inline-flex;cursor:not-allowed}.ds-btn-readonly{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid var(--hairline,rgba(255,255,255,.07));border-radius:var(--r-md,10px);background:var(--surface-2,#10131e);color:var(--ink-faint,#8b95a9);font-family:var(--font-manrope),Manrope,system-ui,sans-serif;font-size:var(--fs-forte,15px);font-weight:600;opacity:.6;cursor:not-allowed}.ds-btn-readonly:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}.ds-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}"
+    },
+    {
+      "name": "Campo com rótulo, dica e erro",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo + INPUT + Erro de campo.tsx: rótulo visível em mono maiúsculo, controle em grafite de campo, dica e erro ligados por aria-describedby, erro em bloco rosa com role=alert. Foco pelo anel global, nunca outline inline.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-field-email\">E-mail do dono</label><input class=\"ds-input\" id=\"ds-field-email\" type=\"email\" value=\"dono@vanta-saude\" aria-invalid=\"true\" aria-describedby=\"ds-field-hint ds-field-erro\"><span class=\"ds-field-hint\" id=\"ds-field-hint\">Com conta, entra como ADMIN; sem conta, recebe convite.</span><p class=\"ds-field-error\" id=\"ds-field-erro\" role=\"alert\">E-mail sem domínio completo.</p></div>",
+      "css": ".ds-field{box-sizing:border-box;display:flex;flex-direction:column;gap:6px;width:300px;padding:18px;border-radius:var(--r-lg,14px);background:var(--surface,#0c0f17);font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-field-label{font-family:var(--font-jetbrains-mono),'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-micro,10px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint,#8b95a9)}.ds-input{box-sizing:border-box;width:100%;padding:10px 12px;border:1px solid var(--hairline,rgba(255,255,255,.07));border-radius:var(--r-md,10px);background:var(--surface-2,#10131e);color:var(--ink,#f5f7fb);font-family:inherit;font-size:var(--fs-base,13px);font-weight:600}.ds-input:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}.ds-field-hint{font-size:var(--fs-nota,11.5px);font-weight:500;color:var(--ink-faint,#8b95a9)}.ds-field-error{margin:0;padding:9px 11px;border:1px solid rgba(var(--red-rgb,255,92,138),.3);border-radius:var(--r-md,10px);background:var(--red-soft,rgba(255,92,138,.14));color:var(--red-text,#ffa3bd);font-size:var(--fs-base,13px);font-weight:600}"
+    },
+    {
+      "name": "Navegação lateral",
+      "kind": "nav",
+      "refersTo": "sidebar-item",
+      "description": "Sidebar de 236px: eyebrow por seção, item de 13px com raio de 9px, ativo em véu de céu com aria-current. Sem hover: o .navitem:hover do cosmos.css é anulado pelo estilo inline do item. No pé, a caixa tracejada Fora deste painel.",
+      "html": "<nav class=\"ds-sidebar\" aria-label=\"Navegação do back-office\"><div class=\"ds-nav-group\"><div class=\"ds-nav-eyebrow\">Plataforma</div><a class=\"ds-nav-item\" href=\"#\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12 14 4-4\"/><path d=\"M3.34 19a10 10 0 1 1 17.32 0\"/></svg><span>Home</span></a><a class=\"ds-nav-item\" href=\"#\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z\"/><path d=\"M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2\"/><path d=\"M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2\"/><path d=\"M10 6h4\"/><path d=\"M10 10h4\"/><path d=\"M10 14h4\"/><path d=\"M10 18h4\"/></svg><span>Clientes</span></a><a class=\"ds-nav-item\" href=\"#\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Aprovações</span></a><a class=\"ds-nav-item\" href=\"#\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/></svg><span>Observabilidade</span></a></div><div class=\"ds-nav-outside\"><div class=\"ds-nav-eyebrow ds-nav-eyebrow-amber\">Fora deste painel</div><p>Remover cliente, revogar staff e promover ADMIN não existem aqui — são operações de banco, por decisão.</p></div></nav>",
+      "css": ".ds-sidebar{box-sizing:border-box;display:flex;flex-direction:column;gap:20px;width:236px;padding:16px 10px;background:var(--sidebar,#0a0c14);border-right:1px solid var(--hairline,rgba(255,255,255,.07));font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-nav-group{display:flex;flex-direction:column;gap:2px}.ds-nav-eyebrow{padding:0 10px 7px;font-family:var(--font-jetbrains-mono),'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-micro,10px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint,#8b95a9)}.ds-nav-item{display:flex;align-items:center;gap:10px;padding:8.5px 10px;border-radius:9px;color:var(--ink-muted,#b8c0d0);font-size:var(--fs-base,13px);font-weight:600;text-decoration:none;transition:background .15s ease,color .15s ease}.ds-nav-item svg{width:15.5px;height:15.5px;flex-shrink:0;stroke-width:1.9}.ds-nav-item[aria-current=page]{background:var(--accent-soft,rgba(92,180,228,.14));color:var(--accent-text,#a8dbf4);font-weight:700}.ds-nav-item[aria-current=page] svg{stroke-width:2.1}.ds-nav-item:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}.ds-nav-outside{margin:0 4px;padding:12px;border:1px dashed var(--hairline-strong,rgba(255,255,255,.14));border-radius:var(--r-md,10px)}.ds-nav-outside .ds-nav-eyebrow{padding:0}.ds-nav-eyebrow-amber{color:var(--amber-text,#f6f2c3)}.ds-nav-outside p{margin:7px 0 0;font-size:var(--fs-nota,11.5px);line-height:1.55;font-weight:500;color:var(--ink-subtle,#a2acc0)}"
+    },
+    {
+      "name": "Estado: badge e ponto",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Cor mais palavra, sempre. Badge com ponto para status vivo (módulos da carteira: Ativo verde, Trial azul, Suspenso âmbar, Cancelado vermelho) e StatusDot quando o estado acompanha um nome.",
+      "html": "<div class=\"ds-state\"><span class=\"ds-badge ds-badge-green\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>COSMOS · Ativo</span><span class=\"ds-badge ds-badge-blue\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>CHARTER · Trial</span><span class=\"ds-badge ds-badge-amber\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>SIGNAL · Suspenso</span><span class=\"ds-badge ds-badge-red\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>MERIDIAN · Cancelado</span><span class=\"ds-status-dot\"><span class=\"ds-status-dot-mark\" aria-hidden=\"true\"></span>Convidado</span></div>",
+      "css": ".ds-state{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:16px;border-radius:var(--r-lg,14px);background:var(--surface,#0c0f17);font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid transparent;border-radius:var(--r-pill,999px);font-size:var(--fs-nota,11.5px);font-weight:700;letter-spacing:.02em;white-space:nowrap}.ds-badge-dot{width:6px;height:6px;border-radius:99px;background:currentColor}.ds-badge-green{background:var(--green-soft,rgba(41,204,122,.13));color:var(--green-text,#7ce8ad);border-color:rgba(var(--green-rgb,41,204,122),.25)}.ds-badge-blue{background:var(--blue-soft,rgba(137,207,240,.14));color:var(--blue-text,#bde5f8);border-color:rgba(var(--blue-rgb,137,207,240),.25)}.ds-badge-amber{background:var(--amber-soft,rgba(236,208,106,.13));color:var(--amber-text,#f6f2c3);border-color:rgba(var(--amber-rgb,236,208,106),.25)}.ds-badge-red{background:var(--red-soft,rgba(255,92,138,.14));color:var(--red-text,#ffa3bd);border-color:rgba(var(--red-rgb,255,92,138),.25)}.ds-status-dot{display:inline-flex;align-items:center;gap:7px;font-size:var(--fs-nota,11.5px);font-weight:600;color:var(--ink-muted,#b8c0d0)}.ds-status-dot-mark{width:7px;height:7px;flex-shrink:0;border-radius:99px;background:var(--amber,#ecd06a);box-shadow:0 0 7px 1px rgba(var(--amber-rgb,236,208,106),.5)}"
+    },
+    {
+      "name": "Cabeçalho de página",
+      "kind": "custom",
+      "refersTo": "page-header",
+      "description": "PageHeader do kit em todas as telas do shell: gradiente ardósia, fio de luz no topo, halo do tom, eyebrow Seção · faceta e h1 em Space Grotesk. Os 27px e 14,5px são literais do kit, fora da escala.",
+      "html": "<header class=\"ds-page-header\"><div class=\"ds-page-header-eyebrow\">Plataforma · carteira</div><div class=\"ds-page-header-row\"><div><h1>Carteira de clientes</h1><p>Todos os clientes provisionados, seus módulos e status de contratação.</p></div><a class=\"ds-page-header-action\" href=\"#\">+ Provisionar cliente</a></div></header>",
+      "css": ".ds-page-header{box-sizing:border-box;position:relative;overflow:hidden;max-width:720px;padding:22px 26px 24px;border:1px solid var(--hairline,rgba(255,255,255,.07));border-radius:var(--r-lg,14px);background:linear-gradient(180deg,var(--surface-3,#181d2c),var(--surface-2,#10131e) 60%,var(--surface,#0c0f17));box-shadow:var(--card-shadow,0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -20px rgba(0,0,0,.9));font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent)}.ds-page-header::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 100% at 14% 0%,rgba(var(--accent-rgb,92,180,228),.14),transparent 62%)}.ds-page-header>*{position:relative;z-index:1}.ds-page-header-eyebrow{margin-bottom:8px;font-family:var(--font-jetbrains-mono),'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text,#a8dbf4)}.ds-page-header-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:20px}.ds-page-header h1{margin:0;font-family:var(--font-space-grotesk),'Space Grotesk',var(--font-manrope),sans-serif;font-size:27px;font-weight:700;letter-spacing:-.025em;color:var(--ink,#f5f7fb)}.ds-page-header p{margin:6px 0 0;max-width:760px;font-size:14.5px;line-height:1.45;color:var(--ink-subtle,#a2acc0)}.ds-page-header-action{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid var(--accent,#5cb4e4);border-radius:var(--r-md,10px);background:var(--accent,#5cb4e4);color:var(--accent-fg,#07080c);font-size:var(--fs-forte,15px);font-weight:600;text-decoration:none;box-shadow:0 1px 2px rgba(var(--accent-rgb,92,180,228),.4),0 6px 16px -8px rgba(var(--accent-rgb,92,180,228),.6);transition:transform .1s ease}.ds-page-header-action:active{transform:translateY(.5px)}.ds-page-header-action:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}"
+    },
+    {
+      "name": "Cartão de seção com vazio",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Secao (SectionCard com título em h2): superfície por fio e sombra baixa, nunca borda grossa. No corpo, o Vazio tracejado que diz por que está vazio e o que muda com isso.",
+      "html": "<section class=\"ds-section\"><div class=\"ds-section-head\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/></svg><div><h2>Catálogo</h2><div class=\"ds-section-sub\">0 ativos de 0</div></div></div><div class=\"ds-section-body\"><p class=\"ds-empty\">Catálogo vazio. Sem serviço cadastrado, proposta vira texto livre e o Benchmark fica sem eixo de comparação.</p></div></section>",
+      "css": ".ds-section{overflow:hidden;max-width:520px;border:1px solid var(--hairline,rgba(255,255,255,.07));border-radius:var(--r-lg,14px);background:var(--surface,#0c0f17);box-shadow:var(--card-shadow,0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -20px rgba(0,0,0,.9));font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-section-head{position:relative;display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--hairline,rgba(255,255,255,.07));background:var(--surface-2,#10131e);color:var(--ink-muted,#b8c0d0)}.ds-section-head::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.1) 30%,rgba(255,255,255,.06) 70%,transparent 100%)}.ds-section-head svg{width:16px;height:16px;flex-shrink:0}.ds-section-head h2{margin:0;font-family:var(--font-space-grotesk),'Space Grotesk',var(--font-manrope),sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.015em;color:var(--ink,#f5f7fb)}.ds-section-sub{margin-top:1px;font-size:12.5px;color:var(--ink-subtle,#a2acc0)}.ds-section-body{padding:18px}.ds-empty{margin:0;padding:24px;text-align:center;border:1px dashed var(--hairline-strong,rgba(255,255,255,.14));border-radius:var(--r-md,10px);color:var(--ink-subtle,#a2acc0);font-size:var(--fs-base,13px);font-weight:500;line-height:1.6}"
+    },
+    {
+      "name": "Cartão de KPI",
+      "kind": "card",
+      "refersTo": "kpi-card",
+      "description": "KpiCard do kit no escuro (tom azul, como Clientes na carteira): valor em mono, ladrilho de ícone no tom, sobe 3px no hover e acende a grade de pontos. O gradiente de fundo é o literal do kit, calculado sobre a paleta do Cosmos.",
+      "html": "<div class=\"ds-kpi\"><div class=\"ds-kpi-clip\" aria-hidden=\"true\"><div class=\"ds-kpi-dots\"></div></div><div class=\"ds-kpi-top\"><span class=\"ds-kpi-label\">Clientes na carteira</span><span class=\"ds-kpi-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z\"/><path d=\"M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2\"/><path d=\"M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2\"/><path d=\"M10 6h4\"/><path d=\"M10 10h4\"/><path d=\"M10 14h4\"/><path d=\"M10 18h4\"/></svg></span></div><div class=\"ds-kpi-value\">42</div><div class=\"ds-kpi-hint\">clientes provisionados</div></div>",
+      "css": ".ds-kpi{box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:flex-start;width:260px;min-height:150px;padding:18px 20px;border:1px solid rgba(var(--blue-rgb,137,207,240),.2);border-radius:var(--r-xl,18px);background:radial-gradient(130% 130% at 0% 0%,rgba(96,165,250,.13),transparent 46%),linear-gradient(180deg,#0d1526,#0a1020);box-shadow:var(--card-shadow,0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -20px rgba(0,0,0,.9));font-family:var(--font-manrope),Manrope,system-ui,sans-serif;transition:transform .4s cubic-bezier(.2,.7,.3,1),border-color .4s ease,box-shadow .4s ease}.ds-kpi:hover{transform:translateY(-3px)}.ds-kpi-clip{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}.ds-kpi-dots{position:absolute;inset:0;color:var(--blue,#89cff0);opacity:0;transition:opacity .55s ease;background-image:radial-gradient(currentColor 1.1px,transparent 1.5px);background-size:11px 11px;-webkit-mask-image:radial-gradient(150% 130% at 100% 100%,#000 0%,transparent 58%);mask-image:radial-gradient(150% 130% at 100% 100%,#000 0%,transparent 58%)}.ds-kpi:hover .ds-kpi-dots{opacity:.45}.ds-kpi-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;width:100%}.ds-kpi-label{max-width:74%;font-size:13px;font-weight:600;line-height:1.3;color:var(--ink-muted,#b8c0d0)}.ds-kpi-icon{display:grid;place-items:center;width:34px;height:34px;flex-shrink:0;border:1px solid rgba(var(--blue-rgb,137,207,240),.22);border-radius:var(--r-md,10px);background:var(--blue-soft,rgba(137,207,240,.14));color:var(--blue,#89cff0)}.ds-kpi-icon svg{width:18px;height:18px}.ds-kpi-value{position:relative;z-index:1;margin:auto 0 12px;padding-top:14px;font-family:var(--font-jetbrains-mono),'JetBrains Mono',ui-monospace,monospace;font-size:37px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--blue-text,#bde5f8)}.ds-kpi-hint{position:relative;z-index:1;font-size:12px;font-weight:500;color:var(--ink-subtle,#a2acc0)}"
+    },
+    {
+      "name": "Barreira antes de operação sem volta",
+      "kind": "custom",
+      "refersTo": "button-ghost-danger",
+      "description": "ConfirmarAcao aberta, tom vermelho: fieldset inline com rótulo em imperativo, alvo em mono, consequência em prosa e Voltar antes de Confirmar, para a confirmação não nascer sob o cursor. Esc volta.",
+      "html": "<div class=\"ds-barrier-stage\"><fieldset class=\"ds-barrier\" aria-labelledby=\"ds-barrier-rotulo\" aria-describedby=\"ds-barrier-alvo ds-barrier-consequencia\"><span class=\"ds-barrier-title\"><span id=\"ds-barrier-rotulo\">Cancelar COSMOS</span> — <span class=\"ds-barrier-target\" id=\"ds-barrier-alvo\">vanta-saude</span></span><span class=\"ds-barrier-consequence\" id=\"ds-barrier-consequencia\">O cliente perde acesso ao módulo e o contrato passa a constar como encerrado.</span><div class=\"ds-barrier-actions\"><button class=\"ds-barrier-back\" type=\"button\">Voltar</button><button class=\"ds-barrier-confirm\" type=\"button\">Confirmar</button></div></fieldset></div>",
+      "css": ".ds-barrier-stage{box-sizing:border-box;max-width:460px;padding:16px;border-radius:var(--r-lg,14px);background:var(--surface,#0c0f17);color:var(--ink,#f5f7fb);font-family:var(--font-manrope),Manrope,system-ui,sans-serif}.ds-barrier{display:flex;flex-direction:column;gap:8px;min-width:0;margin:0;padding:10px 12px;border:1px solid rgba(var(--red-rgb,255,92,138),.3);border-radius:var(--r-md,10px);background:var(--red-soft,rgba(255,92,138,.14))}.ds-barrier-title{font-size:var(--fs-base,13px);font-weight:600}.ds-barrier-target{font-family:var(--font-jetbrains-mono),'JetBrains Mono',ui-monospace,monospace}.ds-barrier-consequence{font-size:var(--fs-nota,11.5px);color:var(--ink-muted,#b8c0d0)}.ds-barrier-actions{display:flex;align-items:center;gap:8px}.ds-barrier-back,.ds-barrier-confirm{padding:5px 11px;border:1px solid var(--hairline,rgba(255,255,255,.07));border-radius:var(--r-sm,8px);background:none;font-family:inherit;font-size:var(--fs-nota,11.5px);font-weight:600;cursor:pointer;transition:transform .1s ease}.ds-barrier-back{color:var(--ink-muted,#b8c0d0)}.ds-barrier-confirm{color:var(--red-text,#ffa3bd)}.ds-barrier-back:active,.ds-barrier-confirm:active{transform:translateY(.5px)}.ds-barrier-back:focus-visible,.ds-barrier-confirm:focus-visible{outline:2px solid var(--accent,#5cb4e4);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Sala de Máquinas",
+    "overview": "O cliente usa o Cosmos e os outros produtos. O Big Bang é a sala de máquinas: onde a Nebuloz provisiona, contrata, acompanha e cobra cada cliente sem abrir o banco. Quem opera é gente da casa (plataforma, CS, comercial, segurança, quem fecha o mês no Financeiro), que abre a tela dezenas de vezes por dia e já conhece o vocabulário. Isso define quase tudo: densidade em vez de acolhimento, mais tabela que gráfico, mais dado que atmosfera. Não há onboarding, ilustração nem espaço morto decorativo. São 29 telas em 8 seções de menu (Plataforma, Delivery, Growth, Comercial, Empresa, Ferramentas, Auditoria, Operações) num shell único.\n\nO acento é um só e é escasso: o azul-céu da marca marca posição (item ativo, anel de foco), ação primária e seleção. Cor carrega estado (verde, âmbar, vermelho, azul, roxo) e nunca aparece sozinha: todo estado é cor mais palavra. Toda operação sem volta passa por uma barreira que escreve o alvo e a consequência, e todo resultado é dito em frase no lugar onde a ação aconteceu. O mono é o que faz um id parecer um id.\n\nA atmosfera existe, contida, e só no escuro, que é o tema padrão: grão e grade de 64px nas telas fora do shell, e as camadas do cartão de KPI no hover. O claro é limpo por decisão. Rejeições confirmadas no código: a lavanda do Cosmos e o preto do marketing, toast, borda grossa colorida em cartão, estado só em cor e a confirmação genérica do tipo \"Tem certeza?\".",
+    "keyCharacteristics": [
+      "Escuro por padrão, com tema claro completo e trocável na topbar.",
+      "Um acento: azul-céu no escuro, azul profundo no claro; o texto sobre ele é o canvas no escuro.",
+      "Seis degraus de tipo em token (10 a 22px); Manrope para ler, Space Grotesk para titular, JetBrains Mono para dado.",
+      "Profundidade por camada tonal, hairline e sombra baixa, nunca por borda grossa.",
+      "Estado em cor mais palavra; controle bloqueado diz por quê.",
+      "Toda leitura tem esqueleto com a forma da tela, vazio que explica e falha com \"Tentar de novo\".",
+      "Um breakpoint (1023px): a sidebar vira gaveta e as grades empilham."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Céu Escasso",
+        "body": "O azul-céu marca posição, ação primária e seleção. Não vira fundo de seção, ícone decorativo nem gradiente de destaque. Fora disso, ele só aparece no halo do `PageHeader` (14%) e no ladrilho da marca.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Cor com Palavra",
+        "body": "Estado nunca é só cor, só `title` ou só posição. `Badge` e `StatusDot` levam a palavra; o desvio do Orçado ganhou \"acima do orçado\" e \"abaixo do previsto\" (`orcado.tsx`) depois de a crítica R5 pegá-lo só em cor.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Texto Tonal",
+        "body": "Texto de estado usa `-text`, nunca o sólido. Pela fórmula WCAG 2.x sobre `light-surface`, os sólidos do claro dão verde 4,0:1, âmbar 4,3:1, azul 3,5:1, roxo 4,4:1 e vermelho 4,5:1; os `-text` ficam entre 5,4:1 e 6,4:1, e acima de 4,8:1 sobre o próprio `-soft`. No escuro todos passam, mas a divisão de papéis é a mesma.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Canvas sobre o Céu",
+        "body": "Texto e ícone sobre accent sólido usam `accent-fg`. No escuro, branco sobre `#5cb4e4` dá 2,3:1 e reprova AA; o canvas dá 8,7:1. No claro, branco sobre `light-accent` dá 5,9:1. O comentário do CSS fala em \"~1.8:1\" e \"passa dos 10:1\": os números não se reproduzem pela fórmula, a decisão sim.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra dos Seis Degraus",
+        "body": "Tamanho de fonte só por `var(--fs-*)`. Um tamanho fora deles é um degrau novo, e degrau novo é como os quinze de antes apareceram (comentário da escala em `cosmos.css`).",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Mono",
+        "body": "Identificador, valor, data, código e cabeçalho de tabela vão em mono. É o que faz `P-ABC123`, `R$ 8.449,90` e `22/09/2026 14:20` parecerem o que são. Manrope num id apaga a pista.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Grade em Classe",
+        "body": "Layout de tela não usa `gridTemplateColumns` inline: inline não tem media query. As 31 grades fixas que não empilhavam viraram classes `.bo-*`; forma nova de grade entra no `backoffice-theme.css`, não no componente.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra da Hairline",
+        "body": "Cartões são superfícies elevadas por hairline e sombra baixa, nunca por borda grossa. A frase é citada por `ferramentas/processos/painel.tsx` e por `processos-painel-dominio.test.tsx`: a cor do domínio virou um ponto ao lado do rótulo.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra da Textura no Escuro",
+        "body": "Grão, grade e camadas de KPI existem só em `[data-theme=\"dark\"]` e só onde já estão. O claro é limpo por decisão.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use cor e palavra para todo estado: `Badge` com `dot` para status vivo, `StatusDot` quando o estado acompanha um nome, veredito escrito ao lado de qualquer cor.",
+      "Use mono para identificador, valor, data, código e cabeçalho de tabela, e datas por `lib/data.ts` (`dd/mm/aaaa hh:mm`, fuso de São Paulo, \"—\" quando vazia).",
+      "Escreva o eyebrow como `Seção · faceta`, com a seção de `secaoDaRota`; em tela de detalhe, `entidade · id`.",
+      "Use `var(--fs-*)` para tamanho e `var(--token)` para cor. Hex literal só nas duas exceções escritas no código: a reserva do `var()` em `falha-geral.tsx` e as cores do `.canvas` exportado em `processos-canvas.ts`.",
+      "Monte grade de tela com as classes `.bo-*`; forma nova entra no `backoffice-theme.css`.",
+      "Abra cada seção com `Secao` (título em `h2`); `h3` só para cartão aninhado.",
+      "Entregue a leitura completa: `loading.tsx` com `Carregando` na forma da tela, `Vazio` que diz por que e o que fazer, `FalhaAoCarregar` com \"Tentar de novo\" dentro da moldura.",
+      "Diga o sucesso em frase, no lugar: `Confirmacao` junto do controle que agiu, nomeando o alvo.",
+      "Ponha `ConfirmarAcao` antes de toda operação sem volta: alvo escrito, consequência em prosa, \"Voltar\" antes de \"Confirmar\".",
+      "Explique todo controle bloqueado: `WriteButton` (aria-disabled e motivo no DOM) quando depende de papel, `OQueFalta` ao lado de submit incompleto.",
+      "Limite toda lista: `take` até 100 com \"Mostrar mais\", ou `PaginacaoEmLinks` quando a página vem do servidor."
+    ],
+    "donts": [
+      "Não use a lavanda do Cosmos (`#5e6ad2`, `#7c87ff` no escuro) nem o `#010102` do marketing: são outras superfícies.",
+      "Não ponha `data-theme` em nó interno: reativa as regras do `globals.css` e troca o `--accent` pelo valor do design-system sem parecer quebrado (medido no sign-in: `lab(10.6% .65 -3.3)` dentro do cartão). O tema vem só do `<html>`.",
+      "Não inverta a ordem de import do `layout.tsx` (`cosmos.css` antes de `backoffice-theme.css`, CSS do bpmn-js antes de `bpmn-estudio.css`).",
+      "Não escreva texto com o sólido de um tom: no claro ele fica entre 3,5:1 e 4,5:1; texto de estado é `-text`.",
+      "Não ponha branco sobre o accent no escuro (2,3:1): use `accent-fg`.",
+      "Não clareie `ink-faint`: ele carrega os rótulos de 10px e está a 4,6:1 sobre `light-surface-3` (NFR-2 do handoff pede o mesmo).",
+      "Não use borda grossa colorida em cartão: o `borderLeft: 3px` de `processos/painel.tsx` foi o warning do detector e virou um ponto de 7px ao lado do rótulo, com teste.",
+      "Não use toast para dizer que deu certo: o painel é sem toast por decisão (spec do funil v2), e o teste `sucesso-no-lugar` cobra a frase junto do controle.",
+      "Não pergunte \"Tem certeza?\" nem use `window.confirm`: a barreira escreve alvo e consequência.",
+      "Não desabilite em silêncio, nem use opacidade, `title` ou posição como único sinal de estado.",
+      "Não use placeholder como rótulo: some ao digitar e não é rótulo para leitor de tela.",
+      "Não escreva `fontSize` numérico nem crie degrau novo, e não copie os literais do kit (27px, 14,5px) para fora dele.",
+      "Não escreva `gridTemplateColumns` inline para layout de tela.",
+      "Não pinte com utilitário do Tailwind ou do shadcn (`bg-primary`, `text-muted-foreground`, `text-destructive`, `border-red-500/30`): eles leem a régua do `globals.css`, não a do Big Bang. Tailwind fica para largura e posição de diálogo e para `sr-only`.",
+      "Não escreva `outline: none` nem `outline` inline: o anel global é o foco do painel.",
+      "Não leve textura (grão, grade de 64px) para o tema claro nem para telas do shell.",
+      "Não copie a receita do botão primário para mais um arquivo: use `BotaoPrimario`, ou `WriteButton` quando depende de papel.",
+      "Não cubra nem restile o `.bjs-powered-by` do canto inferior direito do canvas BPMN: a licença bpmn.io exige o watermark visível e sem sobreposição."
+    ]
+  }
+}
