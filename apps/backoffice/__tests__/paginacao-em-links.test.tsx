@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   listBenchmark: vi.fn(),
 }));
 
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/accounts", () => ({
   listAccountHealth: mocks.listAccountHealth,
 }));

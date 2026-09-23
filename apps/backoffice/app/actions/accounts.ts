@@ -17,6 +17,7 @@ import {
   type Listagem,
   type OpcoesDePagina,
 } from "@/lib/paginacao";
+import { rotuloDoModulo } from "@/lib/rotulos";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
@@ -76,7 +77,7 @@ function sinaisDeModulo(
     if (MODULO_QUEBRADO.has(m.status)) {
       sinais.push({
         nivel: "RISCO",
-        texto: `Módulo ${m.module} está ${m.status === "SUSPENDED" ? "suspenso" : "cancelado"}.`,
+        texto: `Módulo ${rotuloDoModulo(m.module)} está ${m.status === "SUSPENDED" ? "suspenso" : "cancelado"}.`,
       });
     }
   }

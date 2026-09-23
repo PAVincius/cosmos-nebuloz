@@ -4,6 +4,8 @@ import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { clientListArgs } from "@/lib/client-queries";
+import { mensagemDeErro } from "@/lib/erro-de-integracao";
 import { requirePlatformStaff, SYSTEM_TENANT_ID } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -17,6 +19,9 @@ import { type Result, safeAction } from "@/lib/safe-action";
  */
 
 const EVENTOS = ["LOGIN", "LOGOUT", "RECUSADO"] as const;
+
+/** Quantas integrações quebradas a tela lista. A contagem é à parte. */
+const LIMITE_DE_QUEBRADAS = 50;
 
 const AcessoSchema = z.object({
   email: z.string().min(3).max(200),
@@ -81,10 +86,17 @@ export type IntegracaoQuebrada = {
   name: string;
   status: string;
   ultimoSync: string | null;
+  /** A causa do último sync com erro, sem credencial
+   *  (`lib/erro-de-integracao.ts`). */
+  mensagem: string;
 };
 
 export type SaudeDaPlataforma = {
   integracoes: IntegracaoQuebrada[];
+  /** Todas as integrações com erro, contadas no banco. A lista para em
+   *  `LIMITE_DE_QUEBRADAS`; o KPI "Integrações com erro" contava a lista e
+   *  saturava em 50 sem dizer. */
+  integracoesComErro: number;
   acessos: AcessoRow[];
   recusas: number;
   tenants: number;
@@ -96,57 +108,75 @@ export type SaudeDaPlataforma = {
   }[];
 };
 
+/** Sem log de erro, admite-se que não há detalhe — uma causa plausível
+ *  inventada mandaria o operador consertar a coisa errada. */
+const SEM_DETALHE =
+  "Falha registrada sem detalhe no log de sincronização. Rode um novo sync para capturar a causa.";
+
 export async function listPlatformHealth(): Promise<Result<SaudeDaPlataforma>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
-    const [integracoes, acessos, eventos, tenants] = await Promise.all([
-      database.integration.findMany({
-        // Só o que exige atenção. A tela existe para mostrar o que está
-        // quebrado; listar tudo faria o operador procurar o problema no meio
-        // do que está funcionando.
-        where: { status: { in: ["ERROR"] } },
-        orderBy: { lastSyncAt: "desc" },
-        take: 50,
-        // NFR-1.7 — `config` e `mapping` fora do select. Credencial é
-        // write-only, e aqui vale igual à aba por tenant.
-        select: {
-          id: true,
-          source: true,
-          name: true,
-          status: true,
-          lastSyncAt: true,
-          tenant: { select: { slug: true, name: true } },
-        },
-      }),
-      database.accessLog.findMany({
-        where: { tenantId: SYSTEM_TENANT_ID },
-        orderBy: { criadoEm: "desc" },
-        take: 50,
-        select: {
-          id: true,
-          email: true,
-          evento: true,
-          motivo: true,
-          ip: true,
-          criadoEm: true,
-        },
-      }),
-      database.auditLog.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        select: {
-          id: true,
-          action: true,
-          metadata: true,
-          createdAt: true,
-        },
-      }),
-      database.tenant.count({ where: { isSystem: false } }),
-    ]);
+    // Só o que exige atenção. A tela existe para mostrar o que está
+    // quebrado; listar tudo faria o operador procurar o problema no meio do
+    // que está funcionando.
+    const quebradas = { status: { in: ["ERROR"] } };
+
+    const [integracoes, integracoesComErro, acessos, eventos, tenants] =
+      await Promise.all([
+        database.integration.findMany({
+          where: quebradas,
+          orderBy: { lastSyncAt: "desc" },
+          take: LIMITE_DE_QUEBRADAS,
+          // NFR-1.7 — `config` e `mapping` fora do select. Credencial é
+          // write-only, e aqui vale igual à aba por tenant. A mensagem do
+          // log passa por `semSegredo` antes de sair daqui.
+          select: {
+            id: true,
+            source: true,
+            name: true,
+            status: true,
+            lastSyncAt: true,
+            tenant: { select: { slug: true, name: true } },
+            syncLogs: {
+              where: { status: "error" },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: { errors: true },
+            },
+          },
+        }),
+        database.integration.count({ where: quebradas }),
+        database.accessLog.findMany({
+          where: { tenantId: SYSTEM_TENANT_ID },
+          orderBy: { criadoEm: "desc" },
+          take: 50,
+          select: {
+            id: true,
+            email: true,
+            evento: true,
+            motivo: true,
+            ip: true,
+            criadoEm: true,
+          },
+        }),
+        database.auditLog.findMany({
+          orderBy: { createdAt: "desc" },
+          take: 10,
+          select: {
+            id: true,
+            action: true,
+            metadata: true,
+            createdAt: true,
+          },
+        }),
+        // O filtro da carteira: a Home e `/clientes` dão o mesmo número.
+        database.tenant.count({ where: clientListArgs().where }),
+      ]);
 
     return {
       tenants,
+      integracoesComErro,
       integracoes: integracoes.map((i) => ({
         id: i.id,
         tenantSlug: i.tenant?.slug ?? "—",
@@ -155,6 +185,7 @@ export async function listPlatformHealth(): Promise<Result<SaudeDaPlataforma>> {
         name: i.name,
         status: i.status,
         ultimoSync: i.lastSyncAt ? i.lastSyncAt.toISOString() : null,
+        mensagem: mensagemDeErro(i.syncLogs[0]?.errors) ?? SEM_DETALHE,
       })),
       acessos: acessos.map((a) => ({
         id: a.id,

@@ -35,6 +35,7 @@ vi.mock("@/lib/guard", () => ({
   requirePlatformStaff: mocks.requirePlatformStaff,
 }));
 vi.mock("@/lib/modulos", () => ({ MODULOS_DA_PLATAFORMA: ["COSMOS"] }));
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/access", () => ({
   listPlatformHealth: mocks.listPlatformHealth,
 }));

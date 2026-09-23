@@ -20,9 +20,16 @@ vi.mock("@/app/actions/proposals", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/propostas",
   useRouter: () => ({ push: pushMock, refresh: vi.fn() }),
   useSearchParams: () => paramsMock(),
 }));
+
+/** A confirmação do envio, que nasce na linha. O contador da busca também é
+ *  `status`, e não é dele que o teste fala. */
+function confirmacaoNaTela(): HTMLElement | undefined {
+  return screen.queryAllByRole("status").find((s) => s.closest("li"));
+}
 
 function linha(over: Partial<ProposalRow>): ProposalRow {
   return {
@@ -53,15 +60,15 @@ describe("Propostas — confirmação do envio", () => {
       <Propostas iniciais={[linha({ status: "ENVIADA" })]} podeEscrever />
     );
 
-    const status = screen.getByRole("status");
-    expect(status.textContent).toContain("Atlas — plataforma");
-    expect(status.textContent).toContain("enviada");
+    const status = confirmacaoNaTela();
+    expect(status?.textContent).toContain("Atlas — plataforma");
+    expect(status?.textContent).toContain("enviada");
   });
 
   it("sem o parâmetro, nada de confirmação", () => {
     render(<Propostas iniciais={[linha({})]} podeEscrever />);
 
-    expect(screen.queryByRole("status")).toBeNull();
+    expect(confirmacaoNaTela()).toBeUndefined();
   });
 
   it("id que não está na lista não inventa confirmação", () => {
@@ -70,7 +77,7 @@ describe("Propostas — confirmação do envio", () => {
     );
     render(<Propostas iniciais={[linha({})]} podeEscrever />);
 
-    expect(screen.queryByRole("status")).toBeNull();
+    expect(confirmacaoNaTela()).toBeUndefined();
   });
 });
 

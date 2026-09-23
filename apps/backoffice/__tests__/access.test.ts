@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
   accessCreate: vi.fn(),
   accessFindMany: vi.fn(),
   integrationFindMany: vi.fn(),
+  integrationCount: vi.fn(),
   auditFindMany: vi.fn(),
   tenantCount: vi.fn(),
   headers: vi.fn(),
@@ -34,7 +35,10 @@ vi.mock("next/headers", () => ({ headers: mocks.headers }));
 vi.mock("@repo/database", () => ({
   database: {
     accessLog: { create: mocks.accessCreate, findMany: mocks.accessFindMany },
-    integration: { findMany: mocks.integrationFindMany },
+    integration: {
+      findMany: mocks.integrationFindMany,
+      count: mocks.integrationCount,
+    },
     auditLog: { findMany: mocks.auditFindMany },
     tenant: { count: mocks.tenantCount },
   },
@@ -55,6 +59,7 @@ function resetar() {
   mocks.accessCreate.mockResolvedValue({ id: "al-1" });
   mocks.accessFindMany.mockResolvedValue([]);
   mocks.integrationFindMany.mockResolvedValue([]);
+  mocks.integrationCount.mockResolvedValue(0);
   mocks.auditFindMany.mockResolvedValue([]);
   mocks.tenantCount.mockResolvedValue(0);
   mocks.headers.mockResolvedValue(new Map());
@@ -128,6 +133,7 @@ describe("listPlatformHealth", () => {
         status: "ERROR",
         lastSyncAt: new Date("2026-08-01T00:00:00.000Z"),
         tenant: { slug: "vanta", name: "Vanta" },
+        syncLogs: [],
       },
     ]);
 
@@ -154,5 +160,70 @@ describe("listPlatformHealth", () => {
     // operador procurar o problema no meio do que está funcionando.
     const where = mocks.integrationFindMany.mock.calls[0][0].where;
     expect(where.status).toEqual({ in: ["ERROR"] });
+  });
+
+  // A lista para em 50; o KPI "Integrações com erro" dizia 50 com 73
+  // quebradas. A contagem é do banco, com o mesmo filtro da lista.
+  it("conta as integrações com erro no banco, não na lista", async () => {
+    mocks.integrationCount.mockResolvedValue(73);
+
+    const res = await listPlatformHealth();
+
+    if (!res.ok) {
+      throw new Error(res.error);
+    }
+    expect(res.data.integracoesComErro).toBe(73);
+    expect(mocks.integrationCount).toHaveBeenCalledWith({
+      where: mocks.integrationFindMany.mock.calls[0][0].where,
+    });
+  });
+
+  // "Nome, fonte e erro de cada integração" — e a action nem selecionava o
+  // erro. Vem do último SyncLog com erro, sem segredo.
+  it("traz a última mensagem de erro, sem credencial", async () => {
+    mocks.integrationFindMany.mockResolvedValue([
+      {
+        id: "i-1",
+        source: "github",
+        name: "GitHub",
+        status: "ERROR",
+        lastSyncAt: null,
+        tenant: { slug: "vanta", name: "Vanta" },
+        syncLogs: [
+          {
+            errors: {
+              message:
+                "401 Bad credentials for ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+            },
+          },
+        ],
+      },
+      {
+        id: "i-2",
+        source: "linear",
+        name: "Linear",
+        status: "ERROR",
+        lastSyncAt: null,
+        tenant: { slug: "atlas", name: "Atlas" },
+        syncLogs: [],
+      },
+    ]);
+
+    const res = await listPlatformHealth();
+
+    if (!res.ok) {
+      throw new Error(res.error);
+    }
+    const [comLog, semLog] = res.data.integracoes;
+    expect(comLog.mensagem).toContain("401 Bad credentials");
+    expect(comLog.mensagem).not.toContain("ghp_");
+    // Sem log, admite que não há detalhe — nunca uma causa plausível.
+    expect(semLog.mensagem).toMatch(/sem detalhe/);
+    expect(mocks.integrationFindMany.mock.calls[0][0].select.syncLogs).toEqual({
+      where: { status: "error" },
+      orderBy: { createdAt: "desc" },
+      take: 1,
+      select: { errors: true },
+    });
   });
 });

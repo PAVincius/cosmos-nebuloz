@@ -26,6 +26,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: mocks.refresh }),
   useSearchParams: () => new URLSearchParams(),
 }));
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/clients", () => ({
   listClients: mocks.listClients,
 }));
