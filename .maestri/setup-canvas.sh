@@ -194,4 +194,14 @@ routine "Caixa 13 semanas"    --terminal "Caixa" --weekly fri@15:00 --command "A
 routine "Relatório da semana" --terminal "Ordem" --weekly fri@17:00 --command "Faça o Relatório da Semana conforme seu papel."
 routine "Compliance mensal"   --terminal "Lacre" --daily 09:00 --pre-run '[ "$(date +%d)" = "01" ]' --command "Revisão mensal: risk-register.md, DPAs vencendo, e toda feature entregue no mês que toque dado pessoal sem parecer."
 
+# Triagem de mudanças: Jev (via AI Gateway, retenção zero) lê os commits da última hora e só acorda a Morgana
+# se algo tocar tenant/auth, dado pessoal ou schema. Nasce desligada: ligar com `maestri routine enable
+# "Triagem de mudanças"` depois do parecer do Lacre e com AI_GATEWAY_API_KEY no ambiente do Maestri.
+# Sem a chave, falha aberta: a Morgana recebe "AI_GATEWAY_API_KEY ausente" e a lista crua.
+routine "Triagem de mudanças" --every 1h --disabled \
+  --pre-run 'node "$MAESTRI_WORKSPACE_DIR/.maestri/jev.mjs" triagem' \
+  --command "{{output}}
+
+Roteie cada linha conforme seu papel: recrute o Vigia, peça parecer ao Lacre, avise Alicerce e Pilar. Linha 'incerto' você decide lendo o diff. Atualize o Quadro."
+
 echo "Pronto. Confira: $M list · $M floor list · $M routine list"
