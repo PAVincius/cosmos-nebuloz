@@ -1,7 +1,7 @@
 // node --test .maestri/jev.test.mjs
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ask, perguntas, triagem, triar } from "./jev.mjs";
+import { ask, commits, lotes, perguntas, triagem, triar } from "./jev.mjs";
 
 const c = (sha, files = ["apps/app/x.ts"]) => ({ sha, subject: `msg ${sha}`, files, diff: "d" });
 
@@ -24,6 +24,21 @@ test("ask fala o protocolo do Gateway: boolean, retenção zero, probability vir
   assert.equal(body.questions.q.type, "boolean");
   assert.deepEqual(body.providerOptions, { gateway: { zeroDataRetention: true } });
   assert.deepEqual(r, { q: { p: 0.9, confidence: 0.8 } });
+});
+
+test("ask tenta de novo em 503/429 e desiste na terceira", async () => {
+  let n = 0;
+  const flaky = async () => (++n < 3 ? new Response("busy", { status: 503 }) : new Response(JSON.stringify({ answers: { q: { probability: 0.6 } } })));
+  assert.deepEqual(await ask({}, { q: { type: "noul", instructions: "x" } }, { key: "k", fetchImpl: flaky, espera: 0 }), { q: { p: 0.6, confidence: undefined } });
+  assert.equal(n, 3);
+  n = 0;
+  const sempre = async () => (n++, new Response("busy", { status: 503 }));
+  await assert.rejects(ask({}, {}, { key: "k", fetchImpl: sempre, espera: 0 }), /503/);
+  assert.equal(n, 3);
+  n = 0;
+  const ruim = async () => (n++, new Response("bad", { status: 400 }));
+  await assert.rejects(ask({}, {}, { key: "k", fetchImpl: ruim, espera: 0 }), /400/);
+  assert.equal(n, 1);
 });
 
 test("ask sem chave falha antes de qualquer rede", async () => {
@@ -59,6 +74,49 @@ test("triagem com tudo baixo sai 1: ninguém acorda", async () => {
     new Response(JSON.stringify({ answers: { vigia_a1: { probability: 0.05, confidence: 0.9 }, lacre_a1: { probability: 0.02, confidence: 0.9 } } }));
   const r = await triagem("1 hour ago", { git: fakeGit("a1\tmsg a1\n"), key: "k", fetchImpl });
   assert.equal(r.code, 1);
+});
+
+test("lotes: cada chamada fica em ~12k chars (o Gateway devolve 503 em lote grande sob carga)", () => {
+  const cs = Array.from({ length: 30 }, (_, i) => ({ ...c(`s${i}`), diff: "x".repeat(2500) }));
+  const ls = lotes(cs);
+  assert.ok(ls.length > 1);
+  assert.equal(ls.flat().length, 30);
+  for (const l of ls) assert.ok(JSON.stringify(l).length <= 12_000);
+});
+
+test("triagem com muitos commits faz uma chamada por lote, em sequência, e junta as respostas", async () => {
+  const log = Array.from({ length: 30 }, (_, i) => `s${i}\tmsg s${i}`).join("\n");
+  const git = (args) => (args[0] === "log" ? log : args.includes("--name-only") ? "apps/app/x.ts\n" : "x".repeat(9000));
+  let calls = 0;
+  const fetchImpl = async (_url, init) => {
+    calls++;
+    const ids = Object.keys(JSON.parse(init.body).questions);
+    return new Response(JSON.stringify({ answers: Object.fromEntries(ids.map((id) => [id, { probability: id === "vigia_s29" ? 0.95 : 0.01 }])) }));
+  };
+  const r = await triagem("1 day ago", { git, key: "k", fetchImpl });
+  assert.ok(calls > 1);
+  assert.equal(r.code, 0);
+  assert.match(r.out, /s29 "msg s29" → Vigia/);
+});
+
+test("diff ignora arquivo gerado (grafo de conhecimento, lockfile)", () => {
+  const seen = [];
+  commits("1 day ago", (args) => {
+    seen.push(args);
+    return args[0] === "log" ? "a1\tmsg\n" : "";
+  });
+  const diffArgs = seen.find((a) => a.includes("--unified=2"));
+  assert.ok(diffArgs.includes(":(exclude).maestri/knowledge"));
+  assert.ok(diffArgs.includes(":(exclude)pnpm-lock.yaml"));
+});
+
+test("triagem falha aberta também quando o git quebra: nunca sai 1 calada", async () => {
+  const git = () => {
+    throw new Error("ENOBUFS");
+  };
+  const r = await triagem("1 day ago", { git, key: "k", fetchImpl: () => assert.fail("chamou a rede") });
+  assert.equal(r.code, 0);
+  assert.match(r.out, /Triagem falhou ao ler o git \(ENOBUFS\)/);
 });
 
 test("triagem falha aberta: Gateway fora entrega a lista crua", async () => {

@@ -8,7 +8,7 @@ import { pathToFileURL } from "node:url";
 
 const GATEWAY_URL = "https://ai-gateway.vercel.sh/v4/ai/evaluation-model";
 
-// Uma pergunta por área, feita para cada commit, tudo numa chamada só (fan-out especulativo).
+// Uma pergunta por área para cada commit, todas de um lote numa chamada só (fan-out especulativo).
 export const PERGUNTAS = {
   vigia:
     "altera autenticação, autorização, sessão ou isolamento entre tenants (requireTenantSession, requireRole, filtro por tenantId, RLS, acesso cross-tenant)",
@@ -22,15 +22,19 @@ const SCHEMA = /^packages\/database\/prisma\/schema\//;
 const LIMIAR = 0.7;
 const INCERTO = 0.4;
 const CONFIANCA = 0.5;
-const MAX_DIFF = 6000;
-const MAX_COMMITS = 20;
+const MAX_DIFF = 2500;
+const MAX_COMMITS = 40;
+// Medido em 2026-09-23: sob a carga atual do Jev, lote de ~25k chars falha 3 em 5 e lotes em paralelo
+// falham quase todos; ~12k em sequência, com nova tentativa, passa. Reavaliar quando o Jev folgar.
+const MAX_LOTE = 12_000;
+const TENTATIVAS = 3;
 
-export async function ask(state, questions, { key = process.env.AI_GATEWAY_API_KEY, fetchImpl = fetch } = {}) {
+export async function ask(state, questions, { key = process.env.AI_GATEWAY_API_KEY, fetchImpl = fetch, espera = 800 } = {}) {
   if (!key) throw new Error("AI_GATEWAY_API_KEY ausente no ambiente");
   const gatewayQuestions = Object.fromEntries(
     Object.entries(questions).map(([id, q]) => [id, q.type === "noul" ? { ...q, type: "boolean" } : q]),
   );
-  const res = await fetchImpl(GATEWAY_URL, {
+  const pedir = () => fetchImpl(GATEWAY_URL, {
     method: "POST",
     headers: {
       authorization: `Bearer ${key}`,
@@ -47,6 +51,13 @@ export async function ask(state, questions, { key = process.env.AI_GATEWAY_API_K
     }),
     signal: AbortSignal.timeout(30_000),
   });
+  let res;
+  for (let i = 1; ; i++) {
+    res = await pedir();
+    // Só 429 e 5xx são passageiros; 4xx é pedido errado e não melhora repetindo.
+    if (res.ok || (res.status !== 429 && res.status < 500) || i === TENTATIVAS) break;
+    await new Promise((r) => setTimeout(r, espera * 2 ** (i - 1)));
+  }
   if (!res.ok) throw new Error(`Gateway HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const body = await res.json();
   const conf = body.providerMetadata?.typesafe?.confidence ?? {};
@@ -55,7 +66,10 @@ export async function ask(state, questions, { key = process.env.AI_GATEWAY_API_K
   );
 }
 
-const gitRun = (args) => execFileSync("git", args, { cwd: process.env.MAESTRI_WORKSPACE_DIR || process.cwd(), encoding: "utf8" });
+// Arquivo gerado não diz nada ao Jev e estoura o buffer (o graph.json tem MB).
+const SEM_GERADOS = [":(exclude).maestri/knowledge", ":(exclude)graphify-out", ":(exclude)pnpm-lock.yaml"];
+const gitRun = (args) =>
+  execFileSync("git", args, { cwd: process.env.MAESTRI_WORKSPACE_DIR || process.cwd(), encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
 
 export function commits(since, git = gitRun) {
   const log = git(["log", "--all", "--no-merges", `--since=${since}`, "--format=%h%x09%s"]).trim();
@@ -66,9 +80,24 @@ export function commits(since, git = gitRun) {
     .map((line) => {
       const [sha, subject] = line.split("\t");
       const files = git(["show", "--name-only", "--format=", sha]).trim().split("\n").filter(Boolean);
-      const diff = git(["show", "--format=", "--unified=2", sha]).slice(0, MAX_DIFF);
+      const diff = git(["show", "--format=", "--unified=2", sha, "--", ".", ...SEM_GERADOS]).slice(0, MAX_DIFF);
       return { sha, subject, files, diff };
     });
+}
+
+/** Divide os commits em lotes que cabem numa chamada. */
+export function lotes(cs, max = MAX_LOTE) {
+  const out = [];
+  let atual = [];
+  for (const c of cs) {
+    if (atual.length && JSON.stringify([...atual, c]).length > max) {
+      out.push(atual);
+      atual = [];
+    }
+    atual.push(c);
+  }
+  if (atual.length) out.push(atual);
+  return out;
 }
 
 export function perguntas(cs) {
@@ -98,12 +127,18 @@ export function triar(cs, answers) {
 }
 
 export async function triagem(since = "65 minutes ago", deps = {}) {
-  const cs = commits(since, deps.git);
+  let cs;
+  try {
+    cs = commits(since, deps.git);
+  } catch (e) {
+    return { code: 0, out: `Triagem falhou ao ler o git (${e.message.split("\n")[0].slice(0, 120)}). Veja os commits da última hora à mão.` };
+  }
   if (!cs.length) return { code: 1, out: "" };
-  const state = { repositorio: "Nebuloz", commits: cs };
   let answers;
   try {
-    answers = await ask(state, perguntas(cs), deps);
+    answers = {};
+    // Em sequência: em paralelo o Gateway recusa quase tudo (ver MAX_LOTE).
+    for (const l of lotes(cs)) Object.assign(answers, await ask({ repositorio: "Nebuloz", commits: l }, perguntas(l), deps));
   } catch (e) {
     // Falha aberta: sem Jev, a Morgana recebe a lista crua em vez de nada.
     const lista = cs.map((c) => `${c.sha} "${c.subject}"`).join("\n");
