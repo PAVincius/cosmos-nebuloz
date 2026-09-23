@@ -15,6 +15,7 @@ import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { formatarData } from "@/lib/data";
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
+import { plano } from "@/lib/rotulos";
 import { CharterBootstrap } from "./charter-bootstrap";
 import { DetalheDoTenant } from "./detalhe";
 import { MeridianBootstrap } from "./meridian-bootstrap";
@@ -41,23 +42,6 @@ export async function generateMetadata({
       : tituloDaAba("/clientes"),
   };
 }
-
-// O enum real (`SubscriptionPlan` em `tenant.prisma`). O mapa antigo tinha
-// SCALE/ENTERPRISE, que não existem: GALAXY, NEBULA e UNIVERSE caíam no neutro
-// e o selo mostrava o enum cru. A 9a consolida isto em `lib/rotulos.ts`.
-const TOM_DO_PLANO: Record<string, "green" | "amber" | "blue" | "purple"> = {
-  ORBIT: "blue",
-  GALAXY: "purple",
-  NEBULA: "amber",
-  UNIVERSE: "green",
-};
-
-const ROTULO_DO_PLANO: Record<string, string> = {
-  ORBIT: "Orbit",
-  GALAXY: "Galaxy",
-  NEBULA: "Nebula",
-  UNIVERSE: "Universe",
-};
 
 /** A seção do menu e a faceta, como as outras telas do painel. */
 const EYEBROW = `${secaoDaRota("/clientes")} · cliente`;
@@ -125,6 +109,10 @@ export default async function ClientDetailPage({
       .map((m) => m.module as string)
   );
 
+  // Nome e tom do plano de um lugar só (`lib/rotulos.ts`), como a carteira
+  // e Contas: o mesmo cliente não muda de cor entre telas.
+  const planoDoCliente = plano(client.plan);
+
   return (
     <div
       style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
@@ -153,9 +141,7 @@ export default async function ClientDetailPage({
           eyebrow={EYEBROW}
           meta={
             <>
-              <Badge tone={TOM_DO_PLANO[client.plan] ?? "neutral"}>
-                {ROTULO_DO_PLANO[client.plan] ?? client.plan}
-              </Badge>
+              <Badge tone={planoDoCliente.tom}>{planoDoCliente.rotulo}</Badge>
               <Badge tone="neutral">
                 {client.memberCount} membro
                 {client.memberCount === 1 ? "" : "s"}
@@ -164,7 +150,7 @@ export default async function ClientDetailPage({
           }
           subtitle={`${client.slug} · cliente desde ${formatarData(client.createdAt)}`}
           title={client.name}
-          tone={TOM_DO_PLANO[client.plan] ?? "accent"}
+          tone={planoDoCliente.tom}
         />
         {recemCriado ? (
           <ConfirmacaoDeUmaVez param="criado">

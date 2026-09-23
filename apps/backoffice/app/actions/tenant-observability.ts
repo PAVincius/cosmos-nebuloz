@@ -1,6 +1,7 @@
 "use server";
 
 import { database } from "@repo/database";
+import { mensagemDeErro } from "@/lib/erro-de-integracao";
 import { requirePlatformStaff, StaffAuthError } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -33,30 +34,6 @@ export type IntegracaoRow = {
   mensagem: string | null;
 };
 
-/**
- * Extrai a causa legível do último sync com erro.
- *
- * `SyncLog.errors` é `Json?` — pode chegar como objeto com `message`, como
- * string, ou como array. Ler só um formato e devolver vazio nos outros produz
- * exatamente o "erro sem causa" que o FR-4.4.2 proíbe.
- */
-function causaDoErro(errors: unknown): string | null {
-  if (!errors) {
-    return null;
-  }
-  if (typeof errors === "string") {
-    return errors;
-  }
-  if (Array.isArray(errors)) {
-    const primeiro = errors[0];
-    return typeof primeiro === "string" ? primeiro : causaDoErro(primeiro);
-  }
-  if (typeof errors === "object" && "message" in errors) {
-    return String((errors as { message: unknown }).message);
-  }
-  return null;
-}
-
 export async function listTenantIntegrations(
   slug: string
 ): Promise<Result<IntegracaoRow[]>> {
@@ -87,7 +64,7 @@ export async function listTenantIntegrations(
 
     return integracoes.map((i) => {
       const comErro = i.status === "ERROR";
-      const causa = causaDoErro(i.syncLogs[0]?.errors);
+      const causa = mensagemDeErro(i.syncLogs[0]?.errors);
       return {
         id: i.id,
         source: i.source,

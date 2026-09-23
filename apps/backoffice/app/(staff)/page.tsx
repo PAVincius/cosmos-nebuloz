@@ -90,7 +90,9 @@ function Conteudo({
   saude: SaudeDaPlataforma;
   aprovacoes: FilaDeAprovacoes;
 }) {
-  const quebradas = saude.integracoes.length;
+  // O total do banco: a lista `integracoes` para em 50 e contá-la fazia a
+  // Home dizer 50 enquanto Observabilidade dizia o número real.
+  const quebradas = saude.integracoesComErro;
   const pendentes = "pendentes" in aprovacoes ? aprovacoes.pendentes : null;
   const tudoCalmo = quebradas === 0 && pendentes === 0 && saude.recusas === 0;
 

@@ -156,7 +156,6 @@ describe("plano com o enum real e rótulo humano", () => {
   }
 
   it.each([
-    ["ORBIT", "Orbit"],
     ["GALAXY", "Galaxy"],
     ["NEBULA", "Nebula"],
     ["UNIVERSE", "Universe"],
@@ -167,6 +166,17 @@ describe("plano com o enum real e rótulo humano", () => {
     expect(screen.queryByText(enumCru)).toBeNull();
     // Neutro é `--chip-bg`/`--ink-muted`: plano sem tom cai nele.
     expect(selo.getAttribute("style")).not.toContain("--ink-muted");
+  });
+
+  // O tom vem de `lib/rotulos.ts` (fonte única com Carteira e Contas). Há
+  // quatro tons sem significado de estado — neutro, azul, roxo, accent — e
+  // quatro planos: o de entrada fica no neutro. O que o distingue de um plano
+  // desconhecido é o nome: "Orbit", não o enum cru.
+  it("ORBIT vira 'Orbit' — plano de entrada, neutro por decisão, nunca o enum", async () => {
+    await renderizarPagina("ORBIT");
+
+    expect(screen.getByText("Orbit")).toBeTruthy();
+    expect(screen.queryByText("ORBIT")).toBeNull();
   });
 
   it("eyebrow no padrão Seção · faceta, e o slug continua à vista", async () => {

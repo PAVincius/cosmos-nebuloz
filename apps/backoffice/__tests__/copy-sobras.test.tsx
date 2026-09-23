@@ -174,6 +174,8 @@ describe("plural real, não (s)", () => {
     mocks.listPlatformHealth.mockResolvedValue({
       data: {
         integracoes: [{ id: "i1" }],
+        // A Home conta o total do banco, não a lista (que para em 50).
+        integracoesComErro: 1,
         recusas: 2,
         tenants: 1,
         ultimosEventos: [],

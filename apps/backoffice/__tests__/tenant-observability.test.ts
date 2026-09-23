@@ -124,6 +124,38 @@ describe("listTenantIntegrations", () => {
     expect(res.data[0].mensagem).toContain("Token expirado");
   });
 
+  it("a mensagem vai à tela sem o segredo que o provedor ecoou", async () => {
+    mocks.integrationFindMany.mockResolvedValue([
+      {
+        id: "i-1",
+        source: "github",
+        name: "GitHub",
+        status: "ERROR",
+        lastSyncAt: new Date("2026-08-01T00:00:00.000Z"),
+        syncLogs: [
+          {
+            status: "error",
+            errors: {
+              message:
+                "401 em https://bot:s3nh4@api.github.com — Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+            },
+            createdAt: new Date("2026-08-01T00:00:00.000Z"),
+          },
+        ],
+      },
+    ]);
+
+    const res = await listTenantIntegrations("vanta-saude");
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data[0].mensagem).toContain("401");
+    expect(res.data[0].mensagem).not.toContain("s3nh4");
+    expect(res.data[0].mensagem).not.toContain("ghp_abcdefghij");
+  });
+
   it("erro sem log não inventa causa — diz que não há detalhe", async () => {
     mocks.integrationFindMany.mockResolvedValue([
       {
