@@ -1,0 +1,1097 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T23:59:00-03:00",
+  "title": "Design System: Scaffold",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Papel Frio",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Branco de Leitura",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Branco Gelo",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface-3": {
+        "role": "neutral",
+        "displayName": "Cinza Gelo",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Branco de Margem",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Fio Claro",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242529",
+          "#404246",
+          "#5f6165",
+          "#808287",
+          "#a3a5aa",
+          "#c7c9ce",
+          "#eceef3"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Fio Firme",
+        "tonalRamp": [
+          "#090b10",
+          "#22252b",
+          "#3f4248",
+          "#5e6168",
+          "#7f828a",
+          "#a1a5ad",
+          "#c5c9d1",
+          "#eaeff7"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Nanquim",
+        "tonalRamp": [
+          "#080b12",
+          "#22252d",
+          "#3e424a",
+          "#5d616a",
+          "#7e828c",
+          "#a1a5af",
+          "#c4c9d4",
+          "#eaeef9"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "tonalRamp": [
+          "#060b17",
+          "#1e2533",
+          "#3b4251",
+          "#596171",
+          "#7a8394",
+          "#9ca5b7",
+          "#c0c9dc",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle": {
+        "role": "neutral",
+        "displayName": "Grafite Médio",
+        "tonalRamp": [
+          "#050b17",
+          "#1e2533",
+          "#3a4251",
+          "#596271",
+          "#798393",
+          "#9ca6b7",
+          "#bfcadc",
+          "#e6efff"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Ardósia Calibrada",
+        "tonalRamp": [
+          "#050b16",
+          "#1e2532",
+          "#3a4250",
+          "#596270",
+          "#7a8392",
+          "#9ca6b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "chip-bg": {
+        "role": "neutral",
+        "displayName": "Cinza de Chip",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Cerúleo Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#00476b",
+          "#1a6895",
+          "#428ab9",
+          "#66aede",
+          "#91d2ff",
+          "#dff1ff"
+        ]
+      },
+      "accent-soft": { "role": "primary", "displayName": "Véu Cerúleo" },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Cerúleo Noturno",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#024769",
+          "#2d678c",
+          "#5089af",
+          "#72add4",
+          "#96d1fa",
+          "#dff2ff"
+        ]
+      },
+      "accent-fg": {
+        "role": "primary",
+        "displayName": "Tinta sobre Accent",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Azul Baby Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#002840",
+          "#00476c",
+          "#09689a",
+          "#398abf",
+          "#5faee4",
+          "#93d1ff",
+          "#e0f1ff"
+        ]
+      },
+      "blue-soft": { "role": "secondary", "displayName": "Véu Azul" },
+      "blue-text": {
+        "role": "secondary",
+        "displayName": "Azul Tinta",
+        "tonalRamp": [
+          "#000c19",
+          "#002742",
+          "#00466f",
+          "#286693",
+          "#4c88b8",
+          "#6eacdd",
+          "#97d0ff",
+          "#e1f1ff"
+        ]
+      },
+      "purple": {
+        "role": "secondary",
+        "displayName": "Lilás Frio",
+        "tonalRamp": [
+          "#0d002c",
+          "#280068",
+          "#432792",
+          "#604bb8",
+          "#7f6ede",
+          "#a193ff",
+          "#c5c1ff",
+          "#edecff"
+        ]
+      },
+      "purple-soft": { "role": "secondary", "displayName": "Véu Lilás" },
+      "purple-text": {
+        "role": "secondary",
+        "displayName": "Lilás Profundo",
+        "tonalRamp": [
+          "#0c002d",
+          "#26006a",
+          "#402695",
+          "#5d4bba",
+          "#7c6ee1",
+          "#9e95ff",
+          "#c4c2ff",
+          "#ececff"
+        ]
+      },
+      "green": {
+        "role": "semantic",
+        "displayName": "Verde Confirmação",
+        "tonalRamp": [
+          "#000f06",
+          "#002e18",
+          "#00502e",
+          "#007446",
+          "#229962",
+          "#50be84",
+          "#77e3a7",
+          "#c4ffda"
+        ]
+      },
+      "green-soft": { "role": "semantic", "displayName": "Véu Verde" },
+      "green-text": {
+        "role": "semantic",
+        "displayName": "Verde Floresta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#1c724a",
+          "#44956a",
+          "#69b98c",
+          "#8ddeaf",
+          "#c3ffdb"
+        ]
+      },
+      "amber": {
+        "role": "semantic",
+        "displayName": "Ocre",
+        "tonalRamp": [
+          "#110a00",
+          "#312200",
+          "#553e00",
+          "#7c5b00",
+          "#a27c21",
+          "#c69f4a",
+          "#ecc36f",
+          "#ffecc8"
+        ]
+      },
+      "amber-soft": { "role": "semantic", "displayName": "Véu Ocre" },
+      "amber-text": {
+        "role": "semantic",
+        "displayName": "Ocre Queimado",
+        "tonalRamp": [
+          "#110a00",
+          "#322200",
+          "#563d00",
+          "#7b5c15",
+          "#9d7d3c",
+          "#c1a05f",
+          "#e7c482",
+          "#ffecca"
+        ]
+      },
+      "red": {
+        "role": "semantic",
+        "displayName": "Framboesa",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b0019",
+          "#7e002f",
+          "#b30a48",
+          "#dc4067",
+          "#ff6d8b",
+          "#ffb0bb",
+          "#ffe8ea"
+        ]
+      },
+      "red-soft": { "role": "semantic", "displayName": "Véu Framboesa" },
+      "red-text": {
+        "role": "semantic",
+        "displayName": "Framboesa Escura",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b001a",
+          "#7e0030",
+          "#aa274c",
+          "#d14e6c",
+          "#fa728e",
+          "#ffb0bc",
+          "#ffe8eb"
+        ]
+      },
+      "neutral": {
+        "role": "neutral",
+        "displayName": "Cinza Neutro",
+        "tonalRamp": [
+          "#060b16",
+          "#1e2532",
+          "#3a4250",
+          "#596270",
+          "#7a8392",
+          "#9ca5b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "neutral-soft": { "role": "neutral", "displayName": "Véu Neutro" },
+      "neutral-text": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto",
+        "tonalRamp": [
+          "#060b16",
+          "#1e2532",
+          "#3b4250",
+          "#596170",
+          "#7a8392",
+          "#9da5b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Preto Nebuloz",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Noite Tinta",
+        "tonalRamp": [
+          "#080b13",
+          "#21252e",
+          "#3e424c",
+          "#5d616c",
+          "#7e828d",
+          "#a0a5b0",
+          "#c4c9d5",
+          "#e9eefb"
+        ]
+      },
+      "surface-2-dark": {
+        "role": "neutral",
+        "displayName": "Noite Índigo",
+        "tonalRamp": [
+          "#080a15",
+          "#212430",
+          "#3e414f",
+          "#5c616f",
+          "#7d8291",
+          "#a0a4b4",
+          "#c4c9d9",
+          "#e9eeff"
+        ]
+      },
+      "surface-3-dark": {
+        "role": "neutral",
+        "displayName": "Ardósia Noturna",
+        "tonalRamp": [
+          "#070a18",
+          "#1f2434",
+          "#3c4152",
+          "#5a6173",
+          "#7b8295",
+          "#9da5b9",
+          "#c1c9dd",
+          "#e8eeff"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "Margem Noturna",
+        "tonalRamp": [
+          "#090b13",
+          "#22252e",
+          "#3f424c",
+          "#5e616b",
+          "#7f828d",
+          "#a1a5b0",
+          "#c5c9d5",
+          "#eaeefb"
+        ]
+      },
+      "hairline-dark": { "role": "neutral", "displayName": "Fio de Luz" },
+      "hairline-strong-dark": {
+        "role": "neutral",
+        "displayName": "Fio de Luz Firme"
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Branco Estelar",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "ink-muted-dark": {
+        "role": "neutral",
+        "displayName": "Prata",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2531",
+          "#3c424f",
+          "#5a616f",
+          "#7b8291",
+          "#9da5b5",
+          "#c1c9d9",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle-dark": {
+        "role": "neutral",
+        "displayName": "Prata Fosca",
+        "tonalRamp": [
+          "#050b18",
+          "#1d2534",
+          "#3a4253",
+          "#586173",
+          "#798396",
+          "#9ba5b9",
+          "#bfc9de",
+          "#e7efff"
+        ]
+      },
+      "ink-faint-dark": {
+        "role": "neutral",
+        "displayName": "Cinza Lunar",
+        "tonalRamp": [
+          "#050b19",
+          "#1d2535",
+          "#394253",
+          "#586174",
+          "#798396",
+          "#9ba5ba",
+          "#bfc9df",
+          "#e7efff"
+        ]
+      },
+      "chip-bg-dark": { "role": "neutral", "displayName": "Véu de Chip" },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Sky",
+        "tonalRamp": [
+          "#000d16",
+          "#00293c",
+          "#004866",
+          "#006993",
+          "#308cba",
+          "#58b0e0",
+          "#89d4ff",
+          "#ddf2ff"
+        ]
+      },
+      "accent-soft-dark": { "role": "primary", "displayName": "Véu Sky" },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Sky Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#16485d",
+          "#38687e",
+          "#598aa1",
+          "#7badc5",
+          "#9fd2ea",
+          "#dbf3ff"
+        ]
+      },
+      "accent-fg-dark": {
+        "role": "primary",
+        "displayName": "Canvas sobre Sky",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "blue-dark": {
+        "role": "secondary",
+        "displayName": "Baby",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#004962",
+          "#206a87",
+          "#468cab",
+          "#6aafcf",
+          "#8ed4f5",
+          "#dbf3ff"
+        ]
+      },
+      "blue-soft-dark": { "role": "secondary", "displayName": "Véu Baby" },
+      "blue-text-dark": {
+        "role": "secondary",
+        "displayName": "Baby Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#032938",
+          "#234757",
+          "#436777",
+          "#63899a",
+          "#85acbe",
+          "#a9d0e3",
+          "#daf3ff"
+        ]
+      },
+      "purple-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Estelar",
+        "tonalRamp": [
+          "#0d002b",
+          "#280e5d",
+          "#433180",
+          "#6152a4",
+          "#8273c9",
+          "#a496ef",
+          "#c7c0ff",
+          "#eeecff"
+        ]
+      },
+      "purple-soft-dark": {
+        "role": "secondary",
+        "displayName": "Véu Lilás Estelar"
+      },
+      "purple-text-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Névoa",
+        "tonalRamp": [
+          "#0d0424",
+          "#261e42",
+          "#433b62",
+          "#625a84",
+          "#837ba7",
+          "#a59ecc",
+          "#c9c2f2",
+          "#eeecff"
+        ]
+      },
+      "green-dark": {
+        "role": "semantic",
+        "displayName": "Verde Sinal",
+        "tonalRamp": [
+          "#001005",
+          "#002e16",
+          "#00502b",
+          "#007541",
+          "#009c58",
+          "#16c472",
+          "#53ea96",
+          "#c5ffd8"
+        ]
+      },
+      "green-soft-dark": {
+        "role": "semantic",
+        "displayName": "Véu Verde Sinal"
+      },
+      "green-text-dark": {
+        "role": "semantic",
+        "displayName": "Verde Menta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#007447",
+          "#229963",
+          "#50be85",
+          "#77e3a8",
+          "#c3ffdb"
+        ]
+      },
+      "amber-dark": {
+        "role": "semantic",
+        "displayName": "Butter Dourado",
+        "tonalRamp": [
+          "#0f0b00",
+          "#2e2400",
+          "#4f4100",
+          "#745f00",
+          "#9b8000",
+          "#bfa33a",
+          "#e4c862",
+          "#ffefb4"
+        ]
+      },
+      "amber-soft-dark": { "role": "semantic", "displayName": "Véu Butter" },
+      "amber-text-dark": {
+        "role": "semantic",
+        "displayName": "Butter",
+        "tonalRamp": [
+          "#0e0c00",
+          "#2a2600",
+          "#484319",
+          "#676339",
+          "#888459",
+          "#aba77b",
+          "#d0cc9e",
+          "#f5f1c2"
+        ]
+      },
+      "red-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Alerta",
+        "tonalRamp": [
+          "#1e0007",
+          "#4b001c",
+          "#7d0034",
+          "#b3004e",
+          "#dd3b6e",
+          "#ff6c92",
+          "#ffb0bf",
+          "#ffe8eb"
+        ]
+      },
+      "red-soft-dark": { "role": "semantic", "displayName": "Véu Rosa" },
+      "red-text-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Claro",
+        "tonalRamp": [
+          "#1d0009",
+          "#4a0021",
+          "#6f213e",
+          "#93425d",
+          "#b9647d",
+          "#df86a0",
+          "#ffafc5",
+          "#ffe8ed"
+        ]
+      },
+      "neutral-dark": {
+        "role": "neutral",
+        "displayName": "Cinza Neutro Noturno",
+        "tonalRamp": [
+          "#040b18",
+          "#1c2534",
+          "#394253",
+          "#576273",
+          "#788395",
+          "#9aa6b9",
+          "#becade",
+          "#e5efff"
+        ]
+      },
+      "neutral-soft-dark": {
+        "role": "neutral",
+        "displayName": "Véu Neutro Noturno"
+      },
+      "neutral-text-dark": {
+        "role": "neutral",
+        "displayName": "Cinza de Texto Noturno",
+        "tonalRamp": [
+          "#050b18",
+          "#1d2534",
+          "#3a4253",
+          "#586173",
+          "#798396",
+          "#9ba5b9",
+          "#bfc9de",
+          "#e7efff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "micro": {
+        "displayName": "Micro (--fs-micro)",
+        "purpose": "Eyebrow e carimbo mono em caixa alta; o piso da escala."
+      },
+      "nota": {
+        "displayName": "Nota (--fs-nota)",
+        "purpose": "Meta, dica, legenda, contador, chip de filtro, rótulo de campo."
+      },
+      "base": {
+        "displayName": "Base (--fs-base)",
+        "purpose": "Corpo, rótulo, tab, input e botão do base.tsx."
+      },
+      "forte": {
+        "displayName": "Forte (--fs-forte)",
+        "purpose": "Número-chave e título de estado vazio e de erro."
+      },
+      "titulo": {
+        "displayName": "Título (--fs-titulo)",
+        "purpose": "Título de modal."
+      },
+      "display": {
+        "displayName": "Display (--fs-display)",
+        "purpose": "Contagem grande e título de tela \"Em breve\"; no Scaffold, o .display aperta a entreletra para -.035em."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow",
+        "purpose": "Único dispositivo de caixa alta; o .mono do Scaffold usa algarismos tabulares."
+      },
+      "page-title": {
+        "displayName": "Título de página",
+        "purpose": "PageHeader do kit; fora da escala."
+      },
+      "section-title": {
+        "displayName": "Título de seção",
+        "purpose": "Cabeçalho de SectionCard e do GatePanel; fora da escala."
+      },
+      "kpi-value": {
+        "displayName": "Valor de KPI",
+        "purpose": "Valor do KpiCard em mono tabular; fora da escala. No Scaffold as camadas do KPI estão sem CSS."
+      },
+      "button": {
+        "displayName": "Botão",
+        "purpose": "Button do kit (13px em sm); fora da escala."
+      },
+      "badge": {
+        "displayName": "Badge",
+        "purpose": "Texto de Badge; coincide com o degrau nota."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-shadow (claro)",
+        "value": "0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1)",
+        "purpose": "Todo cartão em repouso no tema claro."
+      },
+      {
+        "name": "card-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px rgba(0, 0, 0, 0.9)",
+        "purpose": "Todo cartão em repouso no tema escuro."
+      },
+      {
+        "name": "hover-shadow (claro)",
+        "value": "0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px rgba(var(--accent-rgb), 0.3)",
+        "purpose": "Hover de cartão (.lift) no claro."
+      },
+      {
+        "name": "hover-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px rgba(var(--accent-rgb), 0.5)",
+        "purpose": "Hover de cartão no escuro."
+      },
+      {
+        "name": "modal",
+        "value": "0 50px 90px -24px rgba(0, 0, 0, 0.7)",
+        "purpose": "ModalShell (renderizado inline no Scaffold)."
+      },
+      {
+        "name": "confirmação",
+        "value": "0 24px 48px -16px rgba(0, 0, 0, 0.6)",
+        "purpose": "alertdialog de descarte do ModalHost."
+      },
+      {
+        "name": "primary-glow",
+        "value": "0 1px 2px rgba(var(--accent-rgb), 0.4), 0 6px 16px -8px rgba(var(--accent-rgb), 0.6)",
+        "purpose": "Botão primário do kit."
+      },
+      {
+        "name": "tone-bar-glow",
+        "value": "0 0 10px 2px rgba(var(--tone-rgb), 0.7), 0 0 22px 4px rgba(var(--tone-rgb), 0.3)",
+        "purpose": "Barra de 3px do cabeçalho de SectionCard com tom e do card de fase ativo."
+      },
+      {
+        "name": "status-glow",
+        "value": "0 0 8px rgba(var(--tone-rgb), 0.6)",
+        "purpose": "Ponto do StatusDot."
+      },
+      {
+        "name": "lift (escuro)",
+        "value": "0 18px 40px -28px rgba(0, 0, 0, 0.9)",
+        "purpose": ".lift:hover no escuro; no claro, --hover-shadow."
+      },
+      {
+        "name": "current-phase",
+        "value": "0 0 0 4px rgba(var(--tone-rgb), 0.12), 0 0 16px rgba(var(--tone-rgb), 0.4)",
+        "purpose": "Nó da fase corrente no trilho."
+      },
+      {
+        "name": "gate-glow",
+        "value": "0 0 12px rgba(var(--tone-rgb), 0.35)",
+        "purpose": "Losango de gate decidido, pronto ou bloqueado."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Token --ease-out do Scaffold: entrada e transições de .btn. Não é o --ease-out-soft da especificação."
+      },
+      {
+        "name": "ease-io",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Token --ease-io do Scaffold: o toque do .btn."
+      },
+      {
+        "name": "fade-in",
+        "value": "450ms var(--ease-out); opacity 0 → 1, translateY(7px) → 0",
+        "purpose": "Entrada de tela; desligada em reduced motion."
+      },
+      {
+        "name": "btn",
+        "value": "150ms var(--ease-out)",
+        "purpose": "Fundo, borda e sombra do .btn."
+      },
+      {
+        "name": "btn-tap",
+        "value": "60ms var(--ease-io); scale(0.985)",
+        "purpose": ".btn:active. Não há :hover em .btn por decisão do sistema."
+      },
+      {
+        "name": "nav-hover",
+        "value": "150ms ease",
+        "purpose": "Fundo e cor do .navitem."
+      },
+      {
+        "name": "lift",
+        "value": "250ms ease; translateY(-2px)",
+        "purpose": "Hover dos cards de fase (.lift)."
+      },
+      {
+        "name": "skeleton-shimmer",
+        "value": "1.4s ease-in-out infinite",
+        "purpose": "Carregamento; desligado em reduced motion."
+      },
+      {
+        "name": "pulse-ring",
+        "value": "1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Losango do gate pronto para decisão; desligado em reduced motion."
+      },
+      {
+        "name": "count-up",
+        "value": "900ms ease-out cúbico",
+        "purpose": "Contagem do KpiCard (kit); acima dos 450ms — dívida."
+      },
+      {
+        "name": "progress-fill",
+        "value": "750ms cubic-bezier(0.2, 0.8, 0.3, 1)",
+        "purpose": "Preenchimento do Progress (kit); acima dos 450ms — dívida."
+      },
+      {
+        "name": "header-pulse",
+        "value": "700ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Pulso radial único do cabeçalho de SectionCard com onActivate."
+      }
+    ],
+    "breakpoints": [{ "name": "pointer-coarse", "value": "(pointer: coarse)" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação primária do kit com as curvas do Scaffold: toque em scale(.985) com --ease-io. Sem :hover por decisão do sistema; o scaffold.css não declara anel de foco — o snippet mostra o da família.",
+      "html": "<button class='ds-btn-primary' type='button'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z'/><path d='M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12'/><path d='M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17'/></svg>Criar trilha</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;font-family:var(--font-manrope, Manrope), sans-serif;font-size:14px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--accent-fg, #fff);background:var(--accent, #1d6a97);border:1px solid var(--accent, #1d6a97);border-radius:var(--r-md, 10px);box-shadow:0 1px 2px rgba(var(--accent-rgb, 29, 106, 151), .4), 0 6px 16px -8px rgba(var(--accent-rgb, 29, 106, 151), .6);cursor:pointer;transition:background .15s var(--ease-out, cubic-bezier(.16, 1, .3, 1)), border-color .15s var(--ease-out, cubic-bezier(.16, 1, .3, 1)), transform .06s var(--ease-io, cubic-bezier(.4, 0, .2, 1)), box-shadow .15s var(--ease-out, cubic-bezier(.16, 1, .3, 1))}.ds-btn-primary:active{transform:scale(.985)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação secundária: superfície com fio firme. No GatePanel, o override só aparece depois de tentar fechar o gate.",
+      "html": "<button class='ds-btn-secondary' type='button'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/></svg>Registrar override</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:7px 12px;font-family:var(--font-manrope, Manrope), sans-serif;font-size:13px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--ink, #0d1017);background:var(--surface, #fff);border:1px solid var(--hairline-strong, #d4d8e0);border-radius:var(--r-md, 10px);cursor:pointer;transition:background .15s var(--ease-out, cubic-bezier(.16, 1, .3, 1)), border-color .15s var(--ease-out, cubic-bezier(.16, 1, .3, 1)), transform .06s var(--ease-io, cubic-bezier(.4, 0, .2, 1))}.ds-btn-secondary:active{transform:scale(.985)}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-btn-secondary:disabled{opacity:.45;cursor:not-allowed;transform:none}"
+    },
+    {
+      "name": "Phase Badges",
+      "kind": "chip",
+      "refersTo": "badge-green",
+      "description": "Badge do kit com os estados de fase do Scaffold: palavra sempre presente; verde para fechado, âmbar para gate pronto, vermelho para bloqueado, neutro para não iniciada.",
+      "html": "<div class='ds-badges'><span class='ds-badge ds-badge-green'><span class='ds-badge-dot'></span>Fechado</span><span class='ds-badge ds-badge-amber'><span class='ds-badge-dot'></span>Gate pronto</span><span class='ds-badge ds-badge-red'><span class='ds-badge-dot'></span>Bloqueado</span><span class='ds-badge'>Não iniciada</span></div>",
+      "css": ".ds-badges{display:flex;flex-wrap:wrap;gap:8px}.ds-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--r-pill, 999px);font-family:var(--font-manrope, Manrope), sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;background:var(--chip-bg, #eff1f5);color:var(--ink-muted, #565e6e);border:1px solid var(--hairline, #e5e7ec);transition:background .2s ease, color .2s ease, border-color .2s ease}.ds-badge-dot{width:6px;height:6px;border-radius:99px;background:currentColor}.ds-badge-green{background:var(--green-soft, rgba(18, 145, 90, .1));color:var(--green-text, #0c6941);border-color:rgba(var(--green-rgb, 18, 145, 90), .25)}.ds-badge-amber{background:var(--amber-soft, rgba(154, 116, 21, .13));color:var(--amber-text, #76570e);border-color:rgba(var(--amber-rgb, 154, 116, 21), .25)}.ds-badge-red{background:var(--red-soft, rgba(214, 58, 99, .1));color:var(--red-text, #a7244a);border-color:rgba(var(--red-rgb, 214, 58, 99), .25)}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Field + Input do base.tsx: rótulo nota/700 com asterisco de obrigatório, controle em surface-2 com fio claro; o erro troca a borda para red.",
+      "html": "<div class='ds-field'><label class='ds-label' for='ds-track-name'>Nome da trilha<span class='ds-req' aria-hidden='true'>*</span></label><input class='ds-input' id='ds-track-name' placeholder='Ex.: Triagem de chamados no suporte N1' /></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;max-width:360px;font-family:var(--font-manrope, Manrope), sans-serif}.ds-label{display:flex;gap:5px;align-items:center;font-size:var(--fs-nota, 11.5px);font-weight:700;color:var(--ink-muted, #565e6e)}.ds-req{color:var(--red-text, #a7244a)}.ds-input{width:100%;padding:9px 11px;border-radius:var(--r-sm, 8px);border:1px solid var(--hairline, #e5e7ec);background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017);font-family:inherit;font-size:var(--fs-base, 13px);font-weight:600}.ds-input::placeholder{color:var(--ink-faint, #636c7b);font-weight:500}.ds-input:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-input[aria-invalid='true']{border-color:var(--red, #d63a63)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Seções da sidebar do Scaffold: item ativo em accent-soft com borda a 18% e barra luminosa de 3px; contador neutro em chip-bg.",
+      "html": "<nav class='ds-nav' aria-label='Navegação do Scaffold'><div class='ds-nav-eyebrow'>Adoção</div><a class='ds-nav-item' href='#' aria-current='page'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z'/><path d='M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12'/><path d='M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17'/></svg>Portfólio de trilhas<span class='ds-nav-count'>7</span></a><div class='ds-nav-eyebrow ds-nav-eyebrow-gap'>Método</div><a class='ds-nav-item' href='#'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/><path d='M14 2v4a2 2 0 0 0 2 2h4'/><path d='M10 9H8'/><path d='M16 13H8'/><path d='M16 17H8'/></svg>Casos de negócio</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:3px;width:248px;padding:14px 12px 14px 22px;background:var(--sidebar, #fbfbfd);font-family:var(--font-manrope, Manrope), sans-serif}.ds-nav-eyebrow{padding:0 10px 5px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint, #636c7b)}.ds-nav-eyebrow-gap{margin-top:15px}.ds-nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--r-sm, 8px);border:1px solid transparent;font-size:13px;font-weight:500;color:var(--ink-muted, #565e6e);text-decoration:none;transition:background .15s ease, color .15s ease}.ds-nav-item:hover{background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017)}.ds-nav-item[aria-current='page']{background:var(--accent-soft, rgba(29, 106, 151, .1));color:var(--accent-text, #145275);font-weight:700;border-color:rgba(var(--accent-rgb, 29, 106, 151), .18)}.ds-nav-item[aria-current='page']::before{content:'';position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:99px;background:var(--accent, #1d6a97);box-shadow:0 0 10px 1px rgba(var(--accent-rgb, 29, 106, 151), .7)}.ds-nav-item:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-nav-count{margin-left:auto;padding:1px 6px;border-radius:99px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10.5px;font-weight:700;background:var(--chip-bg, #eff1f5);color:var(--ink-faint, #636c7b)}.ds-nav-item[aria-current='page'] .ds-nav-count{background:rgba(var(--accent-rgb, 29, 106, 151), .25);color:var(--accent-text, #145275)}"
+    },
+    {
+      "name": "Phase Stepper",
+      "kind": "custom",
+      "refersTo": "gate-diamond",
+      "description": "Assinatura do Scaffold: nó de fase, gate, nó, gate. O losango é o gate no trilho — fechado em verde, pronto em âmbar pulsando, futuro tracejado —, e os cards de fase embaixo trazem o estado com palavra e o critério do gate.",
+      "html": "<div class='ds-stepper'><div class='ds-rail'><span class='ds-node ds-node-done' role='img' aria-label='Fase 1 — Assess'><svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 6 9 17l-5-5'/></svg></span><span class='ds-seg ds-seg-done'></span><span class='ds-gate ds-gate-passed' role='img' aria-label='Gate fechado' title='Gate fechado'><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 6 9 17l-5-5'/></svg></span><span class='ds-seg ds-seg-done'></span><span class='ds-node ds-node-cur' role='img' aria-label='Fase 2 — Pilot'>2</span><span class='ds-seg'></span><span class='ds-gate ds-gate-ready' role='img' aria-label='Gate pronto para decisão' title='Gate pronto para decisão'><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/></svg></span><span class='ds-seg'></span><span class='ds-node' role='img' aria-label='Fase 3 — Scale'>3</span><span class='ds-seg'></span><span class='ds-gate ds-gate-locked' role='img' aria-label='Gate futuro' title='Gate futuro'><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/></svg></span><span class='ds-seg'></span><span class='ds-node' role='img' aria-label='Fase 4 — Embed'>4</span></div><div class='ds-phases'><button class='ds-phase' type='button' aria-pressed='false'><div class='ds-phase-title'>Assess</div><span class='ds-phase-state'><span class='ds-phase-dot ds-dot-green'></span>Fechado</span><div class='ds-phase-gate'>Baseline medido existe e o dono do processo assinou.</div></button><button class='ds-phase ds-phase-amber' type='button' aria-pressed='true'><div class='ds-phase-title'>Pilot</div><span class='ds-phase-state'><span class='ds-phase-dot ds-dot-amber'></span>Gate pronto</span><div class='ds-phase-gate'>Piloto vence o baseline na métrica acordada sem risco novo.</div></button><button class='ds-phase' type='button' aria-pressed='false'><div class='ds-phase-title'>Scale</div><span class='ds-phase-state'><span class='ds-phase-dot ds-dot-neutral'></span>Não iniciada</span><div class='ds-phase-gate'>Maioria do volume do time roda no caminho novo.</div></button><button class='ds-phase' type='button' aria-pressed='false'><div class='ds-phase-title'>Embed</div><span class='ds-phase-state'><span class='ds-phase-dot ds-dot-neutral'></span>Não iniciada</span><div class='ds-phase-gate'>Processo sobrevive 30 dias sem envolvimento da Nebuloz.</div></button></div></div>",
+      "css": ".ds-stepper{max-width:780px;padding:18px 18px 16px;border-radius:var(--r-lg, 14px);background:var(--surface, #fff);border:1px solid var(--hairline, #e5e7ec);box-shadow:var(--card-shadow, 0 1px 2px rgba(9, 12, 20, .05), 0 4px 14px -8px rgba(9, 12, 20, .1));font-family:var(--font-manrope, Manrope), sans-serif}.ds-rail{display:flex;align-items:center;gap:8px;padding:0 6px;margin-bottom:14px}.ds-node{box-sizing:border-box;width:32px;height:32px;flex-shrink:0;display:grid;place-items:center;border-radius:99px;background:var(--surface-2, #f7f8fa);border:1.5px solid var(--hairline-strong, #d4d8e0);font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:13px;font-weight:800;color:var(--ink-faint, #636c7b)}.ds-node-done{background:var(--green-soft, rgba(18, 145, 90, .1));border-color:rgba(var(--green-rgb, 18, 145, 90), .55);color:var(--green-text, #0c6941)}.ds-node-cur{background:var(--amber-soft, rgba(154, 116, 21, .13));border-color:rgba(var(--amber-rgb, 154, 116, 21), .55);color:var(--amber-text, #76570e);box-shadow:0 0 0 4px rgba(var(--amber-rgb, 154, 116, 21), .12), 0 0 16px rgba(var(--amber-rgb, 154, 116, 21), .4)}.ds-seg{box-sizing:border-box;flex:1;height:2px;border-top:2px dashed var(--hairline-strong, #d4d8e0)}.ds-seg-done{border-top:none;border-radius:99px;background:linear-gradient(90deg, rgba(var(--green-rgb, 18, 145, 90), .7), rgba(var(--green-rgb, 18, 145, 90), .35));box-shadow:0 0 8px rgba(var(--green-rgb, 18, 145, 90), .25)}.ds-gate{box-sizing:border-box;width:26px;height:26px;flex-shrink:0;display:grid;place-items:center;transform:rotate(45deg);border-radius:7px}.ds-gate svg{transform:rotate(-45deg)}.ds-gate-passed{background:var(--green-soft, rgba(18, 145, 90, .1));border:1.5px solid rgba(var(--green-rgb, 18, 145, 90), .55);box-shadow:0 0 12px rgba(var(--green-rgb, 18, 145, 90), .35);color:var(--green-text, #0c6941)}.ds-gate-ready{background:var(--amber-soft, rgba(154, 116, 21, .13));border:1.5px solid rgba(var(--amber-rgb, 154, 116, 21), .55);box-shadow:0 0 12px rgba(var(--amber-rgb, 154, 116, 21), .35);color:var(--amber-text, #76570e);animation:ds-gate-pulse 1.8s cubic-bezier(.4, 0, .6, 1) infinite}.ds-gate-locked{background:var(--surface-2, #f7f8fa);border:1.5px dashed var(--hairline-strong, #d4d8e0);color:var(--ink-faint, #636c7b)}@keyframes ds-gate-pulse{0%{box-shadow:0 0 0 0 rgba(var(--amber-rgb, 154, 116, 21), .55)}70%{box-shadow:0 0 0 6px rgba(var(--amber-rgb, 154, 116, 21), 0)}100%{box-shadow:0 0 0 0 rgba(var(--amber-rgb, 154, 116, 21), 0)}}.ds-phases{display:grid;grid-template-columns:repeat(4, 1fr);gap:10px}.ds-phase{position:relative;overflow:hidden;text-align:left;padding:12px 13px;border-radius:var(--r-md, 10px);border:1px solid var(--hairline, #e5e7ec);background:transparent;font-family:inherit;cursor:pointer;transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease}.ds-phase:hover{transform:translateY(-2px);border-color:var(--hairline-strong, #d4d8e0);box-shadow:var(--hover-shadow, 0 2px 4px rgba(9, 12, 20, .06), 0 18px 36px -20px rgba(29, 106, 151, .3))}.ds-phase:active{transform:scale(.985)}.ds-phase:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-phase-amber[aria-pressed='true']{background:var(--surface-2, #f7f8fa);border-color:rgba(var(--amber-rgb, 154, 116, 21), .45);box-shadow:0 8px 26px -14px rgba(var(--amber-rgb, 154, 116, 21), .5)}.ds-phase-amber[aria-pressed='true']::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber, #9a7415);box-shadow:0 0 10px 1px rgba(var(--amber-rgb, 154, 116, 21), .6)}.ds-phase-title{margin-bottom:4px;font-family:var(--font-space-grotesk, Space Grotesk), Inter Tight, sans-serif;font-size:14px;font-weight:700;letter-spacing:-.035em;color:var(--ink, #0d1017)}.ds-phase-state{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink, #0d1017)}.ds-phase-dot{width:7px;height:7px;border-radius:99px}.ds-dot-green{background:var(--green, #12915a);box-shadow:0 0 8px rgba(var(--green-rgb, 18, 145, 90), .6)}.ds-dot-amber{background:var(--amber, #9a7415);box-shadow:0 0 8px rgba(var(--amber-rgb, 154, 116, 21), .6)}.ds-dot-neutral{background:var(--neutral, #8a93a3);box-shadow:0 0 8px rgba(var(--neutral-rgb, 138, 147, 163), .6)}.ds-phase-gate{margin-top:8px;padding-top:8px;border-top:1px dashed var(--hairline, #e5e7ec);font-size:10.5px;line-height:1.45;color:var(--ink-subtle, #5f6878)}@media (prefers-reduced-motion: reduce){.ds-gate-ready{animation:none}.ds-phase:hover{transform:none}}"
+    },
+    {
+      "name": "Gate Panel",
+      "kind": "card",
+      "refersTo": "section-card-head",
+      "description": "GatePanel: SectionCard em âmbar enquanto decidível, critérios com checkbox nativo em accent-color verde, contagem mono de atendidos e a ação de fechar — recusa e override ficam dentro do painel.",
+      "html": "<section class='ds-gate-panel'><div class='ds-gp-head'><span class='ds-gp-bar'></span><span class='ds-gp-icon'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/></svg></span><div><h3 class='ds-gp-title'>Gate da fase</h3><div class='ds-gp-sub'>Piloto vence o baseline na métrica acordada sem risco novo.</div></div></div><div class='ds-gp-body'><label class='ds-gp-crit'><input class='ds-gp-check' type='checkbox' checked />Piloto vence o baseline na métrica acordada</label><label class='ds-gp-crit'><input class='ds-gp-check' type='checkbox' />Nenhum risco novo registrado no piloto</label><div class='ds-gp-foot'><span class='ds-gp-meta'>Sem decisão registrada</span><span class='ds-gp-count'>1/2 atendidos</span></div><div class='ds-gp-actions'><button class='ds-gp-close' type='button'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M20 6 9 17l-5-5'/></svg>Fechar gate</button></div></div></section>",
+      "css": ".ds-gate-panel{max-width:460px;background:var(--surface, #fff);border:1px solid rgba(var(--amber-rgb, 154, 116, 21), .22);border-radius:var(--r-lg, 14px);box-shadow:var(--card-shadow, 0 1px 2px rgba(9, 12, 20, .05), 0 4px 14px -8px rgba(9, 12, 20, .1));overflow:hidden;font-family:var(--font-manrope, Manrope), sans-serif;color:var(--ink, #0d1017)}.ds-gp-head{position:relative;display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--hairline, #e5e7ec)}.ds-gp-bar{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber, #9a7415);box-shadow:0 0 10px 2px rgba(var(--amber-rgb, 154, 116, 21), .7), 0 0 22px 4px rgba(var(--amber-rgb, 154, 116, 21), .3)}.ds-gp-icon{display:grid;place-items:center;padding:5px;border-radius:8px;color:var(--amber-text, #76570e);background:rgba(var(--amber-rgb, 154, 116, 21), .12);border:1px solid rgba(var(--amber-rgb, 154, 116, 21), .25)}.ds-gp-title{margin:0;font-family:var(--font-space-grotesk, Space Grotesk), Inter Tight, sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.015em}.ds-gp-sub{margin-top:1px;font-size:12.5px;color:var(--ink-subtle, #5f6878)}.ds-gp-body{display:flex;flex-direction:column;gap:7px;padding:18px}.ds-gp-crit{display:flex;align-items:baseline;gap:10px;font-size:12.5px;font-weight:600;cursor:pointer}.ds-gp-check{flex-shrink:0;margin:0;transform:translateY(2px);accent-color:var(--green, #12915a);cursor:pointer}.ds-gp-check:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-gp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px;padding-top:11px;border-top:1px solid var(--hairline, #e5e7ec)}.ds-gp-meta{font-size:11.5px;color:var(--ink-faint, #636c7b)}.ds-gp-count{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:11px;font-weight:700;color:var(--amber-text, #76570e)}.ds-gp-actions{display:flex;justify-content:flex-end;margin-top:5px}.ds-gp-close{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--accent, #1d6a97);border-radius:var(--r-md, 10px);background:var(--accent, #1d6a97);color:var(--accent-fg, #fff);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:transform .06s var(--ease-io, cubic-bezier(.4, 0, .2, 1))}.ds-gp-close:active{transform:scale(.985)}.ds-gp-close:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}"
+    },
+    {
+      "name": "Stall Card",
+      "kind": "card",
+      "refersTo": "stall-card",
+      "description": "Rodapé da sidebar: a estagnação da carteira na casca, para ser vista sem ninguém procurar — StatusDot com palavra, contagem em mono e o limiar.",
+      "html": "<div class='ds-stall'><span class='ds-stall-status'><span class='ds-stall-dot'></span>Estagnação detectada</span><div class='ds-stall-count'>2 de 7 trilhas</div><div class='ds-stall-note'>sem movimento de gate há ≥ 21 dias</div></div>",
+      "css": ".ds-stall{width:224px;padding:12px 13px;border-radius:var(--r-md, 10px);background:var(--surface-2, #f7f8fa);border:1px solid var(--hairline, #e5e7ec);font-family:var(--font-manrope, Manrope), sans-serif}.ds-stall-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--ink, #0d1017)}.ds-stall-dot{width:7px;height:7px;border-radius:99px;background:var(--red, #d63a63);box-shadow:0 0 8px rgba(var(--red-rgb, 214, 58, 99), .6)}.ds-stall-count{margin-top:7px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-variant-numeric:tabular-nums;font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--red-text, #a7244a)}.ds-stall-note{margin-top:3px;font-size:11px;line-height:1.4;color:var(--ink-faint, #636c7b)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Observatório Noturno",
+    "overview": "O sistema é um observatório: canvas quase preto, instrumentos que só acendem quando alguém os observa e cada leitura catalogada com a sua origem. O escuro é a assinatura — é o tema padrão da plataforma (`defaultTheme=\"dark\"`) e o único com textura; o claro é o mesmo observatório de dia, limpo por decisão e com a tinta calibrada contra as seis superfícies reais. A densidade é de instrumento de trabalho: tabela, painel e formulário para quem decide, nunca vitrine.\n\nA cor não decora. Accent, blue e purple nomeiam ação e categoria; vermelho, âmbar e verde só aparecem quando há um fato negativo, de atenção ou positivo a mostrar, e sempre ao lado de uma palavra ou de um número. Todo identificador e toda medida saem em mono. O movimento informa estado e cabe em 450ms; o que passa disso é laço (pulso, varredura, shimmer) ou dívida registrada.\n\n**Base compartilhada.** Charter, Meridian, Scaffold e Signal usam a mesma paleta (sky `#5CB4E4` → baby `#89CFF0` → butter `#F6F2C3` sobre canvas `#07080c`), a mesma escala de raio, as mesmas sombras de cartão e as mesmas primitivas: `@repo/design-system/cosmos/kit` e `components/charter/base.tsx`, que Meridian, Scaffold e Signal reexportam. Cada produto tem raiz escopada própria (`.charter-root`, `.meridian-root`, `.scaffold-root`, `.signal-root`) e um `.css` próprio — o do Meridian é cópia reescopada do Charter, o do Signal é cópia do Meridian, o do Scaffold foi portado do próprio handoff. Não existe arquivo comum (dívida registrada em `signal.css:11-14` e em `specs/003-signal-measure/plan.md`). **Mudar um token exige mudar os quatro `.css`** (`charter.css`, `meridian.css`, `scaffold.css`, `signal.css`). As cópias já divergem; cada divergência está marcada neste arquivo como tal e não deve ser propagada sem decisão.\n\nNo frontmatter, a chave é o nome da custom property sem o `--`. Sem sufixo, é o valor do tema claro; o sufixo `-dark` marca o mesmo token no tema escuro.\n\n**No Scaffold**, o observatório acompanha o trajeto: quatro fases num trilho, com o gate desenhado como losango entre elas — \"a fase não avança sem passar por aqui\" vira imagem em vez de texto. O `scaffold.css` foi portado do próprio handoff (`scaffold.html`, projeto Claude Design `691f7fe5`) e é a cópia mais enxuta da família: sem as camadas do KPI, sem `:focus-visible`, sem tooltip, sem `--on-accent` e sem `--scrim`. Em troca, é o único que declara curvas de easing (`--ease-out`, `--ease-io`) e, com o Signal, o único com alvo de 44px em ponteiro grosso.",
+    "keyCharacteristics": [
+      "Escuro por padrão, claro limpo: a textura (grade de 64px e camadas do KPI) só existe no escuro.",
+      "Neutros frios em cinco degraus de superfície; tinta clara calibrada a no mínimo 4.60:1 nas seis superfícies claras.",
+      "Um único accent que troca de polaridade: `#1d6a97` com tinta branca no claro, sky `#5cb4e4` com tinta canvas no escuro.",
+      "Cor de estado sempre com palavra ou número; categoria em accent, blue ou purple.",
+      "JetBrains Mono para identificador, contagem, data, versão e medida.",
+      "Raio suave e constante (6 → 18px, pílula em chip e badge); cartão com sombra mínima que só se aprofunda no hover.",
+      "Trilho de fases com nós de 32px e losangos de gate de 26px girados 45°; só o gate pronto para decisão pulsa.",
+      "A estagnação da carteira fica na casca, no rodapé da sidebar, para ser vista \"sem ninguém procurar\".",
+      "Tema guardado no próprio elemento (`scaffold.theme`), escuro por padrão, e mono com algarismos tabulares."
+    ],
+    "rules": [
+      {
+        "name": "The Colored Fact Rule",
+        "body": "Vermelho, âmbar e verde são reservados a informação de fato: negativo, crítico ou bloqueado; atenção ou dinheiro; positivo. Categoria, papel e decoração usam accent, blue ou purple. O código já recusa o atalho: o tom de papel do Charter é \"Categoria, não estado — por isso nada de verde, âmbar ou vermelho\" (`packages/rbac/src/charter-matrix.ts:71-72`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Color-Plus-Word Rule",
+        "body": "Estado nunca vai só na cor: `StatusDot` leva rótulo, célula de mapa de calor leva o número, prazo vencido escreve \"vencido\", gráfico leva legenda. É requisito de acessibilidade (NFR-2), não escolha estética.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four-Slot Rule",
+        "body": "Todo tom existe como `--x`, `--x-rgb`, `--x-soft` e `--x-text`. Texto colorido usa `-text`; fundo usa `-soft`; borda usa `rgba(var(--x-rgb), .2–.35)`; o tom sólido fica para ponto, barra, traço e preenchimento. No claro, o tom sólido como texto reprova AA — verde 3.49:1, âmbar 3.74:1, vermelho 3.93:1 sobre `surface-3`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Polarity Rule",
+        "body": "Glifo sobre preenchimento sólido usa a tinta do tema (`--accent-fg`): branco no claro, canvas no escuro. Branco sobre o sky cai para 2.2:1, e um check branco sobre o butter some.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-for-Measure Rule",
+        "body": "Todo identificador e toda medida — código de caso, iniciativa, trilha ou fornecedor, contagem, data, versão, percentual — saem em JetBrains Mono (`.mono`); prosa nunca sai em mono. É a regra da especificação visual do Charter, e as primitivas a seguem: `MetaCell mono`, contador de navegação e de tab, cabeçalho de tabela, valor de `BarRow`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Six-Step Rule",
+        "body": "Tamanho de texto só nos seis degraus da suíte: `--fs-micro` 10px, `--fs-nota` 11.5px, `--fs-base` 13px, `--fs-forte` 15px, `--fs-titulo` 19px, `--fs-display` 22px. Tamanho novo é degrau novo, \"e degrau novo é como os quinze apareceram\" (`cosmos.css:60-61`). Ao migrar um literal: degrau mais próximo, empate para baixo.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single-Uppercase Rule",
+        "body": "Caixa alta só no `Eyebrow` e nos carimbos mono (cabeçalho de tabela, chip de versão), sempre com entreletra aberta; \"qualquer outro uso de uppercase na UI é erro de porte\" (`components/charter/base.tsx:38-39`). O wordmark do produto é a exceção de marca.",
+        "section": "typography"
+      },
+      {
+        "name": "The One-Cols Rule",
+        "body": "Cabeçalho e linha de tabela compartilham um único `cols` — sem isso, \"a coluna do header desliza em relação à da linha no primeiro ajuste\" (`components/charter/base.tsx:454-455`). Linha clicável é `<button>`, com \"Abrir X\" em `.sr-only` antes do conteúdo das células.",
+        "section": "layout"
+      },
+      {
+        "name": "The Responding-Glow Rule",
+        "body": "Em repouso, cartão só tem `--card-shadow`. A profundidade extra — subir 2px (`.lift`) ou 3px (`.kpi`), `--hover-shadow`, brilho do tom — é resposta a hover, e as camadas decorativas do KPI só acordam no escuro.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Night-Texture Rule",
+        "body": "Grão fractal (`feTurbulence`, opacidade .035, `mix-blend-mode: overlay`, fixo no viewport) e grade de 64px (`rgba(255, 255, 255, 0.022)`) existem só no escuro; no claro \"viram sujeira, não textura\" (`scaffold.css:131`). A intensidade global de efeito é `--fx` (0 a 1.6, padrão 1).",
+        "section": "elevation"
+      },
+      {
+        "name": "The Gate-on-the-Rail Rule",
+        "body": "O gate é losango no trilho, entre as fases — nunca rótulo dentro do card. Desenhá-lo como parte do trilho \"é o que faz 'a fase não avança sem passar por aqui' virar imagem em vez de texto\" (`components/scaffold/phase-stepper.tsx:3-6`).",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do escrever estado como cor + palavra ou número: `StatusDot` com rótulo, célula com contagem, \"vencido\" por extenso.",
+      "Do pôr todo identificador, contagem, data, versão e medida em JetBrains Mono (`.mono`); prosa fica no corpo.",
+      "Do usar o tom pelos quatro slots: texto em `--x-text`, fundo em `--x-soft`, borda em `rgba(var(--x-rgb), .2–.35)`, sólido só em ponto, barra, traço e preenchimento.",
+      "Do usar `--accent-fg` para glifo sobre preenchimento sólido — branco no claro, canvas no escuro.",
+      "Do desabilitar a ação sem permissão com `disabled` real e o motivo escrito (\"Requer papel X — ação\"), no rodapé quando for modal.",
+      "Do mostrar skeleton com a forma do conteúdo real, só depois de 300ms, e vazio com um CTA que resolve o vazio.",
+      "Do dar a todo gráfico legenda centralizada e `role=\"img\"` com `aria-label` que diga os números.",
+      "Do manter o anel de foco de 2px em accent e marcar seleção com `box-shadow`, que não apaga o anel.",
+      "Do respeitar `prefers-reduced-motion`: desligar varredura, shimmer, pulso e translate e manter o fade.",
+      "Do desenhar o gate como losango no trilho, entre as fases, e pulsar só o gate pronto para decisão.",
+      "Do mostrar o snapshot congelado do gate decidido — nunca os critérios de hoje sobre uma decisão passada (SG-07).",
+      "Do manter na casca o que precisa ser visto sem procurar, como a estagnação da carteira no rodapé da sidebar."
+    ],
+    "donts": [
+      "Don't usar vermelho, âmbar ou verde como categoria, papel ou decoração — são fato; categoria usa accent, blue ou purple.",
+      "Don't comunicar estado só com cor, nem deixar a justificativa só no hover: motivo de bloqueio e \"por que isso importa\" ficam na tela (`Callout`, rodapé do modal), não em `title`.",
+      "Don't pôr grão, grade ou camadas do KPI no tema claro.",
+      "Don't animar entrada ou transição acima de 450ms fora de laço; as exceções do kit (contagem do KPI em 900ms, `Progress` em 750ms, pulso do cabeçalho em 700ms) são dívida, não precedente.",
+      "Don't escrever `outline: none` inline num controle, nem usar `outline` como anel de seleção.",
+      "Don't criar tamanho de fonte fora dos seis degraus.",
+      "Don't usar caixa alta fora do `Eyebrow` e dos carimbos mono.",
+      "Don't pôr branco sobre o sky ou sobre qualquer tom sólido no escuro (2.2:1 no sky; some no butter).",
+      "Don't mostrar zero no lugar de ausência: número que não existe aparece como \"—\", \"aguardando\" ou tachado com o motivo — zero num painel se lê como \"medimos e deu zero\".",
+      "Don't gatear com `span` de opacidade ou `pointer-events: none`, que não impede Tab + Enter, nem esconder o controle que o papel não permite.",
+      "Don't trazer o lavanda do Cosmos (`#5e6ad2`) nem importar `cosmos.css` nestas raízes: cada raiz é autossuficiente (ADR-0010).",
+      "Don't portar o seletor de persona do protótipo: o papel vem da sessão, e trocar de papel no topbar seria escalada de privilégio (ADR-0004).",
+      "Don't usar spinner para carregar tela.",
+      "Don't escrever o gate como rótulo dentro do card de fase.",
+      "Don't abrir `ModalShell` fora do `ModalProvider`: sem o host não há portal, scrim, trap de foco nem Esc — é como o Scaffold está hoje.",
+      "Don't trocar o tema só no atributo da raiz enquanto o `<html>` carrega outro `data-theme`: a cascata escolhe o bloco escuro e o kit continua lendo o next-themes."
+    ]
+  }
+}

@@ -1,0 +1,1072 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-22T23:59:00-03:00",
+  "title": "Design System: Meridian",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Papel Frio",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Branco de Leitura",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Branco Gelo",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#a4a5a7",
+          "#c8c9cb",
+          "#edeef0"
+        ]
+      },
+      "surface-3": {
+        "role": "neutral",
+        "displayName": "Cinza Gelo",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Branco de Margem",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#a5a5a7",
+          "#c9c9cb",
+          "#eeeef0"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Fio Claro",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242529",
+          "#404246",
+          "#5f6165",
+          "#808287",
+          "#a3a5aa",
+          "#c7c9ce",
+          "#eceef3"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Fio Firme",
+        "tonalRamp": [
+          "#090b10",
+          "#22252b",
+          "#3f4248",
+          "#5e6168",
+          "#7f828a",
+          "#a1a5ad",
+          "#c5c9d1",
+          "#eaeff7"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Nanquim",
+        "tonalRamp": [
+          "#080b12",
+          "#22252d",
+          "#3e424a",
+          "#5d616a",
+          "#7e828c",
+          "#a1a5af",
+          "#c4c9d4",
+          "#eaeef9"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "tonalRamp": [
+          "#060b17",
+          "#1e2533",
+          "#3b4251",
+          "#596171",
+          "#7a8394",
+          "#9ca5b7",
+          "#c0c9dc",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle": {
+        "role": "neutral",
+        "displayName": "Grafite Médio",
+        "tonalRamp": [
+          "#050b17",
+          "#1e2533",
+          "#3a4251",
+          "#596271",
+          "#798393",
+          "#9ca6b7",
+          "#bfcadc",
+          "#e6efff"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Ardósia Calibrada",
+        "tonalRamp": [
+          "#050b16",
+          "#1e2532",
+          "#3a4250",
+          "#596270",
+          "#7a8392",
+          "#9ca6b6",
+          "#c0cadb",
+          "#e6efff"
+        ]
+      },
+      "chip-bg": {
+        "role": "neutral",
+        "displayName": "Cinza de Chip",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Cerúleo Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#00476b",
+          "#1a6895",
+          "#428ab9",
+          "#66aede",
+          "#91d2ff",
+          "#dff1ff"
+        ]
+      },
+      "accent-soft": { "role": "primary", "displayName": "Véu Cerúleo" },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Cerúleo Noturno",
+        "tonalRamp": [
+          "#000d18",
+          "#00283f",
+          "#024769",
+          "#2d678c",
+          "#5089af",
+          "#72add4",
+          "#96d1fa",
+          "#dff2ff"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "Tinta sobre Accent",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "blue": {
+        "role": "secondary",
+        "displayName": "Azul Baby Profundo",
+        "tonalRamp": [
+          "#000d18",
+          "#002840",
+          "#00476c",
+          "#09689a",
+          "#398abf",
+          "#5faee4",
+          "#93d1ff",
+          "#e0f1ff"
+        ]
+      },
+      "blue-soft": { "role": "secondary", "displayName": "Véu Azul" },
+      "blue-text": {
+        "role": "secondary",
+        "displayName": "Azul Tinta",
+        "tonalRamp": [
+          "#000c19",
+          "#002841",
+          "#00466d",
+          "#206795",
+          "#4689ba",
+          "#69addf",
+          "#95d1ff",
+          "#e0f1ff"
+        ]
+      },
+      "purple": {
+        "role": "secondary",
+        "displayName": "Lilás Frio",
+        "tonalRamp": [
+          "#0d002c",
+          "#280068",
+          "#432792",
+          "#604bb8",
+          "#7f6ede",
+          "#a193ff",
+          "#c5c1ff",
+          "#edecff"
+        ]
+      },
+      "purple-soft": { "role": "secondary", "displayName": "Véu Lilás" },
+      "purple-text": {
+        "role": "secondary",
+        "displayName": "Lilás Profundo",
+        "tonalRamp": [
+          "#0c002d",
+          "#26006a",
+          "#402695",
+          "#5d4bba",
+          "#7c6ee1",
+          "#9e95ff",
+          "#c4c2ff",
+          "#ececff"
+        ]
+      },
+      "green": {
+        "role": "semantic",
+        "displayName": "Verde Confirmação",
+        "tonalRamp": [
+          "#000f06",
+          "#002e18",
+          "#00502e",
+          "#007446",
+          "#229962",
+          "#50be84",
+          "#77e3a7",
+          "#c4ffda"
+        ]
+      },
+      "green-soft": { "role": "semantic", "displayName": "Véu Verde" },
+      "green-text": {
+        "role": "semantic",
+        "displayName": "Verde Floresta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502e",
+          "#0a7447",
+          "#3c9667",
+          "#62ba89",
+          "#87e0ac",
+          "#c4ffda"
+        ]
+      },
+      "amber": {
+        "role": "semantic",
+        "displayName": "Ocre",
+        "tonalRamp": [
+          "#110a00",
+          "#312200",
+          "#553e00",
+          "#7c5b00",
+          "#a27c21",
+          "#c69f4a",
+          "#ecc36f",
+          "#ffecc8"
+        ]
+      },
+      "amber-soft": { "role": "semantic", "displayName": "Véu Ocre" },
+      "amber-text": {
+        "role": "semantic",
+        "displayName": "Ocre Queimado",
+        "tonalRamp": [
+          "#110a00",
+          "#322200",
+          "#563d00",
+          "#7c5b07",
+          "#9f7d35",
+          "#c3a059",
+          "#e8c47d",
+          "#ffecc9"
+        ]
+      },
+      "red": {
+        "role": "semantic",
+        "displayName": "Framboesa",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b0019",
+          "#7e002f",
+          "#b30a48",
+          "#dc4067",
+          "#ff6d8b",
+          "#ffb0bb",
+          "#ffe8ea"
+        ]
+      },
+      "red-soft": { "role": "semantic", "displayName": "Véu Framboesa" },
+      "red-text": {
+        "role": "semantic",
+        "displayName": "Framboesa Escura",
+        "tonalRamp": [
+          "#1e0006",
+          "#4b001a",
+          "#7e0030",
+          "#ad204b",
+          "#d5496b",
+          "#fe6e8d",
+          "#ffb0bc",
+          "#ffe8eb"
+        ]
+      },
+      "scrim": { "role": "overlay", "displayName": "Cortina Noturna" },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Preto Nebuloz",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Noite Tinta",
+        "tonalRamp": [
+          "#080b13",
+          "#21252e",
+          "#3e424c",
+          "#5d616c",
+          "#7e828d",
+          "#a0a5b0",
+          "#c4c9d5",
+          "#e9eefb"
+        ]
+      },
+      "surface-2-dark": {
+        "role": "neutral",
+        "displayName": "Noite Índigo",
+        "tonalRamp": [
+          "#080a15",
+          "#212430",
+          "#3e414f",
+          "#5c616f",
+          "#7d8291",
+          "#a0a4b4",
+          "#c4c9d9",
+          "#e9eeff"
+        ]
+      },
+      "surface-3-dark": {
+        "role": "neutral",
+        "displayName": "Ardósia Noturna",
+        "tonalRamp": [
+          "#070a18",
+          "#1f2434",
+          "#3c4152",
+          "#5a6173",
+          "#7b8295",
+          "#9da5b9",
+          "#c1c9dd",
+          "#e8eeff"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "Margem Noturna",
+        "tonalRamp": [
+          "#090b13",
+          "#22252e",
+          "#3f424c",
+          "#5e616b",
+          "#7f828d",
+          "#a1a5b0",
+          "#c5c9d5",
+          "#eaeefb"
+        ]
+      },
+      "hairline-dark": { "role": "neutral", "displayName": "Fio de Luz" },
+      "hairline-strong-dark": {
+        "role": "neutral",
+        "displayName": "Fio de Luz Firme"
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Branco Estelar",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#242528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#eceef2"
+        ]
+      },
+      "ink-muted-dark": {
+        "role": "neutral",
+        "displayName": "Prata",
+        "tonalRamp": [
+          "#060b15",
+          "#1f2531",
+          "#3c424f",
+          "#5a616f",
+          "#7b8291",
+          "#9da5b5",
+          "#c1c9d9",
+          "#e7efff"
+        ]
+      },
+      "ink-subtle-dark": {
+        "role": "neutral",
+        "displayName": "Prata Fosca",
+        "tonalRamp": [
+          "#050b18",
+          "#1d2534",
+          "#3a4253",
+          "#586173",
+          "#798396",
+          "#9ba5b9",
+          "#bfc9de",
+          "#e7efff"
+        ]
+      },
+      "ink-faint-dark": {
+        "role": "neutral",
+        "displayName": "Cinza Lunar",
+        "tonalRamp": [
+          "#050b19",
+          "#1d2535",
+          "#394253",
+          "#586174",
+          "#798396",
+          "#9ba5ba",
+          "#bfc9df",
+          "#e7efff"
+        ]
+      },
+      "chip-bg-dark": { "role": "neutral", "displayName": "Véu de Chip" },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Sky",
+        "tonalRamp": [
+          "#000d16",
+          "#00293c",
+          "#004866",
+          "#006993",
+          "#308cba",
+          "#58b0e0",
+          "#89d4ff",
+          "#ddf2ff"
+        ]
+      },
+      "accent-soft-dark": { "role": "primary", "displayName": "Véu Sky" },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Sky Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#16485d",
+          "#38687e",
+          "#598aa1",
+          "#7badc5",
+          "#9fd2ea",
+          "#dbf3ff"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "primary",
+        "displayName": "Canvas sobre Sky",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252a",
+          "#404247",
+          "#5f6167",
+          "#808288",
+          "#a3a5ab",
+          "#c7c9cf",
+          "#eceef5"
+        ]
+      },
+      "blue-dark": {
+        "role": "secondary",
+        "displayName": "Baby",
+        "tonalRamp": [
+          "#000d15",
+          "#002939",
+          "#004962",
+          "#206a87",
+          "#468cab",
+          "#6aafcf",
+          "#8ed4f5",
+          "#dbf3ff"
+        ]
+      },
+      "blue-soft-dark": { "role": "secondary", "displayName": "Véu Baby" },
+      "blue-text-dark": {
+        "role": "secondary",
+        "displayName": "Baby Claro",
+        "tonalRamp": [
+          "#000d15",
+          "#032938",
+          "#234757",
+          "#436777",
+          "#63899a",
+          "#85acbe",
+          "#a9d0e3",
+          "#daf3ff"
+        ]
+      },
+      "purple-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Estelar",
+        "tonalRamp": [
+          "#0d002b",
+          "#280e5d",
+          "#433180",
+          "#6152a4",
+          "#8273c9",
+          "#a496ef",
+          "#c7c0ff",
+          "#eeecff"
+        ]
+      },
+      "purple-soft-dark": {
+        "role": "secondary",
+        "displayName": "Véu Lilás Estelar"
+      },
+      "purple-text-dark": {
+        "role": "secondary",
+        "displayName": "Lilás Névoa",
+        "tonalRamp": [
+          "#0d0424",
+          "#261e42",
+          "#433b62",
+          "#625a84",
+          "#837ba7",
+          "#a59ecc",
+          "#c9c2f2",
+          "#eeecff"
+        ]
+      },
+      "green-dark": {
+        "role": "semantic",
+        "displayName": "Verde Sinal",
+        "tonalRamp": [
+          "#001005",
+          "#002e16",
+          "#00502b",
+          "#007541",
+          "#009c58",
+          "#16c472",
+          "#53ea96",
+          "#c5ffd8"
+        ]
+      },
+      "green-soft-dark": {
+        "role": "semantic",
+        "displayName": "Véu Verde Sinal"
+      },
+      "green-text-dark": {
+        "role": "semantic",
+        "displayName": "Verde Menta",
+        "tonalRamp": [
+          "#000f06",
+          "#002e19",
+          "#00502f",
+          "#007447",
+          "#229963",
+          "#50be85",
+          "#77e3a8",
+          "#c3ffdb"
+        ]
+      },
+      "amber-dark": {
+        "role": "semantic",
+        "displayName": "Butter Dourado",
+        "tonalRamp": [
+          "#0f0b00",
+          "#2e2400",
+          "#4f4100",
+          "#745f00",
+          "#9b8000",
+          "#bfa33a",
+          "#e4c862",
+          "#ffefb4"
+        ]
+      },
+      "amber-soft-dark": { "role": "semantic", "displayName": "Véu Butter" },
+      "amber-text-dark": {
+        "role": "semantic",
+        "displayName": "Butter",
+        "tonalRamp": [
+          "#0e0c00",
+          "#2a2600",
+          "#484319",
+          "#676339",
+          "#888459",
+          "#aba77b",
+          "#d0cc9e",
+          "#f5f1c2"
+        ]
+      },
+      "red-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Alerta",
+        "tonalRamp": [
+          "#1e0007",
+          "#4b001c",
+          "#7d0034",
+          "#b3004e",
+          "#dd3b6e",
+          "#ff6c92",
+          "#ffb0bf",
+          "#ffe8eb"
+        ]
+      },
+      "red-soft-dark": { "role": "semantic", "displayName": "Véu Rosa" },
+      "red-text-dark": {
+        "role": "semantic",
+        "displayName": "Rosa Claro",
+        "tonalRamp": [
+          "#1d0009",
+          "#4a0021",
+          "#6f213e",
+          "#93425d",
+          "#b9647d",
+          "#df86a0",
+          "#ffafc5",
+          "#ffe8ed"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "micro": {
+        "displayName": "Micro (--fs-micro)",
+        "purpose": "Eyebrow e carimbo mono em caixa alta; o piso da escala."
+      },
+      "nota": {
+        "displayName": "Nota (--fs-nota)",
+        "purpose": "Meta, dica, legenda, contador, chip de filtro, rótulo de campo."
+      },
+      "base": {
+        "displayName": "Base (--fs-base)",
+        "purpose": "Corpo, rótulo, tab, input e botão do base.tsx."
+      },
+      "forte": {
+        "displayName": "Forte (--fs-forte)",
+        "purpose": "Número-chave e título de estado vazio e de erro."
+      },
+      "titulo": {
+        "displayName": "Título (--fs-titulo)",
+        "purpose": "Título de modal; o título do AwaitingUpstream usa o mesmo tamanho."
+      },
+      "display": {
+        "displayName": "Display (--fs-display)",
+        "purpose": "Contagem grande e título de tela \"Em breve\"."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow",
+        "purpose": "Único dispositivo de caixa alta: seção de navegação, rótulo de MetaCell, cabeçalho de tabela, selos de fronteira."
+      },
+      "page-title": {
+        "displayName": "Título de página",
+        "purpose": "PageHeader do kit; fora da escala."
+      },
+      "section-title": {
+        "displayName": "Título de seção",
+        "purpose": "Cabeçalho de SectionCard; fora da escala."
+      },
+      "kpi-value": {
+        "displayName": "Valor de KPI",
+        "purpose": "Valor do KpiCard em mono (42px em big); fora da escala, e a especificação pedia Space Grotesk 30–34px."
+      },
+      "button": {
+        "displayName": "Botão",
+        "purpose": "Button do kit (13px em sm); fora da escala."
+      },
+      "badge": {
+        "displayName": "Badge",
+        "purpose": "Texto de Badge e de ConfPill; coincide com o degrau nota."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-shadow (claro)",
+        "value": "0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1)",
+        "purpose": "Todo cartão em repouso no tema claro."
+      },
+      {
+        "name": "card-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px rgba(0, 0, 0, 0.9)",
+        "purpose": "Todo cartão em repouso no tema escuro."
+      },
+      {
+        "name": "hover-shadow (claro)",
+        "value": "0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px rgba(var(--accent-rgb), 0.3)",
+        "purpose": "Hover de cartão no claro; o único lugar em que o accent entra na sombra."
+      },
+      {
+        "name": "hover-shadow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px rgba(var(--accent-rgb), 0.5)",
+        "purpose": "Hover de cartão no escuro."
+      },
+      {
+        "name": "modal",
+        "value": "0 50px 90px -24px rgba(0, 0, 0, 0.7)",
+        "purpose": "ModalShell."
+      },
+      {
+        "name": "confirmação",
+        "value": "0 24px 48px -16px rgba(0, 0, 0, 0.6)",
+        "purpose": "alertdialog \"Descartar alterações?\"."
+      },
+      {
+        "name": "primary-glow",
+        "value": "0 1px 2px rgba(var(--accent-rgb), 0.4), 0 6px 16px -8px rgba(var(--accent-rgb), 0.6)",
+        "purpose": "Botão primário do kit."
+      },
+      {
+        "name": "tone-bar-glow",
+        "value": "0 0 10px 2px rgba(var(--tone-rgb), 0.7), 0 0 22px 4px rgba(var(--tone-rgb), 0.3)",
+        "purpose": "Barra de 3px do cabeçalho de SectionCard com tom."
+      },
+      {
+        "name": "status-glow",
+        "value": "0 0 8px rgba(var(--tone-rgb), 0.6)",
+        "purpose": "Ponto do StatusDot e marcador da BenchBand."
+      },
+      {
+        "name": "kpi-glow (escuro)",
+        "value": "0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -24px rgba(var(--tone-rgb), 0.55)",
+        "purpose": "Hover do KpiCard no escuro, alfa multiplicado por --fx."
+      },
+      {
+        "name": "lift (escuro)",
+        "value": "0 18px 40px -28px rgba(0, 0, 0, 0.9)",
+        "purpose": ".lift:hover no escuro; no claro, --hover-shadow."
+      },
+      {
+        "name": "tooltip",
+        "value": "0 12px 26px -10px rgba(0, 0, 0, 0.45)",
+        "purpose": ".chart-tip."
+      },
+      {
+        "name": "drawer",
+        "value": "0 0 60px -12px rgba(0, 0, 0, 0.5)",
+        "purpose": "Sidebar em gaveta abaixo de 1024px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fade-in",
+        "value": "450ms ease; translateY(7px) → 0",
+        "purpose": "Entrada de tela. O meridian-fadeIn só translada; a especificação pede fade mais translate."
+      },
+      {
+        "name": "nav-hover",
+        "value": "150ms ease",
+        "purpose": "Fundo e cor do .navitem e transições do .btn."
+      },
+      {
+        "name": "btn-tap",
+        "value": "100ms ease; translateY(0.5px)",
+        "purpose": ".btn:active. Não há :hover em .btn por decisão do sistema."
+      },
+      {
+        "name": "lift",
+        "value": "250ms ease; translateY(-2px)",
+        "purpose": "Hover de cartão navegável (.lift)."
+      },
+      {
+        "name": "kpi-lift",
+        "value": "400ms cubic-bezier(0.2, 0.7, 0.3, 1); translateY(-3px)",
+        "purpose": "Hover do KpiCard."
+      },
+      {
+        "name": "kpi-texture",
+        "value": "500–550ms ease",
+        "purpose": "Opacidade das camadas do KPI no escuro."
+      },
+      {
+        "name": "drawer",
+        "value": "260ms cubic-bezier(0.2, 0.8, 0.3, 1)",
+        "purpose": "Gaveta de navegação abaixo de 1024px; desligada em reduced motion."
+      },
+      {
+        "name": "scrim-in",
+        "value": "200ms ease",
+        "purpose": "Fade do scrim da gaveta; desligado em reduced motion."
+      },
+      {
+        "name": "skeleton-shimmer",
+        "value": "1.4s ease-in-out infinite",
+        "purpose": "Carregamento; laço."
+      },
+      {
+        "name": "pulse-ring",
+        "value": "1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "purpose": "Ponto vivo (.pulse-dot); laço."
+      },
+      {
+        "name": "ecg-sweep",
+        "value": "3s linear infinite",
+        "purpose": "Traço ECG do KPI no escuro; desligado em reduced motion."
+      },
+      {
+        "name": "tooltip-in",
+        "value": "120ms ease",
+        "purpose": "Entrada do .chart-tip."
+      },
+      {
+        "name": "count-up",
+        "value": "900ms ease-out cúbico",
+        "purpose": "Contagem do KpiCard (kit); acima dos 450ms — dívida."
+      },
+      {
+        "name": "progress-fill",
+        "value": "750ms cubic-bezier(0.2, 0.8, 0.3, 1)",
+        "purpose": "Preenchimento do Progress (kit); acima dos 450ms — dívida."
+      },
+      {
+        "name": "header-pulse",
+        "value": "700ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Pulso radial único do cabeçalho de SectionCard com onActivate."
+      }
+    ],
+    "breakpoints": [{ "name": "drawer", "value": "1023px" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação primária do kit: accent sólido com tinta --accent-fg e brilho do accent. Sem :hover por decisão do sistema. No Meridian falta .btn:disabled no CSS — o estado desabilitado abaixo é o da família.",
+      "html": "<button class='ds-btn-primary' type='button'><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M5 12h14'/><path d='M12 5v14'/></svg>Novo assessment</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;font-family:var(--font-manrope, Manrope), system-ui, sans-serif;font-size:14px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--accent-fg, #ffffff);background:var(--accent, #1d6a97);border:1px solid var(--accent, #1d6a97);border-radius:var(--r-md, 10px);box-shadow:0 1px 2px rgba(var(--accent-rgb, 29, 106, 151), .4), 0 6px 16px -8px rgba(var(--accent-rgb, 29, 106, 151), .6);cursor:pointer;transition:background .15s ease, border-color .15s ease, transform .1s ease, box-shadow .15s ease}.ds-btn-primary:active{transform:translateY(.5px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-btn-primary:disabled{opacity:.45;cursor:not-allowed}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Ação discreta, tamanho sm: transparente com tinta ink-muted — a variante mais usada nas telas do Meridian.",
+      "html": "<button class='ds-btn-ghost' type='button'>Ver artefato<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m9 18 6-6-6-6'/></svg></button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:7px 12px;font-family:var(--font-manrope, Manrope), system-ui, sans-serif;font-size:13px;font-weight:600;line-height:1.1;letter-spacing:.005em;white-space:nowrap;color:var(--ink-muted, #565e6e);background:transparent;border:1px solid transparent;border-radius:var(--r-md, 10px);cursor:pointer;transition:background .15s ease, border-color .15s ease, transform .1s ease}.ds-btn-ghost:active{transform:translateY(.5px)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}"
+    },
+    {
+      "name": "Confidence Pills",
+      "kind": "chip",
+      "refersTo": "conf-pill-measured",
+      "description": "Escala de confiança da suíte, dona o Meridian: Medido, Estimado e Declarado, com a letra em mono. Os outros produtos aplicam a escala sem redefinir.",
+      "html": "<div class='ds-conf-row'><span class='ds-conf ds-conf-m' title='Medido — Série histórica no sistema de origem · escala do Meridian'><span class='ds-conf-k'>M</span>Medido</span><span class='ds-conf ds-conf-e' title='Estimado — Derivado de amostra ou proxy · escala do Meridian'><span class='ds-conf-k'>E</span>Estimado</span><span class='ds-conf ds-conf-d' title='Declarado — Afirmado pelo cliente, sem série · escala do Meridian'><span class='ds-conf-k'>D</span>Declarado</span></div>",
+      "css": ".ds-conf-row{display:flex;flex-wrap:wrap;gap:8px}.ds-conf{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:var(--r-pill, 999px);font-family:var(--font-manrope, Manrope), system-ui, sans-serif;font-size:11.5px;font-weight:700;white-space:nowrap}.ds-conf-k{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;opacity:.85}.ds-conf-m{background:var(--green-soft, rgba(18, 145, 90, .1));color:var(--green-text, #0d7548);border:1px solid rgba(var(--green-rgb, 18, 145, 90), .3)}.ds-conf-e{background:var(--amber-soft, rgba(154, 116, 21, .13));color:var(--amber-text, #805f0f);border:1px solid rgba(var(--amber-rgb, 154, 116, 21), .3)}.ds-conf-d{background:var(--red-soft, rgba(214, 58, 99, .1));color:var(--red-text, #b32750);border:1px solid rgba(var(--red-rgb, 214, 58, 99), .3)}"
+    },
+    {
+      "name": "Filter Chips",
+      "kind": "chip",
+      "refersTo": "filter-chip-selected",
+      "description": "FilterChips: pílulas num fieldset com legend oculta; a ativa em accent-soft com contagem mono.",
+      "html": "<fieldset class='ds-chips'><legend class='ds-sr'>Filtrar assessments por estado</legend><button class='ds-chip' type='button' aria-pressed='true'>Todos<span class='ds-chip-n'>6</span></button><button class='ds-chip' type='button' aria-pressed='false'>Em coleta<span class='ds-chip-n'>2</span></button><button class='ds-chip' type='button' aria-pressed='false'>Em revisão<span class='ds-chip-n'>1</span></button></fieldset>",
+      "css": ".ds-chips{display:flex;flex-wrap:wrap;gap:7px;border:0;padding:0;margin:0}.ds-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.ds-chip{padding:5px 11px;border-radius:var(--r-pill, 999px);border:1px solid var(--hairline, #e5e7ec);background:transparent;color:var(--ink-muted, #565e6e);font-family:var(--font-manrope, Manrope), system-ui, sans-serif;font-size:var(--fs-nota, 11.5px);font-weight:700;cursor:pointer;transition:background .15s ease, border-color .15s ease, color .15s ease}.ds-chip[aria-pressed='true']{background:var(--accent-soft, rgba(29, 106, 151, .1));color:var(--accent-text, #145275);border-color:rgba(var(--accent-rgb, 29, 106, 151), .35)}.ds-chip-n{margin-left:6px;opacity:.75;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace}.ds-chip:active{transform:translateY(.5px)}.ds-chip:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}"
+    },
+    {
+      "name": "Rationale Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Field + Textarea do base.tsx para justificativa: controle em surface-2 com fio claro, peso 500 e entrelinha 1.55; o erro troca a borda para red.",
+      "html": "<div class='ds-field'><label class='ds-label' for='ds-override-why'>Justificativa do override<span class='ds-req' aria-hidden='true'>*</span></label><textarea class='ds-textarea' id='ds-override-why' placeholder='Por que o valor computado não representa este eixo'></textarea><span class='ds-hint'>Fica registrada ao lado do valor computado.</span></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;max-width:420px;font-family:var(--font-manrope, Manrope), system-ui, sans-serif}.ds-label{display:flex;gap:5px;align-items:center;font-size:var(--fs-nota, 11.5px);font-weight:700;color:var(--ink-muted, #565e6e)}.ds-req{color:var(--red-text, #b32750)}.ds-textarea{width:100%;min-height:84px;padding:9px 11px;resize:vertical;border-radius:var(--r-sm, 8px);border:1px solid var(--hairline, #e5e7ec);background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017);font-family:inherit;font-size:var(--fs-base, 13px);font-weight:500;line-height:1.55}.ds-textarea::placeholder{color:var(--ink-faint, #636c7b)}.ds-textarea:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-textarea[aria-invalid='true']{border-color:var(--red, #d63a63)}.ds-hint{font-size:var(--fs-nota, 11.5px);color:var(--ink-faint, #636c7b)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Seção da sidebar do Meridian: item de 8.5×10px com cantos de 9px; o ativo só ganha accent-soft, tinta accent-text e traço 2.1 — sem barra lateral —, e o contador sai sempre em âmbar.",
+      "html": "<nav class='ds-nav' aria-label='Navegação do Meridian'><div class='ds-nav-eyebrow'>Diagnose</div><a class='ds-nav-item' href='#' aria-current='page'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z'/><circle cx='12' cy='12' r='10'/></svg>Assessments</a><a class='ds-nav-item' href='#'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381'/><path d='m16 16 6-6'/><path d='m21.5 10.5-8-8'/><path d='m8 8 6-6'/><path d='m8.5 7.5 8 8'/></svg>Fila de revisão<span class='ds-nav-count'>2</span></a><a class='ds-nav-item' href='#'><svg width='15.5' height='15.5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2'/></svg>Benchmark pool</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:3px;width:232px;padding:16px 10px;background:var(--sidebar, #fbfbfd);font-family:var(--font-manrope, Manrope), system-ui, sans-serif}.ds-nav-eyebrow{padding:0 10px 5px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint, #636c7b)}.ds-nav-item{display:flex;align-items:center;gap:10px;padding:8.5px 10px;border-radius:9px;font-size:13px;font-weight:600;color:var(--ink-muted, #565e6e);text-decoration:none;transition:background .15s ease, color .15s ease}.ds-nav-item:hover{background:var(--surface-2, #f7f8fa);color:var(--ink, #0d1017)}.ds-nav-item[aria-current='page']{background:var(--accent-soft, rgba(29, 106, 151, .1));color:var(--accent-text, #145275);font-weight:700}.ds-nav-item:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}.ds-nav-count{margin-left:auto;padding:1px 7px;border-radius:99px;font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;background:var(--amber-soft, rgba(154, 116, 21, .13));color:var(--amber-text, #805f0f)}"
+    },
+    {
+      "name": "Score Rings",
+      "kind": "custom",
+      "refersTo": "score-ring",
+      "description": "ScoreRing: anel de 54px, traço de 5px em surface-3 e arco no tom do score (70 ou mais verde, 50 a 69 âmbar, abaixo de 50 vermelho), com role=img e aria-label com o número.",
+      "html": "<div class='ds-rings'><svg class='ds-ring' width='54' height='54' role='img' aria-label='Dados: 72 de 100'><circle class='ds-ring-track' cx='27' cy='27' r='23' fill='none' stroke-width='5'/><circle class='ds-ring-arc ds-ring-g' cx='27' cy='27' r='23' fill='none' stroke-width='5' stroke-linecap='round' stroke-dasharray='104.05 144.51' transform='rotate(-90 27 27)'/><text class='ds-ring-n' x='50%' y='50%' dy='.36em' text-anchor='middle'>72</text></svg><svg class='ds-ring' width='54' height='54' role='img' aria-label='Processos: 58 de 100'><circle class='ds-ring-track' cx='27' cy='27' r='23' fill='none' stroke-width='5'/><circle class='ds-ring-arc ds-ring-a' cx='27' cy='27' r='23' fill='none' stroke-width='5' stroke-linecap='round' stroke-dasharray='83.82 144.51' transform='rotate(-90 27 27)'/><text class='ds-ring-n' x='50%' y='50%' dy='.36em' text-anchor='middle'>58</text></svg><svg class='ds-ring' width='54' height='54' role='img' aria-label='Infraestrutura: 41 de 100'><circle class='ds-ring-track' cx='27' cy='27' r='23' fill='none' stroke-width='5'/><circle class='ds-ring-arc ds-ring-r' cx='27' cy='27' r='23' fill='none' stroke-width='5' stroke-linecap='round' stroke-dasharray='59.25 144.51' transform='rotate(-90 27 27)'/><text class='ds-ring-n' x='50%' y='50%' dy='.36em' text-anchor='middle'>41</text></svg></div>",
+      "css": ".ds-rings{display:flex;gap:14px;align-items:center}.ds-ring-track{stroke:var(--surface-3, #edeff3)}.ds-ring-g{stroke:var(--green, #12915a)}.ds-ring-a{stroke:var(--amber, #9a7415)}.ds-ring-r{stroke:var(--red, #d63a63)}.ds-ring-n{fill:var(--ink, #0d1017);font-family:var(--font-manrope, Manrope), system-ui, sans-serif;font-size:16.2px;font-weight:800}"
+    },
+    {
+      "name": "Bench Band",
+      "kind": "custom",
+      "refersTo": "bench-band-track",
+      "description": "BenchBand: trilho de 22px com a faixa p25–p75 da coorte, o traço da mediana e o marcador da organização (verde à frente, âmbar atrás). A faixa usa --neutral, que o meridian.css não declara — o fallback abaixo mostra o desenho pretendido.",
+      "html": "<div class='ds-bench'><div class='ds-bench-row'><div class='ds-bench-head'><span class='ds-bench-axis'>Governança</span><span class='ds-bench-delta ds-bench-ahead'>+8 vs. p50</span></div><div class='ds-bench-track'><span class='ds-bench-band' style='left:38%;width:30%'></span><span class='ds-bench-p50' style='left:52%' title='p50: 52'></span><span class='ds-bench-mark ds-bench-mark-ahead' style='left:calc(60% - 5px)' title='Governança: 60'></span></div></div><div class='ds-bench-row'><div class='ds-bench-head'><span class='ds-bench-axis'>Infraestrutura</span><span class='ds-bench-delta ds-bench-behind'>-12 vs. p50</span></div><div class='ds-bench-track'><span class='ds-bench-band' style='left:30%;width:34%'></span><span class='ds-bench-p50' style='left:48%' title='p50: 48'></span><span class='ds-bench-mark ds-bench-mark-behind' style='left:calc(36% - 5px)' title='Infraestrutura: 36'></span></div></div></div>",
+      "css": ".ds-bench{display:flex;flex-direction:column;gap:14px;width:320px;font-family:var(--font-manrope, Manrope), system-ui, sans-serif}.ds-bench-row{display:flex;flex-direction:column;gap:5px}.ds-bench-head{display:flex;align-items:baseline;gap:8px}.ds-bench-axis{flex:1;font-size:12.5px;font-weight:700;color:var(--ink, #0d1017)}.ds-bench-delta{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:11px;font-weight:700}.ds-bench-ahead{color:var(--green-text, #0d7548)}.ds-bench-behind{color:var(--amber-text, #805f0f)}.ds-bench-track{position:relative;height:22px;border-radius:var(--r-xs, 6px);background:var(--surface-3, #edeff3);overflow:hidden}.ds-bench-band{position:absolute;top:0;bottom:0;background:rgba(var(--neutral-rgb, 138, 147, 163), .3)}.ds-bench-p50{position:absolute;top:0;bottom:0;width:2px;background:var(--ink-faint, #636c7b)}.ds-bench-mark{position:absolute;top:2px;bottom:2px;width:10px;border-radius:3px}.ds-bench-mark-ahead{background:var(--green, #12915a);box-shadow:0 0 8px rgba(var(--green-rgb, 18, 145, 90), .6)}.ds-bench-mark-behind{background:var(--amber, #9a7415);box-shadow:0 0 8px rgba(var(--amber-rgb, 154, 116, 21), .6)}"
+    },
+    {
+      "name": "Inherited From",
+      "kind": "custom",
+      "refersTo": "inherited-from",
+      "description": "Selo de proveniência para dado de outro produto: borda tracejada, cadeado, eyebrow mono e \"somente leitura\"; nunca superfície normal. Definido em seams.tsx, ainda sem consumidor em tela.",
+      "html": "<div class='ds-inherited'><svg class='ds-inherited-lock' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><rect width='18' height='11' x='3' y='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg><div class='ds-inherited-body'><div class='ds-inherited-eyebrow'>Herdado do Charter</div><div class='ds-inherited-entity'>Política de Uso de IA · v1.4 <span class='ds-inherited-ro'>· somente leitura</span></div></div><button class='ds-inherited-open' type='button'>Ver artefato<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='m9 18 6-6-6-6'/></svg></button></div>",
+      "css": ".ds-inherited{display:flex;align-items:center;gap:11px;max-width:480px;padding:11px 14px;border-radius:var(--r-md, 10px);background:var(--blue-soft, rgba(63, 143, 196, .11));border:1px dashed rgba(var(--blue-rgb, 63, 143, 196), .42);font-family:var(--font-manrope, Manrope), system-ui, sans-serif}.ds-inherited-lock{flex-shrink:0;color:var(--blue-text, #2a6f9e)}.ds-inherited-body{flex:1;min-width:0}.ds-inherited-eyebrow{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-text, #2a6f9e)}.ds-inherited-entity{margin-top:1px;font-size:13px;font-weight:700;color:var(--ink, #0d1017);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ds-inherited-ro{font-weight:500;color:var(--ink-faint, #636c7b)}.ds-inherited-open{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid transparent;border-radius:var(--r-md, 10px);background:transparent;color:var(--ink-muted, #565e6e);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:transform .1s ease}.ds-inherited-open:active{transform:translateY(.5px)}.ds-inherited-open:focus-visible{outline:2px solid var(--accent, #1d6a97);outline-offset:2px}"
+    },
+    {
+      "name": "Awaiting Upstream",
+      "kind": "custom",
+      "refersTo": "awaiting-upstream",
+      "description": "Estado de espera por outro produto: borda tracejada, tile âmbar com relógio e o porquê por extenso — nunca zero, nunca número frágil.",
+      "html": "<div class='ds-awaiting'><span class='ds-awaiting-icon'><svg width='21' height='21' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 6v6l4 2'/><circle cx='12' cy='12' r='10'/></svg></span><div><div class='ds-awaiting-eyebrow'>Aguardando link de respondente do convite</div><div class='ds-awaiting-title'>Sem promessa, não há o que apurar</div><p class='ds-awaiting-why'>A bateria abre por um token de uso individual, emitido quando você atribui alguém a um eixo na aba Coleta de um assessment.</p></div></div>",
+      "css": ".ds-awaiting{display:grid;grid-template-columns:44px 1fr;gap:16px;max-width:620px;padding:22px 24px;border-radius:var(--r-lg, 14px);background:var(--surface, #ffffff);border:1px dashed var(--hairline-strong, #d4d8e0);font-family:var(--font-manrope, Manrope), system-ui, sans-serif}.ds-awaiting-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--amber-soft, rgba(154, 116, 21, .13));color:var(--amber-text, #805f0f);border:1px solid rgba(var(--amber-rgb, 154, 116, 21), .3)}.ds-awaiting-eyebrow{font-family:var(--font-jetbrains-mono, JetBrains Mono), ui-monospace, monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber-text, #805f0f)}.ds-awaiting-title{margin-top:5px;font-family:var(--font-space-grotesk, Space Grotesk), var(--font-manrope, Manrope), sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink, #0d1017)}.ds-awaiting-why{margin:8px 0 0;max-width:72ch;font-size:13.5px;line-height:1.6;color:var(--ink-muted, #565e6e)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Observatório Noturno",
+    "overview": "O sistema é um observatório: canvas quase preto, instrumentos que só acendem quando alguém os observa e cada leitura catalogada com a sua origem. O escuro é a assinatura — é o tema padrão da plataforma (`defaultTheme=\"dark\"`) e o único com textura; o claro é o mesmo observatório de dia, limpo por decisão e com a tinta calibrada contra as seis superfícies reais. A densidade é de instrumento de trabalho: tabela, painel e formulário para quem decide, nunca vitrine.\n\nA cor não decora. Accent, blue e purple nomeiam ação e categoria; vermelho, âmbar e verde só aparecem quando há um fato negativo, de atenção ou positivo a mostrar, e sempre ao lado de uma palavra ou de um número. Todo identificador e toda medida saem em mono. O movimento informa estado e cabe em 450ms; o que passa disso é laço (pulso, varredura, shimmer) ou dívida registrada.\n\n**Base compartilhada.** Charter, Meridian, Scaffold e Signal usam a mesma paleta (sky `#5CB4E4` → baby `#89CFF0` → butter `#F6F2C3` sobre canvas `#07080c`), a mesma escala de raio, as mesmas sombras de cartão e as mesmas primitivas: `@repo/design-system/cosmos/kit` e `components/charter/base.tsx`, que Meridian, Scaffold e Signal reexportam. Cada produto tem raiz escopada própria (`.charter-root`, `.meridian-root`, `.scaffold-root`, `.signal-root`) e um `.css` próprio — o do Meridian é cópia reescopada do Charter, o do Signal é cópia do Meridian, o do Scaffold foi portado do próprio handoff. Não existe arquivo comum (dívida registrada em `signal.css:11-14` e em `specs/003-signal-measure/plan.md`). **Mudar um token exige mudar os quatro `.css`** (`charter.css`, `meridian.css`, `scaffold.css`, `signal.css`). As cópias já divergem; cada divergência está marcada neste arquivo como tal e não deve ser propagada sem decisão.\n\nNo frontmatter, a chave é o nome da custom property sem o `--`. Sem sufixo, é o valor do tema claro; o sufixo `-dark` marca o mesmo token no tema escuro.\n\n**No Meridian**, o observatório faz a primeira leitura: o diagnóstico de prontidão que fixa a posição de partida em cinco eixos, com a confiança de cada resposta à vista e o computado nunca apagado pelo override. É a única superfície da família aberta a quem não tem conta — a bateria do respondente (`/meridian-responder/<token>`) roda sob a mesma raiz, sem casca — e a única casca que vira gaveta no celular. O `meridian.css` é cópia reescopada do `charter.css`, com `.lift` e a gaveta a mais.",
+    "keyCharacteristics": [
+      "Escuro por padrão, claro limpo: a textura (grade de 64px e camadas do KPI) só existe no escuro.",
+      "Neutros frios em cinco degraus de superfície; tinta clara calibrada a no mínimo 4.60:1 nas seis superfícies claras.",
+      "Um único accent que troca de polaridade: `#1d6a97` com tinta branca no claro, sky `#5cb4e4` com tinta canvas no escuro.",
+      "Cor de estado sempre com palavra ou número; categoria em accent, blue ou purple.",
+      "JetBrains Mono para identificador, contagem, data, versão e medida.",
+      "Raio suave e constante (6 → 18px, pílula em chip e badge); cartão com sombra mínima que só se aprofunda no hover.",
+      "Radar pentagonal como gráfico-herói e anel de score em SVG com `role=\"img\"` e `aria-label` que diz os números, mais a banda de percentil da coorte.",
+      "Escala de confiança Medido / Estimado / Declarado, única da suíte, e componentes de fronteira para dado de outro produto.",
+      "Abaixo de 1024px a sidebar vira gaveta; nas outras três raízes, não."
+    ],
+    "rules": [
+      {
+        "name": "The Colored Fact Rule",
+        "body": "Vermelho, âmbar e verde são reservados a informação de fato: negativo, crítico ou bloqueado; atenção ou dinheiro; positivo. Categoria, papel e decoração usam accent, blue ou purple. O código já recusa o atalho: o tom de papel do Charter é \"Categoria, não estado — por isso nada de verde, âmbar ou vermelho\" (`packages/rbac/src/charter-matrix.ts:71-72`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Color-Plus-Word Rule",
+        "body": "Estado nunca vai só na cor: `StatusDot` leva rótulo, célula de mapa de calor leva o número, prazo vencido escreve \"vencido\", gráfico leva legenda. É requisito de acessibilidade (NFR-2), não escolha estética.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four-Slot Rule",
+        "body": "Todo tom existe como `--x`, `--x-rgb`, `--x-soft` e `--x-text`. Texto colorido usa `-text`; fundo usa `-soft`; borda usa `rgba(var(--x-rgb), .2–.35)`; o tom sólido fica para ponto, barra, traço e preenchimento. No claro, o tom sólido como texto reprova AA — verde 3.49:1, âmbar 3.74:1, vermelho 3.93:1 sobre `surface-3`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Polarity Rule",
+        "body": "Glifo sobre preenchimento sólido usa a tinta do tema (`--accent-fg`): branco no claro, canvas no escuro. Branco sobre o sky cai para 2.2:1, e um check branco sobre o butter some.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-for-Measure Rule",
+        "body": "Todo identificador e toda medida — código de caso, iniciativa, trilha ou fornecedor, contagem, data, versão, percentual — saem em JetBrains Mono (`.mono`); prosa nunca sai em mono. É a regra da especificação visual do Charter, e as primitivas a seguem: `MetaCell mono`, contador de navegação e de tab, cabeçalho de tabela, valor de `BarRow`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Six-Step Rule",
+        "body": "Tamanho de texto só nos seis degraus da suíte: `--fs-micro` 10px, `--fs-nota` 11.5px, `--fs-base` 13px, `--fs-forte` 15px, `--fs-titulo` 19px, `--fs-display` 22px. Tamanho novo é degrau novo, \"e degrau novo é como os quinze apareceram\" (`cosmos.css:60-61`). Ao migrar um literal: degrau mais próximo, empate para baixo.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single-Uppercase Rule",
+        "body": "Caixa alta só no `Eyebrow` e nos carimbos mono (cabeçalho de tabela, chip de versão), sempre com entreletra aberta; \"qualquer outro uso de uppercase na UI é erro de porte\" (`components/charter/base.tsx:38-39`). O wordmark do produto é a exceção de marca.",
+        "section": "typography"
+      },
+      {
+        "name": "The One-Cols Rule",
+        "body": "Cabeçalho e linha de tabela compartilham um único `cols` — sem isso, \"a coluna do header desliza em relação à da linha no primeiro ajuste\" (`components/charter/base.tsx:454-455`). Linha clicável é `<button>`, com \"Abrir X\" em `.sr-only` antes do conteúdo das células.",
+        "section": "layout"
+      },
+      {
+        "name": "The Responding-Glow Rule",
+        "body": "Em repouso, cartão só tem `--card-shadow`. A profundidade extra — subir 2px (`.lift`) ou 3px (`.kpi`), `--hover-shadow`, brilho do tom — é resposta a hover, e as camadas decorativas do KPI só acordam no escuro.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Night-Texture Rule",
+        "body": "Grão fractal (`feTurbulence`, opacidade .035, `mix-blend-mode: overlay`, fixo no viewport) e grade de 64px (`rgba(255, 255, 255, 0.022)`) existem só no escuro; no claro \"viram sujeira, não textura\" (`scaffold.css:131`). A intensidade global de efeito é `--fx` (0 a 1.6, padrão 1).",
+        "section": "elevation"
+      },
+      {
+        "name": "The Dashed-Seal Rule",
+        "body": "Dado que vem de outro produto aparece com borda tracejada e cadeado, marcado \"somente leitura\" e sem nenhuma affordance de edição: \"a borda tracejada diz 'não é seu', o cadeado diz 'não editável aqui'\", e superfície normal \"convida à edição que não existe\" (`components/meridian/seams.tsx:88-92`).",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do escrever estado como cor + palavra ou número: `StatusDot` com rótulo, célula com contagem, \"vencido\" por extenso.",
+      "Do pôr todo identificador, contagem, data, versão e medida em JetBrains Mono (`.mono`); prosa fica no corpo.",
+      "Do usar o tom pelos quatro slots: texto em `--x-text`, fundo em `--x-soft`, borda em `rgba(var(--x-rgb), .2–.35)`, sólido só em ponto, barra, traço e preenchimento.",
+      "Do usar `--accent-fg` para glifo sobre preenchimento sólido — branco no claro, canvas no escuro.",
+      "Do desabilitar a ação sem permissão com `disabled` real e o motivo escrito (\"Requer papel X — ação\"), no rodapé quando for modal.",
+      "Do mostrar skeleton com a forma do conteúdo real, só depois de 300ms, e vazio com um CTA que resolve o vazio.",
+      "Do dar a todo gráfico legenda centralizada e `role=\"img\"` com `aria-label` que diga os números.",
+      "Do manter o anel de foco de 2px em accent e marcar seleção com `box-shadow`, que não apaga o anel.",
+      "Do respeitar `prefers-reduced-motion`: desligar varredura, shimmer, pulso e translate e manter o fade.",
+      "Do mostrar o computado ao lado do override, e o override como decisão com justificativa — \"o patrocinador apresenta sem hedge\".",
+      "Do tratar a largura estreita como a casca do Meridian trata: gaveta abaixo de 1024px, scrim, foco na gaveta ao abrir, Esc para fechar e foco de volta ao gatilho."
+    ],
+    "donts": [
+      "Don't usar vermelho, âmbar ou verde como categoria, papel ou decoração — são fato; categoria usa accent, blue ou purple.",
+      "Don't comunicar estado só com cor, nem deixar a justificativa só no hover: motivo de bloqueio e \"por que isso importa\" ficam na tela (`Callout`, rodapé do modal), não em `title`.",
+      "Don't pôr grão, grade ou camadas do KPI no tema claro.",
+      "Don't animar entrada ou transição acima de 450ms fora de laço; as exceções do kit (contagem do KPI em 900ms, `Progress` em 750ms, pulso do cabeçalho em 700ms) são dívida, não precedente.",
+      "Don't escrever `outline: none` inline num controle, nem usar `outline` como anel de seleção.",
+      "Don't criar tamanho de fonte fora dos seis degraus.",
+      "Don't usar caixa alta fora do `Eyebrow` e dos carimbos mono.",
+      "Don't pôr branco sobre o sky ou sobre qualquer tom sólido no escuro (2.2:1 no sky; some no butter).",
+      "Don't mostrar zero no lugar de ausência: número que não existe aparece como \"—\", \"aguardando\" ou tachado com o motivo — zero num painel se lê como \"medimos e deu zero\".",
+      "Don't gatear com `span` de opacidade ou `pointer-events: none`, que não impede Tab + Enter, nem esconder o controle que o papel não permite.",
+      "Don't trazer o lavanda do Cosmos (`#5e6ad2`) nem importar `cosmos.css` nestas raízes: cada raiz é autossuficiente (ADR-0010).",
+      "Don't portar o seletor de persona do protótipo: o papel vem da sessão, e trocar de papel no topbar seria escalada de privilégio (ADR-0004).",
+      "Don't usar spinner para carregar tela.",
+      "Don't apresentar dado de outro produto em superfície normal nem com affordance de edição: selo tracejado, cadeado e \"somente leitura\".",
+      "Don't desenhar coorte ou comparação com amostra pequena: o relatório declara a retenção em vez de desenhar — seria \"estatística de mentira\".",
+      "Don't criar outra escala de confiança (\"alta / média / baixa\") em nenhum produto: Medido / Estimado / Declarado é a única, e o dono é o Meridian."
+    ]
+  }
+}
