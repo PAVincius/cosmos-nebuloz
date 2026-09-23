@@ -20,11 +20,20 @@ hire() { # $1=nome $2=papel $3=modelo [$4...]=flags extras
 }
 floor() { "$M" floor list 2>/dev/null | grep -qF "$1" || "$M" floor create "$@"; }
 # Copia skills revisadas (.maestri/skills, ver README) para a pasta do papel: só aquele agente as carrega.
+role_dir() { local j; j=$(grep -lF "\"name\" : \"$1\"" "$PWD"/.maestri/roles/*/role.json 2>/dev/null | head -1); [ -n "$j" ] && dirname "$j"; }
 equip() { # $1=papel $2...=skills
-  local j d; j=$(grep -lF "\"name\" : \"$1\"" "$PWD"/.maestri/roles/*/role.json 2>/dev/null | head -1)
-  [ -n "$j" ] || { echo "! papel $1 sem pasta, skills puladas"; return; }
-  d="$(dirname "$j")/.claude/skills"; mkdir -p "$d"; shift
+  local d; d=$(role_dir "$1") || { echo "! papel $1 sem pasta, skills puladas"; return; }
+  d="$d/.claude/skills"; mkdir -p "$d"; shift
   for s in "$@"; do rm -rf "$d/$s"; cp -R "$PWD/.maestri/skills/$s" "$d/$s"; done
+}
+# Fork do fast-jev-compaction (Gateway, ver .maestri/plugins/fast-jev-compaction/FORK.md), só na pasta do papel.
+# Lê AI_GATEWAY_API_KEY do ambiente. keepThreshold 0.3: o padrão 0.5 cortou até arquivo em uso no teste.
+jev_compaction() { # $1=papel
+  local d r="$PWD"; d=$(role_dir "$1") || { echo "! papel $1 sem pasta, compaction pulado"; return; }
+  ( cd "$d" && claude plugin marketplace add "$r/.maestri/plugins/fast-jev-compaction" --scope project >/dev/null \
+    && claude plugin install fast-jev-compaction@fast-jev-compaction --scope project --config keepThreshold=0.3 >/dev/null ) \
+    || { echo "! compaction falhou em $1"; return; }
+  node -e 'const f=process.argv[1],fs=require("fs");const s=JSON.parse(fs.readFileSync(f,"utf8"));s.env={...s.env,CLAUDE_CODE_ENABLE_FUNCTION_HOOKS:"1"};fs.writeFileSync(f,JSON.stringify(s,null,2)+"\n")' "$d/.claude/settings.json"
 }
 
 # ─── Papéis ──────────────────────────────────────────────────────────────────
@@ -150,6 +159,9 @@ equip "Infra"          supabase-postgres-best-practices prisma-cli
 equip "QA"             playwright-cli
 equip "CRO"            sales-enablement pricing
 equip "CFO"            pricing
+
+# Compaction literal só na Morgana primeiro (vive o dia todo, compacta muito). Estender a Norte/Ordem após uma semana.
+jev_compaction "Morgana"
 
 # ─── Terminais ───────────────────────────────────────────────────────────────
 
