@@ -161,6 +161,51 @@ describe("provisionTenant", () => {
     expect(actions).toContain("tenant.provisioned");
   });
 
+  // `platformStaff` é o que põe a linha em "Atividade do staff" no
+  // back-office. O autocadastro do app usa esta mesma função, e o cliente
+  // que cria o próprio workspace aparecia lá como se fosse da equipe.
+  it("autocadastro não entra como ato de staff", async () => {
+    const db = makeDb({ ownerExists: true });
+
+    await provisionTenant(
+      db,
+      { invalidateModuleCache },
+      {
+        name: "Vanta",
+        ownerEmail: "ana@vanta.exemplo",
+        modules: [{ module: "COSMOS", status: "TRIAL" }],
+        actorUserId: "user-ana",
+        platformStaff: false,
+      }
+    );
+
+    const marcas = db.auditLog.create.mock.calls.map(
+      (call) => call[0].data.metadata.platformStaff
+    );
+    // Uma linha do módulo, uma do provisionamento — nenhuma de staff.
+    expect(marcas).toEqual([false, false]);
+  });
+
+  it("provisionamento pelo back-office segue como ato de staff", async () => {
+    const db = makeDb({ ownerExists: true });
+
+    await provisionTenant(
+      db,
+      { invalidateModuleCache },
+      {
+        name: "Vanta",
+        ownerEmail: "ana@vanta.exemplo",
+        modules: [{ module: "COSMOS" }],
+        actorUserId: "user-staff",
+      }
+    );
+
+    const marcas = db.auditLog.create.mock.calls.map(
+      (call) => call[0].data.metadata.platformStaff
+    );
+    expect(marcas).toEqual([true, true]);
+  });
+
   it("o convite vence em 14 dias", async () => {
     const db = makeDb({ ownerExists: false });
 

@@ -48,6 +48,9 @@ export async function createOnboardingWorkspace(name: string) {
       })),
       actorUserId: dbUser.id,
       actorName: dbUser.name,
+      // Quem cria é o próprio cliente — sem isto a trilha o punha em
+      // "Atividade do staff" no back-office.
+      platformStaff: false,
     }
   );
 
