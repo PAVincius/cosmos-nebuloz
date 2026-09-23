@@ -44,8 +44,6 @@ import { useUnsavedGuard } from "../use-unsaved-guard";
 
 const CASE_COLS = "minmax(0,1fr) 120px 130px";
 const SUBPROCESSOR_LIMIT = 5;
-const HIGH_SCORE = 70;
-const MID_SCORE = 45;
 // Códigos de caso no hint do KpiCard, antes de truncar em "e mais N" — acima
 // disso o card estoura (FR-8.3, ver crítica de design da onda 5a).
 const LINKED_CASES_HINT_LIMIT = 3;
@@ -67,16 +65,6 @@ const TIER_META: Record<string, { label: string; tone: Tone }> = {
   REVIEW: { label: "Em revisão", tone: "accent" },
   BLOCKED: { label: "Bloqueado", tone: "red" },
 };
-
-function scoreTone(score: number): Tone {
-  if (score >= HIGH_SCORE) {
-    return "red";
-  }
-  if (score >= MID_SCORE) {
-    return "amber";
-  }
-  return "green";
-}
 
 type PostureCell = {
   label: string;
@@ -247,14 +235,15 @@ function VendorDetailView({
           marginBottom: "var(--gap)",
         }}
       >
-        {/* Rótulo explícito no hint: sem ele, "score 71" lê como bom (FR-8.3). */}
+        {/* O score 0–100 não tem regra nos docs nem escrita que o calcule: a
+            coluna guarda o default 50, e mostrá-lo era mostrar o default como
+            medição (SRD §3). Volta a ser número quando a regra existir. */}
         <KpiCard
-          hint="maior = pior · postura contratual"
+          hint="nenhuma regra calcula este score"
           icon="gauge"
           label="Score de risco do fornecedor"
-          tone={scoreTone(data.score)}
-          unit="/100"
-          value={data.score}
+          tone="accent"
+          value="sem medição"
         />
         <KpiCard
           hint={linkedCasesHint(data.linkedCases.map((c) => c.code))}

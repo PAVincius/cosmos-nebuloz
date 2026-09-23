@@ -21,7 +21,6 @@ function vendor(over: Partial<VendorRow> = {}): VendorRow {
     retention: null,
     subprocessors: 0,
     maxClass: null,
-    score: 0,
     cases: 0,
     renewalAt: null,
     notes: null,

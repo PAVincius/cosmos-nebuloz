@@ -48,7 +48,6 @@ function baseVendor() {
       retention: "Zero",
       subprocessors: 2,
       maxClass: "CONFIDENTIAL",
-      score: 20,
       cases: 1,
       renewalAt: null,
       notes: null,
