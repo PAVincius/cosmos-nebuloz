@@ -48,13 +48,16 @@ const ROWS: DivergenceRow[] = [
   },
 ];
 
+let fakeWin: { location: { href: string }; close: ReturnType<typeof vi.fn> };
+
 beforeEach(() => {
   vi.clearAllMocks();
-  window.open = vi.fn();
+  fakeWin = { location: { href: "" }, close: vi.fn() };
+  window.open = vi.fn(() => fakeWin as unknown as Window);
 });
 
 describe("DivergencePanel — Ver evidência", () => {
-  it("abre a URL assinada devolvida por requestEvidenceUrl ao clicar", async () => {
+  it("abre a aba em branco no clique (síncrono) e só navega depois que a URL chega — evita bloqueio de popup", async () => {
     getDivergenceMock.mockResolvedValue({ ok: true, data: ROWS });
     requestEvidenceUrlMock.mockResolvedValue({
       ok: true,
@@ -66,17 +69,37 @@ describe("DivergencePanel — Ver evidência", () => {
     const evidenceBtn = await screen.findByText("catalogo.xlsx");
     fireEvent.click(evidenceBtn);
 
+    // window.open precisa acontecer NO clique, antes do await resolver —
+    // depois disso o browser não conta mais como gesto do usuário e bloqueia
+    // o popup.
+    expect(window.open).toHaveBeenCalledTimes(1);
+    expect(window.open).toHaveBeenCalledWith(
+      "",
+      "_blank",
+      "noopener,noreferrer"
+    );
+    expect(fakeWin.location.href).toBe("");
+
     await waitFor(() => {
-      expect(requestEvidenceUrlMock).toHaveBeenCalledWith({
-        evidenceId: "ev1",
-      });
-    });
-    await waitFor(() => {
-      expect(window.open).toHaveBeenCalledWith(
-        "https://signed.example/catalogo.xlsx",
-        "_blank",
-        "noopener,noreferrer"
+      expect(fakeWin.location.href).toBe(
+        "https://signed.example/catalogo.xlsx"
       );
+    });
+    expect(window.open).toHaveBeenCalledTimes(1);
+  });
+
+  it("fecha a aba em branco se requestEvidenceUrl falhar", async () => {
+    getDivergenceMock.mockResolvedValue({ ok: true, data: ROWS });
+    requestEvidenceUrlMock.mockResolvedValue({
+      ok: false,
+      error: "Evidência não encontrada nesta organização.",
+    });
+
+    render(<DivergencePanel assessmentId="a1" axis="DATA" />);
+    fireEvent.click(await screen.findByText("catalogo.xlsx"));
+
+    await waitFor(() => {
+      expect(fakeWin.close).toHaveBeenCalledTimes(1);
     });
   });
 

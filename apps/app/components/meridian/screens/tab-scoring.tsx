@@ -63,14 +63,20 @@ function EvidenceButton({
   const [busy, setBusy] = useState(false);
 
   const open = async () => {
+    // A aba abre NO clique, em branco — depois do await, o browser não conta
+    // mais como gesto do usuário e Chrome/Safari bloqueiam o popup. A URL
+    // assinada só existe depois da volta do servidor; a aba só navega então.
+    const tab = window.open("", "_blank", "noopener,noreferrer");
     setBusy(true);
     const res = await runWithToast(() => requestEvidenceUrl({ evidenceId }), {
       loading: "Abrindo evidência…",
       success: "Evidência aberta — acesso registrado na trilha.",
     });
     setBusy(false);
-    if (res.ok) {
-      window.open(res.data.url, "_blank", "noopener,noreferrer");
+    if (res.ok && tab) {
+      tab.location.href = res.data.url;
+    } else {
+      tab?.close();
     }
   };
 
