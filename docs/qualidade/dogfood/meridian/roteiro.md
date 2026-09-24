@@ -4,6 +4,8 @@
 
 **Decisões vigentes (Morgana/CEO):** D2 = respondentes são CEO + agentes via browser atuando como "auditoria de repo" (reproduz o AS-NBZ-001 para permitir comparação no M4); D3 = AS-NBZ-001 (carregado por SQL) fica como gabarito de comparação, não é apagado; D4 = "vai" do CEO exigido por passo (M1..M11), não por operação individual.
 
+**Nota de correção (Morgana, pós-revisão):** o AS-NBZ-001 tem **dois** respondentes por eixo — fundador (`Vinicius Prates Araújo`) e auditoria de repositório — não um. `M2` e `M3` reproduzem os dez respondentes e as respostas exatas do script `packages/database/scripts/2026-09-diagnostico-nebuloz.sql`, para que a comparação do `M4` seja válida.
+
 **Ambiente:** `https://app.nebuloz.ai` para todos os passos, exceto M10 (só local — ver nota do passo).
 
 Cada passo lista: tela/URL, ação exata, resultado esperado (critério verificável), evidência a coletar, SC provado, e se escreve em produção.
@@ -21,36 +23,79 @@ Cada passo lista: tela/URL, ação exata, resultado esperado (critério verific�
 
 ---
 
-## M2 — Convidar respondentes por eixo
+## M2 — Convidar respondentes por eixo (dez convites: fundador + auditoria)
 
 - **Tela/URL:** `https://app.nebuloz.ai/meridian/assessment/<AS-NBZ-002-id>` (aba Coleta)
-- **Ação exata:** CEO atribui um respondente aos cinco eixos (Data, Process, People, Governance, Infrastructure) — cada respondente é um agente via browser atuando como "auditoria de repo" (D2). Confirma cada atribuição e verifica que o sistema gera o link seguro por eixo.
-- **Resultado esperado:** os cinco eixos aparecem com dono atribuído na aba Coleta; cinco links `/meridian-responder/<token>` distintos são gerados, um por eixo; convite/lembrete é disparado (FR-008).
-- **Evidência a coletar:** screenshot da aba Coleta com os cinco eixos com dono; os cinco tokens/links (print do console ou da tela de atribuição).
-- **SC provado:** — (pré-condição para SC-006 no M3).
-- **Escreve em prod:** Sim — atribuição de respondente e disparo de convite.
+- **Ação exata:** CEO atribui **dois** respondentes a cada um dos cinco eixos — papel "fundador" (o próprio CEO) e papel "auditoria de repositório" (um agente via browser atuando como "auditoria de repo", D2) — reproduzindo os dez respondentes do `AS-NBZ-001` (`packages/database/scripts/2026-09-diagnostico-nebuloz.sql:124-133`). Dez atribuições no total:
+
+  | Eixo | Fundador (CEO) | Auditoria (agente) | Fonte (linha do SQL) |
+  |---|---|---|---|
+  | Data | `founder-data` | `audit-data` | linhas 124, 129 |
+  | Process | `founder-process` | `audit-process` | linhas 125, 130 |
+  | People | `founder-people` | `audit-people` | linhas 126, 131 |
+  | Governance | `founder-governance` | `audit-governance` | linhas 127, 132 |
+  | Infrastructure | `founder-infrastructure` | `audit-infrastructure` | linhas 128, 133 |
+
+- **Resultado esperado:** os cinco eixos aparecem na aba Coleta com **dois** donos cada; dez links `/meridian-responder/<token>` distintos são gerados (um por respondente); convite/lembrete é disparado por respondente (FR-008).
+- **Evidência a coletar:** screenshot da aba Coleta com os cinco eixos, cada um com os dois respondentes; os dez tokens/links (print do console ou da tela de atribuição).
+- **SC provado:** — (pré-condição para SC-002 no M4 e SC-006 no M3).
+- **Escreve em prod:** Sim — atribuição de respondente e disparo de convite (dez vezes).
 
 ---
 
-## M3 — Respondentes preenchem a bateria e anexam evidência, cronometrados
+## M3 — Dez respondentes reentram as respostas exatas do AS-NBZ-001, cronometrados
 
-- **Tela/URL:** `https://app.nebuloz.ai/meridian-responder/<token>` (uma sessão por eixo, janela anônima/isolada por agente)
-- **Ação exata:** cada respondente abre seu link, responde toda a bateria do seu eixo, anexa ao menos uma evidência por eixo, e envia. Cronometrar do instante em que a tela abre até o envio confirmado.
-- **Resultado esperado:** cada eixo é concluído em menos de 10 minutos, evidência incluída (SC-006); após cada envio, o progresso de coleta sobe no painel da consultora (spec US2, AS4); a contagem de evidências do assessment aumenta.
-- **Evidência a coletar:** timestamp de início/fim por eixo (5 medições); screenshot do painel de progresso antes e depois de cada envio; nome/tipo do arquivo de evidência anexado por eixo.
+- **Tela/URL:** `https://app.nebuloz.ai/meridian-responder/<token>` (uma sessão por respondente — dez sessões, uma por linha da tabela do M2)
+- **Ação exata:** cada um dos dez respondentes abre seu link e reentra, pergunta a pergunta, o **valor bruto (`rawValue`) exato** que o script `2026-09-diagnostico-nebuloz.sql` gravou para aquele par respondente/pergunta — não uma resposta livre. Anexa ao menos uma evidência por eixo (uma vez por eixo, no respondente fundador, é suficiente) e envia. Cronometrar do instante em que a tela abre até o envio confirmado.
+
+  | Eixo | Respondente | Q1 | Q2 | Q3 | Fonte (linhas do SQL) |
+  |---|---|---|---|---|---|
+  | Data | Fundador | Q-D01=4 | Q-D02=1 | Q-D03=0 | 147–149 |
+  | Data | Auditoria | Q-D01=3 | Q-D02=0 | Q-D03=1 | 150–152 |
+  | Process | Fundador | Q-P01=3 | Q-P02=0 | Q-P03=3 | 153–155 |
+  | Process | Auditoria | Q-P01=1 | Q-P02=1 | Q-P03=2 | 156–158 |
+  | People | Fundador | Q-E01=1 | Q-E02=0 | Q-E03=1 | 159–161 |
+  | People | Auditoria | Q-E01=0 | Q-E02=1 | Q-E03=0 | 162–164 |
+  | Governance | Fundador | Q-G01=3 | Q-G02=1 | Q-G03=4 | 165–167 |
+  | Governance | Auditoria | Q-G01=1 | Q-G02=1 | Q-G03=2 | 168–170 |
+  | Infrastructure | Fundador | Q-I01=2 | Q-I02=3 | Q-I03=0 | 171–173 |
+  | Infrastructure | Auditoria | Q-I01=0 | Q-I02=2 | Q-I03=0 | 174–176 |
+
+  Valores em escala bruta (0–4); o sistema normaliza (`normalizeAnswer()`) — não reentrar o `normalized` da coluna do SQL, só o `rawValue`.
+
+- **Resultado esperado:** cada uma das dez sessões é concluída em menos de 10 minutos, evidência incluída onde exigida (SC-006); após cada envio, o progresso de coleta sobe no painel da consultora (spec US2, AS4); ao final das dez, as respostas do `AS-NBZ-002` são idênticas às do `AS-NBZ-001` — condição necessária para a comparação do `M4`.
+- **Evidência a coletar:** timestamp de início/fim por sessão (dez medições); screenshot do painel de progresso antes e depois de cada envio; nome/tipo do arquivo de evidência anexado por eixo.
 - **SC provado:** SC-006.
-- **Escreve em prod:** Sim — respostas e evidência.
+- **Escreve em prod:** Sim — respostas e evidência (dez sessões).
 
 ---
 
-## M4 — Fechar coleta, rodar scoring e comparar com o AS-NBZ-001
+## M4 — Fechar coleta, rodar scoring; SC-002 provado em duas partes
+
+SC-002 exige que **rodar o scoring duas vezes sobre o mesmo conjunto de respostas produza resultado idêntico**. Isso pede duas provas distintas — comparar com um gabarito externo (AS-NBZ-001) não é o mesmo que rodar o mesmo motor duas vezes sobre o mesmo assessment.
+
+### (a) Comparação com o AS-NBZ-001 — em produção
 
 - **Tela/URL:** `https://app.nebuloz.ai/meridian/assessment/<AS-NBZ-002-id>` (aba Coleta → Scoring & Revisão)
-- **Ação exata:** com os cinco eixos cobertos, fechar a coleta (dispara o scoring automaticamente, FR-013). Bussola + Crivo comparam, eixo a eixo, o score e a confiança do `AS-NBZ-002` com os do `AS-NBZ-001` (gabarito SQL), usando o mesmo conjunto de respostas.
-- **Resultado esperado:** cada eixo do `AS-NBZ-002` tem score 0–100 e confiança 0–1; os valores batem campo a campo com o `AS-NBZ-001`, pois mesma versão de template e mesmas respostas devem produzir o mesmo resultado (FR-014); qualquer divergência é investigada e explicada antes de seguir.
-- **Evidência a coletar:** tabela comparativa AS-NBZ-001 × AS-NBZ-002 por eixo (score, confidence); screenshot da aba Scoring & Revisão do AS-NBZ-002.
-- **SC provado:** SC-002.
+- **Ação exata:** com os cinco eixos cobertos pelos dez respondentes do M2/M3, fechar a coleta (dispara `runScoringInTx` automaticamente, FR-013). Bussola + Crivo comparam, eixo a eixo, score, confiança e spread do `AS-NBZ-002` com os do `AS-NBZ-001` (`packages/database/scripts/2026-09-diagnostico-nebuloz.sql:191-195` — os cinco `MeridianAxisScore` gravados pelo script).
+- **Resultado esperado:** os cinco eixos do `AS-NBZ-002` reproduzem exatamente score, confidence e spread do `AS-NBZ-001` (mesma versão de template + mesmas respostas ⇒ mesmo resultado, FR-014); qualquer divergência é investigada antes de seguir.
+- **Evidência a coletar:** tabela comparativa AS-NBZ-001 × AS-NBZ-002 por eixo (score, confidence, spread); screenshot da aba Scoring & Revisão do AS-NBZ-002.
 - **Escreve em prod:** Sim — fecha coleta e computa scoring.
+
+### (b) Rodar o mesmo scoring duas vezes — não há ação de recomputar exposta na UI
+
+Verificado no código: `runScoringInTx` (`apps/app/app/(meridian)/actions/scoring.ts:52-56`) é idempotente por construção — o comentário do próprio arquivo (linhas 43–50) diz que "rodar duas vezes sobre as mesmas respostas produz o mesmo estado". Mas essa função só é chamada de dentro de `closeCollection` (`apps/app/app/(meridian)/actions/collection.ts:276`), e a action pública `runScoring` (`scoring.ts:289`) não tem nenhum caller na UI (`grep` confirma zero chamadas fora do próprio arquivo) — não existe botão "recalcular scoring" para um assessment já em revisão. Forçar um segundo fechamento de coleta em produção não é uma ação de produto real, seria contornar a tela.
+
+- **Ação:** SC-002 parte (b) **não é provado em produção**. Fica com o teste automatizado de determinismo do Crivo, já previsto no quickstart:
+  ```bash
+  pnpm --filter @repo/app test -- meridian-scoring
+  ```
+  Esse teste roda o motor duas vezes sobre o mesmo conjunto de respostas e compara score, confidence e spread campo a campo (`specs/001-meridian-diagnose/quickstart.md`, cenário 4).
+- **Resultado esperado:** o teste passa, confirmando resultado idêntico nas duas execuções.
+- **Evidência a coletar:** saída do comando (verde) anexada ao diário; não é print de produção.
+- **Escreve em prod:** Não — roda local, fora de `app.nebuloz.ai`.
+
+- **SC provado:** SC-002 (parte a, em produção; parte b, por teste automatizado local — ver nota acima).
 
 ---
 
