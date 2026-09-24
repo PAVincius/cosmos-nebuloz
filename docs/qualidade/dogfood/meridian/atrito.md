@@ -15,6 +15,8 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   **Dono**: dev Meridian.
 
+  **Resolvido em 2026-09-24, commit `4cf68a24`** — Bussola entregou "Novo assessment" na carteira e "Atribuir respondente" por eixo na aba Coleta. Rodei M1+M2 de verdade contra a UI real (não fixme): cria assessment (`AS-110 · Nebuloz`), navega pro detalhe, atribui os dez respondentes (fundador + auditoria × 5 eixos) — passou. Ver P1/P2 abaixo para atrito novo encontrado nessa mesma UI.
+
 ---
 
 **P0** | Ambiente local (`pnpm dev`, todos os apps) | Qualquer passo do Ensaio (M1–M11 do roteiro): `pnpm dev` (`turbo dev --filter=!docs --continue`) sobe e cada app derruba na inicialização com `Invalid environment variables` — `app:dev` falta `BETTER_AUTH_SECRET` (`packages/auth/keys.ts:13`), `web:dev` falta `BASEHUB_TOKEN` (`packages/cms/keys.ts:13`), `api:dev` reproduz o mesmo erro de `BETTER_AUTH_SECRET`. Nenhum `.env.local` existe em nenhum app nem na raiz (`find . -iname ".env.local" -not -path "*/node_modules/*"` não retorna nada, até profundidade 5); não há `.envrc`, `op`/`doppler` CLI, nem script `env:pull` no repo para provisionar. Confirmado às 2026-09-24 08:5x, terminal reiniciado por hook travado (ver handoff da Morgana) — não é um problema de código, é o ambiente local desta sessão sem segredos configurados.
@@ -56,5 +58,31 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 **P2** | `packages/storage/src/index.ts:21` (`ensureBucket`) | Bucket de evidência criado sem política de lifecycle (retenção/expiração de objetos) — evidência anexada por um respondente sem conta fica armazenada indefinidamente, sem uma regra declarada de por quanto tempo. Achado do security review do Vigia sobre `4cf68a24`.
 
   **Dono**: Bussola. **Estado**: backlog.
+
+---
+
+**P2** | Modal "Novo assessment" (`components/meridian/screens/assessments.tsx:149-172`) | Os campos Organização, Setor e Porte usam `<Field label="...">` (`components/charter/base.tsx:564`) sem passar `htmlFor`/`id` — o `<label>` renderiza mas não fica associado ao `<input>` (`Field` só liga o `for` quando o chamador passa `htmlFor`, e nenhum dos três passa). `getByLabel()` não acha nenhum dos três; só "Prazo" e "Template" têm `aria-label` explícito e funcionam. Achado rodando M1 de verdade — tive que usar `getByPlaceholder` como contorno no E2E. Efeito real: leitor de tela não anuncia o rótulo desses três campos ao focar o input.
+
+  **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 rodando M1/M2.
+
+---
+
+**P2** | `AssignRespondentModal` (`components/meridian/screens/tab-coleta.tsx:32-100`) | Depois de `assignRespondent` ter sucesso, o componente muda pra tela "Link de coleta gerado" (`if (link) return <ModalShell title="Link de coleta gerado">...`) — é o **único lugar** onde o token do respondente aparece (o banco só guarda o hash, comentário do próprio componente: "O token só aparece agora"). Rodando o E2E de verdade (dez atribuições, M2), essa tela nunca ficou observável: `getByRole("dialog", { name: "Link de coleta gerado" })` não achou nada em nenhuma das dez tentativas, com até 5s de espera — só o toast de sucesso ("X atribuído ao eixo Y") apareceu, e a lista de respondentes já reflete a atribuição no próximo instante. Não investiguei a causa raiz (fora do escopo do QA, é código de produto) — hipótese não confirmada: algo em `onAssigned`/`onChanged` pode estar disparando um refresh que desmonta o `ModalProvider` antes do usuário conseguir copiar o link.
+
+  Se for isso mesmo, é sério: sem o link, o consultor não tem como reenviar o convite pro respondente por fora (não há canal automatizado ainda, é copiar e mandar manualmente) — bloqueia M2/M3 em produção também, não só o E2E.
+
+  **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 rodando M2 de verdade — precisa de investigação (não é só teste, pode ser bug real).
+
+---
+
+**P2** | Carteira (`/meridian`) vs. `scripts/seed-meridian.ts` | O assessment `AS-200 Solaris Digital` (plantado pelo seed pra M3-M9) não aparece na carteira da consultora — bloqueia o terceiro teste de `meridian-dogfood.spec.ts` (fecha coleta → promove gap), que precisei marcar `test.fixme` de novo. Causa raiz **confirmada** via consulta direta ao Postgres local (`Tenant`, `MeridianAssessment`, `Session`):
+  - `AS-200` tem `tenantId` do tenant `cosmos-dev` (slug correto — o seed rodou com `pnpm seed:meridian cosmos-dev`, como o `globalSetup` manda).
+  - A sessão mais recente de `marina.duarte@nebuloz.exemplo` (a mesma que o E2E usa) tem `activeTenantId` do tenant **`nebuloz`** — não `cosmos-dev`. `requireTenantSession` "auto-seta na primeira requisição" (comentário de `auth.setup.ts:4`), e parece ter fixado `nebuloz` numa sessão antiga (a mais velha encontrada é de 2026-09-15, bem antes desta rodada).
+  - `TENANT_SLUG` do seed (`scripts/seed-meridian.ts:74`) tem default `"nebuloz"` quando chamado sem argumento — então algum `pnpm seed:meridian` sem argumento, rodado dias atrás contra este mesmo banco local persistente, deve ter criado os 4 assessments que a carteira mostra hoje (`Mira Varejo`, `Helix Agro`, `Vanta Saúde` ×2) sob o tenant `nebuloz`, e é esse tenant que a sessão da Marina carrega — não `cosmos-dev`, onde o `AS-200` de hoje vive.
+  - `listAssessments` (`actions/assessments.ts:123`) em si está correto — filtra só por `tenantId: ctx.tenantId`, sem bug de paginação nem de escopo extra. O isolamento por tenant está funcionando como deveria; o problema é dado de teste em tenants diferentes.
+
+  Não é bug de produto — é o banco local persistente (não resetado entre rodadas) tendo dados do Meridian espalhados em dois tenants diferentes, e a sessão da consultora presa no mais antigo. Não mexi na sessão nem no seed (fora da minha alçada, `scripts/seed-meridian.ts` é da Bussola). Rodei M1 pela UI de verdade nessa mesma sessão (tenant `nebuloz`) e funcionou — cria e mostra no ato; o problema é só quando o dado nasce em `cosmos-dev` via seed enquanto a sessão fica em `nebuloz`.
+
+  **Dono**: Bussola/infra — alinhar o slug default do seed com o tenant que a sessão da Marina realmente usa (ou resetar o banco local, ou o `globalSetup` recriar a sessão depois do seed). **Estado**: novo, achado 2026-09-24 — bloqueia execução real de M4-M9 localmente; roteiro em produção não é afetado (lá não existe esse mismatch de tenant entre rodadas de seed).
 
 ---
