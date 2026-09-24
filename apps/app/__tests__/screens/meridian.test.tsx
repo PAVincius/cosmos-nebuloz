@@ -2,22 +2,27 @@
 // regressão de dados esconderia: a carteira com os três estados obrigatórios
 // (carregando / vazio com saída / erro com retry), e a coorte retida do
 // benchmark, que é a regra de privacidade mais fácil de quebrar sem notar.
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AssessmentRow } from "../../app/(meridian)/actions/assessments";
 import type { CohortRow } from "../../app/(meridian)/actions/benchmark";
 
 const listAssessmentsMock = vi.fn();
 const listCohortsMock = vi.fn();
+const listTemplatesMock = vi.fn();
+const createAssessmentMock = vi.fn();
+const routerPushMock = vi.fn();
 
 vi.mock("@/app/(meridian)/actions/assessments", () => ({
+  createAssessment: (...args: unknown[]) => createAssessmentMock(...args),
   listAssessments: (...args: unknown[]) => listAssessmentsMock(...args),
+  listTemplates: (...args: unknown[]) => listTemplatesMock(...args),
 }));
 vi.mock("@/app/(meridian)/actions/benchmark", () => ({
   listCohorts: (...args: unknown[]) => listCohortsMock(...args),
 }));
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: routerPushMock }),
 }));
 
 import AssessmentsScreen from "@/components/meridian/screens/assessments";
@@ -54,6 +59,10 @@ const ROW: AssessmentRow = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  listTemplatesMock.mockResolvedValue({
+    ok: true,
+    data: [{ id: "tpl1", name: "Diagnose padrão", version: "v3.2" }],
+  });
 });
 
 describe("AssessmentsScreen", () => {
@@ -105,6 +114,49 @@ describe("AssessmentsScreen", () => {
     await waitFor(() => {
       expect(screen.getByText(/Falha ao consultar a carteira/)).toBeTruthy();
     });
+  });
+
+  it("cria um assessment pelo botão 'Novo assessment' e navega pro detalhe", async () => {
+    listAssessmentsMock.mockResolvedValue({ ok: true, data: [] });
+    createAssessmentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "a9", code: "AS-200" },
+    });
+    render(<AssessmentsScreen />);
+
+    fireEvent.click(await screen.findByText("Novo assessment"));
+    await waitFor(() => {
+      expect(screen.getByText("Diagnose padrão · v3.2")).toBeTruthy();
+    });
+
+    fireEvent.change(screen.getByPlaceholderText("Vanta Saúde"), {
+      target: { value: "Helix Agro" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Saúde"), {
+      target: { value: "Agronegócio" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("200–1.000"), {
+      target: { value: "50–200" },
+    });
+    fireEvent.change(screen.getByLabelText("Prazo"), {
+      target: { value: "2026-09-15" },
+    });
+
+    fireEvent.click(screen.getByText("Criar assessment"));
+
+    await waitFor(() => {
+      expect(createAssessmentMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orgName: "Helix Agro",
+          sector: "Agronegócio",
+          sizeBand: "50–200",
+          templateId: "tpl1",
+          deadline: "2026-09-15",
+          benchmarkOptIn: false,
+        })
+      );
+    });
+    expect(routerPushMock).toHaveBeenCalledWith("/meridian/assessment/a9");
   });
 });
 

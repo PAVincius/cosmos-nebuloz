@@ -335,6 +335,23 @@ export async function getAssessment(
   });
 }
 
+export type TemplateOption = { id: string; name: string; version: string };
+
+/** Templates disponíveis pra abrir um novo assessment. Mesma permissão de
+ *  `createAssessment` — quem não pode criar não precisa da lista. */
+export async function listTemplates(): Promise<Result<TemplateOption[]>> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianPermissionContext("assessment.manage");
+    return withTenantDb(ctx.tenantId, (db) =>
+      db.meridianTemplate.findMany({
+        where: { tenantId: ctx.tenantId },
+        orderBy: { version: "desc" },
+        select: { id: true, name: true, version: true },
+      })
+    );
+  });
+}
+
 const CreateSchema = z.object({
   orgName: nnStr,
   sector: nnStr,

@@ -615,6 +615,109 @@ async function main() {
     `  ✓ ${AS104_RESPONDENTS.length + AS107_RESPONDENTS.length} respondentes com respostas`
   );
 
+  // ── Assessment de dogfood local (E2E) ──────────────────────────────────────
+  // Fixture determinística para `e2e/meridian-dogfood.spec.ts`. O atrito P0
+  // registrado em docs/qualidade/dogfood/meridian/atrito.md (nenhuma tela
+  // chamava `createAssessment`/`assignRespondent`) foi corrigido — a carteira
+  // tem "Novo assessment" e a aba Coleta tem "Atribuir respondente" por eixo.
+  // Este bloco continua plantando o assessment e quatro dos cinco
+  // respondentes direto no banco porque o spec ativo (fecha coleta, decide
+  // contestado, gera plano, promove gap) precisa de estado pronto e
+  // determinístico, não de refazer a UI a cada corrida — só o quinto
+  // respondente (eixo Infraestrutura, token fixo abaixo) completa pelo
+  // navegador de fato. Prazo em tempo real (não a `NOW` congelada acima): é
+  // o token que precisa continuar válido em qualquer dia em que a suíte rodar.
+  const dogfoodDeadline = new Date(Date.now() + 30 * 86_400_000);
+  const DOGFOOD_RESPONDENT_TOKEN =
+    "meridian-dogfood-e2e-fixed-token-nao-usar-em-producao";
+
+  const dogfood = await db.meridianAssessment.create({
+    data: {
+      tenantId,
+      code: "AS-200",
+      orgName: "Solaris Digital",
+      sector: "Tecnologia",
+      sizeBand: "50–200",
+      templateId: template.id,
+      status: "COLLECTING",
+      consultantId: consultant,
+      openedAt: new Date(),
+      deadline: dogfoodDeadline,
+      benchmarkOptIn: false,
+    },
+  });
+
+  // Data diverge de propósito (mesmo truque do AS-104): é o que faz o eixo
+  // nascer CONTESTED para o spec exercitar fila de revisão + override.
+  // Process fica baixo para nascer com gap derivado sem depender do navegador.
+  // People e Governance ficam altos — eixos "quietos", sem gap nem contestação.
+  const DOGFOOD_RESPONDENTS: SeedRespondent[] = [
+    {
+      name: "Rafael Tomé",
+      role: "Eng. de Dados",
+      email: "rafael.tome@solaris.exemplo",
+      axis: "DATA",
+      status: "DONE",
+      answers: { "Q-D01": 4, "Q-D02": 4, "Q-D03": 0 },
+    },
+    {
+      name: "Bianca Reis",
+      role: "Analista de BI",
+      email: "bianca.reis@solaris.exemplo",
+      axis: "DATA",
+      status: "DONE",
+      answers: { "Q-D01": 0, "Q-D02": 0, "Q-D03": 3 },
+    },
+    {
+      name: "Diego Salles",
+      role: "Gerente de Operações",
+      email: "diego.salles@solaris.exemplo",
+      axis: "PROCESS",
+      status: "DONE",
+      answers: { "Q-P01": 0, "Q-P02": 1, "Q-P03": 0 },
+    },
+    {
+      name: "Yuki Amano",
+      role: "Head de Pessoas",
+      email: "yuki.amano@solaris.exemplo",
+      axis: "PEOPLE",
+      status: "DONE",
+      answers: { "Q-E01": 4, "Q-E02": 0, "Q-E03": 4 },
+    },
+    {
+      name: "Helena Brito",
+      role: "Compliance",
+      email: "helena.brito@solaris.exemplo",
+      axis: "GOVERNANCE",
+      status: "DONE",
+      answers: { "Q-G01": 4, "Q-G02": 0, "Q-G03": 4 },
+    },
+  ];
+  await seedRespondents(dogfood.id, dogfoodDeadline, DOGFOOD_RESPONDENTS);
+
+  // Infrastructure fica sem resposta, com token fixo conhecido do spec: é o
+  // eixo que o E2E completa pelo `/meridian-responder/<token>`, prova SC-006 e
+  // deriva o gap que o spec promove pra SCAFFOLD.
+  await db.meridianRespondent.create({
+    data: {
+      tenantId,
+      assessmentId: dogfood.id,
+      name: "Marcos Vidal",
+      role: "SRE",
+      email: "marcos.vidal@solaris.exemplo",
+      axis: "INFRASTRUCTURE",
+      status: "INVITED",
+      tokenHash: createHash("sha256")
+        .update(DOGFOOD_RESPONDENT_TOKEN)
+        .digest("hex"),
+      tokenExpiresAt: dogfoodDeadline,
+      invitedAt: new Date(),
+    },
+  });
+  console.log(
+    `  ✓ AS-200 Solaris Digital (dogfood E2E) · token do respondente: /meridian-responder/${DOGFOOD_RESPONDENT_TOKEN}`
+  );
+
   // Scores do AS-104 pelo motor real, a partir das respostas acima.
   for (const axis of AXIS_IDS) {
     const answers = AS104_RESPONDENTS.filter((r) => r.axis === axis).flatMap(
