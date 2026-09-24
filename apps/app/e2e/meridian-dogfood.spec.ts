@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
+import dotenv from "dotenv";
 import { meridianStorageState } from "./setup/auth.setup";
+
+dotenv.config({ path: ".env.local" });
 
 /**
  * E2E — Meridian dogfood (Ensaio local, plano
@@ -28,6 +31,125 @@ import { meridianStorageState } from "./setup/auth.setup";
 // de teste fixo, não usar em produção.
 const DOGFOOD_RESPONDENT_TOKEN =
   "meridian-dogfood-e2e-fixed-token-nao-usar-em-producao";
+
+/**
+ * Anexa uma evidência à resposta de Rafael Tomé (eixo Data, o único
+ * contestado — Rafael × Bianca divergem) pro botão "Ver evidência" do
+ * DivergencePanel (tab-scoring.tsx) ter o que abrir. `seed-meridian.ts` não
+ * anexa evidência a nenhum dos quatro respondentes pré-plantados — só a
+ * bateria do M3 (Infraestrutura, via navegador) tem uma, e Infraestrutura
+ * tem um único respondente, então nunca diverge, então o DivergencePanel
+ * nunca mostra nada pra esse eixo (`getDivergence` só devolve linha com
+ * `answers.length > 1`, actions/scoring.ts:418). Sem escrever fixture nova
+ * em `seed-meridian.ts` (não é meu arquivo), escrevo direto no Postgres +
+ * Supabase locais aqui, do jeito que um script de seed faria.
+ */
+const MERIDIAN_EVIDENCE_BUCKET = "meridian-evidence";
+
+/** Upload via REST do Supabase Storage, sem passar por `@repo/storage` — o
+ *  pacote é TS cru (não compilado), e o `import()` dinâmico do processo do
+ *  Playwright (esbuild, não pula `node_modules`/pacotes de workspace do
+ *  jeito que o `tsx` dos scripts de seed pula) não sabe parsear `export`
+ *  daquele arquivo em runtime. A API HTTP do Storage é estável e simples
+ *  o bastante pra não valer a pena depender do client aqui. */
+async function uploadToSupabaseStorage(
+  path: string,
+  body: string,
+  contentType: string
+): Promise<void> {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!(base && key)) {
+    throw new Error(
+      "uploadToSupabaseStorage: NEXT_PUBLIC_SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY ausentes em .env.local."
+    );
+  }
+  await fetch(`${base}/storage/v1/bucket`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name: MERIDIAN_EVIDENCE_BUCKET, public: false }),
+  }).catch(() => {
+    // já existe — mesma tolerância do `ensureBucket` real.
+  });
+  const res = await fetch(
+    `${base}/storage/v1/object/${MERIDIAN_EVIDENCE_BUCKET}/${path}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": contentType,
+        "x-upsert": "true",
+      },
+      body,
+    }
+  );
+  if (!res.ok) {
+    throw new Error(
+      `uploadToSupabaseStorage: falha no upload (${res.status}) — ${await res.text()}`
+    );
+  }
+}
+
+async function attachEvidenceToContestedAxis(): Promise<void> {
+  const { PrismaPg } = await import("@prisma/adapter-pg");
+  const { Pool } = await import("pg");
+  const { PrismaClient } = await import(
+    "../../../packages/database/generated/index.js"
+  );
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const db = new PrismaClient({ adapter: new PrismaPg(pool) });
+
+  const assessment = await db.meridianAssessment.findFirst({
+    where: { code: "AS-200" },
+    select: { id: true, tenantId: true },
+  });
+  if (!assessment) {
+    throw new Error(
+      "attachEvidenceToContestedAxis: AS-200 não encontrado — rode o seed primeiro."
+    );
+  }
+  const response = await db.meridianResponse.findFirst({
+    where: {
+      tenantId: assessment.tenantId,
+      respondent: { assessmentId: assessment.id, name: "Rafael Tomé" },
+      question: { axis: "DATA" },
+    },
+    select: { id: true, respondentId: true },
+  });
+  if (!response) {
+    throw new Error(
+      "attachEvidenceToContestedAxis: resposta de Rafael Tomé (eixo Data) não encontrada."
+    );
+  }
+
+  const evidenceId = "e2eevidenceseed00000000001";
+  const storagePath = `${assessment.tenantId}/${assessment.id}/${evidenceId}`;
+  await uploadToSupabaseStorage(
+    storagePath,
+    "print de auditoria de dado — ensaio local",
+    "text/plain"
+  );
+
+  await db.meridianEvidence.deleteMany({ where: { responseId: response.id } });
+  await db.meridianEvidence.create({
+    data: {
+      tenantId: assessment.tenantId,
+      assessmentId: assessment.id,
+      responseId: response.id,
+      storagePath,
+      fileName: "auditoria-fonte-de-dado.txt",
+      mimeType: "text/plain",
+      sizeBytes: 42,
+      uploadedByRespondentId: response.respondentId,
+    },
+  });
+
+  await db.$disconnect();
+}
 
 test.describe("Meridian dogfood · M1/M2, CEO cria assessment e convida respondentes @meridian", () => {
   // P0 (docs/qualidade/dogfood/meridian/atrito.md) corrigido pela Bussola em
@@ -194,6 +316,10 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
   // tenant, então a sessão da consultora (regenerada pelo `globalSetup`
   // com `AUTH_TEST`) fica presa no tenant certo (`cosmos-dev`, onde
   // `AS-200 Solaris Digital` mora).
+  test.beforeAll(async () => {
+    await attachEvidenceToContestedAxis();
+  });
+
   test("fecha coleta, decide o contestado, gera plano, relatório e promove gap (SC-002..004, SC-007, SC-009)", async ({
     page,
   }) => {
@@ -213,6 +339,51 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
     // Scoring & Revisão — Data nasce CONTESTED (Rafael x Bianca divergem).
     await expect(page.getByText(/acima do limiar de \d+/)).toBeVisible();
     await page.getByRole("button", { name: "Revisar e decidir" }).click();
+
+    // M8/SC-008 — "Ver evidência" (EvidenceButton, tab-scoring.tsx:53-83).
+    // `window.open` roda DEPOIS de um `await` (o `requestEvidenceUrl`) —
+    // fora da pilha síncrona do clique, é exatamente o padrão que
+    // bloqueadores de pop-up pegam. Confere se a aba abre de fato antes de
+    // assumir sucesso.
+    //
+    // `DivergencePanel` é montado duas vezes (tab-scoring.tsx:423 no card
+    // do eixo e :664 dentro do modal "Override — Data") — sem escopar pelo
+    // `role="dialog"`, o locator resolve pro botão de trás do modal (some
+    // visualmente, mas ainda existe no DOM) tanto quanto pro de dentro,
+    // ambíguo dependendo da corrida. Escopar no diálogo resolve os dois
+    // problemas de uma vez: ambiguidade e a sobreposição de
+    // cabeçalho/rodapé fixos que um `force`/scroll manual não resolvia.
+    const overrideDialog = page.getByRole("dialog", { name: /Override/ });
+    const evidenceButton = overrideDialog.getByRole("button", {
+      name: "auditoria-fonte-de-dado.txt",
+    });
+    await evidenceButton.scrollIntoViewIfNeeded();
+    const popupPromise = page
+      .context()
+      .waitForEvent("page", { timeout: 8000 })
+      .catch(() => null);
+    await evidenceButton.click();
+    await expect(
+      page.getByText("Evidência aberta — acesso registrado na trilha.")
+    ).toBeVisible();
+    const popup = await popupPromise;
+    if (popup) {
+      // Chega na URL assinada de verdade — não só "alguma aba abriu", tem
+      // que navegar pro storage local (Supabase, storage/v1/object/sign/…).
+      await popup.waitForLoadState("domcontentloaded", { timeout: 10_000 });
+      await expect(popup).toHaveURL(
+        /storage\/v1\/object\/sign\/meridian-evidence/
+      );
+      await popup.close();
+    } else {
+      throw new Error(
+        "P1: window.open (EvidenceButton, tab-scoring.tsx) não abriu nenhuma aba nova em 8s — bloqueado como pop-up (async gap entre o clique e o window.open, sem gesto de usuário direto). Ver atrito.md."
+      );
+    }
+    // A entrada meridian.evidence.read na trilha é conferida em M8
+    // (describe dedicado, mais abaixo) — não navego pra /settings/audit
+    // aqui no meio do fluxo pra não perder o estado do DivergencePanel
+    // expandido, que os próximos passos (override) precisam.
 
     await page
       .getByPlaceholder(/O que a evidência mostra/)
@@ -275,15 +446,13 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
 test.describe("Meridian dogfood · M8, amostragem da trilha de auditoria @meridian", () => {
   test.use({ storageState: meridianStorageState("consultant") });
 
-  // Roteiro (M8) pede filtrar por prefixo "meridian." — não dá: `listAuditLogs`
-  // (actions/audit/index.ts:31) faz match exato em `entityType`, sem
-  // `startsWith`, e o dropdown de `/settings/audit`
-  // (settings/audit/components/audit-log-table.tsx:14-25) só lista entidades
-  // do Cosmos/SAFe (Team, Feature, Epic...) — nenhum valor do Meridian. Única
-  // forma de chegar lá é navegar direto pra URL com `entityType` exato (ex.:
-  // `meridian.assessment`), um valor por vez — atrito registrado. Roda depois
-  // de M1-M9 no mesmo arquivo (`fullyParallel: false`), então a trilha já tem
-  // as entradas reais dessa rodada.
+  // Roteiro (M8) pede filtrar por prefixo "meridian." — `listAuditLogs`
+  // (actions/audit/index.ts) ganhou suporte a `entityType` terminado em "."
+  // como prefixo em `ea0454dd` (pill "Meridian" no dropdown). Continuo
+  // navegando com `entityType` exato por ação, um valor por vez — mais
+  // preciso pra amostrar cada evento específico do que o prefixo genérico.
+  // Roda depois de M1-M9 no mesmo arquivo (`fullyParallel: false`), então a
+  // trilha já tem as entradas reais dessa rodada.
   test("amostra criação de assessment, atribuição, fechamento de coleta, override e promoção de gap (SC-008)", async ({
     page,
   }) => {
@@ -322,42 +491,33 @@ test.describe("Meridian dogfood · M8, amostragem da trilha de auditoria @meridi
     ).toBeVisible();
   });
 
-  // FR-038: "a entrada de override mostra o valor antes e depois". O diff
-  // grava certo (`_shared.ts:14`, `AuditDiff = [string,string,string][]`,
-  // formato "[campo, antes, depois]" documentado como deliberadamente
-  // diferente do `Record<string,unknown>` que o Cosmos usa) — mas a tela
-  // genérica de audit log (`formatDiff`, audit-log-table.tsx:42) assume
-  // `Record<string,unknown>` e faz `Object.entries(diff)`. Num array,
-  // `Object.entries` devolve entradas por índice ("0", "1"...), não por
-  // campo — o "antes/depois" não aparece, sai algo como "0: Score
-  // final,50,30" em vez de "Score final: 50 → 30". Não é bug do Meridian
-  // (o diff grava certo), é a tela compartilhada não sabendo ler o formato
-  // do Meridian. Atrito registrado — fixme até alinhar.
-  test.fixme(
-    "override mostra score antes e depois na trilha, não só o índice (FR-038)",
-    async ({ page }) => {
-      await page.goto("/settings/audit?entityType=meridian.override&period=7");
-      const overrideRow = page
-        .getByRole("row", { name: /meridian\.override\.register/ })
-        .first();
-      await expect(overrideRow.getByText(/Score final/)).toBeVisible();
-      await expect(overrideRow.getByText(/→|->/)).toBeVisible();
-    }
-  );
+  // FR-038: "a entrada de override mostra o valor antes e depois". Corrigido
+  // em ea0454dd — `formatDiff` (audit-log-table.tsx:48) agora reconhece o
+  // array de triplas do Meridian (`_shared.ts:14`, `AuditDiff =
+  // [string,string,string][]`) separado do `Record<string,unknown>` do
+  // Cosmos, e renderiza "campo: antes → depois".
+  test("override mostra score antes e depois na trilha, não só o índice (FR-038)", async ({
+    page,
+  }) => {
+    await page.goto("/settings/audit?entityType=meridian.override&period=7");
+    const overrideRow = page
+      .getByRole("row", { name: /meridian\.override\.register/ })
+      .first();
+    await expect(overrideRow.getByText(/Score final/)).toBeVisible();
+    await expect(overrideRow.getByText(/→|->/)).toBeVisible();
+  });
 
-  // `requestEvidenceUrl` (actions/report.ts:264, grava `meridian.evidence.
-  // read` ANTES de emitir a URL assinada) não é chamada por nenhum
-  // componente — mesmo padrão de `createAssessment`/`assignRespondent`
-  // antes da correção em 4cf68a24 (grep confirma zero imports em
-  // apps/app/components e apps/app/app). Não existe botão "ver evidência"
-  // ou "baixar" em nenhuma tela — o consultor nunca aciona essa trilha.
-  // Atrito registrado — SC-008 ("cada pedido de URL de evidência do M3 tem
-  // entrada correspondente") não tem como ser provado, em produção ou
-  // aqui, até a UI existir.
-  test.fixme(
-    "cada pedido de URL de evidência gera entrada meridian.evidence.read (SC-008)",
-    async () => {
-      // Sem UI que chame requestEvidenceUrl — nada a exercitar ainda.
-    }
-  );
+  // `requestEvidenceUrl` (actions/report.ts:264) fechado em c08657af —
+  // botão "Ver evidência" no DivergencePanel (tab-scoring.tsx). O teste
+  // "fecha coleta..." (describe acima, roda antes deste no mesmo arquivo)
+  // já clicou nele — aqui só confere que a leitura ficou registrada na
+  // trilha, não repete o clique.
+  test("cada pedido de URL de evidência gera entrada meridian.evidence.read (SC-008)", async ({
+    page,
+  }) => {
+    await page.goto("/settings/audit?entityType=meridian.evidence&period=1");
+    await expect(
+      page.getByRole("row", { name: /meridian\.evidence\.read/ }).first()
+    ).toBeVisible();
+  });
 });

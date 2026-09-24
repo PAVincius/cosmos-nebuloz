@@ -101,17 +101,29 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   **Dono**: dev Cosmos (tela compartilhada) — adicionar coluna de `target`/metadata legível, e um jeito de filtrar por prefixo ou pelo menos listar os `entityType` do Meridian no dropdown. **Estado**: novo, achado 2026-09-24 escrevendo M8.
 
+  **Corrigido em 2026-09-24, commit `ea0454dd`** — `listAuditLogs` aceita `entityType` terminado em "." como prefixo (`startsWith`), pill "Meridian" no filtro; coluna "Entidade" usa `metadata.target` quando presente, com fallback pro `entityId`. Orbita.
+
 ---
 
 **P2** | `/settings/audit`, coluna "Detalhe" (`formatDiff`, `audit-log-table.tsx:42-54`) | FR-038 pede que a entrada de override mostre o valor antes e depois. O diff grava certo — `AuditDiff = [string,string,string][]` (`_shared.ts:14`), formato `[campo, antes, depois]`, deliberadamente diferente do `Record<string,unknown>` que o Cosmos usa (comentário do próprio `_shared.ts:33-35` já avisa disso). Mas `formatDiff` assume `Record<string,unknown>` e faz `Object.entries(diff)` — num array, isso itera por índice ("0", "1"...), não por campo. O resultado não é "Score final: 50 → 30", é algo como "0: Score final,50,30". Não é bug do Meridian (o dado grava certo, auditável de verdade no banco); é a tela genérica não sabendo ler o formato que o próprio time documentou como intencionalmente diferente. Marquei `test.fixme` em `meridian-dogfood.spec.ts` (M8) pra esse caso específico, esperando o texto correto — hoje ele não aparece.
 
   **Dono**: dev Cosmos (tela compartilhada) — ou `formatDiff` aprende a reconhecer array de triplas, ou o Meridian passa a gravar `Record<string,unknown>` (mas aí perde a ordem/semântica documentada do formato "campo, antes, depois"). **Estado**: novo, achado 2026-09-24 escrevendo M8.
 
+  **Corrigido em 2026-09-24, commit `ea0454dd`** — `formatDiff` reconhece os dois formatos agora, renderiza "campo: antes → depois" pro array de triplas do Meridian. Tirei o `test.fixme` em `meridian-dogfood.spec.ts` e rodei de verdade — passa. Orbita.
+
 ---
 
 **P2** | `requestEvidenceUrl` (`actions/report.ts:264`, grava `meridian.evidence.read` **antes** de emitir a URL assinada — pensado pra SC-008) | Mesmo padrão do atrito P0 original (`createAssessment`/`assignRespondent` antes de `4cf68a24`): a action existe, grava auditoria corretamente, mas **nenhum componente a chama** (`grep -rn "requestEvidenceUrl" apps/app/components apps/app/app` só acha a própria definição e um import não usado em `scaffold/actions/steps.ts`). Não existe botão "ver evidência" ou "baixar" em nenhuma tela do Meridian — o consultor nunca aciona essa trilha, nem aqui nem em produção. SC-008 ("cada pedido de URL de evidência do M3 tem entrada correspondente") não tem como ser provado até essa UI existir. Marquei `test.fixme` em M8 apontando pra cá.
 
   **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 escrevendo M8.
+
+  **Corrigido em 2026-09-24, commit `c08657af`** — botão "Ver evidência" (`EvidenceButton`, `tab-scoring.tsx`) no `DivergencePanel` da aba Scoring & Revisão, chama `requestEvidenceUrl`. Ver P1 abaixo — a primeira versão tinha outro bug (`window.open` com `noopener`), corrigido em `65136545`. Rodei M8 de verdade contra o Chromium do Playwright depois do fix real: clique abre aba nova, a aba navega pra URL assinada do storage local, e a trilha ganha a entrada `meridian.evidence.read` — passa.
+
+---
+
+**P1** | `EvidenceButton` (`components/meridian/screens/tab-scoring.tsx`) | Primeira tentativa de corrigir o P2 acima (commit `94a86212`) tinha um bug próprio: `window.open("", "_blank", "noopener,noreferrer")` — pela spec do HTML, `window.open` com `"noopener"` nas features **sempre devolve `null`**, em todo browser. O código guardava o retorno como se fosse sempre um objeto (`tab.location.href = url` depois do `await`), então a aba abria em branco e nunca navegava — pior que não ter o botão, porque parecia funcionar (abria algo) mas nunca chegava na evidência. Achado do Vigia antes de eu rodar o E2E de verdade.
+
+  **Corrigido em 2026-09-24, commit `65136545`** — `window.open("", "_blank")` sem `"noopener"` nas features (mantém a referência da aba), corta `tab.opener = null` na mão logo em seguida (mesmo efeito de segurança do `noopener`, sem perder a referência). Rodei o M8 de evidência no Chromium real do Playwright (não RTL/mock) depois desse fix: `context.waitForEvent("page")` confirma que uma aba nova abre de fato no clique (síncrono, antes do `await` — não é bloqueada como pop-up), a aba chega em `.../storage/v1/object/sign/meridian-evidence/...` (URL assinada real do Supabase local), e a trilha grava `meridian.evidence.read`. Achado de teste à parte: `DivergencePanel` é montado duas vezes (`tab-scoring.tsx:423` no card do eixo, `:664` dentro do modal) — o locator do botão precisa ser escopado pelo `role="dialog"`, senão resolve ambíguo entre a cópia visível e a de trás do modal.
 
 ---
 
