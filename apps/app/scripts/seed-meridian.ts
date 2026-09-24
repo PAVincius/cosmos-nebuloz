@@ -322,6 +322,29 @@ function toScoringQuestions(axis: MeridianAxis): ScoringQuestion[] {
   }));
 }
 
+/**
+ * Garante que a persona é `TenantMember`/`MeridianMembership` só do tenant
+ * deste seed. Sem isso, rodar o script uma vez com um `TENANT_SLUG` e depois
+ * com outro (ex.: `nebuloz`, depois `cosmos-dev` — o `db.*.upsert` de cada um
+ * é aditivo, nunca remove a membership antiga) deixa a mesma persona sócia de
+ * dois tenants. `requireTenantSession` (`packages/auth/server.ts`) escolhe o
+ * `activeTenantId` com `tenantMember.findFirst` sem `orderBy` — a sessão
+ * salva pro E2E pode apontar pro tenant errado, sem o assessment que acabou
+ * de ser semeado.
+ */
+export async function pinPersonaToTenant(
+  db: Pick<PrismaClientType, "tenantMember" | "meridianMembership">,
+  userId: string,
+  tenantId: string
+): Promise<void> {
+  await db.tenantMember.deleteMany({
+    where: { userId, tenantId: { not: tenantId } },
+  });
+  await db.meridianMembership.deleteMany({
+    where: { userId, tenantId: { not: tenantId } },
+  });
+}
+
 const LOCAL_DB_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
 /** Recusa rodar fora de um banco local. Este seed planta um respondente com
@@ -405,6 +428,7 @@ async function main() {
       create: { tenantId, userId: user.id, role: p.role },
       update: { role: p.role },
     });
+    await pinPersonaToTenant(db, user.id, tenantId);
 
     const existing = await db.account.findFirst({
       where: { accountId: p.email, providerId: "credential" },

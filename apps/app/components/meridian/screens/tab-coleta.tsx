@@ -62,20 +62,29 @@ function AssignRespondentModal({
     setBusy(false);
     if (res.ok) {
       setLink(`${window.location.origin}/meridian-responder/${res.data.token}`);
-      onAssigned();
     }
+  };
+
+  // `onAssigned` recarrega a lista de respondentes, e a tela de detalhe
+  // desmonta pra skeleton enquanto recarrega — se isso rodasse logo depois do
+  // `assignRespondent`, o modal com o token (que só aparece uma vez) sumiria
+  // antes de o consultor conseguir copiar. Só dispara quando o modal já foi
+  // visto e está sendo fechado de propósito.
+  const finish = () => {
+    onAssigned();
+    onClose();
   };
 
   if (link) {
     return (
       <ModalShell
         footer={
-          <Button icon="check" onClick={onClose}>
+          <Button icon="check" onClick={finish}>
             Concluir
           </Button>
         }
         icon="link2"
-        onClose={onClose}
+        onClose={finish}
         subtitle="O token só aparece agora — o banco guarda só o hash. Copie e envie por fora (sem canal automatizado ainda)."
         title="Link de coleta gerado"
         tone="green"

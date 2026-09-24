@@ -38,6 +38,7 @@ import {
   SmartEmptyState,
   TableHead,
   TableRow,
+  useFieldId,
   useMeridianData,
   useModal,
 } from "../base";
@@ -68,6 +69,9 @@ function NewAssessmentModal({
   onClose: () => void;
   onCreated: (id: string) => void;
 }) {
+  const orgNameId = useFieldId("new-assessment-org-name");
+  const sectorId = useFieldId("new-assessment-sector");
+  const sizeBandId = useFieldId("new-assessment-size-band");
   const [templates, setTemplates] = useState<TemplateOption[] | null>(null);
   const [orgName, setOrgName] = useState("");
   const [sector, setSector] = useState("");
@@ -146,8 +150,9 @@ function NewAssessmentModal({
           padding: 20,
         }}
       >
-        <Field label="Organização">
+        <Field htmlFor={orgNameId} label="Organização">
           <Input
+            id={orgNameId}
             onChange={(e) => setOrgName(e.target.value)}
             placeholder="Vanta Saúde"
             value={orgName}
@@ -156,15 +161,17 @@ function NewAssessmentModal({
         <div
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
-          <Field label="Setor">
+          <Field htmlFor={sectorId} label="Setor">
             <Input
+              id={sectorId}
               onChange={(e) => setSector(e.target.value)}
               placeholder="Saúde"
               value={sector}
             />
           </Field>
-          <Field label="Porte">
+          <Field htmlFor={sizeBandId} label="Porte">
             <Input
+              id={sizeBandId}
               onChange={(e) => setSizeBand(e.target.value)}
               placeholder="200–1.000"
               value={sizeBand}

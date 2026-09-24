@@ -129,13 +129,13 @@ describe("AssessmentsScreen", () => {
       expect(screen.getByText("Diagnose padrão · v3.2")).toBeTruthy();
     });
 
-    fireEvent.change(screen.getByPlaceholderText("Vanta Saúde"), {
+    fireEvent.change(screen.getByLabelText("Organização"), {
       target: { value: "Helix Agro" },
     });
-    fireEvent.change(screen.getByPlaceholderText("Saúde"), {
+    fireEvent.change(screen.getByLabelText("Setor"), {
       target: { value: "Agronegócio" },
     });
-    fireEvent.change(screen.getByPlaceholderText("200–1.000"), {
+    fireEvent.change(screen.getByLabelText("Porte"), {
       target: { value: "50–200" },
     });
     fireEvent.change(screen.getByLabelText("Prazo"), {
