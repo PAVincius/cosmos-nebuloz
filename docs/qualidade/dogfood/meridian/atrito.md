@@ -35,6 +35,8 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   **Dono**: CEO/infra (apontar um Supabase local — `supabase start` ou docker — e as duas env vars, ou confirmar que evidência só é provada em `app.nebuloz.ai`).
 
+  **Corrigido em 2026-09-24, commit `107c8aa2`** — Pilar subiu Supabase local (`supabase start` com storage/auth/kong/db, runbook `docs/runbooks/supabase-local.md`), `NEXT_PUBLIC_SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` em `apps/app/.env.local`. Voltei o E2E a exigir sucesso de verdade no upload (`evidencia-infra.txt anexado.` + arquivo listado na pergunta) e rodei M3 de novo — passa. SC-006 provado completo agora, resposta e evidência.
+
 ---
 
 **P2** | `apps/app/app/(meridian)/actions/collection.ts:76` | `assignRespondent` copia `tokenExpiresAt` de `assessment.deadline` no momento da atribuição, em vez de um TTL próprio e curto. Se o consultor estender o prazo do assessment depois de já ter emitido tokens, os tokens já emitidos ganham vida extra em silêncio, sem reemissão — o respondente segue com o mesmo link válido por mais tempo do que foi comunicado a ele. Achado do security review do Vigia sobre `4cf68a24`.
@@ -65,13 +67,17 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 rodando M1/M2.
 
+  **Corrigido em 2026-09-24, commit `509071e7`** — `Field`/`Input` ligados por `useFieldId` (mesmo padrão do onboarding). Troquei o E2E de volta pra `getByLabel` nos três campos e rodei de verdade — passa.
+
 ---
 
-**P2** | `AssignRespondentModal` (`components/meridian/screens/tab-coleta.tsx:32-100`) | Depois de `assignRespondent` ter sucesso, o componente muda pra tela "Link de coleta gerado" (`if (link) return <ModalShell title="Link de coleta gerado">...`) — é o **único lugar** onde o token do respondente aparece (o banco só guarda o hash, comentário do próprio componente: "O token só aparece agora"). Rodando o E2E de verdade (dez atribuições, M2), essa tela nunca ficou observável: `getByRole("dialog", { name: "Link de coleta gerado" })` não achou nada em nenhuma das dez tentativas, com até 5s de espera — só o toast de sucesso ("X atribuído ao eixo Y") apareceu, e a lista de respondentes já reflete a atribuição no próximo instante. Não investiguei a causa raiz (fora do escopo do QA, é código de produto) — hipótese não confirmada: algo em `onAssigned`/`onChanged` pode estar disparando um refresh que desmonta o `ModalProvider` antes do usuário conseguir copiar o link.
+**P0** | `AssignRespondentModal` (`components/meridian/screens/tab-coleta.tsx:32-100`) | Depois de `assignRespondent` ter sucesso, o componente muda pra tela "Link de coleta gerado" (`if (link) return <ModalShell title="Link de coleta gerado">...`) — é o **único lugar** onde o token do respondente aparece (o banco só guarda o hash, comentário do próprio componente: "O token só aparece agora"). Rodando o E2E de verdade (dez atribuições, M2), essa tela nunca ficou observável: `getByRole("dialog", { name: "Link de coleta gerado" })` não achou nada em nenhuma das dez tentativas, com até 5s de espera — só o toast de sucesso ("X atribuído ao eixo Y") apareceu, e a lista de respondentes já reflete a atribuição no próximo instante.
 
-  Se for isso mesmo, é sério: sem o link, o consultor não tem como reenviar o convite pro respondente por fora (não há canal automatizado ainda, é copiar e mandar manualmente) — bloqueia M2/M3 em produção também, não só o E2E.
+  Sem o link, o consultor não tem como reenviar o convite pro respondente por fora (não há canal automatizado ainda, é copiar e mandar manualmente) — bloqueava M2/M3 em produção também, não só o E2E. Morgana subiu pra P0 assim que reportei.
 
-  **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 rodando M2 de verdade — precisa de investigação (não é só teste, pode ser bug real).
+  **Dono**: Bussola. **Estado**: achado 2026-09-24 rodando M2 de verdade.
+
+  **Corrigido em 2026-09-24, commit `509071e7`** — causa raiz era `onAssigned()` (= reload do detalhe) disparando logo após `setLink`, derrubando o `ModalProvider` pro skeleton antes do consultor ver o link. Agora `onAssigned` só dispara quando o consultor fecha o modal de propósito. Rodei M2 de verdade (dez atribuições): as dez telas "Link de coleta gerado" aparecem, o campo com o link (`/meridian-responder/...`) é conferido antes de fechar — passa.
 
 ---
 
@@ -83,6 +89,8 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   Não é bug de produto — é o banco local persistente (não resetado entre rodadas) tendo dados do Meridian espalhados em dois tenants diferentes, e a sessão da consultora presa no mais antigo. Não mexi na sessão nem no seed (fora da minha alçada, `scripts/seed-meridian.ts` é da Bussola). Rodei M1 pela UI de verdade nessa mesma sessão (tenant `nebuloz`) e funcionou — cria e mostra no ato; o problema é só quando o dado nasce em `cosmos-dev` via seed enquanto a sessão fica em `nebuloz`.
 
-  **Dono**: Bussola/infra — alinhar o slug default do seed com o tenant que a sessão da Marina realmente usa (ou resetar o banco local, ou o `globalSetup` recriar a sessão depois do seed). **Estado**: novo, achado 2026-09-24 — bloqueia execução real de M4-M9 localmente; roteiro em produção não é afetado (lá não existe esse mismatch de tenant entre rodadas de seed).
+  **Dono**: Bussola/infra — alinhar o slug default do seed com o tenant que a sessão da Marina realmente usa (ou resetar o banco local, ou o `globalSetup` recriar a sessão depois do seed). **Estado**: achado 2026-09-24 — bloqueava execução real de M4-M9 localmente; roteiro em produção não era afetado (lá não existe esse mismatch de tenant entre rodadas de seed).
+
+  **Corrigido em 2026-09-24, commit `509071e7`** — `pinPersonaToTenant` no seed apaga qualquer membership da persona em outro tenant logo após o upsert, então a sessão regenerada pelo `globalSetup` (`AUTH_TEST=1`) fica presa no tenant certo. Reseedei (`npx tsx scripts/seed-meridian.ts cosmos-dev`), regenerei a sessão via `globalSetup`, tirei o `test.fixme` de M4-M9 e rodei a suíte inteira de ponta a ponta: `AS-200 Solaris Digital` aparece na carteira, fecha coleta → scoring → contesta Data → override → gap register → plano de 12 meses → relatório com override visível → promove gap pro Scaffold — passa.
 
 ---
