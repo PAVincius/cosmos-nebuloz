@@ -25,6 +25,12 @@ const ENTITY_TYPES = [
   "User",
 ];
 
+// Prefixo, não entityType exato — cada produto abaixo grava vários entityType
+// concretos sob o mesmo prefixo (ex.: meridian.assessment,
+// meridian.override, meridian.promotion...), sem um valor fixo por tela.
+// `listAuditLogs` lê entityType terminado em "." como startsWith.
+const PREFIX_FILTERS = [{ label: "Meridian", prefix: "meridian." }];
+
 const ENTITY_TYPE_LABELS: Record<string, string> = {
   Team: "Time",
   Feature: "Feature",
@@ -39,9 +45,24 @@ const ENTITY_TYPE_LABELS: Record<string, string> = {
   User: "Usuário",
 };
 
-function formatDiff(diff: Record<string, unknown> | null): string {
+function formatDiff(diff: AuditLog["diff"]): string {
   if (!diff) {
     return "—";
+  }
+  // Formato normativo do Cosmos: Record<campo, valor>. Alguns produtos
+  // (Meridian) gravam Array<[campo, antes, depois]> de propósito — ver
+  // `(meridian)/actions/_shared.ts` `AuditDiff`. Object.entries num array
+  // itera por índice, não por campo, então os dois formatos precisam de
+  // leitura separada.
+  if (Array.isArray(diff)) {
+    if (diff.length === 0) {
+      return "—";
+    }
+    const preview = diff
+      .slice(0, 2)
+      .map(([field, before, after]) => `${field}: ${before} → ${after}`)
+      .join(", ");
+    return diff.length > 2 ? `${preview}…` : preview;
   }
   const entries = Object.entries(diff);
   if (entries.length === 0) {
@@ -52,6 +73,13 @@ function formatDiff(diff: Record<string, unknown> | null): string {
     .map(([key, value]) => `${key}: ${String(value)}`)
     .join(", ");
   return entries.length > 2 ? `${preview}…` : preview;
+}
+
+function targetLabel(row: AuditLog): string {
+  const target = row.metadata?.target;
+  return typeof target === "string" && target.length > 0
+    ? target
+    : row.entityId;
 }
 
 function pillStyle(active: boolean): CSSProperties {
@@ -109,6 +137,20 @@ export function AuditLogTable({ logs, periodDays, entityType }: Props) {
                   style={pillStyle(active)}
                 >
                   {ENTITY_TYPE_LABELS[et] ?? et}
+                </span>
+              </Link>
+            );
+          })}
+          {PREFIX_FILTERS.map(({ label, prefix }) => {
+            const active = entityType === prefix;
+            const href = `/settings/audit?period=${periodDays}&entityType=${prefix}`;
+            return (
+              <Link href={href} key={prefix}>
+                <span
+                  className="block rounded-cosmos-pill px-3 py-1.5 font-semibold text-[12px] transition-colors"
+                  style={pillStyle(active)}
+                >
+                  {label}
                 </span>
               </Link>
             );
@@ -185,8 +227,9 @@ export function AuditLogTable({ logs, periodDays, entityType }: Props) {
                       <div
                         className="max-w-32 truncate text-[11px]"
                         style={{ color: "var(--ink-faint)" }}
+                        title={row.entityId}
                       >
-                        {row.entityId}
+                        {targetLabel(row)}
                       </div>
                     </div>
                   ),
