@@ -50,3 +50,5 @@ Cumprido 1–3, a rotina pode ligar. Sem 1, seguimos com um caminho aberto real 
 ## Decisões
 
 - 2026-09-23 — Compliance/DPO emite LIBERADO COM CONDIÇÕES, condicionado às 3 ações da seção 4.
+- 2026-09-23 — Condição 1 cumprida pela Morgana: `.maestri/jev.mjs` agora exclui `packages/database/scripts` inteiro do diff enviado (mais amplo que a proposta original — cobre seed futuro com PII real, não só os dois arquivos achados). Teste em `jev.test.mjs`; conferido nos commits reais `51680bd3` e `65f382ab`: 10 e 2 e-mails antes do filtro, 0 depois.
+- 2026-09-23 — Condições 2 e 3 cumpridas pelo Compliance/DPO: entrada `V-19 · Vercel AI Gateway (typesafe-ai/jev)` em `docs/compliance/dpa-fornecedores.md` (quadro-resumo, seção dedicada e ações consolidadas), e `R-013` em `docs/compliance/risk-register.md`, revisão em 2026-10-23.

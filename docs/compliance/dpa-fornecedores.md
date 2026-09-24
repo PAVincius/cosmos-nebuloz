@@ -52,8 +52,10 @@ aqui sem documento que o sustente.
 | V-16 | Knock | a assinar | não declarada | sem prazo | [lista](https://knock.app/legal/subprocessors) | SCCs + UK IDTA | 2026-09-05 |
 | V-17 | BaseHub | não encontrado | não declarada | não confirmada | não encontrado | não encontrado | 2026-09-05 |
 | V-18 | Stripe | embutido | global, EUA | não confirmada | [lista](https://stripe.com/br/legal/service-providers) | SCCs + DPF | 2026-09-05 |
+| V-19 | Vercel AI Gateway (`typesafe-ai/jev`) | não confirmada | não declarada | ZDR pedido pelo cliente, não confirmado pelo fornecedor | não encontrado | não confirmado | 2026-09-23 |
 
-Oito embutidos, seis a assinar, quatro sem documento público.
+Oito embutidos, seis a assinar, quatro sem documento público, um novo sem
+classificação (V-19).
 
 ## 2. Fornecedor a fornecedor
 
@@ -313,6 +315,29 @@ Subprocessadores e afiliadas em
 Preenche `dpa`, `region`. Ação pendente: **confirmar se está ativo**, como pede
 o `notes` do V-18.
 
+### V-19 · Vercel AI Gateway (`typesafe-ai/jev`) — triagem automática de commits
+
+Achado em 2026-09-23 ao avaliar `.maestri/jev.mjs`: rotina horária que manda
+subject, arquivos e diff de commits ao endpoint
+`https://ai-gateway.vercel.sh/v4/ai/evaluation-model`, modelo
+`typesafe-ai/jev`, com `providerOptions.gateway.zeroDataRetention: true` na
+requisição. Diferente do V-06 (Vercel como hospedagem/execução, DPA embutido
+pelo contrato comercial), este é um produto separado (AI Gateway) roteando
+para um alias de modelo (`typesafe-ai`) cuja identidade — produto próprio da
+Vercel ou repasse a terceiro — não foi possível confirmar por fonte primária.
+O ZDR é um campo enviado pelo cliente na chamada, não uma cláusula contratual
+verificada; sem confirmação de que o Gateway ou o provedor por trás do alias
+honra esse campo, ele conta como pedido, não como garantia. Ver parecer
+completo em
+[`2026-09-23-parecer-triagem-jev.md`](2026-09-23-parecer-triagem-jev.md).
+
+Não preenche `dpa`, `region` nem `subprocessors` — nenhum dos três está
+confirmado. Ação pendente: **identificar o operador real por trás de
+`typesafe-ai`** e confirmar se o AI Gateway honra `zeroDataRetention`
+contratualmente, não só como campo de requisição. Mitigação de dado pessoal
+(exclusão de `packages/database/scripts/` do diff enviado) já aplicada em
+`.maestri/jev.mjs`, fora do escopo deste dossiê de fornecedores.
+
 ## 3. Ações consolidadas
 
 O RACI do [playbook de vendas](../comercial/playbook-de-vendas.md) §4 tem a
@@ -335,6 +360,7 @@ entrarem no playbook, esta tabela passa a ter dono de verdade.
 | V-16 Knock | confirmar uso; remover do inventário se não | Responsável pela entrega | não |
 | V-17 BaseHub | pedir DPA | Auditor / revisor | não |
 | V-18 Stripe | confirmar se está ativo | Dono do roadmap | não |
+| V-19 Vercel AI Gateway | identificar operador de `typesafe-ai`; confirmar ZDR contratual | Compliance / DPO | não |
 
 Três bloqueiam venda. O V-03 porque, em plano não pago, a Gemini API usa o
 conteúdo submetido para melhorar produtos e revisores humanos leem entrada e
