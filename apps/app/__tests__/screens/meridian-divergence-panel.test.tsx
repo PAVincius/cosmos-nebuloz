@@ -48,16 +48,26 @@ const ROWS: DivergenceRow[] = [
   },
 ];
 
-let fakeWin: { location: { href: string }; close: ReturnType<typeof vi.fn> };
+let fakeWin: {
+  location: { href: string };
+  close: ReturnType<typeof vi.fn>;
+  opener: unknown;
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
-  fakeWin = { location: { href: "" }, close: vi.fn() };
-  window.open = vi.fn(() => fakeWin as unknown as Window);
+  fakeWin = { location: { href: "" }, close: vi.fn(), opener: {} };
+  // Contrato real de window.open: com "noopener" nas features, TODO browser
+  // devolve null — não dá pra ter referência à aba e cortar o opener ao
+  // mesmo tempo. Um mock que sempre devolve objeto esconde exatamente o bug
+  // que este teste existe pra pegar.
+  window.open = vi.fn((_url?: string, _target?: string, features?: string) =>
+    features?.includes("noopener") ? null : (fakeWin as unknown as Window)
+  );
 });
 
 describe("DivergencePanel — Ver evidência", () => {
-  it("abre a aba em branco no clique (síncrono) e só navega depois que a URL chega — evita bloqueio de popup", async () => {
+  it("abre a aba em branco no clique (síncrono) sem noopener, corta o opener na mão, e só navega depois que a URL chega", async () => {
     getDivergenceMock.mockResolvedValue({ ok: true, data: ROWS });
     requestEvidenceUrlMock.mockResolvedValue({
       ok: true,
@@ -71,13 +81,17 @@ describe("DivergencePanel — Ver evidência", () => {
 
     // window.open precisa acontecer NO clique, antes do await resolver —
     // depois disso o browser não conta mais como gesto do usuário e bloqueia
-    // o popup.
+    // o popup. E sem "noopener" nos args — senão o browser real devolve
+    // null e a aba nunca navega.
     expect(window.open).toHaveBeenCalledTimes(1);
-    expect(window.open).toHaveBeenCalledWith(
-      "",
-      "_blank",
-      "noopener,noreferrer"
-    );
+    const call = (window.open as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(call[0]).toBe("");
+    expect(call[1]).toBe("_blank");
+    expect(String(call[2] ?? "")).not.toMatch(/noopener/);
+
+    // Opener cortado na mão — é o que faz o "noopener" de verdade sem matar
+    // a referência que o resto da função precisa.
+    expect(fakeWin.opener).toBeNull();
     expect(fakeWin.location.href).toBe("");
 
     await waitFor(() => {

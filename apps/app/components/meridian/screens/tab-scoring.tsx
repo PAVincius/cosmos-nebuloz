@@ -66,7 +66,15 @@ function EvidenceButton({
     // A aba abre NO clique, em branco — depois do await, o browser não conta
     // mais como gesto do usuário e Chrome/Safari bloqueiam o popup. A URL
     // assinada só existe depois da volta do servidor; a aba só navega então.
-    const tab = window.open("", "_blank", "noopener,noreferrer");
+    //
+    // Sem "noopener" nos features: pela spec, window.open com "noopener"
+    // devolve null em todo browser — não dá pra ter a referência da aba
+    // (pra navegar depois) e já cortar o opener ao mesmo tempo. Corta o
+    // opener na mão, que é o que "noopener" faz por baixo.
+    const tab = window.open("", "_blank");
+    if (tab) {
+      tab.opener = null;
+    }
     setBusy(true);
     const res = await runWithToast(() => requestEvidenceUrl({ evidenceId }), {
       loading: "Abrindo evidência…",
