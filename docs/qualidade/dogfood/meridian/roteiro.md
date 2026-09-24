@@ -88,9 +88,9 @@ Verificado no código: `runScoringInTx` (`apps/app/app/(meridian)/actions/scorin
 
 - **Ação:** SC-002 parte (b) **não é provado em produção**. Fica com o teste automatizado de determinismo do Crivo, já previsto no quickstart:
   ```bash
-  pnpm --filter @repo/app test -- meridian-scoring
+  cd apps/app && npx vitest run __tests__/lib/meridian-scoring.test.ts
   ```
-  Esse teste roda o motor duas vezes sobre o mesmo conjunto de respostas e compara score, confidence e spread campo a campo (`specs/001-meridian-diagnose/quickstart.md`, cenário 4).
+  (`pnpm --filter @repo/app test -- meridian-scoring` não escopa — o `--` some no filtro do turbo e roda a suíte inteira; ver memória da empresa.) Esse teste roda o motor duas vezes sobre o mesmo conjunto de respostas e compara score, confidence e spread campo a campo (`specs/001-meridian-diagnose/quickstart.md`, cenário 4).
 - **Resultado esperado:** o teste passa, confirmando resultado idêntico nas duas execuções.
 - **Evidência a coletar:** saída do comando (verde) anexada ao diário; não é print de produção.
 - **Escreve em prod:** Não — roda local, fora de `app.nebuloz.ai`.
