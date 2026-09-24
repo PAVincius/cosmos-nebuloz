@@ -52,6 +52,10 @@ export type AuditLog = {
   action: string;
   entityType: string;
   entityId: string;
-  diff: Record<string, unknown> | null;
+  /** Formato normativo do Cosmos: Record<campo, valor>. Alguns produtos
+   *  (Meridian) gravam Array<[campo, antes, depois]> de propósito — ver
+   *  `(meridian)/actions/_shared.ts` `AuditDiff`. */
+  diff: Record<string, unknown> | [string, string, string][] | null;
+  metadata: Record<string, unknown> | null;
   createdAt: Date;
 };

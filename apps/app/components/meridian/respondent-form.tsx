@@ -149,6 +149,72 @@ export function RespondentForm({
         tone="accent"
       />
 
+      {/* Aviso ao titular — texto da Compliance, verbatim, de
+          docs/compliance/operadora-controladora.md §4. Condição única do
+          parecer 796dab44 pra liberar este fluxo em produção; nada aqui é
+          reescrita. */}
+      <SectionCard
+        bodyStyle={{ display: "flex", flexDirection: "column", gap: 10 }}
+        icon="shield"
+        title="Se seus dados chegaram até nós por uma organização"
+        tone="neutral"
+      >
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Você pode ter respondido a um diagnóstico por um link que recebeu, ou
+          participado de uma reunião gravada e transcrita numa organização que
+          usa nossos produtos. Nesses casos, quem decidiu coletar esses dados,
+          para quê e por quanto tempo foi <strong>essa organização</strong>, não
+          a Nebuloz. Ela é a controladora; nós tratamos os dados em nome dela,
+          como operadora, nos termos da Lei 13.709/2018.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Na prática: para pedir confirmação, acesso, correção, eliminação ou
+          portabilidade dos seus dados, procure a organização que convidou você
+          ou conduziu a reunião. É ela que decide o pedido.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Se preferir escrever para nós, escreva — para{" "}
+          <a href="mailto:privacy@nebuloz.com">privacy@nebuloz.com</a>. Em até 5
+          dias úteis encaminhamos seu pedido à organização responsável e
+          avisamos você de que encaminhamos e para quem. Não decidimos o mérito,
+          porque não é nossa decisão tomar.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Há tratamentos em que a Nebuloz é a controladora — a operação do nosso
+          site, os registros de segurança da plataforma e nosso contato
+          comercial. Para esses, o pedido vem direto para nós, e nós
+          respondemos.
+        </p>
+      </SectionCard>
+
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {battery.questions.map((q, qi) => {
           const options = optionsFor(q);

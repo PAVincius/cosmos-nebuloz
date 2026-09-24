@@ -20,3 +20,4 @@
 | R-010 | Backup sem restore testado | Alta | Alto | DevOps | DR drill em staging | NEB-121 | 2026-07-01 |
 | R-011 | Sem circuit breaker em integrações externas | Média | Médio | Backend Lead | cockatiel + async queue | NEB-123 | 2026-08-01 |
 | R-012 | Sem rate limiting em auth/copilot | Alta | Médio | Backend Lead | @upstash/ratelimit | NEB-133 | 2026-07-15 |
+| R-013 | Triagem Jev (`.maestri/jev.mjs`) envia diff de commits a LLM de terceiro (TypeSafe AI / `typesafe-ai/jev`, via Vercel AI Gateway). Operador identificado (V-19), DPA real, ZDR por requisição documentado e fail-closed (`no_providers_available` se indisponível) — risco residual: plano Vercel do time (Pro/Enterprise) não confirmado, sem o qual o ZDR por requisição não vale | Baixa | Médio | Responsável pela conta Vercel | `packages/database/scripts/` já excluído do diff (mitiga PII); confirmar plano Vercel Pro/Enterprise do time | — | 2026-10-23 |
