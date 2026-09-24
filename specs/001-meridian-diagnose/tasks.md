@@ -49,13 +49,13 @@
 **Meta**: carteira navegável com indicadores, filtro e detalhe com cinco abas.
 **Teste independente**: dois assessments em estados diferentes; conferir indicadores, filtro e as cinco abas.
 
-- [ ] T025 [US1] Teste: `apps/app/__tests__/actions/meridian/assessments.test.ts` — **falta, arquivo não existe**
+- [x] T025 [US1] Teste existe em `apps/app/__tests__/meridian/assessments.test.ts` (caminho difere do spec'd `__tests__/actions/meridian/`)
 - [x] T026 [US1] Implementar `apps/app/app/(meridian)/actions/assessments.ts` com `listAssessments`, `getAssessment` e `createAssessment` — `apps/app/app/(meridian)/actions/assessments.ts`
 - [x] T027 [US1] Implementar `apps/app/lib/meridian/composite.ts`
 - [x] T028 [P] [US1] Criar `apps/app/components/meridian/screens/assessments.tsx`
 - [x] T029 [US1] Criar `apps/app/components/meridian/screens/assessment-detail.tsx` e `assessment-detail-client.tsx`
 - [x] T030 [US1] Registrar `assessments` e `assessment` em `registry.tsx`
-- [x] T031 [US1] Teste de tela existe como `apps/app/__tests__/meridian.test.tsx` (não no caminho spec'd `__tests__/screens/meridian-assessments.test.tsx`; cobertura de filtro/empty-state não confirmada)
+- [x] T031 [US1] Teste de tela existe em `apps/app/__tests__/screens/meridian.test.tsx` (nome difere do spec'd `meridian-assessments.test.tsx`; cobertura de filtro/empty-state não confirmada)
 
 **Checkpoint**: US1 entregue e demonstrável.
 
@@ -68,10 +68,10 @@
 
 - [x] T032 [US2] Teste: `apps/app/__tests__/lib/meridian-respondent-token.test.ts`
 - [x] T033 [US2] Implementar `apps/app/lib/meridian/respondent-token.ts`
-- [ ] T034 [US2] Teste: `apps/app/__tests__/actions/meridian/collection.test.ts` — **falta, arquivo não existe**
+- [x] T034 [US2] Teste existe em `apps/app/__tests__/meridian/collection.test.ts` (caminho difere do spec'd)
 - [x] T035 [US2] Implementar `apps/app/app/(meridian)/actions/collection.ts` com `assignRespondent`, `revokeRespondent`, `sendReminder` e `closeCollection` — `apps/app/app/(meridian)/actions/collection.ts` (⚠️ `assignRespondent`:40 e `revokeRespondent`:111 sem chamador de UI — ver P0)
 - [x] T036 [US2] Implementar `apps/app/app/(meridian)/actions/respondent.ts`
-- [ ] T037 [US2] Teste: `apps/app/__tests__/actions/meridian/respondent.test.ts` — **falta, arquivo não existe**
+- [x] T037 [US2] Teste existe em `apps/app/__tests__/meridian/respondent.test.ts` (caminho difere do spec'd)
 - [x] T038 [P] [US2] Criar `apps/app/components/meridian/screens/tab-coleta.tsx`
 - [x] T039 [P] [US2] Criar `apps/app/components/meridian/screens/respondent-form.tsx` (nome difere do spec'd `respondent.tsx`)
 - [x] T040 [US2] Rota implementada em `apps/app/app/meridian-responder/[token]/page.tsx` (fora do route group `(meridian)`, caminho difere do spec'd `app/(meridian)/responder/[token]/page.tsx` — decisão deliberada, não bug)
@@ -88,9 +88,9 @@
 
 - [x] T042 [US3] Teste: `apps/app/__tests__/lib/meridian-scoring.test.ts`
 - [x] T043 [US3] Implementar `apps/app/lib/meridian/scoring.ts`
-- [ ] T044 [US3] Teste: `apps/app/__tests__/actions/meridian/scoring.test.ts` — **falta, arquivo não existe**
+- [x] T044 [US3] Teste existe em `apps/app/__tests__/meridian/scoring-plan.test.ts` (describe "runScoring"; combinado com T064, caminho difere do spec'd)
 - [x] T045 [US3] Implementar `apps/app/app/(meridian)/actions/scoring.ts` (⚠️ `runScoring` público sem chamador de UI — só `runScoringInTx` interno é usado, via `closeCollection`)
-- [ ] T046 [US3] Teste: `apps/app/__tests__/actions/meridian/overrides.test.ts` — **falta, arquivo não existe**
+- [x] T046 [US3] Teste existe em `apps/app/__tests__/meridian/overrides.test.ts` (caminho difere do spec'd)
 - [x] T047 [US3] Implementar `apps/app/app/(meridian)/actions/overrides.ts` (⚠️ `listOverrides`:131 sem chamador de UI)
 - [x] T048 [P] [US3] Criar `apps/app/components/meridian/screens/tab-scoring.tsx`
 - [x] T049 [P] [US3] Criar `apps/app/components/meridian/modals.tsx`
@@ -110,7 +110,7 @@
 - [x] T053 [US4] Implementar `apps/app/lib/meridian/graph.ts`
 - [x] T054 [US4] Teste: `apps/app/__tests__/lib/meridian-plan.test.ts`
 - [x] T055 [US4] Implementar `apps/app/lib/meridian/plan.ts`
-- [ ] T056 [US4] Teste: `apps/app/__tests__/actions/meridian/gaps.test.ts` — **falta, arquivo não existe**
+- [x] T056 [US4] Teste existe em `apps/app/__tests__/meridian/gaps.test.ts` (caminho difere do spec'd)
 - [x] T057 [US4] Implementar `apps/app/app/(meridian)/actions/gaps.ts` (⚠️ `upsertGap`:152, `deleteGap`:244, `linkGapDependency`:288, `unlinkGapDependency`:356, `revokePromotion`:470 sem chamador de UI)
 - [x] T058 [US4] Implementar `apps/app/app/(meridian)/actions/plan.ts`
 - [x] T059 [P] [US4] Criar `apps/app/components/meridian/screens/tab-gaps.tsx`
@@ -118,7 +118,7 @@
 - [x] T061 [P] [US4] Criar `apps/app/components/meridian/screens/gap-register.tsx`
 - [x] T062 [US4] Adicionar `GapDetail` a `apps/app/components/meridian/modals.tsx`
 - [x] T063 [US4] Registrar `registry` (gap register) no `registry.tsx`
-- [ ] T064 [US4] Teste: `apps/app/__tests__/actions/meridian/plan-export.test.ts` — **falta, arquivo não existe**
+- [x] T064 [US4] Teste existe em `apps/app/__tests__/meridian/scoring-plan.test.ts` (describe "exportPlan"; combinado com T044, caminho difere do spec'd)
 
 ---
 
@@ -130,7 +130,7 @@
 - [x] T065 [US5] Teste: `apps/app/__tests__/lib/meridian-benchmark.test.ts`
 - [x] T066 [US5] Implementar `apps/app/lib/meridian/benchmark.ts`
 - [x] T067 [US5] Implementar `apps/app/app/(meridian)/actions/report.ts` (⚠️ `requestEvidenceUrl`:264 sem chamador de UI)
-- [ ] T068 [US5] Teste: `apps/app/__tests__/actions/meridian/report.test.ts` — **falta, arquivo não existe**
+- [x] T068 [US5] Teste existe em `apps/app/__tests__/meridian/report.test.ts` (caminho difere do spec'd)
 - [x] T069 [P] [US5] Criar `apps/app/components/meridian/screens/tab-relatorio.tsx`
 - [x] T070 [P] [US5] Adicionar `ReassessDiffModal` a `apps/app/components/meridian/modals.tsx`
 
@@ -141,7 +141,7 @@
 **Meta**: coortes anônimas com opt-in e limiar de leitura.
 **Teste independente**: duas orgs com opt-in e uma sem; coorte permanece retida abaixo do mínimo.
 
-- [ ] T071 [US6] Teste: `apps/app/__tests__/actions/meridian/benchmark.test.ts` — **falta, arquivo não existe**
+- [x] T071 [US6] Teste existe em `apps/app/__tests__/meridian/benchmark.test.ts` (caminho difere do spec'd)
 - [x] T072 [US6] Implementar `apps/app/app/(meridian)/actions/benchmark.ts` (⚠️ `withdrawContribution`:98 e `readCohortAction`:151 sem chamador de UI)
 - [x] T073 [P] [US6] Criar `apps/app/components/meridian/screens/benchmark.tsx`
 - [x] T074 [US6] Registrar `benchmark` no `registry.tsx`
@@ -163,7 +163,7 @@
 - [x] T078 Criar `apps/app/e2e/meridian-diagnose.spec.ts` — existe (mais `meridian-dogfood.spec.ts` não commitado)
 - [x] T079 [P] Registrar o módulo Meridian nas superfícies existentes — `services.ts`/`proposta-escopo.ts` validam contra o enum do Prisma genericamente
 - [ ] T080 [P] Rodar `pnpm check`, `pnpm --filter @repo/app typecheck` e `pnpm --filter @repo/app test -- meridian` — não verificável estaticamente, precisa rodar
-- [ ] T081 Confirmar cobertura ≥ 80% no escopo `lib/meridian` e `app/(meridian)/actions` — não verificável estaticamente; 9 arquivos de teste de action estão faltando (ver T025/T034/T037/T044/T046/T056/T064/T068/T071), cobertura provavelmente abaixo do alvo
+- [ ] T081 Confirmar cobertura ≥ 80% no escopo `lib/meridian` e `app/(meridian)/actions` — não verificável estaticamente, precisa rodar; todos os testes de action existem (`apps/app/__tests__/meridian/`), correção de caminho apontada pela Morgana
 - [x] T082 Criar `.claude/completions/2026-08-28-meridian-diagnose.md`
 
 ---
