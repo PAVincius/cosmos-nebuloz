@@ -250,6 +250,17 @@ describe("requestEvidenceUrl", () => {
     expect(audit.data.entityType).toBe("meridian.evidence");
   });
 
+  it("cada abertura grava exatamente 1 linha na trilha — a tela 'Ver evidência' chama isto por clique", async () => {
+    const res = await requestEvidenceUrl({ evidenceId: EV_ID });
+    expect(res.ok).toBe(true);
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+
+    // Duas aberturas separadas do mesmo arquivo não deduplicam — são dois
+    // acessos, duas linhas. Auditoria de acesso concedido, não de arquivo.
+    await requestEvidenceUrl({ evidenceId: EV_ID });
+    expect(h.auditCreate).toHaveBeenCalledTimes(2);
+  });
+
   it("recusa evidência de outra organização", async () => {
     h.evidenceFindFirst.mockResolvedValue(null);
     const res = await requestEvidenceUrl({ evidenceId: EV_ID });

@@ -23,6 +23,7 @@ import type {
   AxisScoreView,
 } from "@/app/(meridian)/actions/assessments";
 import { registerOverride } from "@/app/(meridian)/actions/overrides";
+import { requestEvidenceUrl } from "@/app/(meridian)/actions/report";
 import {
   type DivergenceRow,
   getDivergence,
@@ -49,9 +50,46 @@ const STATUS_META: Record<string, [Tone, string]> = {
   OVERRIDDEN: ["purple", "Override"],
 };
 
+/** Abre a evidência que o respondente anexou. URL assinada de curta duração
+ *  — `requestEvidenceUrl` grava a trilha ANTES de emitir, então cada clique
+ *  é uma leitura auditada, não uma URL reaproveitável. */
+function EvidenceButton({
+  evidenceId,
+  fileName,
+}: {
+  evidenceId: string;
+  fileName: string;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  const open = async () => {
+    setBusy(true);
+    const res = await runWithToast(() => requestEvidenceUrl({ evidenceId }), {
+      loading: "Abrindo evidência…",
+      success: "Evidência aberta — acesso registrado na trilha.",
+    });
+    setBusy(false);
+    if (res.ok) {
+      window.open(res.data.url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <Button
+      disabled={busy}
+      icon="paperclip"
+      onClick={open}
+      size="sm"
+      variant="ghost"
+    >
+      {fileName}
+    </Button>
+  );
+}
+
 /** Divergência lado a lado. Carrega sob demanda: só o eixo contestado precisa
  *  dela, e cada leitura é acesso a conteúdo de evidência. */
-function DivergencePanel({
+export function DivergencePanel({
   assessmentId,
   axis,
 }: {
@@ -168,6 +206,7 @@ function DivergencePanel({
                 key={`${r.questionCode}-${ans.respondentName}`}
                 style={{
                   display: "flex",
+                  flexWrap: "wrap",
                   alignItems: "center",
                   gap: 8,
                   padding: "7px 10px",
@@ -207,6 +246,24 @@ function DivergencePanel({
                 >
                   {ans.normalized.toFixed(2)}
                 </span>
+                {ans.evidence.length > 0 && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 6,
+                      width: "100%",
+                    }}
+                  >
+                    {ans.evidence.map((e) => (
+                      <EvidenceButton
+                        evidenceId={e.id}
+                        fileName={e.fileName}
+                        key={e.id}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -347,6 +347,7 @@ export type DivergenceRow = {
     respondentRole: string;
     displayValue: string;
     normalized: number;
+    evidence: { id: string; fileName: string }[];
   }[];
 };
 
@@ -382,7 +383,7 @@ export async function getDivergence(
               ordinal: true,
             },
           },
-          _count: { select: { evidence: true } },
+          evidence: { select: { id: true, fileName: true } },
         },
         orderBy: [{ question: { ordinal: "asc" } }],
       });
@@ -396,7 +397,7 @@ export async function getDivergence(
           evidenceCount: 0,
           answers: [],
         };
-        row.evidenceCount += r._count.evidence;
+        row.evidenceCount += r.evidence.length;
         row.answers.push({
           respondentName: r.respondent.name,
           respondentRole: r.respondent.role,
@@ -406,6 +407,7 @@ export async function getDivergence(
             r.rawValue
           ),
           normalized: Number(r.normalized),
+          evidence: r.evidence,
         });
         byQuestion.set(key, row);
       }
