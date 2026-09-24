@@ -203,12 +203,14 @@ describe("listAssessments", () => {
 });
 
 describe("createAssessment", () => {
+  const FUTURE_DEADLINE = new Date(Date.now() + 30 * 86_400_000).toISOString();
+
   const input = {
     orgName: "Helix Agro",
     sector: "Agronegócio",
     sizeBand: "200–1.000",
     templateId: TPL_ID,
-    deadline: "2026-09-15T00:00:00.000Z",
+    deadline: FUTURE_DEADLINE,
     benchmarkOptIn: true,
   };
 
@@ -263,6 +265,21 @@ describe("createAssessment", () => {
     h.requirePerm.mockRejectedValue(new Error("Requer papel Consultor"));
     const res = await createAssessment(input);
     expect(res.ok).toBe(false);
+    expect(h.assessmentCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa prazo no passado — nasceria com o token do respondente já expirado", async () => {
+    h.templateFindFirst.mockResolvedValue({
+      id: TPL_ID,
+      version: "v3.2",
+      lockedAt: null,
+    });
+    const res = await createAssessment({
+      ...input,
+      deadline: "2020-01-01T00:00:00.000Z",
+    });
+    expect(res.ok).toBe(false);
+    expect(res.ok || res.error).toMatch(/futuro/);
     expect(h.assessmentCreate).not.toHaveBeenCalled();
   });
 });

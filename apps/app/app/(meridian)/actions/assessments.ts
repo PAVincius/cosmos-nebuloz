@@ -357,7 +357,11 @@ const CreateSchema = z.object({
   sector: nnStr,
   sizeBand: nnStr,
   templateId: cuid,
-  deadline: z.coerce.date(),
+  // Prazo no passado nasceria com o token do respondente já expirado —
+  // `tokenExpiresAt` copia `deadline` em `assignRespondent` (collection.ts).
+  deadline: z.coerce
+    .date()
+    .refine((d) => d.getTime() > Date.now(), "Prazo precisa ser no futuro."),
   benchmarkOptIn: z.boolean().default(false),
   reassessmentOfId: cuid.optional(),
 });

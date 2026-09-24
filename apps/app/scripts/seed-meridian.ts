@@ -322,7 +322,29 @@ function toScoringQuestions(axis: MeridianAxis): ScoringQuestion[] {
   }));
 }
 
+const LOCAL_DB_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+
+/** Recusa rodar fora de um banco local. Este seed planta um respondente com
+ *  token fixo e conhecido (`DOGFOOD_RESPONDENT_TOKEN`, usado pelo E2E) —
+ *  contra `DATABASE_URL` de produção, qualquer um com o repo abriria
+ *  `/meridian-responder/<token>` em produção. */
+export function assertLocalDatabaseUrl(rawUrl: string | undefined): void {
+  let host: string | undefined;
+  try {
+    host = rawUrl ? new URL(rawUrl).hostname : undefined;
+  } catch {
+    host = undefined;
+  }
+  if (!(host && LOCAL_DB_HOSTS.has(host))) {
+    console.error(
+      `❌ seed-meridian recusa rodar: DATABASE_URL aponta pra "${host ?? "vazio ou inválido"}", não localhost/127.0.0.1/::1. Este seed cria um respondente com token fixo e conhecido — nunca contra um banco que não seja local.`
+    );
+    process.exit(1);
+  }
+}
+
 async function main() {
+  assertLocalDatabaseUrl(process.env.DATABASE_URL);
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   const db = new PrismaClient({
     adapter: new PrismaPg(pool),
