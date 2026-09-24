@@ -82,6 +82,8 @@ SC-002 exige que **rodar o scoring duas vezes sobre o mesmo conjunto de resposta
 - **Evidência a coletar:** tabela comparativa AS-NBZ-001 × AS-NBZ-002 por eixo (score, confidence, spread); screenshot da aba Scoring & Revisão do AS-NBZ-002.
 - **Escreve em prod:** Sim — fecha coleta e computa scoring.
 
+**Nota operacional (Crivo, 2026-09-24, atrito P3):** `closeCollection` não é reexecutável sobre o mesmo assessment — depois do primeiro fechamento o status vira `REVIEW` e o botão "Fechar coleta e rodar scoring" some da tela (não é possível "fechar de novo" pra corrigir algo). Confirmado rodando o E2E local repetidas vezes sem reseedar entre corridas. Se este passo (a) precisar ser refeito em produção — dado incorreto, resposta trocada depois do fechamento — a saída é uma **reavaliação** (`reassessmentOfId`, um novo assessment), não repetir o mesmo `AS-NBZ-002`. Planeje o "vai" do CEO neste passo sabendo que é decisão de mão única.
+
 ### (b) Rodar o mesmo scoring duas vezes — não há ação de recomputar exposta na UI
 
 Verificado no código: `runScoringInTx` (`apps/app/app/(meridian)/actions/scoring.ts:52-56`) é idempotente por construção — o comentário do próprio arquivo (linhas 43–50) diz que "rodar duas vezes sobre as mesmas respostas produz o mesmo estado". Mas essa função só é chamada de dentro de `closeCollection` (`apps/app/app/(meridian)/actions/collection.ts:276`), e a action pública `runScoring` (`scoring.ts:289`) não tem nenhum caller na UI (`grep` confirma zero chamadas fora do próprio arquivo) — não existe botão "recalcular scoring" para um assessment já em revisão. Forçar um segundo fechamento de coleta em produção não é uma ação de produto real, seria contornar a tela.

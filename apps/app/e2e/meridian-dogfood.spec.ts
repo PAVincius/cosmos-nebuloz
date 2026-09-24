@@ -271,3 +271,93 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
     await expect(page.getByText(/Promovido para o SCAFFOLD/)).toBeVisible();
   });
 });
+
+test.describe("Meridian dogfood · M8, amostragem da trilha de auditoria @meridian", () => {
+  test.use({ storageState: meridianStorageState("consultant") });
+
+  // Roteiro (M8) pede filtrar por prefixo "meridian." — não dá: `listAuditLogs`
+  // (actions/audit/index.ts:31) faz match exato em `entityType`, sem
+  // `startsWith`, e o dropdown de `/settings/audit`
+  // (settings/audit/components/audit-log-table.tsx:14-25) só lista entidades
+  // do Cosmos/SAFe (Team, Feature, Epic...) — nenhum valor do Meridian. Única
+  // forma de chegar lá é navegar direto pra URL com `entityType` exato (ex.:
+  // `meridian.assessment`), um valor por vez — atrito registrado. Roda depois
+  // de M1-M9 no mesmo arquivo (`fullyParallel: false`), então a trilha já tem
+  // as entradas reais dessa rodada.
+  test("amostra criação de assessment, atribuição, fechamento de coleta, override e promoção de gap (SC-008)", async ({
+    page,
+  }) => {
+    // Reruns acumulam entradas na mesma janela de 7 dias — `.first()` em
+    // todas, não é "a única entrada", é "existe pelo menos uma". Não dá pra
+    // filtrar por org ("Solaris Digital"/"AS-200") como o roteiro assume: a
+    // tabela (audit-log-table.tsx:157-207) não tem coluna de `target` —
+    // grava o rótulo legível (`metadata.target`, "AS-200 · Solaris
+    // Digital") mas só renderiza `entityId` (cuid ilegível). Atrito
+    // registrado — amostro por tipo de ação, não por qual assessment.
+    await page.goto("/settings/audit?entityType=meridian.assessment&period=7");
+    await expect(
+      page.getByRole("row", { name: /meridian\.assessment\.create/ }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByRole("row", { name: /meridian\.collection\.close/ }).first()
+    ).toBeVisible();
+
+    await page.goto("/settings/audit?entityType=meridian.respondent&period=7");
+    await expect(
+      page.getByRole("row", { name: /meridian\.respondent\.assign/ }).first()
+    ).toBeVisible();
+
+    await page.goto("/settings/audit?entityType=meridian.override&period=7");
+    const overrideRow = page
+      .getByRole("row", { name: /meridian\.override\.register/ })
+      .first();
+    await expect(overrideRow).toBeVisible();
+
+    // gap.promote grava com entityType "meridian.promotion" (o registro
+    // criado), não "meridian.gap" (gaps.ts:436) — cada action escolhe a
+    // entidade que fez mais sentido gravar, não um valor fixo por tela.
+    await page.goto("/settings/audit?entityType=meridian.promotion&period=7");
+    await expect(
+      page.getByRole("row", { name: /meridian\.gap\.promote/ }).first()
+    ).toBeVisible();
+  });
+
+  // FR-038: "a entrada de override mostra o valor antes e depois". O diff
+  // grava certo (`_shared.ts:14`, `AuditDiff = [string,string,string][]`,
+  // formato "[campo, antes, depois]" documentado como deliberadamente
+  // diferente do `Record<string,unknown>` que o Cosmos usa) — mas a tela
+  // genérica de audit log (`formatDiff`, audit-log-table.tsx:42) assume
+  // `Record<string,unknown>` e faz `Object.entries(diff)`. Num array,
+  // `Object.entries` devolve entradas por índice ("0", "1"...), não por
+  // campo — o "antes/depois" não aparece, sai algo como "0: Score
+  // final,50,30" em vez de "Score final: 50 → 30". Não é bug do Meridian
+  // (o diff grava certo), é a tela compartilhada não sabendo ler o formato
+  // do Meridian. Atrito registrado — fixme até alinhar.
+  test.fixme(
+    "override mostra score antes e depois na trilha, não só o índice (FR-038)",
+    async ({ page }) => {
+      await page.goto("/settings/audit?entityType=meridian.override&period=7");
+      const overrideRow = page
+        .getByRole("row", { name: /meridian\.override\.register/ })
+        .first();
+      await expect(overrideRow.getByText(/Score final/)).toBeVisible();
+      await expect(overrideRow.getByText(/→|->/)).toBeVisible();
+    }
+  );
+
+  // `requestEvidenceUrl` (actions/report.ts:264, grava `meridian.evidence.
+  // read` ANTES de emitir a URL assinada) não é chamada por nenhum
+  // componente — mesmo padrão de `createAssessment`/`assignRespondent`
+  // antes da correção em 4cf68a24 (grep confirma zero imports em
+  // apps/app/components e apps/app/app). Não existe botão "ver evidência"
+  // ou "baixar" em nenhuma tela — o consultor nunca aciona essa trilha.
+  // Atrito registrado — SC-008 ("cada pedido de URL de evidência do M3 tem
+  // entrada correspondente") não tem como ser provado, em produção ou
+  // aqui, até a UI existir.
+  test.fixme(
+    "cada pedido de URL de evidência gera entrada meridian.evidence.read (SC-008)",
+    async () => {
+      // Sem UI que chame requestEvidenceUrl — nada a exercitar ainda.
+    }
+  );
+});

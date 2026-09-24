@@ -94,3 +94,31 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
   **Corrigido em 2026-09-24, commit `509071e7`** — `pinPersonaToTenant` no seed apaga qualquer membership da persona em outro tenant logo após o upsert, então a sessão regenerada pelo `globalSetup` (`AUTH_TEST=1`) fica presa no tenant certo. Reseedei (`npx tsx scripts/seed-meridian.ts cosmos-dev`), regenerei a sessão via `globalSetup`, tirei o `test.fixme` de M4-M9 e rodei a suíte inteira de ponta a ponta: `AS-200 Solaris Digital` aparece na carteira, fecha coleta → scoring → contesta Data → override → gap register → plano de 12 meses → relatório com override visível → promove gap pro Scaffold — passa.
 
 ---
+
+**P2** | `/settings/audit` (`audit-log-table.tsx:157-207`) | Roteiro M8 pede filtrar a trilha "por prefixo `meridian.`" — não dá de nenhum jeito: `listAuditLogs` (`actions/audit/index.ts:31`) faz match exato em `entityType`, sem `startsWith`; e o dropdown de filtro (`ENTITY_TYPES`, `audit-log-table.tsx:14-25`) só lista entidades do Cosmos/SAFe (Team, Feature, Epic...) — nenhum valor do Meridian aparece como opção. Única forma de chegar lá é navegar direto pra URL com `entityType` exato (`meridian.assessment`, `meridian.respondent`, `meridian.override`, `meridian.promotion`...), um valor por vez, sabendo de antemão os literais usados em cada action.
+
+  Além disso, a tabela não tem coluna de `target` — cada `logMeridianAudit` grava um rótulo legível em `metadata.target` (ex. "AS-200 · Solaris Digital"), mas a tela só renderiza `entityId` (cuid ilegível) na coluna "Entidade". Dá pra amostrar que o EVENTO aconteceu (ação certa, tipo certo), mas não dá pra saber, olhando a tela, **qual** assessment/gap/respondente sem consultar o banco. `meridian-dogfood.spec.ts` (M8) amostra por tipo de ação, não por org, por causa disso.
+
+  **Dono**: dev Cosmos (tela compartilhada) — adicionar coluna de `target`/metadata legível, e um jeito de filtrar por prefixo ou pelo menos listar os `entityType` do Meridian no dropdown. **Estado**: novo, achado 2026-09-24 escrevendo M8.
+
+---
+
+**P2** | `/settings/audit`, coluna "Detalhe" (`formatDiff`, `audit-log-table.tsx:42-54`) | FR-038 pede que a entrada de override mostre o valor antes e depois. O diff grava certo — `AuditDiff = [string,string,string][]` (`_shared.ts:14`), formato `[campo, antes, depois]`, deliberadamente diferente do `Record<string,unknown>` que o Cosmos usa (comentário do próprio `_shared.ts:33-35` já avisa disso). Mas `formatDiff` assume `Record<string,unknown>` e faz `Object.entries(diff)` — num array, isso itera por índice ("0", "1"...), não por campo. O resultado não é "Score final: 50 → 30", é algo como "0: Score final,50,30". Não é bug do Meridian (o dado grava certo, auditável de verdade no banco); é a tela genérica não sabendo ler o formato que o próprio time documentou como intencionalmente diferente. Marquei `test.fixme` em `meridian-dogfood.spec.ts` (M8) pra esse caso específico, esperando o texto correto — hoje ele não aparece.
+
+  **Dono**: dev Cosmos (tela compartilhada) — ou `formatDiff` aprende a reconhecer array de triplas, ou o Meridian passa a gravar `Record<string,unknown>` (mas aí perde a ordem/semântica documentada do formato "campo, antes, depois"). **Estado**: novo, achado 2026-09-24 escrevendo M8.
+
+---
+
+**P2** | `requestEvidenceUrl` (`actions/report.ts:264`, grava `meridian.evidence.read` **antes** de emitir a URL assinada — pensado pra SC-008) | Mesmo padrão do atrito P0 original (`createAssessment`/`assignRespondent` antes de `4cf68a24`): a action existe, grava auditoria corretamente, mas **nenhum componente a chama** (`grep -rn "requestEvidenceUrl" apps/app/components apps/app/app` só acha a própria definição e um import não usado em `scaffold/actions/steps.ts`). Não existe botão "ver evidência" ou "baixar" em nenhuma tela do Meridian — o consultor nunca aciona essa trilha, nem aqui nem em produção. SC-008 ("cada pedido de URL de evidência do M3 tem entrada correspondente") não tem como ser provado até essa UI existir. Marquei `test.fixme` em M8 apontando pra cá.
+
+  **Dono**: Bussola. **Estado**: novo, achado 2026-09-24 escrevendo M8.
+
+---
+
+**P3** | `closeCollection` (`actions/collection.ts:230-271`) | Não é idempotente por design — fecha a coleta uma vez (`status: DRAFT/COLLECTING → REVIEW`) e computa o scoring na mesma transação; rodar de novo sobre o mesmo assessment já fechado falha (o botão "Fechar coleta e rodar scoring" nem aparece mais depois do primeiro fechamento, a aba já mostra "Em revisão"). Descoberto rodando `meridian-dogfood.spec.ts` (M4-M9) repetidas vezes sem reseedar entre corridas — a segunda tentativa trava esperando um botão que não existe mais. Não é bug: reabrir uma coleta já fechada e já com scoring/override em cima seria reescrever histórico, o que o design append-only do Meridian recusa de propósito.
+
+  Efeito prático: em produção, **não dá pra "re-rodar" o passo M4 do roteiro** sobre o mesmo `AS-NBZ-002` depois que a coleta fecha uma vez — qualquer correção de dado exige reavaliação nova (`reassessmentOfId`), não repetição do mesmo fechamento. Nota adicionada no roteiro (M4) pra próxima vez que alguém operar isso em produção não tentar fechar coleta duas vezes esperando idempotência.
+
+  **Dono**: n/a — comportamento correto, registrado só como nota operacional. **Estado**: documentado 2026-09-24, sem ação pendente.
+
+---
