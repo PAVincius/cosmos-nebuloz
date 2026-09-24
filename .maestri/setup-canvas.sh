@@ -40,7 +40,8 @@ have() { "$M" list 2>/dev/null | grep -qF "$1"; }
 hire() { # $1=nome $2=papel $3=modelo [$4...]=flags extras
   local n="$1" r="$2" m="$3"; shift 3
   have "$n" && { echo "= $n já existe"; return; }
-  "$M" recruit "$n" --role "$r" --command "claude --model $m" "$@"
+  # --add-dir: o agente roda em .maestri/roles/<id>; sem isso o repo é "fora da pasta" e cada leitura trava num prompt.
+  "$M" recruit "$n" --role "$r" --command "claude --model $m --add-dir $PWD" "$@"
 }
 floor() { "$M" floor list 2>/dev/null | grep -qF "$1" || "$M" floor create "$@"; }
 # Copia skills revisadas (.maestri/skills, ver README) para a pasta do papel: só aquele agente as carrega.
