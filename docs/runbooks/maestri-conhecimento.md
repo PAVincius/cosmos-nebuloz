@@ -9,11 +9,12 @@ Tudo abaixo roda de um terminal com Modo Maestro ligado, na raiz do repositório
 
 Antes da primeira execução, rode `maestri note --help` num terminal Maestro e use a forma que ele aceitar — as duas abaixo cobrem os dois formatos possíveis.
 
-Uma note por produto, mais a do Maestro. Se `maestri note create` receber
-conteúdo por `--file`:
+Uma note por produto — meridian, charter, scaffold, cosmos, backoffice e
+signal —, mais a da plataforma (infra compartilhada) e a do Maestro. Se
+`maestri note create` receber conteúdo por `--file`:
 
 ```bash
-for p in meridian charter scaffold cosmos plataforma signal; do
+for p in meridian charter scaffold cosmos backoffice plataforma signal; do
   maestri note create "$p" --file ".maestri/knowledge/$p/note.md"
 done
 maestri note create "maestro" --file ".maestri/knowledge/maestro/mapa.md"
@@ -22,7 +23,7 @@ maestri note create "maestro" --file ".maestri/knowledge/maestro/mapa.md"
 Se receber por argumento:
 
 ```bash
-for p in meridian charter scaffold cosmos plataforma signal; do
+for p in meridian charter scaffold cosmos backoffice plataforma signal; do
   maestri note create "$p" "$(cat ".maestri/knowledge/$p/note.md")"
 done
 maestri note create "maestro" "$(cat .maestri/knowledge/maestro/mapa.md)"
@@ -50,11 +51,13 @@ se o floor `--no-git` não compartilhar o checkout. Conferir com
 
 **Não crie a rotina antes de decidir o versionamento dos `graph.json`.** Cada refresh regenera ~24 MB de recortes mais o grafo mestre de ~36 MB; a spec §3.3 manda versionar tudo, e essa decisão está sendo revista (candidato: ignorar só os `graph.json`, versionar os `.md`). Ligar a rotina antes torna o custo de histórico irreversível.
 
+**`graphify update .` não entra na rotina.** Em 2026-09-22 o `graphify update .` (v0.9.20, só AST) reconstruiu o mestre de 35 243 para 23 697 nós: descartou os nós semânticos extraídos de documentação (o `CHANGELOG.md` caiu de 1 127 para 4) e sobrescreveu `graphify-out/graph.json`, deixando só um backup em `graphify-out/<data>/`. A guarda de "menos nós" não disparou. Atualizar o mestre é passo manual, com `/graphify --update` (extração semântica), conferindo a contagem de nós antes de commitar. A rotina só recorta o mestre versionado.
+
 ```bash
 maestri routine create "refresh-conhecimento" \
   --daily 06:00 \
   --terminal "conhecimento" \
-  --command "graphify update . && pnpm knowledge:refresh && for p in meridian charter scaffold cosmos plataforma signal; do maestri note write \"\$p\" --file \".maestri/knowledge/\$p/note.md\"; done && maestri note write maestro --file .maestri/knowledge/maestro/mapa.md"
+  --command "pnpm knowledge:refresh && for p in meridian charter scaffold cosmos backoffice plataforma signal; do maestri note write \"\$p\" --file \".maestri/knowledge/\$p/note.md\"; done && maestri note write maestro --file .maestri/knowledge/maestro/mapa.md"
 ```
 
 Ajustar `--file` para a forma confirmada no passo 1. Testar uma vez, sem
@@ -66,9 +69,9 @@ maestri routine run "refresh-conhecimento"
 
 ## 4. O que a rotina respeita
 
-- `graphify update` sem `--force`: se o rebuild vier com menos nós, o
-  graphify recusa, o exportador roda com o mestre anterior, e o
-  `refresh-<data>.md` registra a contagem.
+- O grafo mestre não muda na rotina (ver §3): o exportador recorta o
+  `graphify-out/graph.json` versionado, e recorte com menos de 20 nós vira
+  aviso na note e no `refresh-<data>.md`.
 - As seções `## Estado de tarefa` e `## Obstáculos` de cada note sobrevivem
   ao `note write`, porque o exportador as lê do `.maestri/knowledge/<produto>/note.md`
   atual (o arquivo do repositório, não a note do canvas) e as reinjeta no
@@ -81,7 +84,7 @@ maestri routine run "refresh-conhecimento"
 
 | Sintoma | Causa provável | Ação |
 |---|---|---|
-| Produto com menos de 20 nós no relatório | prefixo errado em `scripts/knowledge/produtos.mts` | corrigir a tabela, rodar `pnpm test:knowledge`, refresh |
+| Produto com menos de 20 nós no relatório | prefixo errado em `scripts/knowledge/produtos.mts`, ou o mestre é anterior ao código (o Signal entrou em 2026-09-04; o mestre é de 2026-09-03) | corrigir a tabela e rodar `pnpm test:knowledge`; se o prefixo está certo, atualizar o mestre com `/graphify --update`; refresh |
 | `nao-roteados.md` crescendo | completion nova sem palavra-chave | acrescentar termo em `PALAVRAS_CHAVE` ou aceitar como compartilhado |
 | note perdeu o "Estado de tarefa" | alguém apagou a seção à mão | a rotina recria vazia e avisa no `refresh-<data>.md` |
-| `graphify` recusa o rebuild | rebuild com menos nós | não forçar; investigar o que sumiu do código |
+| mestre com muito menos nós depois de um update | `graphify update` só AST descartou os nós semânticos | restaurar com `git checkout -- graphify-out && git clean -fdq graphify-out` (há backup em `graphify-out/<data>/`); atualizar com `/graphify --update` |

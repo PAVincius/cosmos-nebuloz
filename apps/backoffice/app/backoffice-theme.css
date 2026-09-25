@@ -272,10 +272,39 @@
   min-width: 880px;
 }
 
+/* Grades de editor: o que se edita à esquerda, o que acompanha à direita —
+   o painel de propriedades do BPMN (300px fixos), a prévia do Mermaid, a
+   coluna lateral do registro de IP. Eram `gridTemplateColumns` inline, e a
+   375px o canvas do BPMN ficava com 43px. No estreito empilham; o canvas do
+   BPMN guarda altura própria, e o painel vem embaixo com a dele. */
+.bo-com-painel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  height: 560px;
+}
+
+.bo-editor-e-previa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+}
+
+.bo-form-e-lateral {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+}
+
 @media (max-width: 1023px) {
   .bo-duas-colunas,
-  .bo-tres-colunas {
+  .bo-tres-colunas,
+  .bo-editor-e-previa,
+  .bo-form-e-lateral {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bo-com-painel {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 420px auto;
+    height: auto;
   }
 
   .bo-kpis,

@@ -6,6 +6,7 @@ import type { MeridianAssessmentStatus } from "@repo/database";
 import {
   Avatar,
   Badge,
+  Button,
   KpiCard,
   PageHeader,
   Progress,
@@ -14,21 +15,32 @@ import {
   type Tone,
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   type AssessmentRow,
+  createAssessment,
   listAssessments,
+  listTemplates,
+  type TemplateOption,
 } from "@/app/(meridian)/actions/assessments";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
 import { finalOf, scoreTone } from "@/lib/meridian/composite";
+import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
+  Field,
   FilterChips,
+  Input,
+  ModalProvider,
+  ModalShell,
   ScreenError,
+  Select,
   SkeletonCard,
   SmartEmptyState,
   TableHead,
   TableRow,
+  useFieldId,
   useMeridianData,
+  useModal,
 } from "../base";
 
 const COLS = "1.4fr 100px 130px 1.2fr 110px 110px";
@@ -50,8 +62,166 @@ const dateBR = (iso: string) =>
     year: "numeric",
   });
 
-export default function AssessmentsScreen() {
+function NewAssessmentModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: (id: string) => void;
+}) {
+  const orgNameId = useFieldId("new-assessment-org-name");
+  const sectorId = useFieldId("new-assessment-sector");
+  const sizeBandId = useFieldId("new-assessment-size-band");
+  const [templates, setTemplates] = useState<TemplateOption[] | null>(null);
+  const [orgName, setOrgName] = useState("");
+  const [sector, setSector] = useState("");
+  const [sizeBand, setSizeBand] = useState("");
+  const [templateId, setTemplateId] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [benchmarkOptIn, setBenchmarkOptIn] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    listTemplates().then((res) => {
+      if (res.ok) {
+        setTemplates(res.data);
+        if (res.data[0]) {
+          setTemplateId(res.data[0].id);
+        }
+      } else {
+        setTemplates([]);
+      }
+    });
+  }, []);
+
+  const valid =
+    orgName.trim().length > 0 &&
+    sector.trim().length > 0 &&
+    sizeBand.trim().length > 0 &&
+    templateId.length > 0 &&
+    deadline.length > 0;
+
+  const submit = async () => {
+    setBusy(true);
+    const res = await runWithToast(
+      () =>
+        createAssessment({
+          orgName,
+          sector,
+          sizeBand,
+          templateId,
+          deadline,
+          benchmarkOptIn,
+        }),
+      {
+        loading: "Criando assessment…",
+        success: (d) => `${d.code} criado — segue pra atribuição de coleta.`,
+      }
+    );
+    setBusy(false);
+    if (res.ok) {
+      onCreated(res.data.id);
+    }
+  };
+
+  return (
+    <ModalShell
+      footer={
+        <>
+          <Button onClick={onClose} variant="ghost">
+            Cancelar
+          </Button>
+          <Button disabled={!valid || busy} icon="check" onClick={submit}>
+            Criar assessment
+          </Button>
+        </>
+      }
+      icon="plus"
+      onClose={onClose}
+      subtitle="Congela a versão do template no primeiro uso — mudar peso depois não reescreve um diagnóstico já aberto."
+      title="Novo assessment"
+      width={560}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          padding: 20,
+        }}
+      >
+        <Field htmlFor={orgNameId} label="Organização">
+          <Input
+            id={orgNameId}
+            onChange={(e) => setOrgName(e.target.value)}
+            placeholder="Vanta Saúde"
+            value={orgName}
+          />
+        </Field>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+        >
+          <Field htmlFor={sectorId} label="Setor">
+            <Input
+              id={sectorId}
+              onChange={(e) => setSector(e.target.value)}
+              placeholder="Saúde"
+              value={sector}
+            />
+          </Field>
+          <Field htmlFor={sizeBandId} label="Porte">
+            <Input
+              id={sizeBandId}
+              onChange={(e) => setSizeBand(e.target.value)}
+              placeholder="200–1.000"
+              value={sizeBand}
+            />
+          </Field>
+        </div>
+        <Field label="Template">
+          <Select
+            ariaLabel="Template"
+            onChange={setTemplateId}
+            options={(templates ?? []).map((t) => ({
+              value: t.id,
+              label: `${t.name} · ${t.version}`,
+            }))}
+            value={templateId}
+          />
+        </Field>
+        <Field label="Prazo">
+          <Input
+            aria-label="Prazo"
+            onChange={(e) => setDeadline(e.target.value)}
+            type="date"
+            value={deadline}
+          />
+        </Field>
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 12.5,
+            fontWeight: 600,
+            color: "var(--ink-muted)",
+          }}
+        >
+          <input
+            checked={benchmarkOptIn}
+            onChange={(e) => setBenchmarkOptIn(e.target.checked)}
+            type="checkbox"
+          />
+          Contribuir para o pool de benchmark (anônimo, reversível)
+        </label>
+      </div>
+    </ModalShell>
+  );
+}
+
+function AssessmentsBody() {
   const router = useRouter();
+  const modal = useModal();
   const [status, setStatus] = useState<"all" | MeridianAssessmentStatus>("all");
 
   const fetcher = useCallback(
@@ -86,7 +256,25 @@ export default function AssessmentsScreen() {
         eyebrow="Diagnose · carteira"
         subtitle="Coleta multi-respondente, scoring assistido e plano sequenciado — um diagnóstico por vez."
         title="Assessments"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() =>
+            modal.open(
+              <NewAssessmentModal
+                onClose={modal.close}
+                onCreated={(id) => {
+                  modal.close();
+                  reload();
+                  router.push(`/meridian/assessment/${id}`);
+                }}
+              />
+            )
+          }
+        >
+          Novo assessment
+        </Button>
+      </PageHeader>
 
       <div
         style={{
@@ -352,5 +540,13 @@ export default function AssessmentsScreen() {
         )}
       </SectionCard>
     </div>
+  );
+}
+
+export default function AssessmentsScreen() {
+  return (
+    <ModalProvider>
+      <AssessmentsBody />
+    </ModalProvider>
   );
 }

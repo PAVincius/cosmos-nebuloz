@@ -62,7 +62,7 @@ export default function NaoEncontradoRaiz() {
           ser antigo, ou o endereço foi digitado com um caminho que não existe.
         </p>
         <Link
-          href="/home"
+          href="/"
           style={{
             alignSelf: "flex-start",
             marginTop: 4,

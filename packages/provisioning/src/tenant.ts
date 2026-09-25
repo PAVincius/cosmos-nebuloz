@@ -17,6 +17,9 @@ export type ProvisionTenantInput = {
   }[];
   actorUserId: string;
   actorName?: string | null;
+  /** `false` no autocadastro: quem cria é o próprio cliente, e a trilha não
+   *  pode pô-lo em "Atividade do staff". Ver `PlatformAuditEntry`. */
+  platformStaff?: boolean;
 };
 
 export type ProvisionTenantResult = {
@@ -94,6 +97,7 @@ export async function provisionTenant(
         expiresAt: mod.expiresAt,
         actorUserId: input.actorUserId,
         actorName: input.actorName,
+        platformStaff: input.platformStaff,
       });
     }
 
@@ -106,6 +110,7 @@ export async function provisionTenant(
       entityId: tenant.id,
       target: tenant.slug,
       note: owner ? `dono ${email}` : `convite pendente para ${email}`,
+      platformStaff: input.platformStaff,
     });
 
     return {

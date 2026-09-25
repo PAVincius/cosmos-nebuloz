@@ -31,6 +31,8 @@ export type ContractModuleInput = {
   expiresAt?: Date | null;
   actorUserId: string;
   actorName?: string | null;
+  /** Ver `PlatformAuditEntry.platformStaff`. */
+  platformStaff?: boolean;
 };
 
 async function requireTenant(db: ModuleDb, tenantId: string) {
@@ -89,6 +91,7 @@ export async function contractModule(
     entityType: "TenantModule",
     entityId: row.id,
     target: `${tenant.slug} · ${input.module}`,
+    platformStaff: input.platformStaff,
   });
 
   return row;

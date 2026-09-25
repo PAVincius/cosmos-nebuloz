@@ -30,9 +30,7 @@ export type EstadoDoProduto =
   | "SUSPENSO"
   | "CANCELADO"
   /** Venceu por `expiresAt`, mesmo com status que concederia. */
-  | "EXPIRADO"
-  /** Contratado e vigente, mas o produto ainda não tem tela neste app. */
-  | "SEM_ROTA";
+  | "EXPIRADO";
 
 export type ProdutoNoPainel = {
   modulo: ProductModule;
@@ -49,13 +47,10 @@ export type ProdutoNoPainel = {
   assentos: number | null;
 };
 
-/** Catálogo fixo: nome, resumo e a rota que existe neste app.
- *
- *  `href: null` em SIGNAL não é esquecimento — o produto não tem rota aqui, e
- *  inventar uma levaria a um 404 com cara de bug. */
+/** Catálogo fixo: nome, resumo e a rota que existe neste app. */
 const CATALOGO: Record<
   ProductModule,
-  { nome: string; resumo: string; href: string | null }
+  { nome: string; resumo: string; href: string }
 > = {
   COSMOS: {
     nome: "Cosmos",
@@ -69,8 +64,8 @@ const CATALOGO: Record<
   },
   SIGNAL: {
     nome: "Signal",
-    resumo: "Métrica de carteira que exige pipeline de dados.",
-    href: null,
+    resumo: "Valor realizado de IA — adoção, ROI com confiança, veredito.",
+    href: "/signal",
   },
   MERIDIAN: {
     nome: "Meridian",
@@ -85,8 +80,7 @@ const CATALOGO: Record<
 };
 
 // Ordem do funil: diagnosticar (Meridian) → adotar (Scaffold) → governar
-// (Charter) → operar (Cosmos) → medir (Signal). O Signal fica por último
-// porque é o único ainda sem rota neste app.
+// (Charter) → operar (Cosmos) → medir (Signal).
 const ORDEM: ProductModule[] = [
   "COSMOS",
   "CHARTER",
@@ -165,17 +159,6 @@ export async function listarProdutos() {
       if (!abre) {
         const { estado, motivo } = explicarAusencia(linha);
         return { ...comum, href: null, estado, motivo };
-      }
-
-      // Contratado e vigente, mas sem tela neste app. Estado próprio: dizer
-      // "disponível" e não ter para onde ir é pior que dizer que falta.
-      if (!href) {
-        return {
-          ...comum,
-          href: null,
-          estado: "SEM_ROTA" as const,
-          motivo: "Contratado. Ainda não tem tela nesta plataforma.",
-        };
       }
 
       return {

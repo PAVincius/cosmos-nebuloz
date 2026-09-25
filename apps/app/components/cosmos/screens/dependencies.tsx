@@ -8,14 +8,12 @@ import {
   KpiCard,
   PageHeader,
   useAction,
-  useThemeName,
 } from "@repo/design-system/cosmos/kit";
 // dependencies.tsx — Dependências, wired to listDependencies(). Lists real
 // DependencyLink rows (blocking → blocked feature) with status + critical-path
 // flag, now with team attribution (Feature.assignedTeamId → Team, resolved
 // tenant-scoped by the action), a portfolio KPI row, and a "Por time" filter.
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   createDependency,
   type DependencyView,
@@ -30,6 +28,7 @@ import {
   nextBoardStatus,
 } from "@/app/(cosmos)/actions/dependencies.constants";
 import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
+import { CosmosPortal } from "../cosmos-portal";
 import { EmptyState } from "../empty-state";
 import {
   ModalCard,
@@ -70,13 +69,15 @@ function FeatureBox({ label, hint }: { label: string; hint: string }) {
         background: "var(--surface-3)",
         borderRadius: "var(--r-md)",
         flex: 1,
-        fontSize: 12,
+        fontSize: "var(--fs-base)",
         minWidth: 0,
         padding: "8px 10px",
       }}
     >
       <div style={{ fontWeight: 700 }}>{label}</div>
-      <div style={{ color: "var(--ink-faint)", fontSize: 10.5 }}>{hint}</div>
+      <div style={{ color: "var(--ink-faint)", fontSize: "var(--fs-nota)" }}>
+        {hint}
+      </div>
     </div>
   );
 }
@@ -153,7 +154,12 @@ function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
         footer={
           confirmandoSaida ? (
             <>
-              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
+              >
                 Descartar o que você preencheu?
               </span>
               <div style={{ display: "flex", gap: 10 }}>
@@ -218,7 +224,7 @@ function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
             >
               <div
                 style={{
-                  fontSize: 13,
+                  fontSize: "var(--fs-base)",
                   fontWeight: 600,
                   lineHeight: 1.4,
                   marginBottom: 14,
@@ -323,7 +329,13 @@ function TeamPill({ name, color }: { name: string; color: string | null }) {
           width: 7,
         }}
       />
-      <span style={{ color: "var(--ink)", fontSize: 11.5, fontWeight: 700 }}>
+      <span
+        style={{
+          color: "var(--ink)",
+          fontSize: "var(--fs-nota)",
+          fontWeight: 700,
+        }}
+      >
         {name}
       </span>
     </span>
@@ -392,7 +404,13 @@ function DepCard({
           </span>
         )}
       </div>
-      <div style={{ color: "var(--ink)", fontSize: 13.5, fontWeight: 600 }}>
+      <div
+        style={{
+          color: "var(--ink)",
+          fontSize: "var(--fs-base)",
+          fontWeight: 600,
+        }}
+      >
         {d.title}
       </div>
       <div style={{ alignItems: "center", display: "flex", gap: 10 }}>
@@ -409,7 +427,7 @@ function DepCard({
         style={{
           borderTop: "1px solid var(--hairline)",
           color: "var(--ink-faint)",
-          fontSize: 11.5,
+          fontSize: "var(--fs-nota)",
           paddingTop: 8,
         }}
       >
@@ -425,7 +443,7 @@ const chipStyle = (on: boolean) => ({
   borderRadius: 99,
   color: on ? "var(--accent-text)" : "var(--ink-muted)",
   cursor: "pointer",
-  fontSize: 11.5,
+  fontSize: "var(--fs-nota)",
   fontWeight: 600,
   padding: "5px 10px",
 });
@@ -441,7 +459,6 @@ function TeamFilterPopover({
   onChange: (next: Set<string>) => void;
   btnRect: DOMRect;
 }) {
-  const themeName = useThemeName();
   const toggle = (id: string) => {
     const next = new Set(selected);
     if (next.has(id)) {
@@ -451,65 +468,71 @@ function TeamFilterPopover({
     }
     onChange(next);
   };
-  return createPortal(
-    <div
-      data-dependency-team-filter
-      data-theme={themeName}
-      style={{
-        background: "var(--surface-3)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
-        left: Math.max(8, btnRect.right - 240),
-        padding: 14,
-        position: "fixed",
-        top: btnRect.bottom + 8,
-        width: 240,
-        zIndex: 400,
-      }}
-    >
+  return (
+    <CosmosPortal>
       <div
+        data-dependency-team-filter
         style={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 10,
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-md)",
+          boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+          left: Math.max(8, btnRect.right - 240),
+          padding: 14,
+          position: "fixed",
+          top: btnRect.bottom + 8,
+          width: 240,
+          zIndex: 400,
         }}
       >
-        <span style={{ color: "var(--ink)", fontSize: 12.5, fontWeight: 700 }}>
-          Filtrar por time
-        </span>
-        {selected.size > 0 && (
-          <button
-            onClick={() => onChange(new Set())}
+        <div
+          style={{
+            alignItems: "center",
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 10,
+          }}
+        >
+          <span
             style={{
-              background: "none",
-              border: "none",
-              color: "var(--accent)",
-              cursor: "pointer",
-              fontSize: 11,
+              color: "var(--ink)",
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
             }}
-            type="button"
           >
-            Limpar
-          </button>
-        )}
+            Filtrar por time
+          </span>
+          {selected.size > 0 && (
+            <button
+              onClick={() => onChange(new Set())}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--accent)",
+                cursor: "pointer",
+                fontSize: "var(--fs-nota)",
+                fontWeight: 700,
+              }}
+              type="button"
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {options.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => toggle(o.id)}
+              style={chipStyle(selected.has(o.id))}
+              type="button"
+            >
+              {o.name}
+            </button>
+          ))}
+        </div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-        {options.map((o) => (
-          <button
-            key={o.id}
-            onClick={() => toggle(o.id)}
-            style={chipStyle(selected.has(o.id))}
-            type="button"
-          >
-            {o.name}
-          </button>
-        ))}
-      </div>
-    </div>,
-    document.body
+    </CosmosPortal>
   );
 }
 

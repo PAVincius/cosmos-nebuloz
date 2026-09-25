@@ -27,9 +27,16 @@ export async function listAuditLogs(
     const filters = AuditFiltersSchema.parse(raw ?? {});
     const { skip, take } = paginationArgs(filters.page, filters.limit);
 
+    // entityType terminado em "." é prefixo (ex.: "meridian.") — cada produto
+    // grava vários entityType concretos sob o mesmo prefixo, sem um valor
+    // fixo por tela (ver atrito registrado por Meridian dogfood M8).
+    const entityTypeFilter = filters.entityType?.endsWith(".")
+      ? { startsWith: filters.entityType }
+      : filters.entityType;
+
     const where = {
       tenantId: ctx.tenantId,
-      ...(filters.entityType ? { entityType: filters.entityType } : {}),
+      ...(entityTypeFilter ? { entityType: entityTypeFilter } : {}),
       ...(filters.userId ? { userId: filters.userId } : {}),
       ...(filters.action ? { action: filters.action } : {}),
       ...(filters.from || filters.to

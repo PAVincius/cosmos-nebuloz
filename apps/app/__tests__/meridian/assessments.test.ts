@@ -15,6 +15,7 @@ const h = vi.hoisted(() => ({
   responseCount: vi.fn(),
   respondentFindMany: vi.fn(),
   templateFindFirst: vi.fn(),
+  templateFindMany: vi.fn(),
   templateUpdate: vi.fn(),
   sequenceUpsert: vi.fn(),
   auditCreate: vi.fn(),
@@ -58,6 +59,7 @@ vi.mock("@repo/database", () => ({
       meridianRespondent: { findMany: h.respondentFindMany },
       meridianTemplate: {
         findFirst: h.templateFindFirst,
+        findMany: h.templateFindMany,
         update: h.templateUpdate,
       },
       meridianSequence: { upsert: h.sequenceUpsert },
@@ -68,6 +70,7 @@ vi.mock("@repo/database", () => ({
 import {
   createAssessment,
   listAssessments,
+  listTemplates,
 } from "@/app/(meridian)/actions/assessments";
 
 const CTX = {
@@ -122,6 +125,36 @@ beforeEach(() => {
   h.assessmentCreate.mockResolvedValue({ id: "a2", code: "AS-104" });
   h.templateUpdate.mockResolvedValue({});
   h.auditCreate.mockResolvedValue({});
+  h.templateFindMany.mockResolvedValue([
+    { id: TPL_ID, name: "Diagnose padrão", version: "v3.2" },
+  ]);
+});
+
+describe("listTemplates", () => {
+  it("filtra pelo tenant da sessão", async () => {
+    await listTemplates();
+    const args = h.templateFindMany.mock.calls[0]?.[0] as {
+      where: Record<string, unknown>;
+    };
+    expect(args.where.tenantId).toBe("t1");
+  });
+
+  it("devolve id, nome e versão", async () => {
+    const res = await listTemplates();
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data[0]).toEqual({
+      id: TPL_ID,
+      name: "Diagnose padrão",
+      version: "v3.2",
+    });
+  });
+
+  it("exige a permissão de conduzir assessment", async () => {
+    h.requirePerm.mockRejectedValue(new Error("Requer papel Consultor"));
+    const res = await listTemplates();
+    expect(res.ok).toBe(false);
+    expect(h.templateFindMany).not.toHaveBeenCalled();
+  });
 });
 
 describe("listAssessments", () => {
@@ -170,12 +203,14 @@ describe("listAssessments", () => {
 });
 
 describe("createAssessment", () => {
+  const FUTURE_DEADLINE = new Date(Date.now() + 30 * 86_400_000).toISOString();
+
   const input = {
     orgName: "Helix Agro",
     sector: "Agronegócio",
     sizeBand: "200–1.000",
     templateId: TPL_ID,
-    deadline: "2026-09-15T00:00:00.000Z",
+    deadline: FUTURE_DEADLINE,
     benchmarkOptIn: true,
   };
 
@@ -230,6 +265,21 @@ describe("createAssessment", () => {
     h.requirePerm.mockRejectedValue(new Error("Requer papel Consultor"));
     const res = await createAssessment(input);
     expect(res.ok).toBe(false);
+    expect(h.assessmentCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa prazo no passado — nasceria com o token do respondente já expirado", async () => {
+    h.templateFindFirst.mockResolvedValue({
+      id: TPL_ID,
+      version: "v3.2",
+      lockedAt: null,
+    });
+    const res = await createAssessment({
+      ...input,
+      deadline: "2020-01-01T00:00:00.000Z",
+    });
+    expect(res.ok).toBe(false);
+    expect(res.ok || res.error).toMatch(/futuro/);
     expect(h.assessmentCreate).not.toHaveBeenCalled();
   });
 });

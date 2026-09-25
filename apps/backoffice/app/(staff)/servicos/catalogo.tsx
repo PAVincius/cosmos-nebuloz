@@ -84,6 +84,12 @@ function acaoDaLinha(
   );
 }
 
+/** "SV-01 · Kickoff saiu do catálogo." — o fim de tirar/devolver. */
+function fraseDaTroca(s: ServiceRow | undefined, ativo: boolean): string {
+  const nome = s ? `${s.codigo} · ${s.nome}` : "Serviço";
+  return ativo ? `${nome} voltou ao catálogo.` : `${nome} saiu do catálogo.`;
+}
+
 /** Quem só lê vê "Ativo" no lugar da ação; o inativo já tem a palavra na
  *  própria linha, então aqui não repete. */
 function badgeDeLeitura(s: ServiceRow) {
@@ -228,22 +234,30 @@ export function Catalogo({
   // Id da linha cuja chamada está no ar: dois cliques rápidos em Devolver
   // eram duas chamadas.
   const [alternandoId, setAlternandoId] = useState<string | null>(null);
-  const alternar = useCallback(async (id: string, ativo: boolean) => {
-    setErro(null);
-    setAlternandoId(id);
-    try {
-      const res = await setServiceAtivoAction({ id, ativo });
-      if (res.ok) {
-        setLista((atual) =>
-          atual.map((s) => (s.id === id ? { ...s, ativo } : s))
-        );
-      } else {
-        setErro(res.error);
+  const alternar = useCallback(
+    async (id: string, ativo: boolean) => {
+      setErro(null);
+      setConfirmacao(null);
+      setAlternandoId(id);
+      const alvo = lista.find((s) => s.id === id);
+      try {
+        const res = await setServiceAtivoAction({ id, ativo });
+        if (res.ok) {
+          setLista((atual) =>
+            atual.map((s) => (s.id === id ? { ...s, ativo } : s))
+          );
+          // Sem isto a linha só esmaecia (ou voltava) — e quem não olhou para
+          // ela não sabia se tirou o serviço certo.
+          setConfirmacao(fraseDaTroca(alvo, ativo));
+        } else {
+          setErro(res.error);
+        }
+      } finally {
+        setAlternandoId(null);
       }
-    } finally {
-      setAlternandoId(null);
-    }
-  }, []);
+    },
+    [lista]
+  );
 
   const falta = [
     form.codigo.trim().length < 2 ? "código" : null,

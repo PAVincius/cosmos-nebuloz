@@ -99,6 +99,16 @@ describe("listAuditLogs", () => {
     const whereArg = mocks.auditLogFindMany.mock.calls[0][0].where;
     expect(whereArg.entityType).toBe("epic");
   });
+
+  it("treats an entityType ending in '.' as a startsWith prefix", async () => {
+    mocks.auditLogFindMany.mockResolvedValue([]);
+    mocks.auditLogCount.mockResolvedValue(0);
+
+    await listAuditLogs({ entityType: "meridian." });
+
+    const whereArg = mocks.auditLogFindMany.mock.calls[0][0].where;
+    expect(whereArg.entityType).toEqual({ startsWith: "meridian." });
+  });
 });
 
 // ─── getAuditLogsByEntity ─────────────────────────────────────────────────────

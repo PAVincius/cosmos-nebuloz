@@ -67,32 +67,34 @@ describe("contrato de módulo", () => {
     );
   }
 
-  it("os botões dizem Ativo / Trial / Suspenso / Cancelado, não o enum", async () => {
+  // Onda 9b: um `<select>` por módulo; as opções levam o rótulo, o valor
+  // continua o enum.
+  const selectDoCosmos = () =>
+    screen.getByRole("combobox", { name: /Cosmos/ }) as HTMLSelectElement;
+
+  it("as opções dizem Ativo / Trial / Suspenso / Cancelado, não o enum", async () => {
     await montar("ACTIVE");
 
-    expect(screen.getByRole("button", { name: /Ativo/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Trial/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Suspenso" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Cancelado" })).toBeTruthy();
+    const textos = Array.from(selectDoCosmos().options).map((o) => o.text);
+    expect(textos).toEqual(["Ativo", "Trial", "Suspenso", "Cancelado"]);
     for (const cru of ["ACTIVE", "TRIAL", "SUSPENDED", "CANCELED"]) {
-      expect(screen.queryByRole("button", { name: cru })).toBeNull();
+      expect(screen.queryByText(cru)).toBeNull();
     }
   });
 
   it("o status atual também aparece com rótulo humano", async () => {
     await montar("SUSPENDED");
 
-    // Segunda célula da linha é o status atual; a terceira, os botões.
-    const [, statusAtual] = screen.getAllByRole("cell");
-    expect(statusAtual.textContent).toBe("Suspenso");
-    expect(screen.queryByText("SUSPENDED")).toBeNull();
+    const select = selectDoCosmos();
+    expect(select.value).toBe("SUSPENDED");
+    expect(select.selectedOptions[0].text).toBe("Suspenso");
   });
 
   it("a action continua recebendo o enum", async () => {
     mocks.contractModuleAction.mockResolvedValue({ ok: true, data: {} });
     await montar("ACTIVE");
 
-    fireEvent.click(screen.getByRole("button", { name: /Trial/ }));
+    fireEvent.change(selectDoCosmos(), { target: { value: "TRIAL" } });
     // Ativar também passa pela barreira (crítica rodada 4).
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 

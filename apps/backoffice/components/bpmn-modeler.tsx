@@ -223,11 +223,9 @@ export function BpmnModeler({
       </div>
 
       <div
+        className="bo-com-painel"
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 300px",
           gap: 0,
-          height: 560,
           borderRadius: "var(--r-lg)",
           border: "1px solid var(--hairline)",
           overflow: "hidden",

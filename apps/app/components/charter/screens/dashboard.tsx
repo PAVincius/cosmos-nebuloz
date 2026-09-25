@@ -430,7 +430,9 @@ function DashboardInner() {
                         color: `var(--${u.riskTone}-text)`,
                       }}
                     >
-                      {u.score} · {u.riskLabel}
+                      {u.score === null
+                        ? u.riskLabel
+                        : `${u.score} · ${u.riskLabel}`}
                     </span>
                     {/* Cor + palavra: "sem revisor" escrito, não só vermelho. */}
                     <span

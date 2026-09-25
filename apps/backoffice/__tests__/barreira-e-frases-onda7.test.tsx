@@ -94,12 +94,19 @@ describe("ModuleForm — ativar também passa pela barreira", () => {
     );
   }
 
+  // Onda 9b: o status é um `<select>` por módulo que abre a barreira; o
+  // rótulo da pergunta é verbo ("Ativar Cosmos") e o alvo é o cliente.
+  const escolher = (valor: string) =>
+    fireEvent.change(screen.getByRole("combobox", { name: /Cosmos/ }), {
+      target: { value: valor },
+    });
+
   it("Ativo abre a pergunta com alvo e consequência, sem chamar a action", () => {
     montar();
-    fireEvent.click(screen.getByRole("button", { name: "Ativo" }));
+    escolher("ACTIVE");
 
-    const grupo = screen.getByRole("group", { name: "Ativo" });
-    expect(grupo.textContent).toContain("COSMOS · acme");
+    const grupo = screen.getByRole("group", { name: "Ativar Cosmos" });
+    expect(grupo.textContent).toContain("acme");
     // O que acontece de verdade: acesso imediato, sem cobrança automática.
     expect(grupo.textContent).toMatch(/acesso/);
     expect(grupo.textContent).toMatch(/cobran/);
@@ -109,9 +116,11 @@ describe("ModuleForm — ativar também passa pela barreira", () => {
   it("Trial diz que não expira sozinho; Confirmar chama e a linha nomeia", async () => {
     mocks.contractModuleAction.mockResolvedValue({ data: null, ok: true });
     montar();
-    fireEvent.click(screen.getByRole("button", { name: "Trial" }));
+    escolher("TRIAL");
 
-    const grupo = screen.getByRole("group", { name: "Trial" });
+    const grupo = screen.getByRole("group", {
+      name: "Liberar Cosmos em trial",
+    });
     expect(grupo.textContent).toMatch(/não expira/);
 
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
@@ -123,11 +132,11 @@ describe("ModuleForm — ativar também passa pela barreira", () => {
         status: "TRIAL",
       })
     );
-    const status = await statusComTexto("COSMOS de acme agora está Trial");
+    const status = await statusComTexto("Cosmos de acme agora está Trial");
     expect(status).toBeTruthy();
   });
 
-  it("o status vigente fica desabilitado — não pergunta o que já é", () => {
+  it("o status vigente não pergunta o que já é", () => {
     render(
       <ModuleForm
         canWrite
@@ -136,9 +145,8 @@ describe("ModuleForm — ativar também passa pela barreira", () => {
         slug="acme"
       />
     );
-    expect(
-      screen.getByRole("button", { name: "Ativo" }).hasAttribute("disabled")
-    ).toBe(true);
+    escolher("ACTIVE");
+    expect(screen.queryByRole("group")).toBeNull();
   });
 });
 

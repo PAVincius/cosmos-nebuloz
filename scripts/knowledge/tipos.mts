@@ -3,6 +3,7 @@ export type Produto =
   | "charter"
   | "scaffold"
   | "cosmos"
+  | "backoffice"
   | "plataforma"
   | "backoffice"
   | "signal";

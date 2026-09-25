@@ -52,8 +52,11 @@ aqui sem documento que o sustente.
 | V-16 | Knock | a assinar | não declarada | sem prazo | [lista](https://knock.app/legal/subprocessors) | SCCs + UK IDTA | 2026-09-05 |
 | V-17 | BaseHub | não encontrado | não declarada | não confirmada | não encontrado | não encontrado | 2026-09-05 |
 | V-18 | Stripe | embutido | global, EUA | não confirmada | [lista](https://stripe.com/br/legal/service-providers) | SCCs + DPF | 2026-09-05 |
+| V-19 | TypeSafe AI (`typesafe-ai/jev`, via Vercel AI Gateway) | embutido \* | não declarada | ZDR por requisição, documentado e fail-closed | [trust](https://trust.typesafe.ai/subprocessors) \* | SCCs + UK Addendum | 2026-09-24 |
 
-Oito embutidos, seis a assinar, quatro sem documento público.
+Oito embutidos, seis a assinar, quatro sem documento público, mais o V-19
+(embutido, com a lista de subprocessadores e o plano Vercel do time ainda por
+confirmar — marcado \*).
 
 ## 2. Fornecedor a fornecedor
 
@@ -313,6 +316,57 @@ Subprocessadores e afiliadas em
 Preenche `dpa`, `region`. Ação pendente: **confirmar se está ativo**, como pede
 o `notes` do V-18.
 
+### V-19 · TypeSafe AI, Inc. (`typesafe-ai/jev`, via Vercel AI Gateway) — triagem automática de commits
+
+Achado em 2026-09-23 ao avaliar `.maestri/jev.mjs`: rotina horária que manda
+subject, arquivos e diff de commits ao endpoint
+`https://ai-gateway.vercel.sh/v4/ai/evaluation-model`, modelo
+`typesafe-ai/jev`, com `providerOptions.gateway.zeroDataRetention: true` na
+requisição. Identificado em 2026-09-24: o operador é **TypeSafe AI, Inc.**
+("Jev", modelo de avaliação — classificação/roteamento, não geração de texto
+livre). Diferente do V-06 (Vercel como hospedagem/execução), aqui a Vercel é
+intermediária: o AI Gateway roteia para o provedor de modelo, que tem DPA e
+subprocessadores próprios.
+
+- **DPA:** [typesafe.ai/legal/data-processing](https://typesafe.ai/legal/data-processing),
+  "Last updated: Apr 24, 2026". Papéis corretos — Customer é *controller*,
+  Typesafe é *processor* (Seção 1.1 e Schedule I). Repasse de subprocessador
+  autorizado de forma geral (Seção 3.1), lista em
+  [trust.typesafe.ai/subprocessors](https://trust.typesafe.ai/subprocessors)
+  — portal dinâmico, não renderizou texto na leitura automatizada (mesma
+  limitação já registrada para V-06/V-07 neste dossiê); por fonte secundária
+  (busca, não primária): AWS (armazena/processa dado de requisição ao vivo),
+  Modal (roda a inferência, não armazena prompt), Slack e Google Workspace
+  (suporte) — **classificação provisória**, mesmo tratamento do asterisco (\*)
+  usado no resto do dossiê.
+- **Transferência internacional:** SCCs (Módulos 2 e 3, Decisão 2021/914) +
+  UK Addendum (Seção 6 do DPA). Sem cláusula específica para o Brasil —
+  mesmo padrão dos demais fornecedores deste dossiê (nenhum tem SCC brasileira
+  dedicada); tratado como aceitável pelo mesmo motivo já usado alhures aqui.
+- **ZDR não é um campo opcional sem efeito — é recurso documentado do AI
+  Gateway e da Jev especificamente.** Confirmado em
+  [vercel.com/docs/ai-gateway/security-and-compliance/zdr](https://vercel.com/docs/ai-gateway/security-and-compliance/zdr)
+  e no guia [typesafe-jev-and-ai-sdk](https://vercel.com/kb/guide/typesafe-jev-and-ai-sdk)
+  ("Data controls: Zero Data Retention and No Training, per request"). Melhor
+  ainda: **falha fechado**. Se não houver provedor ZDR-compliant disponível
+  para o modelo, o Gateway recusa a chamada com `no_providers_available` — não
+  manda o dado sem proteção. Em `jev.mjs`, esse erro cai no catch de
+  `triagem()` (linha 133) e a rotina manda só a lista crua de shas+subjects
+  para a Morgana, sem diff. **Condição:** ZDR por requisição exige conta
+  Vercel Pro ou Enterprise no time da Nebuloz — não confirmado neste dossiê
+  (é config de billing, fora do que dá para verificar por código/docs
+  públicos).
+
+Preenche `dpa` (existe, papéis corretos) e `region` (não declarada — DPA não
+especifica onde a AWS/Modal processam). `subprocessors` fica com a
+classificação provisória acima. Ação pendente: **confirmar no painel da
+Vercel que o time da Nebuloz está em plano Pro/Enterprise** (requisito do
+ZDR por requisição) — dono é quem administra a conta Vercel, não Compliance.
+Mitigação de dado pessoal (exclusão de `packages/database/scripts/` do diff
+enviado) já aplicada em `.maestri/jev.mjs`, fora do escopo deste dossiê. Ver
+parecer completo e o resto da cadeia de decisão em
+[`2026-09-23-parecer-triagem-jev.md`](2026-09-23-parecer-triagem-jev.md).
+
 ## 3. Ações consolidadas
 
 O RACI do [playbook de vendas](../comercial/playbook-de-vendas.md) §4 tem a
@@ -335,6 +389,7 @@ entrarem no playbook, esta tabela passa a ter dono de verdade.
 | V-16 Knock | confirmar uso; remover do inventário se não | Responsável pela entrega | não |
 | V-17 BaseHub | pedir DPA | Auditor / revisor | não |
 | V-18 Stripe | confirmar se está ativo | Dono do roadmap | não |
+| V-19 TypeSafe AI (Jev) | confirmar plano Vercel Pro/Enterprise do time (requisito do ZDR); ler o portal de subprocessadores | Responsável pela conta Vercel | não |
 
 Três bloqueiam venda. O V-03 porque, em plano não pago, a Gemini API usa o
 conteúdo submetido para melhorar produtos e revisores humanos leem entrada e

@@ -1,10 +1,12 @@
 import { Avatar, PageHeader } from "@repo/design-system/cosmos/kit";
-import { listStaffActivity } from "@/app/actions/clients";
+import Link from "next/link";
+import { type ActivityRow, listStaffActivity } from "@/app/actions/clients";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { Secao } from "@/components/secao";
 import { Vazio } from "@/components/vazio";
 import { formatarDataHora } from "@/lib/data";
+import { TETO_DA_LISTA } from "@/lib/paginacao";
 import { ACOES } from "../audit/rotulos";
 
 export const metadata = { title: tituloDaAba("/atividade") };
@@ -47,6 +49,33 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
     );
   }
 
+  // A leitura para no teto. Sem dizer, os 100 pareciam ser a trilha inteira.
+  const cortada = result.data.length >= TETO_DA_LISTA;
+
+  return (
+    <>
+      {cortada ? (
+        <p
+          style={{
+            margin: "0 0 8px",
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-faint)",
+          }}
+        >
+          Mostrando os {TETO_DA_LISTA} atos mais recentes. Para ir mais longe,
+          filtre por cliente e período na{" "}
+          <Link href="/audit" style={{ color: "var(--accent-text)" }}>
+            Trilha de auditoria
+          </Link>
+          .
+        </p>
+      ) : null}
+      <Lista linhas={result.data} />
+    </>
+  );
+}
+
+function Lista({ linhas }: { linhas: ActivityRow[] }) {
   return (
     <ul
       style={{
@@ -57,7 +86,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
         flexDirection: "column",
       }}
     >
-      {result.data.map((row, i) => (
+      {linhas.map((row, i) => (
         <li
           key={row.id}
           style={{
@@ -77,7 +106,18 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
               >
                 {ACOES[row.action] ?? row.action}
               </span>{" "}
-              <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
+              {/* O cliente citado é saída, para a trilha dele. Ato no
+                  tenant interno fica texto: não há detalhe para onde ir. */}
+              {row.clienteSlug ? (
+                <Link
+                  href={`/clientes/${row.clienteSlug}?aba=audit`}
+                  style={{ color: "var(--ink-muted)" }}
+                >
+                  {row.target}
+                </Link>
+              ) : (
+                <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
+              )}
             </span>
             <span
               className="mono"

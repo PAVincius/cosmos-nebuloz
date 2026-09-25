@@ -61,6 +61,9 @@ function opcoes(): string[] {
 beforeEach(() => {
   vi.clearAllMocks();
   zerarRoteador("/ip");
+  // A paleta lembra os últimos destinos (onda 9b): sem limpar, o que um
+  // teste escolheu vira "Recentes" no seguinte e desloca as posições.
+  window.localStorage.clear();
   buscarClientes.mockResolvedValue({
     data: [{ name: "Acme Ltda", slug: "acme" }],
     ok: true,

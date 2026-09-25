@@ -1,5 +1,6 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import {
   type AuditEventoRow,
   listAuditEvents,
@@ -25,17 +26,64 @@ type Busca = {
   pagina?: string;
 };
 
-function Linha({ evento }: { evento: AuditEventoRow }) {
+/**
+ * O cliente da linha, como saída para a aba Audit dele. Fica fora do
+ * `<summary>`, como irmão do `<details>`: dentro, o link ficaria sob o papel
+ * de botão do summary — controle dentro de controle, que o leitor de tela
+ * achata. O tenant interno (e o que não está no seletor) fica texto: não tem
+ * detalhe de cliente para onde ir.
+ */
+function ClienteDaLinha({
+  slug,
+  ehCliente,
+}: {
+  slug: string;
+  ehCliente: boolean;
+}) {
+  const badge = <Badge tone="blue">{slug}</Badge>;
+  return (
+    <span style={{ padding: "9px 0 9px 6px" }}>
+      {ehCliente ? (
+        <Link
+          href={`/clientes/${slug}?aba=audit`}
+          style={{ textDecoration: "none" }}
+        >
+          <span className="sr-only">Trilha do cliente </span>
+          {badge}
+        </Link>
+      ) : (
+        badge
+      )}
+    </span>
+  );
+}
+
+function Linha({
+  evento,
+  ehCliente,
+}: {
+  evento: AuditEventoRow;
+  ehCliente: boolean;
+}) {
   const tuplas = Array.isArray(evento.diff)
     ? (evento.diff as [string, string, string][])
     : null;
 
   return (
-    <li style={{ listStyle: "none" }}>
+    <li
+      style={{
+        listStyle: "none",
+        display: "grid",
+        gridTemplateColumns: "auto minmax(0, 1fr)",
+        alignItems: "start",
+        borderTop: "1px solid var(--hairline)",
+      }}
+    >
+      <ClienteDaLinha ehCliente={ehCliente} slug={evento.tenantSlug} />
       {/* `<details>` nativo: a expansão funciona sem JS e já vem com teclado e
           leitor de tela corretos. Numa lista de centenas de linhas, também
           evita um estado de cliente por linha. */}
-      <details style={{ borderTop: "1px solid var(--hairline)" }}>
+      <details>
         <summary
           className="navitem"
           style={{
@@ -52,7 +100,6 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
               parece texto parado. O chevron gira em `details[open]` (CSS em
               backoffice-theme.css). */}
           <Icon className="bo-chevron" name="chevronRight" size={14} />
-          <Badge tone="blue">{evento.tenantSlug}</Badge>
           <span
             className="mono"
             style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
@@ -191,13 +238,21 @@ export default async function AuditPage({
         }
         title="Eventos"
       >
-        {renderEventos(pagina)}
+        {renderEventos(
+          pagina,
+          // Os clientes que têm detalhe: o seletor já lê a carteira inteira,
+          // sem o tenant interno. Sem essa lista, nenhum slug vira link.
+          new Set(tenants.ok ? tenants.data.map((t) => t.slug) : [])
+        )}
       </Secao>
     </div>
   );
 }
 
-function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
+function renderEventos(
+  pagina: Awaited<ReturnType<typeof listAuditEvents>>,
+  clientes: Set<string>
+) {
   if (!pagina.ok) {
     return (
       <FalhaAoCarregar
@@ -221,7 +276,7 @@ function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
     <>
       <ul style={{ margin: 0, padding: 0 }}>
         {pagina.data.eventos.map((e) => (
-          <Linha evento={e} key={e.id} />
+          <Linha ehCliente={clientes.has(e.tenantSlug)} evento={e} key={e.id} />
         ))}
       </ul>
       <Paginacao

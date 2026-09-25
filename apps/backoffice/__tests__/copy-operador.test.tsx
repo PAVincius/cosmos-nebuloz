@@ -25,6 +25,7 @@ const mocks = vi.hoisted(() => ({
   requirePlatformStaff: vi.fn(),
 }));
 
+vi.mock("@/app/actions/agregados", () => import("../vitest-mocks/agregados"));
 vi.mock("@/app/actions/clients", () => ({
   listClients: mocks.listClients,
   listStaffActivity: mocks.listStaffActivity,
@@ -39,7 +40,6 @@ vi.mock("@/app/actions/approvals", () => ({
 }));
 vi.mock("@/app/actions/access", () => ({
   listPlatformHealth: mocks.listPlatformHealth,
-  registrarAcesso: vi.fn(),
 }));
 vi.mock("@/app/actions/scaffold-supervision", () => ({
   enterTenantContext: vi.fn(),

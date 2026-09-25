@@ -12,6 +12,7 @@ import { type DadosFunil, Funil } from "@/app/(staff)/funil/funil";
 import type { ClientRow } from "@/app/actions/clients";
 import type { LeadRow } from "@/app/actions/leads";
 import {
+  replaceMock,
   replaceStateMock,
   zerarRoteador,
 } from "../vitest-mocks/next-navigation";
@@ -190,7 +191,9 @@ describe("Carteira — KPI Exigem atenção filtra", () => {
 
     fireEvent.click(kpi);
 
-    expect(replaceStateMock).toHaveBeenCalledWith(null, "", "/?atencao=1");
+    // Navega: o filtro é do servidor (`listClients({ atencao })`), para o
+    // suspenso da página 2 também aparecer.
+    expect(replaceMock).toHaveBeenCalledWith("/?atencao=1", { scroll: false });
     expect(kpi.getAttribute("aria-pressed")).toBe("true");
     expect(linhasDaTabela()).toHaveLength(1);
     expect(screen.getByText("Vanta Saúde")).toBeTruthy();

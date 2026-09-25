@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   CRITICAL_CLAUSE_CODES,
+  caseRisk,
   dataClassWeight,
   deriveVendorMaxClass,
   policyPublishBlockers,
@@ -185,6 +186,36 @@ describe("riskScore", () => {
     expect(r.likelihood).toBe(4); // round(26/7) = round(3.71) = 4
     expect(r.score).toBe(20);
     expect(r.label).toBe("Crítico");
+  });
+});
+
+// SRD §9: "Caso sem pontuação não mostra score". O intake grava 1 em cada
+// eixo por default; default não é medição.
+describe("caseRisk", () => {
+  const flat = (n: number) => ({
+    privacy: n,
+    regulatory: n,
+    security: n,
+    bias: n,
+    ip: n,
+    operational: n,
+    reputational: n,
+  });
+
+  it("sete eixos no default 1 e ninguém pontuou: sem pontuação (null), não '1 · Baixo'", () => {
+    expect(caseRisk(flat(1), null)).toBeNull();
+  });
+
+  it("eixo fora do default sem data de pontuação (seed, dogfood): o risco gravado vale", () => {
+    const r = caseRisk({ ...flat(1), privacy: 5 }, null);
+    expect(r?.score).toBe(10);
+    expect(r?.label).toBe("Elevado");
+  });
+
+  it("alguém pontuou 1 em tudo: é medição, 1 · Baixo", () => {
+    const r = caseRisk(flat(1), new Date("2026-09-23"));
+    expect(r?.score).toBe(1);
+    expect(r?.label).toBe("Baixo");
   });
 });
 

@@ -335,12 +335,33 @@ export async function getAssessment(
   });
 }
 
+export type TemplateOption = { id: string; name: string; version: string };
+
+/** Templates disponíveis pra abrir um novo assessment. Mesma permissão de
+ *  `createAssessment` — quem não pode criar não precisa da lista. */
+export async function listTemplates(): Promise<Result<TemplateOption[]>> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianPermissionContext("assessment.manage");
+    return withTenantDb(ctx.tenantId, (db) =>
+      db.meridianTemplate.findMany({
+        where: { tenantId: ctx.tenantId },
+        orderBy: { version: "desc" },
+        select: { id: true, name: true, version: true },
+      })
+    );
+  });
+}
+
 const CreateSchema = z.object({
   orgName: nnStr,
   sector: nnStr,
   sizeBand: nnStr,
   templateId: cuid,
-  deadline: z.coerce.date(),
+  // Prazo no passado nasceria com o token do respondente já expirado —
+  // `tokenExpiresAt` copia `deadline` em `assignRespondent` (collection.ts).
+  deadline: z.coerce
+    .date()
+    .refine((d) => d.getTime() > Date.now(), "Prazo precisa ser no futuro."),
   benchmarkOptIn: z.boolean().default(false),
   reassessmentOfId: cuid.optional(),
 });

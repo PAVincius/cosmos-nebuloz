@@ -246,7 +246,10 @@ export function Mapa({
   const excluirProcessoSelecionado = useCallback(
     async (id: string) => {
       setErro(null);
+      setConfirmacao(null);
       setExcluindo(true);
+      // O nome sai antes: depois da releitura o processo não existe mais.
+      const alvo = dados.processos.find((p) => p.id === id);
       try {
         const res = await excluirProcesso({ id });
         if (!res.ok) {
@@ -255,22 +258,31 @@ export function Mapa({
         }
         setSelecionado(null);
         await recarregar();
+        // O painel fecha junto com o processo; a frase fica no topo, onde
+        // mora o "Novo processo".
+        setConfirmacao(
+          alvo
+            ? `${alvo.codigo} · ${alvo.nome} excluído do mapa.`
+            : "Processo excluído do mapa."
+        );
       } finally {
         setExcluindo(false);
       }
     },
-    [recarregar, setSelecionado]
+    [dados.processos, recarregar, setSelecionado]
   );
 
+  /** `true` quando removeu — o painel usa para dizer qual ligação saiu. */
   const removerLigacao = useCallback(
     async (id: string) => {
       setErro(null);
       const res = await excluirLigacao({ id });
       if (!res.ok) {
         setErro(res.error);
-        return;
+        return false;
       }
       await recarregar();
+      return true;
     },
     [recarregar]
   );

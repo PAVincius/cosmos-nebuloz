@@ -1,9 +1,10 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import { type AgregadoDoFunil, agregadoDoFunil } from "@/app/actions/agregados";
 import { listarFunil } from "@/app/actions/leads";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
-import { estagnado, paraLeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
+import type { Result } from "@/lib/safe-action";
 import { Funil } from "./funil";
 
 /**
@@ -15,10 +16,34 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: tituloDaAba("/funil") };
 
+/** O cabeçalho conta o funil inteiro (`actions/agregados.ts`); o board mostra
+ *  os leads carregados. Contado sobre o board, "100 ativos" era o teto da
+ *  lista. Sem a contagem, o cabeçalho diz isso em vez de chutar. */
+function Meta({ agregado }: { agregado: Result<AgregadoDoFunil> }) {
+  if (!agregado.ok) {
+    return <Badge tone="neutral">contagem indisponível</Badge>;
+  }
+  const { ativos, estagnados, pelaEscada } = agregado.data;
+  return (
+    <>
+      <Badge tone="neutral">{ativos} ativos</Badge>
+      {estagnados > 0 ? (
+        <Badge dot tone="red">
+          {estagnados} estagnados
+        </Badge>
+      ) : null}
+      {pelaEscada === null ? null : (
+        <Badge tone="blue">{pelaEscada}% entram pelo assessment</Badge>
+      )}
+    </>
+  );
+}
+
 export default async function FunilPage() {
-  const [staff, res] = await Promise.all([
+  const [staff, res, agregado] = await Promise.all([
     requirePlatformStaff(),
     listarFunil(),
+    agregadoDoFunil(),
   ]);
 
   if (!res.ok) {
@@ -38,39 +63,11 @@ export default async function FunilPage() {
     );
   }
 
-  const { leads, estagios, hoje } = res.data;
-  const hojeData = new Date(hoje);
-  const ativos = leads.filter((l) => l.situacao === "ATIVO");
-  const estagnados = ativos.filter((l) =>
-    estagnado(paraLeadFunil(l), estagios, hojeData)
-  ).length;
-  const comEntrada = leads.filter((l) => l.entrada !== null);
-  const pelaEscada =
-    comEntrada.length === 0
-      ? null
-      : Math.round(
-          (comEntrada.filter((l) => l.entrada === "MERIDIAN").length /
-            comEntrada.length) *
-            100
-        );
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow={`${secaoDaRota("/funil")} · funil`}
-        meta={
-          <>
-            <Badge tone="neutral">{ativos.length} ativos</Badge>
-            {estagnados > 0 ? (
-              <Badge dot tone="red">
-                {estagnados} estagnados
-              </Badge>
-            ) : null}
-            {pelaEscada === null ? null : (
-              <Badge tone="blue">{pelaEscada}% entram pelo assessment</Badge>
-            )}
-          </>
-        }
+        meta={<Meta agregado={agregado} />}
         subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
         title="Funil"
         tone="amber"

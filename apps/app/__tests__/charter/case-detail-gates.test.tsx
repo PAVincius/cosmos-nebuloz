@@ -76,13 +76,22 @@ function caso(over: Partial<UseCaseDetail> = {}): UseCaseDetail {
     submittedAt: "2026-09-01T00:00:00.000Z",
     severity: 3,
     likelihood: 2,
-    risks: {},
+    risks: {
+      privacy: 3,
+      regulatory: 2,
+      security: 2,
+      bias: 2,
+      ip: 2,
+      operational: 2,
+      reputational: 2,
+    },
     restrictions: [],
     blockReason: null,
     changeRequest: null,
     mitigations: [],
     decisions: [],
-    can: { decide: false },
+    can: { decide: false, score: false },
+    scoreDenial: "Requer papel Compliance ou Segurança — Pontuar risco",
     ...over,
   };
 }
@@ -110,7 +119,7 @@ describe("CaseDetailScreen — gates e leitura", () => {
   it("'Registrar decisão' sem permissão: botão desabilitado, motivo visível, clique não abre o modal", async () => {
     getCaseMock.mockResolvedValue({
       ok: true,
-      data: caso({ can: { decide: false } }),
+      data: caso({ can: { decide: false, score: false } }),
     });
     render(<CaseDetailScreen param="UC-003" />);
 
@@ -129,7 +138,7 @@ describe("CaseDetailScreen — gates e leitura", () => {
   it("'Registrar decisão' com permissão: clique abre o modal de decisão", async () => {
     getCaseMock.mockResolvedValue({
       ok: true,
-      data: caso({ can: { decide: true } }),
+      data: caso({ can: { decide: true, score: false } }),
     });
     render(<CaseDetailScreen param="UC-003" />);
 

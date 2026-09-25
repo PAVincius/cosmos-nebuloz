@@ -69,7 +69,13 @@ function AgingWipPanel() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -90,7 +96,7 @@ function AgingWipPanel() {
                   justifyContent: "space-between",
                   alignItems: "baseline",
                   marginBottom: 6,
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   gap: 8,
                 }}
               >
@@ -172,8 +178,8 @@ function cfrTone(m: DoraMetricValue): Tone {
   return "red";
 }
 
-function doraKpiValue(m: DoraMetricValue, format: (n: number) => string) {
-  return m.status === "measured" ? format(m.value) : "—";
+function doraKpiValue(m: DoraMetricValue, toKpi: (n: number) => number) {
+  return m.status === "measured" ? toKpi(m.value) : "—";
 }
 
 function doraKpiHint(m: DoraMetricValue, whenMeasured: string) {
@@ -192,7 +198,13 @@ function DoraSection() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -213,6 +225,7 @@ function DoraSection() {
           }}
         >
           <KpiCard
+            decimals={2}
             hint={doraKpiHint(
               data.deploymentFrequency,
               `${data.successfulProductionDeployments} deploy(s) com sucesso em ${data.windowDays}d`
@@ -221,19 +234,16 @@ function DoraSection() {
             label="Deployment Frequency"
             tone="green"
             unit="/dia"
-            value={doraKpiValue(data.deploymentFrequency, (n) =>
-              n.toFixed(2).replace(".", ",")
-            )}
+            value={doraKpiValue(data.deploymentFrequency, (n) => n)}
           />
           <KpiCard
+            decimals={1}
             hint={doraKpiHint(data.leadTimeHours, "commit → produção")}
             icon="clock"
             label="Lead Time"
             tone="blue"
             unit={data.leadTimeHours.status === "measured" ? "d" : undefined}
-            value={doraKpiValue(data.leadTimeHours, (n) =>
-              (n / 24).toFixed(1).replace(".", ",")
-            )}
+            value={doraKpiValue(data.leadTimeHours, (n) => n / 24)}
           />
           <KpiCard
             hint={doraKpiHint(
@@ -247,7 +257,7 @@ function DoraSection() {
               data.changeFailureRate.status === "measured" ? "%" : undefined
             }
             value={doraKpiValue(data.changeFailureRate, (n) =>
-              Math.round(n * 100).toString()
+              Math.round(n * 100)
             )}
           />
           <KpiCard
@@ -271,7 +281,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
     <div>
       <div
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: "var(--ink-muted)",
           marginBottom: 10,
@@ -305,7 +315,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
+                  fontSize: "var(--fs-nota)",
                   fontWeight: 700,
                   color: "var(--ink-muted)",
                 }}
@@ -324,7 +334,7 @@ function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
               />
               <span
                 style={{
-                  fontSize: 10.5,
+                  fontSize: "var(--fs-nota)",
                   color: "var(--ink-faint)",
                   fontWeight: 600,
                   textAlign: "center",
@@ -367,7 +377,7 @@ function CfdChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
     <div>
       <div
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: "var(--ink-muted)",
           marginBottom: 10,
@@ -399,10 +409,10 @@ function CfdChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
           marginTop: 4,
         }}
       >
-        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {cumulative[0]?.label}
         </span>
-        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {cumulative.at(-1)?.label}
         </span>
       </div>
@@ -424,7 +434,13 @@ function FlowHistorySection() {
     >
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
@@ -473,12 +489,24 @@ export default function FlowScreen() {
       />
       {error && <ErrorState />}
       {!error && loading && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Carregando...
         </div>
       )}
       {!(error || loading) && data === null && (
-        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+        <div
+          style={{
+            padding: 16,
+            color: "var(--ink-muted)",
+            fontSize: "var(--fs-base)",
+          }}
+        >
           Nenhuma métrica de flow registrada ainda.
         </div>
       )}
@@ -500,12 +528,13 @@ export default function FlowScreen() {
               value={data.flowVelocityTotal}
             />
             <KpiCard
+              decimals={1}
               hint="lead time médio"
               icon="clock"
               label="Flow Time"
               tone="amber"
               unit="d"
-              value={(data.flowTimeAvgHours / 24).toFixed(1).replace(".", ",")}
+              value={data.flowTimeAvgHours / 24}
             />
             <KpiCard
               hint="ativo vs. espera"
@@ -544,7 +573,7 @@ export default function FlowScreen() {
                     justifyContent: "space-between",
                     padding: "10px 16px",
                     borderTop: "1px solid var(--hairline)",
-                    fontSize: 13,
+                    fontSize: "var(--fs-base)",
                   }}
                 >
                   <span style={{ color: "var(--ink-muted)" }}>{type}</span>

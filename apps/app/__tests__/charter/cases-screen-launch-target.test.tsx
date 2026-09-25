@@ -51,7 +51,6 @@ const vendor: VendorRow = {
   retention: "Zero",
   subprocessors: 0,
   maxClass: "CONFIDENTIAL",
-  score: 0,
   cases: 0,
   renewalAt: null,
   notes: null,

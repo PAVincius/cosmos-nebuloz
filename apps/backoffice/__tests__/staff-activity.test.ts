@@ -81,12 +81,14 @@ describe("listStaffActivity", () => {
         action: "module.contracted",
         metadata: { target: "vanta-saude · CHARTER", actorName: "Vinícius" },
         createdAt: new Date("2026-07-31T12:00:00Z"),
+        tenant: { slug: "vanta-saude", isSystem: false },
       },
       {
         id: "a2",
         action: "tenant.provisioned",
         metadata: {},
         createdAt: new Date("2026-07-31T12:05:00Z"),
+        tenant: { slug: "vanta-saude", isSystem: false },
       },
     ]);
 
@@ -101,5 +103,38 @@ describe("listStaffActivity", () => {
       });
       expect(result.data[1]).toMatchObject({ target: "—", actorName: null });
     }
+  });
+
+  // Ato de staff é gravado no tenant do cliente (`logPlatformAudit`): o slug
+  // dele é a saída da linha para o detalhe. O tenant interno não tem
+  // detalhe de cliente — lá, a linha não vira link.
+  it("traz o slug do cliente citado, e nulo no tenant interno", async () => {
+    findMany.mockResolvedValue([
+      {
+        id: "a1",
+        action: "module.contracted",
+        metadata: { target: "vanta-saude · CHARTER" },
+        createdAt: new Date("2026-07-31T12:00:00Z"),
+        tenant: { slug: "vanta-saude", isSystem: false },
+      },
+      {
+        id: "a2",
+        action: "created",
+        metadata: { target: "P-0001 · Atlas" },
+        createdAt: new Date("2026-07-31T12:05:00Z"),
+        tenant: { slug: "nebuloz", isSystem: true },
+      },
+    ]);
+
+    const result = await listStaffActivity();
+
+    expect(findMany.mock.calls[0][0].select.tenant).toEqual({
+      select: { slug: true, isSystem: true },
+    });
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+    expect(result.data[0].clienteSlug).toBe("vanta-saude");
+    expect(result.data[1].clienteSlug).toBeNull();
   });
 });

@@ -39,7 +39,8 @@ export type VendorRow = {
   retention: string | null;
   subprocessors: number;
   maxClass: CharterDataClass | null;
-  score: number;
+  // Sem `score`: a coluna 0–100 é default 50 que nenhuma escrita calcula, e a
+  // regra não existe nos docs. A tela diz "sem medição" (SRD §3).
   cases: number;
   renewalAt: string | null;
   notes: string | null;
@@ -116,7 +117,6 @@ export async function listVendors(): Promise<Result<VendorRow[]>> {
         retention: v.retention,
         subprocessors: v.subprocessors,
         maxClass: v.maxClass,
-        score: v.score,
         cases: v._count.useCases,
         renewalAt: v.renewalAt?.toISOString() ?? null,
         notes: v.notes,
@@ -169,7 +169,6 @@ export async function getVendor(
         retention: v.retention,
         subprocessors: v.subprocessors,
         maxClass: v.maxClass,
-        score: v.score,
         cases: v.useCases.length,
         renewalAt: v.renewalAt?.toISOString() ?? null,
         notes: v.notes,

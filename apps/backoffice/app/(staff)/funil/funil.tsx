@@ -473,9 +473,8 @@ export function Funil({
 
   const semEstagios = dados.estagios.length === 0;
   const pipelineCentavos = pipelinePonderado(leadsFunil, dados.estagios);
-  const pipelineTexto = (pipelineCentavos / 100_000)
-    .toFixed(1)
-    .replace(".", ",");
+  // Em milhares de reais (unidade "k"); o KpiCard formata em pt-BR.
+  const pipelineMil = pipelineCentavos / 100_000;
   const taxa = taxaLeadParaProposta(leadsFunil);
   const cac = cacSobreAcvGanho(leadsFunil, dados.canais);
 
@@ -529,11 +528,12 @@ export function Funil({
 
       <div className="bo-kpis">
         <KpiCard
+          decimals={1}
           icon="wallet"
           label="Pipeline ponderado"
           tone="accent"
           unit={unidadeKpiPipeline(semEstagios)}
-          value={valorKpiOuTraco(semEstagios, pipelineTexto)}
+          value={valorKpiOuTraco(semEstagios, pipelineMil)}
         />
         <KpiCard
           icon="trendingUp"

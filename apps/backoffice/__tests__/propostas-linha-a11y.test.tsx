@@ -24,6 +24,7 @@ vi.mock("@/app/actions/proposals", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/propostas",
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => paramsMock(),
 }));
@@ -96,7 +97,7 @@ describe("Propostas — linha sem controle aninhado", () => {
 
   it("o subtítulo pluraliza de verdade", () => {
     const { unmount } = render(
-      <Propostas iniciais={[linha({})]} podeEscrever />
+      <Propostas iniciais={[linha({})]} podeEscrever total={1} />
     );
     expect(screen.getByText("1 proposta")).toBeTruthy();
     unmount();
@@ -105,6 +106,7 @@ describe("Propostas — linha sem controle aninhado", () => {
       <Propostas
         iniciais={[linha({}), linha({ id: "prop-2", numero: "P-0002" })]}
         podeEscrever
+        total={2}
       />
     );
     expect(screen.getByText("2 propostas")).toBeTruthy();

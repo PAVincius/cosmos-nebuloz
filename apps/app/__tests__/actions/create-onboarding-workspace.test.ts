@@ -81,6 +81,19 @@ describe("createOnboardingWorkspace", () => {
     expect(mocks.provisionTenant).toHaveBeenCalledOnce();
   });
 
+  // Quem cria o workspace é o próprio cliente. Sem isto a trilha gravava
+  // `platformStaff: true`, e o autocadastro aparecia como "Atividade do
+  // staff" no back-office.
+  it("não se registra como ato de staff", async () => {
+    await createOnboardingWorkspace("Acme Corp");
+
+    expect(mocks.provisionTenant).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ platformStaff: false })
+    );
+  });
+
   it("throws UNAUTHORIZED when session has no user", async () => {
     mocks.getSession.mockResolvedValue(null);
 
