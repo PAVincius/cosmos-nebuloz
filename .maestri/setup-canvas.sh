@@ -60,6 +60,26 @@ equip() { # $1=papel $2...=skills
 }
 # Fork do fast-jev-compaction (Gateway, ver .maestri/plugins/fast-jev-compaction/FORK.md), só na pasta do papel.
 # Lê AI_GATEWAY_API_KEY do ambiente. keepThreshold 0.3: o padrão 0.5 cortou até arquivo em uso no teste.
+# Canny (devs, QA, Infra): bloqueia "pronto" quando nenhum check passou depois da última edição.
+# Regra local, sem rede (sem TYPESAFE_API_KEY). Checks e ignorados em .canny.json, que só vale após \`canny trust\`.
+CANNY="$HOME/.canny/src/dist/cli.js"
+canny_guard() { # $1=papel
+  [ -f "$CANNY" ] || { echo "! Canny não instalado em ~/.canny/src (ver .maestri/guarda/README.md)"; return; }
+  local ds d; ds=$(role_dirs "$1"); [ -n "$ds" ] || { echo "! papel $1 sem pasta, Canny pulado"; return; }
+  while read -r d; do ( cd "$d" && node "$CANNY" init --claude >/dev/null ) || echo "! Canny falhou em $1"; done <<< "$ds"
+}
+canny_trust() { # confiança é por caminho e conteúdo: Ground e cada andar
+  local r; for r in "$PWD" "$ANDARES"*; do [ -f "$r/.canny.json" ] && ( cd "$r" && node "$CANNY" trust >/dev/null ); done
+}
+# Hook de fonte (C-levels e Vigia): afirmação com número ou de verificação precisa de evidência recente.
+# Julga o NLI local (com.nebuloz.nli, :8765); fora do ar, o turno passa.
+FONTE="node $PWD/.maestri/guarda/fonte.mjs"
+fonte_guard() { # $1=papel
+  local ds d; ds=$(role_dirs "$1"); [ -n "$ds" ] || { echo "! papel $1 sem pasta, hook de fonte pulado"; return; }
+  while read -r d; do
+    node -e 'const [f,cmd]=process.argv.slice(1),fs=require("fs");let s={};try{s=JSON.parse(fs.readFileSync(f,"utf8"))}catch{}s.hooks??={};const st=(s.hooks.Stop??=[]);if(!st.some(g=>(g.hooks??[]).some(h=>h.command===cmd)))st.push({hooks:[{type:"command",command:cmd,timeout:30}]});fs.mkdirSync(require("path").dirname(f),{recursive:true});fs.writeFileSync(f,JSON.stringify(s,null,2)+"\n")' "$d/.claude/settings.json" "$FONTE"
+  done <<< "$ds"
+}
 jev_compaction() { # $1=papel
   local d r="$PWD"; d=$(role_dir "$1") || { echo "! papel $1 sem pasta, compaction pulado"; return; }
   ( cd "$d" && claude plugin marketplace add "$r/.maestri/plugins/fast-jev-compaction" --scope project >/dev/null \
@@ -201,7 +221,7 @@ $CONCEDE
 ## Aprendizado (você é dona do ciclo)
 - Entrega que você devolve ao agente, ou aceita, também vira registro. $REGISTRO
 - Fechamento do dia (rotina): pergunte a cada agente ativo, com \`maestri ask --batch\`, o que aprendeu hoje. Ele grava na própria memória, e só se houver algo.
-- Retro semanal (rotina): a partir do resumo do registro, escreva a nota "Propostas de melhoria". Suba cada causa que se repete um degrau: memória do agente → regra em \`$GATE\` ou em .claude/COMMON_MISTAKES.md → teste ou lint (determinístico). Inclua as skills em \`$PROPOSTAS\` e as mudanças de papel como diff sugerido do .maestri/setup-canvas.sh. Nada disso é aplicado sem o CEO aprovar; aprovado vira PR. Commite o .maestri/aprendizado.jsonl da semana.
+- Retro semanal (rotina): leia também as rodadas da semana em \`$PWD/.maestri/sugestoes.md\` (o Vigilante, modelo local: útil, mas erra — confira a evidência antes de levar adiante). A partir do resumo do registro, escreva a nota "Propostas de melhoria". Suba cada causa que se repete um degrau: memória do agente → regra em \`$GATE\` ou em .claude/COMMON_MISTAKES.md → teste ou lint (determinístico). Inclua as skills em \`$PROPOSTAS\` e as mudanças de papel como diff sugerido do .maestri/setup-canvas.sh. Nada disso é aplicado sem o CEO aprovar; aprovado vira PR. Commite o .maestri/aprendizado.jsonl da semana.
 - Você também tem a sua memória própria. Mesmas regras: fato curto com a origem, nunca segredo.
 
 ## Resposta ao CEO
@@ -220,6 +240,11 @@ equip "CFO"            pricing
 # Compaction literal só na Morgana primeiro (vive o dia todo, compacta muito). Estender a Norte/Ordem após uma semana.
 jev_compaction "Morgana"
 
+# Guardas contra erro confiante: regra (Canny) onde há código e teste; fonte (NLI) onde há número e afirmação.
+for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice" "Dev Plataforma" "QA" "Infra"; do canny_guard "$d"; done
+[ -f "$CANNY" ] && canny_trust
+for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer"; do fonte_guard "$c"; done
+
 # ─── Terminais ───────────────────────────────────────────────────────────────
 
 # Ground — Engenharia (o Maestro é o CTO)
@@ -236,6 +261,10 @@ hire "Pilar"    "Infra"          sonnet
 # Security Reviewer: não fica no canvas. No checkpoint de PR: `maestri recruit "Vigia" --role "Security Reviewer"`; depois `maestri dismiss "Vigia"`.
 
 # Produto e Diretoria: floors sem git (mesmo diretório do Ground, canvas separado)
+# Vigilante: terminal com modelo local (não é Claude Code) que lê os registros e sugere evoluções.
+# Sobe modelo e LiteLLM junto com o terminal e derruba ao fechar. Ver .maestri/vigilante/README.md.
+have "Vigilante" || "$M" recruit "Vigilante" --command "bash $PWD/.maestri/vigilante/iniciar.sh"
+
 floor "Produto" --no-git
 hire "Norte"  "CPO" opus   --floor "Produto"
 hire "Regua"  "PO"  sonnet --floor "Produto"
@@ -284,5 +313,13 @@ routine "Retro semanal" --weekly fri@16:00 \
   --command "{{output}}
 
 Retro semanal, conforme a seção Aprendizado do seu papel."
+# Arquivo no Drive (remote rclone nebuloz-drive:, pasta Memory): transcrições com mais de 21 dias saem do disco
+# (redigidas, para a Lixeira depois de conferidas no Drive); memória e registros ganham espelho. Só acorda a
+# Morgana se algum envio falhar. Remote numa máquina nova: ver o cabeçalho de .maestri/arquivo/arquivar.mjs.
+routine "Arquivo semanal" --weekly fri@19:00 \
+  --pre-run 'node "$MAESTRI_WORKSPACE_DIR/.maestri/arquivo/arquivar.mjs"' \
+  --command "{{output}}
+
+Avise o CEO do que falhou no arquivo semanal e que dá para repetir com: node .maestri/arquivo/arquivar.mjs"
 
 echo "Pronto. Confira: $M list · $M floor list · $M routine list"

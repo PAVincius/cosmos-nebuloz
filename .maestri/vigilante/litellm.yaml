@@ -1,0 +1,11 @@
+# LiteLLM do Vigilante: nome estável "local" na frente do modelo que estiver servindo em :8080.
+# Trocar de modelo = mudar VIGILANTE_MODELO_DIR no iniciar.sh; o Vigilante continua pedindo "local".
+model_list:
+  - model_name: local
+    litellm_params:
+      model: openai/default_model
+      api_base: http://127.0.0.1:8080/v1
+      api_key: sem-chave-local
+litellm_settings:
+  telemetry: false
+  drop_params: true

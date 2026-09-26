@@ -1,0 +1,16 @@
+{
+  "verify": [
+    "\\b(vitest|jest|playwright test|playwright cli test|node --test|pnpm test|npm test|pnpm run test|npm run test)\\b",
+    "\\b(tsc|pnpm typecheck|pnpm type-check|pnpm build|pnpm run build|next build|turbo run (build|test|typecheck))\\b",
+    "\\b(biome (check|lint)|pnpm check|pnpm lint|eslint)\\b",
+    "\\bpnpm test:[a-z-]+\\b"
+  ],
+  "ignore": [
+    "^docs/",
+    "^\\.claude/completions/",
+    "^\\.maestri/(knowledge|memoria)/",
+    "^\\.maestri/(aprendizado|concessoes)\\.jsonl$",
+    "^\\.maestri/sugestoes\\.md$",
+    "^specs/.*\\.md$"
+  ]
+}
