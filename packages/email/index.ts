@@ -2,6 +2,7 @@ import { render } from "@react-email/components";
 import { Resend } from "resend";
 import { keys } from "./keys";
 import { InviteTemplate } from "./templates/invite";
+import { ResetPasswordTemplate } from "./templates/reset-password";
 
 /**
  * Cliente do Resend construído na primeira utilização, não no import.
@@ -59,8 +60,10 @@ export const resend = new Proxy({} as Resend, {
   },
 });
 
+export { keys } from "./keys";
 export { ContactTemplate } from "./templates/contact";
 export { InviteTemplate } from "./templates/invite";
+export { ResetPasswordTemplate } from "./templates/reset-password";
 
 type RenderInviteOptions = {
   inviteeName?: string;
@@ -80,6 +83,24 @@ export async function renderInviteEmail(
       workspaceName: options.workspaceName,
       acceptUrl: options.acceptUrl,
       expiresInDays: options.expiresInDays ?? 7,
+    })
+  );
+}
+
+type RenderResetPasswordOptions = {
+  resetUrl: string;
+  userName?: string;
+  expiresInMinutes?: number;
+};
+
+export async function renderResetPasswordEmail(
+  options: RenderResetPasswordOptions
+): Promise<string> {
+  return render(
+    ResetPasswordTemplate({
+      resetUrl: options.resetUrl,
+      userName: options.userName,
+      expiresInMinutes: options.expiresInMinutes ?? 60,
     })
   );
 }

@@ -6,6 +6,7 @@ export type { MemberRole } from "@repo/database";
 
 import type { MemberRole } from "@repo/database";
 
+import { keys, renderResetPasswordEmail, resend } from "@repo/email";
 import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -45,6 +46,26 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 12, // SOC2 CC6: min 12 chars
+    sendResetPassword: async ({ user, url }) => {
+      const fromAddress = keys().RESEND_FROM;
+      try {
+        const html = await renderResetPasswordEmail({
+          userName: user.name || undefined,
+          resetUrl: url,
+        });
+        await resend.emails.send({
+          from: `Nebuloz <${fromAddress}>`,
+          to: user.email,
+          subject: "Redefina sua senha no Nebuloz",
+          html,
+        });
+      } catch (emailError: unknown) {
+        log.error("sendResetPassword: falha ao enviar email", {
+          user_id: user.id,
+          error: emailError,
+        });
+      }
+    },
   },
   session: {
     expiresIn: SESSION_IDLE_SECONDS,
@@ -75,7 +96,7 @@ export const auth = betterAuth({
   },
   plugins: [
     twoFactor({
-      issuer: "Cosmos",
+      issuer: "Nebuloz",
       otpOptions: { digits: 6 },
     }),
   ],

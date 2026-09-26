@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@repo/audit": "workspace:*",
+    "@repo/email": "workspace:*",
     "@repo/observability": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "better-auth": "^1.6.26",

@@ -23,6 +23,13 @@ export const roleStorageState = (role: SeededRole) => fixture("roles", role);
 const ADMIN_STATE = "./e2e/fixtures/auth-session.json";
 
 /**
+ * Senha padrão dos papéis semeados por `seed-e2e.ts` (`ROLES` abaixo),
+ * exportada pra quem precisa logar de verdade via UI em vez de storageState
+ * — caso de specs que mudam a própria senha, como `trocar-senha.spec.ts`.
+ */
+export const SEEDED_ROLE_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
+
+/**
  * As quatro personas de governança do Charter, semeadas por `seed-charter.ts`
  * no tenant `medcore`. Sem sessão própria por papel, os specs de RBAC do
  * Charter (`case.decide`, `policy.publish`, ...) não teriam quem fazer os
@@ -169,7 +176,7 @@ async function globalSetup(config: FullConfig) {
   }
 
   const { baseURL } = config.projects[0].use;
-  const password = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
+  const password = SEEDED_ROLE_PASSWORD;
 
   for (const seed of SEEDS) {
     console.log(`🌱 Executing ${seed} before E2E tests...`);

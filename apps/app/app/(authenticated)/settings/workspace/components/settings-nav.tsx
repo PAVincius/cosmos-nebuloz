@@ -1,6 +1,7 @@
 import {
   BellIcon,
   Building2Icon,
+  KeyRoundIcon,
   LockIcon,
   PlugIcon,
   ScrollTextIcon,
@@ -46,6 +47,12 @@ const NAV_ITEMS: NavItem[] = [
     label: "Papéis & permissões",
     icon: ShieldCheckIcon,
     href: "/settings/roles",
+  },
+  {
+    id: "security",
+    label: "Segurança",
+    icon: KeyRoundIcon,
+    href: "/settings/security",
   },
   {
     id: "sso",
