@@ -111,6 +111,26 @@ só confirmo o resultado (host aplicado, migrations rodadas etc.).
 
 ### 3. Migrations no banco dev — CEO roda, ou eu, lendo `.env.dev`
 
+**Pré-condição obrigatória: inventário read-only antes de qualquer migrate.**
+Já aconteceu de um `DATABASE_URL` de "banco novo" apontar pra um projeto
+Supabase antigo, com dado de outro app inteiro dentro (schema `public` cheio
+de tabelas de verdade, `auth.users` com gente de verdade logada). Rodar
+migrate/seed em cima disso mistura ou destrói dado real de outro sistema.
+Antes do primeiro `migrate:deploy` num banco dev novo, rode um script
+read-only (padrão `@prisma/adapter-pg` + `pg`, igual
+`scripts/seed-regulacao.mts` usa) que consulta, sem escrever nada:
+
+- tabelas fora de `pg_catalog`/`information_schema`, por schema, com
+  `pg_class.reltuples` como estimativa de linhas;
+- se `public._prisma_migrations` existe (não deveria, banco é novo);
+- extensões instaladas (`pg_extension`).
+
+Só segue pro `migrate:deploy` se `public` aparecer **sem nenhuma tabela**.
+Qualquer tabela de aplicação em `public`, ou `auth.users`/`auth.sessions`
+com linhas, é sinal de banco reaproveitado por engano — pare e confirme com
+o CEO antes de continuar. Apague o script de inventário depois de rodar,
+não é pra virar parte do código do produto.
+
 Pelo caminho do deploy, nunca `prisma migrate resolve --applied` — isso
 marca migration como aplicada sem rodar; mascara schema divergente, que é o
 incidente exato que motivou `deploy-migrations.mts` existir (ver comentário
@@ -223,6 +243,10 @@ resultado.
 
 ## Nunca fazer
 
+- Rodar `migrate:deploy` ou seed num banco dev sem antes conferir por
+  inventário read-only que `public` está vazio (passo 3) — já aconteceu de
+  um `DATABASE_URL` "novo" apontar pra projeto Supabase antigo com dado real
+  de outro app.
 - `prisma migrate resolve --applied` no banco dev.
 - Copiar `DATABASE_URL`/`DIRECT_URL` do projeto de produção para o projeto
   novo, mesmo "só para testar".
