@@ -490,21 +490,46 @@ type ReissuedItem = {
   link: string;
 };
 
+/** Tira \n/\r de um campo de texto — impede linha falsa injetada via nome
+ *  (Vigia, item 2) tanto no `.txt`/clipboard quanto no `.csv`. */
+function stripLineBreaks(v: string): string {
+  return v.replaceAll(/[\r\n]+/g, " ");
+}
+
 /** "nome · eixo · link", um por linha — mesmo texto pro clipboard e pro
  *  `.txt`. Exportada pra testar o formato sem montar clipboard/DOM. */
 export function buildReissuedListText(items: ReissuedItem[]): string {
   return items
-    .map((i) => `${i.name} · ${AXES[i.axis].label} · ${i.link}`)
+    .map(
+      (i) => `${stripLineBreaks(i.name)} · ${AXES[i.axis].label} · ${i.link}`
+    )
     .join("\n");
 }
 
 /** Mesmo conteúdo em CSV (`nome,eixo,link`), campos entre aspas — o link é
- *  uma URL e não deveria ter vírgula, mas aspas cobrem o caso mesmo assim. */
+ *  uma URL e não deveria ter vírgula, mas aspas cobrem o caso mesmo assim.
+ *  Nome/eixo levam apóstrofo na frente quando começam com =, +, -, @ ou TAB —
+ *  sem isso o Excel/Sheets interpreta o campo como fórmula ao abrir o .csv
+ *  (Vigia, item 1: HYPERLINK/WEBSERVICE pode exfiltrar o token da linha). */
+const CSV_FORMULA_PREFIX = /^[=+\-@\t]/;
+
+function csvTextField(v: string): string {
+  const noBreaks = stripLineBreaks(v);
+  const neutralized = CSV_FORMULA_PREFIX.test(noBreaks)
+    ? `'${noBreaks}`
+    : noBreaks;
+  return `"${neutralized.replaceAll('"', '""')}"`;
+}
+
 export function buildReissuedListCsv(items: ReissuedItem[]): string {
-  const quote = (v: string) => `"${v.replaceAll('"', '""')}"`;
+  const quoteLink = (v: string) => `"${v.replaceAll('"', '""')}"`;
   const header = "nome,eixo,link";
   const rows = items.map((i) =>
-    [i.name, AXES[i.axis].label, i.link].map(quote).join(",")
+    [
+      csvTextField(i.name),
+      csvTextField(AXES[i.axis].label),
+      quoteLink(i.link),
+    ].join(",")
   );
   return [header, ...rows].join("\n");
 }

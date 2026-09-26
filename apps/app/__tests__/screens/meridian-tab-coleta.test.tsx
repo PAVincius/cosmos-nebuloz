@@ -542,6 +542,67 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
     );
     expect(lines).toHaveLength(3);
   });
+
+  it("csv: neutraliza injeção de fórmula (=, +, -, @) no nome e no eixo", () => {
+    const malicious = [
+      {
+        respondentId: "r1",
+        name: '=HYPERLINK("https://evil.example","clique")',
+        axis: "DATA" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+      },
+      {
+        respondentId: "r2",
+        name: "+1",
+        axis: "PROCESS" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok2",
+      },
+      {
+        respondentId: "r3",
+        name: "-1",
+        axis: "PEOPLE" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok3",
+      },
+      {
+        respondentId: "r4",
+        name: "@SUM(1+1)",
+        axis: "DATA" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok4",
+      },
+    ];
+    const lines = buildReissuedListCsv(malicious).split("\n");
+    for (const line of lines.slice(1)) {
+      const firstField = line.slice(1, line.indexOf('"', 1));
+      expect(firstField[0]).not.toMatch(/[=+\-@]/);
+      expect(firstField.startsWith("'")).toBe(true);
+    }
+  });
+
+  it("csv: rejeita/sanitiza \\n e \\r dentro do nome (linha falsa)", () => {
+    const injected = [
+      {
+        respondentId: "r1",
+        name: "Ana Kim\nfake,row,injected",
+        axis: "DATA" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+      },
+    ];
+    const csv = buildReissuedListCsv(injected);
+    expect(csv.split("\n")).toHaveLength(2);
+  });
+
+  it("texto: rejeita/sanitiza \\n e \\r dentro do nome (linha falsa no copiar tudo)", () => {
+    const injected = [
+      {
+        respondentId: "r1",
+        name: "Ana Kim\r\nfake · line",
+        axis: "DATA" as const,
+        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+      },
+    ];
+    const text = buildReissuedListText(injected);
+    expect(text.split("\n")).toHaveLength(1);
+  });
 });
 
 describe("ColetaTab — reemitir e copiar todos os pendentes (spec 006 US2)", () => {
