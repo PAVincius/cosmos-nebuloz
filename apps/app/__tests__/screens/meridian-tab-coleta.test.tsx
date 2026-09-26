@@ -288,6 +288,55 @@ describe("ColetaTab — atribuir respondente", () => {
       ).toBe(false);
     });
   });
+
+  // P3 (achado do dogfood M1/M2, 2026-09-26): `markDirty` (useEffect
+  // `link && !copied`) marca o `ModalHost` como sujo assim que o link
+  // aparece — e nada nunca chama `markClean` de volta. Depois de copiar,
+  // `dirty` continua `true` pro resto da vida do modal, então o clique no
+  // backdrop (que passa pelo `tryClose`/`dirty` do `ModalHost`, não pelo
+  // `requestClose` próprio deste modal) ainda dispara o alerta genérico do
+  // `ModalHost` ("Descartar alterações?", form-kit.tsx/modal.tsx) — alarme
+  // falso, já que o consultor fez a coisa certa. `it.fails`: documenta o
+  // bug pro dev: deve virar `it` puro quando `DirtyCtx` ganhar `markClean` e
+  // este componente chamá-lo ao copiar.
+  it.fails("backdrop depois de copiar fecha direto — não repete 'Descartar alterações?'", async () => {
+    assignRespondentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r9", token: "tok-abc123" },
+    });
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getAllByText("Atribuir respondente")[0]);
+    fireEvent.change(screen.getByPlaceholderText("Marina Costa"), {
+      target: { value: "Rafael Tomé" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Gerente de Dados"), {
+      target: { value: "Eng. de Dados" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("marina@empresa.com"), {
+      target: { value: "rafael@x.com" },
+    });
+    fireEvent.click(screen.getByText("Atribuir e gerar link"));
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+      ).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByText("Copiar"));
+    await waitFor(() => {
+      expect(
+        (screen.getByText("Concluir").closest("button") as HTMLButtonElement)
+          .disabled
+      ).toBe(false);
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Fechar modal" }));
+    expect(screen.queryByText("Descartar alterações?")).toBeNull();
+  });
 });
 
 describe("ColetaTab — revogar respondente", () => {
