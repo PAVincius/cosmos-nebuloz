@@ -28,7 +28,7 @@ describe("pinPersonaToTenant", () => {
     const db = {
       tenantMember: { deleteMany: tenantMemberDeleteMany },
       meridianMembership: { deleteMany: meridianMembershipDeleteMany },
-    };
+    } as unknown as Parameters<typeof pinPersonaToTenant>[0];
 
     await pinPersonaToTenant(db, "user-marina", "tenant-cosmos-dev");
 
@@ -45,7 +45,7 @@ describe("pinPersonaToTenant", () => {
     const db = {
       tenantMember: { deleteMany: tenantMemberDeleteMany },
       meridianMembership: { deleteMany: meridianMembershipDeleteMany },
-    };
+    } as unknown as Parameters<typeof pinPersonaToTenant>[0];
 
     await pinPersonaToTenant(db, "user-marina", "tenant-cosmos-dev");
 
