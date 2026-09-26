@@ -54,9 +54,27 @@ export type MeridianPersonaRole = keyof typeof MERIDIAN_PERSONAS;
 export const meridianStorageState = (role: MeridianPersonaRole) =>
   fixture("meridian", role);
 
+/**
+ * Persona do tenant `nebuloz-e2e-interno` (`isInternalTenant = true`),
+ * semeada por `seed-catalogo-e2e.ts` — único jeito de exercitar o cenário 2
+ * do catálogo pós-login (spec 004, US2) sem depender do workspace real do
+ * CEO (`seed-nebuloz.ts` é convite, sem senha).
+ */
+const CATALOGO_PERSONAS = {
+  interna: "interno.catalogo@nebuloz.exemplo",
+} as const;
+export type CatalogoPersonaRole = keyof typeof CATALOGO_PERSONAS;
+export const catalogoStorageState = (role: CatalogoPersonaRole) =>
+  fixture("catalogo", role);
+
 /** Erro vira aviso: o seed pode já estar aplicado, e abortar aqui jogaria
  *  fora as suítes que não dependem dele. */
-const SEEDS = ["seed:e2e", "seed:charter", "seed:meridian cosmos-dev"] as const;
+const SEEDS = [
+  "seed:e2e",
+  "seed:charter",
+  "seed:meridian cosmos-dev",
+  "seed:catalogo-e2e",
+] as const;
 
 /**
  * Grupos de persona que dependem de um seed opcional.
@@ -83,6 +101,15 @@ const GRUPOS_OPCIONAIS = [
     envSenha: "MERIDIAN_SEED_PASSWORD",
     senhaPadrao: "meridian123",
     ausente: "seed ausente?",
+  },
+  {
+    nome: "Catálogo interno",
+    dir: "catalogo",
+    personas: CATALOGO_PERSONAS,
+    landingPath: "/produto",
+    envSenha: "CATALOGO_SEED_PASSWORD",
+    senhaPadrao: "catalogo123",
+    ausente: "seed catalogo-e2e ausente?",
   },
 ] as const;
 

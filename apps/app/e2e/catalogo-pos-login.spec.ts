@@ -1,20 +1,15 @@
 import { expect, test } from "@playwright/test";
+import { catalogoStorageState } from "./setup/auth.setup";
 
 /**
  * E2E — Catálogo de produtos pós-login (spec 004, US2)
  *
  * Cenário 2 do quickstart (tenant interno → catálogo, Meridian clicável,
- * demais "em breve") depende de uma sessão logada no tenant `nebuloz`
- * (`isInternalTenant = true`) com senha conhecida — não existe fixture/seed
- * para isso ainda (só `scripts/seed-nebuloz.ts`, que é convite, sem senha).
- * Registrado como pendência para quem adicionar esse seed — mesmo padrão de
- * `GRUPOS_OPCIONAIS` em e2e/setup/auth.setup.ts (Charter/Meridian).
+ * demais "em breve"). Sessão semeada por `scripts/seed-catalogo-e2e.ts`
+ * (tenant dedicado `nebuloz-e2e-interno`, não o workspace real do CEO).
  */
 test.describe("Catálogo pós-login — tenant interno", () => {
-  test.skip(
-    true,
-    "requer fixture de sessão do tenant nebuloz (isInternalTenant=true) — sem seed dedicado ainda"
-  );
+  test.use({ storageState: catalogoStorageState("interna") });
 
   test("aterrissa no catálogo, com Meridian clicável e os demais 'em breve'", async ({
     page,
