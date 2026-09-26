@@ -5,55 +5,6 @@ type AuthLayoutProps = {
   readonly children: ReactNode;
 };
 
-/** A cadência de um PI: cinco iterações de execução e a janela de IP que fecha
- *  o incremento. É a estrutura que o Cosmos organiza — desenhá-la diz mais
- *  sobre o produto do que ilustrar o "cosmos" do nome. */
-const CADENCE = [
-  { id: "I1", ip: false },
-  { id: "I2", ip: false },
-  { id: "I3", ip: false },
-  { id: "I4", ip: false },
-  { id: "I5", ip: false },
-  { id: "IP", ip: true },
-] as const;
-
-const CadenceRail = () => (
-  <div aria-hidden="true" className="select-none">
-    <div className="h-px w-full bg-white/15" />
-    <ol className="flex items-stretch">
-      {CADENCE.map((segment, index) => (
-        <li
-          className={`motion-safe:fade-in motion-safe:slide-in-from-top-1 relative flex-1 pt-3 pb-2 motion-safe:animate-in motion-safe:fill-mode-backwards motion-safe:duration-500 ${
-            segment.ip ? "bg-[#5e6ad2]/12" : ""
-          }`}
-          key={segment.id}
-          style={{ animationDelay: `${180 + index * 70}ms` }}
-        >
-          <span
-            className={`absolute top-0 left-0 w-px ${
-              segment.ip ? "h-3 bg-[#8b95f0]" : "h-2 bg-white/30"
-            }`}
-          />
-          <span
-            className={`pl-2 font-mono text-[11px] tracking-[0.12em] ${
-              segment.ip ? "text-[#a5aef7]" : "text-[#6f7689]"
-            }`}
-          >
-            {segment.id}
-          </span>
-        </li>
-      ))}
-      <li className="relative w-px">
-        <span className="absolute top-0 left-0 h-2 w-px bg-white/30" />
-      </li>
-    </ol>
-    <div className="mt-1 flex justify-between font-mono text-[#565c6d] text-[10px] uppercase tracking-[0.18em]">
-      <span>Execução</span>
-      <span>Inovação e planejamento</span>
-    </div>
-  </div>
-);
-
 const AuthLayout = ({ children }: AuthLayoutProps) => (
   <div className="grid h-dvh grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
     {/* Painel de marca — escuro nos dois temas, por decisão. */}
@@ -70,20 +21,17 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
       <div className="relative z-10 flex items-center gap-2.5">
         <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] bg-[#5e6ad2]" />
         <span className="font-mono text-[#e7e9f5] text-[13px] uppercase tracking-[0.32em]">
-          Cosmos
+          Nebuloz
         </span>
       </div>
 
       <h2 className="relative z-10 font-display font-semibold text-[#f2f3fa] text-[2.1rem] leading-[1.08] tracking-[-0.03em] xl:text-[2.5rem] 2xl:text-[3rem]">
-        Cinco iterações.
+        Uma suíte.
         <br />
-        Uma janela de IP.
-        <br />
-        <span className="text-[#8b95f0]">Nenhuma decisão perdida.</span>
+        <span className="text-[#8b95f0]">Um só login.</span>
       </h2>
 
-      <div className="relative z-10 space-y-10">
-        <CadenceRail />
+      <div className="relative z-10">
         <p className="font-mono text-[#454b5c] text-[10px] uppercase tracking-[0.2em]">
           Nebuloz · {new Date().getFullYear()}
         </p>
@@ -100,7 +48,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
         <div className="mb-10 flex items-center gap-2.5 lg:hidden">
           <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] bg-[#5e6ad2]" />
           <span className="font-mono text-[13px] uppercase tracking-[0.32em]">
-            Cosmos
+            Nebuloz
           </span>
         </div>
         {children}

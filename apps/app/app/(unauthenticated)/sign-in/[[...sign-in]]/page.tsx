@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 const title = "Entrar";
-const description = "Acesse seu workspace no Cosmos.";
+const description = "Acesse seu workspace na Nebuloz.";
 const SignIn = dynamic(() =>
   import("@repo/auth/components/sign-in").then((mod) => mod.SignIn)
 );

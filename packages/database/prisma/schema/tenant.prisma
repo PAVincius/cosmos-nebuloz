@@ -23,22 +23,28 @@ enum InvitationStatus {
 }
 
 model Tenant {
-  id              String           @id @default(cuid())
-  name            String
-  slug            String           @unique
-  logo            String?
-  plan            SubscriptionPlan @default(ORBIT)
+  id               String           @id @default(cuid())
+  name             String
+  slug             String           @unique
+  logo             String?
+  plan             SubscriptionPlan @default(ORBIT)
   // True only for the single internal row (id "system") that owns
   // system-generated audit rows (see lib/inngest/isolation-audit.ts and the
   // 20260728020000_system_tenant / 20260728030000_system_tenant_marker
   // migrations). Any tenant-facing listing (admin org list, billing export,
   // customer CSV) must filter isSystem = false — this row is not a customer.
-  isSystem        Boolean          @default(false)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  metadata        Json?
+  isSystem         Boolean          @default(false)
+  // Diferencia o(s) tenant(s) que veem o catálogo de produtos pós-login (hoje,
+  // só Nebuloz) dos demais, que seguem direto pro produto contratado. Distinto
+  // de isSystem: aqui é dogfood real de cliente, não tenant técnico de
+  // auditoria. Setado manualmente (migration de dado ou ação administrativa) —
+  // sem UI de gerenciar a flag nesta feature.
+  isInternalTenant Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  metadata         Json?
   // Strategy Map — cosmos.html screen-strategy vision statement
-  visionStatement String?          @db.Text
+  visionStatement  String?          @db.Text
 
   members                   TenantMember[]
   invitations               TenantInvitation[]
