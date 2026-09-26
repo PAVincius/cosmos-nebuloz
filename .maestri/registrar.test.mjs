@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { registrar, resumo } from "./registrar.mjs";
+import { conceder, concessoes, registrar, resumo } from "./registrar.mjs";
 
 const arquivo = () =>
   join(mkdtempSync(join(tmpdir(), "aprendizado-")), "aprendizado.jsonl");
@@ -100,6 +100,77 @@ test("resumo: taxa por agente e causas que se repetem na janela", () => {
   assert.match(out, /Selo: 0 aprovado, 1 reprovado, 0 achado/);
   assert.match(out, /2× sem filtro tenantId \(Orbita, Selo\)/i);
   assert.doesNotMatch(out, /fora da janela/);
+});
+
+test("conceder registra quem, para quem, escopo e validade; no máximo 24 h", () => {
+  const f = arquivo();
+  const c = conceder(
+    {
+      de: "Norte",
+      para: "Regua",
+      escopo: "editar docs/produto/cosmos-prd.md",
+      motivo: "ajuste de critério de aceite",
+      horas: "4",
+    },
+    f,
+    agora
+  );
+  assert.equal(c.ate, "2026-09-25T16:00:00.000Z");
+  assert.deepEqual(JSON.parse(readFileSync(f, "utf8").trim()), c);
+  assert.throws(
+    () =>
+      conceder(
+        { de: "Norte", para: "Regua", escopo: "x", motivo: "y", horas: "25" },
+        f,
+        agora
+      ),
+    /24/
+  );
+  assert.throws(
+    () =>
+      conceder(
+        { de: "Norte", para: "Norte", escopo: "x", motivo: "y", horas: "1" },
+        f,
+        agora
+      ),
+    /si mesmo/
+  );
+  assert.throws(
+    () =>
+      conceder(
+        { de: "Norte", para: "Regua", escopo: "x", horas: "1" },
+        f,
+        agora
+      ),
+    /motivo/
+  );
+});
+
+test("concessoes lista só as ativas, e filtra por quem recebeu", () => {
+  const f = arquivo();
+  conceder(
+    { de: "Ordem", para: "Caixa", escopo: "a", motivo: "m", horas: "2" },
+    f,
+    agora
+  );
+  conceder(
+    { de: "Morgana", para: "Orbita", escopo: "b", motivo: "m", horas: "1" },
+    f,
+    new Date(agora - 2 * 36e5)
+  );
+  conceder(
+    { de: "Morgana", para: "Selo", escopo: "c", motivo: "m", horas: "3" },
+    f,
+    agora
+  );
+  assert.deepEqual(
+    concessoes(f, agora).map((c) => c.para),
+    ["Caixa", "Selo"]
+  );
+  assert.deepEqual(
+    concessoes(f, agora, "Selo").map((c) => c.escopo),
+    ["c"]
+  );
 });
 
 test("resumo sem eventos na janela sai 1: a retro é pulada", () => {

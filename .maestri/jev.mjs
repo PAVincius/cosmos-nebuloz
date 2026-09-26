@@ -4,6 +4,8 @@
 // Sai 1 quando não há nada para ninguém (a rotina é pulada, nenhum agente acorda);
 // sai 0 com as linhas de roteamento no stdout, que entram no prompt via {{output}}.
 import { execFileSync } from "node:child_process";
+import { readdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const GATEWAY_URL = "https://ai-gateway.vercel.sh/v4/ai/evaluation-model";
@@ -98,44 +100,70 @@ const SEM_GERADOS = [
   ":(exclude)graphify-out",
   ":(exclude)pnpm-lock.yaml",
 ];
-const gitRun = (args) =>
+const gitRun = (args, cwd) =>
   execFileSync("git", args, {
-    cwd: process.env.MAESTRI_WORKSPACE_DIR || process.cwd(),
+    cwd,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
   });
 
-export function commits(since, git = gitRun) {
-  const log = git([
-    "log",
-    "--all",
-    "--no-merges",
-    `--since=${since}`,
-    "--format=%h%x09%s",
-  ]).trim();
-  if (!log) {
-    return [];
+/**
+ * O Ground e os andares deste repo. Andar do Maestri é um clone completo, com .git próprio,
+ * em <pai>/.maestri/floors/<repo>--<branch>: commit feito lá só aparece no Ground depois do land.
+ */
+export function repos(ws = process.env.MAESTRI_WORKSPACE_DIR || process.cwd()) {
+  const dir = join(dirname(ws), ".maestri", "floors");
+  const prefixo = `${basename(ws)}--`;
+  let andares = [];
+  try {
+    andares = readdirSync(dir)
+      .filter((n) => n.startsWith(prefixo))
+      .map((n) => join(dir, n));
+  } catch {
+    // Sem pasta de andares: só o Ground.
   }
-  return log
+  return [ws, ...andares];
+}
+
+const logDe = (git, since, cwd) =>
+  git(
+    ["log", "--all", "--no-merges", `--since=${since}`, "--format=%h%x09%s"],
+    cwd
+  ).trim();
+
+function lerCommit(git, cwd, { sha, subject, andar }) {
+  const files = git(["show", "--name-only", "--format=", sha], cwd)
+    .trim()
     .split("\n")
-    .slice(0, MAX_COMMITS)
-    .map((line) => {
+    .filter(Boolean);
+  const diff = git(
+    ["show", "--format=", "--unified=2", sha, "--", ".", ...SEM_GERADOS],
+    cwd
+  ).slice(0, MAX_DIFF);
+  return { sha, subject, files, diff, ...(andar && { andar }) };
+}
+
+export function commits(since, git = gitRun, onde = repos()) {
+  const vistos = new Set();
+  const out = [];
+  for (const cwd of onde) {
+    const andar = cwd === onde[0] ? undefined : basename(cwd);
+    for (const line of logDe(git, since, cwd).split("\n").filter(Boolean)) {
       const [sha, subject] = line.split("\t");
-      const files = git(["show", "--name-only", "--format=", sha])
-        .trim()
-        .split("\n")
-        .filter(Boolean);
-      const diff = git([
-        "show",
-        "--format=",
-        "--unified=2",
-        sha,
-        "--",
-        ".",
-        ...SEM_GERADOS,
-      ]).slice(0, MAX_DIFF);
-      return { sha, subject, files, diff };
-    });
+      // Commit já aterrissado aparece no Ground e no andar: conta uma vez, pelo Ground.
+      if (vistos.has(sha) || out.length >= MAX_COMMITS) {
+        continue;
+      }
+      vistos.add(sha);
+      out.push(lerCommit(git, cwd, { sha, subject, andar }));
+    }
+  }
+  return out;
+}
+
+/** Para o fechamento do dia: houve commit em algum repo (Ground ou andar) desde `since`? */
+export function houveCommit(since, git = gitRun, onde = repos()) {
+  return onde.some((cwd) => logDe(git, since, cwd) !== "");
 }
 
 /** Divide os commits em lotes que cabem numa chamada. */
@@ -185,7 +213,7 @@ function linhaDaArea(alvo, area, a) {
 export function triar(cs, answers) {
   const linhas = [];
   for (const c of cs) {
-    const alvo = `${c.sha} "${c.subject}"`;
+    const alvo = `${c.sha}${c.andar ? ` [andar ${c.andar}]` : ""} "${c.subject}"`;
     for (const area of Object.keys(PERGUNTAS)) {
       const linha = linhaDaArea(alvo, area, answers[`${area}_${c.sha}`]);
       if (linha) {
@@ -204,7 +232,7 @@ export function triar(cs, answers) {
 export async function triagem(since = "65 minutes ago", deps = {}) {
   let cs;
   try {
-    cs = commits(since, deps.git);
+    cs = commits(since, deps.git, deps.onde);
   } catch (e) {
     return {
       code: 0,
@@ -244,8 +272,13 @@ export async function triagem(since = "65 minutes ago", deps = {}) {
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const [cmd, since] = process.argv.slice(2);
+  if (cmd === "houve-commit") {
+    process.exit(houveCommit(since ?? "midnight") ? 0 : 1);
+  }
   if (cmd !== "triagem") {
-    console.error("uso: node .maestri/jev.mjs triagem [desde]");
+    console.error(
+      "uso: node .maestri/jev.mjs triagem [desde] | houve-commit [desde]"
+    );
     process.exit(2);
   }
   const { code, out } = await triagem(since);

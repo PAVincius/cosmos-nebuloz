@@ -3,6 +3,10 @@
 // É o sinal do ciclo de melhoria: sem ele, "o agente aprendeu" é impressão.
 //   node .maestri/registrar.mjs --agente Crivo --tarefa "PR #250" --veredito reprovado --causa "sem filtro tenantId" [--produto cosmos]
 //   node .maestri/registrar.mjs resumo [--dias 7]   (sai 1 sem eventos: a retro semanal é pulada)
+// Concessões: o superior libera, por tempo, que o subordinado aja dentro do domínio DO SUPERIOR.
+//   node .maestri/registrar.mjs conceder --de Norte --para Regua --escopo "editar docs/produto/x.md" --motivo "..." --horas 4
+//   node .maestri/registrar.mjs concessoes [--para Regua]   (só as ativas)
+// ponytail: é trilha de auditoria + regra de prompt; as permissões do Claude Code não mudam. Quem aplica é o agente.
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -10,6 +14,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const ARQUIVO = fileURLToPath(
   new URL("./aprendizado.jsonl", import.meta.url)
 );
+export const CONCESSOES = fileURLToPath(
+  new URL("./concessoes.jsonl", import.meta.url)
+);
+const MAX_HORAS = 24;
 const VEREDITOS = ["aprovado", "reprovado", "achado"];
 const PREFIXO_FLAG = /^--/;
 
@@ -103,6 +111,50 @@ export function resumo(arquivo = ARQUIVO, dias = 7, agora = new Date()) {
   return { code: 0, out: linhas.join("\n") };
 }
 
+export function conceder(
+  { de, para, escopo, motivo, horas },
+  arquivo = CONCESSOES,
+  agora = new Date()
+) {
+  for (const [campo, valor] of Object.entries({ de, para, escopo, motivo })) {
+    if (!valor) {
+      throw new Error(`falta --${campo}`);
+    }
+  }
+  if (de === para) {
+    throw new Error("ninguém concede acesso a si mesmo");
+  }
+  const h = Number(horas);
+  if (!(h > 0 && h <= MAX_HORAS)) {
+    throw new Error(`--horas entre 0 e ${MAX_HORAS}`);
+  }
+  const c = {
+    ts: agora.toISOString(),
+    de,
+    para,
+    escopo,
+    motivo,
+    ate: new Date(agora.getTime() + h * 36e5).toISOString(),
+  };
+  appendFileSync(arquivo, `${JSON.stringify(c)}\n`);
+  return c;
+}
+
+export function concessoes(
+  arquivo = CONCESSOES,
+  agora = new Date(),
+  para = ""
+) {
+  if (!existsSync(arquivo)) {
+    return [];
+  }
+  return readFileSync(arquivo, "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .map((l) => JSON.parse(l))
+    .filter((c) => Date.parse(c.ate) > agora && (!para || c.para === para));
+}
+
 function flags(args) {
   const out = {};
   for (let i = 0; i < args.length; i += 2) {
@@ -123,6 +175,24 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
         console.log(out);
       }
       process.exit(code);
+    }
+    if (args[0] === "conceder") {
+      const c = conceder(flags(args.slice(1)));
+      console.log(`concedido: ${c.de} → ${c.para} até ${c.ate}: ${c.escopo}`);
+      process.exit(0);
+    }
+    if (args[0] === "concessoes") {
+      const ativas = concessoes(
+        CONCESSOES,
+        new Date(),
+        flags(args.slice(1)).para
+      );
+      for (const c of ativas) {
+        console.log(
+          `${c.de} → ${c.para} até ${c.ate}: ${c.escopo} (${c.motivo})`
+        );
+      }
+      process.exit(ativas.length ? 0 : 1);
     }
     const e = registrar(flags(args));
     console.log(`registrado: ${e.agente} ${e.veredito} ${e.tarefa}`);
