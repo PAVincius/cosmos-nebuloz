@@ -15,6 +15,7 @@ import type { AssessmentDetail } from "@/app/(meridian)/actions/assessments";
 import {
   assignRespondent,
   closeCollection,
+  reissueRespondentLink,
   revokeRespondent,
   sendReminder,
 } from "@/app/(meridian)/actions/collection";
@@ -32,6 +33,286 @@ import {
 } from "../base";
 import { ScoreRing } from "../charts";
 
+/**
+ * Guarda de fechamento: enquanto `guarded`, marca o `ModalHost` como sujo
+ * (backdrop/Esc do Charter caem na confirmação de descarte genérica) e
+ * intercepta o Esc em fase de captura no `document` — antes do listener em
+ * `window` do `ModalHost` — pra abrir a confirmação PRÓPRIA deste modal em
+ * vez da genérica. Nasceu do P1 AS-112 (5fad9132): X/Esc/backdrop fechando
+ * sem copiar o link perdiam o token do mesmo jeito que "Concluir" desabilitado
+ * tentava evitar.
+ */
+function useCloseGuard(guarded: boolean) {
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const { markDirty } = useDirty();
+
+  useEffect(() => {
+    if (guarded) {
+      markDirty();
+    }
+  }, [guarded, markDirty]);
+
+  useEffect(() => {
+    if (!guarded) {
+      return;
+    }
+    const onKeyDownCapture = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        e.preventDefault();
+        setConfirmDiscard(true);
+      }
+    };
+    document.addEventListener("keydown", onKeyDownCapture, true);
+    return () =>
+      document.removeEventListener("keydown", onKeyDownCapture, true);
+  }, [guarded]);
+
+  const requestClose = (doClose: () => void) => {
+    if (guarded) {
+      setConfirmDiscard(true);
+      return;
+    }
+    doClose();
+  };
+
+  return { confirmDiscard, setConfirmDiscard, requestClose };
+}
+
+function DiscardConfirmOverlay({
+  title,
+  message,
+  onCancel,
+  onConfirm,
+}: {
+  title: string;
+  message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 320,
+        display: "grid",
+        placeItems: "center",
+        background: "var(--scrim)",
+        backdropFilter: "blur(3px)",
+      }}
+    >
+      <div
+        aria-labelledby="discard-link-title"
+        aria-modal="true"
+        role="alertdialog"
+        style={{
+          background: "var(--surface-3)",
+          border: "1px solid var(--hairline-strong)",
+          borderRadius: "var(--r-lg)",
+          padding: "24px 28px",
+          maxWidth: 400,
+          boxShadow: "0 24px 48px -16px rgba(0,0,0,.6)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: 11,
+            alignItems: "flex-start",
+            marginBottom: 16,
+          }}
+        >
+          <span
+            style={{
+              display: "grid",
+              placeItems: "center",
+              width: 34,
+              height: 34,
+              borderRadius: 9,
+              flexShrink: 0,
+              background: "var(--amber-soft)",
+              color: "var(--amber-text)",
+              border: "1px solid rgba(var(--amber-rgb),.25)",
+            }}
+          >
+            <Icon name="alert" size={16} />
+          </span>
+          <div>
+            <div
+              className="display"
+              id="discard-link-title"
+              style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 5 }}
+            >
+              {title}
+            </div>
+            <div
+              style={{
+                fontSize: 12.5,
+                color: "var(--ink-muted)",
+                lineHeight: 1.55,
+              }}
+            >
+              {message}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <Button onClick={onCancel} size="md" variant="secondary">
+            Voltar e copiar
+          </Button>
+          <Button
+            icon="x"
+            onClick={onConfirm}
+            size="md"
+            style={{ background: "var(--red)", borderColor: "var(--red)" }}
+          >
+            Fechar mesmo assim
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Exibe um link de respondente que só aparece uma vez (banco guarda só o
+ * hash) — usado tanto por "Atribuir respondente" quanto por "Reemitir link"
+ * (mesmo padrão, texto de título/aviso diferente).
+ */
+function RespondentLinkModal({
+  title,
+  fieldLabel,
+  link,
+  discardMessage,
+  onClose,
+  onDone,
+}: {
+  title: string;
+  fieldLabel: string;
+  link: string;
+  discardMessage: string;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
+  const linkInputRef = useRef<HTMLInputElement>(null);
+  const { confirmDiscard, setConfirmDiscard, requestClose } = useCloseGuard(
+    !copied
+  );
+
+  const finish = () => {
+    onDone();
+    onClose();
+  };
+
+  const copyLink = async () => {
+    try {
+      if (!navigator.clipboard) {
+        throw new Error("clipboard indisponível");
+      }
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setCopyFailed(false);
+    } catch {
+      // Sem Clipboard API (ou negada): seleciona o texto pra Ctrl+C manual
+      // funcionar. O `onCopy` do input marca `copied` quando isso acontecer.
+      linkInputRef.current?.select();
+      setCopyFailed(true);
+    }
+  };
+
+  return (
+    <>
+      <ModalShell
+        footer={
+          <Button disabled={!copied} icon="check" onClick={finish}>
+            Concluir
+          </Button>
+        }
+        icon="link2"
+        onClose={() => requestClose(finish)}
+        subtitle="O token só aparece agora — o banco guarda só o hash. Copie e envie por fora (sem canal automatizado ainda)."
+        title={title}
+        tone="green"
+        width={560}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: 9,
+              alignItems: "center",
+              padding: "9px 12px",
+              borderRadius: 9,
+              border: "1px solid rgba(var(--amber-rgb),.32)",
+              background: "var(--amber-soft)",
+            }}
+          >
+            <Icon
+              name="alert"
+              size={14}
+              style={{ color: "var(--amber-text)", flexShrink: 0 }}
+            />
+            <span
+              style={{
+                fontSize: 11.5,
+                color: "var(--amber-text)",
+                fontWeight: 700,
+              }}
+            >
+              Este link não aparece de novo em lugar nenhum — se sair desta tela
+              sem copiar, o único jeito de recuperar é reemitir de novo.
+            </span>
+          </div>
+          <Field label={fieldLabel}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <Input
+                onCopy={() => setCopied(true)}
+                readOnly
+                ref={linkInputRef}
+                style={{ flex: 1 }}
+                value={link}
+              />
+              <Button icon="copy" onClick={copyLink} variant="secondary">
+                Copiar
+              </Button>
+            </div>
+          </Field>
+          {copyFailed && (
+            <span
+              style={{
+                fontSize: 11,
+                color: "var(--red-text)",
+                fontWeight: 600,
+              }}
+            >
+              Não deu pra copiar automático — o texto já está selecionado, use
+              Ctrl+C (ou Cmd+C) pra copiar à mão.
+            </span>
+          )}
+        </div>
+      </ModalShell>
+      {confirmDiscard && (
+        <DiscardConfirmOverlay
+          message={discardMessage}
+          onCancel={() => setConfirmDiscard(false)}
+          onConfirm={finish}
+          title="Fechar sem copiar o link?"
+        />
+      )}
+    </>
+  );
+}
+
 function AssignRespondentModal({
   assessmentId,
   axis,
@@ -43,16 +324,11 @@ function AssignRespondentModal({
   onClose: () => void;
   onAssigned: () => void;
 }) {
+  const modal = useModal();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
-  const [link, setLink] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [copyFailed, setCopyFailed] = useState(false);
-  const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const linkInputRef = useRef<HTMLInputElement>(null);
-  const { markDirty } = useDirty();
 
   const valid =
     name.trim().length > 0 && role.trim().length > 0 && email.trim().length > 0;
@@ -67,259 +343,23 @@ function AssignRespondentModal({
       }
     );
     setBusy(false);
-    if (res.ok) {
-      setLink(`${window.location.origin}/meridian-responder/${res.data.token}`);
-    }
-  };
-
-  // `onAssigned` recarrega a lista de respondentes, e a tela de detalhe
-  // desmonta pra skeleton enquanto recarrega — se isso rodasse logo depois do
-  // `assignRespondent`, o modal com o token (que só aparece uma vez) sumiria
-  // antes de o consultor conseguir copiar. Só dispara quando o modal já foi
-  // visto e está sendo fechado de propósito.
-  const finish = () => {
-    onAssigned();
-    onClose();
-  };
-
-  // `dirty` faz o `ModalHost` perguntar antes de fechar no backdrop/Esc, em
-  // vez de fechar direto — mesmo mecanismo que o Charter usa pra não perder
-  // formulário preenchido. Aqui o que se perde é o token, não um formulário.
-  useEffect(() => {
-    if (link && !copied) {
-      markDirty();
-    }
-  }, [link, copied, markDirty]);
-
-  // O `X` do ModalShell chama `onClose` direto; Esc chega no `ModalHost` via
-  // listener em `window` (bolha). Capturando em `document` antes da bolha
-  // chegar em `window`, dá pra interceptar o Esc e perguntar — sem isso, Esc
-  // fecha e perde o link mesmo com "Concluir" desabilitado.
-  useEffect(() => {
-    if (!link || copied) {
+    if (!res.ok) {
       return;
     }
-    const onKeyDownCapture = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        e.preventDefault();
-        setConfirmDiscard(true);
-      }
-    };
-    document.addEventListener("keydown", onKeyDownCapture, true);
-    return () =>
-      document.removeEventListener("keydown", onKeyDownCapture, true);
-  }, [link, copied]);
-
-  const requestClose = () => {
-    if (copied) {
-      finish();
-      return;
-    }
-    setConfirmDiscard(true);
-  };
-
-  const copyLink = async (value: string) => {
-    try {
-      if (!navigator.clipboard) {
-        throw new Error("clipboard indisponível");
-      }
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setCopyFailed(false);
-    } catch {
-      // Sem Clipboard API (ou negada): seleciona o texto pra Ctrl+C manual
-      // funcionar. O `onCopy` do input marca `copied` quando isso acontecer.
-      linkInputRef.current?.select();
-      setCopyFailed(true);
-    }
-  };
-
-  if (link) {
-    return (
-      <>
-        <ModalShell
-          footer={
-            <Button disabled={!copied} icon="check" onClick={finish}>
-              Concluir
-            </Button>
-          }
-          icon="link2"
-          onClose={requestClose}
-          subtitle="O token só aparece agora — o banco guarda só o hash. Copie e envie por fora (sem canal automatizado ainda)."
-          title="Link de coleta gerado"
-          tone="green"
-          width={560}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              padding: 20,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: 9,
-                alignItems: "center",
-                padding: "9px 12px",
-                borderRadius: 9,
-                border: "1px solid rgba(var(--amber-rgb),.32)",
-                background: "var(--amber-soft)",
-              }}
-            >
-              <Icon
-                name="alert"
-                size={14}
-                style={{ color: "var(--amber-text)", flexShrink: 0 }}
-              />
-              <span
-                style={{
-                  fontSize: 11.5,
-                  color: "var(--amber-text)",
-                  fontWeight: 700,
-                }}
-              >
-                Este link não aparece de novo em lugar nenhum — se sair desta
-                tela sem copiar, o único jeito de recuperar é revogar e emitir
-                outro.
-              </span>
-            </div>
-            <Field label={`Link para ${name} · ${AXES[axis].label}`}>
-              <div style={{ display: "flex", gap: 8 }}>
-                <Input
-                  onCopy={() => setCopied(true)}
-                  readOnly
-                  ref={linkInputRef}
-                  style={{ flex: 1 }}
-                  value={link}
-                />
-                <Button
-                  icon="copy"
-                  onClick={() => copyLink(link)}
-                  variant="secondary"
-                >
-                  Copiar
-                </Button>
-              </div>
-            </Field>
-            {copyFailed && (
-              <span
-                style={{
-                  fontSize: 11,
-                  color: "var(--red-text)",
-                  fontWeight: 600,
-                }}
-              >
-                Não deu pra copiar automático — o texto já está selecionado, use
-                Ctrl+C (ou Cmd+C) pra copiar à mão.
-              </span>
-            )}
-          </div>
-        </ModalShell>
-        {confirmDiscard && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 320,
-              display: "grid",
-              placeItems: "center",
-              background: "var(--scrim)",
-              backdropFilter: "blur(3px)",
-            }}
-          >
-            <div
-              aria-labelledby="assign-discard-title"
-              aria-modal="true"
-              role="alertdialog"
-              style={{
-                background: "var(--surface-3)",
-                border: "1px solid var(--hairline-strong)",
-                borderRadius: "var(--r-lg)",
-                padding: "24px 28px",
-                maxWidth: 400,
-                boxShadow: "0 24px 48px -16px rgba(0,0,0,.6)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: 11,
-                  alignItems: "flex-start",
-                  marginBottom: 16,
-                }}
-              >
-                <span
-                  style={{
-                    display: "grid",
-                    placeItems: "center",
-                    width: 34,
-                    height: 34,
-                    borderRadius: 9,
-                    flexShrink: 0,
-                    background: "var(--amber-soft)",
-                    color: "var(--amber-text)",
-                    border: "1px solid rgba(var(--amber-rgb),.25)",
-                  }}
-                >
-                  <Icon name="alert" size={16} />
-                </span>
-                <div>
-                  <div
-                    className="display"
-                    id="assign-discard-title"
-                    style={{
-                      fontSize: 14.5,
-                      fontWeight: 700,
-                      marginBottom: 5,
-                    }}
-                  >
-                    Fechar sem copiar o link?
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 12.5,
-                      color: "var(--ink-muted)",
-                      lineHeight: 1.55,
-                    }}
-                  >
-                    Você não copiou o link de {name}. Ele não aparece de novo —
-                    o único jeito de recuperar depois é revogar esse respondente
-                    e emitir outro.
-                  </div>
-                </div>
-              </div>
-              <div
-                style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}
-              >
-                <Button
-                  onClick={() => setConfirmDiscard(false)}
-                  size="md"
-                  variant="secondary"
-                >
-                  Voltar e copiar
-                </Button>
-                <Button
-                  icon="x"
-                  onClick={finish}
-                  size="md"
-                  style={{
-                    background: "var(--red)",
-                    borderColor: "var(--red)",
-                  }}
-                >
-                  Fechar mesmo assim
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </>
+    // Troca pro modal de link — não é a mesma tela recarregando: `onAssigned`
+    // só dispara quando o consultor fecha esse modal de propósito, senão o
+    // link (que só aparece uma vez) some antes de dar tempo de copiar.
+    modal.open(
+      <RespondentLinkModal
+        discardMessage={`Você não copiou o link de ${name}. Ele não aparece de novo — o único jeito de recuperar depois é revogar esse respondente e emitir outro.`}
+        fieldLabel={`Link para ${name} · ${AXES[axis].label}`}
+        link={`${window.location.origin}/meridian-responder/${res.data.token}`}
+        onClose={modal.close}
+        onDone={onAssigned}
+        title="Link de coleta gerado"
+      />
     );
-  }
+  };
 
   return (
     <ModalShell
@@ -473,6 +513,33 @@ export default function ColetaTab({
     onChanged();
   };
 
+  // Reemite o link do MESMO respondente (spec 006, US1) — o remédio pro AS-112:
+  // link perdido antes de copiar não precisa de revogar + reatribuir.
+  const reissueOne = async (id: string, name: string, axis: MeridianAxis) => {
+    setBusy(true);
+    const res = await runWithToast(
+      () => reissueRespondentLink({ respondentId: id }),
+      {
+        loading: "Reemitindo link…",
+        success: `Link novo gerado para ${name}.`,
+      }
+    );
+    setBusy(false);
+    if (!res.ok) {
+      return;
+    }
+    modal.open(
+      <RespondentLinkModal
+        discardMessage={`Você não copiou o link reemitido de ${name}. Ele não aparece de novo — o único jeito de recuperar depois é reemitir de novo.`}
+        fieldLabel={`Link para ${name} · ${AXES[axis].label}`}
+        link={`${window.location.origin}/meridian-responder/${res.data.token}`}
+        onClose={modal.close}
+        onDone={onChanged}
+        title="Link reemitido"
+      />
+    );
+  };
+
   const close = async () => {
     setBusy(true);
     const res = await runWithToast(
@@ -615,6 +682,19 @@ export default function ColetaTab({
                         variant="ghost"
                       >
                         Lembrar
+                      </Button>
+                    )}
+                    {!revoked && r.status !== "DONE" && (
+                      <Button
+                        disabled={busy}
+                        icon="refresh"
+                        onClick={() =>
+                          reissueOne(r.id, r.name, r.axis as MeridianAxis)
+                        }
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Reemitir link
                       </Button>
                     )}
                     {!revoked && (
