@@ -240,4 +240,42 @@ sem alterar. Onde o código não chega lá, é gap (§6 do mapa, itens 4 a 6, 8,
 
 ---
 
+## 10. Decisões
+
+### 2026-09-26 · Link do respondente deixa de ser irrecuperável (CPO)
+
+**Contexto.** No dogfood do AS-112 o consultor perdeu os 10 links duas vezes
+(`docs/qualidade/dogfood/meridian/diario.md:8-9`). O token só existe no modal de atribuição, o banco
+guarda o hash (`actions/collection.ts:75`) e o único remédio é revogar e atribuir de novo, o que cria
+outro respondente (`actions/collection.ts:108-131`). A trava "Concluir só depois de Copiar" do #253
+não resolveu: copiar não é colar em algum lugar (`atrito.md:138-144`). A causa não é pressa. Perder
+o link é terminal, e deveria ser um atraso de um clique.
+
+**Decisão.**
+1. **P0: "Reemitir link" por respondente (opção a).** Gira o `tokenHash` do mesmo respondente, que
+   mantém id, eixo, rascunho e status. O link antigo morre na hora. Fica bloqueado para
+   `DONE` e `REVOKED`. Grava auditoria `meridian.respondent.reissue`. Mostra o link novo no
+   mesmo modal do #253.
+2. **P0, mesma entrega: "Reemitir e copiar todos os pendentes" (opção c, feita em cima da a).**
+   Uma ação reemite todos os respondentes `INVITED`, `PENDING` e `OVERDUE` do assessment e devolve a
+   lista nome · eixo · link para copiar de uma vez e baixar em `.txt`/`.csv`. A opção c pura
+   ("copiar todos" ao fim das atribuições) foi descartada porque segura tokens no estado do
+   cliente, e um reload faz perder tudo de novo.
+3. **Depois: e-mail ao respondente (opção b).** Só entra depois que a spec 004 plugar o Resend no
+   Better Auth e a Lacre der parecer sobre o e-mail do respondente (base legal, retenção, quem
+   é o controlador no fluxo de consultoria). Não fica pronto para o lançamento.
+
+**Prioridade frente à spec 004.** Correm em paralelo, sem disputar a vez: a 004 mexe na
+autenticação (`packages/auth`) e isto mexe na coleta do Meridian (`actions/collection.ts`,
+`tab-coleta.tsx`). Pelo tamanho que estimo (uma action, dois botões, um modal de lista), isto
+entra antes do próximo ensaio de coleta. A opção b depende da 004 e não o contrário.
+
+**Critério de pronto.** O consultor fecha a aba no meio da atribuição, volta e recupera os 10
+links num único passo, sem revogar nada, em produção.
+
+**Junto (achado P2 do Vigia, `atrito.md:42`).** A reemissão define um `tokenExpiresAt` próprio
+em vez de copiar `assessment.deadline`. O Maestro decide o valor.
+
+---
+
 *Draft para revisão interna. Documento companheiro: Meridian SRD v1.0.*
