@@ -26,6 +26,7 @@
         "**/__tests__/**",
         "**/*.test.ts",
         "**/*.test.tsx",
+        "**/*.test.mjs",
         "**/*.spec.ts"
       ],
       "linter": {
