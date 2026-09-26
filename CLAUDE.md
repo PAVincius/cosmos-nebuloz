@@ -148,9 +148,9 @@ graphify explain "<node>" --graph .maestri/knowledge/<produto>/graph.json
 ---
 
 <!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-at specs/004-login-generico-produto/plan.md
+## Spec Kit
+
+Active plan: [`specs/003-signal-measure/plan.md`](specs/003-signal-measure/plan.md)
 <!-- SPECKIT END -->
 
 ---
