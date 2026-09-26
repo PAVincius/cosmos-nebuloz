@@ -6,6 +6,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { keys } from "./keys";
+import { scrubBreadcrumb, scrubRequestUrl } from "./scrub";
 
 /**
  * No DSN, no init.
@@ -53,10 +54,23 @@ export const initializeSentry = ():
       Sentry.replayIntegration({
         // Additional Replay configuration goes in here, for example:
         maskAllText: true,
+        maskAllInputs: true,
         blockAllMedia: true,
+        // No networkDetailAllowUrls: request/response bodies and headers are
+        // never captured. An allowlist here would need to keep excluding every
+        // route that can carry a token/code/secret in its URL or payload —
+        // capturing none by default is the safer bar.
       }),
       // Send console.log, console.error, and console.warn calls as logs to Sentry
       Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
     ],
+
+    beforeSend(event) {
+      return scrubRequestUrl(event);
+    },
+    beforeSendTransaction(event) {
+      return scrubRequestUrl(event);
+    },
+    beforeBreadcrumb: scrubBreadcrumb,
   });
 };
