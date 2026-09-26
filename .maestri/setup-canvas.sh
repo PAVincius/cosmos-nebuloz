@@ -60,6 +60,26 @@ equip() { # $1=papel $2...=skills
 }
 # Fork do fast-jev-compaction (Gateway, ver .maestri/plugins/fast-jev-compaction/FORK.md), só na pasta do papel.
 # Lê AI_GATEWAY_API_KEY do ambiente. keepThreshold 0.3: o padrão 0.5 cortou até arquivo em uso no teste.
+# Canny (devs, QA, Infra): bloqueia "pronto" quando nenhum check passou depois da última edição.
+# Regra local, sem rede (sem TYPESAFE_API_KEY). Checks e ignorados em .canny.json, que só vale após \`canny trust\`.
+CANNY="$HOME/.canny/src/dist/cli.js"
+canny_guard() { # $1=papel
+  [ -f "$CANNY" ] || { echo "! Canny não instalado em ~/.canny/src (ver .maestri/guarda/README.md)"; return; }
+  local ds d; ds=$(role_dirs "$1"); [ -n "$ds" ] || { echo "! papel $1 sem pasta, Canny pulado"; return; }
+  while read -r d; do ( cd "$d" && node "$CANNY" init --claude >/dev/null ) || echo "! Canny falhou em $1"; done <<< "$ds"
+}
+canny_trust() { # confiança é por caminho e conteúdo: Ground e cada andar
+  local r; for r in "$PWD" "$ANDARES"*; do [ -f "$r/.canny.json" ] && ( cd "$r" && node "$CANNY" trust >/dev/null ); done
+}
+# Hook de fonte (C-levels e Vigia): afirmação com número ou de verificação precisa de evidência recente.
+# Julga o NLI local (com.nebuloz.nli, :8765); fora do ar, o turno passa.
+FONTE="node $PWD/.maestri/guarda/fonte.mjs"
+fonte_guard() { # $1=papel
+  local ds d; ds=$(role_dirs "$1"); [ -n "$ds" ] || { echo "! papel $1 sem pasta, hook de fonte pulado"; return; }
+  while read -r d; do
+    node -e 'const [f,cmd]=process.argv.slice(1),fs=require("fs");let s={};try{s=JSON.parse(fs.readFileSync(f,"utf8"))}catch{}s.hooks??={};const st=(s.hooks.Stop??=[]);if(!st.some(g=>(g.hooks??[]).some(h=>h.command===cmd)))st.push({hooks:[{type:"command",command:cmd,timeout:30}]});fs.mkdirSync(require("path").dirname(f),{recursive:true});fs.writeFileSync(f,JSON.stringify(s,null,2)+"\n")' "$d/.claude/settings.json" "$FONTE"
+  done <<< "$ds"
+}
 jev_compaction() { # $1=papel
   local d r="$PWD"; d=$(role_dir "$1") || { echo "! papel $1 sem pasta, compaction pulado"; return; }
   ( cd "$d" && claude plugin marketplace add "$r/.maestri/plugins/fast-jev-compaction" --scope project >/dev/null \
@@ -219,6 +239,11 @@ equip "CFO"            pricing
 
 # Compaction literal só na Morgana primeiro (vive o dia todo, compacta muito). Estender a Norte/Ordem após uma semana.
 jev_compaction "Morgana"
+
+# Guardas contra erro confiante: regra (Canny) onde há código e teste; fonte (NLI) onde há número e afirmação.
+for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice" "Dev Plataforma" "QA" "Infra"; do canny_guard "$d"; done
+[ -f "$CANNY" ] && canny_trust
+for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer"; do fonte_guard "$c"; done
 
 # ─── Terminais ───────────────────────────────────────────────────────────────
 
