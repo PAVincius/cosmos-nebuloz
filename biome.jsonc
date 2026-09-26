@@ -26,6 +26,7 @@
         "**/__tests__/**",
         "**/*.test.ts",
         "**/*.test.tsx",
+        "**/*.test.mjs",
         "**/*.spec.ts"
       ],
       "linter": {
@@ -430,6 +431,9 @@
       // install), copiados como vieram do pacote. Lintar aqui só produz
       // ruído contra um estilo que não é o nosso e trava o pre-commit.
       "!.claude/skills/impeccable/scripts",
+      // Fork vendorizado do fast-jev-compaction (ver FORK.md): mantido no estilo
+      // do upstream para o diff contra ele continuar mínimo.
+      "!.maestri/plugins",
       // Protótipo de design: fonte de verdade visual do port, copiada como
       // veio do projeto de design. Lintar quebraria a fidelidade da referência.
       "!docs/design-handoff",

@@ -5,6 +5,7 @@ export type Produto =
   | "cosmos"
   | "backoffice"
   | "plataforma"
+  | "backoffice"
   | "signal";
 
 export type Destino = Produto | "compartilhado";
