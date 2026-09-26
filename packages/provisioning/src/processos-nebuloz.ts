@@ -2,7 +2,9 @@
 // §1. Os 21 nós e as 23 arestas vieram do design (backoffice-process-map.jsx
 // `PROC_NODES`/`PROC_EDGES`), consumidos por
 // apps/app/scripts/seed-empresa-nebuloz.ts como `StaffProcess` e
-// `StaffProcessEdge`.
+// `StaffProcessEdge`. PZ-22, PZ-23 e a 24ª ligação vieram depois, com os
+// diagramas BPMN (ver processos-bpmn/). O SQL de produção
+// `packages/database/scripts/2026-09-seed-processos.sql` ainda tem só os 21.
 //
 // Só dados e tipos: sem import de valor de "@repo/database" (server-only).
 
@@ -276,6 +278,34 @@ export const PROCESSOS_NEBULOZ: ProcessoSeed[] = [
     revisadoEm: "2026-09-01",
     tags: ["comitê", "veredito", "escalar", "encerrar", "rationale"],
   },
+  // PZ-22 e PZ-23 não vieram do design: entraram com os primeiros diagramas
+  // BPMN (2026-09-26), cada um com fonte escrita — o runbook de acesso e o
+  // plano de resposta a incidente. Sem dono nomeado porque as fontes dão
+  // cargo, não pessoa.
+  {
+    codigo: "PZ-22",
+    nome: "Acesso ao back-office",
+    descricao:
+      "Conta própria → papel por SQL no tenant system → autenticador. Revogar é DELETE.",
+    dominio: "PLATAFORMA",
+    nivel: 3,
+    tipo: "APOIO",
+    donoNome: null,
+    revisadoEm: null,
+    tags: ["staff", "2fa", "admin", "member", "revogação"],
+  },
+  {
+    codigo: "PZ-23",
+    nome: "Resposta a incidente",
+    descricao:
+      "Detecção → triagem P0–P3 → contenção → notificação → post-mortem.",
+    dominio: "GOVERNANCA",
+    nivel: 2,
+    tipo: "APOIO",
+    donoNome: null,
+    revisadoEm: "2026-05-19",
+    tags: ["incidente", "severidade", "anpd", "72h", "post-mortem"],
+  },
 ];
 
 export const LIGACOES_NEBULOZ: LigacaoSeed[] = [
@@ -302,4 +332,7 @@ export const LIGACOES_NEBULOZ: LigacaoSeed[] = [
   { de: "PZ-20", para: "PZ-13", rotulo: "prioriza" },
   { de: "PZ-21", para: "PZ-15", rotulo: "alimenta" },
   { de: "PZ-16", para: "PZ-17", rotulo: "realimenta" },
+  // Fonte: docs/runbooks/acesso-ao-backoffice.md "Revogar" (conta comprometida
+  // → apagar Session) e o runbook de conta comprometida do plano de incidente.
+  { de: "PZ-23", para: "PZ-22", rotulo: "conta comprometida → revoga" },
 ];

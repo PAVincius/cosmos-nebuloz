@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ01" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ01">
+    <bpmn:participant id="Pool_PZ01" name="Nebuloz — funil comercial" processRef="Processo_PZ01" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ01" name="Funil de leads" isExecutable="false">
+    <bpmn:documentation>PZ-01 · Funil de leads. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: docs/comercial/mapa-de-processo.md — §1 Identificação de ICP; §2 Qualificação; §8 Diagrama de estados
+Fonte: docs/comercial/playbook-de-vendas.md — §1 O roteiro de discovery; Sinal de desqualificação
+Lacuna: Não há critério escrito de quando um lead passa de DISCOVERY para EVALUATION — a passagem é julgamento de quem toca o lead (mapa §2). O gateway 'Segue para avaliação?' desenha esse julgamento, não uma regra.
+Lacuna: Critérios de saída de cada estágio vivem em EstagioDoFunil, editáveis na tela; a fonte escrita não os reproduz, então o diagrama não os detalha (mapa §2).
+Lacuna: proximaAcao/proximaAcaoEm marca atraso na tela mas não dispara lembrete (mapa §2) — sem evento de tempo no diagrama.
+Lacuna: Mapa §1 diz que a origem do lead é texto livre e que não há captura automática do site; todo lead entra por cadastro manual. O schema já tem canal de lead (funil v2), e o mapa não foi atualizado — conferir.
+Lacuna: O mapa não diz o que acontece com o prospect que não bate com o ICP além de não ser registrado.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ01">
+      <bpmn:lane id="Raia_cadastro" name="Comercial ou RevOps">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConferirIcp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BateIcp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ForaDoIcp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CriarLead</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_dono" name="Dono do lead">
+        <bpmn:flowNodeRef>Discovery</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Desqualifica</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Avaliacao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SegueProposta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Converter</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Convertido</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaPerda</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RegistrarPerda</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Perdido</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Prospect identificado (evento, indicação, site)">
+      <bpmn:documentation>Origem: mapa §1 Entrada</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_ConferirIcp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="ConferirIcp" name="Conferir recorte do ICP">
+      <bpmn:documentation>Origem: mapa §1; icp-e-precificacao.md</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Inicio_ConferirIcp</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ConferirIcp_BateIcp</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="BateIcp" name="Bate com o ICP?">
+      <bpmn:documentation>Origem: mapa §1</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ConferirIcp_BateIcp</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_BateIcp_CriarLead</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_BateIcp_ForaDoIcp</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="ForaDoIcp" name="Prospect não registrado">
+      <bpmn:incoming>Fluxo_BateIcp_ForaDoIcp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="CriarLead" name="Cadastrar lead com origem e dono (criarLead)">
+      <bpmn:documentation>Origem: mapa §1 Saída; actions/leads.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_BateIcp_CriarLead</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_CriarLead_Discovery</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Discovery" name="Discovery com as cinco perguntas do diagnóstico">
+      <bpmn:documentation>Origem: playbook §1; mapa §2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_CriarLead_Discovery</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Discovery_Desqualifica</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Desqualifica" name="Sinal de desqualificação?">
+      <bpmn:documentation>Origem: playbook §1 Sinal de desqualificação</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Discovery_Desqualifica</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Desqualifica_Avaliacao</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Desqualifica_JuntaPerda</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Avaliacao" name="Avaliação (estágio EVALUATION)">
+      <bpmn:documentation>Origem: mapa §2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Desqualifica_Avaliacao</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Avaliacao_SegueProposta</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="SegueProposta" name="Segue para proposta?">
+      <bpmn:documentation>Origem: mapa §2 (lead continua perdível até o fechamento)</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Avaliacao_SegueProposta</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_SegueProposta_Converter</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_SegueProposta_JuntaPerda</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Converter" name="Converter em proposta (converterEmProposta)">
+      <bpmn:documentation>Origem: mapa §2, estágio PROPOSAL</bpmn:documentation>
+      <bpmn:incoming>Fluxo_SegueProposta_Converter</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Converter_Convertido</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Convertido" name="Lead convertido — segue em PZ-02">
+      <bpmn:documentation>Origem: mapa §2 Saída (propostaId)</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Converter_Convertido</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="JuntaPerda">
+      <bpmn:incoming>Fluxo_Desqualifica_JuntaPerda</bpmn:incoming>
+      <bpmn:incoming>Fluxo_SegueProposta_JuntaPerda</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaPerda_RegistrarPerda</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RegistrarPerda" name="Registrar perda (perdidoEm + motivoPerda)">
+      <bpmn:documentation>Origem: mapa §2 Saída</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaPerda_RegistrarPerda</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RegistrarPerda_Perdido</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Perdido" name="Lead perdido">
+      <bpmn:incoming>Fluxo_RegistrarPerda_Perdido</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_ConferirIcp" sourceRef="Inicio" targetRef="ConferirIcp" />
+    <bpmn:sequenceFlow id="Fluxo_ConferirIcp_BateIcp" sourceRef="ConferirIcp" targetRef="BateIcp" />
+    <bpmn:sequenceFlow id="Fluxo_BateIcp_CriarLead" name="sim" sourceRef="BateIcp" targetRef="CriarLead">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_BateIcp_ForaDoIcp" name="não" sourceRef="BateIcp" targetRef="ForaDoIcp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_CriarLead_Discovery" sourceRef="CriarLead" targetRef="Discovery" />
+    <bpmn:sequenceFlow id="Fluxo_Discovery_Desqualifica" sourceRef="Discovery" targetRef="Desqualifica" />
+    <bpmn:sequenceFlow id="Fluxo_Desqualifica_Avaliacao" name="não" sourceRef="Desqualifica" targetRef="Avaliacao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Desqualifica_JuntaPerda" name="sim: &#60;50 pessoas, sem engenharia ou Big Four" sourceRef="Desqualifica" targetRef="JuntaPerda">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim: &lt;50 pessoas, sem engenharia ou Big Four</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Avaliacao_SegueProposta" sourceRef="Avaliacao" targetRef="SegueProposta" />
+    <bpmn:sequenceFlow id="Fluxo_SegueProposta_Converter" name="sim" sourceRef="SegueProposta" targetRef="Converter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_SegueProposta_JuntaPerda" name="não" sourceRef="SegueProposta" targetRef="JuntaPerda">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Converter_Convertido" sourceRef="Converter" targetRef="Convertido" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaPerda_RegistrarPerda" sourceRef="JuntaPerda" targetRef="RegistrarPerda" />
+    <bpmn:sequenceFlow id="Fluxo_RegistrarPerda_Perdido" sourceRef="RegistrarPerda" targetRef="Perdido" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ01">
+    <bpmndi:BPMNPlane id="Plano_PZ01" bpmnElement="Colaboracao_PZ01">
+      <bpmndi:BPMNShape id="Pool_PZ01_di" bpmnElement="Pool_PZ01" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="2270" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_cadastro_di" bpmnElement="Raia_cadastro" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="2240" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_dono_di" bpmnElement="Raia_dono" isHorizontal="true">
+        <dc:Bounds x="130" y="320" width="2240" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConferirIcp_di" bpmnElement="ConferirIcp">
+        <dc:Bounds x="350" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BateIcp_di" bpmnElement="BateIcp">
+        <dc:Bounds x="545" y="100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="465" y="68" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ForaDoIcp_di" bpmnElement="ForaDoIcp">
+        <dc:Bounds x="722" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="690" y="279" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CriarLead_di" bpmnElement="CriarLead">
+        <dc:Bounds x="690" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Discovery_di" bpmnElement="Discovery">
+        <dc:Bounds x="860" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Desqualifica_di" bpmnElement="Desqualifica">
+        <dc:Bounds x="1055" y="360" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="975" y="328" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Avaliacao_di" bpmnElement="Avaliacao">
+        <dc:Bounds x="1200" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SegueProposta_di" bpmnElement="SegueProposta">
+        <dc:Bounds x="1395" y="360" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1315" y="328" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Converter_di" bpmnElement="Converter">
+        <dc:Bounds x="1540" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Convertido_di" bpmnElement="Convertido">
+        <dc:Bounds x="1742" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1710" y="409" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaPerda_di" bpmnElement="JuntaPerda">
+        <dc:Bounds x="1905" y="360" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RegistrarPerda_di" bpmnElement="RegistrarPerda">
+        <dc:Bounds x="2050" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Perdido_di" bpmnElement="Perdido">
+        <dc:Bounds x="2252" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2220" y="409" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_ConferirIcp_di" bpmnElement="Fluxo_Inicio_ConferirIcp">
+        <di:waypoint x="248" y="125" />
+        <di:waypoint x="350" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConferirIcp_BateIcp_di" bpmnElement="Fluxo_ConferirIcp_BateIcp">
+        <di:waypoint x="450" y="125" />
+        <di:waypoint x="545" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_BateIcp_CriarLead_di" bpmnElement="Fluxo_BateIcp_CriarLead">
+        <di:waypoint x="595" y="125" />
+        <di:waypoint x="690" y="125" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="107" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_BateIcp_ForaDoIcp_di" bpmnElement="Fluxo_BateIcp_ForaDoIcp">
+        <di:waypoint x="570" y="150" />
+        <di:waypoint x="570" y="255" />
+        <di:waypoint x="722" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="576" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_CriarLead_Discovery_di" bpmnElement="Fluxo_CriarLead_Discovery">
+        <di:waypoint x="790" y="125" />
+        <di:waypoint x="825" y="125" />
+        <di:waypoint x="825" y="385" />
+        <di:waypoint x="860" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Discovery_Desqualifica_di" bpmnElement="Fluxo_Discovery_Desqualifica">
+        <di:waypoint x="960" y="385" />
+        <di:waypoint x="1055" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Desqualifica_Avaliacao_di" bpmnElement="Fluxo_Desqualifica_Avaliacao">
+        <di:waypoint x="1105" y="385" />
+        <di:waypoint x="1200" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1111" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Desqualifica_JuntaPerda_di" bpmnElement="Fluxo_Desqualifica_JuntaPerda">
+        <di:waypoint x="1080" y="410" />
+        <di:waypoint x="1080" y="440" />
+        <di:waypoint x="1930" y="440" />
+        <di:waypoint x="1930" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1086" y="422" width="140" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Avaliacao_SegueProposta_di" bpmnElement="Fluxo_Avaliacao_SegueProposta">
+        <di:waypoint x="1300" y="385" />
+        <di:waypoint x="1395" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_SegueProposta_Converter_di" bpmnElement="Fluxo_SegueProposta_Converter">
+        <di:waypoint x="1445" y="385" />
+        <di:waypoint x="1540" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1451" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_SegueProposta_JuntaPerda_di" bpmnElement="Fluxo_SegueProposta_JuntaPerda">
+        <di:waypoint x="1420" y="410" />
+        <di:waypoint x="1420" y="440" />
+        <di:waypoint x="1930" y="440" />
+        <di:waypoint x="1930" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1426" y="422" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Converter_Convertido_di" bpmnElement="Fluxo_Converter_Convertido">
+        <di:waypoint x="1640" y="385" />
+        <di:waypoint x="1742" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaPerda_RegistrarPerda_di" bpmnElement="Fluxo_JuntaPerda_RegistrarPerda">
+        <di:waypoint x="1955" y="385" />
+        <di:waypoint x="2050" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RegistrarPerda_Perdido_di" bpmnElement="Fluxo_RegistrarPerda_Perdido">
+        <di:waypoint x="2150" y="385" />
+        <di:waypoint x="2252" y="385" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

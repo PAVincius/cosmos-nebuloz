@@ -1609,6 +1609,9 @@ importers:
 
   packages/provisioning:
     dependencies:
+      '@repo/bpmn':
+        specifier: workspace:*
+        version: link:../bpmn
       '@repo/database':
         specifier: workspace:*
         version: link:../database
@@ -1628,6 +1631,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
+      bpmn-js:
+        specifier: ^18.16.1
+        version: 18.16.1
+      jsdom:
+        specifier: ^27.2.0
+        version: 27.2.0(bufferutil@4.0.9)(postcss@8.5.26)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

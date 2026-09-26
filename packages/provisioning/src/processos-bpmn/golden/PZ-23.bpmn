@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ23" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ23">
+    <bpmn:participant id="Pool_PZ23" name="Nebuloz — resposta a incidente de segurança" processRef="Processo_PZ23" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ23" name="Resposta a incidente" isExecutable="false">
+    <bpmn:documentation>PZ-23 · Resposta a incidente. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: docs/compliance/soc2/policies/02-incident-response-plan.md — §2 Severity; §3 Team; §4 Response Phases 1–6; §5 Evidence; §6 Customer Notification; §7 Regulatory Reporting
+Lacuna: Quem detecta e faz o registro inicial (hora, fonte, canal, acionar o Incident Commander) não está nomeado; a raia diz isso.
+Lacuna: O plano não dá ordem entre notificação (§6, §7) e erradicação/recuperação (fases 4–5); o prazo de 72 h conta da descoberta, então o desenho põe a notificação logo após a contenção. Na prática correm em paralelo — o esquema só tem gateway exclusivo.
+Lacuna: P2/P3 manda 'monitorar escalada' sem gatilho de reclassificação; não há volta desenhada.
+Lacuna: Papéis por cargo (CTO, Engineering Lead, CEO, jurídico externo), sem nomes; o RACI do playbook §4 está em branco.
+Lacuna: O canal '#incident-AAAA-MM-DD-descricao' não diz em que ferramenta; o contato é security@nebuloz.com, e a produção é nebuloz.ai — confirmar o domínio.
+Lacuna: BetterStack aparece como fonte de alerta, mas não consta do inventário de dpa-fornecedores.md (que tem Sentry).
+Lacuna: Os runbooks do §8 (conta comprometida, exfiltração, CVE) não estão desenhados; conta comprometida de staff segue PZ-22.
+Lacuna: O plano está em inglês, escrito para 'Cosmos', versão 1.0 de 2026-05-19.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ23">
+      <bpmn:lane id="Raia_deteccao" name="Quem detecta (não nomeado)">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Registrar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_ic" name="Incident Commander (CTO)">
+        <bpmn:flowNodeRef>Triar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Notificar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Severidade</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaContencao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NotificaCliente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaAviso</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DadoPessoal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaRegulador</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PostMortem</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Atualizar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Encerrado</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_tecnico" name="Líder técnico (Engineering Lead)">
+        <bpmn:flowNodeRef>Isolar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Preservar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Restringir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Erradicar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Recuperar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_comunicacao" name="Comunicação (CEO) e jurídico">
+        <bpmn:flowNodeRef>InformarCeo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AvisarClientes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StatusPage</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Anpd</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Alerta, relato de usuário ou de terceiro">
+      <bpmn:documentation>Origem: §4 Fase 1 Triggers</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_Registrar</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Registrar" name="Registrar hora e fonte, abrir canal, acionar o Incident Commander">
+      <bpmn:documentation>Origem: §4 Fase 1 Actions</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Inicio_Registrar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Registrar_Triar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Triar" name="Triar em até 30 min: severidade P0–P3 e escopo">
+      <bpmn:documentation>Origem: §4 Fase 2; §2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Registrar_Triar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Triar_Notificar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Notificar" name="Notificar o time e abrir a linha do tempo">
+      <bpmn:documentation>Origem: §4 Fase 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Triar_Notificar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Notificar_Severidade</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Severidade" name="Severidade?">
+      <bpmn:documentation>Origem: §2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Notificar_Severidade</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Severidade_Isolar</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Severidade_Restringir</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Isolar" name="Isolar sistemas: chaves, sessões, IPs">
+      <bpmn:documentation>Origem: §4 Fase 3 P0/P1</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Severidade_Isolar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Isolar_Preservar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Preservar" name="Preservar evidência e ampliar logs">
+      <bpmn:documentation>Origem: §4 Fase 3; §5</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Isolar_Preservar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Preservar_InformarCeo</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="InformarCeo" name="Informar o CEO">
+      <bpmn:documentation>Origem: §4 Fase 3 P0/P1</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Preservar_InformarCeo</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_InformarCeo_JuntaContencao</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Restringir" name="Restringir o componente e monitorar escalada">
+      <bpmn:documentation>Origem: §4 Fase 3 P2/P3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Severidade_Restringir</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Restringir_JuntaContencao</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="JuntaContencao">
+      <bpmn:incoming>Fluxo_InformarCeo_JuntaContencao</bpmn:incoming>
+      <bpmn:incoming>Fluxo_Restringir_JuntaContencao</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaContencao_NotificaCliente</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="NotificaCliente" name="Cliente precisa ser notificado?">
+      <bpmn:documentation>Origem: §6</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaContencao_NotificaCliente</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_NotificaCliente_AvisarClientes</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_NotificaCliente_StatusPage</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AvisarClientes" name="Notificar clientes (P0: 72 h, com revisão jurídica)">
+      <bpmn:documentation>Origem: §6</bpmn:documentation>
+      <bpmn:incoming>Fluxo_NotificaCliente_AvisarClientes</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AvisarClientes_JuntaAviso</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="StatusPage" name="Atualizar a status page">
+      <bpmn:documentation>Origem: §6 P2/P3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_NotificaCliente_StatusPage</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_StatusPage_JuntaAviso</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="JuntaAviso">
+      <bpmn:incoming>Fluxo_AvisarClientes_JuntaAviso</bpmn:incoming>
+      <bpmn:incoming>Fluxo_StatusPage_JuntaAviso</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaAviso_DadoPessoal</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="DadoPessoal" name="Violação confirmada de dado pessoal?">
+      <bpmn:documentation>Origem: §7</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaAviso_DadoPessoal</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_DadoPessoal_Anpd</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_DadoPessoal_JuntaRegulador</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Anpd" name="Reportar à ANPD em 72 h (e GDPR se couber)">
+      <bpmn:documentation>Origem: §7</bpmn:documentation>
+      <bpmn:incoming>Fluxo_DadoPessoal_Anpd</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Anpd_JuntaRegulador</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="JuntaRegulador">
+      <bpmn:incoming>Fluxo_DadoPessoal_JuntaRegulador</bpmn:incoming>
+      <bpmn:incoming>Fluxo_Anpd_JuntaRegulador</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaRegulador_Erradicar</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Erradicar" name="Erradicar: causa raiz, correção, rotação de credenciais">
+      <bpmn:documentation>Origem: §4 Fase 4</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaRegulador_Erradicar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Erradicar_Recuperar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Recuperar" name="Recuperar: restaurar, verificar controles, monitorar 24 h">
+      <bpmn:documentation>Origem: §4 Fase 5</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Erradicar_Recuperar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Recuperar_PostMortem</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="PostMortem" name="Post-mortem sem culpa em até 5 dias úteis">
+      <bpmn:documentation>Origem: §4 Fase 6</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Recuperar_PostMortem</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_PostMortem_Atualizar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Atualizar" name="Atualizar runbooks e controles; compartilhar o resumo">
+      <bpmn:documentation>Origem: §4 Fase 6</bpmn:documentation>
+      <bpmn:incoming>Fluxo_PostMortem_Atualizar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Atualizar_Encerrado</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Encerrado" name="Incidente encerrado">
+      <bpmn:incoming>Fluxo_Atualizar_Encerrado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_Registrar" sourceRef="Inicio" targetRef="Registrar" />
+    <bpmn:sequenceFlow id="Fluxo_Registrar_Triar" sourceRef="Registrar" targetRef="Triar" />
+    <bpmn:sequenceFlow id="Fluxo_Triar_Notificar" sourceRef="Triar" targetRef="Notificar" />
+    <bpmn:sequenceFlow id="Fluxo_Notificar_Severidade" sourceRef="Notificar" targetRef="Severidade" />
+    <bpmn:sequenceFlow id="Fluxo_Severidade_Isolar" name="P0 ou P1" sourceRef="Severidade" targetRef="Isolar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">P0 ou P1</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Severidade_Restringir" name="P2 ou P3" sourceRef="Severidade" targetRef="Restringir">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">P2 ou P3</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Isolar_Preservar" sourceRef="Isolar" targetRef="Preservar" />
+    <bpmn:sequenceFlow id="Fluxo_Preservar_InformarCeo" sourceRef="Preservar" targetRef="InformarCeo" />
+    <bpmn:sequenceFlow id="Fluxo_InformarCeo_JuntaContencao" sourceRef="InformarCeo" targetRef="JuntaContencao" />
+    <bpmn:sequenceFlow id="Fluxo_Restringir_JuntaContencao" sourceRef="Restringir" targetRef="JuntaContencao" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaContencao_NotificaCliente" sourceRef="JuntaContencao" targetRef="NotificaCliente" />
+    <bpmn:sequenceFlow id="Fluxo_NotificaCliente_AvisarClientes" name="sim: dado exposto ou impacto" sourceRef="NotificaCliente" targetRef="AvisarClientes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim: dado exposto ou impacto</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_NotificaCliente_StatusPage" name="não" sourceRef="NotificaCliente" targetRef="StatusPage">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AvisarClientes_JuntaAviso" sourceRef="AvisarClientes" targetRef="JuntaAviso" />
+    <bpmn:sequenceFlow id="Fluxo_StatusPage_JuntaAviso" sourceRef="StatusPage" targetRef="JuntaAviso" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaAviso_DadoPessoal" sourceRef="JuntaAviso" targetRef="DadoPessoal" />
+    <bpmn:sequenceFlow id="Fluxo_DadoPessoal_Anpd" name="sim" sourceRef="DadoPessoal" targetRef="Anpd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_DadoPessoal_JuntaRegulador" name="não" sourceRef="DadoPessoal" targetRef="JuntaRegulador">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Anpd_JuntaRegulador" sourceRef="Anpd" targetRef="JuntaRegulador" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaRegulador_Erradicar" sourceRef="JuntaRegulador" targetRef="Erradicar" />
+    <bpmn:sequenceFlow id="Fluxo_Erradicar_Recuperar" sourceRef="Erradicar" targetRef="Recuperar" />
+    <bpmn:sequenceFlow id="Fluxo_Recuperar_PostMortem" sourceRef="Recuperar" targetRef="PostMortem" />
+    <bpmn:sequenceFlow id="Fluxo_PostMortem_Atualizar" sourceRef="PostMortem" targetRef="Atualizar" />
+    <bpmn:sequenceFlow id="Fluxo_Atualizar_Encerrado" sourceRef="Atualizar" targetRef="Encerrado" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ23">
+    <bpmndi:BPMNPlane id="Plano_PZ23" bpmnElement="Colaboracao_PZ23">
+      <bpmndi:BPMNShape id="Pool_PZ23_di" bpmnElement="Pool_PZ23" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="3460" height="780" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_deteccao_di" bpmnElement="Raia_deteccao" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="3430" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_ic_di" bpmnElement="Raia_ic" isHorizontal="true">
+        <dc:Bounds x="130" y="190" width="3430" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_tecnico_di" bpmnElement="Raia_tecnico" isHorizontal="true">
+        <dc:Bounds x="130" y="320" width="3430" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_comunicacao_di" bpmnElement="Raia_comunicacao" isHorizontal="true">
+        <dc:Bounds x="130" y="580" width="3430" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Registrar_di" bpmnElement="Registrar">
+        <dc:Bounds x="350" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Triar_di" bpmnElement="Triar">
+        <dc:Bounds x="520" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Notificar_di" bpmnElement="Notificar">
+        <dc:Bounds x="690" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Severidade_di" bpmnElement="Severidade">
+        <dc:Bounds x="885" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="805" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Isolar_di" bpmnElement="Isolar">
+        <dc:Bounds x="1030" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Preservar_di" bpmnElement="Preservar">
+        <dc:Bounds x="1200" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="InformarCeo_di" bpmnElement="InformarCeo">
+        <dc:Bounds x="1370" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Restringir_di" bpmnElement="Restringir">
+        <dc:Bounds x="1030" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaContencao_di" bpmnElement="JuntaContencao">
+        <dc:Bounds x="1565" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotificaCliente_di" bpmnElement="NotificaCliente">
+        <dc:Bounds x="1735" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1655" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AvisarClientes_di" bpmnElement="AvisarClientes">
+        <dc:Bounds x="1880" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StatusPage_di" bpmnElement="StatusPage">
+        <dc:Bounds x="1880" y="735" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaAviso_di" bpmnElement="JuntaAviso">
+        <dc:Bounds x="2075" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DadoPessoal_di" bpmnElement="DadoPessoal">
+        <dc:Bounds x="2245" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2165" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Anpd_di" bpmnElement="Anpd">
+        <dc:Bounds x="2390" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaRegulador_di" bpmnElement="JuntaRegulador">
+        <dc:Bounds x="2585" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Erradicar_di" bpmnElement="Erradicar">
+        <dc:Bounds x="2730" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recuperar_di" bpmnElement="Recuperar">
+        <dc:Bounds x="2900" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PostMortem_di" bpmnElement="PostMortem">
+        <dc:Bounds x="3070" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Atualizar_di" bpmnElement="Atualizar">
+        <dc:Bounds x="3240" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Encerrado_di" bpmnElement="Encerrado">
+        <dc:Bounds x="3442" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3410" y="279" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_Registrar_di" bpmnElement="Fluxo_Inicio_Registrar">
+        <di:waypoint x="248" y="125" />
+        <di:waypoint x="350" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Registrar_Triar_di" bpmnElement="Fluxo_Registrar_Triar">
+        <di:waypoint x="450" y="125" />
+        <di:waypoint x="485" y="125" />
+        <di:waypoint x="485" y="255" />
+        <di:waypoint x="520" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Triar_Notificar_di" bpmnElement="Fluxo_Triar_Notificar">
+        <di:waypoint x="620" y="255" />
+        <di:waypoint x="690" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Notificar_Severidade_di" bpmnElement="Fluxo_Notificar_Severidade">
+        <di:waypoint x="790" y="255" />
+        <di:waypoint x="885" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Severidade_Isolar_di" bpmnElement="Fluxo_Severidade_Isolar">
+        <di:waypoint x="935" y="255" />
+        <di:waypoint x="982.5" y="255" />
+        <di:waypoint x="982.5" y="385" />
+        <di:waypoint x="1030" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="237" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Severidade_Restringir_di" bpmnElement="Fluxo_Severidade_Restringir">
+        <di:waypoint x="910" y="280" />
+        <di:waypoint x="910" y="515" />
+        <di:waypoint x="1030" y="515" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="497" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Isolar_Preservar_di" bpmnElement="Fluxo_Isolar_Preservar">
+        <di:waypoint x="1130" y="385" />
+        <di:waypoint x="1200" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Preservar_InformarCeo_di" bpmnElement="Fluxo_Preservar_InformarCeo">
+        <di:waypoint x="1300" y="385" />
+        <di:waypoint x="1335" y="385" />
+        <di:waypoint x="1335" y="645" />
+        <di:waypoint x="1370" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_InformarCeo_JuntaContencao_di" bpmnElement="Fluxo_InformarCeo_JuntaContencao">
+        <di:waypoint x="1470" y="645" />
+        <di:waypoint x="1590" y="645" />
+        <di:waypoint x="1590" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Restringir_JuntaContencao_di" bpmnElement="Fluxo_Restringir_JuntaContencao">
+        <di:waypoint x="1130" y="515" />
+        <di:waypoint x="1590" y="515" />
+        <di:waypoint x="1590" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaContencao_NotificaCliente_di" bpmnElement="Fluxo_JuntaContencao_NotificaCliente">
+        <di:waypoint x="1615" y="255" />
+        <di:waypoint x="1735" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_NotificaCliente_AvisarClientes_di" bpmnElement="Fluxo_NotificaCliente_AvisarClientes">
+        <di:waypoint x="1785" y="255" />
+        <di:waypoint x="1832.5" y="255" />
+        <di:waypoint x="1832.5" y="645" />
+        <di:waypoint x="1880" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1791" y="237" width="140" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_NotificaCliente_StatusPage_di" bpmnElement="Fluxo_NotificaCliente_StatusPage">
+        <di:waypoint x="1760" y="280" />
+        <di:waypoint x="1760" y="775" />
+        <di:waypoint x="1880" y="775" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1766" y="757" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AvisarClientes_JuntaAviso_di" bpmnElement="Fluxo_AvisarClientes_JuntaAviso">
+        <di:waypoint x="1980" y="645" />
+        <di:waypoint x="2100" y="645" />
+        <di:waypoint x="2100" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_StatusPage_JuntaAviso_di" bpmnElement="Fluxo_StatusPage_JuntaAviso">
+        <di:waypoint x="1980" y="775" />
+        <di:waypoint x="2100" y="775" />
+        <di:waypoint x="2100" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaAviso_DadoPessoal_di" bpmnElement="Fluxo_JuntaAviso_DadoPessoal">
+        <di:waypoint x="2125" y="255" />
+        <di:waypoint x="2245" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DadoPessoal_Anpd_di" bpmnElement="Fluxo_DadoPessoal_Anpd">
+        <di:waypoint x="2270" y="280" />
+        <di:waypoint x="2270" y="645" />
+        <di:waypoint x="2390" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2276" y="627" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DadoPessoal_JuntaRegulador_di" bpmnElement="Fluxo_DadoPessoal_JuntaRegulador">
+        <di:waypoint x="2295" y="255" />
+        <di:waypoint x="2585" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2301" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Anpd_JuntaRegulador_di" bpmnElement="Fluxo_Anpd_JuntaRegulador">
+        <di:waypoint x="2490" y="645" />
+        <di:waypoint x="2610" y="645" />
+        <di:waypoint x="2610" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaRegulador_Erradicar_di" bpmnElement="Fluxo_JuntaRegulador_Erradicar">
+        <di:waypoint x="2635" y="255" />
+        <di:waypoint x="2682.5" y="255" />
+        <di:waypoint x="2682.5" y="385" />
+        <di:waypoint x="2730" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Erradicar_Recuperar_di" bpmnElement="Fluxo_Erradicar_Recuperar">
+        <di:waypoint x="2830" y="385" />
+        <di:waypoint x="2900" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Recuperar_PostMortem_di" bpmnElement="Fluxo_Recuperar_PostMortem">
+        <di:waypoint x="3000" y="385" />
+        <di:waypoint x="3035" y="385" />
+        <di:waypoint x="3035" y="255" />
+        <di:waypoint x="3070" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_PostMortem_Atualizar_di" bpmnElement="Fluxo_PostMortem_Atualizar">
+        <di:waypoint x="3170" y="255" />
+        <di:waypoint x="3240" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Atualizar_Encerrado_di" bpmnElement="Fluxo_Atualizar_Encerrado">
+        <di:waypoint x="3340" y="255" />
+        <di:waypoint x="3442" y="255" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
