@@ -1,7 +1,8 @@
 # Revogar respondente na aba Coleta (P1 AS-112)
 
 **Data**: 2026-09-26
-**Commits**: `4f0821eb` (docs), `28d72cfd` (feat + testes)
+**Commits**: `4f0821eb` (docs), `28d72cfd` (feat + testes), `023139ae` (completion),
+`5fad9132` (fix: X/Esc/backdrop também gated — review da Morgana)
 **Origem**: Morgana → decisão do CEO, P1 achado em produção (AS-112): CEO atribuiu os 10
 respondentes mas não copiou nenhum link; sem botão de revogar, a coleta travou.
 
@@ -38,6 +39,35 @@ medir cobertura de eixo").
 
 `npx vitest run __tests__/screens/meridian-tab-coleta.test.tsx
 __tests__/meridian/collection.test.ts` — 17 passam.
+
+## Review da Morgana — causa raiz continuava aberta
+
+Ela apontou (correto): `onClose={finish}` no `ModalShell` do passo do link
+deixava X, Esc e clique no backdrop fecharem direto, sem checar `copied` —
+só o botão "Concluir" era gated. Corrigido em `5fad9132`:
+
+- X e Esc agora passam pela mesma confirmação local ("Fechar sem copiar o
+  link?" / "Voltar e copiar" / "Fechar mesmo assim"). Esc é interceptado em
+  fase de captura no `document` (`e.stopPropagation()`), antes de chegar no
+  listener em `window` que o `ModalHost` do Charter usa pra Esc — sem isso,
+  Esc chegava lá primeiro e fechava sem perguntar.
+- Clique no backdrop não dá pra interceptar do componente (é um `<button>`
+  irmão, fora da árvore do conteúdo) — usei `useDirty`/`markDirty`
+  (`components/charter/form-kit.tsx`, já documentado como consumido por
+  cosmos/meridian/scaffold/signal; primeiro uso de fato no Meridian) pra
+  marcar o modal como "sujo" e acionar a confirmação de descarte que o
+  `ModalHost` já tem pronta — mensagem genérica ("Descartar alterações?"),
+  não a mesma do X/Esc, mas resolve o mesmo risco. Não toquei em
+  `components/charter/modal.tsx` (Charter, fora da minha alçada).
+- Bônus pedido: `copied` só vira `true` quando `clipboard.writeText`
+  resolve de verdade; se falhar, seleciona o texto do input e mostra aviso
+  — o evento `onCopy` nativo do input cobre o Ctrl+C manual.
+
+Testes novos (RTL): Esc sem copiar não fecha nem chama `onAssigned`; X sem
+copiar pede confirmação e só fecha em "Fechar mesmo assim"; clipboard falho
+seleciona+avisa e libera "Concluir" só depois do `onCopy` manual.
+20/20 passam (`__tests__/screens/meridian-tab-coleta.test.tsx` +
+`__tests__/meridian/collection.test.ts`).
 
 ## Obstáculo
 
