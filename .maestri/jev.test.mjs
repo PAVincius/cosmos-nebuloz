@@ -220,6 +220,20 @@ test("diff ignora arquivo gerado (grafo de conhecimento, lockfile)", () => {
   assert.ok(diffArgs.includes(":(exclude)pnpm-lock.yaml"));
 });
 
+test("diff não leva scripts de dado de produção ao Gateway (dado pessoal, parecer 4054c231)", () => {
+  const seen = [];
+  commits(
+    "1 day ago",
+    (args) => {
+      seen.push(args);
+      return args[0] === "log" ? "a1\tmsg\n" : "";
+    },
+    ONDE
+  );
+  const diffArgs = seen.find((a) => a.includes("--unified=2"));
+  assert.ok(diffArgs.includes(":(exclude)packages/database/scripts"));
+});
+
 test("triagem falha aberta também quando o git quebra: nunca sai 1 calada", async () => {
   const git = () => {
     throw new Error("ENOBUFS");
