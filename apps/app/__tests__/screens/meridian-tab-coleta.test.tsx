@@ -107,8 +107,15 @@ describe("ColetaTab — atribuir respondente", () => {
     expect(screen.queryByText("tela recarregando")).toBeNull();
 
     // "Concluir" só libera depois de copiar — é a causa raiz do P1 (link
-    // perdido sem o consultor ter clicado em Copiar).
+    // perdido sem o consultor ter clicado em Copiar). `copyLink` é async
+    // (espera a escrita no clipboard resolver antes de marcar `copied`).
     fireEvent.click(screen.getByText("Copiar"));
+    await waitFor(() => {
+      expect(
+        (screen.getByText("Concluir").closest("button") as HTMLButtonElement)
+          .disabled
+      ).toBe(false);
+    });
 
     // Fechar o modal (já viu/copiou o link) é o que deve disparar a recarga.
     fireEvent.click(screen.getByText("Concluir"));
@@ -161,6 +168,124 @@ describe("ColetaTab — atribuir respondente", () => {
     fireEvent.click(screen.getByText("Concluir"));
     await waitFor(() => {
       expect(screen.getByText("tela recarregando")).toBeTruthy();
+    });
+  });
+
+  it("Esc sem copiar pede confirmação — não fecha nem chama onAssigned direto", async () => {
+    assignRespondentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r9", token: "tok-abc123" },
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getAllByText("Atribuir respondente")[0]);
+    fireEvent.change(screen.getByPlaceholderText("Marina Costa"), {
+      target: { value: "Rafael Tomé" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Gerente de Dados"), {
+      target: { value: "Eng. de Dados" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("marina@empresa.com"), {
+      target: { value: "rafael@x.com" },
+    });
+    fireEvent.click(screen.getByText("Atribuir e gerar link"));
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+      ).toBeTruthy();
+    });
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    // Esc sozinho não fecha nem recarrega — só abre a confirmação.
+    expect(screen.queryByText("tela recarregando")).toBeNull();
+    expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
+    expect(
+      screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+    ).toBeTruthy();
+
+    // "Voltar e copiar" cancela a confirmação, link continua na tela.
+    fireEvent.click(screen.getByText("Voltar e copiar"));
+    expect(screen.queryByText("Fechar sem copiar o link?")).toBeNull();
+    expect(
+      screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+    ).toBeTruthy();
+  });
+
+  it("X sem copiar pede confirmação; 'Fechar mesmo assim' fecha e recarrega", async () => {
+    assignRespondentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r9", token: "tok-abc123" },
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getAllByText("Atribuir respondente")[0]);
+    fireEvent.change(screen.getByPlaceholderText("Marina Costa"), {
+      target: { value: "Rafael Tomé" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Gerente de Dados"), {
+      target: { value: "Eng. de Dados" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("marina@empresa.com"), {
+      target: { value: "rafael@x.com" },
+    });
+    fireEvent.click(screen.getByText("Atribuir e gerar link"));
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+      ).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Fechar" }));
+    expect(screen.queryByText("tela recarregando")).toBeNull();
+    expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
+
+    fireEvent.click(screen.getByText("Fechar mesmo assim"));
+    await waitFor(() => {
+      expect(screen.getByText("tela recarregando")).toBeTruthy();
+    });
+  });
+
+  it("clipboard falha: seleciona o texto e avisa; onCopy manual libera 'Concluir'", async () => {
+    assignRespondentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r9", token: "tok-abc123" },
+    });
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error("negado")) },
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getAllByText("Atribuir respondente")[0]);
+    fireEvent.change(screen.getByPlaceholderText("Marina Costa"), {
+      target: { value: "Rafael Tomé" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Gerente de Dados"), {
+      target: { value: "Eng. de Dados" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("marina@empresa.com"), {
+      target: { value: "rafael@x.com" },
+    });
+    fireEvent.click(screen.getByText("Atribuir e gerar link"));
+    const input = await screen.findByDisplayValue(
+      /meridian-responder\/tok-abc123/
+    );
+
+    fireEvent.click(screen.getByText("Copiar"));
+    await waitFor(() => {
+      expect(screen.getByText(/Não deu pra copiar automático/)).toBeTruthy();
+    });
+    expect(
+      (screen.getByText("Concluir").closest("button") as HTMLButtonElement)
+        .disabled
+    ).toBe(true);
+
+    fireEvent.copy(input);
+    await waitFor(() => {
+      expect(
+        (screen.getByText("Concluir").closest("button") as HTMLButtonElement)
+          .disabled
+      ).toBe(false);
     });
   });
 });
