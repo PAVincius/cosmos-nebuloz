@@ -73,6 +73,26 @@ import {
   updateDiagramAction,
 } from "../app/actions/diagrams";
 
+/** O menor BPMN que passa nas checagens estruturais: início → fim. */
+const BPMN_VALIDO = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="D" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="P" isExecutable="false">
+    <bpmn:startEvent id="I" name="Início" />
+    <bpmn:endEvent id="F" name="Fim" />
+    <bpmn:sequenceFlow id="f1" sourceRef="I" targetRef="F" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+/** Importa no moddle, mas a tarefa não chega a um fim. */
+const BPMN_SEM_FIM = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="D" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="P" isExecutable="false">
+    <bpmn:startEvent id="I" name="Início" />
+    <bpmn:task id="T" name="Analisar" />
+    <bpmn:sequenceFlow id="f1" sourceRef="I" targetRef="T" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
 const staff = {
   userId: "u-1",
   name: "Vinícius",
@@ -146,7 +166,7 @@ describe("createDiagramAction", () => {
     const res = await createDiagramAction({
       kind: "BPMN",
       name: "Onboarding",
-      source: "<xml/>",
+      source: BPMN_VALIDO,
     });
 
     expect(res.ok).toBe(false);
@@ -160,14 +180,14 @@ describe("createDiagramAction", () => {
     const res = await createDiagramAction({
       kind: "BPMN",
       name: "Onboarding",
-      source: "<xml/>",
+      source: BPMN_VALIDO,
     });
 
     expect(res.ok).toBe(true);
     const versao = mocks.versionCreate.mock.calls[0][0].data;
     expect(versao.versao).toBe(1);
-    expect(versao.source).toBe("<xml/>");
-    expect(mocks.create.mock.calls[0][0].data.source).toBe("<xml/>");
+    expect(versao.source).toBe(BPMN_VALIDO);
+    expect(mocks.create.mock.calls[0][0].data.source).toBe(BPMN_VALIDO);
   });
 
   it("recusa slug já usado — o unique do banco não deve ser a primeira barreira", async () => {
@@ -176,7 +196,7 @@ describe("createDiagramAction", () => {
     const res = await createDiagramAction({
       kind: "BPMN",
       name: "Onboarding",
-      source: "<xml/>",
+      source: BPMN_VALIDO,
     });
 
     expect(res.ok).toBe(false);
@@ -201,10 +221,110 @@ describe("createDiagramAction", () => {
     await createDiagramAction({
       kind: "BPMN",
       name: "Onboarding",
-      source: "<xml/>",
+      source: BPMN_VALIDO,
     });
 
     expect(mocks.logPlatformAudit).toHaveBeenCalled();
+  });
+
+  it("BPMN que não importa no moddle é recusado antes de gravar", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+
+    const res = await createDiagramAction({
+      kind: "BPMN",
+      name: "Onboarding",
+      source: "isto não é XML",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok ? "" : res.error).toMatch(/não é XML BPMN válido/);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("BPMN com caminho sem fim é recusado e a mensagem diz onde", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+
+    const res = await createDiagramAction({
+      kind: "BPMN",
+      name: "Onboarding",
+      source: BPMN_SEM_FIM,
+    });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok ? "" : res.error).toMatch(/"Analisar".*não chega a um fim/);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("o BPMN em branco do estúdio passa na validação — criar diagrama novo não quebra", async () => {
+    const { BPMN_EM_BRANCO } = await import("../components/bpmn-modeler");
+    mocks.findFirst.mockResolvedValue(null);
+    mocks.create.mockResolvedValue({ id: "d-3", slug: "novo" });
+
+    const res = await createDiagramAction({
+      kind: "BPMN",
+      name: "Novo",
+      source: BPMN_EM_BRANCO,
+    });
+
+    expect(res.ok).toBe(true);
+  });
+
+  it("Mermaid não passa pelo validador de BPMN", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+    mocks.create.mockResolvedValue({ id: "d-2", slug: "fluxo" });
+
+    const res = await createDiagramAction({
+      kind: "MERMAID",
+      name: "Fluxo",
+      source: "graph TD; A-->B",
+    });
+
+    expect(res.ok).toBe(true);
+  });
+});
+
+describe("updateDiagramAction — validação de BPMN", () => {
+  beforeEach(resetar);
+
+  it("revisão de BPMN estruturalmente quebrada não vira versão", async () => {
+    mocks.findFirst.mockResolvedValue({
+      id: "d-1",
+      kind: "BPMN",
+      slug: "onboarding",
+      name: "Onboarding",
+      source: BPMN_VALIDO,
+    });
+
+    const res = await updateDiagramAction({ id: "d-1", source: BPMN_SEM_FIM });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok ? "" : res.error).toMatch(/não chega a um fim/);
+    expect(mocks.versionCreate).not.toHaveBeenCalled();
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("revisão de BPMN válida vira versão", async () => {
+    mocks.findFirst.mockResolvedValue({
+      id: "d-1",
+      kind: "BPMN",
+      slug: "onboarding",
+      name: "Onboarding",
+      source: BPMN_SEM_FIM,
+    });
+    mocks.versionAggregate.mockResolvedValue({ _max: { versao: 1 } });
+
+    const res = await updateDiagramAction({ id: "d-1", source: BPMN_VALIDO });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.versionCreate.mock.calls[0][0].data.versao).toBe(2);
+  });
+
+  it("consulta o kind do diagrama para decidir se valida", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+
+    await updateDiagramAction({ id: "d-1", source: "x" });
+
+    expect(mocks.findFirst.mock.calls[0][0].select.kind).toBe(true);
   });
 });
 

@@ -1,5 +1,8 @@
 "use server";
 
+// Caminho profundo: o índice de @repo/bpmn traz o compilador (auto-layout e
+// bpmnlint), que esta action não usa — validar precisa só do moddle.
+import { validarXmlBpmn } from "@repo/bpmn/src/validar";
 import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
@@ -147,6 +150,32 @@ export async function getDiagram(id: string): Promise<Result<DiagramDetail>> {
   });
 }
 
+/** Quantos problemas a mensagem lista antes de resumir o resto. */
+const PROBLEMAS_NA_MENSAGEM = 5;
+
+/**
+ * BPMN só é gravado se importa no moddle e passa nas checagens estruturais
+ * (@repo/bpmn): todo nó alcançável do início, todo caminho chegando a um fim,
+ * gateway que decide com saídas rotuladas. Sem isto o mapa marcaria como
+ * "Modelado" um processo cujo desenho não se sustenta. Mermaid não passa aqui:
+ * quem valida a DSL é o renderizador da tela.
+ */
+async function exigirBpmnValido(kind: string, source: string): Promise<void> {
+  if (kind !== "BPMN") {
+    return;
+  }
+  const r = await validarXmlBpmn(source);
+  if (r.ok) {
+    return;
+  }
+  const lista = r.problemas.slice(0, PROBLEMAS_NA_MENSAGEM).join("; ");
+  const resto = r.problemas.length - PROBLEMAS_NA_MENSAGEM;
+  throw new StaffAuthError(
+    "FORBIDDEN",
+    `O BPMN não foi salvo: ${lista}${resto > 0 ? `; e mais ${resto}` : ""}.`
+  );
+}
+
 const CriarSchema = z.object({
   kind: z.enum(TIPOS),
   name: z.string().min(2).max(120),
@@ -162,6 +191,7 @@ export async function createDiagramAction(
     assertCanWrite(staff);
 
     const dados = CriarSchema.parse(input);
+    await exigirBpmnValido(dados.kind, dados.source);
     const slug = slugificar(dados.name);
     if (!slug) {
       throw new StaffAuthError(
@@ -315,7 +345,7 @@ export async function updateDiagramAction(
 
     const atual = await database.staffDiagram.findFirst({
       where: { id: dados.id, tenantId: SYSTEM_TENANT_ID },
-      select: { id: true, slug: true, name: true, source: true },
+      select: { id: true, kind: true, slug: true, name: true, source: true },
     });
     if (!atual) {
       throw new StaffAuthError("FORBIDDEN", "Diagrama não encontrado.");
@@ -327,6 +357,9 @@ export async function updateDiagramAction(
     if (atual.source === dados.source) {
       return { id: atual.id, versao: null };
     }
+    // Depois da comparação: salvar sem mudança continua sendo um nada, mesmo
+    // num diagrama antigo que não passaria na checagem.
+    await exigirBpmnValido(atual.kind, dados.source);
 
     const versao = await database.$transaction(async (tx) => {
       const { _max } = await tx.staffDiagramVersion.aggregate({
