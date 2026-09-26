@@ -127,7 +127,7 @@
 
 - [x] T029 [P] Trocar `issuer: "Cosmos"` para `issuer: "Nebuloz"` em `packages/auth/server.ts:78`.
 - [x] T030 [P] Teste confirmando que 2FA já cadastrado antes da troca de issuer continua validando (segredo TOTP preservado) — `packages/auth/__tests__/server.test.ts` (estender teste existente).
-- [ ] T031 Rodar `quickstart.md` cenário a cenário em ambiente local/staging antes de considerar a feature pronta pra dev encerrar.
+- [x] T031 Rodar `quickstart.md` cenário a cenário em ambiente local/staging antes de considerar a feature pronta pra dev encerrar. — QA, 2026-09-26, ver `.claude/completions/2026-09-26-spec-004-quickstart-t031.md`.
 - [ ] T032 Confirmar com o CEO que o domínio `nebuloz.ai` está verificado no Resend (SPF/DKIM) antes de validar US4 em produção — dependência operacional registrada no spec, não uma task de código.
 
 ---
