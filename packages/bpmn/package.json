@@ -7,8 +7,7 @@
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "vitest run",
-    "gerar:golden": "tsx scripts/gerar-golden.ts"
+    "test": "vitest run"
   },
   "dependencies": {
     "bpmn-auto-layout": "^1.3.0",

@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { beforeAll, describe, expect, it } from "vitest";
 import { compilarProcesso } from "../compilar";
+import { abrirNoBpmnJs, prepararSvgDoJsdom } from "../testes/bpmn-js-no-jsdom";
 import { processoMinimo } from "./fixture";
-import { abrirNoBpmnJs, prepararSvgDoJsdom } from "./jsdom-svg";
 
 beforeAll(() => {
   prepararSvgDoJsdom();

@@ -182,17 +182,55 @@ function rota(s: Centro, t: Centro, pelaDireita: boolean): Ponto[] {
   ];
 }
 
-/** Rótulo junto do último trecho horizontal — perto do destino, que é único
- *  por saída; perto da origem, duas saídas do mesmo gateway se sobreporiam. */
+/** Distância do centro da sub-linha ao corredor: abaixo da tarefa (40) e do
+ *  rótulo de evento (até 51), antes da borda da sub-linha (65). */
+const CORREDOR = 55;
+
+/** Algum trecho horizontal do traçado cruza a caixa de outro nó? */
+function atravessa(pontos: Ponto[], obstaculos: Caixa[]): boolean {
+  for (let i = 1; i < pontos.length; i += 1) {
+    const a = pontos[i - 1] as Ponto;
+    const b = pontos[i] as Ponto;
+    const x1 = Math.min(a.x, b.x);
+    const x2 = Math.max(a.x, b.x);
+    const y1 = Math.min(a.y, b.y);
+    const y2 = Math.max(a.y, b.y);
+    const cruza = obstaculos.some(
+      (c) => x1 < direitaDe(c) && x2 > c.x && y1 < baixo(c) && y2 > c.y
+    );
+    if (cruza) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Sai pela base (ou topo, se o destino está acima), corre no corredor da
+ *  sub-linha do destino e entra no destino por baixo (ou por cima). */
+function peloCorredor(s: Centro, t: Centro): Ponto[] {
+  const acima = t.cy < s.cy;
+  const y = acima ? t.cy - CORREDOR : t.cy + CORREDOR;
+  return [
+    { x: s.cx, y: acima ? s.caixa.y : baixo(s.caixa) },
+    { x: s.cx, y },
+    { x: t.cx, y },
+    { x: t.cx, y: acima ? t.caixa.y : baixo(t.caixa) },
+  ];
+}
+
+/** Rótulo no começo do primeiro trecho horizontal a partir da origem. Cada
+ *  saída de um gateway tem trecho horizontal próprio (à direita, ou na altura
+ *  do destino), então os rótulos não se sobrepõem; perto do destino, dois
+ *  fluxos que chegam na mesma junção se sobreporiam. */
 function rotuloDoFluxo(pontos: Ponto[], texto: string): Caixa {
   const largura = Math.min(140, Math.max(24, texto.length * 6.5));
-  for (let i = pontos.length - 1; i > 0; i -= 1) {
+  for (let i = 1; i < pontos.length; i += 1) {
     const a = pontos[i - 1] as Ponto;
     const b = pontos[i] as Ponto;
     if (Math.abs(a.y - b.y) < 1 && Math.abs(a.x - b.x) >= 1) {
       return b.x > a.x
-        ? { x: b.x - largura - 6, y: b.y - 18, width: largura, height: 14 }
-        : { x: b.x + 6, y: b.y + 4, width: largura, height: 14 };
+        ? { x: a.x + 6, y: a.y - 18, width: largura, height: 14 }
+        : { x: a.x - largura - 6, y: a.y + 4, width: largura, height: 14 };
     }
   }
   const p0 = pontos[0] as Ponto;
@@ -240,11 +278,22 @@ export function desenhar(
   const fluxos = new Map<string, { pontos: Ponto[]; rotulo?: Caixa }>();
   for (const f of p.fluxos) {
     const id = idDoFluxo(f.de, f.para);
-    const pontos = rota(
-      mapa.get(f.de) as Centro,
-      mapa.get(f.para) as Centro,
-      pelaDireita.has(id)
-    );
+    const s = mapa.get(f.de) as Centro;
+    const t = mapa.get(f.para) as Centro;
+    const obstaculos = [...mapa]
+      .filter(([nid]) => nid !== f.de && nid !== f.para)
+      .map(([, c]) => c.caixa);
+    const direta = rota(s, t, pelaDireita.has(id));
+    // Saída que não é a da direita e ficou na mesma linha sobreporia a outra
+    // saída do gateway; traçado que atravessa um nó esconderia o nó. Nos dois
+    // casos, o fluxo vai pelo corredor da sub-linha, abaixo dos nós.
+    const sobrepoe =
+      s.tipo === "gatewayExclusivo" &&
+      !pelaDireita.has(id) &&
+      Math.abs(s.cy - t.cy) < 1 &&
+      t.cx > s.cx;
+    const pontos =
+      sobrepoe || atravessa(direta, obstaculos) ? peloCorredor(s, t) : direta;
     fluxos.set(id, {
       pontos,
       rotulo: f.condicao ? rotuloDoFluxo(pontos, f.condicao) : undefined,
