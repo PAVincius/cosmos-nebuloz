@@ -134,3 +134,13 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
   **Dono**: n/a — comportamento correto, registrado só como nota operacional. **Estado**: documentado 2026-09-24, sem ação pendente.
 
 ---
+
+**P1** | Aba Coleta (`components/meridian/screens/tab-coleta.tsx`), achado em produção no assessment AS-112 | O CEO atribuiu os 10 respondentes mas não copiou nenhum link — o token só aparece uma vez (`AssignRespondentModal`, comentário do próprio componente) e não havia botão pra revogar/reatribuir. Sem isso, a coleta travou: os dez respondentes ficam com `INVITED`/token perdido pra sempre e nada na tela deixa reabrir aquele slot. Causa raiz do lado do modal: "Concluir" fechava e disparava o reload mesmo sem o consultor ter clicado em Copiar, então "só aparece agora" era fácil de ignorar sob pressa.
+
+  Decisão do CEO: botão "Revogar respondente" por linha na aba Coleta, chamando a action já existente `revokeRespondent` (`actions/collection.ts:111`, já roda o hash, grava auditoria e fecha o respondente como `REVOKED`).
+
+  **Dono**: Bussola.
+
+  **Corrigido em 2026-09-26** — botão "Revogar" por respondente (confirmação num modal antes de revogar, é irreversível), respondente `REVOKED` some do "sem dono" mas continua listado, riscado, com rótulo "Revogado" e sem os botões de ação. `closeCollection` já ignorava `REVOKED` na cobertura de eixo antes desta mudança (`__tests__/meridian/collection.test.ts:279`, "ignora respondente revogado ao medir cobertura de eixo") — não precisou de alteração na action. No modal "Link de coleta gerado", "Concluir" fica desabilitado até o consultor clicar em Copiar ao menos uma vez, e o aviso de "só aparece agora" ganhou destaque visual (fundo âmbar) pra não passar despercebido.
+
+---

@@ -52,6 +52,11 @@ export {
   useFieldId,
   useScreenLoad,
 } from "@/components/charter/base";
+// `useDirty` já é consumido por cosmos/meridian/scaffold/signal (comentário de
+// `form-kit.tsx`) — não é reexport novo de escopo, só o primeiro uso no
+// Meridian. Marca o `ModalHost` como sujo pra Esc/clique-fora perguntarem
+// antes de fechar, em vez de fechar direto (mesmo mecanismo do Charter).
+export { useDirty } from "@/components/charter/form-kit";
 export {
   ModalProvider,
   ModalShell,

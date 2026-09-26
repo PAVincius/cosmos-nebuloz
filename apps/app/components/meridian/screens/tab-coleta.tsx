@@ -10,11 +10,12 @@ import {
   SectionCard,
   type Tone,
 } from "@repo/design-system/cosmos/kit";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AssessmentDetail } from "@/app/(meridian)/actions/assessments";
 import {
   assignRespondent,
   closeCollection,
+  revokeRespondent,
   sendReminder,
 } from "@/app/(meridian)/actions/collection";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
@@ -26,6 +27,7 @@ import {
   ModalShell,
   SmartEmptyState,
   StatusDot,
+  useDirty,
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
@@ -46,6 +48,11 @@ function AssignRespondentModal({
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [link, setLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const linkInputRef = useRef<HTMLInputElement>(null);
+  const { markDirty } = useDirty();
 
   const valid =
     name.trim().length > 0 && role.trim().length > 0 && email.trim().length > 0;
@@ -75,43 +82,242 @@ function AssignRespondentModal({
     onClose();
   };
 
+  // `dirty` faz o `ModalHost` perguntar antes de fechar no backdrop/Esc, em
+  // vez de fechar direto — mesmo mecanismo que o Charter usa pra não perder
+  // formulário preenchido. Aqui o que se perde é o token, não um formulário.
+  useEffect(() => {
+    if (link && !copied) {
+      markDirty();
+    }
+  }, [link, copied, markDirty]);
+
+  // O `X` do ModalShell chama `onClose` direto; Esc chega no `ModalHost` via
+  // listener em `window` (bolha). Capturando em `document` antes da bolha
+  // chegar em `window`, dá pra interceptar o Esc e perguntar — sem isso, Esc
+  // fecha e perde o link mesmo com "Concluir" desabilitado.
+  useEffect(() => {
+    if (!link || copied) {
+      return;
+    }
+    const onKeyDownCapture = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        e.preventDefault();
+        setConfirmDiscard(true);
+      }
+    };
+    document.addEventListener("keydown", onKeyDownCapture, true);
+    return () =>
+      document.removeEventListener("keydown", onKeyDownCapture, true);
+  }, [link, copied]);
+
+  const requestClose = () => {
+    if (copied) {
+      finish();
+      return;
+    }
+    setConfirmDiscard(true);
+  };
+
+  const copyLink = async (value: string) => {
+    try {
+      if (!navigator.clipboard) {
+        throw new Error("clipboard indisponível");
+      }
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setCopyFailed(false);
+    } catch {
+      // Sem Clipboard API (ou negada): seleciona o texto pra Ctrl+C manual
+      // funcionar. O `onCopy` do input marca `copied` quando isso acontecer.
+      linkInputRef.current?.select();
+      setCopyFailed(true);
+    }
+  };
+
   if (link) {
     return (
-      <ModalShell
-        footer={
-          <Button icon="check" onClick={finish}>
-            Concluir
-          </Button>
-        }
-        icon="link2"
-        onClose={finish}
-        subtitle="O token só aparece agora — o banco guarda só o hash. Copie e envie por fora (sem canal automatizado ainda)."
-        title="Link de coleta gerado"
-        tone="green"
-        width={560}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            padding: 20,
-          }}
+      <>
+        <ModalShell
+          footer={
+            <Button disabled={!copied} icon="check" onClick={finish}>
+              Concluir
+            </Button>
+          }
+          icon="link2"
+          onClose={requestClose}
+          subtitle="O token só aparece agora — o banco guarda só o hash. Copie e envie por fora (sem canal automatizado ainda)."
+          title="Link de coleta gerado"
+          tone="green"
+          width={560}
         >
-          <Field label={`Link para ${name} · ${AXES[axis].label}`}>
-            <div style={{ display: "flex", gap: 8 }}>
-              <Input readOnly style={{ flex: 1 }} value={link} />
-              <Button
-                icon="copy"
-                onClick={() => navigator.clipboard?.writeText(link)}
-                variant="secondary"
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              padding: 20,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: 9,
+                alignItems: "center",
+                padding: "9px 12px",
+                borderRadius: 9,
+                border: "1px solid rgba(var(--amber-rgb),.32)",
+                background: "var(--amber-soft)",
+              }}
+            >
+              <Icon
+                name="alert"
+                size={14}
+                style={{ color: "var(--amber-text)", flexShrink: 0 }}
+              />
+              <span
+                style={{
+                  fontSize: 11.5,
+                  color: "var(--amber-text)",
+                  fontWeight: 700,
+                }}
               >
-                Copiar
-              </Button>
+                Este link não aparece de novo em lugar nenhum — se sair desta
+                tela sem copiar, o único jeito de recuperar é revogar e emitir
+                outro.
+              </span>
             </div>
-          </Field>
-        </div>
-      </ModalShell>
+            <Field label={`Link para ${name} · ${AXES[axis].label}`}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Input
+                  onCopy={() => setCopied(true)}
+                  readOnly
+                  ref={linkInputRef}
+                  style={{ flex: 1 }}
+                  value={link}
+                />
+                <Button
+                  icon="copy"
+                  onClick={() => copyLink(link)}
+                  variant="secondary"
+                >
+                  Copiar
+                </Button>
+              </div>
+            </Field>
+            {copyFailed && (
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "var(--red-text)",
+                  fontWeight: 600,
+                }}
+              >
+                Não deu pra copiar automático — o texto já está selecionado, use
+                Ctrl+C (ou Cmd+C) pra copiar à mão.
+              </span>
+            )}
+          </div>
+        </ModalShell>
+        {confirmDiscard && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 320,
+              display: "grid",
+              placeItems: "center",
+              background: "var(--scrim)",
+              backdropFilter: "blur(3px)",
+            }}
+          >
+            <div
+              aria-labelledby="assign-discard-title"
+              aria-modal="true"
+              role="alertdialog"
+              style={{
+                background: "var(--surface-3)",
+                border: "1px solid var(--hairline-strong)",
+                borderRadius: "var(--r-lg)",
+                padding: "24px 28px",
+                maxWidth: 400,
+                boxShadow: "0 24px 48px -16px rgba(0,0,0,.6)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: 11,
+                  alignItems: "flex-start",
+                  marginBottom: 16,
+                }}
+              >
+                <span
+                  style={{
+                    display: "grid",
+                    placeItems: "center",
+                    width: 34,
+                    height: 34,
+                    borderRadius: 9,
+                    flexShrink: 0,
+                    background: "var(--amber-soft)",
+                    color: "var(--amber-text)",
+                    border: "1px solid rgba(var(--amber-rgb),.25)",
+                  }}
+                >
+                  <Icon name="alert" size={16} />
+                </span>
+                <div>
+                  <div
+                    className="display"
+                    id="assign-discard-title"
+                    style={{
+                      fontSize: 14.5,
+                      fontWeight: 700,
+                      marginBottom: 5,
+                    }}
+                  >
+                    Fechar sem copiar o link?
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12.5,
+                      color: "var(--ink-muted)",
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    Você não copiou o link de {name}. Ele não aparece de novo —
+                    o único jeito de recuperar depois é revogar esse respondente
+                    e emitir outro.
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}
+              >
+                <Button
+                  onClick={() => setConfirmDiscard(false)}
+                  size="md"
+                  variant="secondary"
+                >
+                  Voltar e copiar
+                </Button>
+                <Button
+                  icon="x"
+                  onClick={finish}
+                  size="md"
+                  style={{
+                    background: "var(--red)",
+                    borderColor: "var(--red)",
+                  }}
+                >
+                  Fechar mesmo assim
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -168,6 +374,64 @@ function AssignRespondentModal({
   );
 }
 
+function RevokeConfirmModal({
+  respondentId,
+  name,
+  onClose,
+  onRevoked,
+}: {
+  respondentId: string;
+  name: string;
+  onClose: () => void;
+  onRevoked: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  const confirm = async () => {
+    setBusy(true);
+    const res = await runWithToast(() => revokeRespondent({ respondentId }), {
+      loading: "Revogando respondente…",
+      success: `${name} revogado — o link antigo parou de funcionar.`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      onRevoked();
+      onClose();
+    }
+  };
+
+  return (
+    <ModalShell
+      footer={
+        <>
+          <Button disabled={busy} onClick={onClose} variant="ghost">
+            Cancelar
+          </Button>
+          <Button
+            disabled={busy}
+            icon="ban"
+            onClick={confirm}
+            style={{ background: "var(--red)", borderColor: "var(--red)" }}
+          >
+            Revogar
+          </Button>
+        </>
+      }
+      icon="ban"
+      onClose={onClose}
+      subtitle={`O link de ${name} para de funcionar na hora — não tem como desfazer.`}
+      title="Revogar respondente?"
+      tone="red"
+      width={440}
+    >
+      <div style={{ padding: 20, fontSize: 12.5, color: "var(--ink-muted)" }}>
+        Se o eixo ainda precisar de dono, atribua outro respondente depois —
+        este token não pode ser reativado.
+      </div>
+    </ModalShell>
+  );
+}
+
 const R_STATUS: Record<string, [Tone, string]> = {
   INVITED: ["accent", "Convidado"],
   PENDING: ["accent", "Pendente"],
@@ -186,13 +450,15 @@ export default function ColetaTab({
   const modal = useModal();
   const [busy, setBusy] = useState(false);
 
-  const byAxis = AXIS_IDS.map((axis) => ({
-    axis,
-    list: a.respondents.filter(
-      (r) => r.axis === axis && r.status !== "REVOKED"
-    ),
-  }));
-  const uncovered = byAxis.filter((b) => b.list.length === 0);
+  const byAxis = AXIS_IDS.map((axis) => {
+    const list = a.respondents.filter((r) => r.axis === axis);
+    return {
+      axis,
+      list,
+      active: list.filter((r) => r.status !== "REVOKED"),
+    };
+  });
+  const uncovered = byAxis.filter((b) => b.active.length === 0);
   const progress = a.responses.total
     ? Math.round((a.responses.done / a.responses.total) * 100)
     : 0;
@@ -248,7 +514,7 @@ export default function ColetaTab({
             tone="accent"
           />
         )}
-        {byAxis.map(({ axis, list }) => (
+        {byAxis.map(({ axis, list, active }) => (
           <div key={axis}>
             <div
               style={{
@@ -264,7 +530,7 @@ export default function ColetaTab({
                 style={{ color: "var(--ink-faint)" }}
               />
               <Eyebrow>{AXES[axis as MeridianAxis].label}</Eyebrow>
-              {list.length === 0 && (
+              {active.length === 0 && (
                 <span
                   className="mono"
                   style={{
@@ -297,6 +563,7 @@ export default function ColetaTab({
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {list.map((r) => {
+                const revoked = r.status === "REVOKED";
                 const [tone, label] = R_STATUS[r.status] ?? [
                   "accent" as Tone,
                   r.status,
@@ -311,6 +578,7 @@ export default function ColetaTab({
                       padding: "8px 11px",
                       borderRadius: 9,
                       background: "var(--surface-2)",
+                      opacity: revoked ? 0.6 : 1,
                       border: `1px solid ${r.status === "OVERDUE" ? "rgba(var(--red-rgb),.35)" : "var(--hairline)"}`,
                     }}
                   >
@@ -321,6 +589,7 @@ export default function ColetaTab({
                           display: "block",
                           fontSize: 12,
                           fontWeight: 700,
+                          textDecoration: revoked ? "line-through" : "none",
                         }}
                       >
                         {r.name}
@@ -337,7 +606,7 @@ export default function ColetaTab({
                       </span>
                     </span>
                     <StatusDot label={label} tone={tone} />
-                    {r.status !== "DONE" && (
+                    {!revoked && r.status !== "DONE" && (
                       <Button
                         disabled={busy}
                         icon="mail"
@@ -348,10 +617,30 @@ export default function ColetaTab({
                         Lembrar
                       </Button>
                     )}
+                    {!revoked && (
+                      <Button
+                        disabled={busy}
+                        icon="ban"
+                        onClick={() =>
+                          modal.open(
+                            <RevokeConfirmModal
+                              name={r.name}
+                              onClose={modal.close}
+                              onRevoked={onChanged}
+                              respondentId={r.id}
+                            />
+                          )
+                        }
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Revogar
+                      </Button>
+                    )}
                   </div>
                 );
               })}
-              {list.length === 0 && (
+              {active.length === 0 && (
                 <span
                   style={{
                     fontSize: 11.5,
