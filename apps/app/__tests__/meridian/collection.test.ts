@@ -12,6 +12,7 @@ const h = vi.hoisted(() => ({
   assessmentUpdate: vi.fn(),
   respondentCreate: vi.fn(),
   respondentFindFirst: vi.fn(),
+  respondentFindMany: vi.fn(),
   respondentUpdate: vi.fn(),
   responseCount: vi.fn(),
   auditCreate: vi.fn(),
@@ -54,6 +55,7 @@ vi.mock("@repo/database", () => ({
       meridianRespondent: {
         create: h.respondentCreate,
         findFirst: h.respondentFindFirst,
+        findMany: h.respondentFindMany,
         update: h.respondentUpdate,
       },
       meridianResponse: { count: h.responseCount },
@@ -64,6 +66,8 @@ vi.mock("@repo/database", () => ({
 import {
   assignRespondent,
   closeCollection,
+  reissuePendingLinks,
+  reissueRespondentLink,
   revokeRespondent,
   sendReminder,
 } from "@/app/(meridian)/actions/collection";
@@ -195,6 +199,177 @@ describe("revokeRespondent", () => {
     };
     expect(update.data.status).toBe("REVOKED");
     expect(update.data.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+  });
+});
+
+describe("reissueRespondentLink", () => {
+  // Spec 006 US1 — gira o tokenHash do MESMO respondente (não cria outro),
+  // mantendo id/axis/status, bloqueado pra DONE/REVOKED/deadline vencido.
+
+  it("reemite o link preservando id/axis/status e grava auditoria meridian.respondent.reissue", async () => {
+    h.respondentFindFirst.mockResolvedValue({
+      id: R_ID,
+      name: "Jonas",
+      status: "PENDING",
+      axis: "DATA",
+      assessment: { deadline: new Date("2026-12-01") },
+    });
+    const res = await reissueRespondentLink({ respondentId: R_ID });
+    expect(res.ok).toBe(true);
+    const token = res.ok ? res.data.token : "";
+    expect(token).toMatch(/^[0-9a-f]{64}$/);
+    expect(res.ok && res.data.id).toBe(R_ID);
+
+    const update = h.respondentUpdate.mock.calls[0]?.[0] as {
+      where: { id: string };
+      data: { tokenHash: string; tokenExpiresAt: Date; status?: string };
+    };
+    expect(update.where.id).toBe(R_ID);
+    expect(update.data.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(update.data.tokenHash).not.toBe(token);
+    // status não é campo da atualização — reemitir não mexe em status.
+    expect(update.data.status).toBeUndefined();
+    expect(update.data.tokenExpiresAt).toBeInstanceOf(Date);
+
+    expect(h.auditCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "meridian.respondent.reissue",
+          entityId: R_ID,
+        }),
+      })
+    );
+  });
+
+  it("tokenExpiresAt fixado como min(agora + 14d, deadline)", async () => {
+    h.respondentFindFirst.mockResolvedValue({
+      id: R_ID,
+      name: "Jonas",
+      status: "INVITED",
+      axis: "DATA",
+      assessment: { deadline: new Date("2026-09-30") },
+    });
+    await reissueRespondentLink({ respondentId: R_ID });
+    const update = h.respondentUpdate.mock.calls[0]?.[0] as {
+      data: { tokenExpiresAt: Date };
+    };
+    // Deadline (30/09) chega antes de agora+14d — vence o deadline.
+    expect(update.data.tokenExpiresAt.toISOString()).toBe(
+      new Date("2026-09-30").toISOString()
+    );
+  });
+
+  it("bloqueia reemissão para respondente DONE", async () => {
+    h.respondentFindFirst.mockResolvedValue({
+      id: R_ID,
+      name: "Ana",
+      status: "DONE",
+      axis: "DATA",
+      assessment: { deadline: new Date("2026-12-01") },
+    });
+    const res = await reissueRespondentLink({ respondentId: R_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/já concluiu/i);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+
+  it("bloqueia reemissão para respondente REVOKED", async () => {
+    h.respondentFindFirst.mockResolvedValue({
+      id: R_ID,
+      name: "Ana",
+      status: "REVOKED",
+      axis: "DATA",
+      assessment: { deadline: new Date("2026-12-01") },
+    });
+    const res = await reissueRespondentLink({ respondentId: R_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/revogad/i);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+
+  it("recusa reemissão com deadline do assessment vencido", async () => {
+    h.respondentFindFirst.mockResolvedValue({
+      id: R_ID,
+      name: "Ana",
+      status: "PENDING",
+      axis: "DATA",
+      assessment: { deadline: new Date("2020-01-01") },
+    });
+    const res = await reissueRespondentLink({ respondentId: R_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/prazo/i);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+});
+
+describe("reissuePendingLinks", () => {
+  // Spec 006 US2 — reemite em lote todo INVITED/PENDING/OVERDUE do
+  // assessment, numa única passada; DONE/REVOKED não são tocados.
+
+  it("reemite só os pendentes, grava auditoria por respondente e devolve a lista", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      deadline: new Date("2026-12-01"),
+    });
+    h.respondentFindMany.mockResolvedValue([
+      { id: "r1", name: "Ana", axis: "DATA" },
+      { id: "r2", name: "Bia", axis: "PROCESS" },
+    ]);
+    const res = await reissuePendingLinks({ assessmentId: AS_ID });
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.assessmentId).toBe(AS_ID);
+    expect(res.ok && res.data.reissued).toHaveLength(2);
+    expect(res.ok && res.data.reissued.map((x) => x.respondentId)).toEqual([
+      "r1",
+      "r2",
+    ]);
+    expect(res.ok && res.data.reissued[0].token).toMatch(/^[0-9a-f]{64}$/);
+    expect(h.respondentUpdate).toHaveBeenCalledTimes(2);
+    expect(h.auditCreate).toHaveBeenCalledTimes(2);
+
+    const query = h.respondentFindMany.mock.calls[0]?.[0] as {
+      where: { status: { in: string[] } };
+    };
+    expect(query.where.status.in.sort()).toEqual(
+      ["INVITED", "OVERDUE", "PENDING"].sort()
+    );
+  });
+
+  it("não toca DONE/REVOKED — a query já os exclui", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      deadline: new Date("2026-12-01"),
+    });
+    h.respondentFindMany.mockResolvedValue([]);
+    await reissuePendingLinks({ assessmentId: AS_ID });
+    const query = h.respondentFindMany.mock.calls[0]?.[0] as {
+      where: { status: { in: string[] } };
+    };
+    expect(query.where.status.in).not.toContain("DONE");
+    expect(query.where.status.in).not.toContain("REVOKED");
+  });
+
+  it("sem nenhum pendente devolve sucesso com lista vazia, não erro", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      deadline: new Date("2026-12-01"),
+    });
+    h.respondentFindMany.mockResolvedValue([]);
+    const res = await reissuePendingLinks({ assessmentId: AS_ID });
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.reissued).toEqual([]);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+
+  it("recusa lote com deadline do assessment vencido", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      deadline: new Date("2020-01-01"),
+    });
+    const res = await reissuePendingLinks({ assessmentId: AS_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/prazo/i);
+    expect(h.respondentFindMany).not.toHaveBeenCalled();
   });
 });
 

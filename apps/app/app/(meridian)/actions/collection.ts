@@ -1,5 +1,6 @@
 "use server";
 
+import type { MeridianAxis } from "@repo/database";
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -9,7 +10,11 @@ import {
   requireMeridianPermissionContext,
   StateConflictError,
 } from "@/lib/meridian/guards";
-import { hashToken, issueToken } from "@/lib/meridian/respondent-token";
+import {
+  calcularExpiracaoDaReemissao,
+  hashToken,
+  issueToken,
+} from "@/lib/meridian/respondent-token";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
 import { logMeridianAudit } from "./_shared";
 import { runScoringInTx } from "./scoring";
@@ -140,6 +145,180 @@ export async function revokeRespondent(
     });
 
     revalidatePath("/meridian");
+  });
+}
+
+const ReissueSchema = z.object({ respondentId: cuid });
+
+/**
+ * Reemite o link do MESMO respondente — gira `tokenHash` como `revokeRespondent`,
+ * mas sem tocar `status`: é o remédio pro link perdido antes de copiar (AS-112),
+ * sem precisar revogar e reatribuir (o que perderia o respondente original).
+ */
+export async function reissueRespondentLink(
+  raw: z.input<typeof ReissueSchema>
+): Promise<Result<{ id: string; token: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianPermissionContext("assessment.manage");
+    const input = ReissueSchema.parse(raw);
+
+    const reissued = await withTenantDb(ctx.tenantId, async (db) => {
+      const r = await db.meridianRespondent.findFirst({
+        where: { id: input.respondentId, tenantId: ctx.tenantId },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          assessment: { select: { deadline: true } },
+        },
+      });
+      if (!r) {
+        throw new MeridianRuleError(
+          "respondent.not-found",
+          "Respondente não encontrado nesta organização."
+        );
+      }
+      if (r.status === "DONE") {
+        throw new MeridianRuleError(
+          "reissue.already-done",
+          `${r.name} já concluiu — o link não precisa ser reemitido.`
+        );
+      }
+      if (r.status === "REVOKED") {
+        throw new MeridianRuleError(
+          "reissue.revoked",
+          "Respondente revogado não recebe link novo — atribua um respondente novo pro eixo."
+        );
+      }
+      const now = new Date();
+      if (r.assessment.deadline.getTime() < now.getTime()) {
+        throw new StateConflictError(
+          "reissue.deadline-expired",
+          "Prazo do assessment vencido — não é possível reemitir link."
+        );
+      }
+
+      const token = issueToken();
+      await db.meridianRespondent.update({
+        where: { id: r.id },
+        data: {
+          tokenHash: hashToken(token),
+          tokenExpiresAt: calcularExpiracaoDaReemissao(
+            r.assessment.deadline,
+            now
+          ),
+        },
+      });
+      await logMeridianAudit(db, ctx, {
+        action: "meridian.respondent.reissue",
+        entityType: "meridian.respondent",
+        entityId: r.id,
+        target: r.name,
+        diff: [["Link", "ativo", "reemitido"]],
+      });
+
+      return { id: r.id, token };
+    });
+
+    revalidatePath("/meridian");
+    return reissued;
+  });
+}
+
+const ReissueAllSchema = z.object({ assessmentId: cuid });
+
+const PENDING_STATUSES = ["INVITED", "PENDING", "OVERDUE"] as const;
+
+/**
+ * Reemite, numa única passada, todo respondente pendente (`INVITED`/`PENDING`/
+ * `OVERDUE`) do assessment — o remédio pro cenário real do incidente (10 links
+ * perdidos de uma vez). `DONE`/`REVOKED` não são tocados. Lista vazia de
+ * elegíveis devolve sucesso com `reissued: []`, não erro: a UI distingue "nada
+ * pra reemitir" de falha.
+ */
+export async function reissuePendingLinks(
+  raw: z.input<typeof ReissueAllSchema>
+): Promise<
+  Result<{
+    assessmentId: string;
+    reissued: Array<{
+      respondentId: string;
+      name: string;
+      axis: MeridianAxis;
+      token: string;
+    }>;
+  }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianPermissionContext("assessment.manage");
+    const input = ReissueAllSchema.parse(raw);
+
+    const result = await withTenantDb(ctx.tenantId, async (db) => {
+      const assessment = await db.meridianAssessment.findFirst({
+        where: { id: input.assessmentId, tenantId: ctx.tenantId },
+        select: { id: true, deadline: true },
+      });
+      if (!assessment) {
+        throw new MeridianRuleError(
+          "assessment.not-found",
+          "Assessment não encontrado nesta organização."
+        );
+      }
+      const now = new Date();
+      if (assessment.deadline.getTime() < now.getTime()) {
+        throw new StateConflictError(
+          "reissue.deadline-expired",
+          "Prazo do assessment vencido — não é possível reemitir link."
+        );
+      }
+
+      const pendentes = await db.meridianRespondent.findMany({
+        where: {
+          assessmentId: assessment.id,
+          tenantId: ctx.tenantId,
+          status: { in: [...PENDING_STATUSES] },
+        },
+        select: { id: true, name: true, axis: true },
+      });
+
+      const reissuedList: Array<{
+        respondentId: string;
+        name: string;
+        axis: MeridianAxis;
+        token: string;
+      }> = [];
+      for (const r of pendentes) {
+        const token = issueToken();
+        await db.meridianRespondent.update({
+          where: { id: r.id },
+          data: {
+            tokenHash: hashToken(token),
+            tokenExpiresAt: calcularExpiracaoDaReemissao(
+              assessment.deadline,
+              now
+            ),
+          },
+        });
+        await logMeridianAudit(db, ctx, {
+          action: "meridian.respondent.reissue",
+          entityType: "meridian.respondent",
+          entityId: r.id,
+          target: `${r.name} · ${AXES[r.axis].label}`,
+          diff: [["Link", "ativo", "reemitido"]],
+        });
+        reissuedList.push({
+          respondentId: r.id,
+          name: r.name,
+          axis: r.axis,
+          token,
+        });
+      }
+
+      return { assessmentId: assessment.id, reissued: reissuedList };
+    });
+
+    revalidatePath("/meridian");
+    return result;
   });
 }
 
