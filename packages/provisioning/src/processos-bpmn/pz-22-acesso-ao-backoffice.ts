@@ -1,0 +1,136 @@
+import type { ProcessoBpmnEntrada } from "@repo/bpmn";
+
+const RUNBOOK = "docs/runbooks/acesso-ao-backoffice.md";
+
+export const PZ_22: ProcessoBpmnEntrada = {
+  codigo: "PZ-22",
+  nome: "Acesso ao back-office",
+  fonte: [
+    {
+      arquivo: RUNBOOK,
+      secao: "O modelo; Conceder (passos 1–3); Revogar; Dívidas conhecidas",
+    },
+    {
+      arquivo: "apps/backoffice/lib/guard.ts",
+      secao: "requirePlatformStaff — 2FA obrigatório",
+    },
+  ],
+  lacunas: [
+    "Não há tela: conceder e revogar é SQL em editor, e a concessão não é auditada (runbook, Dívidas conhecidas). PRODUCT.md registra isso como decisão em aberto.",
+    "O runbook não diz quem autoriza uma concessão nem o critério entre ADMIN e MEMBER — só que quem opera precisa de credencial de banco.",
+    "Quando o script para porque a conta não existe, o runbook não diz o próximo passo.",
+    "Nada cobra o passo 3 (autenticador): a listagem final do script mostra twoFactorEnabled=false, e o portão barra, sem prazo nem lembrete.",
+    "Revogar não derruba a sessão aberta: o acesso cai no minuto seguinte (cache de 60 s), exceto se as linhas de Session forem apagadas.",
+    "grant-admin-vinicius-dev.sql tem senha em texto puro num comentário versionado (runbook, Dívidas) — fora do fluxo, mas é risco do mesmo processo.",
+  ],
+  pool: "Nebuloz — acesso da equipe ao back-office",
+  raias: [
+    { id: "Raia_pessoa", nome: "Pessoa da equipe" },
+    { id: "Raia_concede", nome: "Quem concede (credencial de banco)" },
+  ],
+  nos: [
+    {
+      id: "Inicio",
+      tipo: "inicio",
+      nome: "Mudança de acesso à equipe",
+      raia: "Raia_concede",
+      origem: "runbook, título",
+    },
+    {
+      id: "ConcederOuRevogar",
+      tipo: "gatewayExclusivo",
+      nome: "Conceder ou revogar?",
+      raia: "Raia_concede",
+    },
+    {
+      id: "CriarConta",
+      tipo: "tarefaUsuario",
+      nome: "Criar a própria conta em /sign-up do app",
+      raia: "Raia_pessoa",
+      origem: "runbook Conceder 1",
+    },
+    {
+      id: "RodarGrant",
+      tipo: "tarefaManual",
+      nome: "Rodar grant-staff-admin.sql com e-mail e papel",
+      raia: "Raia_concede",
+      origem: "runbook Conceder 2",
+    },
+    {
+      id: "ContaExiste",
+      tipo: "gatewayExclusivo",
+      nome: "Conta existe?",
+      raia: "Raia_concede",
+      origem: "runbook Conceder 2",
+    },
+    {
+      id: "ScriptParou",
+      tipo: "fim",
+      nome: "Script para com erro",
+      raia: "Raia_concede",
+      origem: "runbook Conceder 2",
+    },
+    {
+      id: "Cadastrar2fa",
+      tipo: "tarefaUsuario",
+      nome: "Cadastrar autenticador em /seguranca",
+      raia: "Raia_pessoa",
+      origem: "runbook Conceder 3; guard.ts",
+    },
+    {
+      id: "Concedido",
+      tipo: "fim",
+      nome: "Acesso concedido (ADMIN escreve, MEMBER lê)",
+      raia: "Raia_pessoa",
+      origem: "runbook O modelo",
+    },
+    {
+      id: "RodarDelete",
+      tipo: "tarefaManual",
+      nome: "Rodar o DELETE do fim do script",
+      raia: "Raia_concede",
+      origem: "runbook Revogar",
+    },
+    {
+      id: "Comprometida",
+      tipo: "gatewayExclusivo",
+      nome: "Conta comprometida?",
+      raia: "Raia_concede",
+      origem: "runbook Revogar",
+    },
+    {
+      id: "ApagarSessoes",
+      tipo: "tarefaManual",
+      nome: "Apagar as linhas de Session da pessoa",
+      raia: "Raia_concede",
+      origem: "runbook Revogar",
+    },
+    {
+      id: "CaiNaHora",
+      tipo: "fim",
+      nome: "Acesso cai na hora",
+      raia: "Raia_concede",
+    },
+    {
+      id: "CaiEm60s",
+      tipo: "fim",
+      nome: "Acesso cai em até 60 s",
+      raia: "Raia_concede",
+      origem: "runbook Revogar (cache de sessão)",
+    },
+  ],
+  fluxos: [
+    { de: "Inicio", para: "ConcederOuRevogar" },
+    { de: "ConcederOuRevogar", para: "CriarConta", condicao: "conceder" },
+    { de: "ConcederOuRevogar", para: "RodarDelete", condicao: "revogar" },
+    { de: "CriarConta", para: "RodarGrant" },
+    { de: "RodarGrant", para: "ContaExiste" },
+    { de: "ContaExiste", para: "Cadastrar2fa", condicao: "sim" },
+    { de: "ContaExiste", para: "ScriptParou", condicao: "não" },
+    { de: "Cadastrar2fa", para: "Concedido" },
+    { de: "RodarDelete", para: "Comprometida" },
+    { de: "Comprometida", para: "ApagarSessoes", condicao: "sim" },
+    { de: "Comprometida", para: "CaiEm60s", condicao: "não" },
+    { de: "ApagarSessoes", para: "CaiNaHora" },
+  ],
+};

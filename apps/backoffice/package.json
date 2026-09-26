@@ -12,6 +12,7 @@
   "dependencies": {
     "@bpmn-io/properties-panel": "^3.42.0",
     "@repo/auth": "workspace:*",
+    "@repo/bpmn": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",
     "@repo/next-config": "workspace:*",

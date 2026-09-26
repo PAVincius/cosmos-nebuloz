@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ22" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ22">
+    <bpmn:participant id="Pool_PZ22" name="Nebuloz — acesso da equipe ao back-office" processRef="Processo_PZ22" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ22" name="Acesso ao back-office" isExecutable="false">
+    <bpmn:documentation>PZ-22 · Acesso ao back-office. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: docs/runbooks/acesso-ao-backoffice.md — O modelo; Conceder (passos 1–3); Revogar; Dívidas conhecidas
+Fonte: apps/backoffice/lib/guard.ts — requirePlatformStaff — 2FA obrigatório
+Lacuna: Não há tela: conceder e revogar é SQL em editor, e a concessão não é auditada (runbook, Dívidas conhecidas). PRODUCT.md registra isso como decisão em aberto.
+Lacuna: O runbook não diz quem autoriza uma concessão nem o critério entre ADMIN e MEMBER — só que quem opera precisa de credencial de banco.
+Lacuna: Quando o script para porque a conta não existe, o runbook não diz o próximo passo.
+Lacuna: Nada cobra o passo 3 (autenticador): a listagem final do script mostra twoFactorEnabled=false, e o portão barra, sem prazo nem lembrete.
+Lacuna: Revogar não derruba a sessão aberta: o acesso cai no minuto seguinte (cache de 60 s), exceto se as linhas de Session forem apagadas.
+Lacuna: grant-admin-vinicius-dev.sql tem senha em texto puro num comentário versionado (runbook, Dívidas) — fora do fluxo, mas é risco do mesmo processo.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ22">
+      <bpmn:lane id="Raia_pessoa" name="Pessoa da equipe">
+        <bpmn:flowNodeRef>CriarConta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Cadastrar2fa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Concedido</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_concede" name="Quem concede (credencial de banco)">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConcederOuRevogar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RodarGrant</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ContaExiste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ScriptParou</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RodarDelete</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Comprometida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ApagarSessoes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CaiNaHora</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CaiEm60s</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Mudança de acesso à equipe">
+      <bpmn:documentation>Origem: runbook, título</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_ConcederOuRevogar</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ConcederOuRevogar" name="Conceder ou revogar?">
+      <bpmn:incoming>Fluxo_Inicio_ConcederOuRevogar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ConcederOuRevogar_CriarConta</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_ConcederOuRevogar_RodarDelete</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="CriarConta" name="Criar a própria conta em /sign-up do app">
+      <bpmn:documentation>Origem: runbook Conceder 1</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ConcederOuRevogar_CriarConta</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_CriarConta_RodarGrant</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:manualTask id="RodarGrant" name="Rodar grant-staff-admin.sql com e-mail e papel">
+      <bpmn:documentation>Origem: runbook Conceder 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_CriarConta_RodarGrant</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RodarGrant_ContaExiste</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="ContaExiste" name="Conta existe?">
+      <bpmn:documentation>Origem: runbook Conceder 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_RodarGrant_ContaExiste</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ContaExiste_Cadastrar2fa</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_ContaExiste_ScriptParou</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="ScriptParou" name="Script para com erro">
+      <bpmn:documentation>Origem: runbook Conceder 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ContaExiste_ScriptParou</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Cadastrar2fa" name="Cadastrar autenticador em /seguranca">
+      <bpmn:documentation>Origem: runbook Conceder 3; guard.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ContaExiste_Cadastrar2fa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Cadastrar2fa_Concedido</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Concedido" name="Acesso concedido (ADMIN escreve, MEMBER lê)">
+      <bpmn:documentation>Origem: runbook O modelo</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Cadastrar2fa_Concedido</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="RodarDelete" name="Rodar o DELETE do fim do script">
+      <bpmn:documentation>Origem: runbook Revogar</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ConcederOuRevogar_RodarDelete</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RodarDelete_Comprometida</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Comprometida" name="Conta comprometida?">
+      <bpmn:documentation>Origem: runbook Revogar</bpmn:documentation>
+      <bpmn:incoming>Fluxo_RodarDelete_Comprometida</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Comprometida_ApagarSessoes</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Comprometida_CaiEm60s</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="ApagarSessoes" name="Apagar as linhas de Session da pessoa">
+      <bpmn:documentation>Origem: runbook Revogar</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Comprometida_ApagarSessoes</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ApagarSessoes_CaiNaHora</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="CaiNaHora" name="Acesso cai na hora">
+      <bpmn:incoming>Fluxo_ApagarSessoes_CaiNaHora</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="CaiEm60s" name="Acesso cai em até 60 s">
+      <bpmn:documentation>Origem: runbook Revogar (cache de sessão)</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Comprometida_CaiEm60s</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_ConcederOuRevogar" sourceRef="Inicio" targetRef="ConcederOuRevogar" />
+    <bpmn:sequenceFlow id="Fluxo_ConcederOuRevogar_CriarConta" name="conceder" sourceRef="ConcederOuRevogar" targetRef="CriarConta">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">conceder</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_ConcederOuRevogar_RodarDelete" name="revogar" sourceRef="ConcederOuRevogar" targetRef="RodarDelete">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">revogar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_CriarConta_RodarGrant" sourceRef="CriarConta" targetRef="RodarGrant" />
+    <bpmn:sequenceFlow id="Fluxo_RodarGrant_ContaExiste" sourceRef="RodarGrant" targetRef="ContaExiste" />
+    <bpmn:sequenceFlow id="Fluxo_ContaExiste_Cadastrar2fa" name="sim" sourceRef="ContaExiste" targetRef="Cadastrar2fa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_ContaExiste_ScriptParou" name="não" sourceRef="ContaExiste" targetRef="ScriptParou">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Cadastrar2fa_Concedido" sourceRef="Cadastrar2fa" targetRef="Concedido" />
+    <bpmn:sequenceFlow id="Fluxo_RodarDelete_Comprometida" sourceRef="RodarDelete" targetRef="Comprometida" />
+    <bpmn:sequenceFlow id="Fluxo_Comprometida_ApagarSessoes" name="sim" sourceRef="Comprometida" targetRef="ApagarSessoes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Comprometida_CaiEm60s" name="não" sourceRef="Comprometida" targetRef="CaiEm60s">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_ApagarSessoes_CaiNaHora" sourceRef="ApagarSessoes" targetRef="CaiNaHora" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ22">
+    <bpmndi:BPMNPlane id="Plano_PZ22" bpmnElement="Colaboracao_PZ22">
+      <bpmndi:BPMNShape id="Pool_PZ22_di" bpmnElement="Pool_PZ22" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="1420" height="520" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_pessoa_di" bpmnElement="Raia_pessoa" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="1390" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_concede_di" bpmnElement="Raia_concede" isHorizontal="true">
+        <dc:Bounds x="130" y="190" width="1390" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="279" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConcederOuRevogar_di" bpmnElement="ConcederOuRevogar">
+        <dc:Bounds x="375" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="295" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CriarConta_di" bpmnElement="CriarConta">
+        <dc:Bounds x="520" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RodarGrant_di" bpmnElement="RodarGrant">
+        <dc:Bounds x="690" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ContaExiste_di" bpmnElement="ContaExiste">
+        <dc:Bounds x="885" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="805" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptParou_di" bpmnElement="ScriptParou">
+        <dc:Bounds x="1402" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1370" y="409" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Cadastrar2fa_di" bpmnElement="Cadastrar2fa">
+        <dc:Bounds x="1030" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Concedido_di" bpmnElement="Concedido">
+        <dc:Bounds x="1232" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RodarDelete_di" bpmnElement="RodarDelete">
+        <dc:Bounds x="520" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Comprometida_di" bpmnElement="Comprometida">
+        <dc:Bounds x="715" y="360" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="635" y="328" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApagarSessoes_di" bpmnElement="ApagarSessoes">
+        <dc:Bounds x="860" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CaiNaHora_di" bpmnElement="CaiNaHora">
+        <dc:Bounds x="1062" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1030" y="409" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CaiEm60s_di" bpmnElement="CaiEm60s">
+        <dc:Bounds x="892" y="497" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="860" y="539" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_ConcederOuRevogar_di" bpmnElement="Fluxo_Inicio_ConcederOuRevogar">
+        <di:waypoint x="248" y="255" />
+        <di:waypoint x="375" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConcederOuRevogar_CriarConta_di" bpmnElement="Fluxo_ConcederOuRevogar_CriarConta">
+        <di:waypoint x="425" y="255" />
+        <di:waypoint x="472.5" y="255" />
+        <di:waypoint x="472.5" y="125" />
+        <di:waypoint x="520" y="125" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431" y="237" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConcederOuRevogar_RodarDelete_di" bpmnElement="Fluxo_ConcederOuRevogar_RodarDelete">
+        <di:waypoint x="400" y="280" />
+        <di:waypoint x="400" y="385" />
+        <di:waypoint x="520" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="406" y="367" width="45.5" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_CriarConta_RodarGrant_di" bpmnElement="Fluxo_CriarConta_RodarGrant">
+        <di:waypoint x="620" y="125" />
+        <di:waypoint x="655" y="125" />
+        <di:waypoint x="655" y="255" />
+        <di:waypoint x="690" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RodarGrant_ContaExiste_di" bpmnElement="Fluxo_RodarGrant_ContaExiste">
+        <di:waypoint x="790" y="255" />
+        <di:waypoint x="885" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ContaExiste_Cadastrar2fa_di" bpmnElement="Fluxo_ContaExiste_Cadastrar2fa">
+        <di:waypoint x="935" y="255" />
+        <di:waypoint x="982.5" y="255" />
+        <di:waypoint x="982.5" y="125" />
+        <di:waypoint x="1030" y="125" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ContaExiste_ScriptParou_di" bpmnElement="Fluxo_ContaExiste_ScriptParou">
+        <di:waypoint x="910" y="280" />
+        <di:waypoint x="910" y="440" />
+        <di:waypoint x="1420" y="440" />
+        <di:waypoint x="1420" y="403" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="422" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Cadastrar2fa_Concedido_di" bpmnElement="Fluxo_Cadastrar2fa_Concedido">
+        <di:waypoint x="1130" y="125" />
+        <di:waypoint x="1232" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RodarDelete_Comprometida_di" bpmnElement="Fluxo_RodarDelete_Comprometida">
+        <di:waypoint x="620" y="385" />
+        <di:waypoint x="715" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Comprometida_ApagarSessoes_di" bpmnElement="Fluxo_Comprometida_ApagarSessoes">
+        <di:waypoint x="765" y="385" />
+        <di:waypoint x="860" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="771" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Comprometida_CaiEm60s_di" bpmnElement="Fluxo_Comprometida_CaiEm60s">
+        <di:waypoint x="740" y="410" />
+        <di:waypoint x="740" y="515" />
+        <di:waypoint x="892" y="515" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="746" y="497" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ApagarSessoes_CaiNaHora_di" bpmnElement="Fluxo_ApagarSessoes_CaiNaHora">
+        <di:waypoint x="960" y="385" />
+        <di:waypoint x="1062" y="385" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

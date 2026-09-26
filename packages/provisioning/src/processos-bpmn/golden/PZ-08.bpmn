@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ08" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ08">
+    <bpmn:participant id="Pool_PZ08" name="Nebuloz — contratação de fornecedor" processRef="Processo_PZ08" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ08" name="Revisão de risco e vendor" isExecutable="false">
+    <bpmn:documentation>PZ-08 · Revisão de risco e vendor. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: docs/compliance/soc2/policies/06-vendor-management-policy.md — §3 Vendor Risk Tiers; §4.1 New Vendor Onboarding; §5 Registry; §6 Contractual Requirements
+Fonte: docs/compliance/dpa-fornecedores.md — §0 Como ler (embutido, a assinar, não encontrado); §3 Ações consolidadas
+Lacuna: A política se contradiz no tier 2: a tabela do §3 pede DPA + questionário (sem SOC 2), e o §4.1 pede relatório SOC 2 para tier 1 ou 2. O diagrama segue o §4.1.
+Lacuna: Quem faz a diligência (pedir SOC 2, DPA, questionário) não está nomeado; só quem aprova (Engineering Lead; CTO no tier 1). As raias usam cargos, e o RACI do playbook §4 está em branco.
+Lacuna: A política não diz o que acontece quando a revisão reprova, nem quem revisa os termos de um fornecedor tier 3 ou se ele entra no registro.
+Lacuna: O registro do §5 da política (Supabase, Railway, BetterStack, todos com DPA ✅) diverge do inventário de dpa-fornecedores.md (Neon, Sentry; seis DPAs 'a assinar' e quatro 'não encontrado'). O playbook §6 já aponta os dois documentos que discordam.
+Lacuna: Revisão anual (§4.2) e desligamento de fornecedor (§4.3) são ciclos próprios e não estão neste diagrama.
+Lacuna: A descrição do PZ-08 no mapa fala em 'matriz de risco por classe de dado'; a política classifica por tier, não por classe de dado.
+Lacuna: A política está em inglês, escrita para 'Cosmos', versão 1.0 de 2026-05-19.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ08">
+      <bpmn:lane id="Raia_diligencia" name="Responsável pela diligência (não nomeado)">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Classificar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>QualTier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>RevisarTermos</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Tier3Liberado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PedirSoc2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DadoPessoal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConferirDpa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SituacaoDpa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AssinarDpa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PedirDpa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaDpa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Clausulas</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Questionario</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_eng" name="Engineering Lead">
+        <bpmn:flowNodeRef>RevisaoEng</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AprovadoEng</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EhTier1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaAprovado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Registrar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Contratado</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_cto" name="CTO">
+        <bpmn:flowNodeRef>RevisaoCto</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AprovadoCto</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaReprovado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NaoAprovado</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Fornecedor novo a contratar">
+      <bpmn:documentation>Origem: política §4.1</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_Classificar</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Classificar" name="Classificar tier (1 crítico, 2 significativo, 3 padrão)">
+      <bpmn:documentation>Origem: política §3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Inicio_Classificar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Classificar_QualTier</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="QualTier" name="Tier?">
+      <bpmn:documentation>Origem: política §3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Classificar_QualTier</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_QualTier_RevisarTermos</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_QualTier_PedirSoc2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RevisarTermos" name="Revisar termos de serviço padrão">
+      <bpmn:documentation>Origem: política §3 Tier 3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_QualTier_RevisarTermos</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RevisarTermos_Tier3Liberado</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Tier3Liberado" name="Fornecedor tier 3 liberado">
+      <bpmn:incoming>Fluxo_RevisarTermos_Tier3Liberado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="PedirSoc2" name="Pedir SOC 2 Tipo II (ou ISO 27001, CSA STAR)">
+      <bpmn:documentation>Origem: política §4.1 passo 1</bpmn:documentation>
+      <bpmn:incoming>Fluxo_QualTier_PedirSoc2</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_PedirSoc2_DadoPessoal</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="DadoPessoal" name="Trata dado pessoal?">
+      <bpmn:documentation>Origem: política §4.1 passo 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_PedirSoc2_DadoPessoal</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_DadoPessoal_ConferirDpa</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_DadoPessoal_JuntaDpa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ConferirDpa" name="Conferir DPA em fonte primária">
+      <bpmn:documentation>Origem: dpa-fornecedores §0</bpmn:documentation>
+      <bpmn:incoming>Fluxo_DadoPessoal_ConferirDpa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ConferirDpa_SituacaoDpa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="SituacaoDpa" name="Situação do DPA?">
+      <bpmn:documentation>Origem: dpa-fornecedores §0</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ConferirDpa_SituacaoDpa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_SituacaoDpa_JuntaDpa</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_SituacaoDpa_AssinarDpa</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_SituacaoDpa_PedirDpa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AssinarDpa" name="Aceitar no portal ou assinar a via">
+      <bpmn:documentation>Origem: dpa-fornecedores §0 'a assinar'</bpmn:documentation>
+      <bpmn:incoming>Fluxo_SituacaoDpa_AssinarDpa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AssinarDpa_JuntaDpa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="PedirDpa" name="Pedir DPA ao fornecedor">
+      <bpmn:documentation>Origem: dpa-fornecedores §3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_SituacaoDpa_PedirDpa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_PedirDpa_JuntaDpa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="JuntaDpa">
+      <bpmn:incoming>Fluxo_DadoPessoal_JuntaDpa</bpmn:incoming>
+      <bpmn:incoming>Fluxo_SituacaoDpa_JuntaDpa</bpmn:incoming>
+      <bpmn:incoming>Fluxo_AssinarDpa_JuntaDpa</bpmn:incoming>
+      <bpmn:incoming>Fluxo_PedirDpa_JuntaDpa</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaDpa_Clausulas</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Clausulas" name="Conferir cláusulas: incidente em 72 h, auditoria, deleção, subprocessador">
+      <bpmn:documentation>Origem: política §6</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaDpa_Clausulas</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Clausulas_Questionario</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Questionario" name="Aplicar questionário de segurança">
+      <bpmn:documentation>Origem: política §4.1 passo 3</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Clausulas_Questionario</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Questionario_RevisaoEng</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="RevisaoEng" name="Revisar e aprovar">
+      <bpmn:documentation>Origem: política §4.1 passo 4</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Questionario_RevisaoEng</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RevisaoEng_AprovadoEng</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="AprovadoEng" name="Aprovado?">
+      <bpmn:incoming>Fluxo_RevisaoEng_AprovadoEng</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AprovadoEng_EhTier1</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_AprovadoEng_JuntaReprovado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="EhTier1" name="Tier 1?">
+      <bpmn:documentation>Origem: política §4.1 passo 5</bpmn:documentation>
+      <bpmn:incoming>Fluxo_AprovadoEng_EhTier1</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_EhTier1_RevisaoCto</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_EhTier1_JuntaAprovado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="RevisaoCto" name="Aprovar fornecedor tier 1">
+      <bpmn:documentation>Origem: política §4.1 passo 5</bpmn:documentation>
+      <bpmn:incoming>Fluxo_EhTier1_RevisaoCto</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_RevisaoCto_AprovadoCto</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="AprovadoCto" name="Aprovado pelo CTO?">
+      <bpmn:incoming>Fluxo_RevisaoCto_AprovadoCto</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AprovadoCto_JuntaAprovado</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_AprovadoCto_JuntaReprovado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="JuntaAprovado">
+      <bpmn:incoming>Fluxo_EhTier1_JuntaAprovado</bpmn:incoming>
+      <bpmn:incoming>Fluxo_AprovadoCto_JuntaAprovado</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaAprovado_Registrar</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Registrar" name="Registrar no inventário e confirmar o contrato no Charter">
+      <bpmn:documentation>Origem: política §5; dpa-fornecedores §0 (CharterVendor)</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaAprovado_Registrar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Registrar_Contratado</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Contratado" name="Fornecedor contratado">
+      <bpmn:incoming>Fluxo_Registrar_Contratado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="JuntaReprovado">
+      <bpmn:incoming>Fluxo_AprovadoEng_JuntaReprovado</bpmn:incoming>
+      <bpmn:incoming>Fluxo_AprovadoCto_JuntaReprovado</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaReprovado_NaoAprovado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="NaoAprovado" name="Fornecedor não aprovado">
+      <bpmn:incoming>Fluxo_JuntaReprovado_NaoAprovado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_Classificar" sourceRef="Inicio" targetRef="Classificar" />
+    <bpmn:sequenceFlow id="Fluxo_Classificar_QualTier" sourceRef="Classificar" targetRef="QualTier" />
+    <bpmn:sequenceFlow id="Fluxo_QualTier_RevisarTermos" name="tier 3" sourceRef="QualTier" targetRef="RevisarTermos">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">tier 3</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_QualTier_PedirSoc2" name="tier 1 ou 2" sourceRef="QualTier" targetRef="PedirSoc2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">tier 1 ou 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_RevisarTermos_Tier3Liberado" sourceRef="RevisarTermos" targetRef="Tier3Liberado" />
+    <bpmn:sequenceFlow id="Fluxo_PedirSoc2_DadoPessoal" sourceRef="PedirSoc2" targetRef="DadoPessoal" />
+    <bpmn:sequenceFlow id="Fluxo_DadoPessoal_ConferirDpa" name="sim" sourceRef="DadoPessoal" targetRef="ConferirDpa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_DadoPessoal_JuntaDpa" name="não" sourceRef="DadoPessoal" targetRef="JuntaDpa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_ConferirDpa_SituacaoDpa" sourceRef="ConferirDpa" targetRef="SituacaoDpa" />
+    <bpmn:sequenceFlow id="Fluxo_SituacaoDpa_JuntaDpa" name="embutido" sourceRef="SituacaoDpa" targetRef="JuntaDpa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">embutido</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_SituacaoDpa_AssinarDpa" name="a assinar" sourceRef="SituacaoDpa" targetRef="AssinarDpa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">a assinar</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_SituacaoDpa_PedirDpa" name="não encontrado" sourceRef="SituacaoDpa" targetRef="PedirDpa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não encontrado</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AssinarDpa_JuntaDpa" sourceRef="AssinarDpa" targetRef="JuntaDpa" />
+    <bpmn:sequenceFlow id="Fluxo_PedirDpa_JuntaDpa" sourceRef="PedirDpa" targetRef="JuntaDpa" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaDpa_Clausulas" sourceRef="JuntaDpa" targetRef="Clausulas" />
+    <bpmn:sequenceFlow id="Fluxo_Clausulas_Questionario" sourceRef="Clausulas" targetRef="Questionario" />
+    <bpmn:sequenceFlow id="Fluxo_Questionario_RevisaoEng" sourceRef="Questionario" targetRef="RevisaoEng" />
+    <bpmn:sequenceFlow id="Fluxo_RevisaoEng_AprovadoEng" sourceRef="RevisaoEng" targetRef="AprovadoEng" />
+    <bpmn:sequenceFlow id="Fluxo_AprovadoEng_EhTier1" name="sim" sourceRef="AprovadoEng" targetRef="EhTier1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AprovadoEng_JuntaReprovado" name="não" sourceRef="AprovadoEng" targetRef="JuntaReprovado">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_EhTier1_RevisaoCto" name="sim" sourceRef="EhTier1" targetRef="RevisaoCto">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_EhTier1_JuntaAprovado" name="não" sourceRef="EhTier1" targetRef="JuntaAprovado">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_RevisaoCto_AprovadoCto" sourceRef="RevisaoCto" targetRef="AprovadoCto" />
+    <bpmn:sequenceFlow id="Fluxo_AprovadoCto_JuntaAprovado" name="sim" sourceRef="AprovadoCto" targetRef="JuntaAprovado">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AprovadoCto_JuntaReprovado" name="não" sourceRef="AprovadoCto" targetRef="JuntaReprovado">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_JuntaAprovado_Registrar" sourceRef="JuntaAprovado" targetRef="Registrar" />
+    <bpmn:sequenceFlow id="Fluxo_Registrar_Contratado" sourceRef="Registrar" targetRef="Contratado" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaReprovado_NaoAprovado" sourceRef="JuntaReprovado" targetRef="NaoAprovado" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ08">
+    <bpmndi:BPMNPlane id="Plano_PZ08" bpmnElement="Colaboracao_PZ08">
+      <bpmndi:BPMNShape id="Pool_PZ08_di" bpmnElement="Pool_PZ08" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="3630" height="780" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_diligencia_di" bpmnElement="Raia_diligencia" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="3600" height="520" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_eng_di" bpmnElement="Raia_eng" isHorizontal="true">
+        <dc:Bounds x="130" y="580" width="3600" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_cto_di" bpmnElement="Raia_cto" isHorizontal="true">
+        <dc:Bounds x="130" y="710" width="3600" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Classificar_di" bpmnElement="Classificar">
+        <dc:Bounds x="350" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="QualTier_di" bpmnElement="QualTier">
+        <dc:Bounds x="545" y="100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="465" y="68" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RevisarTermos_di" bpmnElement="RevisarTermos">
+        <dc:Bounds x="690" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Tier3Liberado_di" bpmnElement="Tier3Liberado">
+        <dc:Bounds x="892" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="860" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PedirSoc2_di" bpmnElement="PedirSoc2">
+        <dc:Bounds x="690" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DadoPessoal_di" bpmnElement="DadoPessoal">
+        <dc:Bounds x="885" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="805" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConferirDpa_di" bpmnElement="ConferirDpa">
+        <dc:Bounds x="1030" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SituacaoDpa_di" bpmnElement="SituacaoDpa">
+        <dc:Bounds x="1225" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1145" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AssinarDpa_di" bpmnElement="AssinarDpa">
+        <dc:Bounds x="1370" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PedirDpa_di" bpmnElement="PedirDpa">
+        <dc:Bounds x="1370" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaDpa_di" bpmnElement="JuntaDpa">
+        <dc:Bounds x="1565" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Clausulas_di" bpmnElement="Clausulas">
+        <dc:Bounds x="1710" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Questionario_di" bpmnElement="Questionario">
+        <dc:Bounds x="1880" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RevisaoEng_di" bpmnElement="RevisaoEng">
+        <dc:Bounds x="2050" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AprovadoEng_di" bpmnElement="AprovadoEng">
+        <dc:Bounds x="2245" y="620" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2165" y="588" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EhTier1_di" bpmnElement="EhTier1">
+        <dc:Bounds x="2415" y="620" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2335" y="588" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RevisaoCto_di" bpmnElement="RevisaoCto">
+        <dc:Bounds x="2560" y="735" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AprovadoCto_di" bpmnElement="AprovadoCto">
+        <dc:Bounds x="2755" y="750" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2675" y="718" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaAprovado_di" bpmnElement="JuntaAprovado">
+        <dc:Bounds x="2925" y="620" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Registrar_di" bpmnElement="Registrar">
+        <dc:Bounds x="3070" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Contratado_di" bpmnElement="Contratado">
+        <dc:Bounds x="3272" y="627" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3240" y="669" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaReprovado_di" bpmnElement="JuntaReprovado">
+        <dc:Bounds x="3435" y="750" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NaoAprovado_di" bpmnElement="NaoAprovado">
+        <dc:Bounds x="3612" y="757" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3580" y="799" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_Classificar_di" bpmnElement="Fluxo_Inicio_Classificar">
+        <di:waypoint x="248" y="125" />
+        <di:waypoint x="350" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Classificar_QualTier_di" bpmnElement="Fluxo_Classificar_QualTier">
+        <di:waypoint x="450" y="125" />
+        <di:waypoint x="545" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_QualTier_RevisarTermos_di" bpmnElement="Fluxo_QualTier_RevisarTermos">
+        <di:waypoint x="595" y="125" />
+        <di:waypoint x="690" y="125" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="601" y="107" width="39" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_QualTier_PedirSoc2_di" bpmnElement="Fluxo_QualTier_PedirSoc2">
+        <di:waypoint x="570" y="150" />
+        <di:waypoint x="570" y="255" />
+        <di:waypoint x="690" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="576" y="237" width="71.5" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RevisarTermos_Tier3Liberado_di" bpmnElement="Fluxo_RevisarTermos_Tier3Liberado">
+        <di:waypoint x="790" y="125" />
+        <di:waypoint x="892" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_PedirSoc2_DadoPessoal_di" bpmnElement="Fluxo_PedirSoc2_DadoPessoal">
+        <di:waypoint x="790" y="255" />
+        <di:waypoint x="885" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DadoPessoal_ConferirDpa_di" bpmnElement="Fluxo_DadoPessoal_ConferirDpa">
+        <di:waypoint x="935" y="255" />
+        <di:waypoint x="1030" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DadoPessoal_JuntaDpa_di" bpmnElement="Fluxo_DadoPessoal_JuntaDpa">
+        <di:waypoint x="910" y="280" />
+        <di:waypoint x="910" y="310" />
+        <di:waypoint x="1590" y="310" />
+        <di:waypoint x="1590" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="292" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConferirDpa_SituacaoDpa_di" bpmnElement="Fluxo_ConferirDpa_SituacaoDpa">
+        <di:waypoint x="1130" y="255" />
+        <di:waypoint x="1225" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_SituacaoDpa_JuntaDpa_di" bpmnElement="Fluxo_SituacaoDpa_JuntaDpa">
+        <di:waypoint x="1275" y="255" />
+        <di:waypoint x="1565" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1281" y="237" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_SituacaoDpa_AssinarDpa_di" bpmnElement="Fluxo_SituacaoDpa_AssinarDpa">
+        <di:waypoint x="1250" y="280" />
+        <di:waypoint x="1250" y="385" />
+        <di:waypoint x="1370" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1256" y="367" width="58.5" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_SituacaoDpa_PedirDpa_di" bpmnElement="Fluxo_SituacaoDpa_PedirDpa">
+        <di:waypoint x="1250" y="280" />
+        <di:waypoint x="1250" y="515" />
+        <di:waypoint x="1370" y="515" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1256" y="497" width="91" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AssinarDpa_JuntaDpa_di" bpmnElement="Fluxo_AssinarDpa_JuntaDpa">
+        <di:waypoint x="1470" y="385" />
+        <di:waypoint x="1590" y="385" />
+        <di:waypoint x="1590" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_PedirDpa_JuntaDpa_di" bpmnElement="Fluxo_PedirDpa_JuntaDpa">
+        <di:waypoint x="1470" y="515" />
+        <di:waypoint x="1590" y="515" />
+        <di:waypoint x="1590" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaDpa_Clausulas_di" bpmnElement="Fluxo_JuntaDpa_Clausulas">
+        <di:waypoint x="1615" y="255" />
+        <di:waypoint x="1710" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Clausulas_Questionario_di" bpmnElement="Fluxo_Clausulas_Questionario">
+        <di:waypoint x="1810" y="255" />
+        <di:waypoint x="1880" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Questionario_RevisaoEng_di" bpmnElement="Fluxo_Questionario_RevisaoEng">
+        <di:waypoint x="1980" y="255" />
+        <di:waypoint x="2015" y="255" />
+        <di:waypoint x="2015" y="645" />
+        <di:waypoint x="2050" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RevisaoEng_AprovadoEng_di" bpmnElement="Fluxo_RevisaoEng_AprovadoEng">
+        <di:waypoint x="2150" y="645" />
+        <di:waypoint x="2245" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AprovadoEng_EhTier1_di" bpmnElement="Fluxo_AprovadoEng_EhTier1">
+        <di:waypoint x="2295" y="645" />
+        <di:waypoint x="2415" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2301" y="627" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AprovadoEng_JuntaReprovado_di" bpmnElement="Fluxo_AprovadoEng_JuntaReprovado">
+        <di:waypoint x="2270" y="670" />
+        <di:waypoint x="2270" y="830" />
+        <di:waypoint x="3460" y="830" />
+        <di:waypoint x="3460" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2276" y="812" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_EhTier1_RevisaoCto_di" bpmnElement="Fluxo_EhTier1_RevisaoCto">
+        <di:waypoint x="2440" y="670" />
+        <di:waypoint x="2440" y="775" />
+        <di:waypoint x="2560" y="775" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2446" y="757" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_EhTier1_JuntaAprovado_di" bpmnElement="Fluxo_EhTier1_JuntaAprovado">
+        <di:waypoint x="2465" y="645" />
+        <di:waypoint x="2925" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2471" y="627" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_RevisaoCto_AprovadoCto_di" bpmnElement="Fluxo_RevisaoCto_AprovadoCto">
+        <di:waypoint x="2660" y="775" />
+        <di:waypoint x="2755" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AprovadoCto_JuntaAprovado_di" bpmnElement="Fluxo_AprovadoCto_JuntaAprovado">
+        <di:waypoint x="2780" y="750" />
+        <di:waypoint x="2780" y="645" />
+        <di:waypoint x="2925" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2786" y="627" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AprovadoCto_JuntaReprovado_di" bpmnElement="Fluxo_AprovadoCto_JuntaReprovado">
+        <di:waypoint x="2805" y="775" />
+        <di:waypoint x="3435" y="775" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2811" y="757" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaAprovado_Registrar_di" bpmnElement="Fluxo_JuntaAprovado_Registrar">
+        <di:waypoint x="2975" y="645" />
+        <di:waypoint x="3070" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Registrar_Contratado_di" bpmnElement="Fluxo_Registrar_Contratado">
+        <di:waypoint x="3170" y="645" />
+        <di:waypoint x="3272" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaReprovado_NaoAprovado_di" bpmnElement="Fluxo_JuntaReprovado_NaoAprovado">
+        <di:waypoint x="3485" y="775" />
+        <di:waypoint x="3612" y="775" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

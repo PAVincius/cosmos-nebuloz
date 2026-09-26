@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ10" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ10">
+    <bpmn:participant id="Pool_PZ10" name="Nebuloz — provisionamento de cliente" processRef="Processo_PZ10" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ10" name="Provisionamento de tenant" isExecutable="false">
+    <bpmn:documentation>PZ-10 · Provisionamento de tenant. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: apps/backoffice/app/actions/provisioning.ts — provisionTenantAction
+Fonte: packages/provisioning/src/tenant.ts — provisionTenant (transação)
+Fonte: packages/provisioning/src/modules.ts — contractModule
+Fonte: packages/provisioning/src/slug.ts — uniqueSlug
+Fonte: apps/backoffice/lib/guard.ts — requirePlatformStaff, assertCanWrite
+Fonte: apps/backoffice/app/(staff)/clientes/novo/form.tsx — formulário e barreira de confirmação
+Fonte: apps/app/app/(unauthenticated)/invite/[token]/page.tsx — aceite do convite
+Fonte: docs/comercial/mapa-de-processo.md — §6 Provisionamento (gatilho manual)
+Lacuna: Proposta ACEITA não dispara o provisionamento: é passo manual em /clientes/novo, sem vínculo de volta à proposta além de tenantProvisionadoSlug (mapa §6).
+Lacuna: O back-office não envia o convite. O dono sem conta aceita em /invite/&lt;id&gt; no app, mas como ele recebe esse link não está no código do provisionamento.
+Lacuna: O convite vale 14 dias; nada no fluxo trata expiração nem reenvio.
+Lacuna: O painel manda só módulo e status: assentos e expiresAt nascem nulos (provisionTenantAction), então 'renova em N dias' fica sem dado (PRODUCT.md, Lacunas).
+Lacuna: Falha dentro da transação (por exemplo, slug esgotado após 10 sufixos) desfaz tudo e volta como erro; não está desenhada como caminho próprio.
+Lacuna: Preparar Charter e Meridian (bootstrapCharterAction, bootstrapMeridianAction) é passo separado na tela do cliente, não encadeado ao provisionamento; ficou fora deste diagrama.
+Lacuna: A descrição do PZ-10 no mapa diz 'owner convidado'; o código só convida quando o e-mail ainda não tem conta — com conta, vincula direto como ADMIN.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ10">
+      <bpmn:lane id="Raia_staff" name="Staff ADMIN">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Preencher</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Confirmar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_backoffice" name="Back-office">
+        <bpmn:flowNodeRef>Guard</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Autorizado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Recusado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Slug</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CriarTenant</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>BuscarDono</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DonoTemConta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Vincular</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Convidar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaDono</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Contratar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Auditar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConvitePendente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>NoAr</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_dono" name="Dono do cliente">
+        <bpmn:flowNodeRef>Aceitar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DonoEntra</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Decisão de criar o cliente (hoje: proposta aceita, à mão)">
+      <bpmn:documentation>Origem: mapa §6 Entrada</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_Preencher</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Preencher" name="Preencher nome, e-mail do dono e módulos (ACTIVE ou TRIAL)">
+      <bpmn:documentation>Origem: clientes/novo/form.tsx</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Inicio_Preencher</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Preencher_Confirmar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Confirmar" name="Confirmar na barreira que nomeia alvo e consequência">
+      <bpmn:documentation>Origem: form.tsx ConfirmarAcao</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Preencher_Confirmar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Confirmar_Guard</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Guard" name="Guard: sessão, teto, equipe, 2FA, escrita e cota de provisionamento">
+      <bpmn:documentation>Origem: provisioning.ts:145-160; guard.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Confirmar_Guard</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Guard_Autorizado</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Autorizado" name="Autorizado?">
+      <bpmn:documentation>Origem: guard.ts StaffAuthError</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Guard_Autorizado</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Autorizado_Slug</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Autorizado_Recusado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Recusado" name="Recusado, com o motivo na tela">
+      <bpmn:documentation>Origem: safe-action Result</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Autorizado_Recusado</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Slug" name="Gerar slug único (até 10 sufixos)">
+      <bpmn:documentation>Origem: slug.ts uniqueSlug</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Autorizado_Slug</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Slug_CriarTenant</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="CriarTenant" name="Criar tenant">
+      <bpmn:documentation>Origem: tenant.ts provisionTenant</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Slug_CriarTenant</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_CriarTenant_BuscarDono</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="BuscarDono" name="Procurar conta pelo e-mail do dono">
+      <bpmn:documentation>Origem: tenant.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_CriarTenant_BuscarDono</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_BuscarDono_DonoTemConta</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="DonoTemConta" name="Dono já tem conta?">
+      <bpmn:documentation>Origem: tenant.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_BuscarDono_DonoTemConta</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_DonoTemConta_Vincular</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_DonoTemConta_Convidar</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Vincular" name="Vincular dono como ADMIN (TenantMember)">
+      <bpmn:documentation>Origem: tenant.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_DonoTemConta_Vincular</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Vincular_JuntaDono</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Convidar" name="Criar convite ADMIN de 14 dias (TenantInvitation)">
+      <bpmn:documentation>Origem: tenant.ts INVITE_TTL_DAYS</bpmn:documentation>
+      <bpmn:incoming>Fluxo_DonoTemConta_Convidar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Convidar_JuntaDono</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="JuntaDono">
+      <bpmn:incoming>Fluxo_Vincular_JuntaDono</bpmn:incoming>
+      <bpmn:incoming>Fluxo_Convidar_JuntaDono</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaDono_Contratar</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Contratar" name="Contratar cada módulo: upsert, invalida cache, audita">
+      <bpmn:documentation>Origem: modules.ts contractModule</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaDono_Contratar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Contratar_Auditar</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Auditar" name="Auditar tenant.provisioned">
+      <bpmn:documentation>Origem: tenant.ts logPlatformAudit</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Contratar_Auditar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Auditar_ConvitePendente</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ConvitePendente" name="Convite pendente?">
+      <bpmn:documentation>Origem: provisioning.ts ownerLinked</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Auditar_ConvitePendente</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ConvitePendente_NoAr</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_ConvitePendente_Aceitar</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="NoAr" name="Cliente no ar com dono">
+      <bpmn:incoming>Fluxo_ConvitePendente_NoAr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Aceitar" name="Criar conta e aceitar o convite em /invite/&#60;id&#62;">
+      <bpmn:documentation>Origem: apps/app invite/[token]</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ConvitePendente_Aceitar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Aceitar_DonoEntra</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="DonoEntra" name="Dono entra no cliente">
+      <bpmn:incoming>Fluxo_Aceitar_DonoEntra</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_Preencher" sourceRef="Inicio" targetRef="Preencher" />
+    <bpmn:sequenceFlow id="Fluxo_Preencher_Confirmar" sourceRef="Preencher" targetRef="Confirmar" />
+    <bpmn:sequenceFlow id="Fluxo_Confirmar_Guard" sourceRef="Confirmar" targetRef="Guard" />
+    <bpmn:sequenceFlow id="Fluxo_Guard_Autorizado" sourceRef="Guard" targetRef="Autorizado" />
+    <bpmn:sequenceFlow id="Fluxo_Autorizado_Slug" name="sim" sourceRef="Autorizado" targetRef="Slug">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Autorizado_Recusado" name="não" sourceRef="Autorizado" targetRef="Recusado">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Slug_CriarTenant" sourceRef="Slug" targetRef="CriarTenant" />
+    <bpmn:sequenceFlow id="Fluxo_CriarTenant_BuscarDono" sourceRef="CriarTenant" targetRef="BuscarDono" />
+    <bpmn:sequenceFlow id="Fluxo_BuscarDono_DonoTemConta" sourceRef="BuscarDono" targetRef="DonoTemConta" />
+    <bpmn:sequenceFlow id="Fluxo_DonoTemConta_Vincular" name="sim" sourceRef="DonoTemConta" targetRef="Vincular">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_DonoTemConta_Convidar" name="não" sourceRef="DonoTemConta" targetRef="Convidar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Vincular_JuntaDono" sourceRef="Vincular" targetRef="JuntaDono" />
+    <bpmn:sequenceFlow id="Fluxo_Convidar_JuntaDono" sourceRef="Convidar" targetRef="JuntaDono" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaDono_Contratar" sourceRef="JuntaDono" targetRef="Contratar" />
+    <bpmn:sequenceFlow id="Fluxo_Contratar_Auditar" sourceRef="Contratar" targetRef="Auditar" />
+    <bpmn:sequenceFlow id="Fluxo_Auditar_ConvitePendente" sourceRef="Auditar" targetRef="ConvitePendente" />
+    <bpmn:sequenceFlow id="Fluxo_ConvitePendente_NoAr" name="não" sourceRef="ConvitePendente" targetRef="NoAr">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_ConvitePendente_Aceitar" name="sim" sourceRef="ConvitePendente" targetRef="Aceitar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Aceitar_DonoEntra" sourceRef="Aceitar" targetRef="DonoEntra" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ10">
+    <bpmndi:BPMNPlane id="Plano_PZ10" bpmnElement="Colaboracao_PZ10">
+      <bpmndi:BPMNShape id="Pool_PZ10_di" bpmnElement="Pool_PZ10" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="2780" height="520" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_staff_di" bpmnElement="Raia_staff" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="2750" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_backoffice_di" bpmnElement="Raia_backoffice" isHorizontal="true">
+        <dc:Bounds x="130" y="190" width="2750" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_dono_di" bpmnElement="Raia_dono" isHorizontal="true">
+        <dc:Bounds x="130" y="450" width="2750" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Preencher_di" bpmnElement="Preencher">
+        <dc:Bounds x="350" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Confirmar_di" bpmnElement="Confirmar">
+        <dc:Bounds x="520" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Guard_di" bpmnElement="Guard">
+        <dc:Bounds x="690" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Autorizado_di" bpmnElement="Autorizado">
+        <dc:Bounds x="885" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="805" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recusado_di" bpmnElement="Recusado">
+        <dc:Bounds x="1062" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1030" y="409" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Slug_di" bpmnElement="Slug">
+        <dc:Bounds x="1030" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CriarTenant_di" bpmnElement="CriarTenant">
+        <dc:Bounds x="1200" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BuscarDono_di" bpmnElement="BuscarDono">
+        <dc:Bounds x="1370" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DonoTemConta_di" bpmnElement="DonoTemConta">
+        <dc:Bounds x="1565" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1485" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Vincular_di" bpmnElement="Vincular">
+        <dc:Bounds x="1710" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Convidar_di" bpmnElement="Convidar">
+        <dc:Bounds x="1710" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaDono_di" bpmnElement="JuntaDono">
+        <dc:Bounds x="1905" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Contratar_di" bpmnElement="Contratar">
+        <dc:Bounds x="2050" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Auditar_di" bpmnElement="Auditar">
+        <dc:Bounds x="2220" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ConvitePendente_di" bpmnElement="ConvitePendente">
+        <dc:Bounds x="2415" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2335" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NoAr_di" bpmnElement="NoAr">
+        <dc:Bounds x="2592" y="237" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2560" y="279" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Aceitar_di" bpmnElement="Aceitar">
+        <dc:Bounds x="2560" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DonoEntra_di" bpmnElement="DonoEntra">
+        <dc:Bounds x="2762" y="497" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2730" y="539" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_Preencher_di" bpmnElement="Fluxo_Inicio_Preencher">
+        <di:waypoint x="248" y="125" />
+        <di:waypoint x="350" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Preencher_Confirmar_di" bpmnElement="Fluxo_Preencher_Confirmar">
+        <di:waypoint x="450" y="125" />
+        <di:waypoint x="520" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Confirmar_Guard_di" bpmnElement="Fluxo_Confirmar_Guard">
+        <di:waypoint x="620" y="125" />
+        <di:waypoint x="655" y="125" />
+        <di:waypoint x="655" y="255" />
+        <di:waypoint x="690" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Guard_Autorizado_di" bpmnElement="Fluxo_Guard_Autorizado">
+        <di:waypoint x="790" y="255" />
+        <di:waypoint x="885" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Autorizado_Slug_di" bpmnElement="Fluxo_Autorizado_Slug">
+        <di:waypoint x="935" y="255" />
+        <di:waypoint x="1030" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="941" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Autorizado_Recusado_di" bpmnElement="Fluxo_Autorizado_Recusado">
+        <di:waypoint x="910" y="280" />
+        <di:waypoint x="910" y="385" />
+        <di:waypoint x="1062" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Slug_CriarTenant_di" bpmnElement="Fluxo_Slug_CriarTenant">
+        <di:waypoint x="1130" y="255" />
+        <di:waypoint x="1200" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_CriarTenant_BuscarDono_di" bpmnElement="Fluxo_CriarTenant_BuscarDono">
+        <di:waypoint x="1300" y="255" />
+        <di:waypoint x="1370" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_BuscarDono_DonoTemConta_di" bpmnElement="Fluxo_BuscarDono_DonoTemConta">
+        <di:waypoint x="1470" y="255" />
+        <di:waypoint x="1565" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DonoTemConta_Vincular_di" bpmnElement="Fluxo_DonoTemConta_Vincular">
+        <di:waypoint x="1615" y="255" />
+        <di:waypoint x="1710" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1621" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_DonoTemConta_Convidar_di" bpmnElement="Fluxo_DonoTemConta_Convidar">
+        <di:waypoint x="1590" y="280" />
+        <di:waypoint x="1590" y="385" />
+        <di:waypoint x="1710" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1596" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Vincular_JuntaDono_di" bpmnElement="Fluxo_Vincular_JuntaDono">
+        <di:waypoint x="1810" y="255" />
+        <di:waypoint x="1905" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Convidar_JuntaDono_di" bpmnElement="Fluxo_Convidar_JuntaDono">
+        <di:waypoint x="1810" y="385" />
+        <di:waypoint x="1930" y="385" />
+        <di:waypoint x="1930" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaDono_Contratar_di" bpmnElement="Fluxo_JuntaDono_Contratar">
+        <di:waypoint x="1955" y="255" />
+        <di:waypoint x="2050" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Contratar_Auditar_di" bpmnElement="Fluxo_Contratar_Auditar">
+        <di:waypoint x="2150" y="255" />
+        <di:waypoint x="2220" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Auditar_ConvitePendente_di" bpmnElement="Fluxo_Auditar_ConvitePendente">
+        <di:waypoint x="2320" y="255" />
+        <di:waypoint x="2415" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConvitePendente_NoAr_di" bpmnElement="Fluxo_ConvitePendente_NoAr">
+        <di:waypoint x="2465" y="255" />
+        <di:waypoint x="2592" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2471" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ConvitePendente_Aceitar_di" bpmnElement="Fluxo_ConvitePendente_Aceitar">
+        <di:waypoint x="2440" y="280" />
+        <di:waypoint x="2440" y="515" />
+        <di:waypoint x="2560" y="515" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2446" y="497" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Aceitar_DonoEntra_di" bpmnElement="Fluxo_Aceitar_DonoEntra">
+        <di:waypoint x="2660" y="515" />
+        <di:waypoint x="2762" y="515" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

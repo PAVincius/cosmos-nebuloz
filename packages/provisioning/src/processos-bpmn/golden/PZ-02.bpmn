@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definicoes_PZ02" targetNamespace="https://nebuloz.ai/processos" exporter="@repo/bpmn" exporterVersion="1">
+  <bpmn:collaboration id="Colaboracao_PZ02">
+    <bpmn:participant id="Pool_PZ02" name="Nebuloz — proposta comercial" processRef="Processo_PZ02" />
+  </bpmn:collaboration>
+  <bpmn:process id="Processo_PZ02" name="Geração de proposta" isExecutable="false">
+    <bpmn:documentation>PZ-02 · Geração de proposta. Gerado de definição JSON por @repo/bpmn — não edite o XML à mão.
+Fonte: docs/comercial/mapa-de-processo.md — §3 Precificação; §4 Proposta; §8 Diagrama de estados
+Fonte: docs/comercial/playbook-de-vendas.md — §2 'Está caro' — teto de 15% sem aprovação
+Fonte: apps/backoffice/app/actions/approvals.ts — despacharAcaoAprovada — aprovado vira ENVIADA, rejeitado volta a RASCUNHO
+Lacuna: Não existe ação no back-office que marque proposta ENVIADA como ACEITA ou RECUSADA (mapa §4). O desenho mostra a decisão do cliente porque os estados existem, mas nada a registra.
+Lacuna: Sem motivo estruturado de recusa e sem validade/expiração da proposta (mapa §4 e §9).
+Lacuna: Proposal.aceitaEm ausente: sem data do aceite, o CAC conta clientes ganhos por aproximação (mapa §9).
+Lacuna: Ticket do diagnóstico (SKU de entrada) sem definição — decisão em aberto, não código (mapa §3).
+Lacuna: O mapa de processos liga PZ-02 → PZ-03 ('exige' simulação de capacidade antes do envio), mas a fonte escrita do comercial não cita esse passo; não foi desenhado.
+Lacuna: RACI de quem monta e de quem aprova está em branco (playbook §4); as raias nomeiam papéis, não pessoas.</bpmn:documentation>
+    <bpmn:laneSet id="Raias_PZ02">
+      <bpmn:lane id="Raia_vendedor" name="Quem monta a proposta">
+        <bpmn:flowNodeRef>Inicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Retrabalho</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MontarEscopo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Enviar</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_sistema" name="Back-office">
+        <bpmn:flowNodeRef>Precificar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Congelar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AcimaDoTeto</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AbrirPedido</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VoltaRascunho</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>JuntaEnvio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MarcarEnviada</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_aprovador" name="Outro ADMIN (aprovação)">
+        <bpmn:flowNodeRef>Decidir</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Aprovado</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Raia_cliente" name="Cliente (decisor)">
+        <bpmn:flowNodeRef>ClienteDecide</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Aceitou</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Aceita</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Recusada</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Inicio" name="Lead convertido em proposta (PZ-01)">
+      <bpmn:documentation>Origem: mapa §2 → §3</bpmn:documentation>
+      <bpmn:outgoing>Fluxo_Inicio_Retrabalho</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Retrabalho">
+      <bpmn:incoming>Fluxo_Inicio_Retrabalho</bpmn:incoming>
+      <bpmn:incoming>Fluxo_VoltaRascunho_Retrabalho</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Retrabalho_MontarEscopo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="MontarEscopo" name="Montar escopo: plano, assentos, add-ons, serviços e desconto">
+      <bpmn:documentation>Origem: mapa §3 Entrada; actions/proposta-escopo.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Retrabalho_MontarEscopo</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_MontarEscopo_Precificar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Precificar" name="Precificar (precificarProposta): mensal, uma vez, ACV, TCV">
+      <bpmn:documentation>Origem: mapa §3; lib/comercial/precificar.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_MontarEscopo_Precificar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Precificar_Enviar</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Enviar" name="Enviar proposta (submitProposalAction)">
+      <bpmn:documentation>Origem: mapa §4</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Precificar_Enviar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Enviar_Congelar</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Congelar" name="Congelar total e ACV no envio">
+      <bpmn:documentation>Origem: mapa §4 (totalCentavos e acvCentavos)</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Enviar_Congelar</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Congelar_AcimaDoTeto</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="AcimaDoTeto" name="Desconto acima de 15%?">
+      <bpmn:documentation>Origem: mapa §3; lib/comercial.ts LIMITE_DESCONTO_SEM_APROVACAO</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Congelar_AcimaDoTeto</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AcimaDoTeto_JuntaEnvio</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_AcimaDoTeto_AbrirPedido</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="AbrirPedido" name="Abrir pedido em PlatformApproval (AGUARDANDO_APROVACAO)">
+      <bpmn:documentation>Origem: mapa §4</bpmn:documentation>
+      <bpmn:incoming>Fluxo_AcimaDoTeto_AbrirPedido</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_AbrirPedido_Decidir</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Decidir" name="Decidir o pedido — quem pediu não decide">
+      <bpmn:documentation>Origem: actions/approvals.ts; PRODUCT.md princípio 2</bpmn:documentation>
+      <bpmn:incoming>Fluxo_AbrirPedido_Decidir</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Decidir_Aprovado</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Aprovado" name="Aprovado?">
+      <bpmn:documentation>Origem: actions/approvals.ts</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Decidir_Aprovado</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Aprovado_JuntaEnvio</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Aprovado_VoltaRascunho</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="VoltaRascunho" name="Proposta volta a RASCUNHO">
+      <bpmn:documentation>Origem: actions/approvals.ts despacharAcaoAprovada</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Aprovado_VoltaRascunho</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_VoltaRascunho_Retrabalho</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="JuntaEnvio">
+      <bpmn:incoming>Fluxo_AcimaDoTeto_JuntaEnvio</bpmn:incoming>
+      <bpmn:incoming>Fluxo_Aprovado_JuntaEnvio</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_JuntaEnvio_MarcarEnviada</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="MarcarEnviada" name="Status ENVIADA">
+      <bpmn:documentation>Origem: mapa §4</bpmn:documentation>
+      <bpmn:incoming>Fluxo_JuntaEnvio_MarcarEnviada</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_MarcarEnviada_ClienteDecide</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:manualTask id="ClienteDecide" name="Cliente decide aceite ou recusa">
+      <bpmn:documentation>Origem: mapa §4 Dono</bpmn:documentation>
+      <bpmn:incoming>Fluxo_MarcarEnviada_ClienteDecide</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_ClienteDecide_Aceitou</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="Aceitou" name="Aceitou?">
+      <bpmn:documentation>Origem: mapa §4 Saída; §8</bpmn:documentation>
+      <bpmn:incoming>Fluxo_ClienteDecide_Aceitou</bpmn:incoming>
+      <bpmn:outgoing>Fluxo_Aceitou_Aceita</bpmn:outgoing>
+      <bpmn:outgoing>Fluxo_Aceitou_Recusada</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Aceita" name="ACEITA — provisionamento à mão (PZ-10)">
+      <bpmn:documentation>Origem: mapa §6; §8</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Aceitou_Aceita</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Recusada" name="RECUSADA">
+      <bpmn:documentation>Origem: mapa §8</bpmn:documentation>
+      <bpmn:incoming>Fluxo_Aceitou_Recusada</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Fluxo_Inicio_Retrabalho" sourceRef="Inicio" targetRef="Retrabalho" />
+    <bpmn:sequenceFlow id="Fluxo_Retrabalho_MontarEscopo" sourceRef="Retrabalho" targetRef="MontarEscopo" />
+    <bpmn:sequenceFlow id="Fluxo_MontarEscopo_Precificar" sourceRef="MontarEscopo" targetRef="Precificar" />
+    <bpmn:sequenceFlow id="Fluxo_Precificar_Enviar" sourceRef="Precificar" targetRef="Enviar" />
+    <bpmn:sequenceFlow id="Fluxo_Enviar_Congelar" sourceRef="Enviar" targetRef="Congelar" />
+    <bpmn:sequenceFlow id="Fluxo_Congelar_AcimaDoTeto" sourceRef="Congelar" targetRef="AcimaDoTeto" />
+    <bpmn:sequenceFlow id="Fluxo_AcimaDoTeto_JuntaEnvio" name="não" sourceRef="AcimaDoTeto" targetRef="JuntaEnvio">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AcimaDoTeto_AbrirPedido" name="sim" sourceRef="AcimaDoTeto" targetRef="AbrirPedido">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_AbrirPedido_Decidir" sourceRef="AbrirPedido" targetRef="Decidir" />
+    <bpmn:sequenceFlow id="Fluxo_Decidir_Aprovado" sourceRef="Decidir" targetRef="Aprovado" />
+    <bpmn:sequenceFlow id="Fluxo_Aprovado_JuntaEnvio" name="sim" sourceRef="Aprovado" targetRef="JuntaEnvio">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Aprovado_VoltaRascunho" name="não" sourceRef="Aprovado" targetRef="VoltaRascunho">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_VoltaRascunho_Retrabalho" sourceRef="VoltaRascunho" targetRef="Retrabalho" />
+    <bpmn:sequenceFlow id="Fluxo_JuntaEnvio_MarcarEnviada" sourceRef="JuntaEnvio" targetRef="MarcarEnviada" />
+    <bpmn:sequenceFlow id="Fluxo_MarcarEnviada_ClienteDecide" sourceRef="MarcarEnviada" targetRef="ClienteDecide" />
+    <bpmn:sequenceFlow id="Fluxo_ClienteDecide_Aceitou" sourceRef="ClienteDecide" targetRef="Aceitou" />
+    <bpmn:sequenceFlow id="Fluxo_Aceitou_Aceita" name="sim" sourceRef="Aceitou" targetRef="Aceita">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">sim</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Fluxo_Aceitou_Recusada" name="não" sourceRef="Aceitou" targetRef="Recusada">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">não</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagrama_PZ02">
+    <bpmndi:BPMNPlane id="Plano_PZ02" bpmnElement="Colaboracao_PZ02">
+      <bpmndi:BPMNShape id="Pool_PZ02_di" bpmnElement="Pool_PZ02" isHorizontal="true">
+        <dc:Bounds x="100" y="60" width="2610" height="780" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_vendedor_di" bpmnElement="Raia_vendedor" isHorizontal="true">
+        <dc:Bounds x="130" y="60" width="2580" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_sistema_di" bpmnElement="Raia_sistema" isHorizontal="true">
+        <dc:Bounds x="130" y="190" width="2580" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_aprovador_di" bpmnElement="Raia_aprovador" isHorizontal="true">
+        <dc:Bounds x="130" y="450" width="2580" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Raia_cliente_di" bpmnElement="Raia_cliente" isHorizontal="true">
+        <dc:Bounds x="130" y="580" width="2580" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Inicio_di" bpmnElement="Inicio">
+        <dc:Bounds x="212" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="180" y="149" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Retrabalho_di" bpmnElement="Retrabalho">
+        <dc:Bounds x="375" y="100" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MontarEscopo_di" bpmnElement="MontarEscopo">
+        <dc:Bounds x="520" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Precificar_di" bpmnElement="Precificar">
+        <dc:Bounds x="690" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Enviar_di" bpmnElement="Enviar">
+        <dc:Bounds x="860" y="85" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Congelar_di" bpmnElement="Congelar">
+        <dc:Bounds x="1030" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AcimaDoTeto_di" bpmnElement="AcimaDoTeto">
+        <dc:Bounds x="1225" y="230" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1145" y="198" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AbrirPedido_di" bpmnElement="AbrirPedido">
+        <dc:Bounds x="1370" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decidir_di" bpmnElement="Decidir">
+        <dc:Bounds x="1540" y="475" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Aprovado_di" bpmnElement="Aprovado">
+        <dc:Bounds x="1735" y="490" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1655" y="458" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="VoltaRascunho_di" bpmnElement="VoltaRascunho">
+        <dc:Bounds x="1880" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="JuntaEnvio_di" bpmnElement="JuntaEnvio">
+        <dc:Bounds x="1905" y="230" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="MarcarEnviada_di" bpmnElement="MarcarEnviada">
+        <dc:Bounds x="2050" y="215" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ClienteDecide_di" bpmnElement="ClienteDecide">
+        <dc:Bounds x="2220" y="605" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Aceitou_di" bpmnElement="Aceitou">
+        <dc:Bounds x="2415" y="620" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2335" y="588" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Aceita_di" bpmnElement="Aceita">
+        <dc:Bounds x="2592" y="627" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2560" y="669" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recusada_di" bpmnElement="Recusada">
+        <dc:Bounds x="2592" y="757" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2560" y="799" width="100" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Fluxo_Inicio_Retrabalho_di" bpmnElement="Fluxo_Inicio_Retrabalho">
+        <di:waypoint x="248" y="125" />
+        <di:waypoint x="375" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Retrabalho_MontarEscopo_di" bpmnElement="Fluxo_Retrabalho_MontarEscopo">
+        <di:waypoint x="425" y="125" />
+        <di:waypoint x="520" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_MontarEscopo_Precificar_di" bpmnElement="Fluxo_MontarEscopo_Precificar">
+        <di:waypoint x="620" y="125" />
+        <di:waypoint x="655" y="125" />
+        <di:waypoint x="655" y="255" />
+        <di:waypoint x="690" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Precificar_Enviar_di" bpmnElement="Fluxo_Precificar_Enviar">
+        <di:waypoint x="790" y="255" />
+        <di:waypoint x="825" y="255" />
+        <di:waypoint x="825" y="125" />
+        <di:waypoint x="860" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Enviar_Congelar_di" bpmnElement="Fluxo_Enviar_Congelar">
+        <di:waypoint x="960" y="125" />
+        <di:waypoint x="995" y="125" />
+        <di:waypoint x="995" y="255" />
+        <di:waypoint x="1030" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Congelar_AcimaDoTeto_di" bpmnElement="Fluxo_Congelar_AcimaDoTeto">
+        <di:waypoint x="1130" y="255" />
+        <di:waypoint x="1225" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AcimaDoTeto_JuntaEnvio_di" bpmnElement="Fluxo_AcimaDoTeto_JuntaEnvio">
+        <di:waypoint x="1275" y="255" />
+        <di:waypoint x="1905" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1281" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AcimaDoTeto_AbrirPedido_di" bpmnElement="Fluxo_AcimaDoTeto_AbrirPedido">
+        <di:waypoint x="1250" y="280" />
+        <di:waypoint x="1250" y="385" />
+        <di:waypoint x="1370" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1256" y="367" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_AbrirPedido_Decidir_di" bpmnElement="Fluxo_AbrirPedido_Decidir">
+        <di:waypoint x="1470" y="385" />
+        <di:waypoint x="1505" y="385" />
+        <di:waypoint x="1505" y="515" />
+        <di:waypoint x="1540" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Decidir_Aprovado_di" bpmnElement="Fluxo_Decidir_Aprovado">
+        <di:waypoint x="1640" y="515" />
+        <di:waypoint x="1735" y="515" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Aprovado_JuntaEnvio_di" bpmnElement="Fluxo_Aprovado_JuntaEnvio">
+        <di:waypoint x="1760" y="490" />
+        <di:waypoint x="1760" y="255" />
+        <di:waypoint x="1905" y="255" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1766" y="237" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Aprovado_VoltaRascunho_di" bpmnElement="Fluxo_Aprovado_VoltaRascunho">
+        <di:waypoint x="1785" y="515" />
+        <di:waypoint x="1832.5" y="515" />
+        <di:waypoint x="1832.5" y="385" />
+        <di:waypoint x="1880" y="385" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1791" y="497" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_VoltaRascunho_Retrabalho_di" bpmnElement="Fluxo_VoltaRascunho_Retrabalho">
+        <di:waypoint x="1930" y="425" />
+        <di:waypoint x="1930" y="445" />
+        <di:waypoint x="400" y="445" />
+        <di:waypoint x="400" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_JuntaEnvio_MarcarEnviada_di" bpmnElement="Fluxo_JuntaEnvio_MarcarEnviada">
+        <di:waypoint x="1955" y="255" />
+        <di:waypoint x="2050" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_MarcarEnviada_ClienteDecide_di" bpmnElement="Fluxo_MarcarEnviada_ClienteDecide">
+        <di:waypoint x="2150" y="255" />
+        <di:waypoint x="2185" y="255" />
+        <di:waypoint x="2185" y="645" />
+        <di:waypoint x="2220" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_ClienteDecide_Aceitou_di" bpmnElement="Fluxo_ClienteDecide_Aceitou">
+        <di:waypoint x="2320" y="645" />
+        <di:waypoint x="2415" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Aceitou_Aceita_di" bpmnElement="Fluxo_Aceitou_Aceita">
+        <di:waypoint x="2465" y="645" />
+        <di:waypoint x="2592" y="645" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2471" y="627" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Fluxo_Aceitou_Recusada_di" bpmnElement="Fluxo_Aceitou_Recusada">
+        <di:waypoint x="2440" y="670" />
+        <di:waypoint x="2440" y="775" />
+        <di:waypoint x="2592" y="775" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2446" y="757" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

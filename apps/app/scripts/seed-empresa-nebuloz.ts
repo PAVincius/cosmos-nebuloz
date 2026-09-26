@@ -7,8 +7,9 @@
  *   - ContaDoPlano: 27 linhas de docs/financeiro/plano-de-contas.md
  *   - EstagioDoFunil: 4 linhas (peso/teto/critérios) do funil v2
  *   - CanalDeLead: 5 linhas (CAC médio nulo) do funil v2
- *   - StaffProcess: 21 linhas do mapa de processos
- *   - StaffProcessEdge: 23 linhas do mapa de processos
+ *   - StaffProcess: 23 linhas do mapa de processos (21 do design + PZ-22, PZ-23)
+ *   - StaffProcessEdge: 24 linhas do mapa de processos
+ *   (os diagramas BPMN desses processos: scripts/seed-diagramas-nebuloz.ts)
  *
  *   pnpm seed:empresa:nebuloz
  *

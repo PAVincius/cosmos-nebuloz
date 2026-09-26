@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { LIGACOES_NEBULOZ, PROCESSOS_NEBULOZ } from "../processos-nebuloz";
 
 describe("processos da Nebuloz", () => {
-  it("tem os 21 processos e 23 ligações do design", () => {
-    expect(PROCESSOS_NEBULOZ).toHaveLength(21);
-    expect(LIGACOES_NEBULOZ).toHaveLength(23);
+  it("tem os 21 processos e 23 ligações do design, mais PZ-22 e PZ-23 e uma ligação", () => {
+    expect(PROCESSOS_NEBULOZ).toHaveLength(23);
+    expect(LIGACOES_NEBULOZ).toHaveLength(24);
   });
 
   it("códigos são únicos e no formato PZ-nn", () => {
