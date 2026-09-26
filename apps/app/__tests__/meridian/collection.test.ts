@@ -183,6 +183,30 @@ describe("assignRespondent", () => {
     expect(res.ok).toBe(false);
     expect(h.respondentCreate).not.toHaveBeenCalled();
   });
+
+  it("recusa nome com quebra de linha (injeção de linha na lista exportada)", async () => {
+    const res = await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Ana Kim\nfake,row,injected",
+      role: "Eng",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    expect(res.ok).toBe(false);
+    expect(h.respondentCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa role com \\r (injeção de linha na lista exportada)", async () => {
+    const res = await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Jonas",
+      role: "Eng\r\nfake",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    expect(res.ok).toBe(false);
+    expect(h.respondentCreate).not.toHaveBeenCalled();
+  });
 });
 
 describe("revokeRespondent", () => {
