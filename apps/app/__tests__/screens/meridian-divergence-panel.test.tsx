@@ -61,8 +61,9 @@ beforeEach(() => {
   // devolve null — não dá pra ter referência à aba e cortar o opener ao
   // mesmo tempo. Um mock que sempre devolve objeto esconde exatamente o bug
   // que este teste existe pra pegar.
-  window.open = vi.fn((_url?: string, _target?: string, features?: string) =>
-    features?.includes("noopener") ? null : (fakeWin as unknown as Window)
+  window.open = vi.fn(
+    (_url?: string | URL, _target?: string, features?: string) =>
+      features?.includes("noopener") ? null : (fakeWin as unknown as Window)
   );
 });
 

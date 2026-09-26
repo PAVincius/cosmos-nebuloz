@@ -10,11 +10,12 @@ import {
   SectionCard,
   type Tone,
 } from "@repo/design-system/cosmos/kit";
-import { useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import type { AssessmentDetail } from "@/app/(meridian)/actions/assessments";
 import {
   assignRespondent,
   closeCollection,
+  reissuePendingLinks,
   reissueRespondentLink,
   revokeRespondent,
   sendReminder,
@@ -52,22 +53,6 @@ function useCloseGuard(guarded: boolean) {
     }
   }, [guarded, markDirty]);
 
-  useEffect(() => {
-    if (!guarded) {
-      return;
-    }
-    const onKeyDownCapture = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        e.preventDefault();
-        setConfirmDiscard(true);
-      }
-    };
-    document.addEventListener("keydown", onKeyDownCapture, true);
-    return () =>
-      document.removeEventListener("keydown", onKeyDownCapture, true);
-  }, [guarded]);
-
   const requestClose = (doClose: () => void) => {
     if (guarded) {
       setConfirmDiscard(true);
@@ -76,7 +61,27 @@ function useCloseGuard(guarded: boolean) {
     doClose();
   };
 
-  return { confirmDiscard, setConfirmDiscard, requestClose };
+  // Esc via `onKeyDownCapture` (fase de captura do React, escopada ao DOM
+  // deste modal) chega antes do listener em `window` (bolha) que o
+  // `ModalHost` usa — sem isso, Esc fecha e perde o link/lista mesmo com
+  // "Concluir" desabilitado. `stopPropagation` no evento sintético propaga
+  // pro nativo, então a bolha nunca chega em `window`. Via prop de React em
+  // vez de `document.addEventListener` manual: limpeza garantida no
+  // unmount, sem risco de vazar listener entre montagens de teste.
+  const handleKeyDownCapture = (e: KeyboardEvent) => {
+    if (guarded && e.key === "Escape") {
+      e.stopPropagation();
+      e.preventDefault();
+      setConfirmDiscard(true);
+    }
+  };
+
+  return {
+    confirmDiscard,
+    setConfirmDiscard,
+    requestClose,
+    handleKeyDownCapture,
+  };
 }
 
 function DiscardConfirmOverlay({
@@ -198,9 +203,12 @@ function RespondentLinkModal({
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
   const linkInputRef = useRef<HTMLInputElement>(null);
-  const { confirmDiscard, setConfirmDiscard, requestClose } = useCloseGuard(
-    !copied
-  );
+  const {
+    confirmDiscard,
+    setConfirmDiscard,
+    requestClose,
+    handleKeyDownCapture,
+  } = useCloseGuard(!copied);
 
   const finish = () => {
     onDone();
@@ -224,7 +232,10 @@ function RespondentLinkModal({
   };
 
   return (
-    <>
+    <div
+      onKeyDownCapture={handleKeyDownCapture}
+      style={{ display: "contents" }}
+    >
       <ModalShell
         footer={
           <Button disabled={!copied} icon="check" onClick={finish}>
@@ -309,7 +320,7 @@ function RespondentLinkModal({
           title="Fechar sem copiar o link?"
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -472,6 +483,211 @@ function RevokeConfirmModal({
   );
 }
 
+type ReissuedItem = {
+  respondentId: string;
+  name: string;
+  axis: MeridianAxis;
+  link: string;
+};
+
+/** Tira \n/\r de um campo de texto — impede linha falsa injetada via nome
+ *  (Vigia, item 2) tanto no `.txt`/clipboard quanto no `.csv`. */
+function stripLineBreaks(v: string): string {
+  return v.replaceAll(/[\r\n]+/g, " ");
+}
+
+/** "nome · eixo · link", um por linha — mesmo texto pro clipboard e pro
+ *  `.txt`. Exportada pra testar o formato sem montar clipboard/DOM. */
+export function buildReissuedListText(items: ReissuedItem[]): string {
+  return items
+    .map(
+      (i) => `${stripLineBreaks(i.name)} · ${AXES[i.axis].label} · ${i.link}`
+    )
+    .join("\n");
+}
+
+/** Mesmo conteúdo em CSV (`nome,eixo,link`), campos entre aspas — o link é
+ *  uma URL e não deveria ter vírgula, mas aspas cobrem o caso mesmo assim.
+ *  Nome/eixo levam apóstrofo na frente quando começam com =, +, -, @ ou TAB —
+ *  sem isso o Excel/Sheets interpreta o campo como fórmula ao abrir o .csv
+ *  (Vigia, item 1: HYPERLINK/WEBSERVICE pode exfiltrar o token da linha). */
+const CSV_FORMULA_PREFIX = /^[=+\-@\t]/;
+
+function csvTextField(v: string): string {
+  const noBreaks = stripLineBreaks(v);
+  const neutralized = CSV_FORMULA_PREFIX.test(noBreaks)
+    ? `'${noBreaks}`
+    : noBreaks;
+  return `"${neutralized.replaceAll('"', '""')}"`;
+}
+
+export function buildReissuedListCsv(items: ReissuedItem[]): string {
+  const quoteLink = (v: string) => `"${v.replaceAll('"', '""')}"`;
+  const header = "nome,eixo,link";
+  const rows = items.map((i) =>
+    [
+      csvTextField(i.name),
+      csvTextField(AXES[i.axis].label),
+      quoteLink(i.link),
+    ].join(",")
+  );
+  return [header, ...rows].join("\n");
+}
+
+function downloadFile(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Lista dos links reemitidos em lote (spec 006 US2) — nasce pronta do
+ * servidor a cada acionamento (não guarda token em claro no estado do
+ * cliente entre reloads, decisão do CPO em research.md). Mesma guarda de
+ * fechamento do link individual: perder a lista sem copiar/baixar repetiria
+ * o incidente de origem (3 tropeços com os mesmos 10 links, atrito.md).
+ */
+function ReissuedListModal({
+  items,
+  onClose,
+  onDone,
+}: {
+  items: ReissuedItem[];
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [secured, setSecured] = useState(false);
+  const {
+    confirmDiscard,
+    setConfirmDiscard,
+    requestClose,
+    handleKeyDownCapture,
+  } = useCloseGuard(!secured);
+
+  const finish = () => {
+    onDone();
+    onClose();
+  };
+
+  const text = buildReissuedListText(items);
+
+  const copyAll = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setSecured(true);
+    } catch {
+      // Sem Clipboard API: quem ainda quiser levar a lista usa "baixar" —
+      // não tem input único pra selecionar aqui, ao contrário do link solo.
+    }
+  };
+
+  const download = (ext: "txt" | "csv") => {
+    const content = ext === "csv" ? buildReissuedListCsv(items) : text;
+    downloadFile(
+      `meridian-reemissao-${Date.now()}.${ext}`,
+      content,
+      ext === "csv" ? "text/csv" : "text/plain"
+    );
+    setSecured(true);
+  };
+
+  return (
+    <div
+      onKeyDownCapture={handleKeyDownCapture}
+      style={{ display: "contents" }}
+    >
+      <ModalShell
+        footer={
+          <Button disabled={!secured} icon="check" onClick={finish}>
+            Concluir
+          </Button>
+        }
+        icon="refresh"
+        onClose={() => requestClose(finish)}
+        subtitle={`${items.length} link(s) reemitido(s) — os tokens só aparecem agora. Copie ou baixe antes de fechar.`}
+        title="Links reemitidos"
+        tone="green"
+        width={640}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            padding: 20,
+          }}
+        >
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button icon="copy" onClick={copyAll} variant="secondary">
+              Copiar tudo
+            </Button>
+            <Button
+              icon="download"
+              onClick={() => download("txt")}
+              variant="secondary"
+            >
+              Baixar .txt
+            </Button>
+            <Button
+              icon="download"
+              onClick={() => download("csv")}
+              variant="secondary"
+            >
+              Baixar .csv
+            </Button>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+              maxHeight: 320,
+              overflowY: "auto",
+            }}
+          >
+            {items.map((i) => (
+              <div
+                key={i.respondentId}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "6px 9px",
+                  borderRadius: 8,
+                  background: "var(--surface-2)",
+                }}
+              >
+                <span
+                  style={{ fontSize: 11.5, fontWeight: 700, flexShrink: 0 }}
+                >
+                  {i.name} · {AXES[i.axis].label}
+                </span>
+                <Input
+                  readOnly
+                  style={{ flex: 1, fontSize: 11 }}
+                  value={i.link}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </ModalShell>
+      {confirmDiscard && (
+        <DiscardConfirmOverlay
+          message={`Você não copiou nem baixou a lista com ${items.length} link(s) reemitido(s). Ela some ao fechar — reabrir e acionar de novo gera tokens novos.`}
+          onCancel={() => setConfirmDiscard(false)}
+          onConfirm={finish}
+          title="Fechar sem copiar ou baixar a lista?"
+        />
+      )}
+    </div>
+  );
+}
+
 const R_STATUS: Record<string, [Tone, string]> = {
   INVITED: ["accent", "Convidado"],
   PENDING: ["accent", "Pendente"],
@@ -540,6 +756,39 @@ export default function ColetaTab({
     );
   };
 
+  // Reemite em lote todo pendente do assessment (spec 006, US2) — o remédio
+  // pro cenário real do incidente (10 links perdidos de uma vez).
+  const reissueAll = async () => {
+    setBusy(true);
+    const res = await runWithToast(
+      () => reissuePendingLinks({ assessmentId: a.id }),
+      {
+        loading: "Reemitindo links pendentes…",
+        success: (d) =>
+          d.reissued.length > 0
+            ? `${d.reissued.length} link(s) reemitido(s).`
+            : "Nenhum respondente pendente pra reemitir.",
+      }
+    );
+    setBusy(false);
+    // Lista vazia não é falha (FR-013) — só não há o que mostrar/copiar.
+    if (!res.ok || res.data.reissued.length === 0) {
+      return;
+    }
+    modal.open(
+      <ReissuedListModal
+        items={res.data.reissued.map((r) => ({
+          respondentId: r.respondentId,
+          name: r.name,
+          axis: r.axis,
+          link: `${window.location.origin}/meridian-responder/${r.token}`,
+        }))}
+        onClose={modal.close}
+        onDone={onChanged}
+      />
+    );
+  };
+
   const close = async () => {
     setBusy(true);
     const res = await runWithToast(
@@ -568,6 +817,17 @@ export default function ColetaTab({
       }}
     >
       <SectionCard
+        action={
+          <Button
+            disabled={busy}
+            icon="refresh"
+            onClick={reissueAll}
+            size="sm"
+            variant="ghost"
+          >
+            Reemitir e copiar todos os pendentes
+          </Button>
+        }
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 12 }}
         icon="users"
         subtitle="Cada um recebe link seguro e só enxerga a sua parte da bateria"

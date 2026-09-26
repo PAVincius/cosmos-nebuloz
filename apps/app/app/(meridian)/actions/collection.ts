@@ -29,10 +29,17 @@ const AxisEnum = z.enum([
   "INFRASTRUCTURE",
 ]);
 
+// nnStr só faz trim (tira espaço nas pontas) — não barra \n/\r no meio da
+// string. Sem essa checagem, um nome/role com quebra de linha vira linha
+// falsa no .txt/.csv de reemissão em lote (Vigia, item 2 MÉDIO).
+const singleLineStr = nnStr.refine((v) => !/[\r\n]/.test(v), {
+  message: "Não pode conter quebra de linha.",
+});
+
 const AssignSchema = z.object({
   assessmentId: cuid,
-  name: nnStr,
-  role: nnStr,
+  name: singleLineStr,
+  role: singleLineStr,
   email: z.string().email(),
   axis: AxisEnum,
 });

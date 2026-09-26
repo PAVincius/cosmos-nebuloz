@@ -183,6 +183,30 @@ describe("assignRespondent", () => {
     expect(res.ok).toBe(false);
     expect(h.respondentCreate).not.toHaveBeenCalled();
   });
+
+  it("recusa nome com quebra de linha (injeção de linha na lista exportada)", async () => {
+    const res = await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Ana Kim\nfake,row,injected",
+      role: "Eng",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    expect(res.ok).toBe(false);
+    expect(h.respondentCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa role com \\r (injeção de linha na lista exportada)", async () => {
+    const res = await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Jonas",
+      role: "Eng\r\nfake",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    expect(res.ok).toBe(false);
+    expect(h.respondentCreate).not.toHaveBeenCalled();
+  });
 });
 
 describe("revokeRespondent", () => {
@@ -300,6 +324,23 @@ describe("reissueRespondentLink", () => {
     expect(res.ok === false && res.error).toMatch(/prazo/i);
     expect(h.respondentUpdate).not.toHaveBeenCalled();
   });
+
+  it("respondente de outro tenant é tratado como não encontrado (filtro tenantId + RLS)", async () => {
+    // findFirst filtra por { id, tenantId: ctx.tenantId } — respondente de
+    // outro tenant não bate no where nem passa pela RLS, então o Prisma
+    // devolve null igual a "não existe". Sem esse filtro, o consultor de um
+    // tenant reemitiria link de respondente de outro cliente.
+    h.respondentFindFirst.mockResolvedValue(null);
+    const res = await reissueRespondentLink({ respondentId: R_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não encontrado/i);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+
+    const query = h.respondentFindFirst.mock.calls[0]?.[0] as {
+      where: { id: string; tenantId: string };
+    };
+    expect(query.where).toEqual({ id: R_ID, tenantId: CTX.tenantId });
+  });
 });
 
 describe("reissuePendingLinks", () => {
@@ -370,6 +411,19 @@ describe("reissuePendingLinks", () => {
     expect(res.ok).toBe(false);
     expect(res.ok === false && res.error).toMatch(/prazo/i);
     expect(h.respondentFindMany).not.toHaveBeenCalled();
+  });
+
+  it("assessment de outro tenant é tratado como não encontrado (filtro tenantId + RLS)", async () => {
+    h.assessmentFindFirst.mockResolvedValue(null);
+    const res = await reissuePendingLinks({ assessmentId: AS_ID });
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não encontrado/i);
+    expect(h.respondentFindMany).not.toHaveBeenCalled();
+
+    const query = h.assessmentFindFirst.mock.calls[0]?.[0] as {
+      where: { id: string; tenantId: string };
+    };
+    expect(query.where).toEqual({ id: AS_ID, tenantId: CTX.tenantId });
   });
 });
 
