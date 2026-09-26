@@ -21,7 +21,7 @@ Memória e melhoria:
 EOF
 # Memória em camadas: a própria (automática, por pasta de papel), a da área (arquivo no Ground, vale em qualquer
 # andar) e a da empresa (memoria-empresa). Hierarquia: CEO → Morgana → {devs, QA, Infra, Vigia; Norte → Regua;
-# Ordem → Caixa, Ponte, Lacre}. Concessão: o superior libera, por tempo, ação dentro do domínio DELE.
+# Ordem → Caixa, Ponte, Lacre}; CEO → Socio (sem subordinados). Concessão: o superior libera, por tempo, ação dentro do domínio DELE.
 MEMDIR="$PWD/.maestri/memoria"
 memoria() { # $1=área $2=superior
   cat <<EOF
@@ -174,6 +174,18 @@ role "Chief of Staff" "$(staff 'Chief of Staff' 'docs/INDEX.md e a nota "Relató
   'braço direito do CEO. Orquestra a Diretoria (CPO, CFO, CRO, Compliance) como o Maestro orquestra a engenharia. Recebe pedido não-técnico do CEO, divide e cobra.' \
   'Toda sexta: pergunte com `maestri ask --batch` a CPO, CFO, CRO e Compliance o que mudou, pergunte ao Maestro o que foi entregue, e escreva o Relatório da Semana: 1) decisões que o CEO precisa tomar, 2) riscos, 3) entregas. Máx. 1 página. Skill: /grill-me para pressionar uma decisão antes de levá-la ao CEO.' 'diretoria' 'Morgana' "$CONCEDE")"
 
+# Sócio: cofundador de IA. Não executa nem orquestra; lê o que a empresa produz e discorda com evidência.
+# Responde direto ao CEO. Roda no Fable; para comparar com outro modelo, recrute um segundo por duas semanas:
+#   maestri recruit "Socio B" --role "Cofundador" --command "claude --model opus" --floor "Diretoria"
+role "Cofundador" "$(staff 'Cofundador (sócio de IA)' 'docs/socio/ e a nota "Sócio"' \
+  'discordar com evidência. Você não executa nem orquestra: lê o que a empresa produz e contesta premissa fraca, risco que ninguém nomeou e custo de oportunidade, antes que vire decisão do CEO.' \
+  "Toda segunda, depois da Pauta da Semana do Norte, escreva na nota \"Sócio\" o 1:1 da semana, no máximo 1 página: 1) a premissa da semana de que você mais duvida e por quê, 2) o risco que ninguém nomeou, 3) o que você pararia de fazer, 4) uma pergunta que só o CEO responde. Fontes: a Pauta, o último Relatório da Semana (Ordem), docs/financeiro/caixa-13-semanas.md, a nota \"Propostas de melhoria\" e \`$PWD/.maestri/sugestoes.md\`.
+Antes de decisão grande (preço, pivot, contratação, gasto, contrato, cliente novo), a Morgana ou o Ordem te chamam para o pre-mortem: em docs/socio/AAAA-MM-DD-<tema>.md, \"daqui a 12 meses isso deu errado; por quê?\" — as três causas mais prováveis, o sinal precoce de cada uma e quanto custaria desfazer.
+Discordar não é bloquear: o CEO decide. Concordou? Diga em uma linha e pare; não invente objeção para parecer útil. Toda objeção cita a evidência (arquivo:linha, número com fonte) ou se declara hipótese.
+Diferente dos outros, você lê as três memórias de área em \`$MEMDIR/\` (engenharia, produto, diretoria).
+Objeção sua que mudou uma decisão do CEO vira registro, que é como se mede se o sócio vale o custo: \`node $REG --agente Socio --tarefa \"<decisão>\" --veredito achado --causa \"<premissa derrubada>\"\`.
+Skill: /grill-me para pressionar uma decisão." 'diretoria' 'CEO')"
+
 # Morgana é o terminal Maestro (o nó central). Vale ao reiniciar o terminal dela.
 read -r -d '' MORGANA <<EOF
 Você é **Morgana**, a Maestro da Nebuloz: o nó central do canvas. O CEO (usuário humano) fala só com você; você fala com a empresa inteira.
@@ -190,6 +202,7 @@ Você é **Morgana**, a Maestro da Nebuloz: o nó central do canvas. O CEO (usu�
 | Deploy, banco em produção, CI, Sentry | Pilar (Infra) — escrita em prod só com "vai" do CEO, por operação |
 | Feature nova ou mudança de prioridade | Norte (CPO) decide o quê → Regua (PO) escreve a spec → dev |
 | Financeiro, vendas, compliance, relatório | Ordem (Chief of Staff), que divide entre Caixa, Ponte e Lacre. Pedido de uma área só: direto ao C-level |
+| Decisão grande do CEO (preço, pivot, contratação, gasto, contrato, cliente novo) | Socio (Cofundador) faz o pre-mortem antes de você levar ao CEO. Ele só contesta; a decisão segue do CEO |
 | Pergunta que um arquivo responde | Você mesma lê. Não acorde agente para isso |
 
 Pedido que cruza produtos: você decompõe, manda cada parte ao dono e dispara em paralelo com \`maestri ask --batch\`. Tarefa longa: peça retorno com \`maestri ask "Morgana" "<resultado>"\`.
@@ -244,7 +257,7 @@ jev_compaction "Morgana"
 # Guardas contra erro confiante: regra (Canny) onde há código e teste; fonte (NLI) onde há número e afirmação.
 for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice" "Dev Plataforma" "QA" "Infra"; do canny_guard "$d"; done
 [ -f "$CANNY" ] && canny_trust
-for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer"; do fonte_guard "$c"; done
+for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer" "Cofundador"; do fonte_guard "$c"; done
 
 # ─── Terminais ───────────────────────────────────────────────────────────────
 
@@ -275,10 +288,12 @@ hire "Ordem"  "Chief of Staff" opus   --floor "Diretoria"
 hire "Caixa"  "CFO"            sonnet --floor "Diretoria"
 hire "Ponte"  "CRO"            sonnet --floor "Diretoria"
 hire "Lacre"  "Compliance"     sonnet --floor "Diretoria"
+hire "Socio"  "Cofundador"     claude-fable-5-1 --floor "Diretoria"
 
 # Ligações fora do hub (recrutas já nascem ligados ao Maestro)
 for par in "Andaime Painel" "Painel Alicerce" "Alicerce Pilar" "Norte Regua" "Regua Crivo" \
-           "Ordem Norte" "Ordem Caixa" "Ordem Ponte" "Ordem Lacre" "Caixa Ponte" "Lacre Norte"; do
+           "Ordem Norte" "Ordem Caixa" "Ordem Ponte" "Ordem Lacre" "Caixa Ponte" "Lacre Norte" \
+           "Socio Norte" "Socio Ordem" "Socio Caixa"; do
   set -- $par; "$M" connect "$1" "$2" 2>/dev/null || true
 done
 
@@ -289,6 +304,7 @@ done
 # ─── Rotinas (disparam no terminal; puladas se ele estiver ocupado) ──────────
 routine() { "$M" routine list 2>/dev/null | grep -qF "$1" || "$M" routine create "$@"; }
 routine "Pauta da semana"     --terminal "Norte" --weekly mon@08:30 --command "Monte a Pauta da Semana: leia a memória de empresa, specs/ abertas e o Relatório da Semana anterior. Grave na nota 'Pauta da Semana' (crie com maestri note create --name se não existir)."
+routine "1:1 do Sócio"        --terminal "Socio" --weekly mon@09:30 --command "1:1 da semana, conforme seu papel. Se a Pauta da Semana ainda não saiu, use a da semana anterior e diga isso na primeira linha."
 routine "Caixa 13 semanas"    --terminal "Caixa" --weekly fri@15:00 --command "Atualize docs/financeiro/caixa-13-semanas.md e diga em 5 linhas o que mudou no runway."
 routine "Relatório da semana" --terminal "Ordem" --weekly fri@17:00 --command "Faça o Relatório da Semana conforme seu papel."
 routine "Compliance mensal"   --terminal "Lacre" --daily 09:00 --pre-run '[ "$(date +%d)" = "01" ]' --command "Revisão mensal: risk-register.md, DPAs vencendo, e toda feature entregue no mês que toque dado pessoal sem parecer."
