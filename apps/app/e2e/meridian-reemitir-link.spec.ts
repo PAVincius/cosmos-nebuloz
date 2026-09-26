@@ -128,12 +128,14 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       await respondentPage.close();
     });
 
-    let reissuedAt = 0;
+    let antesDoClique = 0;
+    let depoisDoClique = 0;
 
     await test.step("1 — Reemitir link: saídas do modal sem copiar pedem confirmação; link novo funciona com o rascunho preservado, o antigo não", async () => {
-      reissuedAt = Date.now();
+      antesDoClique = Date.now();
       await page.getByRole("button", { name: "Reemitir link" }).click();
       await expect(linkDialog("Link reemitido")).toBeVisible();
+      depoisDoClique = Date.now();
 
       // Mesma guarda X/Esc/backdrop de 5fad9132/AS-112 (useCloseGuard,
       // f771b865) — Esc e X abrem a confirmação PRÓPRIA deste modal
@@ -204,15 +206,16 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
         "Reemissão · titular"
       );
       const REEMISSAO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
-      // O teto de 14d foi calculado no momento da REEMISSÃO (`reissuedAt`),
-      // não no momento desta asserção — entre um e outro passam os passos de
-      // X/Esc/backdrop, cópia e as duas abas do respondente, o suficiente
-      // pra estourar uma tolerância medida a partir de "agora" aqui.
-      const tetoEsperado = reissuedAt + REEMISSAO_TTL_MS;
-      expect(deadline.getTime()).toBeGreaterThan(tetoEsperado);
-      expect(Math.abs(tokenExpiresAt.getTime() - tetoEsperado)).toBeLessThan(
-        60_000
-      );
+      // Janela [antes+14d, depois+14d] em vez de um alvo fixo com tolerância
+      // de relógio: "antes"/"depois" cercam só a chamada de servidor do
+      // clique (linha ~135), não os passos de X/Esc/backdrop, cópia e as
+      // duas abas do respondente que vêm depois — e não estoura com
+      // cold-compile do dev server numa rota ainda não visitada.
+      const tetoMin = antesDoClique + REEMISSAO_TTL_MS;
+      const tetoMax = depoisDoClique + REEMISSAO_TTL_MS;
+      expect(deadline.getTime()).toBeGreaterThan(tetoMax);
+      expect(tokenExpiresAt.getTime()).toBeGreaterThanOrEqual(tetoMin);
+      expect(tokenExpiresAt.getTime()).toBeLessThanOrEqual(tetoMax);
     });
 
     await test.step("3 — auditoria registra meridian.respondent.reissue", async () => {
