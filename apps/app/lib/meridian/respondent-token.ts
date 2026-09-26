@@ -21,6 +21,17 @@ export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
+const REEMISSAO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+
+/** Expiração do token reemitido: `min(agora + 14 dias, deadline)`, fixada no
+ *  momento da reemissão. Nunca recalculada — estender o deadline do
+ *  assessment depois não muda a vida do token já reemitido (achado P2 do
+ *  Vigia sobre `assignRespondent`, que copia `deadline` direto). */
+export function calcularExpiracaoDaReemissao(deadline: Date, now: Date): Date {
+  const tetoPadrao = new Date(now.getTime() + REEMISSAO_TTL_MS);
+  return tetoPadrao.getTime() < deadline.getTime() ? tetoPadrao : deadline;
+}
+
 /** DONE continua utilizável dentro do prazo: o respondente pode querer rever o
  *  que enviou. REVOKED e prazo vencido não — e a UI trata os dois como "link
  *  inválido", sem detalhar qual. */

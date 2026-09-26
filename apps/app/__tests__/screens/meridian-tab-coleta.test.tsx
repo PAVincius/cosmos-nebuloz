@@ -19,12 +19,16 @@ import type { AssessmentDetail } from "../../app/(meridian)/actions/assessments"
 
 const assignRespondentMock = vi.fn();
 const revokeRespondentMock = vi.fn();
+const reissueRespondentLinkMock = vi.fn();
 
 vi.mock("@/app/(meridian)/actions/collection", () => ({
   assignRespondent: (...args: unknown[]) => assignRespondentMock(...args),
   closeCollection: vi.fn(),
   sendReminder: vi.fn(),
   revokeRespondent: (...args: unknown[]) => revokeRespondentMock(...args),
+  reissueRespondentLink: (...args: unknown[]) =>
+    reissueRespondentLinkMock(...args),
+  reissuePendingLinks: vi.fn(),
 }));
 
 import { ModalProvider } from "@/components/charter/modal";
@@ -429,5 +433,68 @@ describe("ColetaTab — revogar respondente", () => {
     // Revogado não ganha botão de Lembrar/Revogar — só os quatro donos ativos.
     expect(screen.getAllByText("Lembrar")).toHaveLength(4);
     expect(screen.getAllByText("Revogar")).toHaveLength(4);
+  });
+});
+
+describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
+  const ASSESSMENT_COM_RESPONDENTE: AssessmentDetail = {
+    ...ASSESSMENT,
+    respondents: [
+      {
+        id: "r1",
+        name: "Marina Costa",
+        role: "Gerente de Dados",
+        email: "marina@x.com",
+        axis: "DATA",
+        status: "INVITED",
+        invitedAt: "2026-09-20T00:00:00.000Z",
+        lastRemindedAt: null,
+        completedAt: null,
+      },
+    ],
+  };
+
+  it("chama reissueRespondentLink com o id certo e mostra o link novo no mesmo modal de link", async () => {
+    reissueRespondentLinkMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r1", token: "tok-reemitido" },
+    });
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT_COM_RESPONDENTE} onChanged={() => {}} />
+      </ModalProvider>
+    );
+
+    fireEvent.click(screen.getByText("Reemitir link"));
+    await waitFor(() => {
+      expect(reissueRespondentLinkMock).toHaveBeenCalledWith({
+        respondentId: "r1",
+      });
+    });
+    expect(
+      await screen.findByDisplayValue(/meridian-responder\/tok-reemitido/)
+    ).toBeTruthy();
+    expect(screen.getByText("Link reemitido")).toBeTruthy();
+  });
+
+  it("reusa a guarda de fechamento: Esc sem copiar o link reemitido pede confirmação", async () => {
+    reissueRespondentLinkMock.mockResolvedValue({
+      ok: true,
+      data: { id: "r1", token: "tok-reemitido" },
+    });
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT_COM_RESPONDENTE} onChanged={() => {}} />
+      </ModalProvider>
+    );
+
+    fireEvent.click(screen.getByText("Reemitir link"));
+    await screen.findByDisplayValue(/meridian-responder\/tok-reemitido/);
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
+    expect(
+      screen.getByDisplayValue(/meridian-responder\/tok-reemitido/)
+    ).toBeTruthy();
   });
 });

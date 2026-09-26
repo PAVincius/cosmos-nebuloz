@@ -150,7 +150,7 @@ graphify explain "<node>" --graph .maestri/knowledge/<produto>/graph.json
 <!-- SPECKIT START -->
 ## Spec Kit
 
-Active plan: [`specs/003-signal-measure/plan.md`](specs/003-signal-measure/plan.md)
+Active plan: [`specs/006-reemitir-link-respondente/plan.md`](specs/006-reemitir-link-respondente/plan.md)
 <!-- SPECKIT END -->
 
 ---
