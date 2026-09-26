@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain — 3 pendentes, ver Assumptions do spec.md; resolução via `/speckit-clarify`
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,4 +31,4 @@
 
 ## Notes
 
-- 3 perguntas ficaram como [NEEDS CLARIFICATION] em vez de resolvidas com suposição, por pedido explícito do CEO ("perguntas que só o CEO responde: liste, não invente"): mecanismo de diferenciação do tenant Nebuloz, remetente do e-mail de redefinição, e renomear issuer do 2FA. Seguem para `/speckit-clarify`.
+- 3/3 clarificações resolvidas em `/speckit-clarify` (sessão 2026-09-26, respostas do CEO via Morgana): mecanismo de habilitação do catálogo (contrato real, universal), remetente do e-mail de redefinição, e issuer do 2FA. Ver seção `## Clarifications` em spec.md. Checklist: 15/16 → 16/16 itens passando.
