@@ -109,21 +109,10 @@ export const initializeSentry = ():
   });
 };
 
-/**
- * Belt-and-suspenders for the one case the route check above can't cover: a
- * session that started recording on a normal page and then navigates into a
- * sensitive route client-side (no full reload, so `initializeSentry()` never
- * runs again to exclude Replay). Call from a mount effect in
- * `/reset-password`, `/meridian-responder/[token]` and `/invite/[token]`.
- *
- * Real-world coverage is already high without this: `setInitialState()` (see
- * above) only runs again on a brand-new session, not on every client-side
- * navigation, so a session already in flight won't recapture the URL just by
- * visiting these routes — this only closes the gap for whatever the
- * recording buffers *after* the navigation (DOM content, clicks, subsequent
- * network calls), which `stop()` accomplishes even though it can't erase
- * data already sent for a session that started elsewhere.
- */
-export const stopReplayOnSensitivePage = (): void => {
-  Sentry.getReplay()?.stop();
-};
+// No stop-Replay-on-mount export for the sensitive routes: all three
+// (reset-password, meridian-responder, invite) are only ever reached via an
+// external link — full reload, never a client-side navigation into them — so
+// `onSensitiveRoute` above already keeps Replay from starting at all. A
+// mount-time `stop()` would add nothing for that path, and in session mode
+// it flushes (sends) the buffer before stopping, so calling it on a route
+// that already started recording would ship the very URL we're withholding.
