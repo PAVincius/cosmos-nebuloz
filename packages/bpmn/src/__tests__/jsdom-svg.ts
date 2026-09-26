@@ -163,21 +163,31 @@ export function prepararSvgDoJsdom(): void {
   }
 }
 
+type Visualizador = {
+  importXML(xml: string): Promise<{ warnings: { message: string }[] }>;
+  get(servico: string): unknown;
+  destroy(): void;
+};
+
 /** Importa no Viewer do bpmn-js e devolve os avisos e os ids desenhados. */
 export async function abrirNoBpmnJs(
   xml: string
 ): Promise<{ avisos: string[]; ids: string[] }> {
-  const { default: Viewer } = await import("bpmn-js/lib/Viewer");
+  // Forma declarada à mão: este pacote é CommonJS para o TypeScript, e o
+  // `default` de um módulo ESM importado dinamicamente não tipa como classe.
+  const modulo = (await import("bpmn-js/lib/Viewer.js")) as unknown as {
+    default: new (opcoes: { container: HTMLElement }) => Visualizador;
+  };
   const container = document.createElement("div");
   document.body.appendChild(container);
-  const viewer = new Viewer({ container });
+  const viewer = new modulo.default({ container });
   try {
     const { warnings } = await viewer.importXML(xml);
     const registro = viewer.get("elementRegistry") as {
       getAll: () => { id: string; type: string }[];
     };
     return {
-      avisos: warnings.map((w: { message: string }) => w.message),
+      avisos: warnings.map((w) => w.message),
       ids: registro
         .getAll()
         .filter((e) => e.type !== "label")

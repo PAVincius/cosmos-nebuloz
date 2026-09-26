@@ -212,7 +212,9 @@ async function serializar(p: ProcessoBpmn, d: Desenho): Promise<string> {
   const formas: ElementoModdle[] = [
     forma(moddle, pool, d.pool, { isHorizontal: true }),
     ...raias.map((r) =>
-      forma(moddle, r, d.raias.get(r.id) as Caixa, { isHorizontal: true })
+      forma(moddle, r, d.raias.get(r.id as string) as Caixa, {
+        isHorizontal: true,
+      })
     ),
     ...[...nos.values()].map((el) => {
       const caixaDoRotulo = d.rotulosDeNo.get(el.id as string);
