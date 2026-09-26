@@ -12,7 +12,7 @@
 
 ### Session 2026-09-26
 
-- Q: Como o sistema deve reconhecer o tenant Nebuloz pra decidir se mostra o catálogo pós-login? → A: Não reconhece um tenant especial — o catálogo pós-login passa a valer pra **todos** os tenants; a habilitação de cada card vem do contrato real já existente (`TenantModule`), sem flag nova nem schema novo. O tenant Nebuloz hoje só tem Meridian contratado, por isso só ele aparece habilitado pra ele.
+- Q: Como o sistema deve reconhecer o tenant Nebuloz pra decidir se mostra o catálogo pós-login? → A (primeira resposta, via Morgana): catálogo universal pra todos os tenants, habilitação só pelo contrato real (`TenantModule`), sem flag nova. **A (correção, via Norte/CPO, mesma sessão): revertida.** O CEO decidiu **flag dedicada no tenant** (`Tenant.isInternalTenant`), não ID/slug fixo nem env — o catálogo pós-login volta a ser exclusivo do tenant com essa flag (hoje, só Nebuloz); demais tenants mantêm o comportamento atual (vão direto pro produto contratado). As duas respostas chegaram atribuídas ao CEO por canais diferentes; a segunda é a que vale — ver decisão registrada em `intent.md`.
 - Q: Qual remetente usar no e-mail de redefinição de senha? → A: `no-reply@nebuloz.ai`, via Resend (mesmo transporte de `packages/email/index.ts`). Depende de o domínio `nebuloz.ai` estar verificado no Resend (SPF/DKIM) — passo manual do CEO, registrado como dependência.
 - Q: Renomear o issuer do 2FA (hoje "Cosmos" em `packages/auth/server.ts:78`) dentro deste escopo? → A: Sim, para "Nebuloz". Critério: 2FA já cadastrado antes da mudança continua funcionando (o issuer é só um rótulo de exibição no app autenticador, não faz parte do segredo TOTP).
 
@@ -33,20 +33,20 @@ Qualquer pessoa que acesse `app.nebuloz.ai` para autenticar vê uma tela de logi
 
 ---
 
-### User Story 2 - Catálogo de produtos pós-login, habilitado pelo contrato real (Priority: P1)
+### User Story 2 - Catálogo de produtos pós-login (tenant interno, via flag dedicada) (Priority: P1)
 
-Qualquer pessoa autenticada, de qualquer tenant, vê um catálogo com os 5 produtos da suíte (Meridian, Scaffold, Charter, Cosmos, Signal) e os perfis possíveis de cada um. Os cards habilitados são exatamente os módulos que o tenant dela tem contratado hoje (`TenantModule`); os demais aparecem visíveis mas desabilitados, com indicação clara de "em breve". Escolher um produto habilitado leva direto para dentro dele.
+Uma pessoa de um tenant marcado como interno (`Tenant.isInternalTenant = true`; hoje, só o tenant Nebuloz) vê, ao autenticar, um catálogo com os 5 produtos da suíte (Meridian, Scaffold, Charter, Cosmos, Signal) e os perfis possíveis de cada um. Só o Meridian está habilitado; os demais aparecem visíveis mas desabilitados, com indicação clara de "em breve". Escolher o Meridian leva direto para dentro dele. Um usuário de qualquer outro tenant (flag ausente ou `false`) não vê o catálogo — segue direto pro produto que seu tenant tem contratado, como hoje.
 
-**Why this priority**: É o núcleo do pedido — resolve o problema concreto do laboratório de usabilidade (cair no Cosmos em vez do Meridian) reaproveitando a habilitação por contrato que já existe, sem criar um mecanismo novo de "tenant especial".
+**Why this priority**: É o núcleo do pedido — resolve o problema concreto do laboratório de usabilidade (cair no Cosmos em vez do Meridian) sem alterar o fluxo pós-login de nenhum tenant cliente real.
 
-**Independent Test**: Logar como usuário de qualquer tenant e confirmar que a tela pós-login é o catálogo, com os cards do(s) módulo(s) contratado(s) clicáveis e os demais desabilitados; clicar em um produto habilitado e confirmar que entra nele.
+**Independent Test**: Logar como usuário do tenant Nebuloz (`isInternalTenant = true`) e confirmar que a tela pós-login é o catálogo, com Meridian clicável e os demais desabilitados; clicar em Meridian e confirmar que entra nele. Logar como usuário de outro tenant e confirmar que vai direto pro produto contratado, sem ver o catálogo.
 
 **Acceptance Scenarios**:
 
-1. **Given** um usuário autenticado de qualquer tenant, **When** o login é concluído, **Then** ele vê o catálogo dos 5 produtos com os perfis possíveis de cada um.
-2. **Given** o catálogo exibido, **When** o usuário observa um produto que o tenant dele não tem contratado, **Then** esse produto aparece visível mas não clicável, com indicação de "em breve" (ou equivalente).
-3. **Given** o catálogo exibido, **When** o usuário seleciona um produto habilitado (contratado pelo tenant dele), **Then** ele é levado para dentro desse produto.
-4. **Given** um usuário do tenant Nebuloz autenticado, **When** o login é concluído, **Then** ele vê o catálogo com apenas o Meridian habilitado, pois é o único módulo que o tenant Nebuloz tem contratado hoje.
+1. **Given** um usuário autenticado de um tenant com `isInternalTenant = true`, **When** o login é concluído, **Then** ele vê o catálogo dos 5 produtos com os perfis possíveis de cada um.
+2. **Given** o catálogo exibido, **When** o usuário observa Scaffold, Charter, Cosmos ou Signal, **Then** eles aparecem visíveis mas não clicáveis, com indicação de "em breve" (ou equivalente).
+3. **Given** o catálogo exibido, **When** o usuário seleciona Meridian, **Then** ele é levado para dentro do Meridian.
+4. **Given** um usuário de um tenant sem `isInternalTenant` (cliente real), **When** o login é concluído, **Then** ele vai direto para o produto que seu tenant tem contratado, sem ver o catálogo — comportamento idêntico ao atual.
 
 ---
 
@@ -84,8 +84,8 @@ Um usuário deslogado que esqueceu a senha pede redefinição informando o e-mai
 
 ### Edge Cases
 
-- Tenant cliente real com só um módulo contratado (caso comum hoje) passa a ver o catálogo com um único card habilitado antes de entrar no produto — um clique a mais do que o redirect direto atual; comportamento aceito explicitamente, não é regressão a corrigir.
-- Usuário tenta acessar por URL direta um produto que o tenant dele não tem contratado, contornando o catálogo: comportamento atual de bloqueio por falta de contrato é preservado (não é objetivo desta feature abrir produtos não contratados).
+- Usuário de tenant sem `isInternalTenant` que tenta acessar a URL do catálogo diretamente (sem passar pelo redirect): mantém o comportamento de habilitação por contrato já existente (`TenantModule`), sem regressão.
+- Usuário do tenant Nebuloz tenta acessar Scaffold/Charter/Signal por URL direta, contornando o catálogo: comportamento atual de bloqueio por falta de contrato/prontidão é preservado (não é objetivo desta feature abrir esses produtos).
 - Link de redefinição de senha expirado ou já usado: sistema informa que o link não é mais válido e oferece solicitar um novo, sem expor detalhes internos.
 - Usuário solicita redefinição de senha múltiplas vezes seguidas: cada solicitação gera um novo link válido; links anteriores deixam de ser aceitos.
 - Troca do issuer do 2FA de "Cosmos" para "Nebuloz": usuários que já têm 2FA cadastrado continuam autenticando normalmente (o issuer é só o rótulo exibido no app autenticador, a mudança não deve invalidar segredos TOTP existentes).
@@ -95,24 +95,25 @@ Um usuário deslogado que esqueceu a senha pede redefinição informando o e-mai
 ### Functional Requirements
 
 - **FR-001**: A tela de login em `app.nebuloz.ai` MUST NOT exibir wordmark, headline ou ilustração específica de nenhum produto da suíte (ex.: Cosmos) — apenas identidade Nebuloz, para qualquer tenant.
-- **FR-002**: Após autenticação bem-sucedida, o sistema MUST levar todo usuário, de qualquer tenant, ao catálogo de produtos pós-login (substitui o redirect fixo pro Cosmos usado hoje para todos os tenants).
+- **FR-002**: Após autenticação bem-sucedida, o sistema MUST determinar o destino por tenant: usuários de um tenant com `isInternalTenant = true` veem o catálogo de produtos; usuários de qualquer outro tenant seguem direto para o produto que seu tenant tem contratado, como hoje.
 - **FR-003**: O catálogo pós-login MUST listar os 5 produtos da suíte (Meridian, Scaffold, Charter, Cosmos, Signal), com os perfis possíveis de cada um.
-- **FR-004**: No catálogo, cada produto MUST estar habilitado/clicável se e somente se o tenant do usuário tiver esse módulo contratado (`TenantModule`); os demais produtos MUST aparecer visíveis e desabilitados, com indicação clara de "em breve" (ou equivalente). Para o tenant Nebuloz hoje, isso resulta em só o Meridian habilitado.
-- **FR-005**: Selecionar um produto habilitado no catálogo MUST levar o usuário para dentro desse produto.
-- **FR-006**: Um usuário autenticado MUST conseguir trocar a própria senha informando senha atual e nova senha, sem sair do produto em que está.
-- **FR-007**: O sistema MUST rejeitar a troca de senha quando a senha atual informada estiver incorreta, com mensagem de erro clara, sem alterar a senha existente.
-- **FR-008**: Um usuário deslogado MUST conseguir solicitar redefinição de senha informando um e-mail, e o sistema MUST enviar um e-mail real com um link de redefinição (não apenas exibir uma tela sem envio efetivo).
-- **FR-009**: O link do e-mail de redefinição MUST levar a uma tela funcional (não erro) onde o usuário define a nova senha.
-- **FR-010**: Após definir a nova senha via redefinição, o usuário MUST conseguir logar com ela.
-- **FR-011**: Ao solicitar redefinição de senha, o sistema MUST responder de forma equivalente independentemente de o e-mail existir ou não na base (não revelar existência de conta).
-- **FR-012**: Nenhuma escrita ou alteração de senha MUST ocorrer fora do fluxo padrão de autenticação (proibido gravar/alterar senha por SQL direto, script ou qualquer atalho, em qualquer hipótese).
-- **FR-013**: O e-mail de redefinição de senha MUST ser enviado a partir de `no-reply@nebuloz.ai` via Resend, reaproveitando o transporte já usado em `packages/email/index.ts`.
-- **FR-014**: A troca do issuer do 2FA (de "Cosmos" para "Nebuloz") MUST preservar o funcionamento do 2FA já cadastrado por usuários existentes antes da mudança.
+- **FR-004**: No catálogo, apenas o Meridian MUST estar habilitado/clicável; os demais produtos MUST aparecer visíveis e desabilitados, com indicação clara de "em breve" (ou equivalente).
+- **FR-005**: Selecionar o Meridian no catálogo MUST levar o usuário para dentro do Meridian.
+- **FR-006**: O model `Tenant` MUST ganhar um campo booleano `isInternalTenant` (default `false`), via migration Prisma — não por config/env nem checagem de ID/slug fixo no código.
+- **FR-007**: Um usuário autenticado MUST conseguir trocar a própria senha informando senha atual e nova senha, sem sair do produto em que está.
+- **FR-008**: O sistema MUST rejeitar a troca de senha quando a senha atual informada estiver incorreta, com mensagem de erro clara, sem alterar a senha existente.
+- **FR-009**: Um usuário deslogado MUST conseguir solicitar redefinição de senha informando um e-mail, e o sistema MUST enviar um e-mail real com um link de redefinição (não apenas exibir uma tela sem envio efetivo).
+- **FR-010**: O link do e-mail de redefinição MUST levar a uma tela funcional (não erro) onde o usuário define a nova senha.
+- **FR-011**: Após definir a nova senha via redefinição, o usuário MUST conseguir logar com ela.
+- **FR-012**: Ao solicitar redefinição de senha, o sistema MUST responder de forma equivalente independentemente de o e-mail existir ou não na base (não revelar existência de conta).
+- **FR-013**: Nenhuma escrita ou alteração de senha MUST ocorrer fora do fluxo padrão de autenticação (proibido gravar/alterar senha por SQL direto, script ou qualquer atalho, em qualquer hipótese).
+- **FR-014**: O e-mail de redefinição de senha MUST ser enviado a partir de `no-reply@nebuloz.ai` via Resend, reaproveitando o transporte já usado em `packages/email/index.ts`.
+- **FR-015**: A troca do issuer do 2FA (de "Cosmos" para "Nebuloz") MUST preservar o funcionamento do 2FA já cadastrado por usuários existentes antes da mudança.
 
 ### Key Entities *(include if feature involves data)*
 
 - **Catálogo de Produto**: item exibido no catálogo pós-login — nome do produto, perfis possíveis associados, estado de habilitação (habilitado / em breve).
-- **Tenant**: precisa de um atributo/mecanismo que diferencie o tenant Nebuloz dos demais para decidir se mostra o catálogo ou segue direto pro produto contratado (mecanismo exato: ver Assumptions / clarificação necessária).
+- **Tenant**: ganha o campo `isInternalTenant` (booleano, default `false`) — diferencia o(s) tenant(s) que veem o catálogo pós-login (hoje, só Nebuloz) dos demais, que seguem direto pro produto contratado. Entidade com dono único (`docs/produto/mapa-de-fronteiras.md:61`): alvo é Charter, hoje tecnicamente criada em `packages/provisioning/src/tenant.ts:53-116` (gap registrado no mapa).
 - **Solicitação de redefinição de senha**: token de redefinição vinculado a um e-mail, com validade limitada e uso único.
 
 ## Success Criteria *(mandatory)*
@@ -121,7 +122,7 @@ Um usuário deslogado que esqueceu a senha pede redefinição informando o e-mai
 
 - **SC-001**: Um usuário do tenant Nebuloz completa o caminho login → catálogo → dentro do Meridian em uma única sessão, sem passar pelo Cosmos.
 - **SC-002**: 100% das telas de login em `app.nebuloz.ai`, para qualquer tenant, não exibem identidade visual de nenhum produto específico da suíte.
-- **SC-003**: Usuários de tenants clientes reais continuam chegando ao(s) produto(s) que seu tenant tem contratado após o login, passando no máximo por uma tela de catálogo antes de entrar.
+- **SC-003**: Usuários de tenants clientes reais (sem `isInternalTenant`) não percebem nenhuma mudança no fluxo pós-login em relação ao comportamento atual.
 - **SC-004**: Um usuário autenticado completa a troca de senha (atual + nova) em menos de 1 minuto, sem sair do produto.
 - **SC-005**: Um usuário que esqueceu a senha consegue, sem qualquer intervenção manual ou acesso a banco de dados, ir de "esqueci a senha" até logar com a nova senha.
 
@@ -129,8 +130,9 @@ Um usuário deslogado que esqueceu a senha pede redefinição informando o e-mai
 
 - Os perfis de cada produto continuam vindo dos enums de papel já existentes por produto (`MeridianRole`, `CharterRole`, `ScaffoldRole`, `SignalRole`, `MemberRole` para o Cosmos) — não se cria um vocabulário único de "perfil de suíte" nesta feature (fora de escopo, conforme intent).
 - O envio do e-mail de redefinição de senha reaproveita a infraestrutura de e-mail já em produção (`packages/email`, transporte Resend) em vez de introduzir um novo provedor.
-- A habilitação de cada card do catálogo é 100% derivada do contrato real (`TenantModule`) — não existe conceito de "produto pronto só pra um tenant específico"; se amanhã outro tenant contratar Meridian, ele também verá o card habilitado.
+- `isInternalTenant` é um campo novo, distinto de `Tenant.isSystem` (já existente, `tenant.prisma:31-36`, reservado ao tenant técnico de auditoria) — propósitos diferentes: dogfood real de cliente vs. tenant de sistema.
+- Marcar o tenant Nebuloz com `isInternalTenant = true` é uma operação manual pontual (via migration de dado ou ação administrativa), fora do escopo desta spec definir a UI de gerenciar essa flag.
 
 ## Dependencies
 
-- **Domínio `nebuloz.ai` verificado no Resend (SPF/DKIM)**: passo manual, responsabilidade do CEO, necessário para o e-mail de redefinição de senha (`no-reply@nebuloz.ai`) ser entregue de forma confiável. Bloqueia FR-013 até ser concluído.
+- **Domínio `nebuloz.ai` verificado no Resend (SPF/DKIM)**: passo manual, responsabilidade do CEO, necessário para o e-mail de redefinição de senha (`no-reply@nebuloz.ai`) ser entregue de forma confiável. Bloqueia FR-014 até ser concluído.
