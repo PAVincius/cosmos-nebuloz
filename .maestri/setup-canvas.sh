@@ -32,10 +32,18 @@ hire() { # $1=nome $2=papel $3=modelo [$4...]=flags extras
 floor() { "$M" floor list 2>/dev/null | grep -qF "$1" || "$M" floor create "$@"; }
 # Copia skills revisadas (.maestri/skills, ver README) para a pasta do papel: só aquele agente as carrega.
 role_dir() { local j; j=$(grep -lF "\"name\" : \"$1\"" "$PWD"/.maestri/roles/*/role.json 2>/dev/null | head -1); [ -n "$j" ] && dirname "$j"; }
+# Andar do Maestri é um clone completo em <pai>/.maestri/floors/<repo>--<branch>, com a própria cópia de
+# .maestri/roles. Papel recrutado num andar roda na pasta dele, então as skills vão para lá também.
+# Recrutou num andar depois deste setup? Rode o setup de novo (é idempotente).
+ANDARES="$(dirname "$PWD")/.maestri/floors/$(basename "$PWD")--"
+role_dirs() { grep -lF "\"name\" : \"$1\"" "$PWD"/.maestri/roles/*/role.json "$ANDARES"*/.maestri/roles/*/role.json 2>/dev/null | while read -r j; do dirname "$j"; done; }
 equip() { # $1=papel $2...=skills
-  local d; d=$(role_dir "$1") || { echo "! papel $1 sem pasta, skills puladas"; return; }
-  d="$d/.claude/skills"; mkdir -p "$d"; shift
-  for s in "$@"; do rm -rf "$d/$s"; cp -R "$PWD/.maestri/skills/$s" "$d/$s"; done
+  local papel="$1" ds d; shift
+  ds=$(role_dirs "$papel"); [ -n "$ds" ] || { echo "! papel $papel sem pasta, skills puladas"; return; }
+  while read -r d; do
+    mkdir -p "$d/.claude/skills"
+    for s in "$@"; do rm -rf "$d/.claude/skills/$s"; cp -R "$PWD/.maestri/skills/$s" "$d/.claude/skills/$s"; done
+  done <<< "$ds"
 }
 # Fork do fast-jev-compaction (Gateway, ver .maestri/plugins/fast-jev-compaction/FORK.md), só na pasta do papel.
 # Lê AI_GATEWAY_API_KEY do ambiente. keepThreshold 0.3: o padrão 0.5 cortou até arquivo em uso no teste.
@@ -55,6 +63,7 @@ Você é o dev do produto **$1** no monorepo Nebuloz (cwd = raiz do seu checkout
 Ao acordar leia \`$K/$1/note.md\` e \`$GATE\`; o resto (index.md, memory.md, graph.json via graphify) só sob demanda.
 Mexa só nos caminhos listados na sua note.md. Precisa de outro produto ou de schema? Peça ao Maestro com \`maestri ask\`.
 Tarefa vem do Maestro. Ao terminar: commit, completion em .claude/completions/, e reporte com \`maestri ask "<nome do Maestro em maestri list>" "<resumo + hash>"\`.
+Se você está num andar (floor), seu checkout é um clone próprio com .git separado: no reporte, diga o andar, a branch e o caminho do clone (\`git rev-parse --show-toplevel\`) — quem revisa no Ground não enxerga seu commit até o land.
 Skills: /tdd em mudança com lógica, /diagnosing-bugs em bug, /prisma-client-api em query (sempre com tenantId).
 Rode \`maestri list\` antes de perguntar algo a alguém.
 $MEMORIA
@@ -89,6 +98,7 @@ role "Dev Plataforma" "$(dev plataforma 'Você é o ÚNICO que altera packages/d
 role "QA" "Você é o QA da Nebuloz. Mesa: docs/qualidade/, docs/TESTING_PLAN.md, apps/*/__tests__/e2e/.
 Ao receber um PR ou branch: leia os critérios de aceite em specs/NNN-*/spec.md (ou o PRD em docs/produto/), rode \`npx vitest run <arquivos tocados>\` dentro do app e o E2E Playwright do fluxo afetado, e confira os itens de teste de \`$GATE\`.
 Veredito: APROVADO ou REPROVADO + lista arquivo:linha / passo de reprodução. Pode escrever testes; não corrige código de produto — devolve ao dev.
+Entrega vinda de um andar: o código está no clone do andar, não no Ground. Teste lá (\`cd <caminho do clone>\`), com o caminho que o dev informou; sem caminho, peça antes de testar.
 Skills: /playwright-cli (via \`npx playwright cli\`, já no repo), /e2e-testing, /ai-regression-testing.
 $REGISTRO
 Rode \`maestri list\` antes de perguntar algo a alguém.
@@ -103,7 +113,7 @@ Rode \`maestri list\` antes de perguntar algo a alguém.
 $MEMORIA"
 
 role "Security Reviewer" "Revise o diff da branch contra main focando isolamento multi-tenant (tenantId, requireTenantSession, requireRole, logAudit, ADR-0012/0013), OWASP LLM Top 10 (docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md, docs/security/checklist-ia-generativa.md) e os itens de segurança de $GATE. Não edite arquivos: responda só achados, um por linha, arquivo:linha + problema + correção. Skill: /security-review. Rode \`maestri list\` para saber a quem reportar.
-A única escrita permitida a você é o registro: um \`achado\` por categoria de problema, ou um \`aprovado\` se não houver achado. $REGISTRO"
+Se a branch é de um andar, revise o diff no clone do andar (\`git -C <caminho do clone> diff main...HEAD\`). A única escrita permitida a você é o registro: um \`achado\` por categoria de problema, ou um \`aprovado\` se não houver achado. $REGISTRO"
 
 role "CPO" "$(staff 'CPO (Head de Produto)' 'docs/produto/, docs/stories/, docs/pi-planning/' \
   'dono do roadmap dos 6 produtos (Cosmos, Charter, Scaffold, Meridian, Signal, Backoffice). Prioriza por valor para o ICP e pelo bloqueio atual da memória de empresa. Decide O QUE e POR QUÊ; o Maestro decide COMO.' \
@@ -163,6 +173,12 @@ Você valida cada entrega contra PRD/SRD (docs/produto/) e \`$GATE\` antes de di
 
 ## Quadro
 A nota "Quadro" é sua memória entre sessões: | pedido | dono | estado | bloqueio |. Atualize a cada delegação e a cada retorno.
+
+## Andares (floors)
+Andar com git é um clone próprio (\`<pai>/.maestri/floors/<repo>--<branch>\`), com .git separado: o que é commitado lá só chega ao Ground no land.
+- Security Reviewer de uma entrega de andar: recrute no mesmo andar (\`maestri recruit "Vigia" --floor "<andar>" --role "Security Reviewer"\`). QA no Ground testa no caminho do clone que o dev informou.
+- Recrutou alguém num andar? Rode \`bash .maestri/setup-canvas.sh\` de novo: é idempotente e leva as skills do papel para a cópia do andar.
+- A triagem e o fechamento do dia já olham os andares; a linha diz \`[andar …]\`.
 
 ## Aprendizado (você é dona do ciclo)
 - Entrega que você devolve ao agente, ou aceita, também vira registro. $REGISTRO
@@ -242,7 +258,7 @@ Roteie cada linha conforme seu papel: recrute o Vigia, peça parecer ao Lacre, a
 # Ciclo de aprendizado (rotinas da Morgana, no próprio terminal dela).
 # Diário: só em dia com commit, para não acordar a equipe à toa.
 routine "Fechamento do dia" --weekly mon,tue,wed,thu,fri@18:00 \
-  --pre-run 'git -C "$MAESTRI_WORKSPACE_DIR" log --all --since=midnight --oneline | grep -q .' \
+  --pre-run 'node "$MAESTRI_WORKSPACE_DIR/.maestri/jev.mjs" houve-commit midnight' \
   --command "Fechamento do dia, conforme a seção Aprendizado do seu papel."
 # Semanal: antes do Relatório da semana do Ordem (17h), que pode citar a retro. Sem registro na semana, é pulada.
 routine "Retro semanal" --weekly fri@16:00 \
