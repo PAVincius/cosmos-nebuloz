@@ -144,3 +144,11 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
   **Corrigido em 2026-09-26** — botão "Revogar" por respondente (confirmação num modal antes de revogar, é irreversível), respondente `REVOKED` some do "sem dono" mas continua listado, riscado, com rótulo "Revogado" e sem os botões de ação. `closeCollection` já ignorava `REVOKED` na cobertura de eixo antes desta mudança (`__tests__/meridian/collection.test.ts:279`, "ignora respondente revogado ao medir cobertura de eixo") — não precisou de alteração na action. No modal "Link de coleta gerado", "Concluir" fica desabilitado até o consultor clicar em Copiar ao menos uma vez, e o aviso de "só aparece agora" ganhou destaque visual (fundo âmbar) pra não passar despercebido.
 
 ---
+
+**P0** | Aba Coleta, modal "Link de coleta gerado" (`app.nebuloz.ai`, AS-112) | M2, M2-bis e M2-ter em produção: o CEO, como consultor, atribuiu os 10 respondentes três vezes e perdeu os links as três vezes. Na primeira não havia trava; na segunda, copiou sem colar; na terceira, com um arquivo rotulado aberto no TextEdit ao lado, o arquivo e a janela ficaram com 0 links (verificado por contagem). A trava do #253 (Concluir só depois de copiar) não bastou: exigir que o consultor leve um segredo para fora do produto, sem canal de entrega nem reemissão, é o defeito.
+
+  **Decisão** (Norte, `docs/produto/meridian-prd.md` §10): "Reemitir link" por respondente + "Reemitir e copiar todos os pendentes" com download `.txt`/`.csv`. P0, antes do próximo ensaio de coleta. E-mail ao respondente fica para depois (spec 004 + Lacre).
+
+  **Dono**: Regua (spec 005) → Bussola.
+
+---
