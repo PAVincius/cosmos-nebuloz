@@ -1,7 +1,15 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database, type ProductModule } from "@repo/database";
+import {
+  CharterRole,
+  database,
+  MemberRole,
+  MeridianRole,
+  type ProductModule,
+  ScaffoldRole,
+  SignalRole,
+} from "@repo/database";
 import { listModules } from "@repo/rbac";
 import { headers } from "next/headers";
 import { safeAction } from "../_base";
@@ -45,37 +53,47 @@ export type ProdutoNoPainel = {
   expiraEm: string | null;
   emTrial: boolean;
   assentos: number | null;
+  /** Rótulos dos perfis possíveis do produto — vem do enum de papel de cada
+   *  produto (`MeridianRole`, `CharterRole`, `ScaffoldRole`, `SignalRole`;
+   *  `MemberRole` para o Cosmos). Não é um vocabulário único de "perfil de
+   *  suíte" — cada produto expõe os seus próprios rótulos. */
+  perfis: string[];
 };
 
-/** Catálogo fixo: nome, resumo e a rota que existe neste app. */
+/** Catálogo fixo: nome, resumo, rota e perfis possíveis de cada produto. */
 const CATALOGO: Record<
   ProductModule,
-  { nome: string; resumo: string; href: string }
+  { nome: string; resumo: string; href: string; perfis: string[] }
 > = {
   COSMOS: {
     nome: "Cosmos",
     resumo: "Planejamento e execução SAFe — PI Planning, portfólio, fluxo.",
     href: "/cosmos",
+    perfis: Object.values(MemberRole),
   },
   CHARTER: {
     nome: "Charter",
     resumo: "Governança de IA — políticas, fornecedores, conformidade.",
     href: "/charter",
+    perfis: Object.values(CharterRole),
   },
   SIGNAL: {
     nome: "Signal",
     resumo: "Valor realizado de IA — adoção, ROI com confiança, veredito.",
     href: "/signal",
+    perfis: Object.values(SignalRole),
   },
   MERIDIAN: {
     nome: "Meridian",
     resumo: "Diagnóstico de prontidão para IA — cinco eixos, gaps, plano.",
     href: "/meridian",
+    perfis: Object.values(MeridianRole),
   },
   SCAFFOLD: {
     nome: "Scaffold",
     resumo: "Adoção em trilhas guiadas — quatro fases, gates bloqueantes.",
     href: "/scaffold",
+    perfis: Object.values(ScaffoldRole),
   },
 };
 
@@ -143,7 +161,7 @@ export async function listarProdutos() {
     const porModulo = new Map(linhas.map((l) => [l.module, l]));
 
     const produtos: ProdutoNoPainel[] = ORDEM.map((modulo) => {
-      const { nome, resumo, href } = CATALOGO[modulo];
+      const { nome, resumo, href, perfis } = CATALOGO[modulo];
       const linha = porModulo.get(modulo);
       const abre = liberados.includes(modulo);
 
@@ -151,6 +169,7 @@ export async function listarProdutos() {
         modulo,
         nome,
         resumo,
+        perfis,
         expiraEm: linha?.expiresAt?.toISOString() ?? null,
         emTrial: linha?.status === "TRIAL",
         assentos: linha?.seats ?? null,

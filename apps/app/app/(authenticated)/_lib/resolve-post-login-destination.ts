@@ -18,15 +18,22 @@ const DESTINO_PADRAO = "/cosmos/dashboard";
  * (que já reaproveita `listModules`); esta função só escolhe entre o catálogo
  * e o primeiro produto disponível — não reimplementa a regra de contrato.
  */
-export async function resolvePostLoginDestination(): Promise<string> {
-  const { tenantId } = await requireTenantSession(await headers());
-
+/** Único ponto de leitura de `Tenant.isInternalTenant` — a página do
+ *  catálogo (`(authenticated)/produto`) também precisa saber se está
+ *  servindo de landing pós-login (rótulo "em breve") ou de hub de
+ *  contratação normal, e reusa esta função em vez de repetir a consulta. */
+export async function isTenantInterno(tenantId: string): Promise<boolean> {
   const tenant = await database.tenant.findUnique({
     where: { id: tenantId },
     select: { isInternalTenant: true },
   });
+  return tenant?.isInternalTenant ?? false;
+}
 
-  if (tenant?.isInternalTenant) {
+export async function resolvePostLoginDestination(): Promise<string> {
+  const { tenantId } = await requireTenantSession(await headers());
+
+  if (await isTenantInterno(tenantId)) {
     return "/produto";
   }
 
