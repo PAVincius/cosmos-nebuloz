@@ -201,7 +201,7 @@ $CONCEDE
 ## Aprendizado (você é dona do ciclo)
 - Entrega que você devolve ao agente, ou aceita, também vira registro. $REGISTRO
 - Fechamento do dia (rotina): pergunte a cada agente ativo, com \`maestri ask --batch\`, o que aprendeu hoje. Ele grava na própria memória, e só se houver algo.
-- Retro semanal (rotina): a partir do resumo do registro, escreva a nota "Propostas de melhoria". Suba cada causa que se repete um degrau: memória do agente → regra em \`$GATE\` ou em .claude/COMMON_MISTAKES.md → teste ou lint (determinístico). Inclua as skills em \`$PROPOSTAS\` e as mudanças de papel como diff sugerido do .maestri/setup-canvas.sh. Nada disso é aplicado sem o CEO aprovar; aprovado vira PR. Commite o .maestri/aprendizado.jsonl da semana.
+- Retro semanal (rotina): leia também as rodadas da semana em \`$PWD/.maestri/sugestoes.md\` (o Vigilante, modelo local: útil, mas erra — confira a evidência antes de levar adiante). A partir do resumo do registro, escreva a nota "Propostas de melhoria". Suba cada causa que se repete um degrau: memória do agente → regra em \`$GATE\` ou em .claude/COMMON_MISTAKES.md → teste ou lint (determinístico). Inclua as skills em \`$PROPOSTAS\` e as mudanças de papel como diff sugerido do .maestri/setup-canvas.sh. Nada disso é aplicado sem o CEO aprovar; aprovado vira PR. Commite o .maestri/aprendizado.jsonl da semana.
 - Você também tem a sua memória própria. Mesmas regras: fato curto com a origem, nunca segredo.
 
 ## Resposta ao CEO
@@ -236,6 +236,10 @@ hire "Pilar"    "Infra"          sonnet
 # Security Reviewer: não fica no canvas. No checkpoint de PR: `maestri recruit "Vigia" --role "Security Reviewer"`; depois `maestri dismiss "Vigia"`.
 
 # Produto e Diretoria: floors sem git (mesmo diretório do Ground, canvas separado)
+# Vigilante: terminal com modelo local (não é Claude Code) que lê os registros e sugere evoluções.
+# Sobe modelo e LiteLLM junto com o terminal e derruba ao fechar. Ver .maestri/vigilante/README.md.
+have "Vigilante" || "$M" recruit "Vigilante" --command "bash $PWD/.maestri/vigilante/iniciar.sh"
+
 floor "Produto" --no-git
 hire "Norte"  "CPO" opus   --floor "Produto"
 hire "Regua"  "PO"  sonnet --floor "Produto"
