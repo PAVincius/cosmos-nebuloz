@@ -1,18 +1,66 @@
 import { expect, test } from "@playwright/test";
+import dotenv from "dotenv";
 import { meridianStorageState } from "./setup/auth.setup";
+
+dotenv.config({ path: ".env.local" });
 
 /**
  * E2E — Spec 006 US1, "Reemitir link" individual.
  *
  * Cenários 1–3 do quickstart (specs/006-reemitir-link-respondente/quickstart.md):
- *  1. Reemitir link individual: link novo funciona, o antigo não.
- *  2. Bloqueios: DONE, REVOKED, deadline vencido.
+ *  1. Reemitir link individual: link novo funciona, o antigo não, rascunho
+ *     preservado (mesmo respondentId, só o tokenHash gira).
+ *  2. Bloqueios: DONE (server-side, `__tests__/meridian/collection.test.ts` —
+ *     a UI esconde "Reemitir link" pra DONE por desenho, então não há como
+ *     chegar nesse bloqueio por interação real; ver nota no teste de
+ *     bloqueios abaixo), REVOKED (E2E, botão some da linha).
  *  3. Auditoria: entrada `meridian.respondent.reissue`.
+ *  4. `tokenExpiresAt` = min(agora + 14d, deadline), conferido direto no
+ *     Postgres local — não só no mock do unitário.
+ *  5. Saídas do modal "Link reemitido" sem copiar pedem confirmação — mesma
+ *     guarda X/Esc/backdrop de `5fad9132`/`meridian-collection-as112.spec.ts`,
+ *     reusada via `useCloseGuard` (f771b865).
  *
  * Cria assessment isolado pela UI (mesmo padrão de
  * `meridian-collection-as112.spec.ts`) pra não disputar estado com outros
  * specs do dogfood.
  */
+
+/** Lê `tokenExpiresAt` e o `deadline` do assessment direto no Postgres local
+ *  — mesmo padrão de acesso direto ao banco de `meridian-dogfood.spec.ts`
+ *  (`attachEvidenceToContestedAxis`), evitando expor o campo na UI só pra
+ *  este teste. */
+async function readTokenExpiryFromDb(respondentName: string): Promise<{
+  tokenExpiresAt: Date;
+  deadline: Date;
+}> {
+  const { PrismaPg } = await import("@prisma/adapter-pg");
+  const { Pool } = await import("pg");
+  const { PrismaClient } = await import(
+    "../../../packages/database/generated/index.js"
+  );
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const db = new PrismaClient({ adapter: new PrismaPg(pool) });
+
+  const respondent = await db.meridianRespondent.findFirst({
+    where: { name: respondentName },
+    select: {
+      tokenExpiresAt: true,
+      assessment: { select: { deadline: true } },
+    },
+  });
+  await db.$disconnect();
+  if (!respondent) {
+    throw new Error(
+      `readTokenExpiryFromDb: respondente "${respondentName}" não encontrado.`
+    );
+  }
+  return {
+    tokenExpiresAt: respondent.tokenExpiresAt,
+    deadline: respondent.assessment.deadline,
+  };
+}
 
 test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @meridian", () => {
   test.use({ storageState: meridianStorageState("consultant") });
@@ -59,16 +107,58 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       ).toBeVisible({ timeout: 15_000 });
     });
 
-    await test.step("1 — Reemitir link: link novo funciona, o antigo não", async () => {
-      // O link antigo já foi copiado no passo anterior — recupera lendo o
-      // clipboard, já que a lista não guarda o token em claro em lugar nenhum.
-      const oldToken = (
+    let oldToken = "";
+
+    await test.step("rascunho: responde 1 pergunta no link original e salva pra continuar depois", async () => {
+      oldToken = (
         await page.evaluate(() => navigator.clipboard.readText())
       ).split("/meridian-responder/")[1];
       expect(oldToken).toBeTruthy();
 
+      const respondentPage = await context.newPage();
+      await respondentPage.goto(`/meridian-responder/${oldToken}`);
+      await respondentPage
+        .getByRole("button", { name: "Discordo forte", exact: true })
+        .first()
+        .click();
+      await respondentPage
+        .getByRole("button", { name: "Salvar e continuar depois" })
+        .click();
+      await expect(respondentPage.getByText(/Rascunho salvo/)).toBeVisible();
+      await respondentPage.close();
+    });
+
+    let reissuedAt = 0;
+
+    await test.step("1 — Reemitir link: saídas do modal sem copiar pedem confirmação; link novo funciona com o rascunho preservado, o antigo não", async () => {
+      reissuedAt = Date.now();
       await page.getByRole("button", { name: "Reemitir link" }).click();
       await expect(linkDialog("Link reemitido")).toBeVisible();
+
+      // Mesma guarda X/Esc/backdrop de 5fad9132/AS-112 (useCloseGuard,
+      // f771b865) — Esc e X abrem a confirmação PRÓPRIA deste modal
+      // ("Fechar sem copiar o link?"); o backdrop passa pelo dirty genérico
+      // do ModalHost ("Descartar alterações?").
+      await page.keyboard.press("Escape");
+      await expect(page.getByText("Fechar sem copiar o link?")).toBeVisible();
+      await expect(linkDialog("Link reemitido")).toBeVisible();
+      await page.getByRole("button", { name: "Voltar e copiar" }).click();
+      await expect(page.getByText("Fechar sem copiar o link?")).toHaveCount(0);
+
+      await linkDialog("Link reemitido")
+        .getByRole("button", { name: "Fechar" })
+        .click();
+      await expect(page.getByText("Fechar sem copiar o link?")).toBeVisible();
+      await page.getByRole("button", { name: "Voltar e copiar" }).click();
+      await expect(linkDialog("Link reemitido")).toBeVisible();
+
+      await page
+        .getByRole("button", { name: "Fechar modal" })
+        .click({ position: { x: 10, y: 10 } });
+      await expect(page.getByText("Descartar alterações?")).toBeVisible();
+      await page.getByRole("button", { name: "Continuar editando" }).click();
+      await expect(linkDialog("Link reemitido")).toBeVisible();
+
       const newValue = await linkDialog("Link reemitido")
         .getByRole("textbox")
         .inputValue();
@@ -95,7 +185,34 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       await expect(
         newTokenPage.getByText("Link inválido ou expirado")
       ).toHaveCount(0);
+      // Rascunho preservado: reemitir gira só o tokenHash, o respondentId (e
+      // as respostas já salvas) continuam os mesmos — `getBattery` carrega
+      // por respondentId, não por token (actions/respondent.ts:128-129).
+      await expect(
+        newTokenPage
+          .getByRole("button", {
+            name: "Discordo forte",
+            exact: true,
+          })
+          .first()
+      ).toHaveAttribute("aria-pressed", "true");
       await newTokenPage.close();
+    });
+
+    await test.step("4 — tokenExpiresAt = min(agora + 14d, deadline), conferido no Postgres local", async () => {
+      const { tokenExpiresAt, deadline } = await readTokenExpiryFromDb(
+        "Reemissão · titular"
+      );
+      const REEMISSAO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+      // O teto de 14d foi calculado no momento da REEMISSÃO (`reissuedAt`),
+      // não no momento desta asserção — entre um e outro passam os passos de
+      // X/Esc/backdrop, cópia e as duas abas do respondente, o suficiente
+      // pra estourar uma tolerância medida a partir de "agora" aqui.
+      const tetoEsperado = reissuedAt + REEMISSAO_TTL_MS;
+      expect(deadline.getTime()).toBeGreaterThan(tetoEsperado);
+      expect(Math.abs(tokenExpiresAt.getTime() - tetoEsperado)).toBeLessThan(
+        60_000
+      );
     });
 
     await test.step("3 — auditoria registra meridian.respondent.reissue", async () => {
@@ -112,9 +229,20 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
     });
   });
 
-  test("bloqueia reemissão para respondente DONE e para REVOKED", async ({
+  test("bloqueia reemissão para respondente REVOKED (botão some da linha)", async ({
     page,
+    context,
   }) => {
+    // DONE não dá pra exercitar por interação real: a UI esconde "Reemitir
+    // link" pra DONE por desenho (tab-coleta.tsx, mesma condição de
+    // "Lembrar"), então não existe caminho de clique que chegue no bloqueio
+    // server-side. Coberto em __tests__/meridian/collection.test.ts
+    // ("bloqueia reemissão para respondente DONE").
+    //
+    // Sem `grantPermissions`, `navigator.clipboard.writeText` rejeita, e
+    // "Concluir" fica desabilitado pra sempre (só libera com `copied`) —
+    // travava o teste antes mesmo de chegar no que importa aqui (revogar).
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/meridian");
     await page.getByRole("button", { name: /Novo assessment/ }).click();
     await page.getByLabel("Organização").fill("Reemissão 006 · bloqueios");
@@ -129,11 +257,15 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       .getByRole("button", { name: "Atribuir respondente" })
       .first()
       .click();
-    await page.getByPlaceholder("Marina Costa").fill("Bloqueio · revogado");
+    // Nome sem a palavra "revogado" de propósito — getByText é
+    // case-insensitive por padrão, e um nome que contivesse "revogado"
+    // faria a asserção do StatusDot mais abaixo casar com o próprio nome
+    // e com os toasts, não só com o rótulo de status.
+    await page.getByPlaceholder("Marina Costa").fill("Bloqueio · alvo");
     await page.getByPlaceholder("Gerente de Dados").fill("Fundador");
     await page
       .getByPlaceholder("marina@empresa.com")
-      .fill("bloqueio-revogado@nebuloz.exemplo");
+      .fill("bloqueio-alvo@nebuloz.exemplo");
     await page.getByRole("button", { name: "Atribuir e gerar link" }).click();
     await page
       .getByRole("dialog", { name: "Link de coleta gerado" })
@@ -144,7 +276,7 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       .getByRole("button", { name: "Concluir" })
       .click();
     await expect(
-      page.getByText("Bloqueio · revogado", { exact: true })
+      page.getByText("Bloqueio · alvo", { exact: true })
     ).toBeVisible({ timeout: 15_000 });
 
     // REVOKED: revoga e confirma que "Reemitir link" some da linha (a UI
@@ -154,7 +286,7 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       .getByRole("dialog", { name: "Revogar respondente?" })
       .getByRole("button", { name: "Revogar" })
       .click();
-    await expect(page.getByText("Revogado")).toBeVisible();
+    await expect(page.getByText("Revogado", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Reemitir link" })
     ).toHaveCount(0);
