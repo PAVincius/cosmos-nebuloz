@@ -43,6 +43,16 @@ describe("ResetPassword — token inválido/expirado (US4, FR-011)", () => {
 });
 
 describe("ResetPassword — define nova senha (US4, FR-010)", () => {
+  // Achado do Vigia (info): UI anunciava "mínimo 8" enquanto o servidor
+  // exigia 12 (server.ts, SOC2 CC6).
+  it("exige o mesmo mínimo de senha do servidor (12, SOC2 CC6)", () => {
+    render(<ResetPassword />);
+
+    const novaSenha = screen.getByLabelText(/nova senha/i);
+    expect(novaSenha.getAttribute("minlength")).toBe("12");
+    expect(novaSenha.getAttribute("placeholder")).toBe("Mínimo 12 caracteres");
+  });
+
   it("chama authClient.resetPassword com a nova senha e o token da URL", async () => {
     h.resetPassword.mockResolvedValue({ data: {}, error: null });
     render(<ResetPassword />);

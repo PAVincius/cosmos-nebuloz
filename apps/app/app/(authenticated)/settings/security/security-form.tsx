@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { MIN_PASSWORD_LENGTH } from "@repo/auth/password-policy";
 import { useState } from "react";
 
 const inputClass =
@@ -14,7 +15,9 @@ export function SecurityForm() {
   const [success, setSuccess] = useState(false);
 
   const canSubmit =
-    currentPassword.length > 0 && newPassword.length >= 8 && !loading;
+    currentPassword.length > 0 &&
+    newPassword.length >= MIN_PASSWORD_LENGTH &&
+    !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +31,15 @@ export function SecurityForm() {
     // `changePassword` não lança em senha atual incorreta — devolve `{ error }`
     // (mesma convenção documentada em packages/auth/client.ts para chamadas
     // do Better Auth que não lançam em falha de credencial).
+    //
+    // `revokeOtherSessions: true` — sem isso, uma sessão roubada sobrevive à
+    // troca de senha. O better-auth derruba todas as sessões e recria só a
+    // atual (novo token, cookie setado na resposta), então quem está aqui
+    // continua logado e qualquer outro dispositivo/sessão cai.
     const result = await authClient.changePassword({
       currentPassword,
       newPassword,
+      revokeOtherSessions: true,
     });
 
     setLoading(false);
@@ -70,9 +79,9 @@ export function SecurityForm() {
           autoComplete="new-password"
           className={inputClass}
           id="newPassword"
-          minLength={8}
+          minLength={MIN_PASSWORD_LENGTH}
           onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="Mínimo 8 caracteres"
+          placeholder={`Mínimo ${MIN_PASSWORD_LENGTH} caracteres`}
           required
           type="password"
           value={newPassword}

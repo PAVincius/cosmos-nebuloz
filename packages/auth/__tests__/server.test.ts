@@ -299,6 +299,21 @@ describe("configuração do better-auth", () => {
     expect(emailCfg.minPasswordLength).toBe(12);
   });
 
+  // Achado do Vigia (BAIXO, revisão de segurança da spec 004):
+  // /request-password-reset só tinha a regra especial embutida do
+  // better-auth (janela de 60s), a mesma altura de proteção pensada pra
+  // login — sem uma regra própria, mais restritiva, pra quem enumera
+  // e-mail atrás de conta existente via "esqueci a senha".
+  it("tem regra de rate-limit própria e mais restritiva pra /request-password-reset", () => {
+    const rateLimitCfg = mocks.authConfig?.rateLimit as {
+      customRules?: Record<string, { window: number; max: number }>;
+    };
+    const regra = rateLimitCfg?.customRules?.["/request-password-reset"];
+    expect(regra).toBeDefined();
+    expect(regra?.max).toBeLessThanOrEqual(3);
+    expect(regra?.window).toBeGreaterThanOrEqual(300);
+  });
+
   // Curinga em trustedOrigins abriria o fluxo de auth para qualquer página
   // hospedada no domínio.
   it("não aceita curinga em trustedOrigins", () => {

@@ -25,6 +25,17 @@ function preencher(atual: string, nova: string) {
 }
 
 describe("SecurityForm — trocar senha logado (US3, FR-007/FR-008)", () => {
+  // Achado do Vigia (info): UI anunciava "mínimo 8" enquanto o servidor
+  // exigia 12 (server.ts, SOC2 CC6) — a pessoa digitava 8-11 caracteres,
+  // via passava, e só descobria a regra de verdade no erro do servidor.
+  it("exige o mesmo mínimo de senha do servidor (12, SOC2 CC6)", () => {
+    render(<SecurityForm />);
+
+    const novaSenha = screen.getByLabelText(/^nova senha/i);
+    expect(novaSenha.getAttribute("minlength")).toBe("12");
+    expect(novaSenha.getAttribute("placeholder")).toBe("Mínimo 12 caracteres");
+  });
+
   it("troca a senha com sucesso e avisa o usuário", async () => {
     authMocks.changePassword.mockResolvedValue({ data: {}, error: null });
     render(<SecurityForm />);
@@ -35,9 +46,15 @@ describe("SecurityForm — trocar senha logado (US3, FR-007/FR-008)", () => {
     await waitFor(() => {
       expect(screen.getByText(/senha alterada/i)).not.toBeNull();
     });
+    // revokeOtherSessions:true — sessão roubada (ou de outro dispositivo)
+    // não sobrevive à troca de senha (achado do Vigia na revisão de
+    // segurança da spec 004). A sessão atual é preservada pelo próprio
+    // better-auth (recria com token novo e seta o cookie), só as outras
+    // caem.
     expect(authMocks.changePassword).toHaveBeenCalledWith({
       currentPassword: "senha-atual-123",
       newPassword: "senha-nova-1234",
+      revokeOtherSessions: true,
     });
   });
 

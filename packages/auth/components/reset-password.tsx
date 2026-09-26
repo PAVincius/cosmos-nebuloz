@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "../client";
+import { MIN_PASSWORD_LENGTH } from "../password-policy";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors";
@@ -101,9 +102,9 @@ export const ResetPassword = () => {
             autoComplete="new-password"
             className={inputClass}
             id="newPassword"
-            minLength={8}
+            minLength={MIN_PASSWORD_LENGTH}
             onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Mínimo 8 caracteres"
+            placeholder={`Mínimo ${MIN_PASSWORD_LENGTH} caracteres`}
             required
             type="password"
             value={newPassword}
@@ -118,7 +119,7 @@ export const ResetPassword = () => {
 
         <button
           className="w-full rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={newPassword.length < 8 || loading}
+          disabled={newPassword.length < MIN_PASSWORD_LENGTH || loading}
           type="submit"
         >
           {loading ? "Salvando…" : "Redefinir senha"}

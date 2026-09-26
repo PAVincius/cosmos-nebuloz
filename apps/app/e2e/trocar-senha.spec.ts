@@ -78,4 +78,55 @@ test.describe("Trocar senha logado (US3, cenário 4) @auth", () => {
     await login(page, EMAIL, PASSWORD);
     await expect(page).not.toHaveURL(/sign-in/);
   });
+
+  // Achado do Vigia (revisão de segurança da spec 004, ALTO): sem
+  // `revokeOtherSessions: true`, uma sessão roubada sobrevive à troca de
+  // senha — quem trocou pensa que se protegeu, mas o invasor continua
+  // logado. Prova as duas pontas: a outra sessão cai, a atual sobrevive
+  // (o better-auth recria só a atual com token novo e seta o cookie na
+  // resposta — ver update-user.mjs do pacote instalado).
+  test("troca de senha revoga outras sessões e mantém a atual", async ({
+    browser,
+  }) => {
+    // A espera do cookieCache (até 60s) não cabe no timeout padrão de 30s.
+    test.setTimeout(120_000);
+
+    const sessaoAtual = await browser.newContext();
+    const outraSessao = await browser.newContext();
+    try {
+      const paginaAtual = await sessaoAtual.newPage();
+      const paginaOutra = await outraSessao.newPage();
+
+      await login(paginaAtual, EMAIL, PASSWORD);
+      await login(paginaOutra, EMAIL, PASSWORD);
+
+      await trocarSenha(paginaAtual, PASSWORD, NEW_PASSWORD);
+      await expect(paginaAtual.getByText(/senha alterada/i)).toBeVisible({
+        timeout: 15_000,
+      });
+
+      // Outra sessão: derrubada — mas não instantâneo. `cookieCache` (server.ts)
+      // serve a sessão do cookie assinado por até 60s sem reler o banco (o
+      // mesmo orçamento de atraso de revogação do AC-002) — a linha de
+      // Session já morreu, o cookie da outra aba é que ainda não expirou.
+      // Sem esperar essa janela, o teste provaria só o cache, não a revogação.
+      await expect(async () => {
+        await paginaOutra.goto("/settings/security");
+        await expect(paginaOutra).toHaveURL(/sign-in/);
+      }).toPass({ timeout: 75_000, intervals: [2000] });
+
+      // Sessão atual: sobrevive, sem precisar logar de novo.
+      await paginaAtual.goto("/settings/security");
+      await expect(paginaAtual).not.toHaveURL(/sign-in/);
+
+      // Cleanup: reverte pra senha original pela sessão que sobreviveu.
+      await trocarSenha(paginaAtual, NEW_PASSWORD, PASSWORD);
+      await expect(paginaAtual.getByText(/senha alterada/i)).toBeVisible({
+        timeout: 15_000,
+      });
+    } finally {
+      await sessaoAtual.close();
+      await outraSessao.close();
+    }
+  });
 });
