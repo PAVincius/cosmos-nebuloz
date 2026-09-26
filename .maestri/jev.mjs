@@ -95,10 +95,12 @@ export async function ask(
 }
 
 // Arquivo gerado não diz nada ao Jev e estoura o buffer (o graph.json tem MB).
+// scripts/ carrega dado de produção com nome e e-mail reais: não sai para o Gateway (parecer 4054c231).
 const SEM_GERADOS = [
   ":(exclude).maestri/knowledge",
   ":(exclude)graphify-out",
   ":(exclude)pnpm-lock.yaml",
+  ":(exclude)packages/database/scripts",
 ];
 const gitRun = (args, cwd) =>
   execFileSync("git", args, {
