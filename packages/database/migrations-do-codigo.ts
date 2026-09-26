@@ -126,4 +126,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260913000000_catalogo_de_ip",
   "20260914000000_ai_law_watch_record",
   "20260923000000_charter_risk_scored_at",
+  "20260926000000_tenant_isinternaltenant",
 ];
