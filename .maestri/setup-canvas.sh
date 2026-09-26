@@ -226,7 +226,7 @@ jev_compaction "Morgana"
 hire "Orbita"   "Dev Cosmos"     sonnet
 hire "Selo"     "Dev Charter"    sonnet
 hire "Andaime"  "Dev Scaffold"   sonnet
-hire "Bussola"  "Dev Meridian"   haiku
+hire "Bussola"  "Dev Meridian"   sonnet
 hire "Alicerce" "Dev Plataforma" sonnet
 hire "Painel"   "Dev Backoffice" sonnet
 # Signal trabalha na worktree onde as telas vivem. Depois do merge: `maestri recruit --replace "Farol" --command "claude --model sonnet" --dir .`
