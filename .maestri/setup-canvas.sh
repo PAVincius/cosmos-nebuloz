@@ -313,5 +313,13 @@ routine "Retro semanal" --weekly fri@16:00 \
   --command "{{output}}
 
 Retro semanal, conforme a seção Aprendizado do seu papel."
+# Arquivo no Drive (remote rclone nebuloz-drive:, pasta Memory): transcrições com mais de 21 dias saem do disco
+# (redigidas, para a Lixeira depois de conferidas no Drive); memória e registros ganham espelho. Só acorda a
+# Morgana se algum envio falhar. Remote numa máquina nova: ver o cabeçalho de .maestri/arquivo/arquivar.mjs.
+routine "Arquivo semanal" --weekly fri@19:00 \
+  --pre-run 'node "$MAESTRI_WORKSPACE_DIR/.maestri/arquivo/arquivar.mjs"' \
+  --command "{{output}}
+
+Avise o CEO do que falhou no arquivo semanal e que dá para repetir com: node .maestri/arquivo/arquivar.mjs"
 
 echo "Pronto. Confira: $M list · $M floor list · $M routine list"
