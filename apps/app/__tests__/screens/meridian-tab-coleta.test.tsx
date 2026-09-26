@@ -20,6 +20,7 @@ import type { AssessmentDetail } from "../../app/(meridian)/actions/assessments"
 const assignRespondentMock = vi.fn();
 const revokeRespondentMock = vi.fn();
 const reissueRespondentLinkMock = vi.fn();
+const reissuePendingLinksMock = vi.fn();
 
 vi.mock("@/app/(meridian)/actions/collection", () => ({
   assignRespondent: (...args: unknown[]) => assignRespondentMock(...args),
@@ -28,11 +29,14 @@ vi.mock("@/app/(meridian)/actions/collection", () => ({
   revokeRespondent: (...args: unknown[]) => revokeRespondentMock(...args),
   reissueRespondentLink: (...args: unknown[]) =>
     reissueRespondentLinkMock(...args),
-  reissuePendingLinks: vi.fn(),
+  reissuePendingLinks: (...args: unknown[]) => reissuePendingLinksMock(...args),
 }));
 
 import { ModalProvider } from "@/components/charter/modal";
-import ColetaTab from "@/components/meridian/screens/tab-coleta";
+import ColetaTab, {
+  buildReissuedListCsv,
+  buildReissuedListText,
+} from "@/components/meridian/screens/tab-coleta";
 
 const ASSESSMENT: AssessmentDetail = {
   id: "a1",
@@ -199,7 +203,10 @@ describe("ColetaTab — atribuir respondente", () => {
       ).toBeTruthy();
     });
 
-    fireEvent.keyDown(document, { key: "Escape" });
+    // O Esc de verdade tem como alvo o elemento focado (o modal foca o
+    // primeiro controle ao abrir) — disparar em `document` não passaria
+    // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
 
     // Esc sozinho não fecha nem recarrega — só abre a confirmação.
     expect(screen.queryByText("tela recarregando")).toBeNull();
@@ -491,10 +498,207 @@ describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
     fireEvent.click(screen.getByText("Reemitir link"));
     await screen.findByDisplayValue(/meridian-responder\/tok-reemitido/);
 
-    fireEvent.keyDown(document, { key: "Escape" });
+    // O Esc de verdade tem como alvo o elemento focado (o modal foca o
+    // primeiro controle ao abrir) — disparar em `document` não passaria
+    // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
     expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
     expect(
       screen.getByDisplayValue(/meridian-responder\/tok-reemitido/)
     ).toBeTruthy();
+  });
+});
+
+describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
+  const ITEMS = [
+    {
+      respondentId: "r1",
+      name: "Ana Kim",
+      axis: "DATA" as const,
+      link: "https://app.nebuloz.ai/meridian-responder/tok1",
+    },
+    {
+      respondentId: "r2",
+      name: "Bia Reis",
+      axis: "PROCESS" as const,
+      link: "https://app.nebuloz.ai/meridian-responder/tok2",
+    },
+  ];
+
+  it("texto: nome · eixo · link, um por linha", () => {
+    const text = buildReissuedListText(ITEMS);
+    expect(text).toBe(
+      "Ana Kim · Data · https://app.nebuloz.ai/meridian-responder/tok1\n" +
+        "Bia Reis · Process · https://app.nebuloz.ai/meridian-responder/tok2"
+    );
+  });
+
+  it("csv: header + linhas entre aspas", () => {
+    const csv = buildReissuedListCsv(ITEMS);
+    const lines = csv.split("\n");
+    expect(lines[0]).toBe("nome,eixo,link");
+    expect(lines[1]).toBe(
+      '"Ana Kim","Data","https://app.nebuloz.ai/meridian-responder/tok1"'
+    );
+    expect(lines).toHaveLength(3);
+  });
+});
+
+describe("ColetaTab — reemitir e copiar todos os pendentes (spec 006 US2)", () => {
+  const ASSESSMENT_COM_PENDENTES: AssessmentDetail = {
+    ...ASSESSMENT,
+    respondents: [
+      {
+        id: "r1",
+        name: "Ana Kim",
+        role: "Eng",
+        email: "ana@x.com",
+        axis: "DATA",
+        status: "INVITED",
+        invitedAt: "2026-09-20T00:00:00.000Z",
+        lastRemindedAt: null,
+        completedAt: null,
+      },
+      {
+        id: "r2",
+        name: "Bia Reis",
+        role: "Eng",
+        email: "bia@x.com",
+        axis: "PROCESS",
+        status: "DONE",
+        invitedAt: "2026-09-20T00:00:00.000Z",
+        lastRemindedAt: null,
+        completedAt: "2026-09-21T00:00:00.000Z",
+      },
+    ],
+  };
+
+  it("reemite em lote, mostra a lista completa e libera Concluir só depois de copiar/baixar", async () => {
+    reissuePendingLinksMock.mockResolvedValue({
+      ok: true,
+      data: {
+        assessmentId: "a1",
+        reissued: [
+          { respondentId: "r1", name: "Ana Kim", axis: "DATA", token: "tokA" },
+        ],
+      },
+    });
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+    });
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT_COM_PENDENTES} onChanged={() => {}} />
+      </ModalProvider>
+    );
+
+    fireEvent.click(screen.getByText("Reemitir e copiar todos os pendentes"));
+    await waitFor(() => {
+      expect(reissuePendingLinksMock).toHaveBeenCalledWith({
+        assessmentId: "a1",
+      });
+    });
+
+    expect(await screen.findByText("Links reemitidos")).toBeTruthy();
+    const dialog = screen.getByRole("dialog", { name: "Links reemitidos" });
+    expect(
+      within(dialog).getByDisplayValue(/meridian-responder\/tokA/)
+    ).toBeTruthy();
+    expect(within(dialog).getByText(/Ana Kim/)).toBeTruthy();
+
+    const concluir = () =>
+      screen.getByText("Concluir").closest("button") as HTMLButtonElement;
+    expect(concluir().disabled).toBe(true);
+
+    fireEvent.click(screen.getByText("Copiar tudo"));
+    await waitFor(() => {
+      expect(concluir().disabled).toBe(false);
+    });
+  });
+
+  it("sem pendentes: não abre lista (FR-013) — só o toast informativo", async () => {
+    reissuePendingLinksMock.mockResolvedValue({
+      ok: true,
+      data: { assessmentId: "a1", reissued: [] },
+    });
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT} onChanged={() => {}} />
+      </ModalProvider>
+    );
+
+    fireEvent.click(screen.getByText("Reemitir e copiar todos os pendentes"));
+    await waitFor(() => {
+      expect(reissuePendingLinksMock).toHaveBeenCalled();
+    });
+    expect(screen.queryByText("Links reemitidos")).toBeNull();
+  });
+
+  it("baixar .txt/.csv aciona download e libera Concluir", async () => {
+    reissuePendingLinksMock.mockResolvedValue({
+      ok: true,
+      data: {
+        assessmentId: "a1",
+        reissued: [
+          { respondentId: "r1", name: "Ana Kim", axis: "DATA", token: "tokA" },
+        ],
+      },
+    });
+    const createObjectURL = vi.fn().mockReturnValue("blob:mock");
+    const revokeObjectURL = vi.fn();
+    Object.assign(URL, { createObjectURL, revokeObjectURL });
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {
+        /* jsdom não navega de verdade */
+      });
+
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT_COM_PENDENTES} onChanged={() => {}} />
+      </ModalProvider>
+    );
+    fireEvent.click(screen.getByText("Reemitir e copiar todos os pendentes"));
+    await screen.findByText("Links reemitidos");
+
+    fireEvent.click(screen.getByText("Baixar .txt"));
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(
+        (screen.getByText("Concluir").closest("button") as HTMLButtonElement)
+          .disabled
+      ).toBe(false);
+    });
+
+    clickSpy.mockRestore();
+  });
+
+  it("Esc sem copiar/baixar pede confirmação — a lista não some sozinha", async () => {
+    reissuePendingLinksMock.mockResolvedValue({
+      ok: true,
+      data: {
+        assessmentId: "a1",
+        reissued: [
+          { respondentId: "r1", name: "Ana Kim", axis: "DATA", token: "tokA" },
+        ],
+      },
+    });
+    render(
+      <ModalProvider>
+        <ColetaTab a={ASSESSMENT_COM_PENDENTES} onChanged={() => {}} />
+      </ModalProvider>
+    );
+    fireEvent.click(screen.getByText("Reemitir e copiar todos os pendentes"));
+    await screen.findByText("Links reemitidos");
+
+    // O Esc de verdade tem como alvo o elemento focado (o modal foca o
+    // primeiro controle ao abrir) — disparar em `document` não passaria
+    // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
+    expect(
+      screen.getByText("Fechar sem copiar ou baixar a lista?")
+    ).toBeTruthy();
+    expect(screen.getByText("Links reemitidos")).toBeTruthy();
   });
 });
