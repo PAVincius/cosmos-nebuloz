@@ -43,6 +43,10 @@ código: [PRD](./lab-prd.md) · [SRD](./lab-srd.md).
   `main` — implementado, parcial ou ausente — com o arquivo que prova.
 - As specs em `specs/` são fatias de implementação; quando divergem do PRD/SRD,
   o documento de produto diz qual vale.
+- [Registro de decisões](./registro-de-decisoes.md) — decisões do CEO e
+  propostas à espera dele: preço, copiloto em todos os produtos, raio X,
+  modelo próprio e memória empresarial. Cada entrada traz estado e dono no
+  Maestri.
 - [Trilhas](./trilhas/MAPEAMENTO.md) — onde cada camada dos templates de trilha
   de IA (governança, conformidade, segurança) vira dado na suíte.
 - [Pesquisa de mercado do Scaffold](./pesquisa-mercado-scaffold.md).

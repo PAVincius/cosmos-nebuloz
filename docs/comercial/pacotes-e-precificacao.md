@@ -6,7 +6,8 @@ não fechava e fixa preço, franquia de IA e regras de avulso. A trava é
 **LTV/CAC ≥ 3** e **payback ≤ 12 meses**. As duas são verificadas no pior caso
 que o vendedor consegue fechar sem aprovação. Complementa
 [`icp-e-precificacao.md`](icp-e-precificacao.md) e usa a fórmula de
-[`cac-modelo.md`](cac-modelo.md).
+[`cac-modelo.md`](cac-modelo.md). As decisões que saem daqui estão no
+[registro de decisões](../produto/registro-de-decisoes.md), de D-02 a D-06.
 
 ---
 
@@ -75,7 +76,10 @@ original (R$ 9.900 → 16.900) para +4% (R$ 9.750 → 10.140).
 Copilot do Cosmos e o rascunho de política do Charter chamam modelo.
 Meridian, Scaffold e Signal não usam IA (`PRODUCT.md`, seção Capabilities). A
 franquia é real, mas o custo dela está todo em Cosmos e Charter. Isso muda a
-conta do avulso (§4) e não muda a do pacote.
+conta do avulso (§4) e não muda a do pacote. Muda de novo quando o copiloto
+chegar aos outros produtos
+([registro de decisões](../produto/registro-de-decisoes.md), D-07). O crédito
+é medido em custo, não em mensagem (D-04), então o preço aguenta essa mudança.
 
 **6. O pacote vende cinco produtos, e nenhum está pronto para cliente externo**
 ([`prontidao-lancamento.md`](../produto/prontidao-lancamento.md)). O Meridian
@@ -166,6 +170,12 @@ piso do Scale existe por causa dessa regra.
 até o cliente definir um teto. Isso permite vender a franquia **antes** de
 existir medição automática, porque nada é faturado por consumo enquanto o teto
 for nulo.
+
+Consumo que não é faturado continua custando. Por isso, enquanto o teto for
+nulo, vale a **cota técnica de 150% da franquia**
+([registro de decisões](../produto/registro-de-decisoes.md), D-05). A cota
+cabe na folga de custo de todos os pacotes. Com o copiloto em todos os produtos
+(D-07), sem ela o custo não teria limite.
 
 ---
 
