@@ -31,7 +31,9 @@ Só documento: nenhuma escrita em banco, nenhum código.
 Na mesma data, em resposta à pergunta do registro:
 - **D-08:** page index é o sumário do raio X.
 - **D-17:** horizonte de memória igual em todos os pacotes (o contrato
-  inteiro). A proposta por pacote foi riscada no registro.
+  inteiro). A proposta por pacote foi riscada no registro. Também não há
+  diferença por fonte da memória entre pacotes.
+- **D-01:** o lançamento é produto a produto, na ordem do dogfood.
 
 ## Achados conferidos no código
 
@@ -71,5 +73,3 @@ Na mesma data, em resposta à pergunta do registro:
 - D-03: números dos pacotes, depois do Caixa e do pre-mortem do Sócio.
 - D-10: dado de cliente não treina modelo compartilhado; a minuta do DPA já
   promete isso.
-- D-17: diferenciar pacote por fonte da memória ou não.
-- D-01: lançar tudo junto ou produto a produto.

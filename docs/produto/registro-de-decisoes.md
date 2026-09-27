@@ -32,8 +32,8 @@ Três regras valem para o registro inteiro:
 
 | ID | Decisão | Estado | Dono no Maestri |
 |---|---|---|---|
-| D-01 | Nenhum produto é vendido antes de passar pela esteira de validação | **Decidida** | Morgana, Crivo |
-| D-02 | A primeira receita é serviço; a assinatura entra produto a produto | Proposta | Ordem → Caixa, Ponte |
+| D-01 | Nenhum produto é vendido antes de passar pela esteira de validação; o lançamento é produto a produto | **Decidida** | Morgana, Crivo |
+| D-02 | A primeira receita é serviço; a assinatura entra produto a produto | **Decidida**, por consequência de D-01 | Ordem → Caixa, Ponte |
 | D-03 | Quatro pacotes por assento, com mínimo abaixo do teto | Proposta | Caixa, Ponte · pre-mortem do Sócio |
 | D-04 | Crédito de IA é unidade de custo, não de mensagem | Proposta | Caixa |
 | D-05 | Cota técnica de 150% da franquia enquanto o excedente não é cobrado | Proposta | Caixa, Dev Cosmos |
@@ -48,7 +48,7 @@ Três regras valem para o registro inteiro:
 | D-14 | A memória herda a permissão da origem e tem isolamento testado | Proposta | Vigia, Dev Plataforma |
 | D-15 | Retenção e apagamento da memória seguem o contrato e a LGPD | Proposta | Lacre |
 | D-16 | Décadas em três camadas, no Postgres até medir o limite | Proposta | Dev Plataforma, Pilar |
-| D-17 | Horizonte de memória consultável é o mesmo em todos os pacotes | **Decidida** | Ponte, Caixa |
+| D-17 | Memória igual em todos os pacotes: mesmo horizonte, mesmas fontes | **Decidida** | Ponte, Caixa |
 | D-18 | A Nebuloz é o primeiro tenant da memória | Proposta | Morgana |
 
 ---
@@ -73,13 +73,15 @@ pronto, e mesmo ele tem uso externo bloqueado até as condições 2 a 5 do
 parecer de compliance (`docs/compliance/2026-09-24-parecer-meridian-respondente.md`
 §4). Nenhum pacote de cinco produtos é vendável antes de os cinco passarem.
 
-**Fica em aberto:** lançar tudo junto ou produto a produto. A frase do CEO não
-decide isso. O Norte recomenda produto a produto, na ordem do dogfood:
+**Lançamento produto a produto** (decidido pelo CEO em 2026-09-27). Cada
+produto é liberado quando passa pela esteira, na ordem do dogfood:
 Meridian → Scaffold → Charter → Cosmos → Signal (`prontidao-lancamento.md` §3).
+A suíte é anunciada inteira, e os produtos ainda não liberados ficam em lista de
+espera.
 
 ### D-02 — A primeira receita é serviço; a assinatura entra produto a produto
 
-**Estado:** Proposta. **Dono:** Ordem, dividindo entre Caixa e Ponte.
+**Estado:** Decidida em 2026-09-27, por consequência de D-01: se o lançamento é produto a produto, os primeiros liberados são serviço. **Dono:** Ordem, dividindo entre Caixa e Ponte.
 
 Na ordem do dogfood, os dois primeiros liberados são o Diagnóstico (SV-01,
 R$ 48.000 por projeto) e o Scaffold. Os dois são vendidos por projeto. A
@@ -578,8 +580,9 @@ arquivo frio fica guardado durante o contrato e sai no export (D-15).
   conta do documento de preço.
 - **Consequência:** a memória não diferencia pacote. A diferença continua sendo
   assento, franquia de crédito, suporte e recursos (D-03).
-- **Fica como proposta, sem decisão:** diferenciar por fonte, por exemplo
-  indexando reunião transcrita só a partir do Growth.
+- **Sem diferença por fonte** (decidido pelo CEO em 2026-09-27): todo pacote
+  indexa as mesmas fontes, reunião transcrita inclusive, desde que ela tenha
+  passado pelo portão de consentimento (D-15).
 - **Efeito no preço:** memória acumulada é custo de troca, e custo de troca
   reduz churn. O modelo de preço não conta com isso até existir churn medido.
 
@@ -654,7 +657,3 @@ Cada frente nova (copiloto, raio X, memória, modelo próprio) começa por um
    fazer o pre-mortem.
 2. **D-10:** confirmar que dado de cliente não treina modelo compartilhado. Isso
    muda o que o comercial pode prometer.
-3. **D-17:** diferenciar pacote por fonte da memória (reunião transcrita só a
-   partir do Growth) ou não diferenciar.
-4. **D-01:** lançar tudo junto ou produto a produto, pendente desde
-   `prontidao-lancamento.md`.
