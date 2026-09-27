@@ -73,3 +73,30 @@ Na mesma data, em resposta à pergunta do registro:
 - D-03: números dos pacotes, depois do Caixa e do pre-mortem do Sócio.
 - D-10: dado de cliente não treina modelo compartilhado; a minuta do DPA já
   promete isso.
+
+## Laboratório de memória (mesma data, depois do registro)
+
+O CEO pediu para implementar o pacote STEC (docker-compose e esqueleto de
+Memory Control Plane). Ele entrou em `experiments/memoria-stec/`, fora da
+produção, conforme a D-16:
+- **Postgres + pgvector como sistema de registro:**
+  - RLS forçada, com papel da API sem superuser;
+  - memória bitemporal imutável, protegida por trigger;
+  - auditoria que só aceita INSERT;
+  - chaves de API guardadas só como hash, com papel.
+- **Projeções refeitas por `rebuild`:** Qdrant (uma coleção por tenant), Neo4j
+  e MinIO (um arquivo por versão).
+- **Apagamento por origem** (revogação de consentimento, pedido de titular) que
+  chega aos quatro armazéns.
+- **Verificação:**
+  - 23 testes de integração contra os serviços reais, em Docker;
+  - smoke test ponta a ponta com a imagem montada e a CLI;
+  - `ruff` limpo.
+- **Cortado do pacote:** Mem0, Cognee, LangGraph, consolidação por LLM, Context
+  Layer, Redis e UIs, nota de confiança decimal e senhas padrão. O motivo de
+  cada corte está no README.
+- **Achados:**
+  - o Qdrant 1.19 não abre os dados do 1.12; o `rebuild` resolveu;
+  - o vetor sem dimensão volta como `pgvector.Vector`, e a primeira versão da
+    projeção falhava em silêncio; ganhou teste.
+

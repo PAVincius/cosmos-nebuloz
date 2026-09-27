@@ -461,6 +461,7 @@ aceito. **Dono:** Dev Plataforma.
 |---|---|
 | Tipo: decisão, compromisso, lição, fato, preferência | "O que foi decidido" e "o que aprendemos" pedem respostas diferentes |
 | Data do fato e vigência (de/até) | Daqui a dez anos, o que valia em 2027 já não vale; a vigência mostra isso sem apagar nada |
+| Tempo de transação (quando o sistema acreditou nesta versão) | Separa "o que valia em março" de "o que sabíamos em março"; sem ele, uma correção reescreve o passado |
 | Origem: produto, entidade, id | Permite citar (D-07) e refazer o índice (D-12) |
 | Autor e papel | Quem decidiu é parte da decisão |
 | Confiança: medido, estimado, declarado | É a escala do Meridian (entidade 5); o mapa proíbe inventar outra |
@@ -472,6 +473,17 @@ aceito. **Dono:** Dev Plataforma.
   (`.maestri/memoria/*.md`).
 
 O produto herda esse formato em vez de inventar outro.
+
+**Laboratório:** o formato está implementado e testado em
+[`experiments/memoria-stec`](../../experiments/memoria-stec/README.md). Lá
+estão:
+- versões imutáveis com os dois tempos;
+- invalidação que mantém a decisão revogada consultável;
+- confiança só na escala do Meridian;
+- apagamento por origem que tira a memória de todos os armazéns.
+
+O pacote STEC trazido pelo CEO em 2026-09-27 foi a base. O que se cortou dele,
+e por quê, está no README.
 
 ### D-14 — A memória herda a permissão da origem e tem isolamento testado
 
@@ -561,6 +573,11 @@ o pré-requisito da memória V0 (§7).
   tem índice vetorial (nem HNSW nem IVFFlat, em nenhuma migration), e cada
   busca compara com todos os trechos do tenant. Um índice HNSW por partição vem
   antes de qualquer troca de banco, com latência medida antes e depois.
+- **O laboratório já mede isso.** Em `experiments/memoria-stec`, Qdrant, Neo4j
+  e MinIO rodam como projeções do Postgres, com `rebuild` que as refaz. A
+  primeira lição veio de graça: o Qdrant 1.19 não abriu os dados do 1.12. Como
+  era projeção, bastou apagar o volume e reconstruir. Se fosse fonte de verdade,
+  teria exigido migração versão por versão.
 - **Alternativa rejeitada, por ora:** banco vetorial dedicado, LanceDB ou
   GraphRAG em produção. Eles ficam no plano do laboratório
   (`2026-05-26-slm-finetuning-pipeline.md`) até uma medição de latência e de
