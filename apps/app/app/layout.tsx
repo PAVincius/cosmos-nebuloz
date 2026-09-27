@@ -6,6 +6,7 @@ import { DesignSystemProvider } from "@repo/design-system";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { Toolbar } from "@repo/feature-flags/components/toolbar";
 import type { ReactNode } from "react";
+import { EnvironmentBanner } from "./environment-banner";
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -18,6 +19,7 @@ const RootLayout = ({ children }: RootLayoutProperties) => (
       <meta content="#5e6ad2" name="theme-color" />
     </head>
     <body>
+      <EnvironmentBanner vercelEnv={process.env.VERCEL_ENV} />
       <AnalyticsProvider>
         <AuthProvider
           helpUrl={env.NEXT_PUBLIC_DOCS_URL}
