@@ -126,6 +126,28 @@ const termos = (t) =>
       .filter((w) => TEM_NUMERO.test(w) || w.length >= 4)
   );
 
+/**
+ * Estado de produção sustentado pelo sinal da ferramenta, mas só na evidência que fala do mesmo alvo:
+ * se a frase tem número (#261), a evidência precisa ter o número; se não, dividir ao menos um termo.
+ * Sem isso, um "merged" de outro PR na sessão liberaria qualquer "está mergeado".
+ */
+export function sustentadaPorSinal(afirmacao, evidencias) {
+  if (!ESTADO_DE_PRODUCAO.test(afirmacao)) {
+    return false;
+  }
+  const alvo = termos(afirmacao);
+  const numeros = [...alvo].filter((w) => TEM_NUMERO.test(w));
+  return evidencias.some((e) => {
+    if (!SINAL_DE_PRODUCAO.test(e)) {
+      return false;
+    }
+    const t = termos(e);
+    return numeros.length
+      ? numeros.every((n) => t.has(n))
+      : [...alvo].some((w) => t.has(w));
+  });
+}
+
 /** Índices das evidências mais parecidas (número pesa 3); empate: a mais recente primeiro. */
 export function candidatas(afirmacao, evidencias, k = POR_AFIRMACAO) {
   const alvo = termos(afirmacao);
@@ -207,10 +229,7 @@ export async function guarda(entrada, deps = {}) {
   const resultados = [];
   try {
     for (const afirmacao of alvos) {
-      if (
-        ESTADO_DE_PRODUCAO.test(afirmacao) &&
-        evidencias.some((e) => SINAL_DE_PRODUCAO.test(e))
-      ) {
+      if (sustentadaPorSinal(afirmacao, evidencias)) {
         resultados.push({ afirmacao, veredito: "sustentada", evidencia: null });
         continue;
       }

@@ -6,6 +6,7 @@ import {
   candidatas,
   decidir,
   guarda,
+  sustentadaPorSinal,
   turnoAtual,
 } from "./fonte.mjs";
 
@@ -150,7 +151,11 @@ test('guarda: estado de produção com sinal de ferramenta passa sem NLI; "merge
   const mergeado = await guarda(
     { stop_hook_active: false },
     {
-      ler: () => [usuario("entrou?"), resultado("state: MERGED"), final],
+      ler: () => [
+        usuario("entrou?"),
+        resultado("gh pr view 261\nstate: MERGED"),
+        final,
+      ],
       nli: () => assert.fail("chamou o NLI"),
     }
   );
@@ -173,6 +178,35 @@ test('guarda: estado de produção com sinal de ferramenta passa sem NLI; "merge
     }
   );
   assert.equal(perguntou, true);
+});
+
+test("sustentadaPorSinal: o sinal precisa estar na evidência do mesmo alvo", () => {
+  const frase = "O PR #261 já está mergeado.";
+  assert.equal(
+    sustentadaPorSinal(frase, ["gh pr view 261\nstate: MERGED"]),
+    true
+  );
+  assert.equal(
+    sustentadaPorSinal(frase, ["gh pr view 250\nstate: MERGED"]),
+    false
+  );
+  assert.equal(
+    sustentadaPorSinal(frase, [
+      "Merge pull request #250",
+      "gh pr view 261\nstate: OPEN",
+    ]),
+    false
+  );
+  assert.equal(
+    sustentadaPorSinal("O deploy do backoffice está no ar.", [
+      "backoffice readyState: READY",
+    ]),
+    true
+  );
+  assert.equal(
+    sustentadaPorSinal("O saldo é R$ 42 mil.", ["state: MERGED"]),
+    false
+  );
 });
 
 test("guarda: contradição bloqueia e vira registro de achado", async () => {
