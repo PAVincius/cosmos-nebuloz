@@ -208,6 +208,7 @@ export async function requireTenantSession(
   if (!tenantId) {
     const firstMember = await database.tenantMember.findFirst({
       where: { userId: session.user.id },
+      orderBy: { createdAt: "asc" },
       select: { tenantId: true, role: true },
     });
     if (!firstMember) {
