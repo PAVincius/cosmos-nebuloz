@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal</title>
+<style>
+  :root { color-scheme: dark; --fundo: #0b0b0c; --barra: #161618; --texto: #e6e6e6; --apagado: #8a8a8f; --vivo: #3ecf8e; --parado: #6b6b70; --prod: #f5a524; }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: flex; flex-direction: column; background: var(--fundo); color: var(--texto); font: 13px/1.4 -apple-system, system-ui, sans-serif; }
+  header { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: var(--barra); }
+  h1 { font-size: 13px; margin: 0; font-weight: 600; }
+  nav { display: flex; gap: 4px; }
+  nav button { background: none; border: 1px solid #2a2a2e; color: var(--apagado); border-radius: 6px; padding: 2px 10px; font: inherit; cursor: pointer; }
+  nav button[aria-pressed="true"] { color: var(--texto); border-color: #4a4a50; }
+  nav button[data-amb="prod"][aria-pressed="true"] { color: var(--prod); border-color: var(--prod); }
+  #estado { display: flex; align-items: center; gap: 6px; color: var(--apagado); }
+  #estado::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--parado); }
+  #estado.vivo::before { background: var(--vivo); }
+  #url { flex: 1; min-width: 0; color: var(--apagado); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  main { flex: 1; min-height: 0; display: grid; place-items: center; }
+  img { max-width: 100%; max-height: 100%; display: none; }
+  img.clicavel { cursor: crosshair; }
+  #vazio { color: var(--apagado); text-align: center; padding: 16px; white-space: pre-line; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="nome">Portal</h1>
+  <nav>
+    <button type="button" data-amb="local">Local</button>
+    <button type="button" data-amb="prod">Produção</button>
+  </nav>
+  <span id="estado">parado</span>
+  <span id="url"></span>
+</header>
+<main>
+  <img id="tela" alt="Tela da sessão do agent-browser">
+  <div id="vazio"></div>
+</main>
+<script>
+// Portal de uma aplicação: mostra ao vivo a sessão do agent-browser "<app>-<ambiente>".
+// ?app=meridian&nome=Meridian&local=9302&prod=9402 (portas fixas, ver abrir.sh).
+// Local aceita clique (pair browsing); produção é só leitura, como a regra dos agentes.
+const p = new URLSearchParams(location.search);
+const app = p.get("app") ?? "";
+const portas = { local: p.get("local"), prod: p.get("prod") };
+const $ = (id) => document.getElementById(id);
+const tela = $("tela");
+let amb = "local";
+let ws = null;
+let tentativa = null;
+let tamanho = { w: 1, h: 1 };
+
+document.title = $("nome").textContent = p.get("nome") ?? app;
+
+function mostrarVazio() {
+  tela.style.display = "none";
+  $("estado").textContent = "parado";
+  $("estado").classList.remove("vivo");
+  $("vazio").textContent = `Sessão ${app}-${amb} fechada.\nAbra com: bash .maestri/portal/abrir.sh ${app} ${amb}`;
+}
+
+function conectar() {
+  clearTimeout(tentativa);
+  ws?.close();
+  const s = new WebSocket(`ws://127.0.0.1:${portas[amb]}/?maxFps=10`);
+  ws = s;
+  s.onmessage = (e) => {
+    const m = JSON.parse(e.data);
+    if (m.type === "frame") {
+      tela.src = `data:image/jpeg;base64,${m.data}`;
+      tamanho = { w: m.metadata.deviceWidth, h: m.metadata.deviceHeight };
+      tela.style.display = "block";
+      $("vazio").textContent = "";
+      $("estado").textContent = "ao vivo";
+      $("estado").classList.add("vivo");
+    } else if (m.type === "url") {
+      $("url").textContent = m.url;
+    }
+  };
+  s.onclose = () => {
+    if (ws !== s) return;
+    mostrarVazio();
+    tentativa = setTimeout(conectar, 3000);
+  };
+}
+
+function trocar(novo) {
+  amb = novo;
+  document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.amb === amb)));
+  tela.classList.toggle("clicavel", amb === "local");
+  $("url").textContent = "";
+  mostrarVazio();
+  conectar();
+}
+
+tela.addEventListener("click", (e) => {
+  if (amb !== "local" || ws?.readyState !== WebSocket.OPEN) return;
+  const r = tela.getBoundingClientRect();
+  const x = Math.round(((e.clientX - r.left) / r.width) * tamanho.w);
+  const y = Math.round(((e.clientY - r.top) / r.height) * tamanho.h);
+  for (const eventType of ["mousePressed", "mouseReleased"]) {
+    ws.send(JSON.stringify({ type: "input_mouse", eventType, x, y, button: "left", clickCount: 1 }));
+  }
+});
+document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => trocar(b.dataset.amb)));
+trocar("local");
+</script>
+</body>
+</html>
