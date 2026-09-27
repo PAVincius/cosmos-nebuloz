@@ -22,6 +22,14 @@ const FIM_DE_FRASE = /(?<=[.!?])\s+/;
 const TEM_NUMERO = /\d/;
 const VERIFICACAO =
   /\b(confirmad[oa]s?|verificad[oa]s?|validad[oa]s?|comprovad[oa]s?|garantid[oa]s?|aprovad[oa]s?|passaram|passou|est[áa] corret[oa]|est[ãa]o corret[oa]s)\b/i;
+// Estado de produção afirmado (merge, deploy, migration): é onde agente mais erra confiante.
+const ESTADO_DE_PRODUCAO =
+  /\b(mergead[oa]s?|deployad[oa]s?|est[áa] no ar|entrou no ar|foi aplicad[oa]|foram aplicad[oa]s|subiu (para|pra) produ[çc][ãa]o)\b/i;
+// O NLI não liga "mergeado" a "state: MERGED" (saída seca de ferramenta). Para essas frases, regra:
+// sinal de ferramenta na evidência sustenta; sem sinal, segue para o NLI (que pega contradição e falta de fonte).
+// ponytail: um sinal só para os três tipos; "está no ar" sustentado por um "merged" passa. Separar por tipo se acontecer.
+const SINAL_DE_PRODUCAO =
+  /\bmerged\b|Merge pull request #|\bREADY\b|\bapplied\b|Applying migration/i;
 const PALAVRA = /[\p{L}\d][\p{L}\d.,]*/gu;
 const PONTUACAO_FINAL = /[.,]+$/;
 const SEPARADOR_MILHAR = /[.,]/g;
@@ -101,7 +109,11 @@ export function afirmacoes(texto) {
     .map((f) => f.trim())
     .filter(
       (f) =>
-        f && !f.endsWith("?") && (TEM_NUMERO.test(f) || VERIFICACAO.test(f))
+        f &&
+        !f.endsWith("?") &&
+        (TEM_NUMERO.test(f) ||
+          VERIFICACAO.test(f) ||
+          ESTADO_DE_PRODUCAO.test(f))
     )
     .slice(0, MAX_AFIRMACOES);
 }
@@ -195,6 +207,13 @@ export async function guarda(entrada, deps = {}) {
   const resultados = [];
   try {
     for (const afirmacao of alvos) {
+      if (
+        ESTADO_DE_PRODUCAO.test(afirmacao) &&
+        evidencias.some((e) => SINAL_DE_PRODUCAO.test(e))
+      ) {
+        resultados.push({ afirmacao, veredito: "sustentada", evidencia: null });
+        continue;
+      }
       const idx = candidatas(afirmacao, evidencias);
       const enviadas = idx.map((i) =>
         evidencias[i].slice(0, MAX_CHARS_EVIDENCIA)

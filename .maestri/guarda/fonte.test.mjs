@@ -73,6 +73,18 @@ test("afirmacoes: só frases com número ou verificação; ignora código e perg
   ]);
 });
 
+test("afirmacoes: estado de produção afirmado também é checado; regra sobre produção não", () => {
+  const texto = [
+    "O PR já está mergeado.",
+    "A migration foi aplicada em produção.",
+    "Escrita em produção precisa do seu vai.",
+  ].join(" ");
+  assert.deepEqual(afirmacoes(texto), [
+    "O PR já está mergeado.",
+    "A migration foi aplicada em produção.",
+  ]);
+});
+
 test("decidir: contradição bloqueia com a evidência; sem fonte bloqueia pedindo fonte; tudo sustentado passa", () => {
   const contra = decidir([
     {
@@ -131,6 +143,36 @@ test("guarda: serviço NLI fora do ar deixa passar (falha aberta)", async () => 
     }
   );
   assert.equal(r, null);
+});
+
+test('guarda: estado de produção com sinal de ferramenta passa sem NLI; "mergedAt: null" não é sinal', async () => {
+  const final = assistente("O PR #261 já está mergeado.");
+  const mergeado = await guarda(
+    { stop_hook_active: false },
+    {
+      ler: () => [usuario("entrou?"), resultado("state: MERGED"), final],
+      nli: () => assert.fail("chamou o NLI"),
+    }
+  );
+  assert.equal(mergeado, null);
+  let perguntou = false;
+  await guarda(
+    { stop_hook_active: false },
+    {
+      ler: () => [
+        usuario("entrou?"),
+        resultado("state: OPEN\nmergedAt: null"),
+        final,
+      ],
+      nli: async () => {
+        perguntou = true;
+        return { veredito: "contradita", melhor: { i: 0 } };
+      },
+      registrar: () => {},
+      papel: "Morgana",
+    }
+  );
+  assert.equal(perguntou, true);
 });
 
 test("guarda: contradição bloqueia e vira registro de achado", async () => {
