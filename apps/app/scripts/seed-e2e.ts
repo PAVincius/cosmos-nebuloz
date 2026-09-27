@@ -1923,6 +1923,28 @@ async function main(): Promise<SeedContext> {
   }
   const TENANT_ID = tenant.id;
 
+  // Idempotente — sem isso, `cosmos-dev` fica sem nenhuma linha em
+  // TenantModule (a migration 20260728120000_charter_module só semeou
+  // tenants que já existiam quando ela rodou; um tenant recriado por este
+  // seed nasce depois, sem backfill). Sem o módulo COSMOS contratado,
+  // `listarProdutos()` não acha nenhum produto DISPONIVEL pro admin
+  // (`resolve-post-login-destination.ts`) — e se outro seed opcional (ex.:
+  // `seed:meridian cosmos-dev`) contratar MERIDIAN antes, o destino
+  // pós-login vira `/meridian` em vez de `/cosmos/dashboard`, quebrando o
+  // cenário 3 do catálogo (SC-003, tenant sem `isInternalTenant` segue pro
+  // produto de sempre).
+  await db.tenantModule.upsert({
+    where: { tenantId_module: { tenantId: TENANT_ID, module: "COSMOS" } },
+    create: {
+      tenantId: TENANT_ID,
+      module: "COSMOS",
+      status: "ACTIVE",
+      contractedAt: new Date(),
+    },
+    update: { status: "ACTIVE" },
+  });
+  console.log("  ✓ módulo COSMOS contratado");
+
   const membership = await db.tenantMember.findFirst({
     where: { userId, tenantId: TENANT_ID },
   });

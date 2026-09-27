@@ -87,7 +87,7 @@ export const SignUp = () => {
       <div className="space-y-1">
         <h1 className="font-bold text-2xl tracking-tight">Criar conta</h1>
         <p className="text-muted-foreground text-sm">
-          Comece sua jornada no Cosmos gratuitamente.
+          Comece sua jornada na Nebuloz gratuitamente.
         </p>
       </div>
 

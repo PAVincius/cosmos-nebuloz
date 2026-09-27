@@ -6,12 +6,14 @@ export type { MemberRole } from "@repo/database";
 
 import type { MemberRole } from "@repo/database";
 
+import { keys, renderResetPasswordEmail, resend } from "@repo/email";
 import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { twoFactor } from "better-auth/plugins";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
+import { MIN_PASSWORD_LENGTH } from "./password-policy";
 
 const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 /** Janela em que uma sessão encerrada ainda é servida pelo cookie assinado.
@@ -44,7 +46,27 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    minPasswordLength: 12, // SOC2 CC6: min 12 chars
+    minPasswordLength: MIN_PASSWORD_LENGTH, // SOC2 CC6
+    sendResetPassword: async ({ user, url }) => {
+      const fromAddress = keys().RESEND_FROM;
+      try {
+        const html = await renderResetPasswordEmail({
+          userName: user.name || undefined,
+          resetUrl: url,
+        });
+        await resend.emails.send({
+          from: `Nebuloz <${fromAddress}>`,
+          to: user.email,
+          subject: "Redefina sua senha no Nebuloz",
+          html,
+        });
+      } catch (emailError: unknown) {
+        log.error("sendResetPassword: falha ao enviar email", {
+          user_id: user.id,
+          error: emailError,
+        });
+      }
+    },
   },
   session: {
     expiresIn: SESSION_IDLE_SECONDS,
@@ -75,10 +97,24 @@ export const auth = betterAuth({
   },
   plugins: [
     twoFactor({
-      issuer: "Cosmos",
+      issuer: "Nebuloz",
       otpOptions: { digits: 6 },
     }),
   ],
+  // O better-auth já tem uma regra especial embutida pra
+  // `/request-password-reset` (janela de 60s, max 3) — a mesma altura de
+  // `/sign-in`. Achado do Vigia: quem enumera e-mail atrás de conta
+  // existente via "esqueci a senha" merece uma janela maior, não a de
+  // login. `customRules` só adiciona esta regra; não liga rate limit fora
+  // de produção (`enabled` continua no padrão do better-auth,
+  // produção-only) — ligar globalmente em dev/e2e derrubaria as suítes
+  // que logam repetidas vezes num ambiente sem IP confiável (bucket único
+  // compartilhado por todas as requisições).
+  rateLimit: {
+    customRules: {
+      "/request-password-reset": { window: 900, max: 3 }, // 15min / 3 por IP
+    },
+  },
   secret: AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   // Toda requisição de auth é recusada com "Invalid origin" quando a origem não

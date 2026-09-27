@@ -1,3 +1,4 @@
+import { requireTenantSession } from "@repo/auth/server";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   BoxIcon,
@@ -8,6 +9,7 @@ import {
   SignalIcon,
   UsersIcon,
 } from "lucide-react";
+import { headers } from "next/headers";
 import Link from "next/link";
 import type { ElementType } from "react";
 import {
@@ -16,6 +18,7 @@ import {
   type ProdutoNoPainel,
 } from "@/app/actions/produtos";
 import { appDesign } from "@/lib/app-design";
+import { isTenantInterno } from "../_lib/resolve-post-login-destination";
 import { PageHeader } from "../components/page-header";
 
 export const metadata = {
@@ -58,9 +61,21 @@ function formatarData(iso: string): string {
   });
 }
 
-function CartaoDeProduto({ produto }: { produto: ProdutoNoPainel }) {
+function CartaoDeProduto({
+  produto,
+  catalogoPosLogin,
+}: {
+  produto: ProdutoNoPainel;
+  /** Landing pós-login do tenant interno: "não disponível" lê como "em
+   *  breve", não como o motivo real de contrato (não faz sentido falar de
+   *  "fale com o comercial" para quem já está dentro da própria suíte). */
+  catalogoPosLogin: boolean;
+}) {
   const Icone = ICONES[produto.modulo];
-  const badge = BADGE[produto.estado];
+  const emBreve = catalogoPosLogin && produto.estado !== "DISPONIVEL";
+  const badge = emBreve
+    ? { rotulo: "Em breve", variante: "outline" as const }
+    : BADGE[produto.estado];
   const clicavel = produto.href !== null;
 
   const corpo = (
@@ -87,11 +102,18 @@ function CartaoDeProduto({ produto }: { produto: ProdutoNoPainel }) {
         <p className="text-muted-foreground text-sm leading-relaxed">
           {produto.resumo}
         </p>
+        <p className="text-muted-foreground text-xs">
+          Perfis: {produto.perfis.join(", ")}
+        </p>
       </div>
 
       {/* href e motivo são mutuamente exclusivos por contrato da action:
           quem abre não carrega justificativa, quem não abre não carrega link. */}
-      {produto.motivo ? (
+      {emBreve ? (
+        <p className="mt-auto text-muted-foreground text-xs leading-relaxed">
+          Em breve.
+        </p>
+      ) : produto.motivo ? (
         <p className="mt-auto text-muted-foreground text-xs leading-relaxed">
           {produto.motivo}
         </p>
@@ -127,19 +149,31 @@ function CartaoDeProduto({ produto }: { produto: ProdutoNoPainel }) {
 }
 
 export default async function ProdutoPage() {
-  const resultado = await listarProdutos();
+  const { tenantId } = await requireTenantSession(await headers());
+  const [resultado, catalogoPosLogin] = await Promise.all([
+    listarProdutos(),
+    isTenantInterno(tenantId),
+  ]);
 
   return (
     <div className={appDesign.shell}>
       <PageHeader
-        subtitle="O que este workspace contratou, e onde entrar"
+        subtitle={
+          catalogoPosLogin
+            ? "Catálogo de produtos da suíte Nebuloz"
+            : "O que este workspace contratou, e onde entrar"
+        }
         title="Produtos"
       />
       <div className={appDesign.bodyScroll}>
         {resultado.ok ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {resultado.data.map((produto) => (
-              <CartaoDeProduto key={produto.modulo} produto={produto} />
+              <CartaoDeProduto
+                catalogoPosLogin={catalogoPosLogin}
+                key={produto.modulo}
+                produto={produto}
+              />
             ))}
           </div>
         ) : (

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
+import { resolvePostLoginDestination } from "./_lib/resolve-post-login-destination";
 
-// A primeira tela do produto é o dashboard do Cosmos. Antes daqui saía um
-// redirect para `/dashboard`, que por sua vez redirecionava para
-// `/cosmos/dashboard` — dois saltos, duas idas ao servidor e um flash de rota
-// intermediária antes de a tela aparecer. `/dashboard` não existe mais.
-export default function RootPage() {
-  redirect("/cosmos/dashboard");
+// Tenant interno (isInternalTenant) cai no catálogo de produtos; os demais
+// seguem direto pro produto contratado — hoje, na prática, o mesmo
+// `/cosmos/dashboard` de antes desta feature, sem mudança observável.
+export default async function RootPage() {
+  redirect(await resolvePostLoginDestination());
 }

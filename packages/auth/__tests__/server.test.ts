@@ -14,6 +14,8 @@ const mocks = vi.hoisted(() => ({
   nextHeaders: vi.fn(),
   /** Config passada ao betterAuth() na carga do módulo. */
   authConfig: undefined as Record<string, unknown> | undefined,
+  /** Config passada ao twoFactor() na carga do módulo. */
+  twoFactorConfig: undefined as Record<string, unknown> | undefined,
 }));
 
 vi.mock("better-auth", () => ({
@@ -23,7 +25,17 @@ vi.mock("better-auth", () => ({
   },
 }));
 vi.mock("better-auth/adapters/prisma", () => ({ prismaAdapter: () => ({}) }));
-vi.mock("better-auth/plugins", () => ({ twoFactor: () => ({}) }));
+vi.mock("better-auth/plugins", () => ({
+  twoFactor: (config: Record<string, unknown>) => {
+    mocks.twoFactorConfig = config;
+    return {};
+  },
+}));
+vi.mock("@repo/email", () => ({
+  keys: () => ({ RESEND_FROM: "noreply@nebuloz.com" }),
+  resend: { emails: { send: vi.fn() } },
+  renderResetPasswordEmail: vi.fn().mockResolvedValue("<html />"),
+}));
 
 vi.mock("@repo/database", () => ({
   database: {
@@ -287,6 +299,21 @@ describe("configuração do better-auth", () => {
     expect(emailCfg.minPasswordLength).toBe(12);
   });
 
+  // Achado do Vigia (BAIXO, revisão de segurança da spec 004):
+  // /request-password-reset só tinha a regra especial embutida do
+  // better-auth (janela de 60s), a mesma altura de proteção pensada pra
+  // login — sem uma regra própria, mais restritiva, pra quem enumera
+  // e-mail atrás de conta existente via "esqueci a senha".
+  it("tem regra de rate-limit própria e mais restritiva pra /request-password-reset", () => {
+    const rateLimitCfg = mocks.authConfig?.rateLimit as {
+      customRules?: Record<string, { window: number; max: number }>;
+    };
+    const regra = rateLimitCfg?.customRules?.["/request-password-reset"];
+    expect(regra).toBeDefined();
+    expect(regra?.max).toBeLessThanOrEqual(3);
+    expect(regra?.window).toBeGreaterThanOrEqual(300);
+  });
+
   // Curinga em trustedOrigins abriria o fluxo de auth para qualquer página
   // hospedada no domínio.
   it("não aceita curinga em trustedOrigins", () => {
@@ -325,5 +352,14 @@ describe("configuração do better-auth", () => {
       "[auth] session.deleted",
       expect.objectContaining({ userId: "unknown", sessionId: "sess-2" })
     );
+  });
+
+  // T029/T030 — troca do issuer de "Cosmos" pra "Nebuloz". O `issuer` só
+  // rotula a URI otpauth:// mostrada no cadastro (better-auth
+  // plugins/two-factor/totp: `options?.issuer` entra em `.url()`, não em
+  // `createOTP(secret, ...).verify()`); segredo TOTP já cadastrado não é
+  // tocado, então contas com 2FA de antes da troca continuam validando.
+  it("usa Nebuloz como issuer do 2FA, sem tocar o segredo TOTP já cadastrado", () => {
+    expect(mocks.twoFactorConfig?.issuer).toBe("Nebuloz");
   });
 });

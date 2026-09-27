@@ -88,13 +88,13 @@
 
 ### Tests for User Story 3
 
-- [ ] T018 [P] [US3] Teste de integração/component da nova aba de segurança (troca com sucesso e com senha atual errada) — `apps/app/__tests__/settings/security.test.tsx`. Escrever e confirmar que FALHA.
-- [ ] T019 [P] [US3] Teste E2E (Playwright) do cenário 4 do quickstart — `apps/app/e2e/trocar-senha.spec.ts`. Escrever e confirmar que FALHA.
+- [x] T018 [P] [US3] Teste de integração/component da nova aba de segurança (troca com sucesso e com senha atual errada) — `apps/app/__tests__/settings/security.test.tsx`. Escrever e confirmar que FALHA.
+- [x] T019 [P] [US3] Teste E2E (Playwright) do cenário 4 do quickstart — `apps/app/e2e/trocar-senha.spec.ts`. Escrever e confirmar que FALHA.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] Criar `apps/app/app/(authenticated)/settings/security/page.tsx` com formulário (senha atual + nova), chamando `authClient.changePassword` (depende de T018 falhando).
-- [ ] T021 [P] [US3] Adicionar item "Segurança" na nav de settings em `apps/app/app/(authenticated)/settings/workspace/components/settings-nav.tsx`.
+- [x] T020 [US3] Criar `apps/app/app/(authenticated)/settings/security/page.tsx` com formulário (senha atual + nova), chamando `authClient.changePassword` (depende de T018 falhando).
+- [x] T021 [P] [US3] Adicionar item "Segurança" na nav de settings em `apps/app/app/(authenticated)/settings/workspace/components/settings-nav.tsx`.
 
 **Checkpoint**: US1, US2 e US3 funcionando juntas — T018/T019 devem passar.
 
@@ -108,16 +108,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T022 [P] [US4] Teste de integração de `sendResetPassword` (chama `packages/email` com o template certo) — `packages/auth/__tests__/send-reset-password.test.ts`. Escrever e confirmar que FALHA.
-- [ ] T023 [P] [US4] Teste de integração/component da nova rota `/reset-password` (define nova senha, trata token inválido/expirado) — `apps/app/__tests__/reset-password/reset-password.test.tsx`. Escrever e confirmar que FALHA.
-- [ ] T024 [P] [US4] Teste E2E (Playwright) do cenário 5 do quickstart — `apps/app/e2e/esqueci-senha.spec.ts`. Escrever e confirmar que FALHA.
+- [x] T022 [P] [US4] Teste de integração de `sendResetPassword` (chama `packages/email` com o template certo) — `packages/auth/__tests__/send-reset-password.test.ts`. Escrever e confirmar que FALHA.
+- [x] T023 [P] [US4] Teste de integração/component da nova rota `/reset-password` (define nova senha, trata token inválido/expirado) — `apps/app/__tests__/reset-password/reset-password.test.tsx`. Escrever e confirmar que FALHA.
+- [x] T024 [P] [US4] Teste E2E (Playwright) do cenário 5 do quickstart — `apps/app/e2e/esqueci-senha.spec.ts`. Escrever e confirmar que FALHA.
 
 ### Implementation for User Story 4
 
-- [ ] T025 [P] [US4] Criar `packages/email/templates/reset-password.tsx` (mesmo padrão de `templates/invite.tsx`).
-- [ ] T026 [US4] Configurar `sendResetPassword` em `emailAndPassword` (`packages/auth/server.ts:45-48`), chamando `packages/email` com o template de T025 e `keys().RESEND_FROM` como remetente (depende de T022 falhando, e de T025).
-- [ ] T027 [US4] Criar `apps/app/app/(unauthenticated)/reset-password/[[...reset-password]]/page.tsx`, client component chamando `authClient.resetPassword({ newPassword, token })` (depende de T023 falhando).
-- [ ] T028 [P] [US4] Confirmar (ou ajustar) que `requestPasswordReset` responde de forma idêntica pra e-mail existente/inexistente (FR-012) — comportamento padrão do Better Auth, task de verificação, não de construção.
+- [x] T025 [P] [US4] Criar `packages/email/templates/reset-password.tsx` (mesmo padrão de `templates/invite.tsx`).
+- [x] T026 [US4] Configurar `sendResetPassword` em `emailAndPassword` (`packages/auth/server.ts:45-48`), chamando `packages/email` com o template de T025 e `keys().RESEND_FROM` como remetente (depende de T022 falhando, e de T025).
+- [x] T027 [US4] Criar `apps/app/app/(unauthenticated)/reset-password/[[...reset-password]]/page.tsx`, client component chamando `authClient.resetPassword({ newPassword, token })` (depende de T023 falhando).
+- [x] T028 [P] [US4] Confirmar (ou ajustar) que `requestPasswordReset` responde de forma idêntica pra e-mail existente/inexistente (FR-012) — comportamento padrão do Better Auth, task de verificação, não de construção.
 
 **Checkpoint**: Todas as 4 user stories funcionando de forma independente — T022–T024 devem passar.
 
@@ -125,9 +125,9 @@
 
 ## Phase 7: Polish & Cross-Cutting (2FA issuer + dependências operacionais)
 
-- [ ] T029 [P] Trocar `issuer: "Cosmos"` para `issuer: "Nebuloz"` em `packages/auth/server.ts:78`.
-- [ ] T030 [P] Teste confirmando que 2FA já cadastrado antes da troca de issuer continua validando (segredo TOTP preservado) — `packages/auth/__tests__/server.test.ts` (estender teste existente).
-- [ ] T031 Rodar `quickstart.md` cenário a cenário em ambiente local/staging antes de considerar a feature pronta pra dev encerrar.
+- [x] T029 [P] Trocar `issuer: "Cosmos"` para `issuer: "Nebuloz"` em `packages/auth/server.ts:78`.
+- [x] T030 [P] Teste confirmando que 2FA já cadastrado antes da troca de issuer continua validando (segredo TOTP preservado) — `packages/auth/__tests__/server.test.ts` (estender teste existente).
+- [x] T031 Rodar `quickstart.md` cenário a cenário em ambiente local/staging antes de considerar a feature pronta pra dev encerrar. — QA, 2026-09-26, ver `.claude/completions/2026-09-26-spec-004-quickstart-t031.md`.
 - [ ] T032 Confirmar com o CEO que o domínio `nebuloz.ai` está verificado no Resend (SPF/DKIM) antes de validar US4 em produção — dependência operacional registrada no spec, não uma task de código.
 
 ---

@@ -6,6 +6,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { keys } from "./keys";
+import { scrubBreadcrumb, scrubRequestUrl } from "./scrub";
 
 export const initializeSentry = (): ReturnType<typeof Sentry.init> =>
   Sentry.init({
@@ -27,6 +28,10 @@ export const initializeSentry = (): ReturnType<typeof Sentry.init> =>
       if (event.request?.data) {
         event.request.data = "[Filtered]";
       }
-      return event;
+      return scrubRequestUrl(event);
     },
+    beforeSendTransaction(event) {
+      return scrubRequestUrl(event);
+    },
+    beforeBreadcrumb: scrubBreadcrumb,
   });

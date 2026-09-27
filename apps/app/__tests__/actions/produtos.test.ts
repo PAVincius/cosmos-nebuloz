@@ -12,6 +12,42 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/rbac", () => ({ listModules: h.listModules }));
 vi.mock("@repo/database", () => ({
   database: { tenantModule: { findMany: h.findMany } },
+  MemberRole: {
+    ADMIN: "ADMIN",
+    STE: "STE",
+    RTE: "RTE",
+    SM: "SM",
+    PO: "PO",
+    DEV: "DEV",
+    MEMBER: "MEMBER",
+  },
+  CharterRole: {
+    COMPLIANCE: "COMPLIANCE",
+    LEGAL: "LEGAL",
+    SECURITY: "SECURITY",
+    HR: "HR",
+    REQUESTER: "REQUESTER",
+    EXEC: "EXEC",
+    AUDITOR: "AUDITOR",
+  },
+  MeridianRole: {
+    CONSULTANT: "CONSULTANT",
+    REVIEWER: "REVIEWER",
+    VIEWER: "VIEWER",
+  },
+  ScaffoldRole: {
+    TEAM_MEMBER: "TEAM_MEMBER",
+    PROCESS_OWNER: "PROCESS_OWNER",
+    TRANSFORMATION_LEAD: "TRANSFORMATION_LEAD",
+    CONSULTANT: "CONSULTANT",
+    ADMIN: "ADMIN",
+  },
+  SignalRole: {
+    VIEWER: "VIEWER",
+    OWNER: "OWNER",
+    ANALYST: "ANALYST",
+    ADMIN: "ADMIN",
+  },
 }));
 vi.mock("next/headers", () => ({
   headers: () => Promise.resolve(new Headers()),

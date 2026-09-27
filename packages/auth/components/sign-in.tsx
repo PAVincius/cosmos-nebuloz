@@ -36,7 +36,10 @@ export const SignIn = () => {
     const result = await authClient.signIn.email({
       email: email.trim().toLowerCase(),
       password,
-      callbackURL: "/cosmos/dashboard",
+      // "/" resolve o destino no servidor (catálogo para tenant interno,
+      // produto contratado para os demais) — ver
+      // apps/app/app/(authenticated)/_lib/resolve-post-login-destination.ts.
+      callbackURL: "/",
     });
 
     if (result?.error) {
@@ -77,8 +80,9 @@ export const SignIn = () => {
 
     await logMfaVerified();
     // O redirect do callbackURL pertence ao sign-in; depois do TOTP a
-    // navegação é nossa.
-    window.location.href = "/cosmos/dashboard";
+    // navegação é nossa. "/" resolve o destino no servidor — mesmo motivo do
+    // callbackURL acima.
+    window.location.href = "/";
   };
 
   if (step === "totp") {

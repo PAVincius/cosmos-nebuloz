@@ -23,6 +23,7 @@
     "seed:meridian": "tsx scripts/seed-meridian.ts",
     "seed:meridian:nebuloz": "tsx scripts/seed-meridian-nebuloz.ts",
     "seed:meridian:load": "tsx scripts/seed-meridian-load.ts",
+    "seed:catalogo-e2e": "tsx scripts/seed-catalogo-e2e.ts",
     "seed:empresa:nebuloz": "tsx scripts/seed-empresa-nebuloz.ts",
     "seed:diagramas:nebuloz": "tsx scripts/seed-diagramas-nebuloz.ts",
     "backfill:integration-secrets": "tsx --conditions=react-server scripts/backfill-integration-secrets.ts",
