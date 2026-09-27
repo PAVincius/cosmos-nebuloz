@@ -1,0 +1,11 @@
+# Arquivos que o terminal Gemini (Radar) não lê: a conta é pessoal do CEO e o parecer do Lacre ainda não saiu.
+# Mesmo formato do .gitignore. Vale para busca e leitura de arquivo do Gemini CLI (best effort, ver setup-canvas.sh).
+.env
+.env.*
+**/.env*
+packages/database/scripts/
+**/*.pem
+**/*.key
+.maestri/aprendizado.jsonl
+.maestri/concessoes.jsonl
+.maestri/memoria/
