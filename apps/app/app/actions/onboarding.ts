@@ -54,8 +54,8 @@ export async function createOnboardingWorkspace(name: string) {
     }
   );
 
-  await database.session.updateMany({
-    where: { userId: dbUser.id },
+  await database.session.update({
+    where: { id: session.session.id },
     data: { activeTenantId: tenantId },
   });
 

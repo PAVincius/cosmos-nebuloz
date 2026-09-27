@@ -50,8 +50,8 @@ export default async function InviteCompletePage({ params }: Props) {
         where: { id: token },
         data: { status: "ACCEPTED" },
       }),
-      database.session.updateMany({
-        where: { userId: session.user.id },
+      database.session.update({
+        where: { id: session.session.id },
         data: { activeTenantId: invitation.tenantId },
       }),
     ]);
