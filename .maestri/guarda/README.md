@@ -6,7 +6,8 @@ número (caixa, compliance, push rejeitado), mas erra saída seca de ferramenta 
 | Quem | Guarda | Como decide |
 |---|---|---|
 | Devs, QA, Infra | **Canny** (`~/.canny/src`, hooks por pasta de papel) | Regra: editou arquivo e nenhum check passou depois → "pronto" volta. Checks em `/.canny.json` |
-| CPO, PO, CFO, CRO, Compliance, Chief of Staff, Security Reviewer | **Fonte** (`fonte.mjs`, hook Stop) | NLI local: frase com número ou de verificação sem evidência nas saídas de ferramenta recentes → volta uma vez |
+| CPO, PO, CFO, CRO, Compliance, Chief of Staff, Security Reviewer, Cofundador | **Fonte** (`fonte.mjs`, hook Stop) | NLI local: frase com número ou de verificação sem evidência nas saídas de ferramenta recentes → volta uma vez |
+| Morgana, QA, Infra (além do Canny nos dois últimos) | **Fonte**, para estado de produção | "mergeado", "está no ar", "foi aplicada": passa se a evidência tem o sinal da ferramenta (`MERGED`, `READY`, `applied`); sem sinal, vai ao NLI |
 
 Os dois falham aberto: se quebrarem, o turno termina normalmente. Cada bloqueio da Fonte vira `achado` no
 `.maestri/aprendizado.jsonl`, e o Vigilante e a retro da Morgana enxergam.

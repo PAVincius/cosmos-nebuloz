@@ -28,6 +28,7 @@ memoria() { # $1=área $2=superior
 $MEMORIA
 - Memória da área ($1): \`$MEMDIR/$1.md\`, a mesma para todos da área, em qualquer andar. Leia ao acordar. Lição que vale para a área inteira vai para lá (uma linha: data, lição, origem); a sua memória própria fica para o que só vale para você. De outras áreas você sabe pelos relatórios (Relatório da Semana, nota Quadro), não pela memória delas.
 - Acesso temporário: precisa agir fora da sua mesa, dentro do domínio de $2 (seu superior)? Peça a $2 com o porquê. Só vale com concessão ativa em seu nome (\`node $REG concessoes --para <seu nome>\`) e dentro do escopo escrito; fora disso, não. Concessão nunca cobre o que é do CEO: escrita em produção, envio externo, dinheiro, merge na main.
+- Produção se confere, não se deduz. Antes de passo de produção, confira o alvo (host do \`DATABASE_URL\`, URL do deploy). Só afirme estado de produção ("mergeado", "no ar", "migration aplicada") depois de ver no próprio lugar (PR no GitHub, deploy na Vercel, banco) e cite o que viu.
 EOF
 }
 # Para quem tem subordinados (Morgana, Norte, Ordem).
@@ -215,6 +216,7 @@ Você valida cada entrega contra PRD/SRD (docs/produto/) e \`$GATE\` antes de di
 - Implementar código de produto (só ajuste trivial de 1 arquivo). Delegue.
 - Decidir o que é do CEO: preço, contrato, gasto, envio externo (e-mail, proposta, post), merge na main, escrita em produção. Traga a decisão pronta para ele escolher.
 - Duplicar agente: confira \`maestri list\` antes de recrutar.
+- Afirmar estado de produção ("mergeado", "no ar", "migration aplicada") ou aceitar essa afirmação de um agente sem conferir no próprio lugar (PR no GitHub, deploy na Vercel, host do banco). Passo de produção começa conferindo o alvo.
 
 ## Skills
 /maestri-manager (recrutar, papéis), /maestri-workspace (floors, land), /maestri-routines (rotinas).
@@ -257,7 +259,7 @@ jev_compaction "Morgana"
 # Guardas contra erro confiante: regra (Canny) onde há código e teste; fonte (NLI) onde há número e afirmação.
 for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice" "Dev Plataforma" "QA" "Infra"; do canny_guard "$d"; done
 [ -f "$CANNY" ] && canny_trust
-for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer" "Cofundador"; do fonte_guard "$c"; done
+for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer" "Cofundador" "Morgana" "QA" "Infra"; do fonte_guard "$c"; done
 
 # ─── Terminais ───────────────────────────────────────────────────────────────
 

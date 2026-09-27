@@ -19,6 +19,8 @@ Padrões de código: `.claude/COMMON_MISTAKES.md`. Princípios: `.specify/memory
 - [ ] Aplicar schema em produção só pela **Infra**, depois do QA — um por vez no canvas inteiro (pooler sem `DIRECT_URL`, migrate não segura lock)
 - [ ] Coleta dado pessoal ou grava reunião? Parecer da **Compliance** antes de ir ao ar
 - [ ] Escrita em produção: pedir "vai" ao usuário a cada operação
+- [ ] Antes de passo de produção, conferir o alvo: host do `DATABASE_URL` e URL do deploy. Nome de recurso novo não pode coincidir com recurso de produção existente
+- [ ] Estado de produção ("mergeado", "no ar", "migration aplicada") só se afirma conferido no próprio lugar — PR no GitHub, deploy na Vercel, host do banco — e citando o que se viu
 
 ## Git
 - [ ] Commit sem trailer `Co-Authored-By`
