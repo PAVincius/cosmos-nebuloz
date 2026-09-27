@@ -20,6 +20,7 @@
 //     da ideia é o efeito: o papel real fica visível no topbar. A lente de
 //     leitura volta quando houver comportamento especificado por trás dela.
 
+import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -620,6 +621,10 @@ export function SignalShell({
               <div style={{ flex: 1 }} />
               <SourcesChip broken={brokenConnections} />
               <AppSwitcher modules={modules} />
+              <ActiveAccountBadge
+                name={organization}
+                style={{ fontSize: 11, color: "var(--ink-subtle)" }}
+              />
               <span
                 className="mono"
                 style={{
@@ -627,7 +632,6 @@ export function SignalShell({
                   color: "var(--ink-subtle)",
                   fontWeight: 600,
                 }}
-                title={organization}
               >
                 {user.role} · {user.name}
               </span>

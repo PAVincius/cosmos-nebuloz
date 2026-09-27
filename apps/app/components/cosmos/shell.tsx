@@ -1,5 +1,6 @@
 "use client";
 
+import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import {
   Avatar,
@@ -344,16 +345,15 @@ function Sidebar({
             {identity.tenantInitials}
           </span>
           <span style={{ flex: 1, textAlign: "left", minWidth: 0 }}>
-            <span
+            <ActiveAccountBadge
+              name={identity.tenantName}
               style={{
                 display: "block",
                 fontSize: 13.5,
                 fontWeight: 700,
                 letterSpacing: "-.01em",
               }}
-            >
-              {identity.tenantName}
-            </span>
+            />
             <span
               style={{
                 display: "block",

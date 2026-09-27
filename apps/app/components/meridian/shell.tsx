@@ -17,6 +17,7 @@
 // (fixed + translateX, scrim, botão de menu, Escape fecha, foco volta ao
 // gatilho). A regra visual mora em meridian.css; aqui só o estado.
 
+import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -510,6 +511,10 @@ export function MeridianShell({
             </span>
             <div style={{ flex: 1 }} />
             <AppSwitcher modules={modules} />
+            <ActiveAccountBadge
+              name={organization}
+              style={{ fontSize: 11, color: "var(--ink-subtle)" }}
+            />
             <span
               className="mono meridian-topbar-role"
               style={{
@@ -517,7 +522,6 @@ export function MeridianShell({
                 color: "var(--ink-subtle)",
                 fontWeight: 600,
               }}
-              title={organization}
             >
               {user.role} · {user.name}
             </span>

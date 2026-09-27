@@ -15,6 +15,7 @@
 //  3. Estado da política vive na sidebar: é o que o Compliance Lead olha
 //     primeiro de manhã.
 
+import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -622,19 +623,14 @@ function Topbar({
           flexShrink: 1,
         }}
       >
-        <Link
-          className="btn navitem"
-          href="/charter"
+        <ActiveAccountBadge
+          name={organization}
           style={{
-            padding: "2px 4px",
-            borderRadius: 5,
             fontSize: FS.nota,
             color: "var(--ink-faint)",
             whiteSpace: "nowrap",
           }}
-        >
-          {organization}
-        </Link>
+        />
         <Icon
           name="chevronRight"
           size={12}

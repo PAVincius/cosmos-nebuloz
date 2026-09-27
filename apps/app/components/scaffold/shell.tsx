@@ -1,5 +1,6 @@
 "use client";
 
+import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -262,9 +263,10 @@ export function ScaffoldShell({
               gap: 10,
             }}
           >
-            <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
-              {organization}
-            </span>
+            <ActiveAccountBadge
+              name={organization}
+              style={{ fontSize: 12, color: "var(--ink-faint)" }}
+            />
             <IconButton
               name={theme === "dark" ? "sun" : "moon"}
               onClick={toggleTheme}
