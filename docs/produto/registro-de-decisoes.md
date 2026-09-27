@@ -49,7 +49,7 @@ Três regras valem para o registro inteiro:
 | D-15 | Retenção e apagamento da memória seguem o contrato e a LGPD | Proposta | Lacre |
 | D-16 | Décadas em três camadas, no Postgres até medir o limite | Proposta | Dev Plataforma, Pilar |
 | D-17 | Memória igual em todos os pacotes: mesmo horizonte, mesmas fontes | **Decidida** | Ponte, Caixa |
-| D-18 | A Nebuloz é o primeiro tenant da memória | Proposta | Morgana |
+| D-18 | A Nebuloz é o primeiro tenant da memória | Em andamento (agentes) | Morgana |
 
 ---
 
@@ -474,8 +474,8 @@ aceito. **Dono:** Dev Plataforma.
 
 O produto herda esse formato em vez de inventar outro.
 
-**Laboratório:** o formato está implementado e testado em
-[`experiments/memoria-stec`](../../experiments/memoria-stec/README.md). Lá
+**Implementação:** o formato está implementado e testado em
+[`apps/memoria`](../../apps/memoria/README.md), a memória dos agentes. Lá
 estão:
 - versões imutáveis com os dois tempos;
 - invalidação que mantém a decisão revogada consultável;
@@ -573,7 +573,7 @@ o pré-requisito da memória V0 (§7).
   tem índice vetorial (nem HNSW nem IVFFlat, em nenhuma migration), e cada
   busca compara com todos os trechos do tenant. Um índice HNSW por partição vem
   antes de qualquer troca de banco, com latência medida antes e depois.
-- **O laboratório já mede isso.** Em `experiments/memoria-stec`, Qdrant, Neo4j
+- **O laboratório já mede isso.** Em `apps/memoria`, Qdrant, Neo4j
   e MinIO rodam como projeções do Postgres, com `rebuild` que as refaz. A
   primeira lição veio de graça: o Qdrant 1.19 não abriu os dados do 1.12. Como
   era projeção, bastou apagar o volume e reconstruir. Se fosse fonte de verdade,
@@ -609,7 +609,12 @@ refém descrito acima.
 
 ### D-18 — A Nebuloz é o primeiro tenant da memória
 
-**Estado:** Proposta. **Dono:** Morgana.
+**Estado:** Em andamento desde 2026-09-27, do lado dos agentes. **Dono:** Morgana.
+
+**O que já roda:** [`apps/memoria`](../../apps/memoria/README.md) atende os agentes do Maestri por MCP, com o tenant
+`nebuloz`. A importação trouxe 36 itens com origem: as lições das áreas, as 17 ADRs e as 18 decisões deste registro.
+Um agente do Claude Code achou a D-12 e a lição de produção pela busca, e gravou uma lição nova com origem e
+confiança. O copiloto do produto ainda não usa a memória.
 
 O Maestri já opera a memória da Nebuloz. Ele tem:
 - memória por área, com curador;
@@ -656,7 +661,9 @@ perguntas escrito antes do teste.
    passam a apagar o vetor (D-14), e o Copilot do Cosmos fecha permissão,
    confirmação de escrita e citação (D-07).
 4. **Memória V0 no tenant `nebuloz`,** sobre o `PIKnowledgeVector` ampliado com
-   o formato de D-13 (D-12, D-18).
+   o formato de D-13 (D-12, D-18). A memória dos agentes (`apps/memoria`) já
+   roda à parte, por decisão do CEO de 2026-09-27; o que ela ensinar entra
+   aqui. A do produto segue este item e o gate do `intent.md`.
 5. **Copiloto com escopo,** na ordem de D-07.
 6. **Raio X V0** com os capítulos que já têm relatório congelado (D-08).
 7. **Suíte de avaliação e LAB.** Só então o fine-tune (D-09, D-11).

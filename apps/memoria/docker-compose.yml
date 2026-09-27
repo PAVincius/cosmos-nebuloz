@@ -1,16 +1,14 @@
-# Laboratório de memória de longo prazo (STEC) — não é produção.
+# Memória de longo prazo dos agentes da Nebuloz — roda na máquina, não é produção.
 #
 # O Postgres é o sistema de registro. Qdrant, Neo4j e MinIO são projeções que o
-# Memory Control Plane refaz a partir dele (registro de decisões, D-12 e D-16).
+# serviço refaz a partir dele (registro de decisões, D-12 e D-16). Os agentes
+# falam com ele por MCP em http://127.0.0.1:8003/mcp.
 #
-#   cp .env.example .env   # e troque todas as senhas
-#   docker compose up -d --build
-#   docker compose exec memory-control-plane python -m app.cli criar-tenant nebuloz "Nebuloz"
-#   docker compose exec memory-control-plane python -m app.cli criar-chave nebuloz agente-teste escrita
+#   pnpm memoria:up        # gera .env, sobe tudo, cria a chave e liga ao Claude Code
 #
 # Portas só em 127.0.0.1: nada aqui fica exposto na rede.
 
-name: memoria-stec
+name: nebuloz-memoria
 
 x-padrao: &padrao
   restart: unless-stopped
@@ -78,9 +76,10 @@ services:
     ports: ["127.0.0.1:11434:11434"]
     volumes: [ollama_data:/root/.ollama]
 
-  memory-control-plane:
+  memoria:
     <<: *padrao
-    build: ./memory-control-plane
+    build: ./servico
+    image: nebuloz/memoria:local
     depends_on:
       postgres: {condition: service_healthy}
       neo4j: {condition: service_healthy}
@@ -98,7 +97,12 @@ services:
       STEC_MINIO_ENDPOINT: minio:9000
       STEC_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       STEC_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}  # ggignore: interpolação do .env, sem valor literal
-    ports: ["127.0.0.1:8003:8000"]
+    # Fontes que o importador lê (lições do Maestri, ADRs, registro de decisões). Só leitura.
+    volumes:
+      - ../../.maestri/memoria:/fontes/.maestri/memoria:ro
+      - ../../docs/adr:/fontes/docs/adr:ro
+      - ../../docs/produto:/fontes/docs/produto:ro
+    ports: ["127.0.0.1:${MEMORIA_PORTA:-8003}:8000"]
 
 volumes:
   postgres_data:

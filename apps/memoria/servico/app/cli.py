@@ -5,6 +5,7 @@
     python -m app.cli criar-chave nebuloz "agente-pesquisa" escrita
     python -m app.cli revogar-chave <hash-prefixo>
     python -m app.cli purgar-tenant nebuloz --confirmo
+    python -m app.cli importar nebuloz --raiz /fontes
 
 A chave aparece uma vez, na criação. O banco guarda só o hash.
 """
@@ -13,10 +14,13 @@ import argparse
 import hashlib
 import secrets
 import sys
+from pathlib import Path
 
-from . import db
+from . import db, importar
 from .config import get_settings
+from .embeddings import criar_embedder
 from .projecoes import criar_projecoes
+from .servico import Contexto, Motor
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -35,6 +39,9 @@ def main(argv: list[str] | None = None) -> int:
     purga = sub.add_parser("purgar-tenant")
     purga.add_argument("tenant")
     purga.add_argument("--confirmo", action="store_true")
+    importar = sub.add_parser("importar", help="semeia e sincroniza lições do Maestri, ADRs e registro de decisões")
+    importar.add_argument("tenant")
+    importar.add_argument("--raiz", default="/fontes", help="raiz do repositório (ou das pastas montadas)")
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -42,6 +49,8 @@ def main(argv: list[str] | None = None) -> int:
         db.migrar(settings)
         print("esquema aplicado")
         return 0
+    if args.comando == "importar":
+        return _importar(settings, args.tenant, Path(args.raiz))
 
     with db.conexao_admin(settings) as conn:
         if args.comando == "criar-tenant":
@@ -91,6 +100,18 @@ def main(argv: list[str] | None = None) -> int:
                     file=sys.stderr,
                 )
                 return 1
+    return 0
+
+
+def _importar(settings, tenant: str, raiz: Path) -> int:
+    db.abrir_pool(settings)
+    try:
+        motor = Motor(embedder=criar_embedder(settings), projecoes=criar_projecoes(settings))
+        ctx = Contexto(tenant_id=tenant, actor="importador", papel="admin")
+        contagem = importar.sincronizar(motor, ctx, importar.todas(raiz))
+    finally:
+        db.fechar_pool()
+    print(", ".join(f"{n} {nome}" for nome, n in contagem.items()))
     return 0
 
 

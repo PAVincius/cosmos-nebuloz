@@ -1,0 +1,12 @@
+{
+  "name": "memoria",
+  "private": true,
+  "description": "Memória de longo prazo dos agentes: Postgres, Qdrant, Neo4j e MinIO, com MCP em /mcp. Serviço Python em Docker.",
+  "scripts": {
+    "up": "bash scripts/iniciar.sh",
+    "down": "docker compose down",
+    "logs": "docker compose logs -f memoria",
+    "importar": "docker compose exec -T memoria python -m app.cli importar nebuloz --raiz /fontes",
+    "test:integracao": "bash scripts/testar.sh"
+  }
+}

@@ -1,0 +1,174 @@
+# Memória dos agentes (`apps/memoria`)
+
+Memória de longo prazo dos agentes da Nebuloz (Maestri, Claude Code). Roda na
+máquina, em Docker, e responde por MCP em `http://127.0.0.1:8003/mcp`.
+
+**Não é produção.** Nenhum cliente é atendido por ela, e nem o app nem o
+back-office a chamam. O primeiro tenant é a própria Nebuloz (D-18). As regras
+estão no [registro de decisões](../../docs/produto/registro-de-decisoes.md),
+D-12 a D-18.
+
+Começou como laboratório (`experiments/memoria-stec`), montado a partir de um
+pacote externo. No pacote, todo endpoint devolvia resposta fixa, o `/health`
+dizia "connected" sem checar nada, qualquer chave passava e o tenant vinha do
+corpo da requisição. Aqui tudo funciona e tem testes.
+
+## Subir
+
+Precisa do Docker Desktop aberto.
+
+```bash
+pnpm memoria:up
+```
+
+O script (`scripts/iniciar.sh`) pode rodar quantas vezes quiser:
+
+1. Na primeira vez, gera o `.env` com senhas aleatórias. O arquivo fica fora do git.
+2. Sobe Postgres, Qdrant, Neo4j, MinIO e o serviço.
+3. Cria o tenant `nebuloz` e a chave do Maestri, com papel de escrita. A chave
+   fica em `~/.nebuloz/memoria/cabecalhos.json`, com permissão 600, fora do repo.
+4. Importa as lições do Maestri, as ADRs e o registro de decisões.
+
+| Comando | O que faz |
+|---|---|
+| `pnpm memoria:up` | sobe tudo, cria a chave e importa |
+| `pnpm memoria:importar` | sincroniza de novo com os arquivos |
+| `pnpm memoria:test` | roda os testes de integração |
+| `pnpm memoria:down` | para os contêineres; os dados ficam nos volumes |
+
+## Ligar aos agentes
+
+Rode uma vez por máquina. O registro vale para todas as pastas de papel do Maestri:
+
+```bash
+claude mcp add-json --scope user memoria \
+  '{"type":"http","url":"http://127.0.0.1:8003/mcp","headersHelper":"cat ~/.nebuloz/memoria/cabecalhos.json"}'
+```
+
+O `headersHelper` lê a chave do arquivo a cada conexão, então a chave nunca
+entra na configuração do Claude Code. As sessões abertas depois disso já
+enxergam as ferramentas `mcp__memoria__*`.
+
+As ferramentas do MCP:
+
+| Ferramenta | Papel | O que faz |
+|---|---|---|
+| `lembrar` | escrita | grava uma decisão, compromisso, lição, fato ou preferência, com agente, origem e confiança (medido, estimado ou declarado) |
+| `buscar` | leitura | busca híbrida (vetor e texto). `valido_em` responde "o que valia em março"; `sabido_em` responde "o que sabíamos em março" |
+| `listar` | leitura | lista as memórias vigentes |
+| `substituir` | escrita | cria a versão nova de uma memória; a anterior fica no histórico |
+| `revogar` | escrita | marca que deixou de valer, sem apagar |
+| `historico` | leitura | todas as versões de uma memória, com o motivo de cada mudança |
+| `relacionadas` | leitura | entidades ligadas a uma entidade no grafo |
+
+Apagar não existe no MCP, de propósito: apagamento é decisão de gente. Ele se
+faz pela API de governança, com chave admin (`POST /api/v1/governance/erasure`).
+
+## O que a importação traz
+
+O importador é `app/importar.py`, e cada item guarda a origem.
+
+| Fonte | Vira | Origem |
+|---|---|---|
+| `.maestri/memoria/*.md` | uma lição por linha | `maestri-memoria`, arquivo#hash da linha |
+| `docs/adr/NNNN-*.md` | decisão: título, status e a seção "Decisão" | `adr`, caminho do arquivo |
+| `docs/produto/registro-de-decisoes.md` | decisão, uma por D-NN, com o dono | `registro-de-decisoes`, arquivo#D-NN |
+
+Rodar de novo sincroniza:
+- texto igual não mexe;
+- texto mudado vira versão nova, com o motivo "a fonte mudou";
+- lição riscada com `~~` no Maestri vira memória revogada.
+
+Os arquivos continuam sendo a fonte (D-12). A memória é o índice que os agentes
+consultam.
+
+## Por dentro
+
+```
+Postgres + pgvector  ← sistema de registro (fonte da verdade)
+   │  RLS forçada por tenant · papel da API sem superuser
+   │  memória bitemporal, imutável, com auditoria só de INSERT
+   ├──► Qdrant  (vetor, uma coleção por tenant, só a versão vigente)
+   ├──► Neo4j   (entidades e relações, chave inclui o tenant)
+   └──► MinIO   (um JSON por versão: a camada fria)
+```
+
+- **O Postgres é a fonte.** As três projeções se refazem dele
+  (`POST /api/v1/maintenance/rebuild`). Toda resposta relê o Postgres, então
+  projeção atrasada nunca devolve memória apagada ou substituída (D-12).
+- **Dois tempos por fato.** `valid_from` e `valid_to` dizem quando o fato valeu
+  no mundo. `tx_from` e `tx_to` dizem quando o sistema acreditou nele.
+- **Memória não se edita.** Uma versão nova fecha a anterior. A trigger bloqueia
+  UPDATE e DELETE fora de três casos: fechar a versão, apagar o conteúdo e
+  trocar o vetor. A regra vale até para o superusuário.
+- **Apagamento de verdade.** O apagamento zera texto, entidades, relações,
+  marcadores e vetor em todas as versões, e sai do Qdrant, do Neo4j e do MinIO.
+  Apagar por origem é o caminho para revogar consentimento e para o pedido de
+  titular da LGPD (D-14, D-15). A auditoria registra o pedido sem o texto.
+- **O tenant vem da chave.** A chave é emitida pela CLI e guardada só como hash.
+  Os papéis são leitura, escrita e admin. O MCP usa a mesma chave, o mesmo
+  tenant e o mesmo papel da API HTTP. O `/mcp` aceita só os hosts `127.0.0.1`,
+  `localhost` e `[::1]`, contra DNS rebinding.
+
+A API HTTP completa, com Swagger, fica em `http://127.0.0.1:8003/docs`.
+Embeddings semânticos locais saem do perfil `ollama` (instruções no
+`docker-compose.yml`). Sem ele, o serviço usa um embedder por hash de termos:
+determinístico e sem modelo, mas sem sinônimo. A busca por texto em português
+compensa parte disso.
+
+## Por que não roda na Vercel
+
+A Vercel roda funções. Este serviço precisa de quatro bancos com estado (Postgres, Qdrant, Neo4j e MinIO) e de um
+processo contínuo. Para servir fora da máquina, o caminho é um host de contêiner (Fly, Railway, uma VM) com os mesmos
+`docker-compose.yml` e `.env`, atrás de TLS. Antes disso vêm as decisões D-14 e D-10.
+
+## O que ficou de fora do pacote original, e por quê
+
+| Cortado | Motivo |
+|---|---|
+| Mem0 e Cognee | Seriam três camadas de memória para o mesmo trabalho. Este serviço é a camada. |
+| LangGraph | O pacote trazia só um `requirements.txt`. E a D-07 começa por um agente com ferramentas; multiagente só depois de uma avaliação que prove a necessidade. |
+| Consolidação e deduplicação por LLM | Um resumo que reescreve a memória perde a origem (D-16). O que entra depois é resumo por período, com link a cada fonte. |
+| Context Layer (Snowflake, SAP, Salesforce…) | Conector de sistema do cliente é outro projeto. |
+| Redis, UIs, o "MCP" do Mem0 | Nenhum tinha uso. O MCP daqui é o Model Context Protocol, em `/mcp`. |
+| Nota de confiança 0–1 | O mapa de fronteiras proíbe uma segunda escala. |
+| Senhas padrão no compose | Toda senha é obrigatória no `.env`, e as portas só escutam em 127.0.0.1. |
+
+## Testar
+
+```bash
+pnpm memoria:test
+```
+
+São 31 testes de integração contra os serviços reais. Eles usam tenants
+temporários e os purgam no fim, sem tocar no tenant `nebuloz`. Os testes cobrem:
+- **segurança:** chave, papel, isolamento de tenant, RLS e imutabilidade;
+- **memória:** bitemporal, revogação, busca, apagamento por origem e retenção;
+- **projeções:** falha visível, isolamento e `rebuild`;
+- **MCP:** chave, host, papel, isolamento e ausência de apagamento;
+- **importador:** sincronização, versão nova e lição riscada.
+
+Nenhum script do pacote se chama `test`, `build` ou `dev`. Assim, `pnpm test`,
+`pnpm build`, `pnpm dev` e o hook de pre-push não passam a exigir Docker.
+
+## Limites conhecidos
+
+- **Sem índice vetorial.** A coluna `vector` não tem dimensão fixa, para aceitar
+  a troca de modelo. A busca no Postgres compara com todos os trechos do tenant;
+  com o Qdrant ligado, os candidatos vêm dele. O próximo passo é HNSW por
+  modelo, medido antes e depois (D-16).
+- **Projeção síncrona.** Uma falha vira pendência, e o `rebuild` refaz. Não há fila.
+- **Uma camada só.** Ainda faltam a camada morna (resumo por período) e a
+  movimentação para a camada fria por idade.
+- **Uma chave para todo o Maestri.** O agente se identifica no campo `agente`
+  do `lembrar`, sem prova. Uma chave por papel resolve, quando valer o custo.
+- **Nada liga isto ao app.** Os índices do app (`PIKnowledgeVector`) continuam
+  onde estão, com os problemas de apagamento descritos na D-14.
+
+## O que já aprendemos
+
+**Qdrant 1.19 não abre os dados do 1.12.** Na subida, ele entrou em pânico ao
+ler o formato antigo do segmento. Como o Qdrant aqui é só projeção, bastou
+apagar o volume e rodar `rebuild`. Em décadas, a troca de versão vai acontecer
+muitas vezes. Se o Qdrant fosse a fonte de verdade, teria exigido migração em
+cadeia, versão por versão.

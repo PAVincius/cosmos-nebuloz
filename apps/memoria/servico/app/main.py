@@ -1,10 +1,9 @@
-"""API HTTP do Memory Control Plane (laboratório STEC).
+"""API HTTP do serviço de memória (Memory Control Plane).
 
 O tenant sai da chave de API. Nenhuma rota confia em tenant_id vindo do
 corpo ou da query: quando ele vem, só serve para conferir e recusar se
 divergir da chave."""
 
-import hashlib
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -15,6 +14,8 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Query, Response, st
 from pydantic import AwareDatetime, BaseModel, Field
 
 from . import db
+from .acesso import autenticar_chave, pode
+from .agentes import rota_mcp, servidor_mcp
 from .config import get_settings
 from .embeddings import criar_embedder
 from .projecoes import criar_projecoes
@@ -32,8 +33,6 @@ from .schemas import (
 )
 from .servico import Conflito, Contexto, Motor, NaoEncontrada
 
-PAPEIS = {"leitura": 0, "escrita": 1, "admin": 2}
-
 
 @asynccontextmanager
 async def ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
@@ -41,16 +40,19 @@ async def ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
     db.migrar(settings)
     db.abrir_pool(settings)
     app.state.motor = Motor(embedder=criar_embedder(settings), projecoes=criar_projecoes(settings))
-    yield
+    async with servidor_mcp.session_manager.run():
+        yield
     db.fechar_pool()
 
 
 app = FastAPI(
-    title="Memory Control Plane (laboratório STEC)",
+    title="Memória Nebuloz (Memory Control Plane)",
     description="Memória de longo prazo por tenant: Postgres como registro; Qdrant, Neo4j e MinIO como projeções.",
     version="0.1.0",
     lifespan=ciclo_de_vida,
 )
+# Os agentes (Maestri, Claude Code) falam MCP em /mcp, com a mesma chave de API.
+app.router.routes.append(rota_mcp(lambda: app.state.motor))
 
 
 def motor() -> Motor:
@@ -60,17 +62,15 @@ def motor() -> Motor:
 def _autenticar(x_api_key: Annotated[str | None, Header()] = None) -> Contexto:
     if not x_api_key:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de API ausente")
-    digest = hashlib.sha256(x_api_key.encode()).hexdigest()
-    with db.sem_tenant() as conn:
-        linha = conn.execute("SELECT * FROM stec.autenticar(%s)", (digest,)).fetchone()
-    if linha is None:
+    ctx = autenticar_chave(x_api_key)
+    if ctx is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de API inválida ou revogada")
-    return Contexto(tenant_id=linha["tenant_id"], actor=linha["rotulo"], papel=linha["papel"])
+    return ctx
 
 
 def exige(papel: str):
     def dependencia(ctx: Annotated[Contexto, Depends(_autenticar)]) -> Contexto:
-        if PAPEIS[ctx.papel] < PAPEIS[papel]:
+        if not pode(ctx, papel):
             raise HTTPException(status.HTTP_403_FORBIDDEN, f"precisa do papel {papel}")
         return ctx
 

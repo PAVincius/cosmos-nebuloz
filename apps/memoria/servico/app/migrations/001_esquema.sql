@@ -1,4 +1,4 @@
--- Memory Control Plane (laboratório STEC) — esquema do sistema de registro.
+-- Memória dos agentes (Memory Control Plane) — esquema do sistema de registro.
 --
 -- O Postgres é a fonte de verdade da memória. Qdrant, Neo4j e MinIO são
 -- projeções refeitas a partir daqui (registro de decisões, D-12 e D-16).

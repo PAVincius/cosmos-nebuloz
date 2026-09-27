@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     minio_bucket: str = "stec-memoria"
     minio_secure: bool = False
 
+    # Host aceito no /mcp (proteção contra DNS rebinding). JSON no ambiente.
+    mcp_allowed_hosts: list[str] = ["127.0.0.1:*", "localhost:*", "[::1]:*"]
+
 
 @lru_cache
 def get_settings() -> Settings:
