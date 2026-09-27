@@ -28,6 +28,11 @@ Só documento: nenhuma escrita em banco, nenhum código.
   - D-08: raio X em PDF que cresce com os produtos contratados;
   - D-12: memória empresarial de longo prazo como o sistema escalável.
 
+Na mesma data, em resposta à pergunta do registro:
+- **D-08:** page index é o sumário do raio X.
+- **D-17:** horizonte de memória igual em todos os pacotes (o contrato
+  inteiro). A proposta por pacote foi riscada no registro.
+
 ## Achados conferidos no código
 
 - **Índice vetorial:** `PIKnowledgeVector` guarda o texto indexado e nenhum
@@ -66,6 +71,5 @@ Só documento: nenhuma escrita em banco, nenhum código.
 - D-03: números dos pacotes, depois do Caixa e do pre-mortem do Sócio.
 - D-10: dado de cliente não treina modelo compartilhado; a minuta do DPA já
   promete isso.
-- D-17: horizonte de memória por pacote ou igual para todos.
-- D-08: significado de "page index".
+- D-17: diferenciar pacote por fonte da memória ou não.
 - D-01: lançar tudo junto ou produto a produto.

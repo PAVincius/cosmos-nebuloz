@@ -39,7 +39,7 @@ Três regras valem para o registro inteiro:
 | D-05 | Cota técnica de 150% da franquia enquanto o excedente não é cobrado | Proposta | Caixa, Dev Cosmos |
 | D-06 | Avulso vendido por vendedor tem piso; o Diagnóstico abate até 25%, sobre serviço | Proposta | Ponte |
 | D-07 | Um copiloto com escopo por produto, não cinco chatbots | **Direção** | Norte → Regua |
-| D-08 | Raio X: um documento por cliente, feito de relatórios congelados | **Direção** | Norte → Regua |
+| D-08 | Raio X: um documento por cliente, feito de relatórios congelados, com page index como sumário | **Direção**; page index **Decidida** | Norte → Regua |
 | D-09 | O peso aprende método; documentação atual e memória entram por recuperação | Proposta | Norte, Dev Plataforma |
 | D-10 | Dado de cliente nunca treina peso compartilhado | Proposta | Lacre |
 | D-11 | Modelo próprio só atende cliente depois de quatro portões | Proposta | Morgana, Caixa, Lacre |
@@ -48,7 +48,7 @@ Três regras valem para o registro inteiro:
 | D-14 | A memória herda a permissão da origem e tem isolamento testado | Proposta | Vigia, Dev Plataforma |
 | D-15 | Retenção e apagamento da memória seguem o contrato e a LGPD | Proposta | Lacre |
 | D-16 | Décadas em três camadas, no Postgres até medir o limite | Proposta | Dev Plataforma, Pilar |
-| D-17 | Horizonte de memória consultável vira atributo de pacote | Proposta | Ponte, Caixa |
+| D-17 | Horizonte de memória consultável é o mesmo em todos os pacotes | **Decidida** | Ponte, Caixa |
 | D-18 | A Nebuloz é o primeiro tenant da memória | Proposta | Morgana |
 
 ---
@@ -278,10 +278,15 @@ As condições abaixo são proposta. **Dono:** Norte → Regua.
    back-office, porque leitura entre clientes é só do back-office, pela porta
    única (ADR-0013).
 
-**Pergunta ao CEO:** "page index" quer dizer o sumário do raio X ou a técnica
-PageIndex de recuperação pela árvore do documento, sem vetor? A segunda é um
-jeito de o copiloto navegar documentos longos, como o próprio raio X. Uma não
-substitui a outra.
+**Page index é o sumário do raio X** (decidido pelo CEO em 2026-09-27). É a
+primeira página do documento. Para cada capítulo, ela diz:
+- o produto de origem;
+- a data da emissão congelada;
+- se o capítulo está contratado.
+
+Quem lê o sumário sabe, sem abrir o resto, o que o cliente tem e de quando é
+cada número. A técnica PageIndex de recuperação sem vetor não entra aqui: fica
+para quando o copiloto precisar navegar documentos longos (D-07).
 
 ---
 
@@ -538,7 +543,7 @@ o pré-requisito da memória V0 (§7).
 
 | Camada | O que guarda | Onde |
 |---|---|---|
-| Quente | O horizonte consultável (D-17): texto, vetor e busca em português | Postgres + pgvector, particionado por tenant e ano |
+| Quente | O horizonte consultável, que é o contrato inteiro (D-17): texto, vetor e busca em português | Postgres + pgvector, particionado por tenant e ano |
 | Morna | Resumo por período (PI, trimestre, ano), cada frase com link à origem | Postgres |
 | Fria | Arquivo imutável por tenant e ano, com hash, que pode ser reindexado | Armazenamento de objeto |
 
@@ -559,22 +564,28 @@ o pré-requisito da memória V0 (§7).
   (`2026-05-26-slm-finetuning-pipeline.md`) até uma medição de latência e de
   acerto no Postgres pedir a troca.
 
-### D-17 — Horizonte de memória consultável vira atributo de pacote
+### D-17 — Horizonte de memória consultável é o mesmo em todos os pacotes
 
-**Estado:** Proposta; a escolha é do CEO. **Dono:** Ponte e Caixa.
+**Estado:** Decidida pelo CEO em 2026-09-27. **Dono:** Ponte e Caixa.
 
-A proposta é que o copiloto consulte 12 meses na Ideação, 24 na Validação, 36
-no Growth e o prazo do contrato inteiro no Scale. Em todos os pacotes, o arquivo
-frio fica guardado durante o contrato e sai no export.
+O copiloto consulta a memória do contrato inteiro, em qualquer pacote. O
+arquivo frio fica guardado durante o contrato e sai no export (D-15).
 
-- **Por quê:** guardar custa pouco (D-16), e o valor de lembrar cresce com o
-  tempo. O preço segue o valor, não o custo.
-- **O risco:** no segundo ano, o cliente da Ideação perde acesso ao primeiro, e
-  isso pode soar como refém. A alternativa é o mesmo horizonte para todos, com
-  diferença por fonte: reunião transcrita só a partir do Growth, por exemplo. Por
-  isso a escolha é do CEO.
+- **Por quê:** um horizonte menor nos pacotes de entrada faria o cliente da
+  Ideação perder o próprio primeiro ano ao entrar no segundo. Isso soa como
+  refém, e memória é justamente o que o produto promete guardar.
+- **Custo:** guardar custa pouco (D-16), então o horizonte igual não muda a
+  conta do documento de preço.
+- **Consequência:** a memória não diferencia pacote. A diferença continua sendo
+  assento, franquia de crédito, suporte e recursos (D-03).
+- **Fica como proposta, sem decisão:** diferenciar por fonte, por exemplo
+  indexando reunião transcrita só a partir do Growth.
 - **Efeito no preço:** memória acumulada é custo de troca, e custo de troca
   reduz churn. O modelo de preço não conta com isso até existir churn medido.
+
+~~Proposta anterior: 12 meses na Ideação, 24 na Validação, 36 no Growth e o
+contrato inteiro no Scale.~~ Descartada pelo CEO em 2026-09-27, pelo risco de
+refém descrito acima.
 
 ### D-18 — A Nebuloz é o primeiro tenant da memória
 
@@ -643,7 +654,7 @@ Cada frente nova (copiloto, raio X, memória, modelo próprio) começa por um
    fazer o pre-mortem.
 2. **D-10:** confirmar que dado de cliente não treina modelo compartilhado. Isso
    muda o que o comercial pode prometer.
-3. **D-17:** horizonte por pacote ou horizonte igual para todos.
-4. **D-08:** o que "page index" quer dizer.
-5. **D-01:** lançar tudo junto ou produto a produto, pendente desde
+3. **D-17:** diferenciar pacote por fonte da memória (reunião transcrita só a
+   partir do Growth) ou não diferenciar.
+4. **D-01:** lançar tudo junto ou produto a produto, pendente desde
    `prontidao-lancamento.md`.
