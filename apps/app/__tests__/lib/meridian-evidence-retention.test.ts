@@ -84,6 +84,17 @@ describe("eliminateExpiredMeridianEvidence — consulta", () => {
     ).toBeLessThan(1000);
   });
 
+  it("limita a 500 por execução, ordenado por id — backlog grande fica pro dia seguinte", async () => {
+    await handler({ step: makeStep() });
+
+    const args = mocks.evidenceFindMany.mock.calls[0]?.[0] as {
+      take: number;
+      orderBy: { id: string };
+    };
+    expect(args.take).toBe(500);
+    expect(args.orderBy).toEqual({ id: "asc" });
+  });
+
   it("sem nada pendente, não chama deleteObjects nem grava nada", async () => {
     const result = await handler({ step: makeStep() });
     expect(mocks.deleteObjects).not.toHaveBeenCalled();
@@ -122,7 +133,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     expect(result).toEqual({ eliminated: 2, assessments: 1 });
   });
 
-  it("marca storagePath com o marcador, sem apagar o registro (mesma lógica do DSAR)", async () => {
+  it("marca storagePath E fileName com o marcador, sem apagar o registro (mesma lógica do DSAR)", async () => {
     mocks.evidenceFindMany.mockResolvedValue([
       {
         id: "ev-1",
@@ -135,13 +146,19 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
 
     await handler({ step: makeStep() });
 
+    // fileName pode conter dado pessoal (achado da Morgana sobre o P2 do
+    // LGPD que o DSAR já trata em fileName) — sem anonimizar aqui, o dado
+    // sobreviveria aos 90 dias de retenção que essa própria rotina promete.
     expect(mocks.evidenceUpdateMany).toHaveBeenCalledWith({
       where: { id: { in: ["ev-1"] } },
-      data: { storagePath: "eliminado-por-retencao" },
+      data: {
+        storagePath: "eliminado-por-retencao",
+        fileName: "eliminado-por-retencao",
+      },
     });
   });
 
-  it("grava auditLog com actorType system, sem apagar a linha de MeridianEvidence", async () => {
+  it("grava auditLog com actorType system, SEM fileName no metadata (dado pessoal não duplica em log de vida longa)", async () => {
     mocks.evidenceFindMany.mockResolvedValue([
       {
         id: "ev-1",
@@ -156,15 +173,20 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
 
     expect(mocks.auditLogCreateMany).toHaveBeenCalledWith({
       data: [
-        expect.objectContaining({
+        {
           tenantId: "t1",
           actorType: "system",
           action: "meridian.evidence.retention-eliminated",
           entityType: "meridian.evidence",
           entityId: "ev-1",
-        }),
+          metadata: { assessmentId: "a1" },
+        },
       ],
     });
+    const [{ data }] = mocks.auditLogCreateMany.mock.calls[0] as [
+      { data: Array<{ metadata: Record<string, unknown> }> },
+    ];
+    expect(data[0].metadata).not.toHaveProperty("fileName");
   });
 
   it("dois assessments de tenants diferentes viram dois lotes, sem misturar paths entre tenants", async () => {

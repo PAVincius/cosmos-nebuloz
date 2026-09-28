@@ -41,6 +41,11 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
     retries: 2,
   },
   async ({ step }) => {
+    // Teto por execução: sem `take`, um backlog grande na primeira execução
+    // estouraria o tamanho de saída de um step do Inngest. `orderBy: id`
+    // garante progresso determinístico — o que sobrar desta janela de 500
+    // fica pro dia seguinte, não se perde (o filtro por `storagePath` acima
+    // continua achando o que falta).
     const pending: PendingEvidence[] = await step.run(
       "find-expired-evidence",
       () =>
@@ -58,6 +63,8 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
             storagePath: true,
             fileName: true,
           },
+          take: 500,
+          orderBy: { id: "asc" },
         })
     );
 
@@ -79,11 +86,20 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
           rows.map((r) => r.storagePath)
         );
 
+        // fileName também vira o marcador — pode conter dado pessoal (mesmo
+        // motivo do DSAR em lgpd-dsr.ts anonimizar fileName); sem isso, o
+        // dado sobreviveria à própria retenção que este job promete.
         await database.meridianEvidence.updateMany({
           where: { id: { in: rows.map((r) => r.id) } },
-          data: { storagePath: EVIDENCE_RETENTION_ELIMINATED_MARKER },
+          data: {
+            storagePath: EVIDENCE_RETENTION_ELIMINATED_MARKER,
+            fileName: EVIDENCE_RETENTION_ELIMINATED_MARKER,
+          },
         });
 
+        // Sem fileName no metadata: um log de auditoria é de vida longa —
+        // duplicar ali o mesmo dado pessoal que acabamos de anonimizar no
+        // registro principal reabriria a mesma exposição.
         await database.auditLog.createMany({
           data: rows.map((r) => ({
             tenantId: r.tenantId,
@@ -91,7 +107,7 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
             action: "meridian.evidence.retention-eliminated",
             entityType: "meridian.evidence",
             entityId: r.id,
-            metadata: { assessmentId, fileName: r.fileName },
+            metadata: { assessmentId },
           })),
         });
       });
