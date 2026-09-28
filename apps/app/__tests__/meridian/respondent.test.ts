@@ -18,6 +18,17 @@ const h = vi.hoisted(() => ({
   responseFindUnique: vi.fn(),
   evidenceCreate: vi.fn(),
   auditCreate: vi.fn(),
+  headersGet: vi.fn(),
+  rateLimiterLimit: vi.fn(),
+  ensureBucket: vi.fn(),
+}));
+
+vi.mock("next/headers", () => ({
+  headers: vi.fn().mockResolvedValue({ get: h.headersGet }),
+}));
+vi.mock("@repo/rate-limit", () => ({
+  createRateLimiter: vi.fn(() => ({ limit: h.rateLimiterLimit })),
+  fixedWindow: vi.fn((max: number, window: string) => ({ max, window })),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -39,7 +50,7 @@ vi.mock("@/lib/meridian/guards", () => ({
   },
 }));
 vi.mock("@repo/storage", () => ({
-  ensureBucket: vi.fn(),
+  ensureBucket: h.ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
   storageClient: {
     storage: {
@@ -70,6 +81,7 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
+  attachEvidence,
   getBattery,
   resolveRespondentToken,
   saveDraft,
@@ -98,6 +110,14 @@ const respondent = (over: Record<string, unknown> = {}) => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  h.headersGet.mockReturnValue(null);
+  h.rateLimiterLimit.mockResolvedValue({
+    success: true,
+    limit: 30,
+    remaining: 29,
+    reset: 0,
+  });
+  h.ensureBucket.mockResolvedValue(undefined);
   h.respondentFindUnique.mockResolvedValue(respondent());
   h.questionFindMany.mockResolvedValue([
     {
@@ -244,5 +264,79 @@ describe("submitBattery", () => {
     };
     expect(audit.data.actorType).toBe("respondent");
     expect(audit.data.actorId).toBe("r1");
+  });
+});
+
+describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () => {
+  it("recusa quando o rate limiter reporta limite excedido, sem consultar o banco", async () => {
+    h.rateLimiterLimit.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("usa o primeiro IP de x-forwarded-for como identificador do limitador", async () => {
+    h.headersGet.mockReturnValue("9.9.9.9, 1.1.1.1");
+    await getBattery(TOKEN);
+    expect(h.rateLimiterLimit).toHaveBeenCalledWith("9.9.9.9");
+  });
+
+  it("usa 'anonymous' quando não há x-forwarded-for", async () => {
+    h.headersGet.mockReturnValue(null);
+    await getBattery(TOKEN);
+    expect(h.rateLimiterLimit).toHaveBeenCalledWith("anonymous");
+  });
+
+  it("aplica o mesmo teto a saveDraft — também passa por loadRespondent", async () => {
+    h.rateLimiterLimit.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await saveDraft({ token: TOKEN, answers: [] });
+    expect(res.ok).toBe(false);
+  });
+
+  it("em produção, fecha quando o contador de limite está indisponível", async () => {
+    const original = process.env.NODE_ENV;
+    vi.stubEnv("NODE_ENV", "production");
+    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
+    vi.stubEnv("NODE_ENV", original ?? "test");
+    expect(res.ok).toBe(false);
+  });
+
+  it("fora de produção, segue quando o contador de limite está indisponível", async () => {
+    const original = process.env.NODE_ENV;
+    vi.stubEnv("NODE_ENV", "test");
+    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
+    vi.stubEnv("NODE_ENV", original ?? "test");
+    expect(res.ok).toBe(true);
+  });
+});
+
+describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
+  it("chama ensureBucket uma vez só, mesmo com duas evidências anexadas", async () => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    h.evidenceCreate.mockResolvedValue({ id: "e1", fileName: "ev.txt" });
+    const file = {
+      size: 3,
+      type: "text/plain",
+      name: "ev.txt",
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    } as unknown as File;
+
+    await attachEvidence(TOKEN, "q1", file);
+    await attachEvidence(TOKEN, "q1", file);
+
+    expect(h.ensureBucket).toHaveBeenCalledTimes(1);
   });
 });

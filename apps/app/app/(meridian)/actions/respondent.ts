@@ -2,11 +2,13 @@
 
 import type { MeridianQuestionType } from "@repo/database";
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import {
   ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET,
   storageClient,
 } from "@repo/storage";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
 import { MeridianRuleError } from "@/lib/meridian/guards";
@@ -93,7 +95,45 @@ export type Battery = {
   questions: BatteryQuestion[];
 };
 
+// Rate limit do lookup de token — condição 5 do parecer de compliance
+// (docs/compliance/2026-09-24-parecer-meridian-respondente.md) e P2 do Vigia
+// (docs/qualidade/dogfood/meridian/atrito.md:48): sem isso, nada impedia
+// tentativa repetida de adivinhar um hash de token válido. Sem sessão, IP é o
+// único identificador disponível. Fecha em produção quando o contador está
+// fora do ar — mesmo raciocínio do copiloto
+// (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse, derrubar o
+// contador viraria a forma de remover o freio.
+async function enforceTokenLookupRateLimit(): Promise<void> {
+  const headerStore = await headers();
+  const ip =
+    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+
+  let dentroDoLimite: boolean;
+  try {
+    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
+    const limiter = createRateLimiter({
+      limiter: fixedWindow(30, "1 m"),
+      prefix: "meridian-token-lookup",
+    });
+    dentroDoLimite = (await limiter.limit(ip)).success;
+  } catch (erro) {
+    if (process.env.NODE_ENV === "production") {
+      log.error("[meridian] rate limit de lookup de token indisponível", {
+        error: String(erro),
+      });
+      dentroDoLimite = false;
+    } else {
+      dentroDoLimite = true;
+    }
+  }
+
+  if (!dentroDoLimite) {
+    throw TOKEN_ERROR;
+  }
+}
+
 async function loadRespondent(token: string) {
+  await enforceTokenLookupRateLimit();
   const r = await database.meridianRespondent.findUnique({
     where: { tokenHash: hashToken(token) },
     include: {
@@ -275,6 +315,26 @@ export async function submitBattery(
 
 const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
 
+let evidenceBucketReady: Promise<void> | null = null;
+
+/** `ensureBucket` é idempotente mas faz `listBuckets` a cada chamada — sem
+ *  cache, isso rodava a cada evidência anexada em vez de uma vez por
+ *  provisionamento (P2 do Vigia, atrito.md:54). Memoiza por processo; numa
+ *  falha, limpa o cache para a próxima chamada tentar de novo em vez de
+ *  travar upload de evidência pelo resto do processo por causa de uma falha
+ *  transitória. */
+function ensureEvidenceBucketOnce(): Promise<void> {
+  if (!evidenceBucketReady) {
+    evidenceBucketReady = ensureBucket(MERIDIAN_EVIDENCE_BUCKET).catch(
+      (erro) => {
+        evidenceBucketReady = null;
+        throw erro;
+      }
+    );
+  }
+  return evidenceBucketReady;
+}
+
 /** Anexa evidência a uma resposta. O arquivo vai para o bucket privado, com o
  *  caminho prefixado pelo tenant; o banco guarda só o metadado. */
 export async function attachEvidence(
@@ -314,7 +374,7 @@ export async function attachEvidence(
       select: { id: true },
     });
 
-    await ensureBucket(MERIDIAN_EVIDENCE_BUCKET);
+    await ensureEvidenceBucketOnce();
     const id = crypto.randomUUID();
     const storagePath = `${r.tenantId}/${r.assessment.id}/${id}`;
     const { error } = await storageClient.storage
