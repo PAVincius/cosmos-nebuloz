@@ -1,0 +1,431 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_aviso_de_gravacao_documento",
+      "label": "Aviso de Grava\u00e7\u00e3o e Memorando de Base Legal",
+      "file_type": "document",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_consent_state_machine",
+      "label": "consentState \u2014 m\u00e1quina de estados PENDING/GRANTED",
+      "file_type": "rationale",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O produto garante que algu\u00e9m com papel de governan\u00e7a afirmou ter obtido consentimento antes de a fala chegar a um LLM \u2014 \u00e9 tudo que software faz; n\u00e3o garante que o consentimento existiu, e este documento \u00e9 a outra metade que o faz existir."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_fireflies_transcript_job",
+      "label": "fireflies-transcript.ts (inngest job)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_per_meeting_mode",
+      "label": "Modo de consentimento PER_MEETING",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_standing_mode",
+      "label": "Modo de consentimento STANDING",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 habilit\u00e1vel com standingConsentRef preenchido \u2014 CHECK constraint na migration, n\u00e3o valida\u00e7\u00e3o de aplica\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_aviso_interno",
+      "label": "Aviso PT/EN \u2014 reuni\u00e3o s\u00f3 interna",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_aviso_externo",
+      "label": "Aviso PT/EN \u2014 reuni\u00e3o com participante externo",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sob STANDING, um convidado de fora do workspace derruba a libera\u00e7\u00e3o autom\u00e1tica e joga a transcri\u00e7\u00e3o em PENDING, supondo este aviso."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_revoke_consent",
+      "label": "revokeConsent",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Apaga MeetingInsight ainda PENDING/DISMISSED, redige o text dos j\u00e1 APPLIED preservando a linha como prova, zera rawSummary \u2014 mas n\u00e3o desfaz Risk/Impediment/DecisionLog j\u00e1 criados por humano; o aviso n\u00e3o promete 'tudo some' para n\u00e3o repetir o erro da policy antiga."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_standing_consent_ref",
+      "label": "standingConsentRef \u2014 CHECK constraint (migration 20260901130000_meeting_consent)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_clausula_gravacao",
+      "label": "Cl\u00e1usula \"Grava\u00e7\u00e3o e transcri\u00e7\u00e3o de cerim\u00f4nias\"",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A \u00faltima frase (n\u00e3o autoriza grava\u00e7\u00e3o para finalidade diversa) n\u00e3o \u00e9 enfeite: art. 8\u00ba \u00a74\u00ba torna nulas as autoriza\u00e7\u00f5es gen\u00e9ricas."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_base_consentimento",
+      "label": "Base legal: consentimento (art. 7\u00ba, I / art. 8\u00ba)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00d4nus da prova do controlador; autoriza\u00e7\u00e3o gen\u00e9rica nula; revoga\u00e7\u00e3o a qualquer momento gratuita e facilitada \u2014 mas o sistema guarda que um ADMIN/STE/RTE afirmou, n\u00e3o o que o participante disse."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_base_legitimo_interesse",
+      "label": "Base legal: leg\u00edtimo interesse (art. 7\u00ba, IX / art. 10)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Defende bem o caso interno e mal o externo \u2014 um convidado externo n\u00e3o tem expectativa alguma de que sua fala seja processada por um LLM de terceiro, e \u00e9 para ele que o port\u00e3o cai em PENDING."
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_participants_known",
+      "label": "participantsKnown fail-closed",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_pergunta_base_legal",
+      "label": "Pergunta em aberto: consentimento ou leg\u00edtimo interesse para a finalidade 7?",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_pergunta_standing_habilitavel",
+      "label": "Pergunta em aberto: STANDING \u00e9 habilit\u00e1vel?",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_pergunta_prazo_retencao",
+      "label": "Pergunta em aberto: prazo de reten\u00e7\u00e3o da finalidade 7",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_aviso_de_gravacao_ropa_finalidade7",
+      "label": "RoPA \u2014 finalidade 7 (intelig\u00eancia de reuni\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_consent_state_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_consent_state_machine",
+      "target": "docs_compliance_aviso_de_gravacao_fireflies_transcript_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_fireflies_transcript_job",
+      "target": "docs_compliance_aviso_de_gravacao_per_meeting_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_fireflies_transcript_job",
+      "target": "docs_compliance_aviso_de_gravacao_standing_mode",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_standing_mode",
+      "target": "docs_compliance_aviso_de_gravacao_standing_consent_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_per_meeting_mode",
+      "target": "docs_compliance_aviso_de_gravacao_aviso_interno",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_per_meeting_mode",
+      "target": "docs_compliance_aviso_de_gravacao_aviso_externo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_standing_mode",
+      "target": "docs_compliance_aviso_de_gravacao_clausula_gravacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_revoke_consent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_revoke_consent",
+      "target": "docs_compliance_aviso_de_gravacao_aviso_externo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_base_consentimento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_base_legitimo_interesse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_base_consentimento",
+      "target": "docs_compliance_aviso_de_gravacao_aviso_externo",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_base_legitimo_interesse",
+      "target": "docs_compliance_aviso_de_gravacao_participants_known",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_participants_known",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_pergunta_base_legal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_pergunta_standing_habilitavel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_documento",
+      "target": "docs_compliance_aviso_de_gravacao_pergunta_prazo_retencao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_pergunta_base_legal",
+      "target": "docs_compliance_aviso_de_gravacao_ropa_finalidade7",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_pergunta_prazo_retencao",
+      "target": "docs_compliance_aviso_de_gravacao_ropa_finalidade7",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_base_consentimento",
+      "target": "docs_compliance_aviso_de_gravacao_ropa_finalidade7",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_base_legitimo_interesse",
+      "target": "docs_compliance_aviso_de_gravacao_ropa_finalidade7",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_aviso_de_gravacao_base_consentimento",
+      "target": "docs_compliance_aviso_de_gravacao_base_legitimo_interesse",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/aviso-de-gravacao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

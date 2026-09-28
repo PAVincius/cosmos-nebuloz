@@ -1,0 +1,441 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_subprojeto_a",
+      "label": "Subprojeto A \u2014 Per\u00edodo por intervalo e plano de contas edit\u00e1vel",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Um seletor de per\u00edodo para CAC e Financeiro; DRE e CAC por intervalo; plano de contas deixa de ser constante e vira tabela."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_dependencia_telas_empresa_modelo",
+      "label": "Depend\u00eancia: telas-empresa-modelo-design (em produ\u00e7\u00e3o desde 334eefe5)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_date_range_picker_for_shadcn",
+      "label": "date-range-picker-for-shadcn (johnpolacek, refer\u00eancia externa)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": "https://github.com/johnpolacek/date-range-picker-for-shadcn",
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Portado, n\u00e3o instalado \u2014 DateRangePicker sem showCompare e sem Select de preset."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_seletor_de_periodo",
+      "label": "SeletorDePeriodo (componente)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_entrada_de_data",
+      "label": "EntradaDeData (DateInput portado)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "label": "competenciasNoIntervalo(i)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Meses tocados, ordem crescente; lan\u00e7a IntervaloExcedido acima de 12."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_segundas_no_intervalo",
+      "label": "segundasNoIntervalo(i)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Lan\u00e7a acima de 26 semanas."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_intervalo_padrao_competencia",
+      "label": "intervaloPadraoCompetencia(hoje)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Do primeiro dia do m\u00eas hoje-2 ao \u00faltimo dia do m\u00eas corrente (= '\u00faltimos 3 meses')."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_ler_intervalo_da_url",
+      "label": "lerIntervaloDaUrl(params, padrao)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Valida de/ate; inv\u00e1lido ou ausente cai no padr\u00e3o."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_model_conta_do_plano",
+      "label": "model ContaDoPlano",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Era constante em c\u00f3digo; virou tabela porque a opera\u00e7\u00e3o precisa abrir conta sem deploy. Desativada some da entrada e do DRE dos meses seguintes; lan\u00e7amentos j\u00e1 feitos continuam somando \u2014 n\u00e3o h\u00e1 exclus\u00e3o."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_migracao_conta_do_plano",
+      "label": "Migration 20260907000000_conta_do_plano",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_seed_plano_de_contas_nebuloz",
+      "label": "Seed PLANO_DE_CONTAS (27 contas)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_calcular_dre",
+      "label": "calcularDre(contas, lancamentos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Linhas do DRE derivadas das contas ativas: uma linha por conta nos grupos 1 e 3, uma por centro de custo nos grupos 4/5/6."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_dre",
+      "label": "lerDre({de, ate})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_cac",
+      "label": "lerCac({de, ate})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "conta 4.x nula se qualquer m\u00eas do intervalo estiver sem lan\u00e7amento \u2014 total parcial mentiria com cara de n\u00famero. editavel=true s\u00f3 com um m\u00eas."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_caixa",
+      "label": "lerCaixa({de, ate})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_criar_conta",
+      "label": "criarConta(input)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_intervalo_estado_de_url",
+      "label": "Princ\u00edpio: o intervalo \u00e9 estado de URL",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "?de=AAAA-MM-DD&ate=AAAA-MM-DD nas duas p\u00e1ginas; recarregar reproduz o que se via, um link compartilha o per\u00edodo."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_meses_inteiros",
+      "label": "Princ\u00edpio: meses inteiros",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O usu\u00e1rio escolhe dias; a leitura usa as compet\u00eancias que esses dias tocam. 01/07\u201315/09 l\u00ea jul, ago, set."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_tetos_explicitos",
+      "label": "Princ\u00edpio: tetos expl\u00edcitos",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "12 meses no DRE e no CAC, 26 semanas no caixa; acima disso a action recusa com mensagem, n\u00e3o trunca em sil\u00eancio."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_regra_desativar_nao_excluir_conta",
+      "label": "Desativar conta em vez de excluir",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ponytail: desativar cobre o caso e n\u00e3o quebra lan\u00e7amento existente."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_subprojeto_a",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_dependencia_telas_empresa_modelo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_seletor_de_periodo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_date_range_picker_for_shadcn",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_seletor_de_periodo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_entrada_de_data",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_seletor_de_periodo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_ler_intervalo_da_url",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_component_seletor_de_periodo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_intervalo_estado_de_url",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_meses_inteiros",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_tetos_explicitos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_segundas_no_intervalo",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_principio_tetos_explicitos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_intervalo_padrao_competencia",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_migracao_conta_do_plano",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_seed_plano_de_contas_nebuloz",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_calcular_dre",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_calcular_dre",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_regra_desativar_nao_excluir_conta",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_dre",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_dre",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_calcular_dre",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_cac",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_competencias_no_intervalo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_ler_caixa",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_fn_segundas_no_intervalo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_criar_conta",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_action_criar_conta",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_regra_desativar_nao_excluir_conta",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-periodo-e-plano-de-contas-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

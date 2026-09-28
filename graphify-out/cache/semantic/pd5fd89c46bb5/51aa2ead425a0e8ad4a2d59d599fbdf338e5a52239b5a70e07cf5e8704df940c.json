@@ -1,0 +1,417 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_charter_product_root",
+      "label": "Product \u2014 Charter",
+      "file_type": "document",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_compliance_lead",
+      "label": "Compliance Lead (operador principal)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_governance_roles",
+      "label": "7 Pap\u00e9is de Governan\u00e7a (Compliance, Legal, Seguran\u00e7a, People Ops, Requester, Executivo, Auditor)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_charter_matrix",
+      "label": "packages/rbac/src/charter-matrix.ts",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_icp",
+      "label": "ICP: regulados + fornecedores de regulados",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_mapa_de_fronteiras_ownership",
+      "label": "Charter dono de 4 entidades no Mapa de Fronteiras",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_evidencia_viva",
+      "label": "Mecanismo: Evid\u00eancia Viva",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_adr_0005",
+      "label": "ADR-0005 (caminho de aprova\u00e7\u00e3o e SLA congelados na submiss\u00e3o)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_adr_0003",
+      "label": "ADR-0003 (formul\u00e1rio barra fornecedor sem teto contratual)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_regulacoes_versionadas",
+      "label": "Regula\u00e7\u00f5es versionadas (EU AI Act, LGPD, NIST AI RMF, ISO/IEC 42001, checklist Nebuloz)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_campo_competitivo",
+      "label": "Campo competitivo (OneTrust, Credo AI, Holistic AI, watsonx.governance)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_bootstrap",
+      "label": "Bootstrap do m\u00f3dulo (papel Compliance + 9 se\u00e7\u00f5es em rascunho)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_politica_ciclo",
+      "label": "Ciclo de se\u00e7\u00e3o de pol\u00edtica (Rascunho \u2192 Em revis\u00e3o \u2192 Publicada)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_intake_decisao",
+      "label": "Intake e Decis\u00e3o (caminho e SLA ao vivo)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_risco_7_categorias",
+      "label": "Risco: 7 categorias, severidade = m\u00e1ximo",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_fornecedor_tier",
+      "label": "Fornecedor: tier, DPA e cl\u00e1usulas CL-01 a CL-08",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_cl01_gap",
+      "label": "Lacuna: bootstrap n\u00e3o cria CL-01 a CL-08 (teto P\u00fablico)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_dogfooding",
+      "label": "Dogfooding: Charter da Nebuloz governa usos de LLM do Cosmos",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_rls_inerte",
+      "label": "RLS inerte (restri\u00e7\u00e3o de produ\u00e7\u00e3o)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_product_principles",
+      "label": "Product Principles (evid\u00eancia n\u00e3o selo, padr\u00e3o \u00e9 negar)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_charter_product_root",
+      "target": "apps_app_components_charter_product_compliance_lead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_compliance_lead",
+      "target": "apps_app_components_charter_product_governance_roles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_governance_roles",
+      "target": "apps_app_components_charter_product_charter_matrix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_governance_roles",
+      "target": "apps_app_components_charter_product_icp",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_root",
+      "target": "apps_app_components_charter_product_mapa_de_fronteiras_ownership",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_evidencia_viva",
+      "target": "apps_app_components_charter_product_mapa_de_fronteiras_ownership",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_intake_decisao",
+      "target": "apps_app_components_charter_product_adr_0005",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_fornecedor_tier",
+      "target": "apps_app_components_charter_product_adr_0003",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_mapa_de_fronteiras_ownership",
+      "target": "apps_app_components_charter_product_regulacoes_versionadas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_evidencia_viva",
+      "target": "apps_app_components_charter_product_campo_competitivo",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_bootstrap",
+      "target": "apps_app_components_charter_product_politica_ciclo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_bootstrap",
+      "target": "apps_app_components_charter_product_fornecedor_tier",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_fornecedor_tier",
+      "target": "apps_app_components_charter_product_cl01_gap",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_bootstrap",
+      "target": "apps_app_components_charter_product_cl01_gap",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_risco_7_categorias",
+      "target": "apps_app_components_charter_product_fornecedor_tier",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_dogfooding",
+      "target": "apps_app_components_charter_product_cl01_gap",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_principles",
+      "target": "apps_app_components_charter_product_evidencia_viva",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_principles",
+      "target": "apps_app_components_charter_product_rls_inerte",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_product_governance_roles",
+      "target": "apps_app_components_charter_design_charter_role_tone",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "apps/app/components/charter/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

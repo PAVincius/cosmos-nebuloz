@@ -1,0 +1,352 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_milestone",
+      "label": "Or\u00e7ado \u00d7 Realizado e Receita Recorrente Completion (D-b)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_orcamento_da_conta",
+      "label": "OrcamentoDaConta Model (@@unique tenantId+competencia+conta)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_assinatura_do_tenant",
+      "label": "AssinaturaDoTenant Model",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_mudanca_de_assinatura",
+      "label": "MudancaDeAssinatura Model (History-Based MRR)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_credito_do_mes",
+      "label": "CreditoDoMes Model (@@unique tenantId+clienteSlug+competencia)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_recorrente",
+      "label": "Migration 20260911000000_orcamento_e_recorrente",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "label": "Receita Recorrente Pure Rules (MRR by Compet\u00eancia, Churn, Franquia)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_actions_orcamento_assinatura",
+      "label": "Actions: lerOrcado, salvarOrcamento, listarRecorrente + Assinatura Writes",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_fix_valor_na_competencia_tie",
+      "label": "Fix: valorNaCompetencia Tie-Break by criadoEm (Invalid Comparator)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_mrr_takes_history",
+      "label": "Ruling 1: mrr() Takes (assinaturas, mudancas, competencia), Not Spec Signature",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_churn_base_definition",
+      "label": "Ruling 5: churnDeClientes Base = Active at Month End + Departed in Month",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_receita_servico_zero_not_null",
+      "label": "Ruling 3: receitaDeServico Treats Absence as Zero (DRE Treats as Null)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_env_rtk_hook_misreports_prisma",
+      "label": "Env Finding: rtk Hook Misreports prisma migrate status Output",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_pending_da_db_migrations_joint_push",
+      "label": "Pending: D-a + D-b Migrations Ship Together, D-a Is the Risk",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ponytail_audit_diff_null_string",
+      "label": "Ponytail: salvarOrcamento Audit Diff Logs 'null' as Text on Delete",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_recorrente",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_orcamento_da_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_recorrente",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_assinatura_do_tenant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_recorrente",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_credito_do_mes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_mudanca_de_assinatura",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_actions_orcamento_assinatura",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_orcamento_da_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_actions_orcamento_assinatura",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_fix_valor_na_competencia_tie",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_mrr_takes_history",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_churn_base_definition",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_receita_servico_zero_not_null",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_pending_da_db_migrations_joint_push",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_recorrente",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_milestone",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_model_orcamento_da_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_milestone",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_lib_receita_recorrente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_milestone",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_actions_orcamento_assinatura",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_env_rtk_hook_misreports_prisma",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ponytail_audit_diff_null_string",
+      "target": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_actions_orcamento_assinatura",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_pending_da_db_migrations_joint_push",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_migration_livro_razao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_orcado_e_receita_recorrente_ruling_receita_servico_zero_not_null",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_null_vs_zero_dre",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

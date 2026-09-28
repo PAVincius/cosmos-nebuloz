@@ -1,0 +1,205 @@
+{
+  "nodes": [
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_diario_dogfood_meridian",
+      "label": "Di\u00e1rio de dogfood do Meridian (log de opera\u00e7\u00f5es em produ\u00e7\u00e3o com \"vai\" do CEO)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_m1_criar_assessment_as112",
+      "label": "M1 executado em produ\u00e7\u00e3o \u2014 criar assessment pela carteira (gerou AS-112)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_m2_dez_atribuicoes_falhou",
+      "label": "M2 executado em produ\u00e7\u00e3o \u2014 10 atribui\u00e7\u00f5es, falhou (nenhum link copiado, coleta travou)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_m2_bis_revogar_atribuir_falhou",
+      "label": "M2-bis \u2014 revogar e atribuir de novo, falhou (links copiados mas n\u00e3o colados em lugar nenhum)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_m2_ter_colar_links_falhou",
+      "label": "M2-ter \u2014 colar cada link em arquivo local, falhou (arquivo ficou com 0 links)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_as_112_assessment",
+      "label": "AS-112 (assessment criado em produ\u00e7\u00e3o pelo M1, c\u00f3digo gerado pelo sistema, n\u00e3o AS-NBZ-002)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_deploy_86f8153f_merge_248",
+      "label": "Deploy dpl_Hs1rcL1Ys7e4nLtVEhtZNbL46WPp, commit 86f8153f (merge #248) \u2014 pr\u00e9-condi\u00e7\u00e3o M1/M2",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_diario_deploy_d846faed_merge_253",
+      "label": "Deploy dpl_4QSbrS8MQjs3zF85o1LWVv3KXMJk, commit d846faed (merge #253) \u2014 pr\u00e9-condi\u00e7\u00e3o M2-bis",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_diario_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_diario_m1_criar_assessment_as112",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_diario_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_diario_m2_dez_atribuicoes_falhou",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_diario_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_diario_m2_bis_revogar_atribuir_falhou",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_diario_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_diario_m2_ter_colar_links_falhou",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m1_criar_assessment_as112",
+      "target": "docs_qualidade_dogfood_meridian_diario_as_112_assessment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m2_dez_atribuicoes_falhou",
+      "target": "docs_qualidade_dogfood_meridian_diario_as_112_assessment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m1_criar_assessment_as112",
+      "target": "docs_qualidade_dogfood_meridian_diario_deploy_86f8153f_merge_248",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m2_bis_revogar_atribuir_falhou",
+      "target": "docs_qualidade_dogfood_meridian_diario_deploy_d846faed_merge_253",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m2_ter_colar_links_falhou",
+      "target": "docs_qualidade_dogfood_meridian_diario_m2_bis_revogar_atribuir_falhou",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m2_ter_colar_links_falhou",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p0_link_coleta_perdido_tres_vezes_producao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_diario_m2_dez_atribuicoes_falhou",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p1_aba_coleta_sem_botao_revogar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/diario.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

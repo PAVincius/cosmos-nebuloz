@@ -1,0 +1,156 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_board_do_time",
+      "label": "Board do time (sprint, story, task, defeito, impedimento)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Impedimentos e defeitos s\u00e3o itens de primeira classe no board, com o mesmo ciclo de vida de uma story, n\u00e3o coment\u00e1rio solto num card."
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "label": "StateTransitionHistory (fonte \u00fanica das m\u00e9tricas de fluxo)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Toda vez que um item muda de estado no board, o Cosmos registra a transi\u00e7\u00e3o; por tudo derivar dessa mesma tabela, n\u00e3o existe reconcilia\u00e7\u00e3o manual entre 'o board' e 'o relat\u00f3rio'."
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_cfd",
+      "label": "CFD \u2014 Cumulative Flow Diagram",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_throughput",
+      "label": "Throughput (itens conclu\u00eddos por per\u00edodo)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_aging_wip",
+      "label": "Aging WIP (tempo parado num estado)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_lead_time",
+      "label": "Lead time (in\u00edcio at\u00e9 conclus\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_guias_board_do_time_e_metricas_metricas_dora",
+      "label": "M\u00e9tricas DORA (indicadores de entrega de software)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_board_do_time",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_cfd",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_throughput",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_aging_wip",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_lead_time",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_metricas_dora",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_board_do_time_e_metricas_board_do_time",
+      "target": "docs_cliente_conceitos_index_hierarquia_trabalho",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/board-do-time-e-metricas.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,299 @@
+{
+  "nodes": [
+    {
+      "id": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "label": "CAC Totalmente Carregado",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_formula_cac",
+      "label": "Formula do CAC",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_custo_de_entrega_de_aquisicao",
+      "label": "Custo de Entrega de Atividades de Aquisicao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_tempo_de_discovery_nao_convertido",
+      "label": "Tempo de Discovery que Nao Converte",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_exemplo_calculado",
+      "label": "Exemplo Calculado Hipotese - R$20.250 por cliente",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_payback_plano_scale",
+      "label": "Payback contra o Plano Scale",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_cac_por_produto",
+      "label": "CAC por Produto - Rateio",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_regra_de_alocacao",
+      "label": "Regra de Alocacao de CAC entre Produtos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_pendencias_de_preenchimento",
+      "label": "Ordem de Impacto das Pendencias de Preenchimento",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_tela_funil",
+      "label": "Tela Funil do Back-office",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_precificar_test",
+      "label": "precificar.test.ts - constantes reais do plano Scale",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_cac_modelo_pacote_s_scaffold",
+      "label": "Payback do Pacote S do Scaffold - pendente",
+      "file_type": "concept",
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "target": "docs_comercial_cac_modelo_formula_cac",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_formula_cac",
+      "target": "docs_comercial_cac_modelo_custo_de_entrega_de_aquisicao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_formula_cac",
+      "target": "docs_comercial_cac_modelo_tempo_de_discovery_nao_convertido",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_exemplo_calculado",
+      "target": "docs_comercial_cac_modelo_formula_cac",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_exemplo_calculado",
+      "target": "docs_comercial_cac_modelo_custo_de_entrega_de_aquisicao",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_payback_plano_scale",
+      "target": "docs_comercial_cac_modelo_exemplo_calculado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_payback_plano_scale",
+      "target": "docs_comercial_cac_modelo_precificar_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_payback_plano_scale",
+      "target": "docs_comercial_cac_modelo_pacote_s_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_cac_por_produto",
+      "target": "docs_comercial_cac_modelo_regra_de_alocacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_regra_de_alocacao",
+      "target": "docs_comercial_cac_modelo_exemplo_calculado",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_pendencias_de_preenchimento",
+      "target": "docs_comercial_cac_modelo_formula_cac",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_tela_funil",
+      "target": "docs_comercial_cac_modelo_tempo_de_discovery_nao_convertido",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "target": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_payback_plano_scale",
+      "target": "docs_comercial_icp_e_precificacao_plano_scale",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_pacote_s_scaffold",
+      "target": "docs_produto_scaffold_prd_preco_pacote_s",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_cac_modelo_tempo_de_discovery_nao_convertido",
+      "target": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/cac-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

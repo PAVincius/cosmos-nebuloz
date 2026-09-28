@@ -1,0 +1,169 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_workspace",
+      "label": "Settings \u2192 Workspace (nome do tenant, m\u00f3dulos contratados)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_membros",
+      "label": "Settings \u2192 Membros (convidar, atribuir papel SAFe, definir ART)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_papeis_customizados",
+      "label": "Settings \u2192 Pap\u00e9is customizados",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cria papel que adiciona permiss\u00e3o por cima do padr\u00e3o \u2014 nunca restringe."
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_sso",
+      "label": "Settings \u2192 SSO (login via provedor de identidade)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_seguranca",
+      "label": "Settings \u2192 Seguran\u00e7a (2FA obrigat\u00f3rio, sess\u00f5es ativas)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_notificacoes",
+      "label": "Settings \u2192 Notifica\u00e7\u00f5es (quem recebe alerta de qu\u00ea, por canal)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_billing",
+      "label": "Settings \u2192 Billing (m\u00f3dulos ativos e cobran\u00e7a, operado pela Nebuloz)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A parte financeira \u00e9 operada pela Nebuloz, n\u00e3o edit\u00e1vel na tela."
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_safe",
+      "label": "Settings \u2192 SAFe (ARTs, times, altitudes ativas)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_auditoria",
+      "label": "Settings \u2192 Auditoria (trilha de eventos, incl. acessos negados)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_configuracoes_settings_integracoes",
+      "label": "Settings \u2192 Integra\u00e7\u00f5es (Linear, GitHub, webhooks, API keys)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_referencia_configuracoes_settings_papeis_customizados",
+      "target": "docs_cliente_conceitos_permissoes_papel_customizado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_configuracoes_settings_integracoes",
+      "target": "docs_cliente_guias_integracoes_settings_integracoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_configuracoes_settings_auditoria",
+      "target": "docs_cliente_conceitos_permissoes_falta_permissao",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_configuracoes_settings_safe",
+      "target": "docs_cliente_conceitos_index_altitude",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_configuracoes_settings_membros",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/referencia/configuracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

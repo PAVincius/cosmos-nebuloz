@@ -1,0 +1,452 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_meridian_prd_meridian",
+      "label": "Meridian (produto)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "AVALIAR \u2014 'Estamos prontos?': diagn\u00f3stico de prontid\u00e3o para IA em cinco eixos, em que a discord\u00e2ncia entre respondentes vira dado audit\u00e1vel em vez de sumir na m\u00e9dia."
+    },
+    {
+      "id": "docs_produto_meridian_prd_document",
+      "label": "Meridian \u2014 Product Requirements Document",
+      "file_type": "document",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_scoring_engine",
+      "label": "Motor de scoring (score 0\u2013100, confian\u00e7a 0\u20131)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Score sai de fun\u00e7\u00e3o pura, determin\u00edstico por eixo; eixo contestado acima do limiar entra na fila de diverg\u00eancia resposta a resposta antes do relat\u00f3rio."
+    },
+    {
+      "id": "docs_produto_meridian_prd_override",
+      "label": "Override com justificativa (M-13)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Justificativa de 20+ caracteres obrigat\u00f3ria; computado e hist\u00f3rico s\u00e3o preservados, nunca substitu\u00eddos \u2014 o n\u00famero final pode divergir do computado mas o computado nunca some."
+    },
+    {
+      "id": "docs_produto_meridian_prd_gap_register",
+      "label": "Gap register",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Registro can\u00f4nico de lacunas derivadas de eixo abaixo do limiar; a posse do gap fica no Meridian mesmo depois de promovido para Cosmos ou Scaffold."
+    },
+    {
+      "id": "docs_produto_meridian_prd_escala_de_confianca",
+      "label": "Escala de confian\u00e7a: medido, estimado, declarado",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Vocabul\u00e1rio \u00fanico que deveria ser reusado por Signal, Scaffold e Cosmos; cada um hoje redefine seu pr\u00f3prio enum de confian\u00e7a."
+    },
+    {
+      "id": "docs_produto_meridian_prd_bateria_respondente",
+      "label": "Bateria do respondente (/meridian-responder/<token>)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Respondente sem conta responde por link individual com validade, um eixo por vez, rascunho retom\u00e1vel e evid\u00eancia at\u00e9 10 MB."
+    },
+    {
+      "id": "docs_produto_meridian_prd_consultant_role",
+      "label": "Consultora Nebuloz (CONSULTANT)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Conduz o diagn\u00f3stico de v\u00e1rias organiza\u00e7\u00f5es num tenant pr\u00f3prio da consultoria; o cliente responde por link e n\u00e3o entra nesse tenant."
+    },
+    {
+      "id": "docs_produto_meridian_prd_plano_12_meses",
+      "label": "Plano de 12 meses (ordena\u00e7\u00e3o topol\u00f3gica)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sequencia gaps em quatro trimestres por ordena\u00e7\u00e3o topol\u00f3gica; nenhum item entra antes de um pr\u00e9-requisito."
+    },
+    {
+      "id": "docs_produto_meridian_prd_benchmark_pool",
+      "label": "Benchmark pool / coortes por setor e faixa",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhuma tela desenha compara\u00e7\u00e3o com coorte abaixo de 5 organiza\u00e7\u00f5es; a leitura corta o percentil, mas o 'n' hoje conta assessments, n\u00e3o organiza\u00e7\u00f5es distintas."
+    },
+    {
+      "id": "docs_produto_meridian_prd_reemitir_link_decisao",
+      "label": "Decis\u00e3o 2026-09-26: reemitir link do respondente",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O token s\u00f3 existe no modal de atribui\u00e7\u00e3o e o banco guarda o hash; perder o link era terminal. Decis\u00e3o do CPO: girar o tokenHash mantendo id/eixo/rascunho/status, com auditoria meridian.respondent.reissue; e-mail ao respondente fica para depois da spec 004 e parecer da Lacre."
+    },
+    {
+      "id": "docs_produto_meridian_prd_adr_0012",
+      "label": "ADR-0012 (isolamento por RLS, referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "RLS inerte; reassessmentOfId e assessmentId do gap entram sem conferir o tenant (M-01)."
+    },
+    {
+      "id": "docs_produto_meridian_prd_adr_0014",
+      "label": "ADR-0014 \u2014 promo\u00e7\u00e3o Scaffold materializa no back-office",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Accepted; faz do Engagement do back-office o destino da promo\u00e7\u00e3o de gap, mas s\u00f3 testes chamam materializarEngajamento e o Scaffold PRD nega o Engagement \u2014 pendente de revis\u00e3o."
+    },
+    {
+      "id": "docs_produto_meridian_prd_adr_0009",
+      "label": "ADR-0009 \u2014 auditoria reusa AuditLog (referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_charter_ref",
+      "label": "Charter (produto, referenciado \u2014 primitivas visuais)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_scaffold_ref",
+      "label": "Scaffold (produto, referenciado \u2014 promo\u00e7\u00e3o de gap)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_signal_ref",
+      "label": "Signal (produto, referenciado \u2014 cita avalia\u00e7\u00e3o sem recalcular)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_mapa_de_fronteiras",
+      "label": "Mapa de fronteiras (referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "P\u00f5e o Meridian em AVALIAR como dono de tr\u00eas entidades que os outros produtos leem sem alterar."
+    },
+    {
+      "id": "docs_produto_meridian_prd_lgpd_dsr",
+      "label": "Elimina\u00e7\u00e3o LGPD do respondente (lgpd-dsr.ts)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O nome do arquivo de evid\u00eancia \u00e9 anonimizado na elimina\u00e7\u00e3o, mas o objeto em si permanece no bucket."
+    },
+    {
+      "id": "docs_produto_meridian_prd_dogfood_asnbz",
+      "label": "Diagn\u00f3stico dogfood da Nebuloz (AS-NBZ-001 / AS-NEBULOZ-01)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Dois diagn\u00f3sticos concorrentes do dogfood: um com dois respondentes e cinco eixos contestados via SQL, outro com score declarado e confian\u00e7a 0,30 via seed de provisioning \u2014 quest\u00e3o em aberto qual \u00e9 o oficial."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_meridian_prd_document",
+      "target": "docs_produto_meridian_prd_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_scoring_engine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_scoring_engine",
+      "target": "docs_produto_meridian_prd_override",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_gap_register",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_gap_register",
+      "target": "docs_produto_meridian_prd_plano_12_meses",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_escala_de_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_bateria_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_consultant_role",
+      "target": "docs_produto_meridian_prd_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_benchmark_pool",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_bateria_respondente",
+      "target": "docs_produto_meridian_prd_reemitir_link_decisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_adr_0012",
+      "target": "docs_produto_charter_prd_adr_0012",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_adr_0014",
+      "target": "docs_produto_meridian_prd_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_adr_0009",
+      "target": "docs_produto_charter_srd_adr_0009",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_signal_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_signal_ref",
+      "target": "docs_produto_meridian_prd_escala_de_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_mapa_de_fronteiras",
+      "target": "docs_produto_charter_prd_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_bateria_respondente",
+      "target": "docs_produto_meridian_prd_lgpd_dsr",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian",
+      "target": "docs_produto_meridian_prd_dogfood_asnbz",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

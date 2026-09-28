@@ -1,0 +1,344 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_referencia_glossario_tenant",
+      "label": "Gloss\u00e1rio: Tenant",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_modulo",
+      "label": "Gloss\u00e1rio: M\u00f3dulo",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_altitude",
+      "label": "Gloss\u00e1rio: Altitude",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_hierarquia_epico_feature_story_task",
+      "label": "Gloss\u00e1rio: \u00c9pico, Feature, Story, Task",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_art_team",
+      "label": "Gloss\u00e1rio: ART (Agile Release Train) e Team",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_pi",
+      "label": "Gloss\u00e1rio: PI (Program Increment)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_pi_objective",
+      "label": "Gloss\u00e1rio: PI Objective",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_confidence_vote",
+      "label": "Gloss\u00e1rio: Confidence vote",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_wsjf",
+      "label": "Gloss\u00e1rio: WSJF (Weighted Shortest Job First)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_tema_estrategico",
+      "label": "Gloss\u00e1rio: Tema estrat\u00e9gico",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_lean_budget",
+      "label": "Gloss\u00e1rio: Lean budget",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_value_realization",
+      "label": "Gloss\u00e1rio: Value realization",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_papel_efetivo",
+      "label": "Gloss\u00e1rio: Papel efetivo",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_papel_customizado",
+      "label": "Gloss\u00e1rio: Papel customizado",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_flow_metrics",
+      "label": "Gloss\u00e1rio: Flow metrics (CFD, throughput, aging WIP, lead time, DORA)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_referencia_glossario_large_solution",
+      "label": "Gloss\u00e1rio: Large Solution (altitude acima de ART)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Coordena m\u00faltiplos ARTs, capabilities e depend\u00eancias entre eles."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_referencia_glossario_tenant",
+      "target": "docs_cliente_conceitos_index_tenant",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_modulo",
+      "target": "docs_cliente_conceitos_index_modulo",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_altitude",
+      "target": "docs_cliente_conceitos_index_altitude",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_hierarquia_epico_feature_story_task",
+      "target": "docs_cliente_conceitos_index_hierarquia_trabalho",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_art_team",
+      "target": "docs_cliente_conceitos_index_art_team",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_wsjf",
+      "target": "docs_cliente_guias_portfolio_kanban_wsjf_wsjf",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_confidence_vote",
+      "target": "docs_cliente_guias_pi_planning_confidence_vote",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_papel_efetivo",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_papel_customizado",
+      "target": "docs_cliente_conceitos_permissoes_papel_customizado",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_pi_objective",
+      "target": "docs_cliente_guias_pi_planning_pi_objectives",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_tema_estrategico",
+      "target": "docs_cliente_guias_portfolio_kanban_wsjf_tema_estrategico",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_flow_metrics",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_state_transition_history",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_tema_estrategico",
+      "target": "docs_cliente_referencia_glossario_lean_budget",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_lean_budget",
+      "target": "docs_cliente_referencia_glossario_value_realization",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_pi",
+      "target": "docs_cliente_referencia_glossario_pi_objective",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_referencia_glossario_pi_objective",
+      "target": "docs_cliente_referencia_glossario_confidence_vote",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/cliente/referencia/glossario.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

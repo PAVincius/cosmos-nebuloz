@@ -1,0 +1,538 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_charter_design_root",
+      "label": "Design System: Charter",
+      "file_type": "document",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_observatorio_noturno",
+      "label": "O Observat\u00f3rio Noturno (Creative North Star)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_base_compartilhada",
+      "label": "Base Compartilhada (Charter/Meridian/Scaffold/Signal)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_four_css_duplication",
+      "label": "Duplica\u00e7\u00e3o dos 4 CSS (charter/meridian/scaffold/signal.css)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_colored_fact_rule",
+      "label": "The Colored Fact Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_color_plus_word_rule",
+      "label": "The Color-Plus-Word Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_four_slot_rule",
+      "label": "The Four-Slot Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_polarity_rule",
+      "label": "The Polarity Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_mono_for_measure_rule",
+      "label": "The Mono-for-Measure Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_six_step_rule",
+      "label": "The Six-Step Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_single_uppercase_rule",
+      "label": "The Single-Uppercase Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_one_cols_rule",
+      "label": "The One-Cols Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_collapsed_panel_rule",
+      "label": "The Collapsed-Panel Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_responding_glow_rule",
+      "label": "The Responding-Glow Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_night_texture_rule",
+      "label": "The Night-Texture Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_fs_scale_debt",
+      "label": "D\u00edvida: escala --fs-* n\u00e3o declarada fora de .cosmos-root",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_spec_not_implemented_typography",
+      "label": "Especificado, n\u00e3o implementado (tipografia do handoff)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_spec_not_implemented_motion",
+      "label": "Especificado, n\u00e3o implementado (motion da casa)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_heatmap",
+      "label": "Heatmap de risco 5\u00d75",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_setuppanel",
+      "label": "SetupPanel",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_disclosurepanel",
+      "label": "DisclosurePanel",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_gatedbutton",
+      "label": "GatedButton",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_modalshell",
+      "label": "ModalShell (Charter)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_kpicard",
+      "label": "KpiCard (Charter)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_adr_0010",
+      "label": "ADR-0010 (anti-refer\u00eancia ao lavanda do Cosmos)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_two_form_kits",
+      "label": "Dois kits de formul\u00e1rio (base.tsx vs form-kit.tsx)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_charter_design_charter_role_tone",
+      "label": "CHARTER_ROLE_TONE (papel de governan\u00e7a tem tom de categoria)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_charter_design_root",
+      "target": "apps_app_components_charter_design_observatorio_noturno",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_observatorio_noturno",
+      "target": "apps_app_components_charter_design_colored_fact_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_colored_fact_rule",
+      "target": "apps_app_components_charter_design_color_plus_word_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_four_slot_rule",
+      "target": "apps_app_components_charter_design_polarity_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_base_compartilhada",
+      "target": "apps_app_components_charter_design_four_css_duplication",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_base_compartilhada",
+      "target": "apps_app_components_charter_design_adr_0010",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_heatmap",
+      "target": "apps_app_components_charter_design_color_plus_word_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_setuppanel",
+      "target": "apps_app_components_charter_design_gatedbutton",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_disclosurepanel",
+      "target": "apps_app_components_charter_design_collapsed_panel_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_kpicard",
+      "target": "apps_app_components_charter_design_responding_glow_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_kpicard",
+      "target": "apps_app_components_charter_design_night_texture_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_mono_for_measure_rule",
+      "target": "apps_app_components_charter_design_six_step_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_fs_scale_debt",
+      "target": "apps_app_components_charter_design_six_step_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_gatedbutton",
+      "target": "apps_app_components_charter_design_charter_role_tone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_two_form_kits",
+      "target": "apps_app_components_charter_design_gatedbutton",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_modalshell",
+      "target": "apps_app_components_charter_design_two_form_kits",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_spec_not_implemented_typography",
+      "target": "apps_app_components_charter_design_mono_for_measure_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_spec_not_implemented_motion",
+      "target": "apps_app_components_charter_design_responding_glow_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_single_uppercase_rule",
+      "target": "apps_app_components_charter_design_mono_for_measure_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_root",
+      "target": "apps_app_components_charter_design_one_cols_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_root",
+      "target": "apps_app_components_charter_product_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_charter_design_observatorio_noturno",
+      "target": "apps_backoffice_design_sala_de_maquinas",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/charter/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "charter_family_shared_base_design",
+      "label": "Base de design compartilhada (Charter/Meridian/Scaffold/Signal) e sua d\u00edvida de duplica\u00e7\u00e3o",
+      "nodes": [
+        "apps_app_components_charter_design_base_compartilhada",
+        "apps_app_components_charter_design_four_css_duplication",
+        "apps_app_components_charter_design_adr_0010"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/charter/DESIGN.md"
+    }
+  ]
+}

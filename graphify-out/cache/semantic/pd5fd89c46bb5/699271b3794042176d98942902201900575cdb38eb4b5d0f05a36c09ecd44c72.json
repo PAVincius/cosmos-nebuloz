@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_guias_integracoes_linear_github_sync",
+      "label": "Sincroniza\u00e7\u00e3o Linear e GitHub (\u00e9pico, issue, PR, deploy)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Autom\u00e1tica depois de configurada: novas issues e PRs vinculados aparecem no board do time sem recriar o item manualmente."
+    },
+    {
+      "id": "docs_cliente_guias_integracoes_webhooks_saida",
+      "label": "Webhooks de sa\u00edda (com fila de reprocesso / DLQ)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada entrega fica registrada com log de sucesso ou falha; entregas que falharem ficam numa fila de reprocesso e podem ser reenviadas manualmente."
+    },
+    {
+      "id": "docs_cliente_guias_integracoes_api_keys",
+      "label": "API keys para automa\u00e7\u00f5es pr\u00f3prias",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_guias_integracoes_settings_integracoes",
+      "label": "Settings \u2192 Integra\u00e7\u00f5es (superf\u00edcie de configura\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O Cosmos n\u00e3o tem construtor de automa\u00e7\u00e3o de uso geral ('se X, ent\u00e3o Y'); os tr\u00eas mecanismos (sync, webhooks, API) cobrem a maior parte dos casos."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_guias_integracoes_linear_github_sync",
+      "target": "docs_cliente_guias_integracoes_settings_integracoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_integracoes_webhooks_saida",
+      "target": "docs_cliente_guias_integracoes_settings_integracoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_integracoes_api_keys",
+      "target": "docs_cliente_guias_integracoes_settings_integracoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_integracoes_api_keys",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/integracoes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

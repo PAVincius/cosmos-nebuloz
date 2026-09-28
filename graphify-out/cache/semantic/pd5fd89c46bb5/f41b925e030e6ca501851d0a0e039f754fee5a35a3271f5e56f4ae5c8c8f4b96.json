@@ -1,0 +1,226 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "label": "Charter \u2014 Pain\u00e9is Est\u00e1ticos, Skeletons e Barrel Remediation (Onda 5a)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_policy_static_panels_collapse",
+      "label": "Policy: Static Explanatory Panels Collapse in Operation Screens (Stay Open in Policy/Compliance)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_settings_panel_collapsed",
+      "label": "Fix: 'Entrega Ainda N\u00e3o Ligada' Panel Collapsed via DisclosurePanel",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_audit_panel_data_binding_sweep",
+      "label": "Audit: SectionCard Sweep Across 6 Screens for Data-Binding vs Fixed Prose",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_settings_vendor_detail_skeleton",
+      "label": "Fix: settings/vendor-detail Generic Skeleton \u2192 SkeletonCard (Matches Product Idiom)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_linked_cases_hint_truncated",
+      "label": "Fix: linkedCasesHint Truncates to 3 Codes + 'e mais N' (Card Overflow at 12 Cases)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_barrel_direct_imports_five_screens",
+      "label": "Fix: 5 Screens Import Modals Directly From ../modals/<file>, Not Barrel",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_out_of_scope_policy_tsx_barrel",
+      "label": "Out of Scope: policy.tsx Still Uses ../modals Barrel (Other Wave's File)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_paineis_e_estados_finding_session_resumed_after_infra_crash",
+      "label": "Finding: Session Crashed Mid-Execution, Resumed From Disk State, Re-Verified Each Piece",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_policy_static_panels_collapse",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_settings_panel_collapsed",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_audit_panel_data_binding_sweep",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_settings_panel_collapsed",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_barrel_direct_imports_five_screens",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_out_of_scope_policy_tsx_barrel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_policy_static_panels_collapse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_audit_panel_data_binding_sweep",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_settings_vendor_detail_skeleton",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_linked_cases_hint_truncated",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_barrel_direct_imports_five_screens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_finding_session_resumed_after_infra_crash",
+      "target": "_claude_completions_2026_09_16_charter_paineis_e_estados_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_barrel_direct_imports_five_screens",
+      "target": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_fix_barrel_direct_imports_five_screens",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_modals_intake_direct_import",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_paineis_e_estados_out_of_scope_policy_tsx_barrel",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-paineis-e-estados.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

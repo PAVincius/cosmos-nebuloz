@@ -1,0 +1,154 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "label": "Signal ganha href: '/signal' no cat\u00e1logo de produtos",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_sem_rota_estado_removido",
+      "label": "Estado SEM_ROTA (\u00f3rf\u00e3o) removido \u2014 uni\u00e3o, listarProdutos e selo 'Em breve aqui'",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_descritor_valor_realizado_ia",
+      "label": "Descritor aprovado 'Valor realizado de IA' aplicado em 4 lugares divergentes",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_produtos_test_caso_atualizado",
+      "label": "Teste 'SIGNAL n\u00e3o vira link' vira 'SIGNAL contratado vira link para /signal'",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_docs_desmentidos_pela_mudanca",
+      "label": "PRODUCT.md do Signal, signal-prd.md \u00a78 e apps/app/DESIGN.md desmentidos pela mudan\u00e7a",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_sv12_minecraft_hosting_decisao",
+      "label": "SV-12 'Minecraft Server Hosting' \u2014 j\u00e1 arquivado (ativo=false); dono decide deixar como est\u00e1",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_23_signal_no_catalogo_pendencia_ordem_produtos_index",
+      "label": "Coment\u00e1rio sobre ORDEM em produtos/index.ts diverge do array real (pend\u00eancia, n\u00e3o tocada)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_sem_rota_estado_removido",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_descritor_valor_realizado_ia",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_produtos_test_caso_atualizado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_descritor_valor_realizado_ia",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_docs_desmentidos_pela_mudanca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_docs_desmentidos_pela_mudanca",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_docs_produto_prd_srd_novos",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_sv12_minecraft_hosting_decisao",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_23_signal_no_catalogo_pendencia_ordem_produtos_index",
+      "target": "_claude_completions_2026_09_23_signal_no_catalogo_signal_href_produto_catalogo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": ".claude/completions/2026-09-23-signal-no-catalogo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

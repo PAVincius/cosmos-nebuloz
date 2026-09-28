@@ -19,8 +19,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/rbac/src/signal-`
 
 ## Grafo
-- 0 nós, 0 arestas (recorte do mestre com 2 hops)
-- ⚠ recorte com 0 nós (< 20) — conferir prefixos, ou o grafo mestre é anterior ao código (rodar /graphify --update)
+- 2154 nós, 6724 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -32,4 +31,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/signal/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 2 completions em `memory.md`
+- 4 completions em `memory.md`

@@ -1,0 +1,185 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_meridian_prd_meridian_product",
+      "label": "Meridian",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_por_que_discordancia_e_dado",
+      "label": "Por que a discord\u00e2ncia \u00e9 o dado",
+      "file_type": "rationale",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_template_v3_2",
+      "label": "Template v3.2 (15 perguntas, 5 eixos)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_gap_register_meridian",
+      "label": "Gap register do Meridian",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_plano_12_meses",
+      "label": "Plano de 12 meses (ordena\u00e7\u00e3o topol\u00f3gica)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_bateria_do_respondente",
+      "label": "Bateria do respondente (link por token)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_m22_documento_de_entrega",
+      "label": "M-22: Documento de entrega ao patrocinador",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_meridian_prd_autosservico_gap",
+      "label": "Gaps contra a decis\u00e3o de opera\u00e7\u00e3o por consultoria (2026-09-22)",
+      "file_type": "concept",
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_meridian_prd_autosservico_gap",
+      "target": "docs_produto_scaffold_srd_adr_0014_promocao_materializa_backoffice",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_por_que_discordancia_e_dado",
+      "target": "docs_produto_meridian_prd_meridian_product",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian_product",
+      "target": "docs_produto_meridian_prd_template_v3_2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian_product",
+      "target": "docs_produto_meridian_prd_gap_register_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_gap_register_meridian",
+      "target": "docs_produto_meridian_prd_plano_12_meses",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_template_v3_2",
+      "target": "docs_produto_meridian_prd_bateria_do_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian_product",
+      "target": "docs_produto_meridian_prd_m22_documento_de_entrega",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian_product",
+      "target": "docs_produto_meridian_prd_autosservico_gap",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_meridian_prd_meridian_product",
+      "target": "docs_produto_meridian_srd_especificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/meridian-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

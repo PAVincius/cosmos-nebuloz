@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario1_reemitir_individual",
+      "label": "Cen\u00e1rio 1: Reemitir link individual (US1)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario2_bloqueios",
+      "label": "Cen\u00e1rio 2: Bloqueios DONE/REVOKED/prazo vencido (US1)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario3_auditoria",
+      "label": "Cen\u00e1rio 3: Auditoria da reemiss\u00e3o (US1)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario4_reemitir_lote",
+      "label": "Cen\u00e1rio 4: Reemitir e copiar todos os pendentes (US2)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario5_lote_sem_pendentes",
+      "label": "Cen\u00e1rio 5: Lote sem pendentes (FR-013)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_quickstart_cenario6_tokenexpiresat_fixado",
+      "label": "Cen\u00e1rio 6: tokenExpiresAt fixado, n\u00e3o recalcula (FR-006)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario1_reemitir_individual",
+      "target": "specs_006_reemitir_link_respondente_spec_us1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario2_bloqueios",
+      "target": "specs_006_reemitir_link_respondente_spec_us1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario3_auditoria",
+      "target": "specs_006_reemitir_link_respondente_spec_fr007_auditoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario4_reemitir_lote",
+      "target": "specs_006_reemitir_link_respondente_spec_us2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario5_lote_sem_pendentes",
+      "target": "specs_006_reemitir_link_respondente_spec_fr013_lote_sem_pendentes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_quickstart_cenario6_tokenexpiresat_fixado",
+      "target": "specs_006_reemitir_link_respondente_spec_fr006_tokenexpiresat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

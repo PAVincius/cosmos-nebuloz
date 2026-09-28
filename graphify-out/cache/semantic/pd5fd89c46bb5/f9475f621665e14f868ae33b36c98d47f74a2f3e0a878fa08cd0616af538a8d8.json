@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {
+      "id": "apps_docs_internal_static_img_favicon_marca_planeta_orbita",
+      "label": "Favicon docs-internal \u2014 marca planeta e \u00f3rbita",
+      "file_type": "image",
+      "source_file": "apps/docs-internal/static/img/favicon.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00cdcone quadrado arredondado roxo/indigo (#5b5bd6) com um ponto branco central (planeta) e uma elipse branca inclinada -25\u00b0 (anel de \u00f3rbita) \u2014 motivo visual de planeta e \u00f3rbita alinhado \u00e0 identidade Cosmos/Nebuloz, n\u00e3o um logotipo tipogr\u00e1fico."
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

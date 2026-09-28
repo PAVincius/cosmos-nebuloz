@@ -107,7 +107,7 @@ pnpm knowledge:refresh  # regenerate .maestri/knowledge/
 
 ## Knowledge Graph (graphify-out/)
 
-Curated master graph (2026-09-03): 35 243 nodes · 58 626 edges · 2 676 communities. It predates the Signal code (2026-09-04).
+Curated master graph (updated 2026-09-28 at main `4ae0b559`): 40 801 nodes · 70 828 edges · 2 631 communities. Files not re-extracted since 2026-09-03 still carry a second, older ID per symbol (`actions_base_safeaction` beside `apps_app_app_actions_base_safeaction`); use the full-path IDs.
 
 **When to query instead of reading files:**
 
@@ -121,11 +121,11 @@ Curated master graph (2026-09-03): 35 243 nodes · 58 626 edges · 2 676 communi
 | Adding a new file | No — just read adjacent files |
 
 **God nodes** (highest connectivity — touch with care):
-- `auth_server_requiretenantsession` — multi-tenant session guard
-- `actions_base_safeaction` — server action HOF wrapper
-- `actions_base_result` — Result<T> pattern, used everywhere
-- `lib_app_design_appdesign` — central design system
-- `auth_server_requirerole` — RBAC enforcement
+- `packages_auth_server_requiretenantsession` — multi-tenant session guard
+- `apps_app_app_actions_base_safeaction` — server action HOF wrapper
+- `apps_app_app_actions_base_result` — Result<T> pattern, used everywhere
+- `apps_app_lib_app_design_appdesign` — central design system
+- `packages_auth_server_requirerole` — RBAC enforcement
 
 **Query commands:**
 ```bash
@@ -133,10 +133,10 @@ Curated master graph (2026-09-03): 35 243 nodes · 58 626 edges · 2 676 communi
 /graphify query "how does PI Planning confidence vote work?"
 
 # Trace specific path (DFS)
-/graphify path "actions_base_safeaction" "audit_index_logaudit"
+/graphify path "apps_app_app_actions_base_safeaction" "apps_app_app_actions_audit_log_audit_logaudit"
 
 # Explain a node
-/graphify explain "auth_server_requiretenantsession"
+/graphify explain "packages_auth_server_requiretenantsession"
 
 # Per-product slice (Maestri)
 graphify explain "<node>" --graph .maestri/knowledge/<produto>/graph.json

@@ -1,0 +1,343 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "label": "Parecer \u2014 Triagem Jev (jev.mjs)",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "label": "jev.mjs \u2014 rotina de triagem hor\u00e1ria de commits",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_ai_gateway_api_key",
+      "label": "AI_GATEWAY_API_KEY",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_vercel_ai_gateway",
+      "label": "Vercel AI Gateway (endpoint evaluation-model)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_jev_model",
+      "label": "Modelo typesafe-ai/jev (avalia\u00e7\u00e3o/roteamento)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_zero_data_retention",
+      "label": "Zero Data Retention (ZDR) por requisi\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Recurso documentado do AI Gateway e da Jev, n\u00e3o campo sem efeito; falha fechado \u2014 sem provedor ZDR-compliant o Gateway recusa com no_providers_available em vez de mandar dado sem prote\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_sem_gerados",
+      "label": "SEM_GERADOS \u2014 lista de exclus\u00e3o de paths do diff",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_diagnostico_nebuloz_sql",
+      "label": "packages/database/scripts/2026-09-diagnostico-nebuloz.sql (PII real: nome+e-mail do fundador)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_grant_staff_admin_sql",
+      "label": "packages/database/scripts/grant-staff-admin.sql (PII real: e-mail de colaborador)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_inc",
+      "label": "TypeSafe AI, Inc. (operador identificado)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_veredito_liberado_condicoes",
+      "label": "Veredito: Liberado com Condi\u00e7\u00f5es",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "N\u00e3o \u00e9 bloqueio de arquitetura \u2014 \u00e9 um filtro de paths e um registro que faltam."
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_v19_entrada_dossie",
+      "label": "Proposta de entrada V-15/V-19 no dossi\u00ea de fornecedores",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_r013_risco",
+      "label": "Proposta de R-013 no risk register",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_test_mjs",
+      "label": "jev.test.mjs (teste do filtro SEM_GERADOS)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_ai_gateway_api_key",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_vercel_ai_gateway",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_vercel_ai_gateway",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_jev_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_jev_model",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_inc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_zero_data_retention",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_mjs",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_sem_gerados",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_sem_gerados",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_diagnostico_nebuloz_sql",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_sem_gerados",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_grant_staff_admin_sql",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_diagnostico_nebuloz_sql",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_veredito_liberado_condicoes",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_grant_staff_admin_sql",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_veredito_liberado_condicoes",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_veredito_liberado_condicoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_v19_entrada_dossie",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_v19_entrada_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_r013_risco",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_r013_risco",
+      "target": "docs_compliance_risk_register_r013_triagem_jev_llm_terceiro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_jev_test_mjs",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_sem_gerados",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_2026_09_23_parecer_triagem_jev_zero_data_retention",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_veredito_liberado_condicoes",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/2026-09-23-parecer-triagem-jev.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

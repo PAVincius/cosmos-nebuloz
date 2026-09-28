@@ -1,0 +1,613 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_signal_prd_signal",
+      "label": "Signal (produto)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "APURAR \u2014 apura se cada iniciativa de IA valeu a pena: ado\u00e7\u00e3o e retorno juntos, com a origem de cada n\u00famero \u00e0 vista; \u00e9 o \u00fanico produto que decide sobre desempenho de valor em opera\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_produto_signal_prd_document",
+      "label": "Signal \u2014 Product Requirements Document",
+      "file_type": "document",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_regra_mae",
+      "label": "A regra-m\u00e3e: ado\u00e7\u00e3o e resultado moram juntos",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "ROI nunca aparece sem vers\u00e3o da f\u00f3rmula e sem confian\u00e7a; ado\u00e7\u00e3o sozinha celebra uso que n\u00e3o rendeu, ROI sozinho defende um n\u00famero que ningu\u00e9m reconstr\u00f3i."
+    },
+    {
+      "id": "docs_produto_signal_prd_roi_engine",
+      "label": "ROI por componentes (f\u00f3rmula versionada)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Retorno e custo com fonte e premissas, versionados via versionRoiFormula; retorno sem custo vira '\u2014', nunca '0,0\u00d7'; mudar a f\u00f3rmula depois de congelar n\u00e3o altera o relat\u00f3rio j\u00e1 emitido."
+    },
+    {
+      "id": "docs_produto_signal_prd_veredito",
+      "label": "Veredito: ado\u00e7\u00e3o \u00d7 m\u00faltiplo contra r\u00e9guas do tenant",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "ROI sem lastro aparece tachado e marcado 'sem lastro', nunca escondido."
+    },
+    {
+      "id": "docs_produto_signal_prd_confianca_signal",
+      "label": "Confian\u00e7a por fatores ponderados (escala pr\u00f3pria 0\u2013100)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Faixas Alta, M\u00e9dia e Baixa sobre escore 0\u2013100, que mede o m\u00e9todo; gap com o Mapa \u2014 a escala de confian\u00e7a \u00e9 do Meridian (medido/estimado/declarado), e o Signal deveria reusar o vocabul\u00e1rio, n\u00e3o inventar outro (S-30)."
+    },
+    {
+      "id": "docs_produto_signal_prd_baseline",
+      "label": "Baseline assinado (tempo, custo, volume, qualidade, base de usu\u00e1rios)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Vers\u00e3o assinada \u00e9 imut\u00e1vel; ativar a iniciativa s\u00f3 \u00e9 permitido com baseline assinado; cada componente carrega fonte."
+    },
+    {
+      "id": "docs_produto_signal_prd_alertas",
+      "label": "Alertas LOW, WEAK e STALE",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada alerta mostra o qu\u00ea e o pr\u00f3ximo passo; disparo hoje \u00e9 por bot\u00e3o, sem agendador \u2014 n\u00famero parado n\u00e3o avisa sozinho."
+    },
+    {
+      "id": "docs_produto_signal_prd_relatorio_congelado",
+      "label": "Relat\u00f3rio congelado (snapshot)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O que o comit\u00ea leu n\u00e3o muda: congela e exporta JSON, id\u00eantico a cada exporta\u00e7\u00e3o; sem PDF ainda (S-18)."
+    },
+    {
+      "id": "docs_produto_signal_prd_decisao_valor",
+      "label": "Decis\u00e3o de valor (S-29, gap)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Continuar, escalar, pivotar ou encerrar, registrada com dono e prazo, enviada ao Cosmos como entrada do WSJF; hoje veredito e a\u00e7\u00e3o sugerida s\u00e3o s\u00f3 derivados na leitura, nenhuma entidade de decis\u00e3o grava nada."
+    },
+    {
+      "id": "docs_produto_signal_prd_atribuicao_ganho",
+      "label": "Atribui\u00e7\u00e3o de ganho (S-30, gap)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Fator, contrafactual e selo Medido/Estimado/Declarado at\u00e9 o relat\u00f3rio; hoje ausente \u2014 sem modelo de atribui\u00e7\u00e3o, a confian\u00e7a \u00e9 s\u00f3 a escala pr\u00f3pria 0\u2013100 do Signal."
+    },
+    {
+      "id": "docs_produto_signal_prd_mapa_de_fronteiras",
+      "label": "Mapa de fronteiras (referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Alvo normativo: o Signal \u00e9 a fase APURAR; onde o c\u00f3digo diverge dele, o PRD registra um gap."
+    },
+    {
+      "id": "docs_produto_signal_prd_scaffold_ref",
+      "label": "Scaffold (produto, referenciado \u2014 dono do baseline)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_cosmos_ref",
+      "label": "Cosmos (produto, referenciado \u2014 dono da iniciativa e do WSJF)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_meridian_ref",
+      "label": "Meridian (produto, referenciado \u2014 dono da escala de confian\u00e7a)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_charter_ref",
+      "label": "Charter (produto, referenciado \u2014 dono de papel, pol\u00edtica e trilha)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_backoffice_ref",
+      "label": "Back-office / Big Bang (referenciado \u2014 contrata TenantModule)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_gap_s27",
+      "label": "S-27 \u2014 sem importador do baseline assinado do Scaffold",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sem baseline do Scaffold a iniciativa deveria ficar 'aguardando promessa', nunca zero; hoje o Signal cria o pr\u00f3prio baseline em vez de importar por chave est\u00e1vel."
+    },
+    {
+      "id": "docs_produto_signal_prd_gap_s28",
+      "label": "S-28 \u2014 SignalInitiative pr\u00f3pria, sem refer\u00eancia ao Cosmos",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sem chave para Epic ou StrategicTheme do Cosmos; o Signal deveria s\u00f3 recomendar status, n\u00e3o ser dono da \u00e1rvore de portf\u00f3lio."
+    },
+    {
+      "id": "docs_produto_signal_prd_gap_s21",
+      "label": "S-21 \u2014 SignalRole/SignalMember \u00e9 segundo modelo de permiss\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Papel e permiss\u00e3o deveriam ser do Charter, com o papel de medi\u00e7\u00e3o como lente sobre ele; hoje o Signal mant\u00e9m matriz pr\u00f3pria (SignalRole, SignalMember)."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_signal_prd_document",
+      "target": "docs_produto_signal_prd_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_regra_mae",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_regra_mae",
+      "target": "docs_produto_signal_prd_roi_engine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_veredito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_veredito",
+      "target": "docs_produto_signal_prd_roi_engine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_veredito",
+      "target": "docs_produto_signal_prd_confianca_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_confianca_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_confianca_signal",
+      "target": "docs_produto_meridian_prd_escala_de_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_baseline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_baseline",
+      "target": "docs_produto_signal_prd_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_alertas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_relatorio_congelado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_decisao_valor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_decisao_valor",
+      "target": "docs_produto_signal_prd_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_atribuicao_ganho",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_atribuicao_ganho",
+      "target": "docs_produto_signal_prd_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_mapa_de_fronteiras",
+      "target": "docs_produto_charter_prd_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_charter_ref",
+      "target": "docs_produto_charter_prd_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_meridian_ref",
+      "target": "docs_produto_meridian_prd_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_scaffold_ref",
+      "target": "docs_produto_meridian_prd_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_gap_s27",
+      "target": "docs_produto_signal_prd_baseline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_gap_s28",
+      "target": "docs_produto_signal_prd_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_gap_s21",
+      "target": "docs_produto_signal_prd_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_backoffice_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_backoffice_ref",
+      "target": "docs_produto_charter_prd_backoffice_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_gap_s27",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_gap_s28",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal",
+      "target": "docs_produto_signal_prd_gap_s21",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_mapa_de_fronteiras_donos",
+      "label": "Mapa de fronteiras \u2014 produtos donos de entidades compartilhadas",
+      "nodes": [
+        "docs_produto_charter_prd_charter",
+        "docs_produto_meridian_prd_meridian",
+        "docs_produto_signal_prd_signal",
+        "docs_produto_charter_prd_mapa_de_fronteiras"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/produto/signal-prd.md"
+    },
+    {
+      "id": "hyperedge_esteira_validacao_lancamento",
+      "label": "Esteira de valida\u00e7\u00e3o como gate \u00fanico de lan\u00e7amento produto a produto",
+      "nodes": [
+        "docs_produto_registro_de_decisoes_d01",
+        "docs_produto_registro_de_decisoes_esteira_validacao",
+        "docs_produto_prontidao_lancamento_esteira_dogfood",
+        "docs_produto_regra_maturidade_e_carga_gate_k6"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/produto/signal-prd.md"
+    },
+    {
+      "id": "hyperedge_escala_confianca_fragmentada",
+      "label": "Escala de confian\u00e7a da su\u00edte \u2014 vocabul\u00e1rio fragmentado entre produtos",
+      "nodes": [
+        "docs_produto_meridian_prd_escala_de_confianca",
+        "docs_produto_signal_prd_confianca_signal",
+        "docs_produto_registro_de_decisoes_d13"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/produto/signal-prd.md"
+    }
+  ]
+}

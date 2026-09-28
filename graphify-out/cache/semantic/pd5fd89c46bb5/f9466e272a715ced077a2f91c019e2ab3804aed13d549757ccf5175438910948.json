@@ -1,0 +1,330 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_index_document",
+      "label": "Documenta\u00e7\u00e3o de produto (\u00edndice)",
+      "file_type": "document",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_index_meridian_ref",
+      "label": "Meridian (produto, AVALIAR)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'Estamos prontos?'; consultoria Nebuloz opera, cliente responde por link; V1 no c\u00f3digo, sem cliente pago comprovado."
+    },
+    {
+      "id": "docs_produto_index_scaffold_ref",
+      "label": "Scaffold (produto, CONTRATAR)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'O que foi prometido?'; V1 no c\u00f3digo, mas o fluxo n\u00e3o fecha sem SQL manual."
+    },
+    {
+      "id": "docs_produto_index_cosmos_ref",
+      "label": "Cosmos (produto, EXECUTAR)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'O que estamos fazendo?'; em produ\u00e7\u00e3o em /cosmos, para RTE, LPM, PO e Scrum Master de organiza\u00e7\u00f5es SAFe."
+    },
+    {
+      "id": "docs_produto_index_signal_ref",
+      "label": "Signal (produto, APURAR)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'Valeu a pena?'; V1 no c\u00f3digo desde 2026-09-04, n\u00e3o oper\u00e1vel s\u00f3 pela interface."
+    },
+    {
+      "id": "docs_produto_index_charter_ref",
+      "label": "Charter (produto, GOVERNAR, transversal)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'\u00c9 permitido? Sob qual risco?'; em produ\u00e7\u00e3o desde julho, para Compliance, CISO, People Ops, AI Program Lead e auditor."
+    },
+    {
+      "id": "docs_produto_index_backoffice_ref",
+      "label": "Back-office / Big Bang (VENDER E OPERAR, transversal)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'Como isso entra e roda?'; em produ\u00e7\u00e3o em backoffice.nebuloz.ai, para CS, RevOps, plataforma e seguran\u00e7a da Nebuloz."
+    },
+    {
+      "id": "docs_produto_index_lab_ref",
+      "label": "LAB \u2014 registro do modelo pr\u00f3prio (fora da cadeia)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Registra que dado entrou, que treino rodou, que avalia\u00e7\u00e3o mediu; est\u00e1 em especifica\u00e7\u00e3o, sem c\u00f3digo."
+    },
+    {
+      "id": "docs_produto_index_mapa_de_fronteiras",
+      "label": "Mapa de fronteiras",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Diz quem \u00e9 dono de cada entidade compartilhada \u2014 tenant, permiss\u00e3o, baseline, portf\u00f3lio, escala de confian\u00e7a; \u00e9 o alvo, e onde o c\u00f3digo diverge \u00e9 gap a fechar, n\u00e3o precedente."
+    },
+    {
+      "id": "docs_produto_index_registro_de_decisoes_document",
+      "label": "Registro de decis\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Decis\u00f5es do CEO e propostas \u00e0 espera dele: pre\u00e7o, copiloto em todos os produtos, raio X, modelo pr\u00f3prio e mem\u00f3ria empresarial."
+    },
+    {
+      "id": "docs_produto_index_site_publico",
+      "label": "Site p\u00fablico (jornada comercial)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Conta a mesma su\u00edte como jornada comercial \u2014 Diagnosticar, Estruturar, Medir, Governar, Operar; \u00e9 a narrativa de venda, e donos de dado e costuras seguem o mapa, n\u00e3o o site."
+    },
+    {
+      "id": "docs_produto_index_maestri_knowledge",
+      "label": "Notes dos especialistas do Maestri (.maestri/knowledge/<produto>/)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Apontam para PRODUCT.md e DESIGN.md de cada produto; regeneradas com pnpm knowledge:refresh."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_signal_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_backoffice_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_lab_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_charter_ref",
+      "target": "docs_produto_charter_prd_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_charter_ref",
+      "target": "docs_produto_charter_prd_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_charter_ref",
+      "target": "docs_produto_charter_srd_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_meridian_ref",
+      "target": "docs_produto_meridian_prd_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_signal_ref",
+      "target": "docs_produto_signal_prd_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_mapa_de_fronteiras",
+      "target": "docs_produto_charter_prd_mapa_de_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_registro_de_decisoes_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_registro_de_decisoes_document",
+      "target": "docs_produto_registro_de_decisoes_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_site_publico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_document",
+      "target": "docs_produto_index_maestri_knowledge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,171 @@
+{
+  "nodes": [
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "label": "Cr\u00edtica de design \u2014 m\u00f3dulo Charter (2026-09-15)",
+      "file_type": "document",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-09-15T22-39-35Z",
+      "author": null,
+      "contributor": null,
+      "rationale": "Nota de sa\u00fade do design 24/40 (Aceit\u00e1vel); cr\u00edtica por c\u00f3digo, sem inspe\u00e7\u00e3o visual (sem servidor em :3012, sem sess\u00e3o, credencial n\u00e3o inserida)."
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_metodo_dual_agent",
+      "label": "M\u00e9todo dual-agent (A: design review Opus isolado \u00b7 B: detector+browser Sonnet isolado)",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_heuristicas_nielsen",
+      "label": "10 heur\u00edsticas de usabilidade (Nielsen) aplicadas ao Charter",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p0_loop_morto_intake",
+      "label": "P0: loop morto intake\u2192rascunho\u2192nada",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": "modals.tsx:159",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "modals.tsx:159 exige eligible; 4 fornecedores reais em REVIEW sem cl\u00e1usulas \u2192 maxClass null; sem estado 'nenhum fornecedor'; case-detail sem a\u00e7\u00e3o para DRAFT; cases.ts sem submitDraftCase; SetupPanel sem passo de fornecedor."
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_dashboard_estado_inicial_falso",
+      "label": "P1: dashboard mente no estado inicial",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": "dashboard.tsx:162-174",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "dashboard.tsx:162-174 interpola version/daysToReview nulos; prim\u00e1rio 'Publicar atualiza\u00e7\u00e3o' sem nada public\u00e1vel; 'Exportar resumo' apenas navega; fila diz 'Nada aqui.'"
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_gating_span_nao_gateia",
+      "label": "P1: gating por span opacity/pointerEvents n\u00e3o gateia",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": "policy.tsx:222",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "policy.tsx:222 e outros GatedAction dos modais usam span com opacity/pointerEvents em vez de GatedButton/Button.disabled \u2014 Tab+Enter ainda ativa o controle; motivo devia ser vis\u00edvel, n\u00e3o em title."
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_risco_alto_sem_confirmacao",
+      "label": "P1: a\u00e7\u00e3o de alto risco sem confirma\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": "settings.tsx:437-462",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "settings.tsx:437-462 troca papel no onChange (auto-remo\u00e7\u00e3o de COMPLIANCE); onboarding.tsx:436-456 aceite em nome de terceiro em 1 clique sem justificativa; 'Reabrir para revis\u00e3o' da policy sem confirmar."
+    },
+    {
+      "id": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p2_controles_decorativos_defaults_perigosos",
+      "label": "P2: controles decorativos e defaults perigosos",
+      "file_type": "concept",
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": "modals.tsx:1052",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "PublishVersionModal checkboxes fora do onSubmit; ExportPackage com per\u00edodo fixo; NewVendorModal com defaults 'Zero'/'Frankfurt'; IntakeModal hitl/launch descartados; risk Exportar sem handler."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_metodo_dual_agent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_heuristicas_nielsen",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p0_loop_morto_intake",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_dashboard_estado_inicial_falso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_gating_span_nao_gateia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p1_risco_alto_sem_confirmacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_critica_design_charter",
+      "target": "_impeccable_critique_2026_09_15t22_39_35z__apps_app_components_charter_p2_controles_decorativos_defaults_perigosos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".impeccable/critique/2026-09-15T22-39-35Z__apps-app-components-charter.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

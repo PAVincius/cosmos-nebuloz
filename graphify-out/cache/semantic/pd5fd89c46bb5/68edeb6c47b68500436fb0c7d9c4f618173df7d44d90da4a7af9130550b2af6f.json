@@ -1,0 +1,315 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_scaffold_srd_especificacao",
+      "label": "Scaffold SRD v1.0",
+      "file_type": "document",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "label": "Guard de quatro port\u00f5es do Scaffold",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_gate_machine",
+      "label": "Gate engine \u2014 m\u00e1quina de estados de fase",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_override_de_gate",
+      "label": "Override de gate (justificativa 20+ caracteres)",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_caso_de_negocio",
+      "label": "Caso de neg\u00f3cio (BusinessCase) do Scaffold",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_handover_pack",
+      "label": "Handover pack (pacote offline)",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_bloqueio_p0_papel_adocao",
+      "label": "BLOQUEIO P0: ningu\u00e9m recebe papel de ado\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nada no reposit\u00f3rio escreve ScaffoldMembership \u2014 nem bootstrap, nem tela, nem seed \u2014 ent\u00e3o sem SQL manual ningu\u00e9m recebe o papel que a fila de aprova\u00e7\u00e3o de trilha exige."
+    },
+    {
+      "id": "docs_produto_scaffold_srd_bloqueio_p0_assess_nao_fecha",
+      "label": "BLOQUEIO P0: a Assess n\u00e3o fecha sem caso de neg\u00f3cio",
+      "file_type": "rationale",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_adr_0014_promocao_materializa_backoffice",
+      "label": "ADR-0014: promo\u00e7\u00e3o Scaffold materializa no back-office",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_adr_0016_residencia_dado",
+      "label": "ADR-0016: resid\u00eancia de dado por organiza\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_adr_0017_fila_de_gates",
+      "label": "ADR-0017: fila de gates da consultoria no back-office",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_template_overlay",
+      "label": "TemplateOverlay \u2014 customiza\u00e7\u00e3o como opera\u00e7\u00f5es ADD/REMOVE/REPLACE",
+      "file_type": "concept",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_scaffold_srd_conflito_adr0014_x_codigo",
+      "label": "Conflito ADR-0014 \u00d7 c\u00f3digo (duas rotas de promo\u00e7\u00e3o)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "target": "docs_produto_backoffice_srd_platformdb_porta_cross_tenant",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "target": "docs_produto_charter_srd_adr_0012_rls_anulada",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_especificacao",
+      "target": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "target": "docs_produto_scaffold_srd_gate_machine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_gate_machine",
+      "target": "docs_produto_scaffold_srd_override_de_gate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_gate_machine",
+      "target": "docs_produto_scaffold_srd_bloqueio_p0_assess_nao_fecha",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_bloqueio_p0_assess_nao_fecha",
+      "target": "docs_produto_scaffold_srd_caso_de_negocio",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_guard_quatro_portoes",
+      "target": "docs_produto_scaffold_srd_bloqueio_p0_papel_adocao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_caso_de_negocio",
+      "target": "docs_produto_scaffold_srd_handover_pack",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_especificacao",
+      "target": "docs_produto_scaffold_srd_template_overlay",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_especificacao",
+      "target": "docs_produto_scaffold_srd_adr_0016_residencia_dado",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_especificacao",
+      "target": "docs_produto_scaffold_srd_adr_0017_fila_de_gates",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_adr_0014_promocao_materializa_backoffice",
+      "target": "docs_produto_scaffold_srd_conflito_adr0014_x_codigo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_conflito_adr0014_x_codigo",
+      "target": "docs_produto_mapa_de_fronteiras_entidade_engajamento_fase_gate",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_scaffold_srd_adr_0017_fila_de_gates",
+      "target": "docs_produto_backoffice_prd_backoffice",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/scaffold-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "bootstrap_broken_state_pattern",
+      "label": "Bootstrap deixa o tenant num estado quebrado sem caminho de corre\u00e7\u00e3o pela UI, repetido em tr\u00eas produtos",
+      "nodes": [
+        "docs_produto_charter_prd_biblioteca_clausulas_vazia",
+        "docs_produto_scaffold_srd_bloqueio_p0_papel_adocao",
+        "docs_produto_signal_srd_sem_criacao_de_membro"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/produto/scaffold-srd.md"
+    }
+  ]
+}

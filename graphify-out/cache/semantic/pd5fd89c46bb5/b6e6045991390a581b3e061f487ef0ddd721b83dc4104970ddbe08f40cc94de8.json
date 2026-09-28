@@ -1,0 +1,370 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_mapa_de_fronteiras_alvo_normativo",
+      "label": "Mapa de fronteiras \u00e9 o alvo normativo (decis\u00e3o do dono)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_meridian_operado_consultoria",
+      "label": "Meridian \u00e9 operado pela consultoria Nebuloz \u2014 tenant \u00fanico, cliente responde por link",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_backoffice_documenta_dois_escopos",
+      "label": "Back-office documenta opera\u00e7\u00e3o de clientes + sistema interno da Nebuloz",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+      "label": "Funda\u00e7\u00e3o do Maestri (scripts/knowledge, .maestri/knowledge/)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_contexto_table_produtos_test",
+      "label": "Tabela CONTEXTO em cada note + produtos.test.ts (falha se caminho n\u00e3o existir)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_note_md_prompt_opus_55",
+      "label": "note.md reescrita como prompt para o Opus 5.5 ('Antes de agir', 'Como trabalhar')",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_impeccable_config_project_roots",
+      "label": ".impeccable/config.json \u2014 projectRoots: apps/app/components/* (cada produto \u00e9 raiz pr\u00f3pria)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_product_design_md_por_produto",
+      "label": "PRODUCT.md/DESIGN.md por produto + sidecars .impeccable/design.json",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_docs_produto_prd_srd_novos",
+      "label": "docs/produto/ \u2014 PRD/SRD novos e back-office reescrito em v2.0",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_claude_md_tabela_seis_produtos",
+      "label": "CLAUDE.md \u2014 tabela dos seis produtos, se\u00e7\u00e3o 'Before You Act' padr\u00e3o Opus 5.5",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_docs_removidos_templates_vazios",
+      "label": "docs/INDEX.md e .claude/LEARNINGS_INDEX.md removidos (templates nunca preenchidos)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_health_endpoint_publico",
+      "label": "Achado: backoffice.nebuloz.ai/api/health p\u00fablico exp\u00f5e host/usu\u00e1rio/tamanho de senha do banco",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_access_log_sem_sessao",
+      "label": "Achado: access.ts grava AccessLog sem sess\u00e3o",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_tenant_members_sem_filtro",
+      "label": "Achado: tenant-members.ts n\u00e3o filtra isSystem",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_autocadastro_platform_staff",
+      "label": "Achado: autocadastro marca platformStaff: true",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_graphify_update_cli_derrubou_grafo",
+      "label": "graphify update . (CLI, s\u00f3 AST) derrubou o mestre de 35243 para 23697 n\u00f3s",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_fs_scale_so_cosmos_root",
+      "label": "Achado visual: escala --fs-* s\u00f3 existe em .cosmos-root, FS.* cai para 16px fora dele",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_kb_consolidacao_achado_charter_rescorecase_nao_chamado",
+      "label": "Achado: nenhuma tela chama rescoreCase \u2014 caso criado pela tela nasce '1 \u00b7 Baixo'",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_mapa_de_fronteiras_alvo_normativo",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_contexto_table_produtos_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_note_md_prompt_opus_55",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_meridian_operado_consultoria",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_docs_produto_prd_srd_novos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_backoffice_documenta_dois_escopos",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_docs_produto_prd_srd_novos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_impeccable_config_project_roots",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_product_design_md_por_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_claude_md_tabela_seis_produtos",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_mapa_de_fronteiras_alvo_normativo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_docs_removidos_templates_vazios",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_claude_md_tabela_seis_produtos",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_health_endpoint_publico",
+      "target": "_claude_completions_2026_09_23_bo_seguranca_quatro_falhas_api_health_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_access_log_sem_sessao",
+      "target": "_claude_completions_2026_09_23_bo_seguranca_quatro_falhas_trilha_acesso_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_tenant_members_sem_filtro",
+      "target": "_claude_completions_2026_09_23_bo_seguranca_quatro_falhas_aba_usuarios_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_autocadastro_platform_staff",
+      "target": "_claude_completions_2026_09_23_bo_seguranca_quatro_falhas_autocadastro_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_charter_rescorecase_nao_chamado",
+      "target": "_claude_completions_2026_09_23_charter_reavaliacao_de_risco_rescorecase_wired",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_achado_fs_scale_so_cosmos_root",
+      "target": "_claude_completions_2026_09_23_cosmos_lacunas_visuais_typography_scale_migration",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_kb_consolidacao_graphify_update_cli_derrubou_grafo",
+      "target": "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "onda_remediacao_pos_kb_consolidacao",
+      "label": "Onda de remedia\u00e7\u00e3o de 2026-09-23 gerada pelos achados da consolida\u00e7\u00e3o da base de conhecimento",
+      "nodes": [
+        "_claude_completions_2026_09_22_kb_consolidacao_maestri_knowledge_foundation",
+        "_claude_completions_2026_09_23_bo_seguranca_quatro_falhas_pr_247",
+        "_claude_completions_2026_09_23_charter_reavaliacao_de_risco_rescorecase_wired",
+        "_claude_completions_2026_09_23_cosmos_lacunas_visuais_typography_scale_migration"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-22-kb-consolidacao.md"
+    }
+  ]
+}

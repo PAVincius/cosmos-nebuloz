@@ -1,0 +1,365 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_catalogo_de_ip_feature",
+      "label": "Cat\u00e1logo de IP \u2014 proced\u00eancia, licen\u00e7a e reuso medido",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "IpAsset hoje \u00e9 um editor de markdown versionado; falta tudo que decide se o ativo pode ser reusado e se o reuso est\u00e1 pagando: proced\u00eancia, licen\u00e7a, mantenedor, servi\u00e7os que encurta e contagem de reuso."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_design_claude_691f7fe5_ip",
+      "label": "backoffice-ip.jsx \u2014 NewIpModal, IpLibraryScreen (Claude Design 691f7fe5)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "label": "model IpAsset \u2014 colunas novas (link, donoPersonId, procedencia, reusoConfirmado, licenca, licencaRef)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sem proced\u00eancia, registrar artefato nascido em engajamento pago cria passivo, n\u00e3o ativo \u2014 \u00e9 IP do cliente at\u00e9 o contrato dizer o contr\u00e1rio."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_service",
+      "label": "model IpAssetService",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sem servi\u00e7o vinculado o ativo n\u00e3o aparece na hora de montar proposta, que \u00e9 onde ele paga \u2014 por isso \u00e9 regra bloqueante, n\u00e3o campo opcional."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_reuse",
+      "label": "model IpAssetReuse",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "@@unique([assetId, engagementId]) porque 'foi reusado no EN-041' \u00e9 um fato, n\u00e3o um contador. As horas ficam no evento, n\u00e3o no ativo \u2014 permite reuso dif\u00edcil contar diferente de f\u00e1cil."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "label": "R\u00e9gua de aceita\u00e7\u00e3o (6 crit\u00e9rios, verificados no servidor)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A lista lateral do modal \u00e9 espelho da regra, n\u00e3o a regra."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r1_nome",
+      "label": "IP-R1: nome \u2265 3 caracteres",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r2_descricao",
+      "label": "IP-R2: descri\u00e7\u00e3o \u2265 40 caracteres",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "descricao continua nullable no banco; o m\u00ednimo \u00e9 regra do cadastro, n\u00e3o do schema \u2014 retroagir exigiria inventar texto em linha antiga."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r3_endereco",
+      "label": "IP-R3: link \u2265 4 caracteres, ou o ativo vive aqui",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r4_servico",
+      "label": "IP-R4: pelo menos um servi\u00e7o vinculado",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r5_procedencia",
+      "label": "IP-R5: direito de reuso confirmado na proced\u00eancia",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "procedencia=ENGAJAMENTO tamb\u00e9m exige origemEngagementId: a cl\u00e1usula de reuso \u00e9 de um contrato espec\u00edfico, confirmar sem dizer qual n\u00e3o confirma nada."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r6_licenca",
+      "label": "IP-R6: licen\u00e7a de terceiro resolvida e referenciada",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Diverg\u00eancia resolvida adotando o mais estrito: licencaRef exigido tamb\u00e9m em copyleft, n\u00e3o s\u00f3 em commercial \u2014 sem dizer componente e vers\u00e3o n\u00e3o permite revisar nada antes de vender."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_maturidade_derivada_reuso",
+      "label": "Maturidade derivada da contagem de reuso (RASCUNHO/COMPROVADO)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "RASCUNHO com menos de 2 reusos, COMPROVADO a partir do segundo; maturidade n\u00e3o \u00e9 escolhida em lugar nenhum da interface, \u00e9 fun\u00e7\u00e3o da contagem."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_decisao_link_nulo_significativo",
+      "label": "Decis\u00e3o: link nulo \u00e9 significativo",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nulo quer dizer que o ativo vive aqui, no editor; n\u00e3o h\u00e1 coluna 'vive aqui' separada \u2014 o nulo j\u00e1 \u00e9 essa informa\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_renomeacao_componente_para_acelerador",
+      "label": "Renomea\u00e7\u00e3o COMPONENTE \u2192 ACELERADOR (migration UPDATE)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00e3o o mesmo conceito com dois nomes, e dois nomes para uma coisa divergem."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_kpi_lacunas_de_ip",
+      "label": "Painel 'lacunas de IP' (servi\u00e7o ativo sem ativo vinculado)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9 o retorno direto do v\u00ednculo com servi\u00e7o (IP-R4)."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_catalogo_de_ip_feature",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_design_claude_691f7fe5_ip",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_catalogo_de_ip_feature",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r1_nome",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r2_descricao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r3_endereco",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r4_servico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r5_procedencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regua_de_aceitacao_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r6_licenca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_service",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_reuse",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_decisao_link_nulo_significativo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_renomeacao_componente_para_acelerador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_reuse",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_maturidade_derivada_reuso",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r4_servico",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_service",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r5_procedencia",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_regra_ip_r6_licenca",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_extended",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_kpi_lacunas_de_ip",
+      "target": "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_model_ip_asset_service",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-07-catalogo-de-ip-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

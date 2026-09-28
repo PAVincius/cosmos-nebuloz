@@ -1,0 +1,311 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_document",
+      "label": "Feature Specification: Conta ativa sempre vis\u00edvel (Fase 0 do modelo de contas)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_us1_sempre_visivel",
+      "label": "US1: Saber sempre qual conta est\u00e1 ativa (P1)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_us2_trocar_confirmacao",
+      "label": "US2: Trocar de conta com confirma\u00e7\u00e3o e feedback (P1)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_us3_fallback_deterministico",
+      "label": "US3: Fallback determin\u00edstico quando n\u00e3o h\u00e1 conta ativa definida (P2)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_us4_convite_onboarding_isolado",
+      "label": "US4: Convite e onboarding n\u00e3o trocam a conta de outras sess\u00f5es (P2)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr002_componente_unico",
+      "label": "FR-002: mesmo componente nos 5 produtos, n\u00e3o implementa\u00e7\u00e3o separada",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "label": "FR-007: escolher TenantMember mais antigo por createdAt ascendente",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr009_cache",
+      "label": "FR-009: troca MUST continuar limpando cache da sess\u00e3o, coberta por teste",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr010_fr011_escopo_sessao",
+      "label": "FR-010/FR-011: convite/onboarding alteram conta ativa s\u00f3 da sess\u00e3o que executou a a\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr013_switchorg_documentado",
+      "label": "FR-013: switchOrg permanece sem call site, risco documentado, n\u00e3o corrigido",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_fr014_sem_cross_tenant",
+      "label": "FR-014: nenhuma leitura cross-tenant nova, TenantModule inalterado",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_sc001_sem_interacao",
+      "label": "SC-001: identificar conta ativa entre 6 contas sem nenhuma intera\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_sc005_zero_vazamento",
+      "label": "SC-005: 0 ocorr\u00eancias de vazamento cross-sess\u00e3o nos cen\u00e1rios de teste",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_spec_entidade_membership",
+      "label": "Key Entity: Membership (TenantMember) \u2014 papel + createdAt",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_us1_sempre_visivel",
+      "target": "specs_009_conta_ativa_visivel_spec_fr002_componente_unico",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_us2_trocar_confirmacao",
+      "target": "specs_009_conta_ativa_visivel_spec_fr009_cache",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_us3_fallback_deterministico",
+      "target": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_us4_convite_onboarding_isolado",
+      "target": "specs_009_conta_ativa_visivel_spec_fr010_fr011_escopo_sessao",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "target": "specs_009_conta_ativa_visivel_spec_entidade_membership",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_sc001_sem_interacao",
+      "target": "specs_009_conta_ativa_visivel_spec_us1_sempre_visivel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_sc005_zero_vazamento",
+      "target": "specs_009_conta_ativa_visivel_spec_us4_convite_onboarding_isolado",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr013_switchorg_documentado",
+      "target": "specs_009_conta_ativa_visivel_intent_switchorg",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "target": "specs_009_conta_ativa_visivel_research_fallback_deterministico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "target": "auth_server_requiretenantsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr009_cache",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_fr014_sem_cross_tenant",
+      "target": "specs_009_conta_ativa_visivel_intent_componente_comum",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_document",
+      "target": "specs_009_conta_ativa_visivel_intent_feature",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_entidade_membership",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_spec_us1_sempre_visivel",
+      "target": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

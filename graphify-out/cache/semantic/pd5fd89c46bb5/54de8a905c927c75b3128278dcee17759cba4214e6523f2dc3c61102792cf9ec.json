@@ -1,0 +1,195 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_problema_as112",
+      "label": "Problema: consultor perdeu 10 links do AS-112 duas vezes",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_token_so_existe_em_claro_no_modal",
+      "label": "Achado: token s\u00f3 existe em claro no modal de atribui\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_unico_remedio_hoje_revogar",
+      "label": "Achado: \u00fanico rem\u00e9dio hoje \u00e9 revogar+reatribuir (perde respondente)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_trava_copiar_nao_resolveu",
+      "label": "Achado: trava 'Concluir s\u00f3 depois de Copiar' n\u00e3o resolveu",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_decisao_cpo_norte",
+      "label": "Decis\u00e3o do CPO (Norte): 2 entregas P0 (individual + lote)",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_opcao_c_descartada",
+      "label": "Op\u00e7\u00e3o 'copiar todos ao fim das atribui\u00e7\u00f5es' descartada (tokens em claro no client)",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "CPO descartou porque segura tokens em claro no estado do cliente \u2014 um reload perde tudo de novo, mesmo problema de origem."
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_intent_email_fora_de_escopo",
+      "label": "E-mail ao respondente fora de escopo (depende da spec 004 + parecer jur\u00eddico)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_problema_as112",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_unico_remedio_hoje_revogar",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_token_so_existe_em_claro_no_modal",
+      "target": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenhash",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_opcao_c_descartada",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_decisao_cpo_norte",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_decisao_cpo_norte",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_trava_copiar_nao_resolveu",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_email_fora_de_escopo",
+      "target": "specs_004_login_generico_produto_contracts_actions_sendresetpassword",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_problema_as112",
+      "target": "docs_qualidade_dogfood_meridian_diario_incidente_as112_links_perdidos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_decisao_cpo_norte",
+      "target": "docs_produto_meridian_prd_secao10_reemitir_link",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_intent_trava_copiar_nao_resolveu",
+      "target": "docs_qualidade_dogfood_meridian_atrito_trava_copiar_nao_resolve",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

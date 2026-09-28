@@ -1,0 +1,292 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fornecedordpa_model",
+      "label": "FornecedorDpa \u2014 modelo de estado do DPA por fornecedor",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L64-L146",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "V\u00ednculo com CharterVendor pelo c\u00f3digo, n\u00e3o por FK \u2014 tenants diferentes (ADR-0013); ASSINADO exige evidenciaUrl, validado na action."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_decisaodeconsentimento_model",
+      "label": "DecisaoDeConsentimento e PerguntaAoParecer \u2014 modelo de consentimento",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L148-L225",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Singleton por tenant; os textos do aviso ficam em c\u00f3digo (aviso.ts) \u2014 o modelo s\u00f3 guarda o que preenche os marcadores e o resultado do parecer."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_lancamentomensal_model",
+      "label": "LancamentoMensal e plano de contas em c\u00f3digo",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L227-L264",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Um valor por conta do plano por m\u00eas de compet\u00eancia; as linhas somadas do DRE (totais, margens, EBITDA) nunca s\u00e3o persistidas."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_cacperiodo_model",
+      "label": "CacPeriodo e CacAlocacaoProduto \u2014 modelo do CAC",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L266-L320",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Seis das oito parcelas do CAC s\u00e3o contas 4.1\u20134.6 do plano; CacPeriodo guarda s\u00f3 o que n\u00e3o \u00e9 conta do DRE (entrega do diagn\u00f3stico, clientes ganhos, convers\u00f5es)."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_semanadecaixa_model",
+      "label": "SemanaDeCaixa \u2014 modelo do caixa de 13 semanas",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L322-L363",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "R\u00e9gua rolante sem job: saldo inicial da semana 1 \u00e9 extrato real quando lan\u00e7ado; nas demais \u00e9 o saldo final calculado da semana anterior."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_principios_empresa",
+      "label": "Princ\u00edpios que valem para as quatro telas",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L32-L58",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tenant system; dinheiro em centavos e percentual inteiros; nulo \u00e9 n\u00e3o preenchido e zero \u00e9 zero (Int? nunca @default(0)); nada calculado \u00e9 persistido; texto de documento em c\u00f3digo, dado em tabela; um n\u00famero, uma fonte \u2014 a linha Comercial do DRE e o numerador do CAC s\u00e3o a mesma linha."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_cac_formula",
+      "label": "F\u00f3rmula do CAC totalmente carregado e payback",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L389-L403",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "CAC s\u00f3 existe com as 8 parcelas preenchidas; payback usa a mensalidade real do plano Scale anual do cat\u00e1logo (precificarProposta), nunca um n\u00famero copiado."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_dre_caixa_formula",
+      "label": "F\u00f3rmula do DRE e do caixa de 13 semanas",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L405-L437",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uma linha agregada s\u00f3 existe quando todas as contas do grupo t\u00eam lan\u00e7amento no m\u00eas; o caixa encadeia saldoFinal(i-1) como saldoInicial(i)."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_exportar_ao_charter_design",
+      "label": "Exportar para o Charter \u2014 \u00fanica escrita fora do tenant system",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L465-L495",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Segue a ADR-0013 \u00e0 letra: resolve o tenant por slug via platformDb, escreve via withTenantDb; coluna nula no FornecedorDpa n\u00e3o sobrescreve o CharterVendor confirmado."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_seed_design",
+      "label": "Seed empresa-nebuloz \u2014 evid\u00eancia de 5 set, create-only",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L497-L512",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "createMany com skipDuplicates: o seed \u00e9 evid\u00eancia de 5 de setembro; o que a tela mudou depois n\u00e3o pode ser sobrescrito por reexecu\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_navegacao_rotas_design",
+      "label": "Navega\u00e7\u00e3o e rotas \u2014 se\u00e7\u00e3o Empresa",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L523-L534",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fora_do_v1_design",
+      "label": "Fora do v1, e por qu\u00ea",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L536-L553",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Reverificar fontes \u00e9 pesquisa em site de terceiro, n\u00e3o CRUD; exportar xlsx espera haver dado; pipeline por semana e clientes ganhos precisos esperam Proposal.previsaoFechamentoEm e Proposal.aceitaEm, que n\u00e3o existem."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_decisoes_chave_design",
+      "label": "O que fica com voc\u00ea \u2014 tr\u00eas decis\u00f5es centrais",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L567-L575",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "ASSINADO exige evid\u00eancia (prova, n\u00e3o afirma\u00e7\u00e3o, com v\u00e1lvula de escape para 'recomendado'); CAC l\u00ea o DRE (uma fonte, editar um move o outro, intencional); Signal est\u00e1 no enum de rateio mas o seed n\u00e3o cria linha para ele."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_cacperiodo_model",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_lancamentomensal_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L268-L271",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_cac_formula",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_cacperiodo_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L391-L399",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_cac_formula",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_lancamentomensal_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L392-L392",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_dre_caixa_formula",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_lancamentomensal_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L405-L422",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_dre_caixa_formula",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_semanadecaixa_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L424-L437",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_exportar_ao_charter_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fornecedordpa_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L465-L479",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_principios_empresa",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_lancamentomensal_model",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L39-L49",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_principios_empresa",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_cacperiodo_model",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L54-L57",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_decisoes_chave_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fornecedordpa_model",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L569-L570",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_decisoes_chave_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_cacperiodo_model",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L571-L572",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_seed_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fornecedordpa_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L502-L505",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_seed_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_decisaodeconsentimento_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L506-L506",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_fora_do_v1_design",
+      "target": "docs_superpowers_specs_2026_09_05_telas_empresa_modelo_design_calculo_cac_formula",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md",
+      "source_location": "L547-L548",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,333 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "label": "apps/memoria \u2014 experiments/memoria-stec levado ao monorepo, Docker Compose, servi\u00e7o memoria",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_mcp_endpoint_memoria",
+      "label": "MCP em /mcp no mesmo processo \u2014 lembrar/buscar/listar/substituir/revogar/historico/relacionadas",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_sem_apagar_de_proposito",
+      "label": "Sem ferramenta de apagar, de prop\u00f3sito",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_importar_py_cli",
+      "label": "app/importar.py + cli importar \u2014 li\u00e7\u00f5es do Maestri, ADRs e registro de decis\u00f5es sincronizados",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_scripts_iniciar_testar",
+      "label": "scripts/iniciar.sh (memoria:up) e scripts/testar.sh (memoria:test)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_maestri_cabecalhos_json",
+      "label": "Chave do Maestri gerada em ~/.nebuloz/memoria/cabecalhos.json (600)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_registro_mcp_claude_code_ceo_pendente",
+      "label": "Registro do MCP no Claude Code do CEO \u2014 bloqueado por automodifica\u00e7\u00e3o, comando fica pro CEO rodar",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_vercel_nao_roda_stec",
+      "label": "Vercel n\u00e3o roda a stack \u2014 quatro bancos com estado e um processo cont\u00ednuo",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_imagem_sandbox_429_dockerhub",
+      "label": "Imagem neste sandbox \u2014 python:3.11-slim deu 429 no Docker Hub, montada fora do repo",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_por_papel_17_chaves",
+      "label": "2026-09-28: chave por papel \u2014 iniciar.sh l\u00ea hire/recruit do setup-canvas.sh, 17 chaves por agente",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_cabecalho_sh_headers_helper",
+      "label": "scripts/cabecalho.sh (headersHelper) escolhe pela role.json da pasta",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_bug_docker_compose_exec_stdin",
+      "label": "Bug: docker compose exec consumia o stdin do la\u00e7o \u2014 s\u00f3 a primeira chave sa\u00eda",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_segundo_pacote_ceo_mcp_main",
+      "label": "Segundo pacote do CEO (mcp_main.py) \u2014 n\u00e3o substitui o servi\u00e7o (dicion\u00e1rio em mem\u00f3ria, sem tenant validado)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_lembrar_perdeu_parametro_agente",
+      "label": "'lembrar' perdeu o par\u00e2metro 'agente' \u2014 resolvido pela chave por papel",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_verificacao_31_testes_integracao",
+      "label": "31 testes de integra\u00e7\u00e3o passando contra Postgres, Qdrant, Neo4j e MinIO reais",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_memoria_dos_agentes_verificacao_ponta_a_ponta_claude_code",
+      "label": "Ponta a ponta com Claude Code (claude -p --mcp-config) \u2014 agente achou D-12 e gravou li\u00e7\u00e3o como Crivo",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_mcp_endpoint_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_mcp_endpoint_memoria",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_sem_apagar_de_proposito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_importar_py_cli",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_scripts_iniciar_testar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_scripts_iniciar_testar",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_maestri_cabecalhos_json",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_scripts_iniciar_testar",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_registro_mcp_claude_code_ceo_pendente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_vercel_nao_roda_stec",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_imagem_sandbox_429_dockerhub",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_por_papel_17_chaves",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_cabecalho_sh_headers_helper",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_por_papel_17_chaves",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_lembrar_perdeu_parametro_agente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_bug_docker_compose_exec_stdin",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_por_papel_17_chaves",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_segundo_pacote_ceo_mcp_main",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_verificacao_31_testes_integracao",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_apps_memoria_servico_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_verificacao_ponta_a_ponta_claude_code",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_mcp_endpoint_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_por_papel_17_chaves",
+      "target": "_claude_completions_2026_09_27_memoria_dos_agentes_chave_maestri_cabecalhos_json",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

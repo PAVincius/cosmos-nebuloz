@@ -1,0 +1,249 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_charter_srd_especificacao",
+      "label": "Charter SRD v1.0",
+      "file_type": "document",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_guard_requirechartercontext",
+      "label": "requireCharterContext \u2014 guard de quatro port\u00f5es",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_recommendpath_regra",
+      "label": "recommendPath \u2014 regra de caminho por classe de dado",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_sla_dias_uteis",
+      "label": "SLA em dias \u00fateis do Charter",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_gate_de_fornecedor",
+      "label": "Gate de fornecedor (elegibilidade por classe)",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_score_de_risco_formula",
+      "label": "F\u00f3rmula de score de risco (severidade \u00d7 probabilidade)",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_adr_0012_rls_anulada",
+      "label": "ADR-0012: RLS anulada por conex\u00e3o superuser",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A aplica\u00e7\u00e3o conecta ao Postgres como superuser, o que anula a pol\u00edtica de RLS; o isolamento real depende inteiramente do filtro tenantId no where de cada consulta."
+    },
+    {
+      "id": "docs_produto_charter_srd_adr_0009_auditoria_reusa_auditlog",
+      "label": "ADR-0009: auditoria reusa AuditLog",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_adr_0002_admin_nao_herda",
+      "label": "ADR-0002: admin do tenant n\u00e3o herda papel de governan\u00e7a",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_adr_0011_notificacao_fora_v1",
+      "label": "ADR-0011: notifica\u00e7\u00e3o e enforcement fora do V1",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_srd_matriz_papeis",
+      "label": "Matriz de 7 pap\u00e9is \u00d7 12 permiss\u00f5es do Charter",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_charter_srd_especificacao",
+      "target": "docs_produto_charter_srd_guard_requirechartercontext",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_guard_requirechartercontext",
+      "target": "docs_produto_charter_srd_recommendpath_regra",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_recommendpath_regra",
+      "target": "docs_produto_charter_srd_sla_dias_uteis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_recommendpath_regra",
+      "target": "docs_produto_charter_srd_gate_de_fornecedor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_gate_de_fornecedor",
+      "target": "docs_produto_charter_prd_teto_do_fornecedor",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_caso_de_uso_charter",
+      "target": "docs_produto_charter_srd_score_de_risco_formula",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_guard_requirechartercontext",
+      "target": "docs_produto_charter_srd_adr_0012_rls_anulada",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_especificacao",
+      "target": "docs_produto_charter_srd_adr_0009_auditoria_reusa_auditlog",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_guard_requirechartercontext",
+      "target": "docs_produto_charter_srd_adr_0002_admin_nao_herda",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_especificacao",
+      "target": "docs_produto_charter_srd_adr_0011_notificacao_fora_v1",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_guard_requirechartercontext",
+      "target": "docs_produto_charter_srd_matriz_papeis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_srd_adr_0002_admin_nao_herda",
+      "target": "docs_produto_charter_srd_matriz_papeis",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

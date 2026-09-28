@@ -1,0 +1,125 @@
+{
+  "nodes": [
+    {
+      "id": "apps_memoria_docker_compose_service_postgres",
+      "label": "Servi\u00e7o postgres (pgvector/pgvector:pg16, porta 5433)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.postgres",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_docker_compose_service_qdrant",
+      "label": "Servi\u00e7o qdrant (qdrant/qdrant:v1.19.1, porta 6333)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.qdrant",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_docker_compose_service_neo4j",
+      "label": "Servi\u00e7o neo4j (neo4j:5.26-community, portas 7474/7687)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.neo4j",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_docker_compose_service_minio",
+      "label": "Servi\u00e7o minio (portas 9000/9001)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.minio",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_docker_compose_service_ollama",
+      "label": "Servi\u00e7o ollama (embeddings locais opcionais, profile ollama)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.ollama",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Opcional: sem ele o servi\u00e7o usa o embedder hash (local, determin\u00edstico, sem sem\u00e2ntica)."
+    },
+    {
+      "id": "apps_memoria_docker_compose_service_memoria",
+      "label": "Servi\u00e7o memoria (build ./servico, porta 8003\u21928000)",
+      "file_type": "code",
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "depends_on postgres e neo4j healthy, qdrant e minio started; monta .maestri/memoria, docs/adr e docs/produto como fontes s\u00f3-leitura para o importador."
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_memoria_docker_compose_service_memoria",
+      "target": "apps_memoria_docker_compose_service_postgres",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria.depends_on",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_docker_compose_service_memoria",
+      "target": "apps_memoria_docker_compose_service_neo4j",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria.depends_on",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_docker_compose_service_memoria",
+      "target": "apps_memoria_docker_compose_service_qdrant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria.depends_on",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_docker_compose_service_memoria",
+      "target": "apps_memoria_docker_compose_service_minio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria.depends_on",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_docker_compose_service_memoria",
+      "target": "apps_memoria_docker_compose_service_ollama",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/memoria/docker-compose.yml",
+      "source_location": "services.memoria.environment.STEC_OLLAMA_URL",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,229 @@
+{
+  "nodes": [
+    {
+      "id": "docs_financeiro_dre_modelo_dre_mensal",
+      "label": "DRE mensal \u2014 modelo (demonstrativo por compet\u00eancia)",
+      "file_type": "document",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Receita e custo contam no m\u00eas do fato gerador, mesmo que o dinheiro entre ou saia depois; o caixa mora no documento de 13 semanas."
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_receita_por_frente",
+      "label": "Receita por frente (assinatura + servi\u00e7o por produto)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_receita_liquida",
+      "label": "Receita l\u00edquida (bruta menos dedu\u00e7\u00f5es)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_custo_entrega_margem_bruta",
+      "label": "Custo de entrega e margem bruta por frente",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Casamento de receita por frente com custo direto de entregar, para saber qual frente sustenta a opera\u00e7\u00e3o e qual s\u00f3 ocupa capacidade."
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_despesas_centro_custo",
+      "label": "Despesas por centro de custo (comercial, produto/engenharia, G&A)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A linha Comercial deste DRE \u00e9 a mesma base de custo que o modelo de CAC usa no numerador \u2014 os dois documentos devem sempre bater no valor mensal de vendas e marketing."
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_ebitda",
+      "label": "EBITDA (margem bruta menos despesas totais)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "J\u00e1 suficiente para acompanhar a opera\u00e7\u00e3o; deprecia\u00e7\u00e3o, amortiza\u00e7\u00e3o, juros e impostos sobre lucro entram s\u00f3 quando houver ativo ou d\u00edvida relevante \u2014 nenhum dos dois presente hoje."
+    },
+    {
+      "id": "docs_financeiro_dre_modelo_migracao_livro_razao",
+      "label": "Nota de origem: DRE migrou de LancamentoMensal para soma do livro-raz\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-09-06",
+      "author": null,
+      "contributor": null,
+      "rationale": "A tela /empresa/financeiro?aba=dre deixou de somar LancamentoMensal (um valor por conta e m\u00eas) e passou a somar as linhas do livro-raz\u00e3o (Lancamento) por compet\u00eancia \u2014 mesma regra de sinal, mesmo total, mas com 'o que formou a conta' audit\u00e1vel linha a linha."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_financeiro_dre_modelo_dre_mensal",
+      "target": "docs_financeiro_dre_modelo_receita_por_frente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "docs_financeiro_dre_modelo_receita_liquida",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_liquida",
+      "target": "docs_financeiro_dre_modelo_custo_entrega_margem_bruta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_custo_entrega_margem_bruta",
+      "target": "docs_financeiro_dre_modelo_despesas_centro_custo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_despesas_centro_custo",
+      "target": "docs_financeiro_dre_modelo_ebitda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_dre_mensal",
+      "target": "docs_financeiro_dre_modelo_migracao_livro_razao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_custo_entrega_margem_bruta",
+      "target": "docs_financeiro_plano_de_contas_conta_3_custo_entrega",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_despesas_centro_custo",
+      "target": "docs_financeiro_plano_de_contas_centros_custo_resumo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "product_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "product_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_dre_modelo_receita_por_frente",
+      "target": "product_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/dre-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

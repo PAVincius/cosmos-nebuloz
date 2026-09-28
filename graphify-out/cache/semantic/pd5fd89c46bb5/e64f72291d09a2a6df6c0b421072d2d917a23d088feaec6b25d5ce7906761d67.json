@@ -1,0 +1,206 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_us1",
+      "label": "US1: Reemitir link de um respondente (P1)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_us2",
+      "label": "US2: Reemitir e copiar todos os pendentes (P1)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_fr006_tokenexpiresat",
+      "label": "FR-006: tokenExpiresAt pr\u00f3prio, fixado min(now+14d, deadline)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_fr007_auditoria",
+      "label": "FR-007: toda reemiss\u00e3o (individual ou lote) grava auditoria",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_fr013_lote_sem_pendentes",
+      "label": "FR-013: lote sem eleg\u00edveis informa claramente, n\u00e3o lista vazia",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_entidade_respondente",
+      "label": "Key Entity: Respondente (reemiss\u00e3o muda tokenHash/tokenExpiresAt)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_entidade_auditoria_reissue",
+      "label": "Key Entity: Registro de auditoria de reemiss\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_spec_clarification_tokenexpiresat",
+      "label": "Clarification: valor de tokenExpiresAt na reemiss\u00e3o",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Resolvida pelo CEO antes do /speckit-specify: min(agora+14 dias, deadline), nunca recalculado; deadline vencido recusa com mensagem clara."
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_clarification_tokenexpiresat",
+      "target": "specs_006_reemitir_link_respondente_spec_fr006_tokenexpiresat",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_entidade_respondente",
+      "target": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenhash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_entidade_auditoria_reissue",
+      "target": "specs_006_reemitir_link_respondente_data_model_auditoria_reissue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_us1",
+      "target": "specs_006_reemitir_link_respondente_intent_problema_as112",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_us2",
+      "target": "specs_006_reemitir_link_respondente_intent_opcao_c_descartada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_fr006_tokenexpiresat",
+      "target": "specs_006_reemitir_link_respondente_research_decisao2_tokenexpiresat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_fr007_auditoria",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_spec_fr013_lote_sem_pendentes",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "h_006_reissue_actions_flow",
+      "label": "Fluxo de Reemiss\u00e3o de Link (a\u00e7\u00e3o individual + lote)",
+      "nodes": [
+        "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+        "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+        "specs_006_reemitir_link_respondente_data_model_auditoria_reissue",
+        "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir",
+        "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir_todos"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md"
+    },
+    {
+      "id": "h_credential_recovery_pattern_suite",
+      "label": "Padr\u00e3o de Recupera\u00e7\u00e3o de Credencial/Token na Su\u00edte (senha + link de respondente)",
+      "nodes": [
+        "specs_004_login_generico_produto_contracts_actions_resetpassword",
+        "specs_004_login_generico_produto_contracts_actions_sendresetpassword",
+        "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+        "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/006-reemitir-link-respondente/spec.md"
+    }
+  ]
+}

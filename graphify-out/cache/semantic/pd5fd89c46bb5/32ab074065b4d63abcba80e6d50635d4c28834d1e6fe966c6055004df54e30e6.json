@@ -1,0 +1,343 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_milestone",
+      "label": "Funil v2 Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_model_estagio_do_funil",
+      "label": "EstagioDoFunil Model (peso, teto, crit\u00e9rios, ordem \u2014 tenant config)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_model_mudanca_de_estagio",
+      "label": "MudancaDeEstagio Model (Append-Only)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_model_canal_de_lead",
+      "label": "CanalDeLead Model (slug, CAC m\u00e9dio)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_model_historico_de_estagio",
+      "label": "HistoricoDeEstagio Model (One Row per Transition)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_migration_funil_v2",
+      "label": "Migration 20260908000000_funil_v2 (Backfill estagioDesde/notaPerda)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_lib_comercial_funil",
+      "label": "lib/comercial/funil.ts \u2014 Pure Funnel Rules",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "label": "Leads Actions (listarFunil, criarLead, moverEstagio, marcarPerdido...)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_board_component",
+      "label": "Funil Board (Drag-and-Drop, KPIs, Origin/Cost Bars)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_fix_race_condition",
+      "label": "Fix: Read-Then-Write Race in Stage-Change Actions (updateMany guard)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_ruling_marcar_perdido_lookup",
+      "label": "Ruling 4: marcarPerdido Uses Own Lookup (PROPOSAL Leads Still Losable)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_ruling_is_admin_synonym",
+      "label": "Ruling 9: isAdmin Kept as Synonym for podeEscrever (Ponytail)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_deviation_mermaid_diagram",
+      "label": "Deviation: Mermaid State Diagram Not Updated With PROPOSAL",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_decision_abrir_proposta_button",
+      "label": "Decision: 'Abrir Proposta' Button Replaces Auto-Navigate",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_fix_marcar_perdido_ganho",
+      "label": "Fix: marcarPerdido Rejects Won Lead (Proposta ACEITA)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_funil_v2_pending_prod_seed_funil",
+      "label": "Pending: Production Seed funil.sql (Needs Owner Go-Ahead)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_migration_funil_v2",
+      "target": "_claude_completions_2026_09_06_funil_v2_model_estagio_do_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_migration_funil_v2",
+      "target": "_claude_completions_2026_09_06_funil_v2_model_historico_de_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_lib_comercial_funil",
+      "target": "_claude_completions_2026_09_06_funil_v2_model_estagio_do_funil",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "target": "_claude_completions_2026_09_06_funil_v2_lib_comercial_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_fix_race_condition",
+      "target": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_board_component",
+      "target": "_claude_completions_2026_09_06_funil_v2_model_canal_de_lead",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_ruling_marcar_perdido_lookup",
+      "target": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_ruling_is_admin_synonym",
+      "target": "_claude_completions_2026_09_06_funil_v2_board_component",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_deviation_mermaid_diagram",
+      "target": "_claude_completions_2026_09_06_funil_v2_migration_funil_v2",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_decision_abrir_proposta_button",
+      "target": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_fix_marcar_perdido_ganho",
+      "target": "_claude_completions_2026_09_06_funil_v2_actions_leads",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_milestone",
+      "target": "_claude_completions_2026_09_06_funil_v2_model_estagio_do_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_milestone",
+      "target": "_claude_completions_2026_09_06_funil_v2_lib_comercial_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_milestone",
+      "target": "_claude_completions_2026_09_06_funil_v2_board_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_pending_prod_seed_funil",
+      "target": "_claude_completions_2026_09_06_funil_v2_migration_funil_v2",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_funil_v2_model_estagio_do_funil",
+      "target": "_claude_completions_2026_09_06_growth_readiness_decision_rubrica_in_code",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

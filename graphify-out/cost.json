@@ -1,0 +1,13 @@
+{
+  "runs": [
+    {
+      "date": "2026-09-28T19:37:57.956481+00:00",
+      "input_tokens": 5055204,
+      "output_tokens": 0,
+      "files": 1097,
+      "note": "tokens totais por subagente (o host não separa entrada e saída); 18 subagentes Sonnet"
+    }
+  ],
+  "total_input_tokens": 5055204,
+  "total_output_tokens": 0
+}

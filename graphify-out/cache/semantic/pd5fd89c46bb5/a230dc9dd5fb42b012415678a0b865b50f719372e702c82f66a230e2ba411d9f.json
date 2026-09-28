@@ -1,0 +1,290 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "label": "Janela de Capacidade Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_model_staff_person_janela",
+      "label": "StaffPerson entraEm/saiEm/observacao (Migration 20260912000000_janela_de_capacidade)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_lib_capacidade_janela",
+      "label": "lib/capacidade/janela.ts \u2014 Window Arithmetic + Messages",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_formulario_de_capacidade",
+      "label": "FormularioDeCapacidade (Renamed From Capacidade, Person/Terceiro Cards)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_codigo_manda_design_norte",
+      "label": "Decision: 'C\u00f3digo Manda, Design \u00c9 Norte Visual'",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_no_papel_hora_table",
+      "label": "Decision: No Papel/Hora Rate Table (Doesn't Exist in Back-Office)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_horas_not_reais",
+      "label": "Decision: Summary Strip Shows Hours, Not Reais (No Cost Source)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_datas_iso_not_semanas",
+      "label": "Decision: ISO Dates Instead of Week Numbers (S32\u2013S37)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_inline_form_not_modal",
+      "label": "Decision: Inline Form Instead of Modal Shell (None Exists)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_alocacao_window_lock",
+      "label": "Decision: Allocation Refused Outside Person's Window",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_decision_cards_tipo_pessoa_terceiro",
+      "label": "Decision: Type Cards (Pessoa/Terceiro) Kept Despite Simpler Alternative",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_teto_clt_saiem_terceiro_badge",
+      "label": "Teto: CLT Who Resigned Also Gets saiEm + Terceiro Badge",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_janela_de_capacidade_render_blocked_by_login",
+      "label": "Finding: Local Render Blocked by Back-Office Login",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_lib_capacidade_janela",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_model_staff_person_janela",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_formulario_de_capacidade",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_lib_capacidade_janela",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_alocacao_window_lock",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_lib_capacidade_janela",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_codigo_manda_design_norte",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_no_papel_hora_table",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_codigo_manda_design_norte",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_horas_not_reais",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_codigo_manda_design_norte",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_datas_iso_not_semanas",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_codigo_manda_design_norte",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_inline_form_not_modal",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_horas_not_reais",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_no_papel_hora_table",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_teto_clt_saiem_terceiro_badge",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_model_staff_person_janela",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_render_blocked_by_login",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_decision_cards_tipo_pessoa_terceiro",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_formulario_de_capacidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_model_staff_person_janela",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_lib_capacidade_janela",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_formulario_de_capacidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-janela-de-capacidade.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

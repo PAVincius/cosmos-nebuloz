@@ -1,0 +1,385 @@
+{
+  "nodes": [
+    {
+      "id": "apps_backoffice_product_root",
+      "label": "Product \u2014 Back-office (Big Bang)",
+      "file_type": "document",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_staff",
+      "label": "Staff (TenantMember do tenant system)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_job_to_be_done",
+      "label": "Job: contratar/provisionar/acompanhar/cobrar sem abrir o banco",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_platformdb",
+      "label": "platformDb (\u00fanica superf\u00edcie que l\u00ea atrav\u00e9s de clientes)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_adr_0013",
+      "label": "ADR-0013 (platformDb restrito a provisioning + backoffice)",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_adr_0017",
+      "label": "ADR-0017 (Fila de gates do Scaffold mora no back-office)",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_fila_de_gates",
+      "label": "Fila de gates (supervis\u00e3o do Scaffold)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_ciclo_operacional",
+      "label": "Ciclo: Maturidade de IA \u2192 Funil \u2192 Proposta \u2192 Provisionar \u2192 Preparar \u2192 Acompanhar \u2192 Cobrar",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_maturidade_de_ia",
+      "label": "Maturidade de IA (6 dimens\u00f5es \u00d7 5 n\u00edveis, 18 crit\u00e9rios)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_funil",
+      "label": "Funil (Lead \u2192 Discovery \u2192 Avalia\u00e7\u00e3o \u2192 Proposta)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_guard_unico",
+      "label": "Guard \u00fanico (sess\u00e3o \u2192 teto \u2192 v\u00ednculo com system \u2192 2FA)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_trilha_auditoria",
+      "label": "Trilha (logPlatformAudit, AuditLog append-only, AccessLog)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_venda_nunca_fecha",
+      "label": "Lacuna: a venda nunca fecha",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_catalogo_precos",
+      "label": "Cat\u00e1logo (Starter/Scale/Enterprise, m\u00f3dulos, add-ons, servi\u00e7os SV-01 a SV-11)",
+      "file_type": "concept",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_gap_mapa_fronteiras",
+      "label": "Gap com o Mapa de Fronteiras (Engagement pr\u00f3prio)",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_adr_0014",
+      "label": "ADR-0014 (promo\u00e7\u00e3o \u2192 Engagement, conflitante)",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_principles",
+      "label": "Product Principles (nada irrevers\u00edvel em um clique, quem pede n\u00e3o aprova)",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_backoffice_product_regra_do_dono",
+      "label": "Regra do dono: toda entrega se confirma em backoffice.nebuloz.ai",
+      "file_type": "rationale",
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_backoffice_product_root",
+      "target": "apps_backoffice_product_staff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_root",
+      "target": "apps_backoffice_product_job_to_be_done",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_platformdb",
+      "target": "apps_backoffice_product_adr_0013",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_fila_de_gates",
+      "target": "apps_backoffice_product_adr_0017",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_platformdb",
+      "target": "apps_backoffice_product_fila_de_gates",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_ciclo_operacional",
+      "target": "apps_backoffice_product_maturidade_de_ia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_ciclo_operacional",
+      "target": "apps_backoffice_product_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_guard_unico",
+      "target": "apps_backoffice_product_trilha_auditoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_ciclo_operacional",
+      "target": "apps_backoffice_product_venda_nunca_fecha",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_catalogo_precos",
+      "target": "apps_backoffice_product_ciclo_operacional",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_gap_mapa_fronteiras",
+      "target": "apps_backoffice_product_adr_0014",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_principles",
+      "target": "apps_backoffice_product_guard_unico",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_principles",
+      "target": "apps_backoffice_product_trilha_auditoria",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_regra_do_dono",
+      "target": "apps_backoffice_product_job_to_be_done",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_root",
+      "target": "apps_backoffice_product_gap_mapa_fronteiras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_platformdb",
+      "target": "apps_app_components_charter_product_mapa_de_fronteiras_ownership",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_job_to_be_done",
+      "target": "apps_backoffice_design_sala_de_maquinas",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_backoffice_product_root",
+      "target": "apps_app_components_charter_product_root",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/backoffice/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

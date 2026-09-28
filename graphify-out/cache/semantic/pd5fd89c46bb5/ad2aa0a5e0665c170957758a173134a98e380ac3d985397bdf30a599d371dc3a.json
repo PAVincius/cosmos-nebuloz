@@ -1,0 +1,258 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_research_d1_route_topology",
+      "label": "D1 \u2014 Route Topology (single dynamic route group)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d2_server_client_boundary",
+      "label": "D2 \u2014 Server/Client Component Boundary",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d3_derived_vs_frozen",
+      "label": "D3 \u2014 Derived vs. Frozen Formula Data",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d4_pure_calc_engine",
+      "label": "D4 \u2014 Pure Calculation Engine (lib/signal/)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d5_transactional_audit",
+      "label": "D5 \u2014 Transactional Audit Trail",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d6_readable_codes",
+      "label": "D6 \u2014 Readable Sequential Codes",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d7_roles_permissions",
+      "label": "D7 \u2014 Roles and Permissions (persona \u2260 permission)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d8_domain_errors",
+      "label": "D8 \u2014 Domain Error Taxonomy (422/409)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d9_source_ingestion",
+      "label": "D9 \u2014 Source Ingestion Without Hardcoded Connectors",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d10_preferences_vs_settings",
+      "label": "D10 \u2014 Local Preferences vs. Tenant Settings",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_research_d11_risk_based_testing",
+      "label": "D11 \u2014 Risk-Based Test Strategy (BMAD-TEA)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_research_d3_derived_vs_frozen",
+      "target": "specs_003_signal_measure_data_model_verdict_derivation",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d3_derived_vs_frozen",
+      "target": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d5_transactional_audit",
+      "target": "specs_003_signal_measure_contracts_server_actions_guard_preamble",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d6_readable_codes",
+      "target": "specs_003_signal_measure_data_model_signalsequence",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d7_roles_permissions",
+      "target": "specs_003_signal_measure_contracts_server_actions_role_permission_matrix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d7_roles_permissions",
+      "target": "specs_003_signal_measure_contracts_ui_contract_persona_switcher_not_ported",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d8_domain_errors",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d8_domain_errors",
+      "target": "specs_003_signal_measure_contracts_server_actions_state_conflict_error",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d9_source_ingestion",
+      "target": "specs_003_signal_measure_data_model_signalconnection",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d10_preferences_vs_settings",
+      "target": "specs_003_signal_measure_data_model_signalsettings",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d1_route_topology",
+      "target": "specs_003_signal_measure_contracts_ui_contract_routes",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d2_server_client_boundary",
+      "target": "specs_003_signal_measure_plan_project_structure",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_research_d4_pure_calc_engine",
+      "target": "specs_003_signal_measure_contracts_server_actions_roi",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/research.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

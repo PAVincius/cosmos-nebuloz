@@ -1,0 +1,353 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_milestone",
+      "label": "Livro-Raz\u00e3o e T\u00edtulos Completion (D-a)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_lancamento",
+      "label": "Lancamento Model",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_titulo",
+      "label": "Titulo Model",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_migration_livro_razao",
+      "label": "Migration 20260910000000_livro_razao_e_titulos (Backfill From LancamentoMensal)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "label": "lib/empresa/livro.ts \u2014 Pure Ledger Rules",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_actions_empresa_livro",
+      "label": "actions/empresa/livro.ts (listar/criar/atualizar/excluir Lancamento)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_actions_empresa_titulos",
+      "label": "actions/empresa/titulos.ts (criarTitulo, baixarTitulo, cancelarTitulo)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_fix_assert_conta_ativa",
+      "label": "Fix: assertContaAtiva Exported, Called in criarTitulo + baixarTitulo",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "label": "Decision: DRE and CAC Read From Livro-Raz\u00e3o via groupBy (Not Written Fields)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_parcelas_strict_object",
+      "label": "Decision: ParcelasSchema \u2192 z.strictObject (Ruling 7)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_cell_becomes_link",
+      "label": "Decision: DRE Cell Becomes Link to Lan\u00e7amentos Instead of Editable Input",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_agregar_por_mes_pick",
+      "label": "Ruling 1: agregarPorMes Takes Narrow Pick, Not Full LinhaDoLivro",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_null_vs_zero_dre",
+      "label": "Ruling 2: DRE Null-Row Rule Preserved (No Line = Null, Not Zero)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_sinal_do_grupo_out_of_scope",
+      "label": "Ruling 3: sinalDoGrupo Kept Out of DRE Scope (Deferred to D-b)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_cut_dre_editavel",
+      "label": "Cut: Editable DRE Cell (Superseded by Lan\u00e7amentos Link)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_livro_razao_e_titulos_cut_cac_writes_contas",
+      "label": "Cut: CAC Writing the Six 4.1\u20134.6 Accounts (Dual-Write Removed)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_migration_livro_razao",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_migration_livro_razao",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_titulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_lancamento",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_actions_empresa_livro",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_actions_empresa_titulos",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_fix_assert_conta_ativa",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_actions_empresa_titulos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_parcelas_strict_object",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_cell_becomes_link",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_agregar_por_mes_pick",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_null_vs_zero_dre",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_ruling_sinal_do_grupo_out_of_scope",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_cut_dre_editavel",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_cell_becomes_link",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_cut_cac_writes_contas",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_decision_dre_reads_livro",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_milestone",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_milestone",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_model_titulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_livro_razao_e_titulos_milestone",
+      "target": "_claude_completions_2026_09_06_livro_razao_e_titulos_lib_empresa_livro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-livro-razao-e-titulos.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

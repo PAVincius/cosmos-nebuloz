@@ -1,0 +1,581 @@
+{
+  "nodes": [
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "label": "Trava LTV sobre CAC maior ou igual a 3 e Payback ate 12 Meses",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_pacote_ideacao",
+      "label": "Pacote Ideacao - R$199/assento, minimo 20",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_pacote_validacao",
+      "label": "Pacote Validacao - R$195/assento, minimo 30",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_pacote_growth",
+      "label": "Pacote Growth - R$169/assento, minimo 60",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_pacote_scale",
+      "label": "Pacote Scale - R$189/assento referencia, faixas de 50",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_linha_scale",
+      "label": "Erro 1 - Linha do Scale Nao Fechava, 250 vs 101 Assentos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_desconto_subestimado",
+      "label": "Erro 2 - Desconto do Pacote Subestimado, Add-ons Nao Somados",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_minimo_igual_teto",
+      "label": "Erro 3 - Minimo Igual ao Teto Cria Degrau de Login Compartilhado",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_mcp_inexistente",
+      "label": "Erro 4 - Growth Prometia Integracoes e MCP Inexistente",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_creditos_todos_produtos",
+      "label": "Erro 5 - Creditos Nao Valem em Todos os Produtos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_erro_produtos_nao_prontos",
+      "label": "Erro 6 - Nenhum Produto Pronto para Cliente Externo",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_tres_trilhas_oferta",
+      "label": "Tres Trilhas de Oferta - Diagnostico, Avulso, Pacote",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_regra_avulso_vs_pacote",
+      "label": "Regra - Tres Produtos ou Mais, Pacote Sempre Mais Barato",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_creditos_ia_unidade",
+      "label": "Unidade de Credito de IA - Aproximadamente US$0,01",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_franquia_ia",
+      "label": "Franquia de IA por Assento e por Pacote",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_excedente_credito",
+      "label": "Excedente de Credito - Preco e Piso de R$0,20",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_cota_tecnica_150",
+      "label": "Cota Tecnica de 150 por cento da Franquia",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_produto_avulso",
+      "label": "Produto Avulso - Catalogo Existente",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_piso_venda_consultiva",
+      "label": "Piso de Venda Consultiva - R$2.750 por mes",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_scaffold_avulso",
+      "label": "Scaffold Avulso - Preco por Custo Carregado, Pacotes S M L",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_diagnostico_abatimento",
+      "label": "Diagnostico e Abatimento - SV-01, R$48.000, Credito ate 25 por cento",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_validacao_economica",
+      "label": "Validacao Economica - Formulas de LTV, CAC e Payback",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_pior_caso",
+      "label": "Pior Caso - Minimo de Assentos, Anual, Menos 15 por cento Comercial",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_pacotes_e_precificacao_cac_maximo_churn_maximo",
+      "label": "CAC Maximo e Churn Maximo - Leitura Invertida da Trava",
+      "file_type": "concept",
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "target": "docs_comercial_pacotes_e_precificacao_validacao_economica",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_pacote_ideacao",
+      "target": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_pacote_validacao",
+      "target": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_pacote_growth",
+      "target": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_pacote_scale",
+      "target": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_linha_scale",
+      "target": "docs_comercial_pacotes_e_precificacao_pacote_scale",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_desconto_subestimado",
+      "target": "docs_comercial_pacotes_e_precificacao_pacote_ideacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_minimo_igual_teto",
+      "target": "docs_comercial_pacotes_e_precificacao_pacote_validacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_minimo_igual_teto",
+      "target": "docs_comercial_pacotes_e_precificacao_pacote_growth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_mcp_inexistente",
+      "target": "docs_comercial_pacotes_e_precificacao_pacote_growth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_creditos_todos_produtos",
+      "target": "docs_comercial_pacotes_e_precificacao_franquia_ia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_tres_trilhas_oferta",
+      "target": "docs_comercial_pacotes_e_precificacao_produto_avulso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_tres_trilhas_oferta",
+      "target": "docs_comercial_pacotes_e_precificacao_diagnostico_abatimento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_tres_trilhas_oferta",
+      "target": "docs_comercial_pacotes_e_precificacao_regra_avulso_vs_pacote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_franquia_ia",
+      "target": "docs_comercial_pacotes_e_precificacao_creditos_ia_unidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_franquia_ia",
+      "target": "docs_comercial_pacotes_e_precificacao_excedente_credito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_excedente_credito",
+      "target": "docs_comercial_pacotes_e_precificacao_cota_tecnica_150",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_produto_avulso",
+      "target": "docs_comercial_pacotes_e_precificacao_piso_venda_consultiva",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_produto_avulso",
+      "target": "docs_comercial_pacotes_e_precificacao_scaffold_avulso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_validacao_economica",
+      "target": "docs_comercial_pacotes_e_precificacao_pior_caso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_pior_caso",
+      "target": "docs_comercial_pacotes_e_precificacao_cac_maximo_churn_maximo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_cac_maximo_churn_maximo",
+      "target": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_diagnostico_abatimento",
+      "target": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_validacao_economica",
+      "target": "docs_comercial_cac_modelo_exemplo_calculado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_scaffold_avulso",
+      "target": "docs_produto_scaffold_prd_preco_pacote_s",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_cota_tecnica_150",
+      "target": "docs_produto_registro_de_decisoes_d_05",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_creditos_todos_produtos",
+      "target": "docs_produto_registro_de_decisoes_d_07",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_creditos_ia_unidade",
+      "target": "docs_produto_registro_de_decisoes_d_04",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_trava_ltv_cac",
+      "target": "docs_produto_registro_de_decisoes_d_02",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_produtos_nao_prontos",
+      "target": "docs_produto_prontidao_lancamento_criterio_de_saida",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_pacotes_e_precificacao_erro_produtos_nao_prontos",
+      "target": "docs_produto_signal_prd_risco",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

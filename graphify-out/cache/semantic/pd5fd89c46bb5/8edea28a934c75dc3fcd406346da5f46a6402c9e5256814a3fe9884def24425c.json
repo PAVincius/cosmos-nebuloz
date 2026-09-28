@@ -1,0 +1,161 @@
+{
+  "nodes": [
+    {
+      "id": "specs_004_login_generico_produto_research_decisao1_resolucao_destino",
+      "label": "Decis\u00e3o 1: centralizar resolu\u00e7\u00e3o p\u00f3s-login em (authenticated)/page.tsx",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Hoje a regra est\u00e1 hardcoded em 3 lugares; adicionar isInternalTenant nos 3 pontos triplica a chance de diverg\u00eancia."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao2_reuso_catalogo",
+      "label": "Decis\u00e3o 2: reaproveitar (authenticated)/produto como cat\u00e1logo p\u00f3s-login",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tela j\u00e1 resolve habilita\u00e7\u00e3o por contrato real; tela nova duplicaria a fonte de verdade e violaria a restri\u00e7\u00e3o do intent."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao3_isinternaltenant_schema",
+      "label": "Decis\u00e3o 3: isInternalTenant como campo booleano em Tenant",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Segue o precedente de Tenant.isSystem; ID/slug fixo ou env tornaria o comportamento n\u00e3o-audit\u00e1vel via schema."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao4_envio_email_reset",
+      "label": "Decis\u00e3o 4: sendResetPassword via packages/email (Resend)",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "packages/email j\u00e1 resolve dev vs. produ\u00e7\u00e3o num \u00fanico ponto; reimplementar no callback do Better Auth duplicaria essa decis\u00e3o."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao5_rota_reset_password",
+      "label": "Decis\u00e3o 5: nova rota /reset-password catch-all",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Better Auth j\u00e1 exp\u00f5e resetPassword no client; a \u00fanica pe\u00e7a que falta \u00e9 a rota \u2014 hoje o link cairia em 404."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao6_troca_senha_logado",
+      "label": "Decis\u00e3o 6: aba settings/security + changePassword",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "changePassword \u00e9 built-in do Better Auth core \u2014 n\u00e3o precisa de plugin novo, diferente de twoFactor."
+    },
+    {
+      "id": "specs_004_login_generico_produto_research_decisao7_issuer_2fa",
+      "label": "Decis\u00e3o 7: issuer 2FA Cosmos\u2192Nebuloz",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Issuer \u00e9 s\u00f3 metadado de exibi\u00e7\u00e3o no app autenticador, n\u00e3o faz parte do segredo TOTP \u2014 trocar n\u00e3o invalida 2FA j\u00e1 cadastrado."
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_004_login_generico_produto_research_decisao1_resolucao_destino",
+      "target": "specs_004_login_generico_produto_plan_structure_decision",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao2_reuso_catalogo",
+      "target": "specs_004_login_generico_produto_plan_summary",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao3_isinternaltenant_schema",
+      "target": "specs_004_login_generico_produto_data_model_tenant_isinternaltenant",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao4_envio_email_reset",
+      "target": "specs_004_login_generico_produto_contracts_actions_sendresetpassword",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao5_rota_reset_password",
+      "target": "specs_004_login_generico_produto_contracts_actions_resetpassword",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao6_troca_senha_logado",
+      "target": "specs_004_login_generico_produto_contracts_actions_changepassword",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_research_decisao7_issuer_2fa",
+      "target": "specs_004_login_generico_produto_quickstart_cenario6_issuer_2fa",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/research.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

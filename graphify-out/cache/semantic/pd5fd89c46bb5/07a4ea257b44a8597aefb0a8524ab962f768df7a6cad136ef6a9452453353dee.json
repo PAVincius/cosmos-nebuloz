@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_document",
+      "label": "Feature Specification: Gate de maturidade + teste de carga (k6)",
+      "file_type": "document",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_us1_checklist_reutilizavel",
+      "label": "US1: Checklist de gate reutiliz\u00e1vel por produto (P1)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_us2_sc_carga_meridian",
+      "label": "US2: SC de carga formal para o Meridian (P1)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_us3_validar_concorrencia",
+      "label": "US3: Validar n\u00famero real de concorr\u00eancia com os leads (P2)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_fr004_sc_meridian",
+      "label": "FR-004: Meridian MUST ter SC de carga formal (p95<2s, erro<1%)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_fr006_nunca_producao",
+      "label": "FR-006: teste de carga MUST NOT rodar contra produ\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_fr009_concorrencia_atualizavel",
+      "label": "FR-009: n\u00famero de concorr\u00eancia MUST ser atualiz\u00e1vel sem reescrever o gate",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_entidade_gate",
+      "label": "Key Entity: Gate de maturidade (checklist, apto/n\u00e3o apto + motivo)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_entidade_sc_carga",
+      "label": "Key Entity: Success Criterion de carga (cen\u00e1rio + crit\u00e9rio de aprova\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_sc001_5min",
+      "label": "SC-001: determinar aptid\u00e3o de um produto em <5min s\u00f3 com o checklist",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_spec_sc003_fora_producao",
+      "label": "SC-003: 100% das execu\u00e7\u00f5es de teste de carga rodam fora de produ\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_us1_checklist_reutilizavel",
+      "target": "specs_007_gate_maturidade_carga_spec_entidade_gate",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_us2_sc_carga_meridian",
+      "target": "specs_007_gate_maturidade_carga_spec_fr004_sc_meridian",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_fr004_sc_meridian",
+      "target": "specs_007_gate_maturidade_carga_spec_entidade_sc_carga",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_fr006_nunca_producao",
+      "target": "specs_007_gate_maturidade_carga_spec_sc003_fora_producao",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_us3_validar_concorrencia",
+      "target": "specs_007_gate_maturidade_carga_spec_fr009_concorrencia_atualizavel",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_sc001_5min",
+      "target": "specs_007_gate_maturidade_carga_spec_entidade_gate",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_us1_checklist_reutilizavel",
+      "target": "specs_007_gate_maturidade_carga_intent_feature",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_spec_fr009_concorrencia_atualizavel",
+      "target": "specs_007_gate_maturidade_carga_intent_meta_concorrencia_hipotese",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_gate_maturidade_checklist",
+      "label": "Mecanismo do checklist de gate de maturidade (3 crit\u00e9rios), reutiliz\u00e1vel por produto",
+      "nodes": [
+        "specs_007_gate_maturidade_carga_spec_entidade_gate",
+        "specs_007_gate_maturidade_carga_intent_gate_de_maturidade",
+        "specs_007_gate_maturidade_carga_spec_us1_checklist_reutilizavel",
+        "specs_007_gate_maturidade_carga_checklists_requirements_checklist"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "specs/007-gate-maturidade-carga/spec.md"
+    }
+  ]
+}

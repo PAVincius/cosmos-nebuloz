@@ -19,7 +19,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/safe-engine`
 
 ## Grafo
-- 8924 nós, 22675 arestas (recorte do mestre com 2 hops)
+- 8644 nós, 21155 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -31,4 +31,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/cosmos/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 12 completions em `memory.md`
+- 14 completions em `memory.md`

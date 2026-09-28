@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "label": "Charter \u2014 Fluxo do Primeiro Cliente Remediation (Onda 1, PR #208)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_p0_first_client_blocked",
+      "label": "P0 Finding: First Client Can't Complete Core Flow (Draft Had No Exit)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_action_submit_draft_case",
+      "label": "submitDraftCase Action (Shares submissionGate With submitCase)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_case_detail_submit_cta",
+      "label": "Fix: case-detail Draft Gets 'Submeter para Revis\u00e3o' Primary + Gate-Fail Callout",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_refactor_intake_modal_extracted",
+      "label": "Refactor: IntakeModal Extracted to modals-intake.tsx (Pure Move, modals.tsx 2180\u21921734)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_setup_approve_vendor_step",
+      "label": "Fix: setup.ts Gains 'Aprove um Fornecedor' Step",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_dashboard_policy_never_published",
+      "label": "Fix: Dashboard version===null \u2192 'Pol\u00edtica Nunca Publicada' Badge",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_export_resumo_wired",
+      "label": "Fix: 'Exportar Pacote' Wired to Real exportEvidence",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_decision_vendor_detail_route",
+      "label": "Decision: Vendor Detail Route Is /charter/vendor/{code}, Not the Brief's Path",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_prepush_bypassed",
+      "label": "Finding: Push Bypassed pre-push Gate, Run Manually After",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_p0_first_client_blocked",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_action_submit_draft_case",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_p0_first_client_blocked",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_case_detail_submit_cta",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_action_submit_draft_case",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_case_detail_submit_cta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_p0_first_client_blocked",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_refactor_intake_modal_extracted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_dashboard_policy_never_published",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_export_resumo_wired",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_fix_setup_approve_vendor_step",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_decision_vendor_detail_route",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_finding_prepush_bypassed",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-fluxo-primeiro-cliente.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

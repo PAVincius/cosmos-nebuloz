@@ -1,0 +1,204 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_routes",
+      "label": "Signal Route Map (10 screens)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_sg_nav",
+      "label": "SG_NAV Sidebar Navigation",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_topbar",
+      "label": "Signal Topbar",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_persona_switcher_not_ported",
+      "label": "Persona Switcher Deliberately Not Ported",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_visual_system",
+      "label": "Signal Visual System Tokens",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_a11y_floor",
+      "label": "Signal Accessibility Floor",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_content_rules",
+      "label": "Signal Content Rules (regra-m\u00e3e)",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_states",
+      "label": "Signal UI States (empty/loading/error/no-confidence)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_command_palette",
+      "label": "Signal \u2318K Command Palette",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_reused_components",
+      "label": "Reused UI Components (cosmos-kit/charter-base)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_ui_contract_prototype_source",
+      "label": "signal.html Prototype (Claude Design 691f7fe5)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_persona_switcher_not_ported",
+      "target": "specs_003_signal_measure_contracts_ui_contract_topbar",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_content_rules",
+      "target": "specs_003_signal_measure_contracts_ui_contract_states",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_routes",
+      "target": "specs_003_signal_measure_contracts_ui_contract_prototype_source",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_visual_system",
+      "target": "specs_003_signal_measure_contracts_ui_contract_prototype_source",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_reused_components",
+      "target": "specs_003_signal_measure_contracts_ui_contract_prototype_source",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_ui_contract_command_palette",
+      "target": "specs_003_signal_measure_contracts_ui_contract_routes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "signal_roi_never_alone_hyperedge",
+      "label": "ROI Never Without Formula and Confidence (regra-m\u00e3e)",
+      "nodes": [
+        "specs_003_signal_measure_contracts_ui_contract_content_rules",
+        "specs_003_signal_measure_plan_dual_invariant_rule",
+        "specs_003_signal_measure_data_model_verdict_derivation",
+        "specs_003_signal_measure_quickstart_journey1_zero_to_verdict",
+        "specs_003_signal_measure_spec_verdict_rule"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/contracts/ui-contract.md"
+    }
+  ]
+}

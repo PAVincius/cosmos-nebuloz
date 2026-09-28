@@ -1,0 +1,330 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_milestone",
+      "label": "Per\u00edodo por Intervalo e Plano de Contas Edit\u00e1vel Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_empresa_periodo",
+      "label": "lib/empresa/periodo.ts \u2014 Interval \u2192 Compet\u00eancias/Semanas",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "label": "ContaDoPlano Model (27 Contas Seed)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_migration_conta_do_plano",
+      "label": "Migration 20260907000000_conta_do_plano",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_plano_de_contas",
+      "label": "lib/empresa/plano-de-contas.ts + financeiro.ts (calcularDre From Active Accounts)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_seletor_de_periodo",
+      "label": "SeletorDePeriodo / EntradaDeData Components (date-range-picker port)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_actions_financeiro",
+      "label": "actions/empresa/financeiro.ts \u2014 Plano CRUD + DRE/Caixa by Interval",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_actions_cac",
+      "label": "actions/empresa/cac.ts \u2014 CAC Aggregated by Interval",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_interval_schema_in_periodo",
+      "label": "Decision: IntervaloSchema Lives in periodo.ts, Not in Actions",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_popover_mock_relay",
+      "label": "Decision: Popover Mocked via Context Relay (Radix + jsdom Limitation)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_calendar_keyboard_clamp",
+      "label": "Decision: Calendar Keyboard Arrows Clamped to Valid Month/Year",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_proxima_ordem_derived",
+      "label": "Decision: proximaOrdem Derived From Loaded List, Not a Separate MAX Query",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_pending_prod_seed_contas",
+      "label": "Pending: Production Seed contas-do-plano.sql (Needs Owner Go-Ahead)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_empresa_periodo",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_seletor_de_periodo",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_migration_conta_do_plano",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_plano_de_contas",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_actions_financeiro",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_actions_cac",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_empresa_periodo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_interval_schema_in_periodo",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_empresa_periodo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_popover_mock_relay",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_seletor_de_periodo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_calendar_keyboard_clamp",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_seletor_de_periodo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_decision_proxima_ordem_derived",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_pending_prod_seed_contas",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_migration_conta_do_plano",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_milestone",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_empresa_periodo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_milestone",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_milestone",
+      "target": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_seletor_de_periodo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "target": "_claude_completions_2026_09_06_telas_empresa_schema_empresa_prisma",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_model_conta_do_plano",
+      "target": "_claude_completions_2026_09_06_telas_empresa_decision_27_contas_vs_25",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_lib_plano_de_contas",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_actions_cac",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_periodo_e_plano_de_contas_pending_prod_seed_contas",
+      "target": "_claude_completions_2026_09_06_funil_v2_pending_prod_seed_funil",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

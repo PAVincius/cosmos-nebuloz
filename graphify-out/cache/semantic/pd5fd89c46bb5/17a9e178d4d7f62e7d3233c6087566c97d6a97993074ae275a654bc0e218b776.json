@@ -1,0 +1,547 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_cosmos_design_system",
+      "label": "Cosmos Design System",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_painel_de_sinal_vivo",
+      "label": "O Painel de Sinal Vivo (Cosmos creative north star)",
+      "file_type": "rationale",
+      "rationale": "Instrument-panel identity: number as protagonist, frame silent, colour reserved for data, 'sem sinal' instead of fake zero.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_one_voice_rule",
+      "label": "The One Voice Rule",
+      "file_type": "rationale",
+      "rationale": "Lavender is the only brand accent, marking place, action and focus only; no second accent (old cyan, shadcn blue) allowed.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_tone_plus_word_rule",
+      "label": "The Tone-Plus-Word Rule",
+      "file_type": "rationale",
+      "rationale": "State colour never stands alone; always paired with a Badge word or dot/pulse; green/red/amber exclusive to data surfaces.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_scope_rule",
+      "label": "The Scope Rule",
+      "file_type": "rationale",
+      "rationale": "Cosmos tokens only exist inside .cosmos-root; every portal must mount under that wrapper via CosmosPortal or inherit unscoped shadcn neutrals.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_light_from_above_rule",
+      "label": "The Light-From-Above Rule",
+      "file_type": "rationale",
+      "rationale": "In dark theme every elevated surface gets a 1px light edge at the top; depth comes from above, never a hard lateral shadow.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_glow_is_data_rule",
+      "label": "The Glow-Is-Data Rule",
+      "file_type": "rationale",
+      "rationale": "Coloured glow only appears on data surfaces (KPI, tone bar, progress, live switch) or the primary CTA, never on nav/field/text.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_clean_light_rule",
+      "label": "The Clean-Light Rule",
+      "file_type": "rationale",
+      "rationale": "Dot-grid, engraved watermark and ECG texture are dark-theme-only signatures; light theme hides them and has no whole-page grain.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_mono_for_data_rule",
+      "label": "The Mono-for-Data Rule",
+      "file_type": "rationale",
+      "rationale": "Every id, number, percentage, date and code goes in JetBrains Mono (.mono); Manrope on an id loses the signal that it is data.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_six_steps_rule",
+      "label": "The Six Steps Rule",
+      "file_type": "rationale",
+      "rationale": "New font size must come from the six-step scale (micro..display); half-pixel steps do not separate label from title.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_kpi_card",
+      "label": "KPI Card (Cosmos)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_modal",
+      "label": "ModalCard / ModalSplit",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_section_card",
+      "label": "SectionCard (Sangria + Sinal Vivo)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_sidebar_navigation",
+      "label": "Cosmos Sidebar Navigation",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_command_palette",
+      "label": "Command Palette (\u2318K)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_button",
+      "label": "Cosmos Button variants",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_cosmos_portal",
+      "label": "CosmosPortal",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_empty_error_states",
+      "label": "EmptyState / ErrorState",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_motion_spec_gap",
+      "label": "Motion spec vs implementation gap (M1-M18)",
+      "file_type": "rationale",
+      "rationale": "Big Bang\u00b7Charter\u00b7Cosmos micro-interaction spec compared line by line to code; several tokens/behaviors specified but not implemented.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_contrast_debt",
+      "label": "Documented AA contrast debt (light theme fills)",
+      "file_type": "rationale",
+      "rationale": "White text on light green/amber solid fills fails AA; single --on-solid token cannot fix without per-tone foreground.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_ecg_gradient_bug",
+      "label": "KPI ECG sparkline gradientUnits bug",
+      "file_type": "rationale",
+      "rationale": "linearGradient used userSpaceOnUse instead of objectBoundingBox; trace rendered invisible until fixed 2026-09-23.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_kpi_hover_inline_style_bug",
+      "label": "KPI hover border/shadow inline-style override bug",
+      "file_type": "rationale",
+      "rationale": "Kit sets border/boxShadow inline in JS, which beats the CSS :hover rule, so tone border and shadow never light up on hover.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_kpi_value_parse_bug",
+      "label": "KpiCard string-value parse bug",
+      "file_type": "rationale",
+      "rationale": "Kit parsed string values as numbers pre-2026-09-23, reading a pt-BR thousands dot as decimal (1.250.000 -> 1); fixed by passing numbers.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_theme_hydration_fix",
+      "label": "Dark-theme SSR hydration flash fix",
+      "file_type": "rationale",
+      "rationale": "Server always renders dark (theme lives in localStorage); hook now returns dark during hydration then the real theme, fixed 2026-09-23.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_shared_kit",
+      "label": "@repo/design-system/cosmos kit (shared across suite)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_design_ink_subtle_contrast_fix",
+      "label": "Light-theme ink-subtle token recalibration",
+      "file_type": "rationale",
+      "rationale": "ink-subtle was calibrated only against white (4.75:1); recalibrated 2026-09-23 against darkest real surface, shared via cosmos.css with back-office.",
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_cosmos_design_painel_de_sinal_vivo",
+      "target": "apps_app_components_cosmos_design_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_one_voice_rule",
+      "target": "apps_app_components_cosmos_design_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_card",
+      "target": "apps_app_components_cosmos_design_glow_is_data_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_section_card",
+      "target": "apps_app_components_cosmos_design_glow_is_data_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_card",
+      "target": "apps_app_components_cosmos_design_light_from_above_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_card",
+      "target": "apps_app_components_cosmos_design_mono_for_data_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_modal",
+      "target": "apps_app_components_cosmos_design_cosmos_portal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_command_palette",
+      "target": "apps_app_components_cosmos_design_cosmos_portal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_cosmos_portal",
+      "target": "apps_app_components_cosmos_design_scope_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_ecg_gradient_bug",
+      "target": "apps_app_components_cosmos_design_kpi_card",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_hover_inline_style_bug",
+      "target": "apps_app_components_cosmos_design_kpi_card",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_value_parse_bug",
+      "target": "apps_app_components_cosmos_design_kpi_card",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_theme_hydration_fix",
+      "target": "apps_app_components_cosmos_design_kpi_card",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_motion_spec_gap",
+      "target": "apps_app_components_cosmos_design_kpi_card",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_motion_spec_gap",
+      "target": "apps_app_components_cosmos_design_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_contrast_debt",
+      "target": "apps_app_components_cosmos_design_ink_subtle_contrast_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_kpi_card",
+      "target": "apps_app_components_cosmos_design_shared_kit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_button",
+      "target": "apps_app_components_cosmos_design_shared_kit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_section_card",
+      "target": "apps_app_components_cosmos_design_shared_kit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_empty_error_states",
+      "target": "apps_app_components_cosmos_product_no_signal_appears",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_design_sidebar_navigation",
+      "target": "apps_app_components_cosmos_design_one_voice_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "cosmos_color_governance_rules",
+      "label": "Cosmos color-governance named rules",
+      "nodes": [
+        "apps_app_components_cosmos_design_one_voice_rule",
+        "apps_app_components_cosmos_design_tone_plus_word_rule",
+        "apps_app_components_cosmos_design_scope_rule"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/DESIGN.md"
+    },
+    {
+      "id": "cosmos_kpi_debt_cluster",
+      "label": "Cosmos KPI Card debt cluster (fixed 2026-09-23)",
+      "nodes": [
+        "apps_app_components_cosmos_design_ecg_gradient_bug",
+        "apps_app_components_cosmos_design_kpi_hover_inline_style_bug",
+        "apps_app_components_cosmos_design_kpi_value_parse_bug",
+        "apps_app_components_cosmos_design_theme_hydration_fix"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/cosmos/DESIGN.md"
+    }
+  ]
+}

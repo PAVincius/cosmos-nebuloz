@@ -1,0 +1,334 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_guard_preamble",
+      "label": "Guard Preamble (Signal Server Actions)",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_shell",
+      "label": "shell.ts \u2014 getShellData Action",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_initiatives",
+      "label": "initiatives.ts \u2014 Initiative Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_baseline",
+      "label": "baseline.ts \u2014 Baseline Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_connections",
+      "label": "connections.ts \u2014 Connection Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_mapping",
+      "label": "mapping.ts \u2014 Metric Mapping Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_evidence",
+      "label": "evidence.ts \u2014 Evidence Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_roi",
+      "label": "roi.ts \u2014 ROI Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_confidence",
+      "label": "confidence.ts \u2014 Confidence Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_alerts",
+      "label": "alerts.ts \u2014 Alert Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_reports",
+      "label": "reports.ts \u2014 Report Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_settings",
+      "label": "settings.ts \u2014 Settings Actions",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_audit",
+      "label": "audit.ts \u2014 listAudit Action",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "label": "SignalRuleError (422, named rule)",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_state_conflict_error",
+      "label": "StateConflictError (409, blockers)",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_role_permission_matrix",
+      "label": "Signal Role \u00d7 Permission Matrix",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_contracts_server_actions_audit_append_only_rule",
+      "label": "Audit Log Append-Only Invariant",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_initiatives",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_initiatives",
+      "target": "specs_003_signal_measure_contracts_server_actions_state_conflict_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_baseline",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_roi",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_confidence",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_evidence",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_reports",
+      "target": "specs_003_signal_measure_contracts_server_actions_state_conflict_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_reports",
+      "target": "specs_003_signal_measure_contracts_server_actions_rule_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_settings",
+      "target": "specs_003_signal_measure_contracts_server_actions_audit",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_audit",
+      "target": "specs_003_signal_measure_contracts_server_actions_audit_append_only_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_guard_preamble",
+      "target": "specs_003_signal_measure_contracts_server_actions_role_permission_matrix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_connections",
+      "target": "specs_003_signal_measure_contracts_server_actions_alerts",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_connections",
+      "target": "specs_003_signal_measure_contracts_server_actions_mapping",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_contracts_server_actions_connections",
+      "target": "specs_003_signal_measure_contracts_server_actions_evidence",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/contracts/server-actions.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

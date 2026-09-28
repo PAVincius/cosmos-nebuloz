@@ -1,0 +1,185 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_milestone",
+      "label": "Charter \u2014 Bot\u00f5es Que N\u00e3o Fazem Nada Remediation (Onda 3a, PR #207)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "label": "P2 Finding: Built-and-Inert Controls (No Handler, Fake Export, Literal-as-Data)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_export_removed",
+      "label": "Fix: risk 'Exportar Matriz' Button Removed (No Backing Action)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_category_count_derived",
+      "label": "Fix: '7 Categorias de Risco' Eyebrow Now Derived From RISK_CATEGORY_LABEL",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_empty_states",
+      "label": "Fix: risk Heatmap/Rastreador Empty Grids \u2192 SmartEmptyState",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_cases_export_removed",
+      "label": "Fix: cases 'Exportar Fila' Removed (Was router.push to Audit)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_vendors_library_false_positive",
+      "label": "Finding: vendors Clause Library Was a Real Modal, Critique Was Wrong",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_audit_kpi_tone",
+      "label": "Fix: audit 'Exporta\u00e7\u00f5es Registradas' KPI tone green\u2192accent",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_export_removed",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_category_count_derived",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_empty_states",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_cases_export_removed",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_audit_kpi_tone",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_milestone",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_milestone",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_vendors_library_false_positive",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_cases_export_removed",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_fix_risk_export_removed",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_milestone",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-15-charter-botoes-que-nao-fazem-nada.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

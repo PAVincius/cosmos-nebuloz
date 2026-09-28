@@ -1,0 +1,390 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_design_casca_do_appsapp",
+      "label": "Casca do apps/app (Design System)",
+      "file_type": "document",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_antessala_da_cadencia",
+      "label": "A Antessala da Cad\u00eancia (Creative North Star)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_one_accent_rule",
+      "label": "The One Accent Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_swapped_name_rule",
+      "label": "The Swapped-Name Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_layers_rule",
+      "label": "The Layers Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_mono_for_data_rule",
+      "label": "The Mono-for-Data Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_light_from_above_rule",
+      "label": "The Light-From-Above Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_cosmos_shell_reskin",
+      "label": "Reskin .cosmos-shell (ciano pr\u00e9-piv\u00f4)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_appdesign_bridge",
+      "label": "appDesign (lib/app-design.ts)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_two_dialects",
+      "label": "Dois dialetos: shadcn/ui vs cart\u00f5es portados do Cosmos",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_pageheader_casca",
+      "label": "PageHeader (casca)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_sectioncard",
+      "label": "SectionCard (casca)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_modalshell",
+      "label": "ModalShell (casca)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_globalsidebar",
+      "label": "GlobalSidebar",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_paginas_portao",
+      "label": "P\u00e1ginas-port\u00e3o (charter/signal/meridian/scaffold-indisponivel)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_painel_de_marca_login",
+      "label": "Painel de marca e trilho de cad\u00eancia (login)",
+      "file_type": "concept",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_wsjf_semantica_obsoleta",
+      "label": "Sem\u00e2ntica SAFe / WSJF (obsoleto)",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_portfolio_kanban_obsoleto",
+      "label": "Portfolio Kanban / Prioriza\u00e7\u00e3o WSJF (obsoleto)",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_design_liveblocks_room_id_rule",
+      "label": "Liveblocks Room ID Rule ({orgId}:{surface}:{entityId})",
+      "file_type": "rationale",
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_design_casca_do_appsapp",
+      "target": "apps_app_design_antessala_da_cadencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_antessala_da_cadencia",
+      "target": "apps_app_design_one_accent_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_one_accent_rule",
+      "target": "apps_app_design_cosmos_shell_reskin",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_two_dialects",
+      "target": "apps_app_design_appdesign_bridge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_two_dialects",
+      "target": "apps_app_design_pageheader_casca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_two_dialects",
+      "target": "apps_app_design_sectioncard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_two_dialects",
+      "target": "apps_app_design_modalshell",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_pageheader_casca",
+      "target": "apps_app_design_light_from_above_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_sectioncard",
+      "target": "apps_app_design_layers_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_swapped_name_rule",
+      "target": "apps_app_design_globalsidebar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_paginas_portao",
+      "target": "apps_app_design_portfolio_kanban_obsoleto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_casca_do_appsapp",
+      "target": "apps_app_design_wsjf_semantica_obsoleta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_casca_do_appsapp",
+      "target": "apps_app_design_liveblocks_room_id_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_painel_de_marca_login",
+      "target": "apps_app_design_antessala_da_cadencia",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_globalsidebar",
+      "target": "apps_app_design_paginas_portao",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_design_one_accent_rule",
+      "target": "apps_backoffice_design_regra_do_ceu_escasso",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "single_accent_principle_across_products",
+      "label": "Princ\u00edpio do acento \u00fanico e escasso nos design systems da su\u00edte",
+      "nodes": [
+        "apps_app_design_one_accent_rule",
+        "apps_backoffice_design_regra_do_ceu_escasso",
+        "apps_app_components_charter_design_four_slot_rule"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/DESIGN.md"
+    }
+  ]
+}

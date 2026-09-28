@@ -1,0 +1,312 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_milestone",
+      "label": "Growth \u00b7 Motor de AI Readiness Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_no_repo_cloned",
+      "label": "Decision: No Public Repository Cloned \u2014 Native Build Instead",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_reason_agpl_license",
+      "label": "Reason: AGPL/GPL Network Copyleft Would Force Back-Office Open",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_reason_physical_incompatibility",
+      "label": "Reason: Candidate Repos Are Foreign Runtimes, Don't Fit Turborepo Next.js",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_reason_scope_overlap",
+      "label": "Reason: BO_NAV Already Covers Half the Requested Scope",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "label": "lib/growth/maturidade.ts \u2014 Rubric Engine (6 Dims \u00d7 5 Levels \u00d7 18 Criteria)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_actions_maturidade",
+      "label": "actions/maturidade.ts \u2014 Persistence + Audit (4 Actions)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_model_avaliacao_de_maturidade",
+      "label": "AvaliacaoDeMaturidade / RespostaDeMaturidade Models",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_rubrica_in_code",
+      "label": "Decision: Rubric Lives in Code, Not Table (IP, Stays Comparable)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_score_frozen",
+      "label": "Decision: Score Frozen at Close, Never Recalculated on Read",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_null_on_missing_criterion",
+      "label": "Decision: Missing Criterion \u2192 Null Score, Not Partial ('sem n\u00famero, sem chute')",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_faixa_cutoffs",
+      "label": "Decision: Band Cutoffs at 12.5/37.5/62.5/87.5, Not 20/40/60/80",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_elo_fraco_escada",
+      "label": "Decision: Weakest Dimension Picks the Next Product (Escada)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_decision_growth_before_comercial",
+      "label": "Decision: Growth Menu Item Placed Before Comercial",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_growth_readiness_pending_growth_prod_migration",
+      "label": "Pending: Growth Readiness Migration Not Applied in Production",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_reason_agpl_license",
+      "target": "_claude_completions_2026_09_06_growth_readiness_decision_no_repo_cloned",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_reason_physical_incompatibility",
+      "target": "_claude_completions_2026_09_06_growth_readiness_decision_no_repo_cloned",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_reason_scope_overlap",
+      "target": "_claude_completions_2026_09_06_growth_readiness_decision_no_repo_cloned",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "target": "_claude_completions_2026_09_06_growth_readiness_model_avaliacao_de_maturidade",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_actions_maturidade",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_rubrica_in_code",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_score_frozen",
+      "target": "_claude_completions_2026_09_06_growth_readiness_model_avaliacao_de_maturidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_null_on_missing_criterion",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_faixa_cutoffs",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_elo_fraco_escada",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_decision_growth_before_comercial",
+      "target": "_claude_completions_2026_09_06_growth_readiness_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_pending_growth_prod_migration",
+      "target": "_claude_completions_2026_09_06_growth_readiness_model_avaliacao_de_maturidade",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_milestone",
+      "target": "_claude_completions_2026_09_06_growth_readiness_lib_growth_maturidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_growth_readiness_milestone",
+      "target": "_claude_completions_2026_09_06_growth_readiness_decision_no_repo_cloned",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-growth-readiness.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

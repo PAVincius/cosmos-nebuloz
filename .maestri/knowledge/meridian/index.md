@@ -21,7 +21,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/provisioning/src/meridian`
 
 ## Grafo
-- 1737 nós, 7105 arestas (recorte do mestre com 2 hops)
+- 2345 nós, 8150 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -33,4 +33,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/meridian/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 1 completions em `memory.md`
+- 6 completions em `memory.md`

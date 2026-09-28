@@ -1,0 +1,311 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_prontidao_lancamento_document",
+      "label": "Prontid\u00e3o para lan\u00e7amento \u2014 cliente externo",
+      "file_type": "document",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "label": "Veredito de prontid\u00e3o por produto",
+      "file_type": "rationale",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhum produto est\u00e1 pronto para cliente externo em autosservi\u00e7o hoje; o Meridian \u00e9 o \u00fanico com SC, dogfood em produ\u00e7\u00e3o e parecer de compliance, com bloqueios conhecidos, com dono e finitos."
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_preview_meridian",
+      "label": "Preview/vers\u00e3o gratuita do Meridian (proposta)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Autoavalia\u00e7\u00e3o de um respondente s\u00f3, sem convite a terceiros e sem upload de evid\u00eancia, n\u00e3o canibaliza o SKU 1 (projeto multi-respondente com evid\u00eancia e plano) e qualifica o lead; esfor\u00e7o estimado 2\u20133 semanas, dominado pelo login/tenant de autosservi\u00e7o da spec 004."
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "label": "Esteira do dogfood (ordem de libera\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Meridian \u2192 Scaffold \u2192 Charter \u2192 Cosmos \u2192 Signal; anunciar a su\u00edte inteira e liberar produto a produto comunica a vis\u00e3o sem prometer o que n\u00e3o foi validado."
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_parecer_meridian_respondente",
+      "label": "Parecer de compliance sobre respondente do Meridian",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Bloqueia uso externo do Meridian at\u00e9 as condi\u00e7\u00f5es 2\u20135 do parecer; a condi\u00e7\u00e3o 1 (aviso ao titular) j\u00e1 saiu no commit 24f7b299."
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_meridian_ref",
+      "label": "Meridian (produto, referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_charter_ref",
+      "label": "Charter (produto, referenciado \u2014 sem SC formal)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_cosmos_ref",
+      "label": "Cosmos (produto, referenciado \u2014 sem SC formal)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_scaffold_ref",
+      "label": "Scaffold (produto, referenciado \u2014 c\u00f3digo pronto sem valida\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_prontidao_lancamento_signal_ref",
+      "label": "Signal (produto, referenciado \u2014 sem SC formal)",
+      "file_type": "concept",
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_prontidao_lancamento_document",
+      "target": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_signal_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_meridian_ref",
+      "target": "docs_produto_meridian_prd_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_charter_ref",
+      "target": "docs_produto_charter_prd_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_signal_ref",
+      "target": "docs_produto_signal_prd_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_document",
+      "target": "docs_produto_prontidao_lancamento_preview_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_preview_meridian",
+      "target": "docs_produto_prontidao_lancamento_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_document",
+      "target": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "target": "docs_produto_prontidao_lancamento_meridian_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "target": "docs_produto_prontidao_lancamento_scaffold_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "target": "docs_produto_prontidao_lancamento_charter_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "target": "docs_produto_prontidao_lancamento_cosmos_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_esteira_dogfood",
+      "target": "docs_produto_prontidao_lancamento_signal_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_preview_meridian",
+      "target": "docs_produto_prontidao_lancamento_parecer_meridian_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_prontidao_lancamento_veredito_produtos",
+      "target": "docs_produto_prontidao_lancamento_parecer_meridian_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/prontidao-lancamento.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

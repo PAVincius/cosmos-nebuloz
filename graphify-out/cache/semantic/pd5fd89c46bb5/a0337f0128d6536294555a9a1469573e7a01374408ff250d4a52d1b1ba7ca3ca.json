@@ -1,0 +1,574 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_operadora_controladora_analise",
+      "label": "Operadora ou Controladora \u2014 os dois titulares sem conta",
+      "file_type": "document",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A lei n\u00e3o exige que o titular tenha login: exige que exista um agente de tratamento a quem se dirigir \u2014 hoje n\u00e3o est\u00e1 dito em lugar nenhum que essas pessoas leiam quem \u00e9 esse agente."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_fluxo_respondente_meridian",
+      "label": "Fluxo 1.1 \u2014 respondente do Meridian, convidado por link",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cliente decide finalidade (diagnosticar a pr\u00f3pria organiza\u00e7\u00e3o, quem convidar, prazo) \u2014 cliente controlador, Nebuloz operadora quanto aos meios t\u00e9cnicos."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "label": "Fluxo 1.2 \u2014 participante de reuni\u00e3o gravada",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A Nebuloz escolhe os meios mais consequentes (provedor, modelo, prompt) mas cliente ainda decide finalidade \u2014 cada decis\u00e3o \u00e9 um ato dele no AuditLog."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_benchmark_opt_in",
+      "label": "MeridianAssessment.benchmarkOptIn (exce\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Se o pool comparativo servir \u00e0 Nebuloz (benchmark de mercado, material comercial, produto), a finalidade \u00e9 dela; default deny (false) mant\u00e9m a linha divis\u00f3ria de p\u00e9 \u2014 lig\u00e1-lo a cruza."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_recomendacao",
+      "label": "\u00a72 Recomenda\u00e7\u00e3o \u2014 Nebuloz operadora nos dois fluxos",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_art42_responsabilidade_solidaria",
+      "label": "Art. 42 \u00a71\u00ba I \u2014 responsabilidade solid\u00e1ria do operador",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ser operadora n\u00e3o \u00e9 blindagem: se o port\u00e3o falhar ou a Nebuloz processar fora da instru\u00e7\u00e3o, ela responde como se controladora fosse \u2014 por isso default deny e participantsKnown fail-closed s\u00e3o controle de risco dela, n\u00e3o s\u00f3 do cliente."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_situacoes_controladora",
+      "label": "3 situa\u00e7\u00f5es em que a Nebuloz vira controladora",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uso pr\u00f3prio (tenant dela mesma), benchmark do Meridian, e produto pr\u00f3prio (treinar/ajustar/demonstrar com conte\u00fado de cliente) \u2014 nenhuma hipot\u00e9tica."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c1",
+      "label": "C1 \u2014 Pap\u00e9is quanto a titulares sem conta",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c2",
+      "label": "C2 \u2014 Instru\u00e7\u00f5es documentadas",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c3",
+      "label": "C3 \u2014 Canal do titular sem conta",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c4",
+      "label": "C4 \u2014 Prazo de repasse e assist\u00eancia",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c5",
+      "label": "C5 \u2014 Subcontrata\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c6",
+      "label": "C6 \u2014 Elimina\u00e7\u00e3o ao fim do contrato",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_clausula_c7",
+      "label": "C7 \u2014 Coopera\u00e7\u00e3o em incidente",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_texto_publico_canal",
+      "label": "\u00a74 Texto p\u00fablico \u2014 \"Se seus dados chegaram at\u00e9 n\u00f3s por uma organiza\u00e7\u00e3o\"",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Escrito para quem n\u00e3o \u00e9 cliente da Nebuloz e n\u00e3o sabe o que ela \u00e9 \u2014 para publicar em /legal/privacy."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_perguntas_decisao",
+      "label": "\u00a75 Perguntas para decis\u00e3o (8, donos: dire\u00e7\u00e3o da empresa / jur\u00eddico)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_grant_consent_action",
+      "label": "grantConsent (meeting/consent.ts)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_meeting_integration",
+      "label": "MeetingIntegration (apiKey cifrada do cliente)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_playbook_vendas_raci",
+      "label": "RACI do playbook de vendas \u00a74 (Dono do SLA em branco)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Enquanto o Dono do SLA seguir em branco, a decis\u00e3o n\u00e3o tem dono \u2014 \u00e9 isso que a mant\u00e9m aberta desde o RoPA."
+    },
+    {
+      "id": "docs_compliance_operadora_controladora_process_erasure_portability",
+      "label": "processErasureRequest / buildPortabilityExport",
+      "file_type": "concept",
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "J\u00e1 alcan\u00e7am MeridianRespondent, MeetingTranscript e MeetingParticipant \u2014 falta o gatilho fora de sess\u00e3o, que \u00e9 o cliente."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_fluxo_respondente_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_fluxo_respondente_meridian",
+      "target": "docs_compliance_operadora_controladora_benchmark_opt_in",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "target": "docs_compliance_operadora_controladora_grant_consent_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "target": "docs_compliance_operadora_controladora_meeting_integration",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "target": "docs_compliance_aviso_de_gravacao_documento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_recomendacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_recomendacao",
+      "target": "docs_compliance_operadora_controladora_fluxo_respondente_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_recomendacao",
+      "target": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_recomendacao",
+      "target": "docs_compliance_operadora_controladora_art42_responsabilidade_solidaria",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_situacoes_controladora",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_situacoes_controladora",
+      "target": "docs_compliance_operadora_controladora_benchmark_opt_in",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c3",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c4",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_clausula_c7",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c1",
+      "target": "docs_compliance_dpa_modelo_secao1_1_titulares_sem_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c2",
+      "target": "docs_compliance_dpa_modelo_secao3_1_instrucao_documentada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c3",
+      "target": "docs_compliance_dpa_modelo_secao9_1_canal_titular_sem_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c4",
+      "target": "docs_compliance_dpa_modelo_secao9_direitos_titulares",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c5",
+      "target": "docs_compliance_dpa_modelo_secao5_1_regime_subcontratacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c6",
+      "target": "docs_compliance_dpa_modelo_secao10_retencao_eliminacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_clausula_c7",
+      "target": "docs_compliance_dpa_modelo_secao8_incidentes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_texto_publico_canal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_perguntas_decisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_perguntas_decisao",
+      "target": "docs_compliance_operadora_controladora_playbook_vendas_raci",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_analise",
+      "target": "docs_compliance_operadora_controladora_process_erasure_portability",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_process_erasure_portability",
+      "target": "docs_compliance_operadora_controladora_fluxo_respondente_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_operadora_controladora_process_erasure_portability",
+      "target": "docs_compliance_operadora_controladora_fluxo_participante_reuniao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "clausulas_titulares_sem_conta",
+      "label": "Cl\u00e1usulas C1\u2013C7 \u2014 titulares sem conta incorporadas ao DPA modelo",
+      "nodes": [
+        "docs_compliance_operadora_controladora_clausula_c1",
+        "docs_compliance_operadora_controladora_clausula_c2",
+        "docs_compliance_operadora_controladora_clausula_c3",
+        "docs_compliance_operadora_controladora_clausula_c4",
+        "docs_compliance_operadora_controladora_clausula_c5",
+        "docs_compliance_operadora_controladora_clausula_c6",
+        "docs_compliance_operadora_controladora_clausula_c7"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/operadora-controladora.md"
+    }
+  ]
+}

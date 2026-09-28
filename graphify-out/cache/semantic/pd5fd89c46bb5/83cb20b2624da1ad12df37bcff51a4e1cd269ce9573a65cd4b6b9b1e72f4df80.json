@@ -1,0 +1,392 @@
+{
+  "nodes": [
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_1_icp",
+      "label": "Etapa 1 - Identificacao de ICP",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "label": "Etapa 2 - Qualificacao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "label": "Etapa 3 - Precificacao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_4_proposta",
+      "label": "Etapa 4 - Proposta",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_5_contrato",
+      "label": "Etapa 5 - Contrato",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_6_provisionamento",
+      "label": "Etapa 6 - Provisionamento",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_etapa_7_entrega",
+      "label": "Etapa 7 - Entrega",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_diagrama_de_estados",
+      "label": "Diagrama de Estados - Lead para Proposal para Engagement",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "label": "Lacunas Consolidadas do Processo Comercial",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_precificarproposta",
+      "label": "precificarProposta - Funcao Pura de Calculo",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_limite_desconto_sem_aprovacao",
+      "label": "LIMITE_DESCONTO_SEM_APROVACAO igual a 15",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_engagement_escopo_fechado",
+      "label": "Engagement - Escopo Fechado, Nao Alocacao por Hora",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_ferramentas_processos",
+      "label": "Ferramentas Processos - Mapa Navegavel de Todos os Dominios",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_estagiodofunil",
+      "label": "EstagioDoFunil - Peso, Teto e Criterios por Tenant",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_mapa_de_processo_bootstrap_charter",
+      "label": "Bootstrap do Charter Interno no Provisionamento",
+      "file_type": "concept",
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_1_icp",
+      "target": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "target": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "target": "docs_comercial_mapa_de_processo_etapa_4_proposta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_4_proposta",
+      "target": "docs_comercial_mapa_de_processo_etapa_5_contrato",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_5_contrato",
+      "target": "docs_comercial_mapa_de_processo_etapa_6_provisionamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_6_provisionamento",
+      "target": "docs_comercial_mapa_de_processo_etapa_7_entrega",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_diagrama_de_estados",
+      "target": "docs_comercial_mapa_de_processo_etapa_1_icp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_diagrama_de_estados",
+      "target": "docs_comercial_mapa_de_processo_etapa_7_entrega",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "target": "docs_comercial_mapa_de_processo_precificarproposta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "target": "docs_comercial_mapa_de_processo_limite_desconto_sem_aprovacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_4_proposta",
+      "target": "docs_comercial_mapa_de_processo_limite_desconto_sem_aprovacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_6_provisionamento",
+      "target": "docs_comercial_mapa_de_processo_bootstrap_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_7_entrega",
+      "target": "docs_comercial_mapa_de_processo_engagement_escopo_fechado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "target": "docs_comercial_mapa_de_processo_estagiodofunil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "target": "docs_comercial_mapa_de_processo_etapa_1_icp",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "target": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "target": "docs_comercial_mapa_de_processo_etapa_4_proposta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_ferramentas_processos",
+      "target": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_3_precificacao",
+      "target": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "target": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "target": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_mapa_de_processo_etapa_5_contrato",
+      "target": "docs_comercial_playbook_de_vendas_raci_contrato",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/mapa-de-processo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_ttl_proprio_assignrespondent_fix",
+      "label": "TTL pr\u00f3prio em assignRespondent, n\u00e3o copia deadline direto (89937f1b)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_rate_limit_lookup_token_cache",
+      "label": "Rate limit no lookup de token + cache do ensureBucket (9468abd9)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_dsar_apaga_objeto_evidencia",
+      "label": "Elimina\u00e7\u00e3o DSAR apaga o objeto de evid\u00eancia no bucket (1d514a01)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_docs_retencao_bucket_tasks_spec006",
+      "label": "docs(meridian): op\u00e7\u00f5es de reten\u00e7\u00e3o do bucket, tasks.md spec 006, checklist (9f33e7ed)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_pendencia_lifecycle_bucket_ceo",
+      "label": "Pendente: lifecycle do bucket \u2014 tr\u00eas op\u00e7\u00f5es de reten\u00e7\u00e3o (90d/180d/sem expira\u00e7\u00e3o), decis\u00e3o do CEO",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_pendencia_e2e_globalsetup_nao_autentica",
+      "label": "specs/006 T015/T016 \u2014 E2E n\u00e3o roda neste checkout, globalSetup n\u00e3o autentica",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_ttl_proprio_assignrespondent_fix",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_vigia_p2_deadline_copiado_direto",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_rate_limit_lookup_token_cache",
+      "target": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_ttl_proprio_assignrespondent_fix",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_dsar_apaga_objeto_evidencia",
+      "target": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_pendencia_lifecycle_bucket_ceo",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_docs_retencao_bucket_tasks_spec006",
+      "target": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_pendencia_lifecycle_bucket_ceo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_pendencia_e2e_globalsetup_nao_autentica",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_e2e_reemitir_link_lote_nao_executado",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_docs_retencao_bucket_tasks_spec006",
+      "target": "_claude_completions_2026_09_28_meridian_p2s_compliance_spec006_dsar_apaga_objeto_evidencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-28-meridian-p2s-compliance-spec006.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,269 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_feature",
+      "label": "Conta ativa sempre vis\u00edvel (Fase 0 do modelo de contas) \u2014 Intent",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "label": "Incidente dogfood 2026-09-27: CEO confundiu tenant 'Nebula' com 'Nebuloz'",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_causa1_sem_seletor",
+      "label": "Causa 1: nenhum dos 5 produtos tem seletor de conta (WorkspaceSwitcher n\u00e3o \u00e9 ancestral)",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_causa2_visibilidade_inconsistente",
+      "label": "Causa 2: visibilidade do nome da conta inconsistente (Meridian/Signal s\u00f3 tooltip)",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_causa3_fallback_nao_deterministico",
+      "label": "Causa 3: conta ativa default escolhida sem orderBy (findFirst n\u00e3o determin\u00edstico, 2 lugares)",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_causa4_tres_caminhos_troca",
+      "label": "Causa 4: 3 caminhos de troca de conta existem, s\u00f3 1 usado e correto hoje",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_switchorg",
+      "label": "switchOrg (actions/auth/switch-org.ts) \u2014 n\u00e3o limpa cookie, sem call site em produto",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_causa5_vazamento_sessoes",
+      "label": "Causa 5: aceitar convite/completar onboarding trocam activeTenantId de TODAS as sess\u00f5es",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_proposta_modelo_contas_doc",
+      "label": "docs/produto/modelo-de-contas/proposta.md (Morgana, e0f8a647) \u2014 Fase 0 aprovada pelo CEO",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_as_is_doc",
+      "label": "docs/produto/modelo-de-contas/as-is.md (Alicerce, t\u00e9cnico, arquivo:linha)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_restricao_sem_migration",
+      "label": "Restri\u00e7\u00e3o: sem migration de schema nesta fase",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_intent_componente_comum",
+      "label": "Restri\u00e7\u00e3o: um componente comum, n\u00e3o 5 implementa\u00e7\u00f5es por produto",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "target": "specs_009_conta_ativa_visivel_intent_feature",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa1_sem_seletor",
+      "target": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa2_visibilidade_inconsistente",
+      "target": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa3_fallback_nao_deterministico",
+      "target": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa4_tres_caminhos_troca",
+      "target": "specs_009_conta_ativa_visivel_intent_incidente_nebula_nebuloz",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa4_tres_caminhos_troca",
+      "target": "specs_009_conta_ativa_visivel_intent_switchorg",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa5_vazamento_sessoes",
+      "target": "specs_009_conta_ativa_visivel_intent_feature",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_feature",
+      "target": "specs_009_conta_ativa_visivel_intent_proposta_modelo_contas_doc",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa1_sem_seletor",
+      "target": "specs_009_conta_ativa_visivel_intent_as_is_doc",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_feature",
+      "target": "specs_009_conta_ativa_visivel_intent_restricao_sem_migration",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_feature",
+      "target": "specs_009_conta_ativa_visivel_intent_componente_comum",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa4_tres_caminhos_troca",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_intent_causa3_fallback_nao_deterministico",
+      "target": "auth_server_requiretenantsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

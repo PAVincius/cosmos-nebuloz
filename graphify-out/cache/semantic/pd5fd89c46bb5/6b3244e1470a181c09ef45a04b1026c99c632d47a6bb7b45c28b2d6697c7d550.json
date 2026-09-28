@@ -1,0 +1,238 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_calcularexpiracaoreemissao_helper",
+      "label": "calcularExpiracaoDaReemissao(deadline, now) = min(now+14d, deadline)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuerespondentlink_action",
+      "label": "reissueRespondentLink(respondentId) \u2014 gira tokenHash, bloqueia DONE/REVOKED/vencido",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuependinglinks_action",
+      "label": "reissuePendingLinks(assessmentId) \u2014 reemite em lote INVITED/PENDING/OVERDUE",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_link_individual",
+      "label": "Bot\u00e3o 'Reemitir link' por respondente (mesma condi\u00e7\u00e3o de 'Lembrar')",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_lote",
+      "label": "Bot\u00e3o 'Reemitir e copiar todos os pendentes' no cabe\u00e7alho de 'Respondentes por eixo'",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_respondentlinkmodal_reissuedlistmodal",
+      "label": "RespondentLinkModal (reusado) e ReissuedListModal (lote: copiar/baixar .txt/.csv)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_usecloseguard_refactor",
+      "label": "useCloseGuard trocado de addEventListener manual para onKeyDownCapture do React",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_usecloseguard_leak_bug",
+      "label": "Listener manual de Esc vazava entre montagens ao rodar o arquivo de teste inteiro",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_vigia_p2_deadline_copiado_direto",
+      "label": "P2 do Vigia: assignRespondent copiava deadline direto (fechado por calcularExpiracaoDaReemissao)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_done_bloqueado_sem_ui_path",
+      "label": "DONE bloqueado s\u00f3 verific\u00e1vel a n\u00edvel de action \u2014 UI esconde o bot\u00e3o, sem caminho de UI pro cen\u00e1rio",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_e2e_reemitir_link_lote_nao_executado",
+      "label": "e2e/meridian-reemitir-link.spec.ts e meridian-reemitir-lote.spec.ts \u2014 escritos, n\u00e3o executados",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_vigia_p2_deadline_copiado_direto",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_calcularexpiracaoreemissao_helper",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_calcularexpiracaoreemissao_helper",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuerespondentlink_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuerespondentlink_action",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_link_individual",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuependinglinks_action",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_lote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_link_individual",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_respondentlinkmodal_reissuedlistmodal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_lote",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_respondentlinkmodal_reissuedlistmodal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_usecloseguard_leak_bug",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_usecloseguard_refactor",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_respondentlinkmodal_reissuedlistmodal",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_usecloseguard_refactor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_done_bloqueado_sem_ui_path",
+      "target": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_e2e_reemitir_link_lote_nao_executado",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_respondentlinkmodal_reissuedlistmodal",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_review_morgana_x_esc_backdrop",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_reissuerespondentlink_action",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-26-meridian-spec006-reemitir-link.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

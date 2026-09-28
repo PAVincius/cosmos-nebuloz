@@ -1,5 +1,10 @@
 # charter — memória de execução
 
+## Charter — reavaliação de risco e fim dos números padrão
+[2026-09-23-charter-reavaliacao-de-risco.md](../../../.claude/completions/2026-09-23-charter-reavaliacao-de-risco.md) · roteado por "charter"
+
+**Data:** 2026-09-23 · **Branch:** `claude/angry-heisenberg-1c52ff`, empilhada sobre `docs/kb-consolidacao` (PR #243, onde vivem PRD, SRD, PRODUCT.md e DESIGN.md do Charter) Origem: duas lacunas que o SRD do Charter registrou ao ser conferido contra `ea512044`. 1. `rescoreCase` existia, auditado e com permissão `risk.score`, mas nenhuma tela o chamava. O intake não pede risco, então todo caso criado pela interface nascia com os sete eixos no default 1 e aparecia como **"1 · Baixo"** — em lista, detalhe, decisão, fila da Visão Geral e na célula 1×1 da matriz. A capacidade RISK_SCORING contava esses casos como risco pontuado no mapa de conformidade. 2. O score 0–100 do fornecedor é uma coluna com default 50 que nenhuma escrita calcula, e o detalhe o mostrava como medição. - Fornecedor: **"sem medição"** no lugar do 50. A regra do 0–100 não está em nenhum doc (o protótipo só pinta faixas ≥70/≥45); nada foi inventado. - Caso: coluna **`riskScoredAt`** (migration só com `ADD COLUMN IF NOT EXISTS`, sem UPDATE). Pontuado = data preenchida ou algum eixo fora de 1, para que seed e dogfood (risco gravado antes da coluna, sem data) continuem pontuados. - `caseRisk()` e `SEM_PONTUACAO` em `lib/charter/rules.ts`: a regra única de "sem pontuação", usada por …
+
 ## Charter — trabalho digitado não é mais descartado sem perguntar (onda 7b)
 [2026-09-22-charter-trabalho-nao-salvo.md](../../../.claude/completions/2026-09-22-charter-trabalho-nao-salvo.md) · roteado por "charter"
 

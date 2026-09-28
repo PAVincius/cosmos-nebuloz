@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "label": "exportEvidence passa a derivar diff por se\u00e7\u00e3o do snapshot (P0, onda 8)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_auditdiff_contagem_bug",
+      "label": "AuditDiff gravava s\u00f3 contagem de se\u00e7\u00f5es, sob r\u00f3tulo de 'alteradas'",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_version_diff_lib",
+      "label": "lib/charter/version-diff.ts (diffDeSnapshots, snapshotSections, diffSecoesParaTexto)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_getversiondiff_reuso",
+      "label": "getVersionDiff e exportEvidence passam a chamar a mesma fun\u00e7\u00e3o de diff",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_acao_publicou_versao_constants",
+      "label": "ACAO_PUBLICOU_VERSAO movida para audit.constants.ts (dois leitores)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_csv_diff_multilinha_rfc4180",
+      "label": "C\u00e9lula CSV multilinha de diff, compat\u00edvel com RFC 4180",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportrow_sections",
+      "label": "ExportRow ganha campo opcional sections: VersionDiffRow[]",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_package_content_promise",
+      "label": "PACKAGE_CONTENT promete 'diff campo a campo e aprovador'",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_nfr_5_3_reprodutibilidade",
+      "label": "NFR-5.3 \u2014 reprodutibilidade do pacote de evid\u00eancia",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_22_charter_diff_no_pacote_pr_236_diffmodal_tela",
+      "label": "PR #236 \u2014 DiffModal mostra diff por se\u00e7\u00e3o na tela (trabalho anterior)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_auditdiff_contagem_bug",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_version_diff_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_getversiondiff_reuso",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_version_diff_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_acao_publicou_versao_constants",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_csv_diff_multilinha_rfc4180",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportrow_sections",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_package_content_promise",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_nfr_5_3_reprodutibilidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_exportevidence_diff_fix",
+      "target": "_claude_completions_2026_09_22_charter_diff_no_pacote_pr_236_diffmodal_tela",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_22_charter_diff_no_pacote_getversiondiff_reuso",
+      "target": "_claude_completions_2026_09_22_charter_diff_real_getversiondiff_rewrite",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-22-charter-diff-no-pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,363 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_guard_meridian_tres_portoes",
+      "label": "Guard do Meridian \u2014 cadeia de tr\u00eas port\u00f5es em ordem fixa (guards.ts:18-32)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_require_tenant_session",
+      "label": "requireTenantSession (@repo/auth/server) \u2014 confirma quem \u00e9 a pessoa e em qual tenant ela est\u00e1",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_tenant_module_contratado",
+      "label": "TenantModule \u2014 m\u00f3dulo MERIDIAN contratado (status ACTIVE/TRIAL), aus\u00eancia de linha = default deny",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "label": "MeridianMembership \u2014 papel de diagn\u00f3stico por (tenantId, userId): CONSULTANT/REVIEWER/VIEWER",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_meridian_role_matrix",
+      "label": "Matriz de permiss\u00e3o por papel (packages/rbac/src/meridian-matrix.ts:62-79)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_papel_viewer_minimo",
+      "label": "Papel VIEWER \u2014 m\u00ednimo suficiente para \"ver o laborat\u00f3rio\" (s\u00f3 report.read)",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_opcao_a_upsert_direto_membership",
+      "label": "Op\u00e7\u00e3o A \u2014 upsert direto de MeridianMembership, papel VIEWER (recomendado, menor privil\u00e9gio)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_opcao_b_bootstrap_meridian_action",
+      "label": "Op\u00e7\u00e3o B \u2014 bootstrapMeridianAction via bot\u00e3o em backoffice.nebuloz.ai, papel CONSULTANT fixo",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_invalidate_module_cache",
+      "label": "invalidateModuleCache() \u2014 necess\u00e1rio ap\u00f3s contractModule, pois hasModule fica em cache Redis por 5 min",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_forgot_password_nao_funcional",
+      "label": "forgot-password n\u00e3o funciona em produ\u00e7\u00e3o \u2014 nenhum e-mail de fato sai",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_better_auth_send_reset_password_ausente",
+      "label": "emailAndPassword do Better Auth sem sendResetPassword configurado (packages/auth/server.ts:45-48)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_require_meridian_context_guard",
+      "label": "requireMeridianContext() (guards.ts:81-96) \u2014 aplica os tr\u00eas port\u00f5es em toda server action",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_bootstrap_meridian_function",
+      "label": "bootstrapMeridian() (packages/provisioning/src/meridian.ts:260-271) \u2014 upsert idempotente por (tenantId,userId)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_has_module_function",
+      "label": "hasModule() (packages/rbac/src/modules.ts:51-57) \u2014 l\u00ea de cache Redis com TTL de 5 min",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_get_meridian_role_function",
+      "label": "getMeridianRole() (packages/rbac/src/meridian-resolve.ts:30)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_liberar_meridian_usuario_estado_atual_leitura_antes_escrita",
+      "label": "Estado atual \u2014 leitura read-only antes de qualquer escrita (queries de diagn\u00f3stico do acesso)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_guard_meridian_tres_portoes",
+      "target": "docs_runbooks_liberar_meridian_usuario_require_tenant_session",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_guard_meridian_tres_portoes",
+      "target": "docs_runbooks_liberar_meridian_usuario_tenant_module_contratado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_guard_meridian_tres_portoes",
+      "target": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "target": "docs_runbooks_liberar_meridian_usuario_meridian_role_matrix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_meridian_role_matrix",
+      "target": "docs_runbooks_liberar_meridian_usuario_papel_viewer_minimo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_opcao_a_upsert_direto_membership",
+      "target": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_opcao_a_upsert_direto_membership",
+      "target": "docs_runbooks_liberar_meridian_usuario_papel_viewer_minimo",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_opcao_b_bootstrap_meridian_action",
+      "target": "docs_runbooks_liberar_meridian_usuario_bootstrap_meridian_function",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_bootstrap_meridian_function",
+      "target": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_tenant_module_contratado",
+      "target": "docs_runbooks_liberar_meridian_usuario_has_module_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_has_module_function",
+      "target": "docs_runbooks_liberar_meridian_usuario_invalidate_module_cache",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_opcao_a_upsert_direto_membership",
+      "target": "docs_runbooks_liberar_meridian_usuario_invalidate_module_cache",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "target": "docs_runbooks_liberar_meridian_usuario_get_meridian_role_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_require_meridian_context_guard",
+      "target": "docs_runbooks_liberar_meridian_usuario_guard_meridian_tres_portoes",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_require_meridian_context_guard",
+      "target": "docs_runbooks_liberar_meridian_usuario_get_meridian_role_function",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_better_auth_send_reset_password_ausente",
+      "target": "docs_runbooks_liberar_meridian_usuario_forgot_password_nao_funcional",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_estado_atual_leitura_antes_escrita",
+      "target": "docs_runbooks_liberar_meridian_usuario_tenant_module_contratado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_liberar_meridian_usuario_estado_atual_leitura_antes_escrita",
+      "target": "docs_runbooks_liberar_meridian_usuario_meridian_membership_papel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/liberar-meridian-usuario.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

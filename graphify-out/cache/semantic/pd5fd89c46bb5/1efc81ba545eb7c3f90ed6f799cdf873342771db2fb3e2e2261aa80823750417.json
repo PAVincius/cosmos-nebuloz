@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario1_login_sem_marca",
+      "label": "Cen\u00e1rio 1: Login sem marca de produto (FR-001)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario2_catalogo_tenant_interno",
+      "label": "Cen\u00e1rio 2: Cat\u00e1logo p\u00f3s-login, tenant interno (US2)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario3_tenant_sem_flag",
+      "label": "Cen\u00e1rio 3: Tenant sem flag, comportamento inalterado (SC-003)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario4_trocar_senha",
+      "label": "Cen\u00e1rio 4: Trocar senha logado (US3)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario5_esqueci_senha",
+      "label": "Cen\u00e1rio 5: Esqueci a senha ponta a ponta (US4)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_quickstart_cenario6_issuer_2fa",
+      "label": "Cen\u00e1rio 6: Issuer do 2FA (FR-015)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario1_login_sem_marca",
+      "target": "specs_004_login_generico_produto_spec_us1_login_sem_marca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario2_catalogo_tenant_interno",
+      "target": "specs_004_login_generico_produto_spec_us2_catalogo_pos_login",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario3_tenant_sem_flag",
+      "target": "specs_004_login_generico_produto_spec_us2_catalogo_pos_login",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario4_trocar_senha",
+      "target": "specs_004_login_generico_produto_spec_us3_trocar_senha",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario5_esqueci_senha",
+      "target": "specs_004_login_generico_produto_spec_us4_esqueci_senha",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_quickstart_cenario6_issuer_2fa",
+      "target": "specs_004_login_generico_produto_spec_fr015_issuer_2fa",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/quickstart.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,198 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_charter_prd_charter_product",
+      "label": "Charter",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_por_que_trava_adocao",
+      "label": "Por que isso trava a ado\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_politica_de_ia",
+      "label": "Pol\u00edtica de IA (Policy Builder, 9 se\u00e7\u00f5es)",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_caso_de_uso_charter",
+      "label": "Caso de uso \u2014 intake de IA",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_teto_do_fornecedor",
+      "label": "Teto do fornecedor derivado",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O teto \u00e9 sempre derivado da postura e das cl\u00e1usulas do fornecedor, nunca digitado \u00e0 m\u00e3o, para que ningu\u00e9m grave uma classe de dado maior do que o contrato permite."
+    },
+    {
+      "id": "docs_produto_charter_prd_pontuacao_de_risco_charter",
+      "label": "Pontua\u00e7\u00e3o de risco 7\u00d7(1\u20135) do caso",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_biblioteca_clausulas_vazia",
+      "label": "Biblioteca de cl\u00e1usulas vazia no bootstrap",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O bootstrap do Charter n\u00e3o cria as cl\u00e1usulas cr\u00edticas CL-01 a CL-08; sem elas, o teto derivado do fornecedor nunca passa de P\u00fablico, e nenhum caso acima de P\u00fablico consegue passar pelo gate."
+    },
+    {
+      "id": "docs_produto_charter_prd_mapa_conformidade",
+      "label": "Mapa de Conformidade (RFP/regula\u00e7\u00e3o \u2192 capacidade)",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_charter_prd_promessa_x_codigo",
+      "label": "Promessa \u00d7 c\u00f3digo (o que o site promete e o Charter n\u00e3o faz)",
+      "file_type": "concept",
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_charter_prd_por_que_trava_adocao",
+      "target": "docs_produto_charter_prd_charter_product",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_charter_product",
+      "target": "docs_produto_charter_prd_politica_de_ia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_charter_product",
+      "target": "docs_produto_charter_prd_caso_de_uso_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_caso_de_uso_charter",
+      "target": "docs_produto_charter_prd_pontuacao_de_risco_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_teto_do_fornecedor",
+      "target": "docs_produto_charter_prd_charter_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_biblioteca_clausulas_vazia",
+      "target": "docs_produto_charter_prd_teto_do_fornecedor",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_charter_product",
+      "target": "docs_produto_charter_prd_mapa_conformidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_promessa_x_codigo",
+      "target": "docs_produto_charter_prd_charter_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_charter_prd_charter_product",
+      "target": "docs_produto_charter_srd_especificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/charter-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

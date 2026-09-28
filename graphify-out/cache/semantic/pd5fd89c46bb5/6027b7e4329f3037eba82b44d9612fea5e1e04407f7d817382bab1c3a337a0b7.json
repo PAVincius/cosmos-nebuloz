@@ -1,0 +1,531 @@
+{
+  "nodes": [
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_inventario",
+      "label": "Inventario de Insumos de Posicionamento",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_tres_insumos_ausentes",
+      "label": "Os Tres Insumos Ausentes - Voz do Cliente",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_landing_page_atual",
+      "label": "Landing Page Atual em nebuloz.ai",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "label": "A Escada - Cinco Estagios do Produto",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_sua_forma_sampler",
+      "label": "Sua Forma - Sampler Interativo de Cinco Perguntas",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_metodo_oito_semanas",
+      "label": "Metodo - Primeiras Oito Semanas",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_ficha_produtos",
+      "label": "Ficha de Cada Produto no Site",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_pendencia_placeholders_contato",
+      "label": "Pendencia - Placeholders de Contato Nao Preenchidos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_pendencia_locale_pt",
+      "label": "Pendencia - Locale PT Corrigido, Aguardando Deploy",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lista_features_cosmos",
+      "label": "Cosmos - 63 Telas em Nove Secoes",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lista_features_charter",
+      "label": "Charter - 12 Telas, Modulo a Parte",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lista_features_meridian",
+      "label": "Meridian - Diagnostico Produtizado, Telas e Schema",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lista_features_signal",
+      "label": "Signal - Medicao de Adocao e ROI",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lista_features_scaffold",
+      "label": "Scaffold - Trilhas de Adocao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_divergencia_scaffold_catalogo",
+      "label": "Divergencia - Scaffold no Site vs Fora do Catalogo",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_material_comercial_preco",
+      "label": "Material Comercial - Preco de Tabela",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_icp_por_produto",
+      "label": "ICP por Produto - Tabela Consolidada",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_funil_e_conversao",
+      "label": "Funil e Conversao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_lacunas_caras_funil",
+      "label": "Lacunas Mais Caras do Funil",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_roteiro_discovery",
+      "label": "Roteiro de Discovery - Cinco Eixos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_prova_social",
+      "label": "Prova Social - o que Temos de Verdade, Dogfooding",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_objecoes_respostas",
+      "label": "Objecoes e Respostas",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_uso_e_churn_modelado",
+      "label": "Uso e Churn - o que Esta Modelado",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_insumos_de_posicionamento_tres_lacunas_prioritarias",
+      "label": "As Tres Lacunas Prioritarias - o que Fazer com Isto",
+      "file_type": "concept",
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_tres_insumos_ausentes",
+      "target": "docs_comercial_insumos_de_posicionamento_inventario",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_landing_page_atual",
+      "target": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "target": "docs_comercial_insumos_de_posicionamento_sua_forma_sampler",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "target": "docs_comercial_insumos_de_posicionamento_metodo_oito_semanas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "target": "docs_comercial_insumos_de_posicionamento_ficha_produtos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_sua_forma_sampler",
+      "target": "docs_comercial_insumos_de_posicionamento_roteiro_discovery",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_landing_page_atual",
+      "target": "docs_comercial_insumos_de_posicionamento_pendencia_placeholders_contato",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_landing_page_atual",
+      "target": "docs_comercial_insumos_de_posicionamento_pendencia_locale_pt",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lista_features_scaffold",
+      "target": "docs_comercial_insumos_de_posicionamento_divergencia_scaffold_catalogo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_divergencia_scaffold_catalogo",
+      "target": "docs_comercial_insumos_de_posicionamento_material_comercial_preco",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_material_comercial_preco",
+      "target": "docs_comercial_insumos_de_posicionamento_icp_por_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_funil_e_conversao",
+      "target": "docs_comercial_insumos_de_posicionamento_lacunas_caras_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lacunas_caras_funil",
+      "target": "docs_comercial_insumos_de_posicionamento_uso_e_churn_modelado",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_prova_social",
+      "target": "docs_comercial_insumos_de_posicionamento_tres_lacunas_prioritarias",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_tres_insumos_ausentes",
+      "target": "docs_comercial_insumos_de_posicionamento_tres_lacunas_prioritarias",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_objecoes_respostas",
+      "target": "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_roteiro_discovery",
+      "target": "docs_comercial_insumos_de_posicionamento_icp_por_produto",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_material_comercial_preco",
+      "target": "docs_comercial_icp_e_precificacao_plano_scale",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_material_comercial_preco",
+      "target": "docs_comercial_icp_e_precificacao_buraco_produto_de_entrada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lacunas_caras_funil",
+      "target": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lacunas_caras_funil",
+      "target": "docs_comercial_cac_modelo_exemplo_calculado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_roteiro_discovery",
+      "target": "docs_comercial_playbook_de_vendas_roteiro_de_discovery",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_prova_social",
+      "target": "docs_comercial_playbook_de_vendas_prova_social",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_prova_social",
+      "target": "docs_runbooks_charter_nebuloz_politica_de_ia_nebuloz",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lista_features_signal",
+      "target": "specs_003_signal_measure_spec_regra_mae_adocao_resultado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_insumos_de_posicionamento_lista_features_cosmos",
+      "target": "docs_produto_cosmos_prd_estrutura_de_telas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/insumos-de-posicionamento.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

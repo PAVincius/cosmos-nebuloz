@@ -1,0 +1,595 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "label": "Or\u00e7ado \u00d7 realizado e receita recorrente (D-b) \u2014 plano",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamentodaconta_model",
+      "label": "OrcamentoDaConta (modelo)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_assinaturadotenant_model",
+      "label": "AssinaturaDoTenant (modelo)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "label": "MudancaDeAssinatura (hist\u00f3rico append-only)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_creditodomes_model",
+      "label": "CreditoDoMes (modelo)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_e_recorrente",
+      "label": "migration 20260911000000_orcamento_e_recorrente",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "label": "recorrente.ts (lib pura de receita recorrente)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_valornacompetencia_function",
+      "label": "valorNaCompetencia(assinaturaId, mudancas, competencia)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_function",
+      "label": "mrr(assinaturas, mudancas, competencia)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_movimento_function",
+      "label": "movimento(mudancas, competencia)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_excedentedomes_function",
+      "label": "excedenteDoMes(franquia, consumidos, taxa, teto)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_receitadeservico_function",
+      "label": "receitaDeServico(contas, l)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_contas_de_assinatura_servico_constants",
+      "label": "CONTAS_DE_ASSINATURA / CONTAS_DE_SERVICO",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_action",
+      "label": "app/actions/empresa/orcamento.ts",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "label": "app/actions/empresa/recorrente.ts",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_criarassinatura_function",
+      "label": "criarAssinatura (action)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_alterarvalor_function",
+      "label": "alterarValor (action)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcado_tsx_tela",
+      "label": "orcado.tsx (aba Or\u00e7ado \u00d7 realizado)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_tsx_tela",
+      "label": "recorrente.tsx + recorrente-dialogs.tsx (aba Receita recorrente)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_historico_decision",
+      "label": "O MRR de um m\u00eas passado n\u00e3o pode mudar (decis\u00e3o)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_sem_realizado_decision",
+      "label": "Or\u00e7amento n\u00e3o guarda realizado \u2014 realizado \u00e9 sempre agregado",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_spec_base_financeira_ref",
+      "label": "Spec 2026-09-06 base financeira (design)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamentodaconta_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_assinaturadotenant_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_creditodomes_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_plano",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_spec_base_financeira_ref",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_e_recorrente",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamentodaconta_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_e_recorrente",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_assinaturadotenant_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_e_recorrente",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_migration_orcamento_e_recorrente",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_creditodomes_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_valornacompetencia_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_movimento_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_excedentedomes_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_receitadeservico_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_contas_de_assinatura_servico_constants",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_valornacompetencia_function",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_historico_decision",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_function",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_valornacompetencia_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_receitadeservico_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_contas_de_assinatura_servico_constants",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_action",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamentodaconta_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_sem_realizado_decision",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_action",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_criarassinatura_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_alterarvalor_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_criarassinatura_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_criarassinatura_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_assinaturadotenant_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_alterarvalor_function",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcado_tsx_tela",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_orcamento_action",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_tsx_tela",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_action",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_tsx_tela",
+      "target": "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_contas_de_assinatura_servico_constants",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "mrr_reconstituido_por_competencia",
+      "label": "MRR reconstitu\u00eddo pela compet\u00eancia, n\u00e3o pelo valor atual",
+      "nodes": [
+        "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_recorrente_ts_lib",
+        "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_valornacompetencia_function",
+        "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_function",
+        "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mudancadeassinatura_model",
+        "docs_superpowers_plans_2026_09_07_orcado_e_receita_recorrente_mrr_historico_decision"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-09-07-orcado-e-receita-recorrente.md"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/rbac/src/scaffold-`
 
 ## Grafo
-- 1847 nós, 7537 arestas (recorte do mestre com 2 hops)
+- 2674 nós, 10314 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -37,4 +37,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/scaffold/graph.json
 - [ADR-0014 — Promoção para Scaffold materializa no back-office](../../../docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md)
 
 ## Memória de execução
-- 9 completions em `memory.md`
+- 11 completions em `memory.md`
