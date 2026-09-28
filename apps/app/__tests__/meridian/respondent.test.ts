@@ -20,6 +20,7 @@ const h = vi.hoisted(() => ({
   auditCreate: vi.fn(),
   headersGet: vi.fn(),
   rateLimiterLimit: vi.fn(),
+  rateLimiterPeek: vi.fn(),
   ensureBucket: vi.fn(),
 }));
 
@@ -27,7 +28,10 @@ vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue({ get: h.headersGet }),
 }));
 vi.mock("@repo/rate-limit", () => ({
-  createRateLimiter: vi.fn(() => ({ limit: h.rateLimiterLimit })),
+  createRateLimiter: vi.fn(() => ({
+    limit: h.rateLimiterLimit,
+    peek: h.rateLimiterPeek,
+  })),
   fixedWindow: vi.fn((max: number, window: string) => ({ max, window })),
 }));
 
@@ -115,6 +119,12 @@ beforeEach(() => {
     success: true,
     limit: 30,
     remaining: 29,
+    reset: 0,
+  });
+  h.rateLimiterPeek.mockResolvedValue({
+    success: true,
+    limit: 30,
+    remaining: 30,
     reset: 0,
   });
   h.ensureBucket.mockResolvedValue(undefined);
@@ -268,13 +278,34 @@ describe("submitBattery", () => {
 });
 
 describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () => {
-  it("sucesso nunca consulta o limitador — só falha conta (revisão da Morgana sobre 9468abd9)", async () => {
+  // Duas etapas — revisão da Morgana sobre 9468abd9: checar (peek, só
+  // leitura) ANTES da consulta por hash; incrementar (limit) só DEPOIS de um
+  // miss. Checar só depois do miss deixava um IP já acima do teto continuar
+  // acertando token válido — sucesso nunca chamava o limitador.
+
+  it("(a) IP acima do teto + token VÁLIDO → RATE_LIMIT_ERROR, sem consultar o banco", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    // respondentFindUnique segue mockado com um respondente válido —
+    // mesmo assim tem que barrar, porque o peek roda antes da consulta.
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("(b) sucesso não incrementa — só o peek (só leitura) é consultado", async () => {
     const res = await getBattery(TOKEN);
     expect(res.ok).toBe(true);
+    expect(h.rateLimiterPeek).toHaveBeenCalledTimes(1);
     expect(h.rateLimiterLimit).not.toHaveBeenCalled();
   });
 
-  it("token inexistente conta como falha, mas segue com o erro genérico enquanto dentro do teto", async () => {
+  it("(c) miss incrementa — dentro do teto, consulta o banco e grava a falha", async () => {
     h.respondentFindUnique.mockResolvedValue(null);
     const res = await getBattery(TOKEN);
     expect(res.ok).toBe(false);
@@ -282,22 +313,8 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     expect(h.rateLimiterLimit).toHaveBeenCalledTimes(1);
   });
 
-  it("acima do teto de falhas, devolve mensagem própria de limite, não a de link inválido", async () => {
-    h.respondentFindUnique.mockResolvedValue(null);
-    h.rateLimiterLimit.mockResolvedValue({
-      success: false,
-      limit: 30,
-      remaining: 0,
-      reset: 0,
-    });
-    const res = await getBattery(TOKEN);
-    expect(res.ok).toBe(false);
-    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
-  });
-
-  it("resolveRespondentToken também passa pelo limite de falhas — bypass corrigido", async () => {
-    h.respondentFindUnique.mockResolvedValue(null);
-    h.rateLimiterLimit.mockResolvedValue({
+  it("resolveRespondentToken também passa pelo peek — bypass corrigido", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
       success: false,
       limit: 30,
       remaining: 0,
@@ -306,36 +323,33 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     const res = await resolveRespondentToken(TOKEN);
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
   });
 
   it("prefere x-real-ip a x-forwarded-for como identificador", async () => {
     h.headersGet.mockImplementation((name: string) =>
       name === "x-real-ip" ? "8.8.8.8" : "9.9.9.9, 1.1.1.1"
     );
-    h.respondentFindUnique.mockResolvedValue(null);
     await getBattery(TOKEN);
-    expect(h.rateLimiterLimit).toHaveBeenCalledWith("8.8.8.8");
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("8.8.8.8");
   });
 
   it("cai para o primeiro IP de x-forwarded-for quando não há x-real-ip", async () => {
     h.headersGet.mockImplementation((name: string) =>
       name === "x-forwarded-for" ? "9.9.9.9, 1.1.1.1" : null
     );
-    h.respondentFindUnique.mockResolvedValue(null);
     await getBattery(TOKEN);
-    expect(h.rateLimiterLimit).toHaveBeenCalledWith("9.9.9.9");
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("9.9.9.9");
   });
 
   it("usa 'anonymous' quando não há x-real-ip nem x-forwarded-for", async () => {
     h.headersGet.mockReturnValue(null);
-    h.respondentFindUnique.mockResolvedValue(null);
     await getBattery(TOKEN);
-    expect(h.rateLimiterLimit).toHaveBeenCalledWith("anonymous");
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("anonymous");
   });
 
   it("aplica o mesmo mecanismo a saveDraft — também passa por loadRespondent", async () => {
-    h.respondentFindUnique.mockResolvedValue(null);
-    h.rateLimiterLimit.mockResolvedValue({
+    h.rateLimiterPeek.mockResolvedValue({
       success: false,
       limit: 30,
       remaining: 0,
@@ -346,22 +360,28 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
   });
 
-  it("em produção, trata contador indisponível como limite excedido", async () => {
-    h.respondentFindUnique.mockResolvedValue(null);
+  it("em produção, trata peek indisponível como limite excedido (fail-closed)", async () => {
     vi.stubEnv("NODE_ENV", "production");
-    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
     const res = await getBattery(TOKEN);
     vi.unstubAllEnvs();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
   });
 
-  it("fora de produção, contador indisponível não bloqueia além do erro genérico de token", async () => {
-    h.respondentFindUnique.mockResolvedValue(null);
+  it("fora de produção, peek indisponível não bloqueia — segue pro banco normalmente", async () => {
     vi.stubEnv("NODE_ENV", "test");
-    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
     const res = await getBattery(TOKEN);
     vi.unstubAllEnvs();
+    expect(res.ok).toBe(true);
+  });
+
+  it("falha ao gravar o miss (limit indisponível) não muda o erro devolvido", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
+    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
   });

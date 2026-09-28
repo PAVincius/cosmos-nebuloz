@@ -58,35 +58,47 @@ export type RespondentContext = {
 // não editável pelo cliente) e só cai para o primeiro `x-forwarded-for`
 // quando aquele não vem.
 //
-// Só é chamado depois que o lookup por hash JÁ falhou (revisão da Morgana
-// sobre a primeira versão): um respondente legítimo nunca erra o próprio
-// link, então nunca soma contra o teto — só tentativa de adivinhação gera
-// falha atrás de falha. Um escritório inteiro atrás do mesmo IP, respondendo
-// de verdade, não é barrado.
-//
-// Fecha em produção quando o contador está fora do ar — mesmo raciocínio do
-// copiloto (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse,
-// derrubar o contador viraria a forma de remover o freio.
-async function enforceTokenLookupRateLimit(): Promise<void> {
+// Duas etapas, não uma (revisão da Morgana sobre a primeira versão): checar
+// o teto ANTES de consultar o banco, e só INCREMENTAR depois de um miss.
+// Checar só depois do miss (a v1) deixava um IP já acima do teto continuar
+// acertando token válido — sucesso nunca chamava o limitador, então o teto só
+// mudava a mensagem de erro, não freava a força bruta de verdade. E
+// incrementar em todo request (a v0, antes da v1) contava sucesso e falha
+// igual — um escritório inteiro atrás do mesmo IP, respondendo de verdade,
+// estourava o teto e via "link inválido" no próprio link certo.
+async function lookupIdentifierIp(): Promise<string> {
   const headerStore = await headers();
-  const ip =
+  return (
     headerStore.get("x-real-ip")?.trim() ||
     headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    "anonymous";
+    "anonymous"
+  );
+}
 
+async function tokenLookupLimiter() {
+  const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
+  return createRateLimiter({
+    limiter: fixedWindow(30, "1 m"),
+    prefix: "meridian-token-lookup",
+  });
+}
+
+/** Só leitura, ANTES da consulta por hash — recusa sem gastar a consulta
+ *  quando o IP já está no teto. Fecha em produção se o contador estiver fora
+ *  do ar, mesmo raciocínio do copiloto
+ *  (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse, derrubar o
+ *  contador viraria a forma de remover o freio. */
+async function rejectIfAlreadyRateLimited(ip: string): Promise<void> {
   let dentroDoLimite: boolean;
   try {
-    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
-    const limiter = createRateLimiter({
-      limiter: fixedWindow(30, "1 m"),
-      prefix: "meridian-token-lookup",
-    });
-    dentroDoLimite = (await limiter.limit(ip)).success;
+    const limiter = await tokenLookupLimiter();
+    dentroDoLimite = (await limiter.peek(ip)).success;
   } catch (erro) {
     if (process.env.NODE_ENV === "production") {
-      log.error("[meridian] rate limit de lookup de token indisponível", {
-        error: String(erro),
-      });
+      log.error(
+        "[meridian] rate limit de lookup de token indisponível (peek)",
+        { error: String(erro) }
+      );
       dentroDoLimite = false;
     } else {
       dentroDoLimite = true;
@@ -98,11 +110,30 @@ async function enforceTokenLookupRateLimit(): Promise<void> {
   }
 }
 
+/** Chamado só depois que o lookup por hash JÁ falhou — um respondente
+ *  legítimo nunca erra o próprio link, então nunca soma contra o teto; só
+ *  tentativa de adivinhação gera falha atrás de falha. O gate real é o
+ *  `rejectIfAlreadyRateLimited` acima; se o incremento aqui falhar, o
+ *  TOKEN_ERROR do chamador ainda vale — só perde-se esta contagem. */
+async function recordTokenLookupFailure(ip: string): Promise<void> {
+  try {
+    const limiter = await tokenLookupLimiter();
+    await limiter.limit(ip);
+  } catch (erro) {
+    log.error("[meridian] rate limit de lookup de token indisponível (limit)", {
+      error: String(erro),
+    });
+  }
+}
+
 /** Consulta única por `tokenHash`, usada por toda a superfície do respondente
  *  (`resolveRespondentToken` e `loadRespondent`) — as duas precisam do mesmo
  *  freio contra adivinhação, então compartilham a mesma implementação em vez
  *  de cada uma reimplementar a checagem. */
 async function findRespondentByTokenOrThrow(token: string) {
+  const ip = await lookupIdentifierIp();
+  await rejectIfAlreadyRateLimited(ip);
+
   const r = await database.meridianRespondent.findUnique({
     where: { tokenHash: hashToken(token) },
     include: {
@@ -114,7 +145,7 @@ async function findRespondentByTokenOrThrow(token: string) {
   if (r && isTokenUsable(r, new Date())) {
     return r;
   }
-  await enforceTokenLookupRateLimit();
+  await recordTokenLookupFailure(ip);
   throw TOKEN_ERROR;
 }
 
