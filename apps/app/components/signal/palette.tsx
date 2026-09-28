@@ -13,9 +13,9 @@
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { useNav } from "@repo/design-system/cosmos/kit";
 import { Command } from "cmdk";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { NAV } from "./shell";
+import { NAV } from "./nav";
 
 type PaletteEntry = {
   id: string;
@@ -35,11 +35,9 @@ function flattenNav(): PaletteEntry[] {
   );
 }
 
+const ENTRIES = flattenNav();
+
 export function SignalPalette({ screenIds }: { screenIds: string[] }) {
-  // Calculada com preguiça (não no load do módulo) para evitar o crash de
-  // temporal dead zone: shell.tsx importa este módulo antes de inicializar o
-  // próprio `NAV`.
-  const entries = useMemo(() => flattenNav(), []);
   const [open, setOpen] = useState(false);
   const { navigate, isComingSoon } = useNav();
   // Quem abriu a paleta recebe o foco de volta ao fechar. Sem isto o foco cai
@@ -189,7 +187,7 @@ export function SignalPalette({ screenIds }: { screenIds: string[] }) {
           >
             Nenhuma tela com esse nome.
           </Command.Empty>
-          {entries.map((entry) => {
+          {ENTRIES.map((entry) => {
             const soon = !screenIds.includes(entry.id);
             return (
               <Command.Item
