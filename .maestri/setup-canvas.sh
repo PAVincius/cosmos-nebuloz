@@ -299,6 +299,17 @@ for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "
 [ -f "$CANNY" ] && canny_trust
 for c in "CPO" "PO" "CFO" "CRO" "Compliance" "Chief of Staff" "Security Reviewer" "Cofundador" "Morgana" "QA" "Infra"; do fonte_guard "$c"; done
 
+# Memória dos agentes (apps/memoria): MCP "memoria" no escopo do usuário, vale para todas as pastas de papel.
+# O cabecalho.sh escolhe a chave do papel pela pasta onde o agente roda. Ele e as chaves nascem no `pnpm memoria:up`.
+# Sem ele, o registro fica de fora: um MCP sem chave só falharia em toda sessão.
+if [ -f "$HOME/.nebuloz/memoria/cabecalho.sh" ]; then
+  claude mcp remove --scope user memoria >/dev/null 2>&1
+  claude mcp add-json --scope user memoria '{"type":"http","url":"http://127.0.0.1:8003/mcp","headersHelper":"sh ~/.nebuloz/memoria/cabecalho.sh"}' >/dev/null \
+    && echo "+ MCP memoria registrado" || echo "! MCP memoria não registrou (claude mcp add-json falhou)"
+else
+  echo "! MCP memoria pulado: rode pnpm memoria:up e depois este setup de novo"
+fi
+
 # ─── Terminais ───────────────────────────────────────────────────────────────
 
 # Ground — Engenharia (o Maestro é o CTO)

@@ -38,7 +38,9 @@ O script (`scripts/iniciar.sh`) pode rodar quantas vezes quiser:
 
 ## Ligar aos agentes
 
-Rode uma vez por máquina. O registro vale para todas as pastas de papel do Maestri:
+O `.maestri/setup-canvas.sh` registra o MCP sozinho, no escopo do usuário, se o `pnpm memoria:up` já tiver rodado.
+Então basta subir a memória e rodar o setup do Maestri de novo. Fora do Maestri, rode uma vez por máquina;
+o registro vale para todas as pastas de papel:
 
 ```bash
 claude mcp add-json --scope user memoria \

@@ -86,6 +86,6 @@ cat <<EOF
 
 Memória no ar: $URL/health · API em $URL/docs · MCP em $URL/mcp
 
-Para os agentes enxergarem, uma vez por máquina (vale para todas as pastas de papel do Maestri):
+Para os agentes enxergarem: rode o setup do Maestri de novo (.maestri/setup-canvas.sh), que registra o MCP. Ou, à mão:
   claude mcp add-json --scope user memoria '{"type":"http","url":"$URL/mcp","headersHelper":"sh $CASA/cabecalho.sh"}'
 EOF
