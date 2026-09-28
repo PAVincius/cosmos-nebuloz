@@ -15,7 +15,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/database`
 
 ## Grafo
-- 6686 nós, 19868 arestas (recorte do mestre com 2 hops)
+- 6256 nós, 17150 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -29,4 +29,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/plataforma/graph.json
 - [ADR-0001 — Contratação modular via `TenantModule`](../../../docs/adr/0001-contratacao-modular-tenant-module.md)
 
 ## Memória de execução
-- 4 completions em `memory.md`
+- 5 completions em `memory.md`

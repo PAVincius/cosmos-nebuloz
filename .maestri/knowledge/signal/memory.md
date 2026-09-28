@@ -1,5 +1,15 @@
 # signal — memória de execução
 
+## 2026-09-28 — Grafo mestre com o Signal
+[2026-09-28-grafo-mestre-signal.md](../../../.claude/completions/2026-09-28-grafo-mestre-signal.md) · roteado por "signal"
+
+O grafo mestre (`graphify-out/`) era de 2026-09-03, anterior ao código do Signal, e o recorte do Signal no Maestri tinha 0 nós. O pedido: atualizar com `/graphify --update` com o aval do dono (o custo é dele), conferir que a contagem de nós não caiu, rodar `pnpm knowledge:refresh`, ver o recorte do Signal passar de 20 nós e atualizar os números e a frase "It predates the Signal code" do `CLAUDE.md`. - Mestre: 35 243 → 40 801 nós, 58 626 → 70 828 arestas, 2 676 → 2 631 comunidades, `built_at_commit` `4ae0b559` (a main de 2026-09-28). Recorte do Signal: 0 → 2 154 nós, 623 deles do código do Signal. - Detect por conteúdo (`kind="ast"`), aprovado pelo dono em 2026-09-23. As 2 880 linhas do manifesto tinham `semantic_hash` vazio, e o detect padrão do `update.md` contava tudo como mudado. Foram marcados 1 097 arquivos (918 de código, 178 docs e 1 imagem) e 47 apagados. - `.graphifyignore` com `.maestri/`: os recortes saem do próprio mestre. - Part A com código e docs. O mestre guarda o AST de markdown (títulos, `contains`) de cada doc, e o `build_merge` troca todos os nós de um arquivo reextraído. Part B: 172 docs …
+
+## Signal entra pelo catálogo; um descritor só
+[2026-09-23-signal-no-catalogo.md](../../../.claude/completions/2026-09-23-signal-no-catalogo.md) · roteado por "signal"
+
+**Data:** 2026-09-23 · **Branch:** `fix/signal-no-catalogo` O Signal está em produção (`app.nebuloz.ai/signal`), mas `/produto` ainda o mostrava como "Em breve aqui": o catálogo tinha `href: null` e o resumo "Métrica de carteira que exige pipeline de dados.". - `apps/app/app/actions/produtos/index.ts` — Signal com `href: "/signal"`. Sem produto de href nulo, o estado `SEM_ROTA` ficou órfão e saiu: membro da união, ramo em `listarProdutos` e o selo "Em breve aqui" em `app/(authenticated)/produto/page.tsx`. `CATALOGO.href` passa a `string`. - Descritor aprovado pelo dono nesta data: **"Valor realizado de IA"** — a cabeça da coluna "O que faz" do mapa de fronteiras. Aplicado em quatro lugares que divergiam: - switchers do Signal, Charter e Meridian (`components/*/shell.tsx`, `blurb`); - `/produto`: "Valor realizado de IA — adoção, ROI com confiança, veredito."; - topo de `/signal-indisponivel`: "Signal · Valor realizado de IA" (quarta variante, não citada no `PRODUCT.md`). - `__tests__/actions/produtos.test.ts` — o caso "SIGNAL não vira link" virou "SIGNAL contratado vira link para /signal". Nenhum outro teste lê esses textos. - Documentos que a #243 trouxe e esta mudança desmentia: `PRODUCT.md` do Signal (Entradas; Brand Commitments, onde "Unificar é pendência" vira o descritor aprovado), `docs/produto/signal-prd.md` §8 (linha do Cosmos) e `apps/app/DESIGN.md` (Chips → State, que citava o "Em breve …
+
 ## Signal — medição de adoção e valor de iniciativas de IA
 [2026-09-02-signal-measure.md](../../../.claude/completions/2026-09-02-signal-measure.md) · roteado por "signal"
 

@@ -20,7 +20,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `packages/provisioning/src/charter`
 
 ## Grafo
-- 2094 nós, 7787 arestas (recorte do mestre com 2 hops)
+- 3143 nós, 9711 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -38,4 +38,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/charter/graph.json
 - [ADR-0002 — Papel de governança ortogonal ao papel SAFe](../../../docs/adr/0002-papel-governanca-ortogonal-safe.md)
 
 ## Memória de execução
-- 15 completions em `memory.md`
+- 16 completions em `memory.md`

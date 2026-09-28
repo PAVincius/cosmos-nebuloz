@@ -15,7 +15,7 @@ Gerado por `pnpm knowledge:refresh`. Fonte de verdade: os arquivos abaixo. Não 
 - `apps/backoffice`
 
 ## Grafo
-- 1599 nós, 5107 arestas (recorte do mestre com 2 hops)
+- 3950 nós, 11559 arestas (recorte do mestre com 2 hops)
 
 Consultar sem carregar o arquivo:
 ```bash
@@ -27,4 +27,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/backoffice/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 10 completions em `memory.md`
+- 12 completions em `memory.md`

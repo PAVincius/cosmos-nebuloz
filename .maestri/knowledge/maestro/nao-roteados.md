@@ -1,5 +1,7 @@
 # não roteados — decidir o produto à mão
 
+- `2026-09-27-registro-de-decisoes.md` — 2026-09-27 — Registro de decisões: preço, copiloto, raio X, modelo próprio e memória
+- `2026-09-27-memoria-dos-agentes.md` — 2026-09-27 — Memória dos agentes em `apps/memoria`
 - `2026-09-22-kb-consolidacao.md` — Base de conhecimento dos seis produtos — consolidada
 - `2026-08-28-add-intent-stage.md` — Estágio de Intent — /speckit-intent + gate before_specify
 - `0011-notificacoes-e-job-sla-fora-do-v1.md` — ADR-0011 — Notificações e job de SLA fora do V1
