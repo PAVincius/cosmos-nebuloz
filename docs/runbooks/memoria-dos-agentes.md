@@ -34,14 +34,15 @@ Antes de começar (se algo falhar, pare e me diga o quê):
 
 Passos:
 4. `pnpm memoria:up`. Na primeira vez ele baixa cerca de 2 GB de imagens e leva alguns minutos.
-   Espere, nesta ordem: "chaves por papel em …: 17", uma linha "N novas, …" da importação e "Memória no ar".
+   Espere, nesta ordem: "chaves por papel em …: N" (um por papel do canvas: 24 em 2026-09-28, mais quando
+   entra papel), uma linha "… novas, …" da importação e "Memória no ar".
 5. `bash .maestri/setup-canvas.sh`. Espere a linha "+ MCP memoria registrado".
    Se aparecer "! MCP memoria pulado" ou "não registrou", pare e me mande a saída.
 6. `claude mcp get memoria`. Deve mostrar http://127.0.0.1:8003/mcp com o headersHelper `sh ~/.nebuloz/memoria/cabecalho.sh`.
 
 Conferência (só conta como pronto depois disso):
 7. `curl -s http://127.0.0.1:8003/health` responde "status":"ok", com postgres, qdrant, neo4j e minio "ok".
-8. `ls ~/.nebuloz/memoria/chaves | wc -l` dá o número de papéis do canvas (17 hoje).
+8. `ls ~/.nebuloz/memoria/chaves | wc -l` dá o mesmo N do passo 4.
 9. Sua sessão abriu antes do registro e não vai enxergar a memória. Peça ao Crivo, numa sessão nova, que use a
    ferramenta buscar da memória para achar o que foi decidido sobre a memória ser fonte da verdade. Ele deve citar
    a D-12 e o memory_id.
