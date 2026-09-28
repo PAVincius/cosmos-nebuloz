@@ -1,0 +1,137 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_research_decisao1_mecanismo_reemissao",
+      "label": "Decis\u00e3o 1: reissueRespondentLink segue padr\u00e3o de revokeRespondent",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mesmo mecanismo, s\u00f3 sem mudar status pra REVOKED; reaproveitar reduz a superf\u00edcie de bugs."
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_research_decisao2_tokenexpiresat",
+      "label": "Decis\u00e3o 2: tokenExpiresAt = min(now+14d, deadline), fixado na emiss\u00e3o",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Fecha o achado P2 do Vigia: assignRespondent copia assessment.deadline, ent\u00e3o estender o prazo depois d\u00e1 vida extra silenciosa a tokens j\u00e1 emitidos."
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_research_decisao3_bloqueio_status",
+      "label": "Decis\u00e3o 3: bloqueio DONE/REVOKED via MeridianRuleError",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Reaproveita conven\u00e7\u00e3o de erro j\u00e1 usada em sendReminder, mesma UX de mensagem clara e espec\u00edfica por motivo."
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_research_decisao4_lote_transacao",
+      "label": "Decis\u00e3o 4: lote roda em transa\u00e7\u00e3o \u00fanica, retorna lista pronta do servidor",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pedido expl\u00edcito do CPO: a lista tem que nascer pronta do servidor a cada acionamento, n\u00e3o persistir no client."
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_research_decisao5_ui_pontos_entrada",
+      "label": "Decis\u00e3o 5: bot\u00e3o por respondente + modal de lista em lote",
+      "file_type": "rationale",
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Reaproveita ModalShell/useModal/runWithToast j\u00e1 usados em AssignRespondentModal/RevokeConfirmModal."
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao1_mecanismo_reemissao",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao2_tokenexpiresat",
+      "target": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenexpiresat",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao2_tokenexpiresat",
+      "target": "docs_qualidade_dogfood_meridian_atrito_achado_p2_tokenexpiresat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao3_bloqueio_status",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao4_lote_transacao",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao5_ui_pontos_entrada",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_research_decisao5_ui_pontos_entrada",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir_todos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/research.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

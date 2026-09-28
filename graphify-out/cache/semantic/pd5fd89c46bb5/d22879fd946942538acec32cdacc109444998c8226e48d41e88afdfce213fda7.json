@@ -1,0 +1,273 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "label": "createAssessment e assignRespondent sem tela chamadora (P0 do dogfood)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_tasks_md_reconciliado",
+      "label": "specs/001-meridian-diagnose/tasks.md reconciliado \u2014 79/82 tasks eram [x] na pr\u00e1tica",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_actions_orfas_inventario",
+      "label": "Invent\u00e1rio: 11 actions \u00f3rf\u00e3s al\u00e9m do par do P0 (revokeRespondent, upsertGap, etc.)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_benchmark_optin_assessment",
+      "label": "MeridianAssessment.benchmarkOptIn \u2014 opt-in por assessment, default false",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_novo_assessment_modal",
+      "label": "Bot\u00e3o 'Novo assessment' \u2014 modal com organiza\u00e7\u00e3o/setor/porte/template/prazo",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_listtemplates_action_nova",
+      "label": "listTemplates \u2014 action nova; n\u00e3o existia forma de listar templates do tenant",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_atribuir_respondente_modal",
+      "label": "Bot\u00e3o 'Atribuir respondente' por eixo \u2014 modal com nome/papel/e-mail",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_token_visivel_uma_vez",
+      "label": "Link /meridian-responder/<token> s\u00f3 aparece uma vez (banco guarda s\u00f3 o hash)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_sem_envio_automatico_email",
+      "label": "Nenhum modal tem canal de envio autom\u00e1tico (e-mail) \u2014 copiar-colar manual",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_seed_meridian_fixture_deliberada",
+      "label": "seed-meridian.ts (AS-200 + 4 respondentes) vira fixture deliberada, n\u00e3o sai",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_e2e_dogfood_fixme_discrepancia",
+      "label": "e2e/meridian-dogfood.spec.ts \u2014 2 test.fixme() escritos do roteiro, n\u00e3o da UI real",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_porta_3012_ocupada",
+      "label": "Porta 3012 em uso por outro floor \u2014 verifica\u00e7\u00e3o no navegador n\u00e3o feita",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_novo_assessment_modal",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_atribuir_respondente_modal",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_novo_assessment_modal",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_listtemplates_action_nova",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_atribuir_respondente_modal",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_token_visivel_uma_vez",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_atribuir_respondente_modal",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_sem_envio_automatico_email",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_tasks_md_reconciliado",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_actions_orfas_inventario",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_benchmark_optin_assessment",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_p0_no_ui",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_seed_meridian_fixture_deliberada",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_e2e_dogfood_fixme_discrepancia",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_novo_assessment_modal",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_porta_3012_ocupada",
+      "target": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_novo_assessment_modal",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_e2e_dogfood_fixme_discrepancia",
+      "target": "_claude_completions_2026_09_24_audit_log_meridian_format_test_fixme_e2e_meridian_dogfood",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "ciclo_vida_link_respondente_meridian",
+      "label": "Ciclo de vida do link do respondente na aba Coleta \u2014 atribuir, revogar, reemitir",
+      "nodes": [
+        "_claude_completions_2026_09_24_meridian_p0_novo_assessment_atribuir_respondente_atribuir_respondente_modal",
+        "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+        "_claude_completions_2026_09_26_meridian_spec006_reemitir_link_botao_reemitir_link_individual"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-24-meridian-p0-novo-assessment-atribuir-respondente.md"
+    }
+  ]
+}

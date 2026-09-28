@@ -1,0 +1,426 @@
+{
+  "nodes": [
+    {
+      "id": "product_suite_nebuloz",
+      "label": "Product \u2014 Su\u00edte Nebuloz (vis\u00e3o geral)",
+      "file_type": "document",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_persona_visitante_site",
+      "label": "Persona: visitante do site",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Chega com uma de quatro dores: ningu\u00e9m \u00e9 dono do ponto de partida, piloto que n\u00e3o vira pr\u00e1tica, retorno sem prova, jur\u00eddico travando."
+    },
+    {
+      "id": "product_persona_comprador_icp",
+      "label": "Persona: comprador (ICP)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Empresa BR/LATAM 200-2000 funcion\u00e1rios; assina quem tem a verba de cada produto, em geral n\u00e3o \u00e9 quem usa no dia a dia."
+    },
+    {
+      "id": "product_persona_usuario_app",
+      "label": "Persona: usu\u00e1rio do app (membro de tenant)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Autocadastro nasce com o Cosmos em TRIAL de 14 dias; admin do tenant configura membros, pap\u00e9is, SSO, integra\u00e7\u00f5es e onboarding."
+    },
+    {
+      "id": "product_persona_staff_nebuloz",
+      "label": "Persona: staff da Nebuloz (opera\u00e7\u00e3o back-office)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Opera clientes e a pr\u00f3pria empresa no back-office; atua como consultoria no Meridian e na supervis\u00e3o do Scaffold; empresa pequena: 'Todos os canais chegam \u00e0s mesmas duas pessoas.'"
+    },
+    {
+      "id": "product_mapa_de_fronteiras",
+      "label": "Mapa de fronteiras \u2014 alvo normativo da su\u00edte",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada produto responde a uma pergunta; quando dois produtos respondem \u00e0 mesma pergunta, um dos dois est\u00e1 fora do lugar."
+    },
+    {
+      "id": "product_meridian",
+      "label": "Meridian \u2014 AVALIAR",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_scaffold",
+      "label": "Scaffold \u2014 CONTRATAR",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_cosmos",
+      "label": "Cosmos \u2014 EXECUTAR",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_signal",
+      "label": "Signal \u2014 APURAR",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_charter",
+      "label": "Charter \u2014 GOVERNAR (transversal)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_backoffice_big_bang",
+      "label": "Big Bang (back-office) \u2014 VENDER E OPERAR (transversal)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "product_mecanismo_artefatos_versionados",
+      "label": "Mecanismo da su\u00edte: artefato versionado por est\u00e1gio",
+      "file_type": "rationale",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada est\u00e1gio deixa um artefato versionado, com autor e justificativa, que o est\u00e1gio seguinte l\u00ea sem editar, sob pol\u00edtica e trilha de auditoria comuns; as costuras entre produtos quase todas faltam hoje."
+    },
+    {
+      "id": "product_contratacao_modular_adr_0001",
+      "label": "Contrata\u00e7\u00e3o modular (ADR-0001): TenantModule ACTIVE/TRIAL",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "N\u00e3o \u00e9 feature flag; admin do tenant n\u00e3o herda papel de produto; Charter, Meridian, Scaffold e Signal t\u00eam port\u00e3o /<produto>-indisponivel; Cosmos n\u00e3o checa m\u00f3dulo."
+    },
+    {
+      "id": "product_isolamento_rls_inerte",
+      "label": "Isolamento: RLS declarada mas inerte",
+      "file_type": "rationale",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Aplica\u00e7\u00e3o conecta como superuser (ADR-0012); quem separa clientes \u00e9 o filtro por tenantId (withTenantDb); leitura entre clientes s\u00f3 no back-office via platformDb (ADR-0013); nenhuma tela pode contar com RLS para esconder dado."
+    },
+    {
+      "id": "product_roteador_ia",
+      "label": "Roteador de IA @repo/ai (claude-haiku-4-5 \u2192 gemini-2.0-flash \u2192 gpt-4o-mini)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": "packages/ai/lib/router.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nada roda on-prem, ent\u00e3o n\u00e3o prometa soberania de dado; usam IA o Copilot do Cosmos e o rascunho de pol\u00edtica do Charter; Meridian, Scaffold e Signal n\u00e3o usam."
+    },
+    {
+      "id": "product_catalogo_precos",
+      "label": "Cat\u00e1logo de pre\u00e7os (assento Starter/Scale/Enterprise + m\u00f3dulos)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": "packages/database/scripts/2026-09-catalogo-nebuloz.sql",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cat\u00e1logo semeado, n\u00e3o prova de venda; Charter R$1.800/m\u00eas, Signal R$1.200/m\u00eas, Meridian R$1.200/m\u00eas, Scaffold sem pre\u00e7o; plano diagn\u00f3stico a R$0 em produ\u00e7\u00e3o; pre\u00e7o fora dessas fontes n\u00e3o existe."
+    },
+    {
+      "id": "product_principios",
+      "label": "Product Principles (5 princ\u00edpios da su\u00edte)",
+      "file_type": "concept",
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uma entidade um dono; n\u00famero derivado e rastre\u00e1vel nunca digitado nem enfeitado; decis\u00e3o com autor e justificativa em trilha append-only; recusa explica; m\u00e9todo e entreg\u00e1veis ficam com o cliente."
+    }
+  ],
+  "edges": [
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_suite_nebuloz",
+      "target": "product_backoffice_big_bang",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mapa_de_fronteiras",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mapa_de_fronteiras",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mapa_de_fronteiras",
+      "target": "product_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mapa_de_fronteiras",
+      "target": "product_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mapa_de_fronteiras",
+      "target": "product_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_persona_comprador_icp",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_persona_staff_nebuloz",
+      "target": "product_backoffice_big_bang",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_contratacao_modular_adr_0001",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_roteador_ia",
+      "target": "product_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_roteador_ia",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_catalogo_precos",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_catalogo_precos",
+      "target": "product_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_catalogo_precos",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_principios",
+      "target": "product_mapa_de_fronteiras",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "product_mecanismo_artefatos_versionados",
+      "target": "product_mapa_de_fronteiras",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

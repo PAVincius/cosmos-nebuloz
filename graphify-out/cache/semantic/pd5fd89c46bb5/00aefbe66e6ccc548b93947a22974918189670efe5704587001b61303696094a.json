@@ -1,0 +1,247 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "label": "Charter \u2014 FormField variant=group Remediation (Onda 5c)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "label": "Fix: FormField Gains variant: 'field'|'group' (div role=group)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_decision_role_group_over_fieldset",
+      "label": "Decision: role='group' Over <fieldset> (Grid min-width Quirk)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_six_call_sites_updated",
+      "label": "Fix: 6 Call Sites Updated (grep Found 6, PR #211 Only Counted 3)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_test_form_field_group_red_green",
+      "label": "Test: form-field-group.test.tsx (RED Confirmed Before Implementation)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_publish_track_healthtech_residue",
+      "label": "Fix: publish-track.tsx Placeholder Healthtech Residue Replaced",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_modals_intake_direct_import",
+      "label": "Fix: modals-intake.tsx Imports DataClass Directly, Not via Barrel",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_decision_baa_wording_kept",
+      "label": "Decision: 'BAA'/Restricted Wording Kept (Matches Real rules.ts Business Rule)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_exposure_hint_wording",
+      "label": "Fix: 'Exposi\u00e7\u00e3o' Hint Reworded (Was Unsupported 'Paciente' Example)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_formfield_grupo_finding_no_coauthor_verified",
+      "label": "Finding: No Co-Authored-By in Commits, Verified by grep",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_decision_role_group_over_fieldset",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_six_call_sites_updated",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_test_form_field_group_red_green",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_publish_track_healthtech_residue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_modals_intake_direct_import",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_decision_baa_wording_kept",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_exposure_hint_wording",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_finding_no_coauthor_verified",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_formfield_variant_group",
+      "target": "_claude_completions_2026_09_16_charter_a11y_deferred_formfield_group_variant",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_16_charter_a11y_milestone",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_six_call_sites_updated",
+      "target": "_claude_completions_2026_09_16_charter_a11y_deferred_formfield_group_variant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_formfield_grupo_milestone",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_refactor_intake_modal_extracted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-formfield-grupo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

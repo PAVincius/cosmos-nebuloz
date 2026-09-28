@@ -1,0 +1,467 @@
+{
+  "nodes": [
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p0_carteira_sem_criar_assessment",
+      "label": "P0 \u2014 Carteira e detalhe do assessment sem UI para criar assessment/atribuir respondente (M1/M2 bloqueados)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p0_ambiente_local_env_vars_faltando",
+      "label": "P0 \u2014 pnpm dev falha por vari\u00e1veis de ambiente ausentes (sem .env.local em nenhum app)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p1_attach_evidence_sem_supabase_local",
+      "label": "P1 \u2014 attachEvidence falha sem Supabase local (placeholder http://localhost:54321)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_token_expires_at_copiado_do_deadline",
+      "label": "P2 \u2014 assignRespondent copia tokenExpiresAt do deadline do assessment, sem TTL pr\u00f3prio",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_load_respondent_sem_rate_limit",
+      "label": "P2 \u2014 loadRespondent sem rate-limit no lookup de token",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_ensure_bucket_chamada_redundante",
+      "label": "P2 \u2014 ensureBucket roda a cada upload de evid\u00eancia em vez de uma vez no provisionamento",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_bucket_evidencia_sem_lifecycle",
+      "label": "P2 \u2014 bucket de evid\u00eancia criado sem pol\u00edtica de lifecycle/reten\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_campos_modal_sem_htmlfor",
+      "label": "P2 \u2014 campos do modal \"Novo assessment\" sem htmlFor/id (label n\u00e3o associado ao input)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p0_modal_link_coleta_nao_observavel",
+      "label": "P0 \u2014 modal \"Link de coleta gerado\" nunca observ\u00e1vel (reload dispara antes do consultor ver o link)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_seed_tenant_mismatch_carteira",
+      "label": "P2 \u2014 AS-200 n\u00e3o aparece na carteira por mismatch de tenant entre seed e sess\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_audit_log_sem_filtro_prefixo",
+      "label": "P2 \u2014 /settings/audit sem filtro por prefixo meridian. e sem entidades do Meridian no dropdown",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_format_diff_nao_reconhece_array_triplas",
+      "label": "P2 \u2014 formatDiff n\u00e3o reconhece AuditDiff como array de triplas [campo,antes,depois]",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p2_request_evidence_url_sem_botao_ui",
+      "label": "P2 \u2014 requestEvidenceUrl existe mas nenhum componente a chama (SC-008 n\u00e3o prov\u00e1vel)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p1_evidence_button_window_open_noopener_bug",
+      "label": "P1 \u2014 EvidenceButton com bug: window.open com \"noopener\" nas features sempre devolve null",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p3_close_collection_nao_idempotente",
+      "label": "P3 \u2014 closeCollection n\u00e3o \u00e9 idempotente por design (append-only, sem re-fechamento)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p1_aba_coleta_sem_botao_revogar",
+      "label": "P1 \u2014 aba Coleta sem bot\u00e3o de revogar/reatribuir respondente (travou coleta do AS-112)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_p0_link_coleta_perdido_tres_vezes_producao",
+      "label": "P0 \u2014 CEO perdeu o link de coleta tr\u00eas vezes seguidas em produ\u00e7\u00e3o (AS-112)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_action_create_assessment",
+      "label": "createAssessment (apps/app/app/(meridian)/actions/assessments.ts:348)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_action_assign_respondent",
+      "label": "assignRespondent (apps/app/app/(meridian)/actions/collection.ts)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_action_attach_evidence",
+      "label": "attachEvidence (apps/app/app/(meridian)/actions/respondent.ts:280)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_action_revoke_respondent",
+      "label": "revokeRespondent (apps/app/app/(meridian)/actions/collection.ts:111)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_action_request_evidence_url",
+      "label": "requestEvidenceUrl (apps/app/app/(meridian)/actions/report.ts:264)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_job_retencao_evidencia_meridian",
+      "label": "Job de reten\u00e7\u00e3o de evid\u00eancia do Meridian (meridian-evidence-retention.ts, cron di\u00e1rio, 90 dias)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_atrito_decisao_retencao_evidencia_90_dias",
+      "label": "Decis\u00e3o do CEO 2026-09-28 \u2014 reten\u00e7\u00e3o de evid\u00eancia: op\u00e7\u00e3o A, 90 dias ap\u00f3s o fechamento do assessment",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p0_carteira_sem_criar_assessment",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_create_assessment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p0_carteira_sem_criar_assessment",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_assign_respondent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_token_expires_at_copiado_do_deadline",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_assign_respondent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p1_attach_evidence_sem_supabase_local",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_attach_evidence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_load_respondent_sem_rate_limit",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_attach_evidence",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_ensure_bucket_chamada_redundante",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_attach_evidence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_bucket_evidencia_sem_lifecycle",
+      "target": "docs_qualidade_dogfood_meridian_atrito_job_retencao_evidencia_meridian",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_decisao_retencao_evidencia_90_dias",
+      "target": "docs_qualidade_dogfood_meridian_atrito_job_retencao_evidencia_meridian",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_bucket_evidencia_sem_lifecycle",
+      "target": "docs_qualidade_dogfood_meridian_atrito_decisao_retencao_evidencia_90_dias",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_request_evidence_url_sem_botao_ui",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_request_evidence_url",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p1_evidence_button_window_open_noopener_bug",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_request_evidence_url",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p1_aba_coleta_sem_botao_revogar",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_revoke_respondent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_seed_tenant_mismatch_carteira",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p0_carteira_sem_criar_assessment",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p0_modal_link_coleta_nao_observavel",
+      "target": "docs_qualidade_dogfood_meridian_atrito_action_assign_respondent",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p0_link_coleta_perdido_tres_vezes_producao",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p1_aba_coleta_sem_botao_revogar",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p0_link_coleta_perdido_tres_vezes_producao",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p0_modal_link_coleta_nao_observavel",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_format_diff_nao_reconhece_array_triplas",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p2_audit_log_sem_filtro_prefixo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_atrito_p2_campos_modal_sem_htmlfor",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p0_carteira_sem_criar_assessment",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_m2_link_coleta_perdido",
+      "label": "Falha recorrente de perda do link de coleta (M2)",
+      "nodes": [
+        "docs_qualidade_dogfood_meridian_atrito_p0_modal_link_coleta_nao_observavel",
+        "docs_qualidade_dogfood_meridian_atrito_p1_aba_coleta_sem_botao_revogar",
+        "docs_qualidade_dogfood_meridian_atrito_p0_link_coleta_perdido_tres_vezes_producao",
+        "docs_qualidade_dogfood_meridian_diario_m2_ter_colar_links_falhou",
+        "docs_qualidade_dogfood_meridian_roteiro_m2_convidar_dez_respondentes"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/dogfood/meridian/atrito.md"
+    }
+  ]
+}

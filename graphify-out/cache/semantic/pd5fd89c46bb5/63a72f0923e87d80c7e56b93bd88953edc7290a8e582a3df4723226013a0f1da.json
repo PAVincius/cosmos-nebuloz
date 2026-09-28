@@ -1,0 +1,264 @@
+{
+  "nodes": [
+    {
+      "id": "claude_produto_meridian",
+      "label": "Produto Meridian \u2014 AVALIAR (\"Estamos prontos?\")",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_produto_scaffold",
+      "label": "Produto Scaffold \u2014 CONTRATAR (\"O que foi prometido?\")",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_produto_cosmos",
+      "label": "Produto Cosmos \u2014 EXECUTAR (\"O que estamos fazendo?\")",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_produto_signal",
+      "label": "Produto Signal \u2014 APURAR (\"Valeu a pena?\")",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_produto_charter",
+      "label": "Produto Charter \u2014 GOVERNAR, transversal (\"\u00c9 permitido? Sob qual risco?\")",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_produto_backoffice_big_bang",
+      "label": "Back-office (Big Bang) \u2014 VENDER E OPERAR, transversal",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_mapa_de_fronteiras",
+      "label": "Boundary map (mapa de fronteiras) \u2014 arquitetura alvo",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada entidade compartilhada tem exatamente um dono; onde o c\u00f3digo diverge \u00e9 lacuna a fechar, n\u00e3o precedente a copiar."
+    },
+    {
+      "id": "claude_plataforma_compartilhada",
+      "label": "Plataforma compartilhada (tenant, sess\u00e3o, RBAC, provisioning, database)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_notas_maestri_conhecimento",
+      "label": "Notas do Maestri por produto (.maestri/knowledge)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ponto de partida de cada especialista; regenerar com pnpm knowledge:refresh, nunca editar \u00e0 m\u00e3o."
+    },
+    {
+      "id": "claude_grafo_conhecimento_graphify_out",
+      "label": "Grafo de conhecimento curado (graphify-out/)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-09-03",
+      "author": null,
+      "contributor": null,
+      "rationale": "35243 n\u00f3s, 58626 arestas, 2676 comunidades em 2026-09-03; predata o c\u00f3digo do Signal (2026-09-04); graphify update . na master re-extrai s\u00f3 AST e derruba os n\u00f3s sem\u00e2nticos de docs (35243\u219223697 em 2026-09-22)."
+    },
+    {
+      "id": "claude_god_nodes",
+      "label": "God nodes do grafo (requireTenantSession, safeAction, Result, AppDesign, requireRole)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_spec_kit_plano_ativo",
+      "label": "Spec Kit \u2014 plano ativo (specs/003-signal-measure/plan.md)",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_workflow_impeccable",
+      "label": "Workflow /impeccable para trabalho de UI",
+      "file_type": "concept",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Carrega o PRODUCT.md e DESIGN.md do produto-alvo; cada DESIGN.md nomeia os padr\u00f5es que a superf\u00edcie rejeita, tratado como vinculante."
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_meridian",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_scaffold",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_cosmos",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_signal",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_charter",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_plataforma_compartilhada",
+      "target": "claude_produto_backoffice_big_bang",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_god_nodes",
+      "target": "claude_grafo_conhecimento_graphify_out",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_notas_maestri_conhecimento",
+      "target": "claude_grafo_conhecimento_graphify_out",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_spec_kit_plano_ativo",
+      "target": "claude_produto_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_workflow_impeccable",
+      "target": "claude_produto_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_mapa_de_fronteiras",
+      "target": "claude_plataforma_compartilhada",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

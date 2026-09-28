@@ -1,0 +1,503 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_subprojeto_d",
+      "label": "Subprojeto D \u2014 Base financeira da empresa",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "As quatro telas que faltam para o back-office responder onde o dinheiro da Nebuloz entra, sai, foi prometido e se repete: livro-raz\u00e3o, t\u00edtulos, or\u00e7ado\u00d7realizado, receita recorrente."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_dois_planos_d_a_d_b",
+      "label": "Dois planos, n\u00e3o um (D-a e D-b)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A migra\u00e7\u00e3o do DRE (D-a) \u00e9 a parte arriscada e n\u00e3o pode viajar junto com tela nova (D-b: or\u00e7ado\u00d7realizado e receita recorrente, que depende do realizado sair das linhas de D-a)."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_colisao_finops",
+      "label": "Colis\u00e3o de nome com finops.prisma (FinOps do produto)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "packages/database/prisma/schema/finops.prisma j\u00e1 existe (BillingEntry, BudgetPlan, CostAnomaly) e \u00e9 o FinOps do produto/cliente; nada deste subprojeto entra l\u00e1, e nenhum modelo novo reusa aqueles nomes."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "label": "model Lancamento (livro-raz\u00e3o)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Substitui o valor \u00fanico por conta e m\u00eas de LancamentoMensal: o DRE passa a somar estas linhas, e 'o que formou a conta 4.2 em setembro' passa a ter resposta."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_titulo",
+      "label": "model Titulo (compromisso a pagar/receber)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O t\u00edtulo \u00e9 a promessa; o lan\u00e7amento \u00e9 o fato. Sem status 'vencido' persistido: vencido \u00e9 vencimento no passado com status ABERTO, e status derivado n\u00e3o desatualiza sozinho."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_orcamento_da_conta",
+      "label": "model OrcamentoDaConta",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O realizado n\u00e3o mora aqui: sai da soma dos lan\u00e7amentos, para n\u00e3o haver dois n\u00fameros para a mesma pergunta."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_assinatura_do_tenant",
+      "label": "model AssinaturaDoTenant",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O que \u00e9 cobrado agora, depois de desconto/upgrade/downgrade \u2014 diferente do cat\u00e1logo (pre\u00e7o de tabela) e da proposta (o que foi vendido uma vez). tetoExcedenteCentavos nulo = excedente n\u00e3o cobrado, padr\u00e3o do GitHub Copilot (or\u00e7amento zero)."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_franquia_licenca_padrao_copilot",
+      "label": "Padr\u00e3o licen\u00e7a + franquia (GitHub Copilot / Microsoft 365 Copilot)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O assento inclui cota mensal de cr\u00e9ditos que reseta; o excedente \u00e9 cobrado por unidade a taxa decrescente por tier, dentro de um or\u00e7amento de excedente que o cliente define (padr\u00e3o zero). N\u00e3o h\u00e1 venda de cr\u00e9dito avulso."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_mudanca_de_assinatura",
+      "label": "model MudancaDeAssinatura (append-only)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "No padr\u00e3o de MudancaDeEstagio. Sem isto, MRR \u00e9 n\u00famero sem explica\u00e7\u00e3o: n\u00e3o d\u00e1 para abrir o m\u00eas em novo/expans\u00e3o/contra\u00e7\u00e3o/churn olhando s\u00f3 o estado atual."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_credito_do_mes",
+      "label": "model CreditoDoMes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Franquia e pre\u00e7o copiados da assinatura no m\u00eas (n\u00e3o lidos por join) porque o degrau muda e o hist\u00f3rico precisa continuar explic\u00e1vel. excedenteReprimidoCentavos \u00e9 o sinal de upgrade."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_sinal_do_grupo",
+      "label": "sinalDoGrupo(grupo)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_dre_de_lancamentos",
+      "label": "dreDeLancamentos(contas, lancamentos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Substitui calcularDre(contas, l); mesma sa\u00edda, entrada por linha."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_situacao_do_titulo",
+      "label": "situacaoDoTitulo(t, hoje)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_mrr",
+      "label": "mrr(assinaturas, competencia)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_arr",
+      "label": "arr(mrr)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "N\u00e3o inclui servi\u00e7o nem excedente: excedente varia com uso, e prometer doze meses dele \u00e9 o jeito mais comum de inflar ARR."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_movimento",
+      "label": "movimento(mudancas, competencia)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_uso_da_franquia",
+      "label": "usoDaFranquia(creditos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Abaixo de 30% \u00e9 risco de churn, acima de 100% \u00e9 gatilho de upgrade."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_excedente_do_mes",
+      "label": "excedenteDoMes(credito, teto)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Devolve {cobrado, reprimido}: bruto = max(0, consumidos-franquia)\u00d7taxa; cobrado = teto===null?0:min(bruto,teto). Uma fun\u00e7\u00e3o s\u00f3, usada pela action ao gravar e pela tela ao conferir."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_action_baixar_titulo",
+      "label": "baixarTitulo({id, data, competencia})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Escreve em $transaction: baixa e lan\u00e7amento juntos."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_action_alterar_valor",
+      "label": "alterarValor({id, valor, motivo, competencia})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Classifica sozinha em EXPANSAO ou CONTRACAO comparando os valores; ningu\u00e9m digita o tipo."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_tela_financeiro_abas",
+      "label": "/empresa/financeiro \u2014 4 abas (Lan\u00e7amentos, T\u00edtulos, Or\u00e7ado\u00d7realizado, Receita recorrente)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_migracao_lancamento_mensal",
+      "label": "Migra\u00e7\u00e3o LancamentoMensal \u2192 Lancamento de abertura",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "LancamentoMensal n\u00e3o \u00e9 apagado nesta entrega; fica no schema, sem tela, por uma vers\u00e3o, para que diverg\u00eancia de total seja audit\u00e1vel contra a origem. Remo\u00e7\u00e3o \u00e9 migration posterior, depois de o DRE bater."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_base_financeira_design_verificacao_producao_dre",
+      "label": "Verifica\u00e7\u00e3o de produ\u00e7\u00e3o: DRE do m\u00eas corrente d\u00e1 o mesmo n\u00famero de antes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9 a verifica\u00e7\u00e3o que decide se a migra\u00e7\u00e3o foi bem."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_subprojeto_d",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_dois_planos_d_a_d_b",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_subprojeto_d",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_subprojeto_a",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_colisao_finops",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_titulo",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_assinatura_do_tenant",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_mudanca_de_assinatura",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_assinatura_do_tenant",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_credito_do_mes",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_assinatura_do_tenant",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_franquia_licenca_padrao_copilot",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_dre_de_lancamentos",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_situacao_do_titulo",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_titulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_mrr",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_assinatura_do_tenant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_arr",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_mrr",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_movimento",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_mudanca_de_assinatura",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_excedente_do_mes",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_credito_do_mes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_uso_da_franquia",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_credito_do_mes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_action_baixar_titulo",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_titulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_action_baixar_titulo",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_action_alterar_valor",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_mudanca_de_assinatura",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_tela_financeiro_abas",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_fn_dre_de_lancamentos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_migracao_lancamento_mensal",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_lancamento",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_verificacao_producao_dre",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_migracao_lancamento_mensal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_base_financeira_design_dois_planos_d_a_d_b",
+      "target": "docs_superpowers_specs_2026_09_06_base_financeira_design_model_orcamento_da_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "subprojetos_a_b_c_d_base_empresa",
+      "label": "Subprojetos A/B/C/D \u2014 telas de base da empresa no back-office",
+      "nodes": [
+        "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_subprojeto_a",
+        "docs_superpowers_specs_2026_09_06_funil_v2_design_subprojeto_b",
+        "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_subprojeto_c",
+        "docs_superpowers_specs_2026_09_06_base_financeira_design_subprojeto_d"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-base-financeira-design.md"
+    }
+  ]
+}

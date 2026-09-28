@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "specs_007_gate_maturidade_carga_checklists_requirements_checklist",
+      "label": "Specification Quality Checklist: Gate de maturidade + teste de carga (k6)",
+      "file_type": "document",
+      "source_file": "specs/007-gate-maturidade-carga/checklists/requirements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_007_gate_maturidade_carga_checklists_requirements_nota_concorrencia_hipotese",
+      "label": "Nota: concorr\u00eancia \u00e9 hip\u00f3tese, n\u00e3o bloqueio",
+      "file_type": "rationale",
+      "source_file": "specs/007-gate-maturidade-carga/checklists/requirements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_007_gate_maturidade_carga_checklists_requirements_checklist",
+      "target": "specs_007_gate_maturidade_carga_spec_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/checklists/requirements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_checklists_requirements_nota_concorrencia_hipotese",
+      "target": "specs_007_gate_maturidade_carga_spec_fr009_concorrencia_atualizavel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/checklists/requirements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_007_gate_maturidade_carga_checklists_requirements_nota_concorrencia_hipotese",
+      "target": "specs_007_gate_maturidade_carga_intent_meta_concorrencia_hipotese",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/007-gate-maturidade-carga/checklists/requirements.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

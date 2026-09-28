@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_getting_started_index_provisionamento_nebuloz",
+      "label": "Provisionamento do tenant pela Nebuloz (n\u00e3o self-service)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_getting_started_index_convite_aceito",
+      "label": "Pr\u00e9-requisito: convite aceito (senha ou SSO)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_getting_started_index_papel_atribuido",
+      "label": "Pr\u00e9-requisito: papel SAFe atribu\u00eddo por um Admin",
+      "file_type": "concept",
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sem papel, o usu\u00e1rio entra no tenant mas n\u00e3o v\u00ea nenhuma tela."
+    },
+    {
+      "id": "docs_cliente_getting_started_index_art_time_conhecido",
+      "label": "Pr\u00e9-requisito: saber em qual ART e time o usu\u00e1rio est\u00e1",
+      "file_type": "concept",
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_getting_started_index_provisionamento_nebuloz",
+      "target": "docs_cliente_getting_started_index_convite_aceito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_convite_aceito",
+      "target": "docs_cliente_getting_started_index_papel_atribuido",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_papel_atribuido",
+      "target": "docs_cliente_getting_started_index_art_time_conhecido",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_papel_atribuido",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_art_time_conhecido",
+      "target": "docs_cliente_conceitos_index_art_team",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_convite_aceito",
+      "target": "docs_cliente_getting_started_quickstart_board_snapshot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_getting_started_index_papel_atribuido",
+      "target": "docs_cliente_getting_started_primeiro_pi_registro_epico_portfolio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/getting-started/index.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

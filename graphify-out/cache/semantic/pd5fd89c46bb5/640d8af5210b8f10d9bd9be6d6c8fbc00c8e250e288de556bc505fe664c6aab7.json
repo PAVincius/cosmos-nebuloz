@@ -1,0 +1,417 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_data_model_signalinitiative",
+      "label": "SignalInitiative",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalbaseline",
+      "label": "SignalBaseline",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalbaselinedimension",
+      "label": "SignalBaselineDimension",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalconnection",
+      "label": "SignalConnection",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalmetricmapping",
+      "label": "SignalMetricMapping",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalmetricobservation",
+      "label": "SignalMetricObservation (Evidence)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalroiformula",
+      "label": "SignalRoiFormula",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalroientry",
+      "label": "SignalRoiEntry",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalroiassumption",
+      "label": "SignalRoiAssumption",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signaladoptionsnapshot",
+      "label": "SignalAdoptionSnapshot",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signaloutcomesnapshot",
+      "label": "SignalOutcomeSnapshot",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalconfidencerule",
+      "label": "SignalConfidenceRule",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalconfidencescore",
+      "label": "SignalConfidenceScore",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalalert",
+      "label": "SignalAlert",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalreportsnapshot",
+      "label": "SignalReportSnapshot",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalmember",
+      "label": "SignalMember",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalsettings",
+      "label": "SignalSettings",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_signalsequence",
+      "label": "SignalSequence",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_verdict_derivation",
+      "label": "Verdict Derivation Rule (not persisted)",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "label": "ROI/Confidence Derived-Not-Stored Rationale",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signalbaseline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalbaseline",
+      "target": "specs_003_signal_measure_data_model_signalbaselinedimension",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signalroiformula",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalroiformula",
+      "target": "specs_003_signal_measure_data_model_signalroientry",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalroiformula",
+      "target": "specs_003_signal_measure_data_model_signalroiassumption",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signaladoptionsnapshot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signaloutcomesnapshot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signalconfidencescore",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalconfidencescore",
+      "target": "specs_003_signal_measure_data_model_signalconfidencerule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signalmetricobservation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalmetricobservation",
+      "target": "specs_003_signal_measure_data_model_signalmetricmapping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalconnection",
+      "target": "specs_003_signal_measure_data_model_signalmetricmapping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalinitiative",
+      "target": "specs_003_signal_measure_data_model_signalalert",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalbaselinedimension",
+      "target": "specs_003_signal_measure_data_model_signalconnection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_signalroientry",
+      "target": "specs_003_signal_measure_data_model_signalconnection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "target": "specs_003_signal_measure_data_model_signalroiformula",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "target": "specs_003_signal_measure_data_model_signalconfidencescore",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_verdict_derivation",
+      "target": "specs_003_signal_measure_data_model_signalinitiative",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_data_model_verdict_derivation",
+      "target": "specs_003_signal_measure_data_model_signalsettings",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

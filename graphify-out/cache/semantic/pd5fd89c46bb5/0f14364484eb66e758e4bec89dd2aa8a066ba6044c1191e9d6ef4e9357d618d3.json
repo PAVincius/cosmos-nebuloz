@@ -1,0 +1,270 @@
+{
+  "nodes": [
+    {
+      "id": "docs_financeiro_plano_de_contas_base_minima",
+      "label": "Plano de contas \u2014 base m\u00ednima (ContaDoPlano, seed de 27 contas)",
+      "file_type": "document",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": "packages/provisioning/src/plano-de-contas-nebuloz.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "C\u00f3digos num\u00e9ricos simples, sem a granularidade de um plano cont\u00e1bil fiscal \u2014 isso \u00e9 responsabilidade do contador; aqui \u00e9 o m\u00ednimo para gest\u00e3o. Uma frente de receita por produto, com assinatura e servi\u00e7o separados dentro de cada um."
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "label": "1 \u2014 Receita (assinatura + servi\u00e7o, por produto)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Scaffold n\u00e3o tem linha de assinatura por n\u00e3o ser produto recorrente \u2014 toda receita de Scaffold cai em 1.6 (servi\u00e7o)."
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_2_deducoes",
+      "label": "2 \u2014 Dedu\u00e7\u00f5es da receita (impostos, cancelamentos/estornos)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_3_custo_entrega",
+      "label": "3 \u2014 Custo de entrega / CMV de servi\u00e7o",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Custo direto de entregar o que foi vendido \u2014 cresce com o volume entregue, diferente de despesa fixa de estrutura."
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_4_despesas_comerciais",
+      "label": "4 \u2014 Despesas comerciais (centro de custo: comercial)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "As contas que o modelo de CAC l\u00ea diretamente."
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_5_despesas_produto_engenharia",
+      "label": "5 \u2014 Despesas de produto/engenharia",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_conta_6_despesas_gea",
+      "label": "6 \u2014 Despesas gerais e administrativas (G&A)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_plano_de_contas_centros_custo_resumo",
+      "label": "Centros de custo \u2014 resumo (produto/engenharia, comercial, entrega, G&A)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O DRE agrupa despesa por centro de custo e por frente de receita quando calcula margem bruta."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_2_deducoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_3_custo_entrega",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_4_despesas_comerciais",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_5_despesas_produto_engenharia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_conta_6_despesas_gea",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_base_minima",
+      "target": "docs_financeiro_plano_de_contas_centros_custo_resumo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "target": "product_catalogo_precos",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_plano_de_contas_conta_4_despesas_comerciais",
+      "target": "docs_financeiro_dre_modelo_despesas_centro_custo",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "receita_por_produto_no_plano_de_contas",
+      "label": "Cada um dos cinco produtos da su\u00edte tem sua pr\u00f3pria linha de receita no plano de contas",
+      "nodes": [
+        "product_meridian",
+        "product_charter",
+        "product_cosmos",
+        "product_signal",
+        "product_scaffold",
+        "docs_financeiro_plano_de_contas_conta_1_receita"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md"
+    },
+    {
+      "id": "triangulo_documentos_financeiros",
+      "label": "Caixa de 13 semanas, DRE mensal e plano de contas \u2014 tr\u00eas documentos financeiros que se citam mutuamente sobre a mesma base de contas",
+      "nodes": [
+        "docs_financeiro_caixa_13_semanas_forecast_rolante",
+        "docs_financeiro_dre_modelo_dre_mensal",
+        "docs_financeiro_plano_de_contas_base_minima"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/plano-de-contas.md"
+    }
+  ]
+}

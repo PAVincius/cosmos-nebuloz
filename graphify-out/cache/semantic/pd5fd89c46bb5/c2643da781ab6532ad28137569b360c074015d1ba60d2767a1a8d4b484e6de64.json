@@ -1,0 +1,424 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "label": "Cat\u00e1logo de IP \u2014 Proced\u00eancia, Licen\u00e7a e Reuso Medido Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_fields",
+      "label": "IpAsset New Fields (link, donoPersonId, procedencia, reusoConfirmado, licenca)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_service",
+      "label": "IpAssetService Model",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_reuse",
+      "label": "IpAssetReuse Model (@@unique assetId+engagementId)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "label": "lib/ip/regua.ts \u2014 Six-Criterion Rule + Derived Maturity",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_registrar_reuso_action",
+      "label": "registrarReusoAction \u2014 Sole Gate for Reuse Mutation",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_seletor_de_acervo",
+      "label": "SeletorDeAcervo (Replaces 260-280px Sidebar)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_janela_de_contrato_capacidade",
+      "label": "Janela de Contrato na Capacidade (entraEm/saiEm/observacao)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_bug_campo_condicional_vazando",
+      "label": "Bug: Conditional Proced\u00eancia Field Leaked Into Payload",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_bug_estado_vazando_lista",
+      "label": "Bug: List Row State Leaked Between Items (Missing key by id)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_rule_zod_forma_regua_minimo",
+      "label": "Rule: zod Validates Shape/Ceiling, r\u00e9gua Owns Every Minimum",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_defect_pattern_constant_redeclared",
+      "label": "Recurring Defect: Constants Redeclared Instead of Reusing Derived List (5\u00d7)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_cut_tabela_papel_hora",
+      "label": "Cut: Papel/Hora Table + Margin KPI in Reais (No Real Cost Source)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_cut_lab_compute_node",
+      "label": "Cut: LAB Compute Node / Ceiling (LAB Doesn't Exist)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_cut_maturidade_extra_states",
+      "label": "Cut: EM_ENDURECIMENTO / APOSENTADO Maturity States (Not Derivable)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_cut_modal_shell",
+      "label": "Cut: Modal Shell (No Modal Pattern in Back-Office)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_07_catalogo_de_ip_kept_ip_asset_reuse_table",
+      "label": "Kept Despite Cost: IpAssetReuse Table (Only Structure Beyond Acceptance Rule)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_fields",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_registrar_reuso_action",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_reuse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_registrar_reuso_action",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_rule_zod_forma_regua_minimo",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_defect_pattern_constant_redeclared",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_rule_zod_forma_regua_minimo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_bug_campo_condicional_vazando",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_fields",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_tabela_papel_hora",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_lab_compute_node",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_maturidade_extra_states",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_modal_shell",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_kept_ip_asset_reuse_table",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_reuse",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_model_ip_asset_fields",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_lib_ip_regua",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_registrar_reuso_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_janela_de_contrato_capacidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_seletor_de_acervo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_bug_estado_vazando_lista",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_janela_de_contrato_capacidade",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_milestone",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_janela_de_contrato_capacidade",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_teto_clt_saiem_terceiro_badge",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_modal_shell",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_inline_form_not_modal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_tabela_papel_hora",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_no_papel_hora_table",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_cut_lab_compute_node",
+      "target": "_claude_completions_2026_09_07_janela_de_capacidade_decision_no_papel_hora_table",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_07_catalogo_de_ip_bug_estado_vazando_lista",
+      "target": "_claude_completions_2026_09_06_mapa_de_processos_fix_confirmaracao_key",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-07-catalogo-de-ip.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

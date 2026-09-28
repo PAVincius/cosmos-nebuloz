@@ -1,0 +1,176 @@
+{
+  "nodes": [
+    {
+      "id": "specs_004_login_generico_produto_intent_problema_marca_cosmos",
+      "label": "Problema: login herda marca do Cosmos por padr\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_destino_hardcoded",
+      "label": "Destino p\u00f3s-login hardcoded em 3 pontos (/cosmos/dashboard)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_esqueci_senha_quebrado",
+      "label": "Esqueci a senha n\u00e3o envia e-mail nem tem rota (achado)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_isinternaltenant_flag",
+      "label": "Flag dedicada Tenant.isInternalTenant (decis\u00e3o final do CEO)",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "CEO via Norte/CPO reverteu resposta anterior (cat\u00e1logo universal por contrato) e decidiu flag dedicada no tenant, n\u00e3o ID/slug fixo nem config/env \u2014 mant\u00e9m o comportamento audit\u00e1vel via schema."
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_restricao_sql_senha",
+      "label": "Restri\u00e7\u00e3o: nunca gravar senha por SQL direto",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_catalogo_produto_reuso",
+      "label": "Achado: cat\u00e1logo (authenticated)/produto j\u00e1 existe e serve pro pedido (c)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_dono_gap_tenant",
+      "label": "Gap de arquitetura: dono-alvo de Tenant \u00e9 Charter, hoje \u00e9 provisioning",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_intent_resultado_desejado",
+      "label": "Resultado desejado: login neutro + cat\u00e1logo Meridian-only + troca/reset de senha",
+      "file_type": "concept",
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_004_login_generico_produto_intent_destino_hardcoded",
+      "target": "specs_004_login_generico_produto_contracts_actions_rootpage",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_isinternaltenant_flag",
+      "target": "specs_004_login_generico_produto_data_model_tenant_isinternaltenant",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_catalogo_produto_reuso",
+      "target": "specs_004_login_generico_produto_contracts_actions_listarprodutos",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_esqueci_senha_quebrado",
+      "target": "specs_004_login_generico_produto_contracts_actions_sendresetpassword",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_restricao_sql_senha",
+      "target": "specs_004_login_generico_produto_data_model_solicitacao_redefinicao",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_dono_gap_tenant",
+      "target": "specs_004_login_generico_produto_data_model_tenant_isinternaltenant",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_resultado_desejado",
+      "target": "specs_004_login_generico_produto_contracts_actions_rootpage",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_intent_restricao_sql_senha",
+      "target": "docs_runbooks_liberar_meridian_usuario_proibicao_gravar_senha_sql",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/intent.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

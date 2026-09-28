@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "label": "Charter \u2014 Gates de Verdade e Confirma\u00e7\u00e3o em Pol\u00edtica/Caso de Uso Remediation (Onda 4b)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "label": "Fix: policy.tsx Three Spans (Publicar/Editar/Aprovar) \u2192 GatedButton",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_reopen_section_confirm_modal",
+      "label": "Fix: 'Reabrir para Revis\u00e3o' Requires Confirmation (ReopenSectionModal)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_case_detail_decision_gated",
+      "label": "Fix: case-detail 'Registrar Decis\u00e3o' \u2192 GatedButton (Same Span Defect)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_sla_tone_dynamic",
+      "label": "Fix: 'SLA Restante' KPI Uses slaTone() Instead of Fixed Amber",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_metacell_decidido_por_rename",
+      "label": "Fix: MetaCell 'Revisor' Renamed to 'Decidido Por' (deciderRole, Not reviewerId)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_scope_screen_error",
+      "label": "Fix: policy-scope.tsx Error Text \u2192 ScreenError With Retry",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_reopen_section_confirm_modal",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_fix_case_detail_decision_gated",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_reopen_section_confirm_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_case_detail_decision_gated",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_sla_tone_dynamic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_metacell_decidido_por_rename",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_milestone",
+      "target": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_scope_screen_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_gated_action_to_gated_button",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_fix_policy_spans_to_gated_button",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_bug_span_never_blocked",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_politica_gates_fix_reopen_section_confirm_modal",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_settings_role_change_modal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-16-charter-politica-gates.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

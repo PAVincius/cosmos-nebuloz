@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_conceitos_index_tenant",
+      "label": "Tenant (fronteira de isolamento total)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Todo dado \u2014 \u00e9pico, time, PI, membro \u2014 pertence a um tenant; nenhuma tela mostra dado de outro tenant."
+    },
+    {
+      "id": "docs_cliente_conceitos_index_modulo",
+      "label": "M\u00f3dulo (Cosmos, Charter e outros, contratados independentemente)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_cliente_conceitos_index_altitude",
+      "label": "Altitude SAFe (Portf\u00f3lio, ART, Time, Lideran\u00e7a/Analytics)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada altitude tem sua pr\u00f3pria tela, mas todas leem do mesmo modelo de dados \u2014 por isso um n\u00famero em Analytics sempre bate com o board de origem."
+    },
+    {
+      "id": "docs_cliente_conceitos_index_hierarquia_trabalho",
+      "label": "Hierarquia de trabalho (\u00c9pico \u2192 Feature \u2192 Story \u2192 Task)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9pico vive na altitude de portf\u00f3lio; ao ser aprovado vira Features distribu\u00eddas entre times; cada Feature quebra em Stories, cada Story em Tasks \u2014 onde o trabalho de fato acontece."
+    },
+    {
+      "id": "docs_cliente_conceitos_index_art_team",
+      "label": "ART e Team (um time pertence a exatamente um ART)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9 essa rela\u00e7\u00e3o que organiza o PI Planning: o RTE do ART planeja o PI olhando o compromisso de todos os times daquele trem."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_conceitos_index_tenant",
+      "target": "docs_cliente_conceitos_index_modulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_conceitos_index_altitude",
+      "target": "docs_cliente_conceitos_index_hierarquia_trabalho",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_conceitos_index_art_team",
+      "target": "docs_cliente_conceitos_index_altitude",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_conceitos_index_tenant",
+      "target": "docs_cliente_conceitos_permissoes_isolamento_organizacoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/index.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "pipeline_altitude_safe_cosmos",
+      "label": "Pipeline de altitudes SAFe do Cosmos: portf\u00f3lio \u2192 ART \u2192 time, sobre um \u00fanico modelo de dados",
+      "nodes": [
+        "docs_cliente_conceitos_index_altitude",
+        "docs_cliente_conceitos_index_hierarquia_trabalho",
+        "docs_cliente_guias_portfolio_kanban_wsjf_kanban_epicos",
+        "docs_cliente_guias_pi_planning_conceito",
+        "docs_cliente_guias_board_do_time_e_metricas_board_do_time"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/cliente/conceitos/index.md"
+    }
+  ]
+}

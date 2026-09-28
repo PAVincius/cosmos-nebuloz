@@ -1,0 +1,276 @@
+{
+  "nodes": [
+    {
+      "id": "specs_004_login_generico_produto_spec_us1_login_sem_marca",
+      "label": "US1: Login sem marca de produto espec\u00edfico (P1)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_us2_catalogo_pos_login",
+      "label": "US2: Cat\u00e1logo de produtos p\u00f3s-login via isInternalTenant (P1)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_us3_trocar_senha",
+      "label": "US3: Trocar senha logado (P2)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_us4_esqueci_senha",
+      "label": "US4: Esqueci a senha ponta a ponta (P2)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_fr006_isinternaltenant",
+      "label": "FR-006: campo isInternalTenant via migration Prisma",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_fr012_resposta_equivalente",
+      "label": "FR-012: resposta equivalente e-mail existente/inexistente",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_fr013_proibicao_sql",
+      "label": "FR-013: proibi\u00e7\u00e3o de escrita de senha fora do fluxo padr\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_fr015_issuer_2fa",
+      "label": "FR-015: troca issuer 2FA preserva 2FA j\u00e1 cadastrado",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_entidade_catalogo_produto",
+      "label": "Key Entity: Cat\u00e1logo de Produto",
+      "file_type": "concept",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_entidade_tenant",
+      "label": "Key Entity: Tenant (+ isInternalTenant)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_entidade_solicitacao_redefinicao",
+      "label": "Key Entity: Solicita\u00e7\u00e3o de redefini\u00e7\u00e3o de senha",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_clarification_isinternaltenant",
+      "label": "Clarification: flag dedicada vs. cat\u00e1logo universal (revertida)",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Duas respostas atribu\u00eddas ao CEO por canais diferentes na mesma sess\u00e3o (Morgana: cat\u00e1logo universal; Norte/CPO: flag dedicada) \u2014 a segunda \u00e9 a que vale."
+    },
+    {
+      "id": "specs_004_login_generico_produto_spec_dependencia_resend_dominio",
+      "label": "Dependency: dom\u00ednio nebuloz.ai verificado no Resend (SPF/DKIM)",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_004_login_generico_produto_spec_clarification_isinternaltenant",
+      "target": "specs_004_login_generico_produto_spec_entidade_tenant",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_us4_esqueci_senha",
+      "target": "specs_004_login_generico_produto_spec_dependencia_resend_dominio",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_entidade_tenant",
+      "target": "specs_004_login_generico_produto_data_model_tenant_isinternaltenant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_entidade_catalogo_produto",
+      "target": "specs_004_login_generico_produto_data_model_produtonopainel_perfis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_entidade_solicitacao_redefinicao",
+      "target": "specs_004_login_generico_produto_data_model_solicitacao_redefinicao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_us1_login_sem_marca",
+      "target": "specs_004_login_generico_produto_intent_problema_marca_cosmos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_us2_catalogo_pos_login",
+      "target": "specs_004_login_generico_produto_intent_isinternaltenant_flag",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_us3_trocar_senha",
+      "target": "specs_004_login_generico_produto_contracts_actions_changepassword",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_us4_esqueci_senha",
+      "target": "specs_004_login_generico_produto_contracts_actions_requestpasswordreset",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_fr013_proibicao_sql",
+      "target": "specs_004_login_generico_produto_intent_restricao_sql_senha",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_spec_fr012_resposta_equivalente",
+      "target": "specs_004_login_generico_produto_data_model_solicitacao_redefinicao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/spec.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "h_004_user_stories_login_generico",
+      "label": "User Stories da Feature Login Gen\u00e9rico + Sele\u00e7\u00e3o de Produto",
+      "nodes": [
+        "specs_004_login_generico_produto_spec_us1_login_sem_marca",
+        "specs_004_login_generico_produto_spec_us2_catalogo_pos_login",
+        "specs_004_login_generico_produto_spec_us3_trocar_senha",
+        "specs_004_login_generico_produto_spec_us4_esqueci_senha"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "specs/004-login-generico-produto/spec.md"
+    }
+  ]
+}

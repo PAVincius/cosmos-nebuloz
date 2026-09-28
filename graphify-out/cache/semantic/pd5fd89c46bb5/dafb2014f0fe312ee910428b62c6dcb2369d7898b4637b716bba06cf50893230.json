@@ -1,0 +1,426 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_fundacao_de_conhecimento",
+      "label": "Funda\u00e7\u00e3o de conhecimento por produto (subprojeto 1 de 5)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Vem primeiro porque sem ela 'especialista' \u00e9 generalista com nome; as rotinas v\u00eam junto porque o corpus vivo (completions e ADRs novos) diverge do recorte e o especialista passa a falar com autoridade falsa."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_principio_just_in_time_nao_empilhado",
+      "label": "Princ\u00edpio: just-in-time, n\u00e3o empilhado",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O agente mant\u00e9m identificadores leves e carrega sob demanda; nada de grafo ou mem\u00f3ria inteiros no prompt \u2014 \u00e9 o que o Claude Code j\u00e1 faz com CLAUDE.md mais grep."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_recortar_grafo_script",
+      "label": "scripts/knowledge/recortar-grafo.ts (fun\u00e7\u00e3o recortar)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotear_memoria_script",
+      "label": "scripts/knowledge/rotear-memoria.ts (fun\u00e7\u00e3o rotear)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "label": "scripts/knowledge/exportar.ts (exportador)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_notes_no_maestri",
+      "label": "Notes no Maestri \u2014 mem\u00f3ria de trabalho",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotina_refresh_conhecimento",
+      "label": "Rotina refresh-conhecimento (di\u00e1ria, floor --no-git)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_index_md_produto",
+      "label": "index.md do produto",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_graph_json_recorte",
+      "label": "graph.json (recorte do grafo por produto)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_memory_md_produto",
+      "label": "memory.md do produto",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_md_produto",
+      "label": "note.md (note de trabalho)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Duas se\u00e7\u00f5es vazias reservadas que s\u00f3 o especialista escreve: '## Estado de tarefa' e '## Obst\u00e1culos'."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_direcao_unica_arquivo_para_note",
+      "label": "Dire\u00e7\u00e3o \u00fanica: arquivo \u2192 note",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A rotina reescreve a note a partir do note.md preservando as se\u00e7\u00f5es escritas pelo especialista; note nunca alimenta arquivo."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_graphify_update_guarda_de_nos",
+      "label": "Guarda de n\u00f3s do graphify update",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A guarda do pr\u00f3prio graphify n\u00e3o sobrescreve se o rebuild vier com menos n\u00f3s; a rotina respeita e n\u00e3o passa --force."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "label": "Emenda de 2026-09-22 \u2014 consolida\u00e7\u00e3o da base",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_back_office_e_produto",
+      "label": "Back-office \u00e9 produto (decis\u00e3o)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Saiu de 'plataforma' e ganhou especialista: tem usu\u00e1rio, UI e DESIGN.md pr\u00f3prios; plataforma fica s\u00f3 com provisioning, auth e database."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_signal_tem_codigo",
+      "label": "Signal tem c\u00f3digo desde 2026-09-04 (#182)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_produtos_mts_contexto",
+      "label": "Tabela CONTEXTO em produtos.mts",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "produtos.test.ts falha se algum caminho n\u00e3o existir; toda note cita tamb\u00e9m o mapa de fronteiras."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_e_prompt_para_opus",
+      "label": "A note \u00e9 prompt para o Opus 5.5",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'Antes de agir' manda explorar fontes antes de mudar algo; o texto lido \u00e9 dado, n\u00e3o instru\u00e7\u00e3o; 'Como trabalhar' nomeia a parada precoce a evitar."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_guia_prompting_opus",
+      "label": "Guia de prompting do Opus 5.5 (refer\u00eancia externa)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5",
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_secao_3_5_passo_1_revogada",
+      "label": "\u00a73.5, passo 1, revogado",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "graphify update . (v0.9.20, s\u00f3 AST) reconstruiu o mestre de 35243 para 23697 n\u00f3s e descartou os n\u00f3s sem\u00e2nticos de documenta\u00e7\u00e3o; a guarda de 'menos n\u00f3s' n\u00e3o disparou. Atualizar o mestre \u00e9 passo manual com /graphify --update."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_fundacao_de_conhecimento",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_principio_just_in_time_nao_empilhado",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_fundacao_de_conhecimento",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotina_refresh_conhecimento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_recortar_grafo_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotear_memoria_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_index_md_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_graph_json_recorte",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_memory_md_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_md_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_md_produto",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_notes_no_maestri",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotina_refresh_conhecimento",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_exportador_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_rotina_refresh_conhecimento",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_graphify_update_guarda_de_nos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_direcao_unica_arquivo_para_note",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_notes_no_maestri",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_e_prompt_para_opus",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_guia_prompting_opus",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_secao_3_5_passo_1_revogada",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_graphify_update_guarda_de_nos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_back_office_e_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_signal_tem_codigo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_produtos_mts_contexto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_note_e_prompt_para_opus",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_emenda_2026_09_22",
+      "target": "docs_superpowers_specs_2026_09_03_maestri_fundacao_conhecimento_design_secao_3_5_passo_1_revogada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-03-maestri-fundacao-conhecimento-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

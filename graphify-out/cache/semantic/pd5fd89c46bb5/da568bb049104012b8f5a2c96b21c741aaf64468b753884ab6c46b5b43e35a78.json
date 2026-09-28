@@ -1,0 +1,267 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_document",
+      "label": "Tasks: Conta ativa sempre vis\u00edvel (Fase 0 do modelo de contas)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t001_types",
+      "label": "T001: esqueleto do m\u00f3dulo compartilhado (types.ts, ActiveAccountData)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t004_activeaccountbadge_impl",
+      "label": "T004: implementar ActiveAccountBadge",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_accountswitcher",
+      "label": "AccountSwitcher (T015: badge + seletor compostos, esconde seletor se tenants<=1)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t016_resolve_active_account_destination",
+      "label": "T016: resolve-active-account-destination.ts (server action fina)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t028_orderby_fallback",
+      "label": "T028: adicionar orderBy createdAt asc em requireTenantSession",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t031_t032_updatemany_fix",
+      "label": "T031/T032: trocar session.updateMany por session.update escopado",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_t013_e2e_partial",
+      "label": "T013: E2E workspace-switcher.spec.ts (PARCIAL \u2014 falta seed de 2+ TenantMember)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_phase2_foundational",
+      "label": "Phase 2: Foundational \u2014 bloqueia US1/US2, n\u00e3o bloqueia US3/US4",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_tasks_mvp_strategy",
+      "label": "MVP First: Foundational \u2192 US1 \u2192 validar \u2192 US2",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_document",
+      "target": "specs_009_conta_ativa_visivel_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_document",
+      "target": "specs_009_conta_ativa_visivel_tasks_mvp_strategy",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t001_types",
+      "target": "specs_009_conta_ativa_visivel_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t004_activeaccountbadge_impl",
+      "target": "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_accountswitcher",
+      "target": "specs_009_conta_ativa_visivel_tasks_t004_activeaccountbadge_impl",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_accountswitcher",
+      "target": "specs_009_conta_ativa_visivel_plan_switchaccountdialog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t016_resolve_active_account_destination",
+      "target": "specs_009_conta_ativa_visivel_research_resolvepostlogindestination",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t028_orderby_fallback",
+      "target": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t028_orderby_fallback",
+      "target": "auth_server_requiretenantsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t031_t032_updatemany_fix",
+      "target": "specs_009_conta_ativa_visivel_spec_fr010_fr011_escopo_sessao",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t013_e2e_partial",
+      "target": "specs_009_conta_ativa_visivel_spec_us2_trocar_confirmacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_tasks_t013_e2e_partial",
+      "target": "specs_009_conta_ativa_visivel_quickstart_us2_validation",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_conta_ativa_componente_unico",
+      "label": "Converg\u00eancia dos 5 shells de produto para o componente \u00fanico de conta ativa (FR-002)",
+      "nodes": [
+        "specs_009_conta_ativa_visivel_spec_fr002_componente_unico",
+        "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+        "specs_009_conta_ativa_visivel_plan_switchaccountdialog",
+        "specs_009_conta_ativa_visivel_tasks_accountswitcher",
+        "specs_009_conta_ativa_visivel_research_decision1_bug_tooltip"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md"
+    },
+    {
+      "id": "hyperedge_vazamento_sessao_fix",
+      "label": "Fluxo de corre\u00e7\u00e3o do vazamento de activeTenantId entre sess\u00f5es (convite/onboarding)",
+      "nodes": [
+        "specs_009_conta_ativa_visivel_research_vazamento_sessao",
+        "specs_009_conta_ativa_visivel_spec_fr010_fr011_escopo_sessao",
+        "specs_009_conta_ativa_visivel_tasks_t031_t032_updatemany_fix",
+        "specs_009_conta_ativa_visivel_intent_causa5_vazamento_sessoes"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "specs/009-conta-ativa-visivel/tasks.md"
+    }
+  ]
+}

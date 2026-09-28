@@ -1,0 +1,200 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_supabase_local_supabase_local_storage_runbook",
+      "label": "Supabase local (storage) \u2014 sobe Supabase local s\u00f3 para storage, nunca aponta pro projeto de produ\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_supabase_cli_instalacao",
+      "label": "CLI do Supabase \u2014 instala\u00e7\u00e3o local ao usu\u00e1rio, sem sudo, em ~/.local/bin",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_supabase_start_containers_minimos",
+      "label": "supabase start com -x (exclui realtime, imgproxy, mailpit etc.) \u2014 sobe s\u00f3 db, auth, storage, kong",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_env_local_supabase_url_service_role_key",
+      "label": "NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY em apps/app/.env.local (git-ignorado)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_smoke_test_upload_bucket",
+      "label": "Smoke test \u2014 upload/remove em meridian-evidence via @supabase/supabase-js, espera \"upload: ok\"",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_meridian_evidence_bucket",
+      "label": "Bucket meridian-evidence \u2014 criado por ensureBucket na primeira chamada, sem seed.sql",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_placeholder_hardcoded_localhost_54321",
+      "label": "Placeholder hardcoded http://localhost:54321 \u2014 usado quando as env vars faltam, n\u00e3o est\u00e1 de p\u00e9 em clone novo",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_supabase_local_ensure_bucket_sem_seed",
+      "label": "ensureBucket (packages/storage/src/index.ts:21) \u2014 cria o bucket sem pol\u00edtica de reten\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_supabase_local_supabase_local_storage_runbook",
+      "target": "docs_runbooks_supabase_local_supabase_cli_instalacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_supabase_local_storage_runbook",
+      "target": "docs_runbooks_supabase_local_supabase_start_containers_minimos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_supabase_start_containers_minimos",
+      "target": "docs_runbooks_supabase_local_env_local_supabase_url_service_role_key",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_env_local_supabase_url_service_role_key",
+      "target": "docs_runbooks_supabase_local_smoke_test_upload_bucket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_smoke_test_upload_bucket",
+      "target": "docs_runbooks_supabase_local_meridian_evidence_bucket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_meridian_evidence_bucket",
+      "target": "docs_runbooks_supabase_local_ensure_bucket_sem_seed",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_placeholder_hardcoded_localhost_54321",
+      "target": "docs_runbooks_supabase_local_env_local_supabase_url_service_role_key",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_ensure_bucket_sem_seed",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p2_bucket_evidencia_sem_lifecycle",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_supabase_local_placeholder_hardcoded_localhost_54321",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p1_attach_evidence_sem_supabase_local",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/supabase-local.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_ambiente_local_e2e_meridian",
+      "label": "Depend\u00eancias de ambiente local para rodar o E2E do Meridian",
+      "nodes": [
+        "docs_qualidade_dogfood_meridian_atrito_p0_ambiente_local_env_vars_faltando",
+        "docs_qualidade_dogfood_meridian_atrito_p1_attach_evidence_sem_supabase_local",
+        "docs_runbooks_supabase_local_supabase_local_storage_runbook",
+        "docs_runbooks_supabase_local_env_local_supabase_url_service_role_key"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/runbooks/supabase-local.md"
+    }
+  ]
+}

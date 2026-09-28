@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "label": "Bot\u00e3o 'Revogar' por respondente ativo \u2014 chama revokeRespondent existente",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_revokeconfirmmodal",
+      "label": "RevokeConfirmModal \u2014 confirma\u00e7\u00e3o antes de revogar (irrevers\u00edvel)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_byaxis_list_vs_active_split",
+      "label": "byAxis separa list (todos) de active (n\u00e3o-REVOKED, para cobertura de eixo)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_as112_p1_causa_raiz",
+      "label": "AS-112 (produ\u00e7\u00e3o): CEO atribuiu 10 respondentes, n\u00e3o copiou nenhum link, sem bot\u00e3o de revogar",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_concluir_desabilitado_ate_copiar",
+      "label": "'Concluir' desabilitado at\u00e9 clicar 'Copiar' ao menos uma vez",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_review_morgana_x_esc_backdrop",
+      "label": "Review da Morgana: X/Esc/backdrop fechavam sem checar 'copied' (causa raiz continuava aberta)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_esc_capture_document_fix",
+      "label": "Esc interceptado em fase de captura no document, antes do listener em window do ModalHost",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_usedirty_markdirty_backdrop_fix",
+      "label": "Backdrop usa useDirty/markDirty (form-kit.tsx) para acionar confirma\u00e7\u00e3o de descarte",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_clipboard_writetext_resolve_check",
+      "label": "'copied' s\u00f3 vira true quando clipboard.writeText resolve de verdade (fallback: seleciona texto)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_biome_oom_obstaculo",
+      "label": "biome check --write deu OOM via Bash; hook de pre-commit rodou com sucesso",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_as112_p1_causa_raiz",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_revokeconfirmmodal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_byaxis_list_vs_active_split",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_as112_p1_causa_raiz",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_concluir_desabilitado_ate_copiar",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_review_morgana_x_esc_backdrop",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_esc_capture_document_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_review_morgana_x_esc_backdrop",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_usedirty_markdirty_backdrop_fix",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_review_morgana_x_esc_backdrop",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_concluir_desabilitado_ate_copiar",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_clipboard_writetext_resolve_check",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_concluir_desabilitado_ate_copiar",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_usedirty_markdirty_backdrop_fix",
+      "target": "_claude_completions_2026_09_22_charter_trabalho_nao_salvo_dirtyctx_form_kit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_biome_oom_obstaculo",
+      "target": "_claude_completions_2026_09_26_meridian_p1_revogar_respondente_botao_revogar_respondente",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.6,
+      "source_file": ".claude/completions/2026-09-26-meridian-p1-revogar-respondente.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,164 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_document",
+      "label": "Data Model: Conta ativa sempre vis\u00edvel (Fase 0)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_tenant_entity",
+      "label": "Tenant (packages/database/prisma/schema/tenant.prisma)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_tenantmember_entity",
+      "label": "TenantMember (tenant.prisma:418-431)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "label": "TenantMember.createdAt \u2014 crit\u00e9rio do fallback determin\u00edstico (FR-007/008)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_session_entity",
+      "label": "Session (better-auth, tabela gerenciada por @repo/auth)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_session_activetenantid",
+      "label": "Session.activeTenantId \u2014 contrato central desta fase",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_data_model_fluxo_estado",
+      "label": "Fluxo de estado do seletor (confirma\u00e7\u00e3o pendente \u2192 POST switch-tenant)",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_document",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenant_entity",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_document",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenantmember_entity",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_document",
+      "target": "specs_009_conta_ativa_visivel_data_model_session_entity",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_tenantmember_entity",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_session_entity",
+      "target": "specs_009_conta_ativa_visivel_data_model_session_activetenantid",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_fluxo_estado",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "target": "specs_009_conta_ativa_visivel_spec_fr007_fallback",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_data_model_session_activetenantid",
+      "target": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_activeaccountdata",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/009-conta-ativa-visivel/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

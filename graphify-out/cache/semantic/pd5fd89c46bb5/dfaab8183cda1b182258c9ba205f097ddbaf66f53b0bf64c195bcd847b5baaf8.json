@@ -1,0 +1,237 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_llm_desktop_windows_modelo_local_desktop_windows_rx580",
+      "label": "Modelo local no desktop Windows (RX 580) \u2014 serve LLM aos agentes do Maestri via Tailscale",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_tailscale_rede_privada",
+      "label": "Tailscale \u2014 rede privada entre desktop (nebuloz-gpu) e MacBook, sem URL p\u00fablica (ao contr\u00e1rio do ngrok)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_llama_cpp_vulkan_backend",
+      "label": "llama.cpp com backend Vulkan \u2014 \u00fanica op\u00e7\u00e3o vi\u00e1vel na RX 580 (Polaris/gfx803, sem suporte ROCm)",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_qwen3_8b_q4_k_m_modelo",
+      "label": "Qwen3-8B-Q4_K_M (~5 GB) \u2014 modelo principal, cabe nos 8 GB da placa, melhor em portugu\u00eas que Llama 3.1 8B",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_decisao_ceo_tailscale_nao_ngrok",
+      "label": "Decis\u00e3o do CEO (2026-09-27): Tailscale (n\u00e3o ngrok), Qwen3-8B como principal, downloads aprovados",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "label": "llama-server.exe \u2014 host IP do Tailscale, porta 8080, --reasoning-budget 0, -c 8192",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_llm_local_key_autenticacao",
+      "label": "LLM_LOCAL_KEY \u2014 chave que impede outra m\u00e1quina da rede privada de usar o modelo",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_vigilante_terminal_maestri",
+      "label": "Vigilante (terminal do Maestri) \u2014 usa o modelo do desktop ao responder, deixa de subir MLX local",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_maestri_local_llm_client",
+      "label": "Cliente .maestri/local/llm.mjs \u2014 chama o modelo do desktop a partir do Mac",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_llm_desktop_windows_gpt_oss_20b_alternativa",
+      "label": "gpt-oss-20b (MXFP4, ~12 GB) \u2014 alternativa mais lenta e melhor em racioc\u00ednio, com --n-cpu-moe",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_llm_desktop_windows_modelo_local_desktop_windows_rx580",
+      "target": "docs_runbooks_llm_desktop_windows_tailscale_rede_privada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_modelo_local_desktop_windows_rx580",
+      "target": "docs_runbooks_llm_desktop_windows_llama_cpp_vulkan_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_modelo_local_desktop_windows_rx580",
+      "target": "docs_runbooks_llm_desktop_windows_qwen3_8b_q4_k_m_modelo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_decisao_ceo_tailscale_nao_ngrok",
+      "target": "docs_runbooks_llm_desktop_windows_tailscale_rede_privada",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_decisao_ceo_tailscale_nao_ngrok",
+      "target": "docs_runbooks_llm_desktop_windows_qwen3_8b_q4_k_m_modelo",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "target": "docs_runbooks_llm_desktop_windows_llama_cpp_vulkan_backend",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "target": "docs_runbooks_llm_desktop_windows_qwen3_8b_q4_k_m_modelo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "target": "docs_runbooks_llm_desktop_windows_tailscale_rede_privada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "target": "docs_runbooks_llm_desktop_windows_llm_local_key_autenticacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_maestri_local_llm_client",
+      "target": "docs_runbooks_llm_desktop_windows_llama_server_configuracao",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_vigilante_terminal_maestri",
+      "target": "docs_runbooks_llm_desktop_windows_maestri_local_llm_client",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_llm_desktop_windows_qwen3_8b_q4_k_m_modelo",
+      "target": "docs_runbooks_llm_desktop_windows_gpt_oss_20b_alternativa",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/llm-desktop-windows.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

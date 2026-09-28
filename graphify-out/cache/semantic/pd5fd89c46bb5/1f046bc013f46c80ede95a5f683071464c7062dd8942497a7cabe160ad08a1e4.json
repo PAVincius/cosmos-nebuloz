@@ -1,0 +1,498 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_dpa_modelo_anexo",
+      "label": "Acordo de Tratamento de Dados Pessoais \u2014 modelo (DPA)",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Rascunho estruturado pendente de revis\u00e3o jur\u00eddica; itens entre colchetes duplos s\u00e3o fatos que s\u00f3 a Nebuloz pode confirmar."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao1_papeis",
+      "label": "\u00a71 Pap\u00e9is \u2014 Cliente controlador, Nebuloz operadora",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Variante: h\u00e1 tratamentos (auditoria de plataforma, prospec\u00e7\u00e3o, colaboradores) em que a Nebuloz decide finalidade e meios por conta pr\u00f3pria e \u00e9 controladora independente."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao1_1_titulares_sem_conta",
+      "label": "\u00a71.1 Titulares sem conta",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao2_finalidades",
+      "label": "\u00a72 Objeto e finalidades (por produto)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A Nebuloz n\u00e3o trata dados para finalidade pr\u00f3pria nem usa para treinar modelos \u2014 sem zero-retention contratual, n\u00e3o consegue prometer o que o subprocessador n\u00e3o promete."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao3_instrucoes",
+      "label": "\u00a73 Instru\u00e7\u00f5es e limites",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Dois limites t\u00e9cnicos s\u00e3o parte da instru\u00e7\u00e3o e est\u00e3o no produto, n\u00e3o s\u00f3 no papel: consentimento registrado antes do LLM, e observabilidade de IA sem conte\u00fado em claro por padr\u00e3o."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao3_1_instrucao_documentada",
+      "label": "\u00a73.1 O que constitui instru\u00e7\u00e3o documentada (art. 39)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao4_confidencialidade",
+      "label": "\u00a74 Confidencialidade e pessoas autorizadas",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A trilha de auditoria registra a\u00e7\u00f5es, n\u00e3o leitura de dado por staff \u2014 prometer 'todo acesso \u00e9 registrado' exige construir isso antes, repetindo o erro da policy anterior."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "label": "\u00a75 Subprocessadores",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Coluna de salvaguarda vazia de prop\u00f3sito: \u00e9 fato de contrato com cada subprocessador e s\u00f3 entra depois de confirmado."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao5_1_regime_subcontratacao",
+      "label": "\u00a75.1 Regime da subcontrata\u00e7\u00e3o (30 dias de aviso a novo subprocessador)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao6_transferencia_internacional",
+      "label": "\u00a76 Transfer\u00eancia internacional",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao7_seguranca",
+      "label": "\u00a77 Seguran\u00e7a",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uma limita\u00e7\u00e3o declarada em vez de escondida: o isolamento entre organiza\u00e7\u00f5es \u00e9 aplicado pela camada de aplica\u00e7\u00e3o, n\u00e3o \u00e9 a barreira ativa hoje no banco \u2014 resposta honesta vale mais que a conveniente."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao8_incidentes",
+      "label": "\u00a78 Incidentes de seguran\u00e7a (notifica\u00e7\u00e3o em at\u00e9 72h)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao9_direitos_titulares",
+      "label": "\u00a79 Direitos dos titulares",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Titulares sem conta \u2014 respondentes e participantes \u2014 n\u00e3o t\u00eam como acionar o fluxo pela aplica\u00e7\u00e3o porque ele exige sess\u00e3o; o caminho \u00e9 o Cliente, como controlador."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao9_1_canal_titular_sem_conta",
+      "label": "\u00a79.1 Canal do titular sem conta (repasse em 5 dias \u00fateis)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_secao10_retencao_eliminacao",
+      "label": "\u00a710 Reten\u00e7\u00e3o e elimina\u00e7\u00e3o ao fim do contrato (30 dias)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_adr_0012",
+      "label": "ADR-0012 \u2014 RLS anulada por conex\u00e3o superuser",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_soc2_policy05",
+      "label": "Pol\u00edtica de Classifica\u00e7\u00e3o e Reten\u00e7\u00e3o de Dados v1.1 (soc2/policies/05)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Diz com todas as letras que a elimina\u00e7\u00e3o ao fim do contrato \u00e9 hoje procedimento manual com dono nomeado, n\u00e3o processo autom\u00e1tico \u2014 o anexo pode prometer o prazo, n\u00e3o o mecanismo."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_tabela_dependencias",
+      "label": "Tabela \"O que este modelo depende, e de quem\"",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Seis das sete linhas n\u00e3o s\u00e3o c\u00f3digo; a que \u00e9 est\u00e1 marcada como inexistente, para o anexo n\u00e3o prometer o que o sistema n\u00e3o faz."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_v1_1_changelog",
+      "label": "Nota de vers\u00e3o v1.1 \u2014 sete cl\u00e1usulas incorporadas de operadora-controladora.md",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Fecha a \u00fanica lacuna que o modelo n\u00e3o cobria: titulares que aparecem no banco sem nunca terem tido conta n\u00e3o t\u00eam sess\u00e3o para exercer o art. 18."
+    },
+    {
+      "id": "docs_compliance_dpa_modelo_charter_nebuloz_runbook_ref",
+      "label": "runbook charter-nebuloz.md \u00a75 (invent\u00e1rio completo citado no anexo)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao1_papeis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao1_papeis",
+      "target": "docs_compliance_dpa_modelo_secao1_1_titulares_sem_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao1_1_titulares_sem_conta",
+      "target": "docs_compliance_operadora_controladora_analise",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_v1_1_changelog",
+      "target": "docs_compliance_operadora_controladora_analise",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao2_finalidades",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao3_instrucoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao3_instrucoes",
+      "target": "docs_compliance_dpa_modelo_secao3_1_instrucao_documentada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao4_confidencialidade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "target": "docs_compliance_dpa_modelo_secao5_1_regime_subcontratacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "target": "docs_compliance_dpa_fornecedores_dossie",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "target": "docs_compliance_dpa_modelo_charter_nebuloz_runbook_ref",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao6_transferencia_internacional",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao7_seguranca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao7_seguranca",
+      "target": "docs_compliance_dpa_modelo_adr_0012",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_soc2_policy05",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao8_incidentes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao9_direitos_titulares",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao9_direitos_titulares",
+      "target": "docs_compliance_dpa_modelo_secao9_1_canal_titular_sem_conta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao9_1_canal_titular_sem_conta",
+      "target": "docs_compliance_operadora_controladora_analise",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_secao10_retencao_eliminacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_secao10_retencao_eliminacao",
+      "target": "docs_compliance_dpa_modelo_soc2_policy05",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_tabela_dependencias",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_tabela_dependencias",
+      "target": "docs_compliance_dpa_modelo_secao1_papeis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_tabela_dependencias",
+      "target": "docs_compliance_dpa_modelo_secao5_subprocessadores",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_modelo_anexo",
+      "target": "docs_compliance_dpa_modelo_v1_1_changelog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-modelo.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

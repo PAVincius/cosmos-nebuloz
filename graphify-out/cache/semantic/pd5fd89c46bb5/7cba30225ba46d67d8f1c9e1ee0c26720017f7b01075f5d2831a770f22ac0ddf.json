@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "label": "docs/comercial/pacotes-e-precificacao.md \u2014 quatro pacotes (Idea\u00e7\u00e3o, Valida\u00e7\u00e3o, Growth, Scale)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_scaffold_formula_diagnostico_abatimento",
+      "label": "Scaffold por f\u00f3rmula; regra de abatimento do Diagn\u00f3stico",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_unit_economics_pior_caso",
+      "label": "Unit economics no pior caso da al\u00e7ada, estresse e leitura invertida (CAC/churn m\u00e1ximos)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_scale_250_vs_101",
+      "label": "Achado: linha do Scale comparava contra 250 assentos, n\u00e3o 101",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_avulso_nao_soma_addons",
+      "label": "Achado: 'avulso equivalente' n\u00e3o somava os add-ons inclu\u00eddos \u2014 desconto real plano em ~21%",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_degrau_minimo_teto",
+      "label": "Achado: m\u00ednimo = teto criava degrau de +71%; com m\u00ednimo abaixo do teto cai para +4%",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_mcp_nao_existe",
+      "label": "Achado: MCP n\u00e3o existe no app \u2014 saiu do Growth",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_so_cosmos_charter_chamam_modelo",
+      "label": "Achado: s\u00f3 Cosmos e Charter chamam modelo; Meridian, Signal e Scaffold n\u00e3o",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_sem_medicao_credito_cota",
+      "label": "Achado: n\u00e3o h\u00e1 medi\u00e7\u00e3o de cr\u00e9dito nem checagem de assento; cotas leem Tenant.plan, n\u00e3o PlanoComercial",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_pacotes_e_precificacao_icp_precificacao_nota_atualizacao",
+      "label": "docs/comercial/icp-e-precificacao.md \u2014 nota de atualiza\u00e7\u00e3o apontando para o novo documento",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_scale_250_vs_101",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_avulso_nao_soma_addons",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_degrau_minimo_teto",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_mcp_nao_existe",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_so_cosmos_charter_chamam_modelo",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_achado_sem_medicao_credito_cota",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_scaffold_formula_diagnostico_abatimento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_unit_economics_pior_caso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_pacotes_e_precificacao_icp_precificacao_nota_atualizacao",
+      "target": "_claude_completions_2026_09_27_pacotes_e_precificacao_doc_pacotes_precificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-pacotes-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

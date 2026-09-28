@@ -1,0 +1,289 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_architecture_map_monorepo_structure",
+      "label": "Cosmos Nebuloz Monorepo Structure",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_apps_app",
+      "label": "apps/app \u2014 Client Products",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_apps_backoffice",
+      "label": "apps/backoffice \u2014 Big Bang Back-Office",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_apps_api",
+      "label": "apps/api \u2014 api.nebuloz.ai",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_apps_web",
+      "label": "apps/web \u2014 Marketing Site",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_apps_docs_internal",
+      "label": "apps/docs-internal \u2014 Internal PRD/SRD Site",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_auth",
+      "label": "packages/auth \u2014 requireTenantSession, Session Mgmt",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_rbac",
+      "label": "packages/rbac \u2014 Permission Matrices",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_provisioning",
+      "label": "packages/provisioning \u2014 Tenant + Module Provisioning",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_database",
+      "label": "packages/database \u2014 Prisma Client + Multi-File Schema",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_design_system",
+      "label": "packages/design-system \u2014 shadcn/ui + Cosmos Kit",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_safe_engine",
+      "label": "packages/safe-engine \u2014 SAFe Domain Logic",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_packages_ai",
+      "label": "packages/ai \u2014 Model Router (Anthropic \u2192 Haiku 4.5 fallback)",
+      "file_type": "concept",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_server_action_pattern",
+      "label": "Server Action Pattern (safeAction + requireTenantSession)",
+      "file_type": "rationale",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_result_type_pattern",
+      "label": "Result<T> Usage Pattern (Client)",
+      "file_type": "rationale",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_architecture_map_test_pattern",
+      "label": "Vitest Mock-Before-Import Test Pattern",
+      "file_type": "rationale",
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_architecture_map_server_action_pattern",
+      "target": "_claude_architecture_map_packages_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_server_action_pattern",
+      "target": "_claude_architecture_map_packages_database",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_result_type_pattern",
+      "target": "_claude_architecture_map_server_action_pattern",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_test_pattern",
+      "target": "_claude_architecture_map_server_action_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_apps_backoffice",
+      "target": "_claude_architecture_map_packages_auth",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_monorepo_structure",
+      "target": "_claude_architecture_map_apps_app",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_monorepo_structure",
+      "target": "_claude_architecture_map_apps_backoffice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_monorepo_structure",
+      "target": "_claude_architecture_map_packages_database",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_architecture_map_packages_rbac",
+      "target": "_claude_architecture_map_apps_app",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/ARCHITECTURE_MAP.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_monorepo_composition",
+      "label": "Core Monorepo Apps & Platform Packages",
+      "nodes": [
+        "_claude_architecture_map_apps_app",
+        "_claude_architecture_map_apps_backoffice",
+        "_claude_architecture_map_packages_database",
+        "_claude_architecture_map_packages_auth",
+        "_claude_architecture_map_packages_rbac"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/ARCHITECTURE_MAP.md"
+    }
+  ]
+}

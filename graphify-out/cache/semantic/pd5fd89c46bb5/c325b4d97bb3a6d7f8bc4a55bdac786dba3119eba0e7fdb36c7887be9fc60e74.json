@@ -1,0 +1,333 @@
+{
+  "nodes": [
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_plano_dogfood_esteira",
+      "label": "Plano \u2014 Nebuloz como cliente da pr\u00f3pria esteira",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ciclo_padrao_seis_passos",
+      "label": "Ciclo padr\u00e3o por produto (6 passos: Roteiro, Ensaio, Execu\u00e7\u00e3o, Atrito, Corre\u00e7\u00e3o, Gate)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_gate_de_saida",
+      "label": "Gate de sa\u00edda (passo 6 do ciclo: SCs provados, zero P0/P1, E2E verde, Sentry limpo 7 dias)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ordem_da_esteira",
+      "label": "Ordem da esteira: Meridian \u2192 Scaffold \u2192 Charter \u2192 Cosmos \u2192 Signal",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d1_ordem_confirmada",
+      "label": "Decis\u00e3o D1 \u2014 ordem da esteira confirmada pelo CEO",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d2_respondentes_b",
+      "label": "Decis\u00e3o D2 \u2014 respondentes = CEO + agentes via browser como \"auditoria de repo\" (op\u00e7\u00e3o b)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d3_manter_as_nbz_001",
+      "label": "Decis\u00e3o D3 \u2014 manter AS-NBZ-001 como gabarito de compara\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d4_vai_por_passo",
+      "label": "Decis\u00e3o D4 \u2014 \"vai\" do CEO exigido por passo do roteiro (M1..M9), n\u00e3o por opera\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_001",
+      "label": "AS-NBZ-001 (assessment carregado via SQL, gabarito de compara\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_002",
+      "label": "AS-NBZ-002 (assessment alvo do dogfood do Meridian)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "label": "Produto 1 \u2014 Meridian (detalhado, passos M1\u2013M11)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_read_outside_working_directories",
+      "label": "Risco ALTO \u2014 agentes param no prompt \"read outside working directories\"",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_charter_cosmos_signal_sem_scs",
+      "label": "Risco ALTO \u2014 Charter, Cosmos e Signal sem SCs formais (gate de sa\u00edda n\u00e3o existe)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_dado_real_mistura_benchmark",
+      "label": "Risco M\u00c9DIO \u2014 dado real da Nebuloz em produ\u00e7\u00e3o mistura o benchmark pool",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_tasks_md_desatualizado",
+      "label": "Risco M\u00c9DIO \u2014 tasks.md do Meridian desatualizado (82 tarefas desmarcadas apesar do c\u00f3digo entregue)",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_2026_09_23_plano_dogfood_esteira_parecer_lacre_e_vigia",
+      "label": "Pareceres exigidos para o Meridian: Lacre (dado pessoal) e Vigia (seguran\u00e7a do link do respondente)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_plano_dogfood_esteira",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ciclo_padrao_seis_passos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_plano_dogfood_esteira",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ordem_da_esteira",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ciclo_padrao_seis_passos",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_gate_de_saida",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ordem_da_esteira",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_002",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_001",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d3_manter_as_nbz_001",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_001",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d1_ordem_confirmada",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ordem_da_esteira",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d2_respondentes_b",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_decisao_d4_vai_por_passo",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_ciclo_padrao_seis_passos",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_parecer_lacre_e_vigia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_read_outside_working_directories",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_plano_dogfood_esteira",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_charter_cosmos_signal_sem_scs",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_plano_dogfood_esteira",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_dado_real_mistura_benchmark",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_001",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_2026_09_23_plano_dogfood_esteira_risco_tasks_md_desatualizado",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_produto_1_meridian_detalhado",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/2026-09-23-plano-dogfood-esteira.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

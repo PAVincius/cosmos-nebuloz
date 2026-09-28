@@ -1,0 +1,376 @@
+{
+  "nodes": [
+    {
+      "id": "apps_memoria_readme_servico_memoria",
+      "label": "Servi\u00e7o de mem\u00f3ria de longo prazo dos agentes (apps/memoria)",
+      "file_type": "document",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "N\u00e3o \u00e9 produ\u00e7\u00e3o \u2014 nenhum cliente \u00e9 atendido, app e back-office n\u00e3o a chamam; primeiro tenant \u00e9 a pr\u00f3pria Nebuloz (D-18); come\u00e7ou como laborat\u00f3rio (experiments/memoria-stec) montado a partir de pacote externo que s\u00f3 devolvia resposta fixa."
+    },
+    {
+      "id": "apps_memoria_readme_mcp_endpoint",
+      "label": "Endpoint MCP (http://127.0.0.1:8003/mcp)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Aceita s\u00f3 os hosts 127.0.0.1, localhost e [::1], contra DNS rebinding."
+    },
+    {
+      "id": "apps_memoria_readme_tool_lembrar",
+      "label": "Ferramenta MCP: lembrar (escrita)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Grava decis\u00e3o, compromisso, li\u00e7\u00e3o, fato ou prefer\u00eancia com origem e confian\u00e7a (medido, estimado, declarado); texto id\u00eantico a mem\u00f3ria vigente do mesmo projeto n\u00e3o \u00e9 gravado de novo; fato at\u00f4mico contradit\u00f3rio volta em conflitos."
+    },
+    {
+      "id": "apps_memoria_readme_tool_buscar",
+      "label": "Ferramenta MCP: buscar (leitura, h\u00edbrida vetor+texto)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "valido_em responde 'o que valia em mar\u00e7o'; sabido_em responde 'o que sab\u00edamos em mar\u00e7o'."
+    },
+    {
+      "id": "apps_memoria_readme_tool_listar",
+      "label": "Ferramenta MCP: listar (leitura)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_readme_tool_substituir",
+      "label": "Ferramenta MCP: substituir (escrita, vers\u00e3o nova)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cria a vers\u00e3o nova de uma mem\u00f3ria; a anterior fica no hist\u00f3rico."
+    },
+    {
+      "id": "apps_memoria_readme_tool_revogar",
+      "label": "Ferramenta MCP: revogar (escrita, marca que deixou de valer)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Marca que deixou de valer, sem apagar \u2014 apagar n\u00e3o existe no MCP de prop\u00f3sito; apagamento \u00e9 decis\u00e3o de gente."
+    },
+    {
+      "id": "apps_memoria_readme_tool_historico",
+      "label": "Ferramenta MCP: historico (leitura, todas as vers\u00f5es)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_readme_tool_relacionadas",
+      "label": "Ferramenta MCP: relacionadas (leitura, grafo de entidades)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_readme_arquitetura_postgres_fonte",
+      "label": "Arquitetura: Postgres+pgvector fonte da verdade, Qdrant/Neo4j/MinIO como proje\u00e7\u00f5es",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "As tr\u00eas proje\u00e7\u00f5es se refazem do Postgres via POST /api/v1/maintenance/rebuild; toda resposta rel\u00ea o Postgres, ent\u00e3o proje\u00e7\u00e3o atrasada nunca devolve mem\u00f3ria apagada ou substitu\u00edda."
+    },
+    {
+      "id": "apps_memoria_readme_modelo_bitemporal",
+      "label": "Modelo bitemporal (valid_from/valid_to + tx_from/tx_to)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "valid_from/valid_to dizem quando o fato valeu no mundo; tx_from/tx_to dizem quando o sistema acreditou nele; mem\u00f3ria n\u00e3o se edita, uma vers\u00e3o nova fecha a anterior, e a trigger bloqueia UPDATE/DELETE fora de tr\u00eas casos, valendo at\u00e9 para o superusu\u00e1rio."
+    },
+    {
+      "id": "apps_memoria_readme_chave_por_papel",
+      "label": "Uma chave de escrita por papel do Maestri",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": "cabecalho.sh",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O agente de cada mem\u00f3ria vem da chave, e lembrar n\u00e3o aceita outro; revogar a chave de um papel n\u00e3o afeta os outros; a chave nunca entra na configura\u00e7\u00e3o do Claude Code; chave por papel separa pap\u00e9is mas n\u00e3o isola um do outro no filesystem."
+    },
+    {
+      "id": "apps_memoria_readme_api_governanca_erasure",
+      "label": "API de governan\u00e7a: apagamento (POST /api/v1/governance/erasure)",
+      "file_type": "rationale",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Apagamento zera texto, entidades, rela\u00e7\u00f5es, marcadores e vetor em todas as vers\u00f5es e sai do Qdrant/Neo4j/MinIO; caminho para revogar consentimento e pedido de titular da LGPD (D-14, D-15); auditoria registra o pedido sem o texto."
+    },
+    {
+      "id": "apps_memoria_readme_escopo_cortado_pacote_original",
+      "label": "Escopo cortado do pacote externo original",
+      "file_type": "rationale",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mem0/Cognee cortados (seriam tr\u00eas camadas de mem\u00f3ria pro mesmo trabalho); LangGraph cortado (multiagente s\u00f3 depois de avalia\u00e7\u00e3o que prove necessidade); consolida\u00e7\u00e3o por LLM cortada (resumo que reescreve perde a origem, D-16); Context Layer, Redis/UIs e nota de confian\u00e7a 0-1 cortados; senhas padr\u00e3o do compose substitu\u00eddas por obrigat\u00f3rias no .env."
+    },
+    {
+      "id": "apps_memoria_readme_suite_testes_integracao",
+      "label": "Su\u00edte de 34 testes de integra\u00e7\u00e3o contra servi\u00e7os reais",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cobre seguran\u00e7a (chave, papel, isolamento de tenant, RLS, imutabilidade), mem\u00f3ria (bitemporal, revoga\u00e7\u00e3o, busca, apagamento, reten\u00e7\u00e3o), proje\u00e7\u00f5es, MCP e importador; usa tenants tempor\u00e1rios purgados no fim, sem tocar o tenant nebuloz."
+    },
+    {
+      "id": "apps_memoria_readme_importador",
+      "label": "Importador (app/importar.py)",
+      "file_type": "concept",
+      "source_file": "apps/memoria/README.md",
+      "source_location": "app/importar.py",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Traz .maestri/memoria/*.md (uma li\u00e7\u00e3o por linha), docs/adr/NNNN-*.md (decis\u00e3o, status, se\u00e7\u00e3o Decis\u00e3o) e docs/produto/registro-de-decisoes.md (uma por D-NN); texto igual n\u00e3o mexe, texto mudado vira vers\u00e3o nova, li\u00e7\u00e3o riscada com ~~ vira mem\u00f3ria revogada; os arquivos continuam sendo a fonte (D-12)."
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_mcp_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_lembrar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_buscar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_listar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_substituir",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_revogar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_historico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_readme_tool_relacionadas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_tool_revogar",
+      "target": "apps_memoria_readme_api_governanca_erasure",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_arquitetura_postgres_fonte",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_arquitetura_postgres_fonte",
+      "target": "apps_memoria_readme_modelo_bitemporal",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_chave_por_papel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_escopo_cortado_pacote_original",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_suite_testes_integracao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_readme_importador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_servico_memoria",
+      "target": "apps_memoria_docker_compose_service_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_mcp_endpoint",
+      "target": "apps_memoria_docker_compose_service_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_readme_arquitetura_postgres_fonte",
+      "target": "apps_memoria_docker_compose_service_postgres",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/memoria/README.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,247 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "label": "Migration 20260910000000_livro_razao_e_titulos (cria Lancamento/Titulo, copia LancamentoMensal, ativa RLS)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_tabela_lancamento",
+      "label": "Tabela Lancamento (nova, com RLS FORCE + policy tenant_isolation)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_tabela_titulo",
+      "label": "Tabela Titulo (nova, com RLS FORCE + policy tenant_isolation)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_copia_abertura_lancamento_mensal",
+      "label": "C\u00f3pia de LancamentoMensal para Lancamento de abertura (id abert_, roda antes do bloco de RLS)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_regra_nunca_prisma_migrate_resolve_applied_livro_razao",
+      "label": "Regra: nunca prisma migrate resolve --applied para \"consertar\" migration n\u00e3o aplicada",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_verificacao_dre_pos_deploy",
+      "label": "Verifica\u00e7\u00e3o \u2014 comparar /empresa/financeiro?aba=dre antes/depois do deploy",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_consulta_divergencia_lancamento",
+      "label": "Consulta de diverg\u00eancia \u2014 LancamentoMensal vs Lancamento por (tenantId, competencia, conta)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_valor_migrado_zero_ou_negativo",
+      "label": "Valor migrado zero ou negativo \u2014 LancamentoSchema novo exige valorCentavos > 0, linha copiada fica bloqueada para edi\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_migration_orcamento_e_recorrente",
+      "label": "Migration 20260911000000_orcamento_e_recorrente (OrcamentoDaConta, AssinaturaDoTenant, MudancaDeAssinatura, CreditoDoMes)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_livro_razao_em_producao_lancamento_mensal_tabela_legada",
+      "label": "LancamentoMensal \u2014 tabela legada, n\u00e3o apagada, sem escritor, origem audit\u00e1vel at\u00e9 DRE bater por um m\u00eas",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "target": "docs_runbooks_livro_razao_em_producao_tabela_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "target": "docs_runbooks_livro_razao_em_producao_tabela_titulo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "target": "docs_runbooks_livro_razao_em_producao_copia_abertura_lancamento_mensal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_copia_abertura_lancamento_mensal",
+      "target": "docs_runbooks_livro_razao_em_producao_lancamento_mensal_tabela_legada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_copia_abertura_lancamento_mensal",
+      "target": "docs_runbooks_livro_razao_em_producao_tabela_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_copia_abertura_lancamento_mensal",
+      "target": "docs_runbooks_livro_razao_em_producao_valor_migrado_zero_ou_negativo",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "target": "docs_runbooks_livro_razao_em_producao_regra_nunca_prisma_migrate_resolve_applied_livro_razao",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_livro_razao_titulos",
+      "target": "docs_runbooks_livro_razao_em_producao_verificacao_dre_pos_deploy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_verificacao_dre_pos_deploy",
+      "target": "docs_runbooks_livro_razao_em_producao_consulta_divergencia_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_consulta_divergencia_lancamento",
+      "target": "docs_runbooks_livro_razao_em_producao_tabela_lancamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_consulta_divergencia_lancamento",
+      "target": "docs_runbooks_livro_razao_em_producao_lancamento_mensal_tabela_legada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_orcamento_e_recorrente",
+      "target": "docs_runbooks_livro_razao_em_producao_verificacao_dre_pos_deploy",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_livro_razao_em_producao_migration_orcamento_e_recorrente",
+      "target": "docs_runbooks_livro_razao_em_producao_regra_nunca_prisma_migrate_resolve_applied_livro_razao",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/runbooks/livro-razao-em-producao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

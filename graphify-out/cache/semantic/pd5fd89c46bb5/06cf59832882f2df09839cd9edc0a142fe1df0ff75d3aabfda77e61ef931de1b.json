@@ -1,0 +1,243 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_document",
+      "label": "Regra de maturidade e teste de carga (k6)",
+      "file_type": "document",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_gate_k6",
+      "label": "Regra de maturidade (gate de entrada do k6)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Um produto s\u00f3 entra no teste de carga cumprindo as tr\u00eas: SCs formais verdes no E2E da persona principal; dogfood sem P0/P1 aberto e P2 com dono e data; condi\u00e7\u00f5es de compliance cumpridas quando coleta dado de terceiro. Sem o gate, k6 mede velocidade de produto que ainda quebra."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_k6_tool",
+      "label": "k6 (teste de carga)",
+      "file_type": "concept",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Responde 'aguenta muita gente ao mesmo tempo?', n\u00e3o 'o cliente consegue fazer a jornada?' \u2014 os dois s\u00e3o necess\u00e1rios, nessa ordem, com Playwright primeiro."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_playwright_swarm",
+      "label": "Playwright por persona (apps/app/e2e/swarm/)",
+      "file_type": "concept",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_meridian_load_spec",
+      "label": "Teste de volume do Meridian (meridian-load.spec.ts)",
+      "file_type": "concept",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "200 assessments / 2.000 gaps, or\u00e7amento 2s, s\u00f3 local \u2014 \u00fanico teste de volume existente na su\u00edte."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_meta_carga",
+      "label": "Meta de carga (hip\u00f3tese \u2014 PI Planning ICP)",
+      "file_type": "rationale",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cen\u00e1rio de refer\u00eancia: PI Planning de um cliente ICP (RTE, 3+ ARTs, lead prim\u00e1rio TOTVS); pico de centenas de usu\u00e1rios num \u00fanico tenant, crit\u00e9rio sugerido p95 < 2s e erro < 1%; validar com os 3 leads antes de fixar n\u00famero, por precedente de n\u00famero irreal levando a otimizar a coisa errada."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_ordem_produtos",
+      "label": "Ordem de libera\u00e7\u00e3o para k6",
+      "file_type": "concept",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Meridian (j\u00e1 tem teste de volume e dogfood em curso), Charter (em foco, falta SC formal), Signal (tem jornada e teste de isolamento, 0 SC no spec), depois Scaffold, Cosmos e Backoffice quando passarem no gate."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_restricao_producao",
+      "label": "Restri\u00e7\u00e3o: nunca rodar k6 contra produ\u00e7\u00e3o",
+      "file_type": "rationale",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Produ\u00e7\u00e3o usa pooler Supabase (6543) e dado real; carga sint\u00e9tica contamina dado e gera custo Vercel/Supabase \u2014 ambiente \u00e9 local ou staging dedicado."
+    },
+    {
+      "id": "docs_produto_regra_maturidade_e_carga_risco_server_actions",
+      "label": "Risco t\u00e9cnico: Server Actions com IDs de build dificultam k6 HTTP puro",
+      "file_type": "rationale",
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Op\u00e7\u00f5es: m\u00f3dulo browser do k6, ou exercitar rotas/route handlers diretamente; decis\u00e3o de qual afeta prazo cabe ao Maestro."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_document",
+      "target": "docs_produto_regra_maturidade_e_carga_gate_k6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_gate_k6",
+      "target": "docs_produto_regra_maturidade_e_carga_k6_tool",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_k6_tool",
+      "target": "docs_produto_regra_maturidade_e_carga_playwright_swarm",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_gate_k6",
+      "target": "docs_produto_regra_maturidade_e_carga_meridian_load_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_document",
+      "target": "docs_produto_regra_maturidade_e_carga_meta_carga",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_document",
+      "target": "docs_produto_regra_maturidade_e_carga_ordem_produtos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_ordem_produtos",
+      "target": "docs_produto_meridian_prd_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_ordem_produtos",
+      "target": "docs_produto_charter_prd_charter",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_ordem_produtos",
+      "target": "docs_produto_signal_prd_signal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_document",
+      "target": "docs_produto_regra_maturidade_e_carga_restricao_producao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_document",
+      "target": "docs_produto_regra_maturidade_e_carga_risco_server_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_gate_k6",
+      "target": "docs_produto_prontidao_lancamento_parecer_meridian_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_regra_maturidade_e_carga_meta_carga",
+      "target": "docs_produto_regra_maturidade_e_carga_meridian_load_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/regra-maturidade-e-carga.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

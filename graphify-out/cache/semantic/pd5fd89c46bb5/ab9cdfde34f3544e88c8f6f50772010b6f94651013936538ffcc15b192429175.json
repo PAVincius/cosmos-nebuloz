@@ -1,0 +1,432 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_signal_product_signal",
+      "label": "Signal (Produto APURAR)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\"Valeu a pena?\": ado\u00e7\u00e3o e valor de iniciativas de IA. Produto de expans\u00e3o e renova\u00e7\u00e3o, n\u00e3o de entrada \u2014 pressup\u00f5e Meridian ou Scaffold antes. Regra-m\u00e3e: ado\u00e7\u00e3o e resultado moram juntos; ROI nunca aparece sem f\u00f3rmula e sem confian\u00e7a."
+    },
+    {
+      "id": "apps_app_components_signal_product_iniciativa",
+      "label": "Iniciativa (Initiative)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Registrada com hip\u00f3tese false\u00e1vel e baseline assinado; no gap do mapa, deveria anexar \u00e0 \u00e1rvore do Cosmos mas hoje \u00e9 agrupada por BU e categoria, pr\u00f3pria do Signal."
+    },
+    {
+      "id": "apps_app_components_signal_product_baseline",
+      "label": "Baseline (Assinado, Imut\u00e1vel)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tempo, custo, volume, qualidade e base de usu\u00e1rios, cada um com fonte; imut\u00e1vel antes de ativar. \"N\u00famero sem origem n\u00e3o \u00e9 baseline, \u00e9 lembran\u00e7a.\""
+    },
+    {
+      "id": "apps_app_components_signal_product_roi_multiplo",
+      "label": "ROI / M\u00faltiplo",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhum n\u00famero calculado vira coluna (investido, retornado, m\u00faltiplo, confian\u00e7a, ado\u00e7\u00e3o e veredito calculados na leitura); prot\u00f3tipo mostrava total diferente da soma das partes em 2 de 8 casos."
+    },
+    {
+      "id": "apps_app_components_signal_product_veredito",
+      "label": "Veredito (Provado / Uso sem valor / Promessa parada / Candidata a parada)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Linguagem de decis\u00e3o: Provado \u2192 Escalar or\u00e7amento; Uso sem valor \u2192 Investigar m\u00e9todo; Promessa parada \u2192 Destravar ado\u00e7\u00e3o; Candidata a parada \u2192 Levar ao comit\u00ea."
+    },
+    {
+      "id": "apps_app_components_signal_product_atribuicao_de_ganho",
+      "label": "Atribui\u00e7\u00e3o de Ganho",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Fator, contrafactual e selo de confian\u00e7a \u2014 n\u00facleo exclusivo do Signal no mapa de fronteiras; hoje o contrafactual est\u00e1 ausente na implementa\u00e7\u00e3o."
+    },
+    {
+      "id": "apps_app_components_signal_product_decisao_de_valor",
+      "label": "Decis\u00e3o de Valor (Continuar/Escalar/Pivotar/Encerrar)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Com dono e prazo, viaja ao Cosmos como recomenda\u00e7\u00e3o \u2014 \"o v\u00e1cuo real\": ningu\u00e9m mais decide sobre desempenho em opera\u00e7\u00e3o. Hoje n\u00e3o \u00e9 registrada; veredito e a\u00e7\u00e3o existem s\u00f3 na leitura."
+    },
+    {
+      "id": "apps_app_components_signal_product_encerramento_de_valor",
+      "label": "Encerramento de Valor",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Benef\u00edcio apurado, vari\u00e2ncia e li\u00e7\u00e3o que volta ao template do Scaffold; hoje guarda s\u00f3 o motivo do encerramento, sem vari\u00e2ncia nem li\u00e7\u00e3o."
+    },
+    {
+      "id": "apps_app_components_signal_product_principle_roi_nunca_sozinho",
+      "label": "ROI Nunca Sozinho (Product Principle 1)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Todo m\u00faltiplo carrega a vers\u00e3o da f\u00f3rmula e a confian\u00e7a; sem lastro, o n\u00famero aparece tachado. Mecanismo estrutural, n\u00e3o decis\u00e3o de UI isolada."
+    },
+    {
+      "id": "apps_app_components_signal_product_principle_nada_calculado_vira_coluna",
+      "label": "Nada Calculado Vira Coluna (Product Principle 2)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Deriva-se na leitura e congela-se s\u00f3 no relat\u00f3rio; congelamento \u00e9 recusado se uma fonte citada caiu."
+    },
+    {
+      "id": "apps_app_components_signal_product_principle_ausencia_nao_e_zero",
+      "label": "Aus\u00eancia N\u00e3o \u00c9 Zero (Product Principle 3)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Custo ausente \u00e9 \"\u2014\", baseline ausente \u00e9 \"aguardando promessa\". \"Aus\u00eancia de n\u00famero n\u00e3o \u00e9 retorno zero.\" Nunca \"0,0\u00d7\" para custo ausente."
+    },
+    {
+      "id": "apps_app_components_signal_product_principle_mede_adocao_nao_pessoas",
+      "label": "Mede Ado\u00e7\u00e3o, N\u00e3o Pessoas (Product Principle 4)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 contagem agregada por iniciativa (ativos e licenciados), nunca evento individual; decis\u00e3o em aberto se isso vira requisito escrito (supress\u00e3o abaixo de N, elimina\u00e7\u00e3o LGPD) antes de qualquer conector com evento individual."
+    },
+    {
+      "id": "apps_app_components_signal_product_principle_apura_sem_editar",
+      "label": "Apura Sem Editar, Decide e Recomenda (Product Principle 5)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Apura contra a promessa de outro produto sem edit\u00e1-la, decide sobre valor e recomenda; quem encerra a execu\u00e7\u00e3o \u00e9 o Cosmos."
+    },
+    {
+      "id": "apps_app_components_signal_product_role_matrix_signal",
+      "label": "Matriz de Pap\u00e9is do Signal (signal-matrix.ts)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Admin do tenant n\u00e3o herda: Leitor l\u00ea tudo e exporta relat\u00f3rio congelado; Dono de iniciativa escreve s\u00f3 nas pr\u00f3prias; Analista escreve em qualquer iniciativa, mapeia e versiona f\u00f3rmula; Administrador cuida de fontes, limiares, congelamento e pap\u00e9is."
+    },
+    {
+      "id": "apps_app_components_signal_product_five_gate_guard",
+      "label": "Guard de Cinco Port\u00f5es (sess\u00e3o\u2192m\u00f3dulo\u2192papel\u2192permiss\u00e3o\u2192posse)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Em toda action: 403 manda pedir acesso, 422 nomeia a regra, 409 lista os bloqueios; c\u00f3digo de outro tenant responde \"n\u00e3o encontrado\"; auditoria grava na mesma transa\u00e7\u00e3o da escrita, e se falha, a escrita falha."
+    },
+    {
+      "id": "apps_app_components_signal_product_gap_baseline_proprio",
+      "label": "Gap: Baseline Pr\u00f3prio em Vez de Importar do Scaffold",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "nebuloz.signal.baseline/2 n\u00e3o tem importador; o estado \"aguardando promessa\" n\u00e3o existe. Decis\u00e3o em aberto: por qual chave o Signal importaria o caso assinado (content_hash ou signalInitiativeRef)."
+    },
+    {
+      "id": "apps_app_components_signal_product_gap_iniciativa_propria",
+      "label": "Gap: Iniciativa Pr\u00f3pria em Vez de Anexar \u00e0 \u00c1rvore do Cosmos",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Agrupada por BU e categoria em vez de anexar \u00e0 hierarquia do Cosmos, que \u00e9 quem deveria fornecer a \u00e1rvore."
+    },
+    {
+      "id": "apps_app_components_signal_product_gap_escala_confianca_propria",
+      "label": "Gap: Escala de Confian\u00e7a Pr\u00f3pria (0-100) em Vez da Escala do Meridian",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "0-100, Alta/M\u00e9dia/Baixa, em vez de Medido \u00b7 Estimado \u00b7 Declarado (a escala de confian\u00e7a do Meridian, que o mapa de fronteiras normaliza para a su\u00edte)."
+    },
+    {
+      "id": "apps_app_components_signal_product_seed_signal_ts",
+      "label": "seed-signal.ts (Vanta Sa\u00fade)",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tenant de desenvolvimento fict\u00edcio; \u00fanica fonte de ado\u00e7\u00e3o, resultado e f\u00f3rmula no sistema hoje \u2014 nunca prova real. Em produ\u00e7\u00e3o h\u00e1 0 iniciativas em 6 tenants internos."
+    },
+    {
+      "id": "apps_app_components_signal_product_pricing_signal",
+      "label": "Pre\u00e7o do Signal (R$1.200/m\u00eas + SV-04 + SV-06)",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "R$1.200/m\u00eas (packages/database/scripts/2026-09-catalogo-nebuloz.sql:81, confirmado em produ\u00e7\u00e3o); SV-04 \"Use Case Delivery Squad\" R$74.000/sprint de 2 semanas; SV-06 \"AI Operations Retainer\" R$26.000/m\u00eas, m\u00ednimo 6 meses."
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_signal_product_baseline",
+      "target": "apps_app_components_signal_product_gap_baseline_proprio",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_gap_baseline_proprio",
+      "target": "apps_app_components_scaffold_product_signal_export_contract",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_gap_baseline_proprio",
+      "target": "apps_app_components_scaffold_product_caso_de_negocio",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_roi_multiplo",
+      "target": "apps_app_components_signal_product_principle_roi_nunca_sozinho",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_roi_multiplo",
+      "target": "apps_app_components_signal_design_valuereading",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_veredito",
+      "target": "apps_app_components_signal_design_verdict_first_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_veredito",
+      "target": "apps_app_components_signal_design_adoptionvaluematrix",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_decisao_de_valor",
+      "target": "apps_app_components_signal_product_veredito",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_encerramento_de_valor",
+      "target": "apps_app_components_scaffold_product_metodo_como_dado",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_principle_apura_sem_editar",
+      "target": "apps_app_components_signal_product_baseline",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_gap_iniciativa_propria",
+      "target": "apps_app_components_signal_product_iniciativa",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_gap_escala_confianca_propria",
+      "target": "apps_app_components_scaffold_design_confpill",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_seed_signal_ts",
+      "target": "apps_app_components_signal_product_iniciativa",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_pricing_signal",
+      "target": "apps_app_components_signal_product_signal",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_role_matrix_signal",
+      "target": "apps_app_components_signal_product_five_gate_guard",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_principle_roi_nunca_sozinho",
+      "target": "apps_app_components_scaffold_product_gate_bloqueante",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_product_atribuicao_de_ganho",
+      "target": "apps_app_components_signal_product_decisao_de_valor",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_scaffold_signal_baseline_gap",
+      "label": "Lacuna do Pipeline de Valor Scaffold\u2192Signal (Baseline N\u00e3o Consumido)",
+      "nodes": [
+        "apps_app_components_scaffold_product_caso_de_negocio",
+        "apps_app_components_scaffold_product_signal_export_contract",
+        "apps_app_components_signal_product_baseline",
+        "apps_app_components_signal_product_gap_baseline_proprio"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/PRODUCT.md"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenhash",
+      "label": "MeridianRespondent.tokenHash (regravado na reemiss\u00e3o)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenexpiresat",
+      "label": "MeridianRespondent.tokenExpiresAt = min(now+14d, deadline)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_data_model_auditoria_reissue",
+      "label": "Novo evento de auditoria: meridian.respondent.reissue",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_data_model_reemitidopendente",
+      "label": "ReemitidoPendente (shape de transporte, n\u00e3o persistido)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/data-model.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenexpiresat",
+      "target": "docs_qualidade_dogfood_meridian_atrito_achado_p2_tokenexpiresat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/data-model.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

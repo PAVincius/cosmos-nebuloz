@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "specs_004_login_generico_produto_plan_summary",
+      "label": "Plano: substituir /cosmos/dashboard fixo por resolu\u00e7\u00e3o din\u00e2mica",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_plan_constitution_check",
+      "label": "Constitution Check: 5 princ\u00edpios, PASS sem viola\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_004_login_generico_produto_plan_structure_decision",
+      "label": "Structure Decision: centralizar resolu\u00e7\u00e3o em (authenticated)/page.tsx",
+      "file_type": "rationale",
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Evita triplicar a regra isInternalTenant\u2192cat\u00e1logo nos 3 pontos hoje hardcoded; sign-in.tsx passa a redirecionar pra '/' que resolve uma vez s\u00f3, no servidor."
+    },
+    {
+      "id": "specs_004_login_generico_produto_plan_technical_context",
+      "label": "Technical Context: Next.js 15, Better Auth, Prisma, Resend",
+      "file_type": "document",
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_004_login_generico_produto_plan_summary",
+      "target": "specs_004_login_generico_produto_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_004_login_generico_produto_plan_constitution_check",
+      "target": "specs_004_login_generico_produto_data_model_tenant_isinternaltenant",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/004-login-generico-produto/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

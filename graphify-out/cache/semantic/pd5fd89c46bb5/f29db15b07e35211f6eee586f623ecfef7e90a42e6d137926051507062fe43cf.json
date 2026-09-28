@@ -1,0 +1,524 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "label": "Per\u00edodo por intervalo e plano de contas edit\u00e1vel (plano)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervalo_type",
+      "label": "Intervalo (tipo de per\u00edodo: de/ate)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "label": "periodo.ts (lib de per\u00edodo)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contadoplano_model",
+      "label": "ContaDoPlano (modelo Prisma)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_nebuloz_seed",
+      "label": "PLANO_DE_CONTAS_NEBULOZ (seed de 27 contas)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_calculardre_function",
+      "label": "calcularDre(contas, l)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_ts",
+      "label": "plano-de-contas.ts (regras do plano de contas)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component",
+      "label": "SeletorDePeriodo (componente)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_entradadedata_component",
+      "label": "EntradaDeData (componente)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "label": "financeiro.ts (action de Financeiro)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_action",
+      "label": "cac.ts (action de CAC)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contas_do_cac_constant",
+      "label": "CONTAS_DO_CAC (constante fixa 4.1\u20134.6)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_date_range_picker_for_shadcn",
+      "label": "date-range-picker-for-shadcn (johnpolacek, portado)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervaloexcedido_error",
+      "label": "IntervaloExcedido (erro nomeado)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_tetos_decision",
+      "label": "Tetos de 12 meses / 26 semanas recusam, n\u00e3o truncam",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_spec_periodo_ref",
+      "label": "Spec 2026-09-06 per\u00edodo e plano de contas (design)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_crud_actions",
+      "label": "listarPlanoDeContas / criarConta / atualizarConta",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_tsx_tela",
+      "label": "plano.tsx (aba Plano de contas)",
+      "file_type": "code",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_dre_view",
+      "label": "DreView (com intervalo e coluna total)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_caixa_view",
+      "label": "CaixaView (com intervalo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_view",
+      "label": "CacView (agrega\u00e7\u00e3o por intervalo, editavel)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contadoplano_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_spec_periodo_ref",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervalo_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervaloexcedido_error",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_tetos_decision",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contadoplano_model",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_nebuloz_seed",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_nebuloz_seed",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_ts",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_calculardre_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_calculardre_function",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contadoplano_model",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_calculardre_function",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_crud_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_dre_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_financeiro_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_caixa_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contas_do_cac_constant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_action",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_cac_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_entradadedata_component",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervalo_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_date_range_picker_for_shadcn",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_tsx_tela",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_de_contas_crud_actions",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_plano_tsx_tela",
+      "target": "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_contadoplano_model",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "periodo_por_intervalo_mecanismo",
+      "label": "Per\u00edodo por intervalo \u2014 mecanismo de teto e presets",
+      "nodes": [
+        "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_periodo_ts",
+        "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervalo_type",
+        "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_intervaloexcedido_error",
+        "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_tetos_decision",
+        "docs_superpowers_plans_2026_09_06_periodo_e_plano_de_contas_seletordeperiodo_component"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-09-06-periodo-e-plano-de-contas.md"
+    }
+  ]
+}

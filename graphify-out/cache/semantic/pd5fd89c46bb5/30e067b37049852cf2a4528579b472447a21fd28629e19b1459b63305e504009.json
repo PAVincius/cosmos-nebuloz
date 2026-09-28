@@ -1,0 +1,457 @@
+{
+  "nodes": [
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "label": "Roteiro de dogfood \u2014 Meridian (M1\u2013M11)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m1_abrir_assessment_pela_carteira",
+      "label": "M1 \u2014 Abrir o AS-NBZ-002 pela carteira, do zero (SC-001 in\u00edcio)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m2_convidar_dez_respondentes",
+      "label": "M2 \u2014 Convidar respondentes por eixo (dez convites: fundador + auditoria)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m3_respondentes_reentram_respostas",
+      "label": "M3 \u2014 Dez respondentes reentram as respostas exatas do AS-NBZ-001, cronometrados (SC-006)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m4_fechar_coleta_rodar_scoring",
+      "label": "M4 \u2014 Fechar coleta, rodar scoring; SC-002 provado em duas partes",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m5_fila_revisao_override_rationale",
+      "label": "M5 \u2014 Fila de revis\u00e3o: eixo contestado, override com rationale (SC-003, SC-004)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m6_gap_register_plano_12_meses",
+      "label": "M6 \u2014 Gap register + plano de 12 meses: conferir a topologia (SC-007)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m7_relatorio_sem_planilha_auxiliar",
+      "label": "M7 \u2014 Relat\u00f3rio gerado sem planilha auxiliar (SC-001 fim)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m8_amostragem_trilha_auditoria",
+      "label": "M8 \u2014 Amostragem na trilha de auditoria de leitura de evid\u00eancia (SC-008)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m9_promover_lacuna_scaffold",
+      "label": "M9 \u2014 Promover \u22651 lacuna para o Scaffold; tentar editar a lacuna fora do Meridian (SC-009)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m10_carga_200_assessments_local",
+      "label": "M10 \u2014 Carga: 200 assessments / 2.000 gaps, s\u00f3 no local (SC-010)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_m11_benchmark_coorte_menor_5",
+      "label": "M11 \u2014 Benchmark: com coorte < 5, nenhuma compara\u00e7\u00e3o aparece (SC-005)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_sc_002_determinismo_scoring_duas_partes",
+      "label": "SC-002 \u2014 rodar o scoring duas vezes sobre as mesmas respostas produz resultado id\u00eantico (prova em duas partes)",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_in_tx",
+      "label": "runScoringInTx (apps/app/app/(meridian)/actions/scoring.ts:52-56) \u2014 idempotente por constru\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_action_sem_caller",
+      "label": "runScoring (scoring.ts:289) \u2014 action p\u00fablica sem nenhum caller na UI, sem bot\u00e3o \"recalcular scoring\"",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_close_collection_action",
+      "label": "closeCollection (apps/app/app/(meridian)/actions/collection.ts:276) \u2014 n\u00e3o reexecut\u00e1vel sobre o mesmo assessment",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_meridian_scoring_test",
+      "label": "__tests__/lib/meridian-scoring.test.ts \u2014 teste automatizado de determinismo do motor de scoring",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_decisoes_vigentes_morgana_ceo",
+      "label": "Decis\u00f5es vigentes do roteiro (Morgana/CEO): D2 respondentes, D3 gabarito, D4 \"vai\" por passo",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_nota_correcao_dois_respondentes_por_eixo",
+      "label": "Nota de corre\u00e7\u00e3o \u2014 AS-NBZ-001 tem dois respondentes por eixo (fundador + auditoria), n\u00e3o um",
+      "file_type": "rationale",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_qualidade_dogfood_meridian_roteiro_criterio_termino_roteiro",
+      "label": "Crit\u00e9rio de t\u00e9rmino do roteiro \u2014 M1\u2013M11 executados, evid\u00eancia coletada, SCs provados, atrito registrado",
+      "file_type": "concept",
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m1_abrir_assessment_pela_carteira",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m2_convidar_dez_respondentes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m3_respondentes_reentram_respostas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m4_fechar_coleta_rodar_scoring",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m5_fila_revisao_override_rationale",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m6_gap_register_plano_12_meses",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m7_relatorio_sem_planilha_auxiliar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m8_amostragem_trilha_auditoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m9_promover_lacuna_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m10_carga_200_assessments_local",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m11_benchmark_coorte_menor_5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_m4_fechar_coleta_rodar_scoring",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_sc_002_determinismo_scoring_duas_partes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_sc_002_determinismo_scoring_duas_partes",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_in_tx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_sc_002_determinismo_scoring_duas_partes",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_meridian_scoring_test",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_in_tx",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_close_collection_action",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_action_sem_caller",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_run_scoring_in_tx",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_m4_fechar_coleta_rodar_scoring",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_close_collection_action",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_close_collection_action",
+      "target": "docs_qualidade_dogfood_meridian_atrito_p3_close_collection_nao_idempotente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_nota_correcao_dois_respondentes_por_eixo",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_m2_convidar_dez_respondentes",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_decisoes_vigentes_morgana_ceo",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_roteiro_dogfood_meridian",
+      "target": "docs_qualidade_dogfood_meridian_roteiro_criterio_termino_roteiro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_m1_abrir_assessment_pela_carteira",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_002",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_qualidade_dogfood_meridian_roteiro_m4_fechar_coleta_rodar_scoring",
+      "target": "docs_qualidade_2026_09_23_plano_dogfood_esteira_as_nbz_001",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/qualidade/dogfood/meridian/roteiro.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

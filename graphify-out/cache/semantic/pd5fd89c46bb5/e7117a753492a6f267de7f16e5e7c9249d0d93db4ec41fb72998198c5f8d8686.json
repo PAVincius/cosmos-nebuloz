@@ -1,0 +1,637 @@
+{
+  "nodes": [
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_metodologia_comparacao",
+      "label": "Metodologia da Comparacao entre Handoff e Codigo",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_ferramentas_convergencia",
+      "label": "Foco Ferramentas - Convergencia entre Design e Codigo",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_estudio_componente",
+      "label": "Componente Estudio - ferramentas estudio.tsx unificado",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_bpmn_js_mermaid_reais",
+      "label": "bpmn-js e Mermaid Reais - Codigo a Frente do Prototipo",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_t6_tenant_do_diagrama",
+      "label": "T6 - Seletor de Tenant no Diagrama, Fechado",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_t7_versionamento_diff",
+      "label": "T7 - Publicar Versao e Diff por Elemento, Pendente",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_mapa_de_processo_grafo",
+      "label": "Mapa de Processo - Grafo de Conhecimento Navegavel no Design",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_proc_nodes",
+      "label": "PROC_NODES - Schema de 21 Nos do Mapa",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_proc_edges",
+      "label": "PROC_EDGES - 23 Arestas com Relacao em Texto Livre",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_staffdiagram_nao_serve",
+      "label": "StaffDiagram Nao Serve para o Mapa de Processo",
+      "file_type": "rationale",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+      "label": "StaffProcess StaffProcessEdge StaffProcessSource - Schema Proposto",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_lineage_screen",
+      "label": "LineageScreen e ModelCardScreen - Bloqueados pelo LAB",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_lab_bloqueado",
+      "label": "LAB Fora do Menu ate Ter PRD SRD e Schema",
+      "file_type": "rationale",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_funil_divergencia",
+      "label": "Funil - Divergencia Quatro Estagios no Design vs Tres no Codigo",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_stagepanel",
+      "label": "StagePanel - Peso Teto Conversao e Edicao Append-Only",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_contagem_por_rota",
+      "label": "Contagem por Rota - 20 Existem, 9 Faltam",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_logs_como_telas",
+      "label": "Os Logs como Telas - Quatro Documentos sem Desenho",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_kit_componentes_faltantes",
+      "label": "Componentes do Kit Ausentes no Codigo - ToastStack Legend BarRow useNarrow",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_icones_faltantes",
+      "label": "Icones Faltantes - graph drive mic layers2",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_ambiguidades",
+      "label": "Dez Ambiguidades para o Usuario Confirmar",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_ordem_de_implementacao",
+      "label": "Ordem Sugerida de Implementacao por Blocos",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_1_fechado",
+      "label": "Bloco 1 - Ferramentas, Fechado em 2026-09-07",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_3_mapa",
+      "label": "Bloco 3 - Mapa de Processos, a Peca Grande",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_5_lab_bloqueado",
+      "label": "Bloco 5 - LAB, Bloqueado por Decisao",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_design_handoff_backoffice_gap_2026_09_05_delivery_contas_detalhe",
+      "label": "Rotas de Detalhe Ausentes - delivery id e contas slug",
+      "file_type": "concept",
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_metodologia_comparacao",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_ferramentas_convergencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ferramentas_convergencia",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_estudio_componente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_estudio_componente",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_bpmn_js_mermaid_reais",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ferramentas_convergencia",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_t6_tenant_do_diagrama",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ferramentas_convergencia",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_t7_versionamento_diff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_mapa_de_processo_grafo",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_proc_nodes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_mapa_de_processo_grafo",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_proc_edges",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_proc_nodes",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_staffdiagram_nao_serve",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_staffdiagram_nao_serve",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_proc_edges",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_lab_bloqueado",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_lineage_screen",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_funil_divergencia",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_stagepanel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_contagem_por_rota",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_funil_divergencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_contagem_por_rota",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_lab_bloqueado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_contagem_por_rota",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_delivery_contas_detalhe",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ordem_de_implementacao",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_1_fechado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ordem_de_implementacao",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_3_mapa",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ordem_de_implementacao",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_5_lab_bloqueado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_1_fechado",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_t6_tenant_do_diagrama",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_3_mapa",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_bloco_5_lab_bloqueado",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_lab_bloqueado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ambiguidades",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ambiguidades",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_funil_divergencia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_ambiguidades",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_lab_bloqueado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_kit_componentes_faltantes",
+      "target": "docs_design_handoff_backoffice_gap_2026_09_05_icones_faltantes",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_logs_como_telas",
+      "target": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_mapa_de_processo_grafo",
+      "target": "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_funil_divergencia",
+      "target": "docs_comercial_mapa_de_processo_etapa_2_qualificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_logs_como_telas",
+      "target": "docs_compliance_dpa_fornecedores_quadro_resumo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_logs_como_telas",
+      "target": "docs_financeiro_plano_de_contas_centros_de_custo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_design_handoff_backoffice_gap_2026_09_05_logs_como_telas",
+      "target": "docs_compliance_aviso_de_gravacao_per_meeting_standing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_escada_cinco_produtos_nebuloz",
+      "label": "Cinco Produtos da Escada Nebuloz e Seus ICPs",
+      "nodes": [
+        "docs_comercial_insumos_de_posicionamento_escada_cinco_estagios",
+        "docs_comercial_icp_e_precificacao_icp_meridian",
+        "docs_comercial_icp_e_precificacao_icp_charter",
+        "docs_comercial_icp_e_precificacao_icp_cosmos",
+        "docs_comercial_icp_e_precificacao_icp_signal",
+        "docs_comercial_icp_e_precificacao_icp_scaffold"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md"
+    },
+    {
+      "id": "hyperedge_pendencias_acopladas_ticket_diagnostico",
+      "label": "Pendencias Acopladas de Precificacao do Diagnostico",
+      "nodes": [
+        "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+        "docs_comercial_cac_modelo_cac_totalmente_carregado",
+        "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+        "docs_comercial_pacotes_e_precificacao_diagnostico_abatimento"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md"
+    },
+    {
+      "id": "hyperedge_gap_design_codigo_mapa_de_processo",
+      "label": "Gap de Design vs Codigo no Mapa de Processo",
+      "nodes": [
+        "docs_design_handoff_backoffice_gap_2026_09_05_mapa_de_processo_grafo",
+        "docs_design_handoff_backoffice_gap_2026_09_05_staffprocess_proposto",
+        "docs_comercial_mapa_de_processo_lacunas_consolidadas",
+        "docs_comercial_mapa_de_processo_ferramentas_processos"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/design-handoff/backoffice-gap-2026-09-05.md"
+    }
+  ]
+}

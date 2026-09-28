@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_meridian_product_meridian_product",
+      "label": "Meridian Product (AVALIAR)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_readiness_assessment",
+      "label": "AI readiness assessment (5-axis diagnostic)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_confidence_scale_ownership",
+      "label": "Meridian owns the confidence scale (Medido/Estimado/Declarado)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_gap_register",
+      "label": "Gap register (lacunas)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_dispute_review_flow",
+      "label": "Contested-axis review flow (discord\u00e2ncia -> revis\u00e3o humana)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_consultancy_operating_model",
+      "label": "Consultancy operates Meridian on behalf of clients (decision 2026-09-22)",
+      "file_type": "rationale",
+      "rationale": "The Nebuloz consultancy runs the diagnostic across client organizations from one Nebuloz tenant, conducting the whole flow end to end.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_confidence_scale_fragmentation",
+      "label": "Confidence scale is not actually unified across products",
+      "file_type": "rationale",
+      "rationale": "Scaffold duplicates the enum and seal, Signal uses 0-100 with Alta/M\u00e9dia/Baixa, Cosmos uses LOW/MEDIUM/HIGH in WSJF, though the scale screen claims all apply the same seal.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_append_only_integrity_gap",
+      "label": "Answers stay editable after closing despite append-only claim",
+      "file_type": "rationale",
+      "rationale": "The UI states 'Respostas e overrides s\u00e3o append-only' but responses remain editable after the assessment closes.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_gap_severity_hardcoded_bug",
+      "label": "Gap severity uses fixed 60 instead of battery threshold",
+      "file_type": "rationale",
+      "rationale": "Severity computation should use the battery's own threshold but is hardcoded to 60, an integrity issue flagged for correction.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_evidence_retention_lgpd_gap",
+      "label": "Evidence file survives LGPD deletion",
+      "file_type": "rationale",
+      "rationale": "Uploaded evidence outlives the LGPD elimination flow, an unresolved data-retention integrity gap.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_icp_meridian",
+      "label": "Meridian ICP (CIO/CTO, 200-2000 employees, BR/LATAM)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_pricing_meridian",
+      "label": "Meridian pricing (module R$1.200/mo + SV-01 service)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_small_cohort_retention_rule",
+      "label": "Declare retention instead of drawing a misleading small-sample chart",
+      "file_type": "rationale",
+      "rationale": "With cohort below n=5 the report states that it withheld the comparison rather than draw a chart that would read as 'estat\u00edstica de mentira.'",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_respondent_flow",
+      "label": "Respondent link flow (/meridian-responder/<token>, no login)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_v1_1_scope_decision",
+      "label": "Open decision: what scope ships as V1.1",
+      "file_type": "rationale",
+      "rationale": "Which recorte becomes V1.1 (create assessment, indicate respondent, roles, finalize, PDF) is unresolved before the first sale.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_product_defensible_number_principle",
+      "label": "\"N\u00famero defens\u00e1vel\" principle",
+      "file_type": "rationale",
+      "rationale": "Every final score is traceable to answers or to a justified override, and the computed value is never erased by the override.",
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_meridian_product_meridian_product",
+      "target": "apps_app_components_meridian_design_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_confidence_scale_ownership",
+      "target": "apps_app_components_meridian_design_confidence_scale_component",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_confidence_scale_ownership",
+      "target": "apps_app_components_meridian_product_confidence_scale_fragmentation",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_gap_register",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_respondent_flow",
+      "target": "apps_app_components_meridian_product_readiness_assessment",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_append_only_integrity_gap",
+      "target": "apps_app_components_meridian_product_respondent_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_gap_severity_hardcoded_bug",
+      "target": "apps_app_components_meridian_product_gap_register",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_evidence_retention_lgpd_gap",
+      "target": "apps_app_components_meridian_product_respondent_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_small_cohort_retention_rule",
+      "target": "apps_app_components_meridian_design_bench_band",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_small_cohort_retention_rule",
+      "target": "apps_app_components_meridian_design_radar",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_consultancy_operating_model",
+      "target": "apps_app_components_meridian_product_meridian_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_icp_meridian",
+      "target": "apps_app_components_meridian_product_meridian_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_pricing_meridian",
+      "target": "apps_app_components_meridian_product_meridian_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_v1_1_scope_decision",
+      "target": "apps_app_components_meridian_product_meridian_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_defensible_number_principle",
+      "target": "apps_app_components_cosmos_product_no_signal_appears",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_product_dispute_review_flow",
+      "target": "apps_app_components_meridian_product_meridian_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,179 @@
+{
+  "nodes": [
+    {
+      "id": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "label": "Caixa de 13 semanas \u2014 forecast rolante (por caixa, n\u00e3o por compet\u00eancia)",
+      "file_type": "document",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Semana 1 \u00e9 a corrente; a r\u00e9gua sempre olha 13 semanas \u00e0 frente e empurra uma semana a cada atualiza\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_saldo_inicial_final",
+      "label": "Saldo inicial / saldo final (linha da tabela semanal)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Saldo final realizado da semana que fechou vira o saldo inicial da nova semana 1 \u2014 sempre valor de extrato banc\u00e1rio, nunca proje\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_entradas_recebiveis",
+      "label": "Entradas \u2014 receb\u00edveis previstos (faturas j\u00e1 emitidas)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_entradas_contratos_assinados",
+      "label": "Entradas \u2014 contratos assinados (Proposal.status=ACEITA, n\u00e3o faturada)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_entradas_pipeline_ponderado",
+      "label": "Entradas \u2014 pipeline ponderado (ENVIADA/AGUARDANDO_APROVACAO \u00d7 convers\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Deliberadamente conservador: s\u00f3 entra proposta que j\u00e1 saiu, nunca Lead em DISCOVERY ou EVALUATION \u2014 antes de virar proposta o valor n\u00e3o tem n\u00famero para ponderar."
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_saidas_categorias",
+      "label": "Sa\u00eddas por categoria (pessoal, fornecedores, comercial, impostos, outras)",
+      "file_type": "concept",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ligadas aos centros de custo do plano de contas."
+    },
+    {
+      "id": "docs_financeiro_caixa_13_semanas_regra_atualizacao_semanal",
+      "label": "Regra de atualiza\u00e7\u00e3o semanal (rolagem, taxa de convers\u00e3o recalculada)",
+      "file_type": "rationale",
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pipeline ponderado se recalcula com a taxa de convers\u00e3o mais recente do funil, n\u00e3o com taxa fixa herdada; toda sa\u00edda realizada \u00e9 lan\u00e7ada pelo valor real do extrato \u2014 a r\u00e9gua rolante existe para corrigir o desvio, n\u00e3o para escond\u00ea-lo."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_saldo_inicial_final",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_entradas_recebiveis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_entradas_contratos_assinados",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_entradas_pipeline_ponderado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_saidas_categorias",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_caixa_13_semanas_regra_atualizacao_semanal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_entradas_pipeline_ponderado",
+      "target": "docs_financeiro_caixa_13_semanas_regra_atualizacao_semanal",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_forecast_rolante",
+      "target": "docs_financeiro_dre_modelo_dre_mensal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_financeiro_caixa_13_semanas_entradas_recebiveis",
+      "target": "docs_financeiro_plano_de_contas_conta_1_receita",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/financeiro/caixa-13-semanas.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

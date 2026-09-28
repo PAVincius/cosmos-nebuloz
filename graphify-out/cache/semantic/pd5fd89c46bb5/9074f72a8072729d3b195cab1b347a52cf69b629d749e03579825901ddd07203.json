@@ -1,0 +1,518 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_meridian_design_system",
+      "label": "Meridian Design System",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_observatorio_noturno",
+      "label": "O Observat\u00f3rio Noturno (Meridian creative north star)",
+      "file_type": "rationale",
+      "rationale": "Near-black canvas, instruments that only light up when observed, every reading catalogued with its origin and confidence.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_colored_fact_rule",
+      "label": "The Colored Fact Rule",
+      "file_type": "rationale",
+      "rationale": "Red/amber/green reserved for negative-critical, attention-or-money, and positive fact; category/role/decoration use accent, blue or purple.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_color_plus_word_rule",
+      "label": "The Color-Plus-Word Rule",
+      "file_type": "rationale",
+      "rationale": "State never rides on colour alone: StatusDot carries a label, heatmap cell carries the number, charts carry a legend \u2014 an accessibility requirement (NFR-2).",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_four_slot_rule",
+      "label": "The Four-Slot Rule",
+      "file_type": "rationale",
+      "rationale": "Every tone exists as --x, --x-rgb, --x-soft, --x-text; text uses -text, background -soft, border rgba(x,.2-.35), solid fill reserved for point/bar/stroke.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_polarity_rule",
+      "label": "The Polarity Rule",
+      "file_type": "rationale",
+      "rationale": "Glyph over a solid fill uses the theme's --accent-fg (white in light, canvas in dark); white on sky drops to 2.2:1, a white check vanishes on butter.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_mono_for_measure_rule",
+      "label": "The Mono-for-Measure Rule",
+      "file_type": "rationale",
+      "rationale": "Every identifier and measure (case code, count, date, version, percentage) renders in JetBrains Mono; prose never renders in mono.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_six_step_rule",
+      "label": "The Six-Step Rule",
+      "file_type": "rationale",
+      "rationale": "Text size only from the six suite steps (micro 10px..display 22px); a new size is a new step, migrate a literal to the nearest step, tie rounds down.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_single_uppercase_rule",
+      "label": "The Single-Uppercase Rule",
+      "file_type": "rationale",
+      "rationale": "Uppercase only in Eyebrow and mono stamps, always with open letter-spacing; any other UI uppercase is a sizing error.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_one_cols_rule",
+      "label": "The One-Cols Rule",
+      "file_type": "rationale",
+      "rationale": "Table header and row must share a single 'cols' template, or the header column drifts from the row column on the first resize.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_responding_glow_rule",
+      "label": "The Responding-Glow Rule",
+      "file_type": "rationale",
+      "rationale": "At rest a card only has --card-shadow; lift, hover-shadow and tone glow are hover responses, and the KPI decorative layers wake only in dark theme.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_night_texture_rule",
+      "label": "The Night-Texture Rule",
+      "file_type": "rationale",
+      "rationale": "Fractal grain and 64px grid exist only in dark theme; in light theme they 'become dirt, not texture' (scaffold.css:131).",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_dashed_seal_rule",
+      "label": "The Dashed-Seal Rule",
+      "file_type": "rationale",
+      "rationale": "Data from another product gets a dashed border plus lock, marked read-only: 'the dashed border says not yours, the lock says not editable here.'",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_confpill",
+      "label": "ConfPill component",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_inheritedfrom",
+      "label": "InheritedFrom component",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_awaitingupstream",
+      "label": "AwaitingUpstream component",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_score_ring",
+      "label": "ScoreRing chart",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_radar",
+      "label": "Radar chart (report hero)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_bench_band",
+      "label": "BenchBand cohort-percentile chart",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_shared_base_kit",
+      "label": "Shared base across Charter/Meridian/Scaffold/Signal (cosmos kit + charter/base.tsx)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_no_css_token_file",
+      "label": "No shared token file across the four product .css copies",
+      "file_type": "rationale",
+      "rationale": "charter.css/meridian.css/scaffold.css/signal.css are separate rescoped copies with no common file; changing one token means changing all four, and copies already diverge.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_fs_scale_not_declared_debt",
+      "label": "--fs-* six-step scale undeclared in the four product roots",
+      "file_type": "rationale",
+      "rationale": "The six steps live only in .cosmos-root; under Charter/Meridian/Scaffold/Signal roots FS.* does not resolve and text falls back to the 16px body size.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_grain_selector_mismatch",
+      "label": "Grain texture selector never matches (deliberate false positive)",
+      "file_type": "rationale",
+      "rationale": "The .grain selector needs a descendant of the product root, but the shell puts both classes on the same element, so grain never renders; Impeccable flags it as a known false positive.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_neutral_token_missing",
+      "label": "--neutral/--neutral-rgb missing in meridian.css",
+      "file_type": "rationale",
+      "rationale": "Radar's dashed median and BenchBand's p25-p75 band consume --neutral, but meridian.css never declares it, so the two elements do not paint.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_confidence_scale_component",
+      "label": "Escala de confian\u00e7a UI (Medido/Estimado/Declarado)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_gray_button_no_hover_decision",
+      "label": "Buttons have no :hover state (system decision)",
+      "file_type": "rationale",
+      "rationale": "No product's .btn defines :hover; the only feedback is :active \u2014 a deliberate decision from Charter wave 6, not an oversight.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_adr_0010_self_sufficient_roots",
+      "label": "ADR-0010: each product root is self-sufficient",
+      "file_type": "rationale",
+      "rationale": "Meridian must not bring in Cosmos's lavender accent (#5e6ad2) or import cosmos.css \u2014 each of the four raizes stays self-contained.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_meridian_design_adr_0004_no_persona_switch",
+      "label": "ADR-0004: no persona switcher in topbar",
+      "file_type": "rationale",
+      "rationale": "Role comes from the session; porting the prototype's persona switcher into the topbar would be a privilege-escalation vector.",
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_meridian_design_observatorio_noturno",
+      "target": "apps_app_components_meridian_design_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_confpill",
+      "target": "apps_app_components_meridian_design_confidence_scale_component",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_inheritedfrom",
+      "target": "apps_app_components_meridian_design_dashed_seal_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_awaitingupstream",
+      "target": "apps_app_components_meridian_design_dashed_seal_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_radar",
+      "target": "apps_app_components_meridian_design_color_plus_word_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_bench_band",
+      "target": "apps_app_components_meridian_design_color_plus_word_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_score_ring",
+      "target": "apps_app_components_meridian_design_color_plus_word_rule",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_confpill",
+      "target": "apps_app_components_meridian_design_colored_fact_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_shared_base_kit",
+      "target": "apps_app_components_cosmos_design_shared_kit",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_no_css_token_file",
+      "target": "apps_app_components_meridian_design_shared_base_kit",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_fs_scale_not_declared_debt",
+      "target": "apps_app_components_meridian_design_six_step_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_grain_selector_mismatch",
+      "target": "apps_app_components_meridian_design_night_texture_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_neutral_token_missing",
+      "target": "apps_app_components_meridian_design_radar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_neutral_token_missing",
+      "target": "apps_app_components_meridian_design_bench_band",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_adr_0010_self_sufficient_roots",
+      "target": "apps_app_components_cosmos_design_one_voice_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_gray_button_no_hover_decision",
+      "target": "apps_app_components_meridian_design_responding_glow_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_meridian_design_confidence_scale_component",
+      "target": "apps_app_components_meridian_design_four_slot_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "meridian_componentes_de_fronteira",
+      "label": "Componentes de Fronteira (Meridian boundary components)",
+      "nodes": [
+        "apps_app_components_meridian_design_confpill",
+        "apps_app_components_meridian_design_inheritedfrom",
+        "apps_app_components_meridian_design_awaitingupstream"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/meridian/DESIGN.md"
+    }
+  ]
+}

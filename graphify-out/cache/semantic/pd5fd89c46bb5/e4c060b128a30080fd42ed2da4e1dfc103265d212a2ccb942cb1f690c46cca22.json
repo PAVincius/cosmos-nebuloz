@@ -1,0 +1,405 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "label": "M\u00e9todo eixo \u00d7 lacuna",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_catalogo_fontes_criticas",
+      "label": "Candidato: Cat\u00e1logo m\u00ednimo das fontes cr\u00edticas (DATA, Q-D01)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_qualidade_dados_observavel",
+      "label": "Candidato: Qualidade observ\u00e1vel nas fontes que alimentam IA (DATA, Q-D02)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_recolhimento_dado_sombra",
+      "label": "Candidato: Recolhimento do dado sombra (DATA, Q-D03)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_baseline_antes_piloto",
+      "label": "Candidato: Baseline antes do piloto (PROCESS, Q-P01)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_carteira_casos_uso",
+      "label": "Candidato: Carteira de casos de uso com crit\u00e9rio compar\u00e1vel (PROCESS, Q-P02)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_gestao_excecao",
+      "label": "Candidato: Gest\u00e3o de exce\u00e7\u00e3o com revis\u00e3o executada (PROCESS, Q-P03)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_letramento_ia_persona",
+      "label": "Candidato: Letramento em IA por persona, com evid\u00eancia (PEOPLE, Q-E01)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_formalizacao_papeis_dado",
+      "label": "Candidato: Formaliza\u00e7\u00e3o dos pap\u00e9is de dado (PEOPLE, Q-E02)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_descentralizacao_conhecimento",
+      "label": "Candidato: Descentraliza\u00e7\u00e3o do conhecimento de IA (PEOPLE, Q-E03)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_politica_ia_aprovada",
+      "label": "Candidato: Pol\u00edtica de IA aprovada, versionada e comunicada (GOVERNANCE, Q-G01)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_comite_ia_operacao",
+      "label": "Candidato: Comit\u00ea de IA em opera\u00e7\u00e3o (GOVERNANCE, Q-G02)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_classificacao_dado_sensivel",
+      "label": "Candidato: Classifica\u00e7\u00e3o e controle aplicados ao dado sens\u00edvel (GOVERNANCE, Q-G03)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_ambiente_segregado_experimentacao",
+      "label": "Candidato: Ambiente segregado para experimenta\u00e7\u00e3o (INFRASTRUCTURE, Q-I01)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_ciclo_vida_modelo_rollback",
+      "label": "Candidato: Ciclo de vida de modelo com rollback testado (INFRASTRUCTURE, Q-I02)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_tpl_custo_inferencia_caso_uso",
+      "label": "Candidato: Custo de infer\u00eancia por caso de uso (INFRASTRUCTURE, Q-I03)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_pesquisa_mercado_scaffold_pacote_setorial_financeiro",
+      "label": "Pacote setorial financeiro (overlay de m\u00e9todo)",
+      "file_type": "concept",
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tratar o pacote financeiro como overlay de m\u00e9todo, e n\u00e3o como template paralelo, evita duplicar os passos comuns em cinco trilhas e reusa a mesma m\u00e1quina de detec\u00e7\u00e3o de conflito que j\u00e1 existe para overlay de cliente."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_catalogo_fontes_criticas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_qualidade_dados_observavel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_recolhimento_dado_sombra",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_baseline_antes_piloto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_carteira_casos_uso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_gestao_excecao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_letramento_ia_persona",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_formalizacao_papeis_dado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_descentralizacao_conhecimento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_politica_ia_aprovada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_comite_ia_operacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_classificacao_dado_sensivel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_ambiente_segregado_experimentacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_ciclo_vida_modelo_rollback",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_custo_inferencia_caso_uso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_tpl_baseline_antes_piloto",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_carteira_casos_uso",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_metodo_eixo_lacuna",
+      "target": "docs_produto_pesquisa_mercado_scaffold_pacote_setorial_financeiro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_pacote_setorial_financeiro",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_classificacao_dado_sensivel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_pacote_setorial_financeiro",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_ambiente_segregado_experimentacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_pacote_setorial_financeiro",
+      "target": "docs_produto_pesquisa_mercado_scaffold_tpl_ciclo_vida_modelo_rollback",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_pesquisa_mercado_scaffold_tpl_ambiente_segregado_experimentacao",
+      "target": "docs_produto_scaffold_srd_adr_0016_residencia_dado",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/produto/pesquisa-mercado-scaffold.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

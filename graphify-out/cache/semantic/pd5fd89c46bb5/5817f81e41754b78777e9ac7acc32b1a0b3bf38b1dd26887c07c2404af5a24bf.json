@@ -1,0 +1,604 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_dpa_fornecedores_dossie",
+      "label": "DPA dos Fornecedores \u2014 estado real, por fonte prim\u00e1ria",
+      "file_type": "document",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_charter_vendor_model",
+      "label": "CharterVendor (modelo Prisma \u2014 dpa, retention, subprocessors, region, score)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Toda coluna contratual do invent\u00e1rio est\u00e1 no default de prop\u00f3sito (dpa=false, score=50) porque o runbook decidiu que confirma\u00e7\u00e3o de contrato se faz na tela, n\u00e3o no seed; este dossi\u00ea \u00e9 a evid\u00eancia para essa confirma\u00e7\u00e3o, n\u00e3o o ato dela."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_charter_nebuloz_runbook",
+      "label": "runbook charter-nebuloz.md \u00a75 (invent\u00e1rio de fornecedores)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v01_anthropic",
+      "label": "V-01 \u00b7 Anthropic \u2014 modelo de linguagem",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "DPA incorporado por refer\u00eancia aos termos comerciais; reten\u00e7\u00e3o da API n\u00e3o confirmada \u2014 a p\u00e1gina p\u00fablica cobre s\u00f3 produtos de consumo."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v02_openai",
+      "label": "V-02 \u00b7 OpenAI \u2014 modelo de linguagem",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Dado n\u00e3o \u00e9 usado para treinar desde mar\u00e7o de 2023; reten\u00e7\u00e3o zero exige aprova\u00e7\u00e3o pr\u00e9via da OpenAI, n\u00e3o \u00e9 o padr\u00e3o."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v03_google_gemini",
+      "label": "V-03 \u00b7 Google (Gemini Developer API)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Em Unpaid Services o Google usa prompts/respostas para melhorar produtos e revisores humanos leem entrada e sa\u00edda \u2014 a\u00e7\u00e3o pendente cr\u00edtica: confirmar que a chave \u00e9 de plano pago."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v04_langfuse",
+      "label": "V-04 \u00b7 Langfuse (ClickHouse) \u2014 observabilidade de LLM",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Langfuse foi absorvida pela ClickHouse; nunca ligar LANGFUSE_CAPTURE_CONTENT em ambiente com dado de cliente."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v05_neon",
+      "label": "V-05 \u00b7 Neon (Databricks) \u2014 banco de dados",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Isolamento entre tenants hoje \u00e9 de aplica\u00e7\u00e3o (ADR-0012) \u2014 risco de arquitetura, n\u00e3o de contrato."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v06_vercel",
+      "label": "V-06 \u00b7 Vercel \u2014 hospedagem e execu\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v07_upstash",
+      "label": "V-07 \u00b7 Upstash \u2014 cache e rate limit",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Classifica\u00e7\u00e3o provis\u00f3ria: PDFs de DPA e subprocessadores sem camada de texto extra\u00edvel."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v08_sentry",
+      "label": "V-08 \u00b7 Sentry \u2014 observabilidade de erro",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "DPA n\u00e3o \u00e9 autom\u00e1tico \u2014 algu\u00e9m precisa aceitar no portal; confirmar pol\u00edtica de scrubbing porque stack trace carrega dado incidental."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v09_liveblocks",
+      "label": "V-09 \u00b7 Liveblocks \u2014 colabora\u00e7\u00e3o em tempo real",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v10_resend",
+      "label": "V-10 \u00b7 Resend \u2014 e-mail transacional",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v11_fireflies",
+      "label": "V-11 \u00b7 Fireflies \u2014 transcri\u00e7\u00e3o de reuni\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Maior risco do invent\u00e1rio \u2014 \u00fanico cujo DPA \u00e9 fluxo de assinatura expl\u00edcito; reten\u00e7\u00e3o de 0 dias com fornecedores e parceiros declarada."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v12_posthog",
+      "label": "V-12 \u00b7 PostHog \u2014 analytics de produto",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "DPA self-serve, efetivo no momento em que se assina, em qualquer plano incluindo o gratuito."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v13_arcjet",
+      "label": "V-13 \u00b7 Arcjet \u2014 seguran\u00e7a de borda",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhum DPA p\u00fablico; corpo da requisi\u00e7\u00e3o n\u00e3o \u00e9 enviado \u00e0 API, mas IP, cabe\u00e7alhos e e-mail de valida\u00e7\u00e3o sim, com reten\u00e7\u00e3o de 30 dias."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v14_inngest",
+      "label": "V-14 \u00b7 Inngest \u2014 execu\u00e7\u00e3o de jobs",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhum DPA p\u00fablico; orquestra o V-11 e herda o risco dele."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v15_svix",
+      "label": "V-15 \u00b7 Svix \u2014 webhooks",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00danico subprocessador com acesso ao Customer Content \u00e9 a AWS, na regi\u00e3o escolhida pelo cliente; confirmar se est\u00e1 em uso antes de pedir DPA."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v16_knock",
+      "label": "V-16 \u00b7 Knock \u2014 notifica\u00e7\u00f5es",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Um \u00fanico arquivo importa o pacote, prov\u00e1vel heran\u00e7a do Next Forge \u2014 se n\u00e3o estiver em uso, sai do invent\u00e1rio em vez de assinar DPA de 2023."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v17_basehub",
+      "label": "V-17 \u00b7 BaseHub \u2014 CMS do site",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "P\u00e1ginas legais servem casca renderizada por JavaScript sem conte\u00fado leg\u00edvel por fonte prim\u00e1ria; site j\u00e1 tirou /legal do CMS de prop\u00f3sito."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v18_stripe",
+      "label": "V-18 \u00b7 Stripe \u2014 pagamentos",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "label": "V-19 \u00b7 TypeSafe AI, Inc. (typesafe-ai/jev, via Vercel AI Gateway) \u2014 triagem autom\u00e1tica de commits",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Diferente do V-06 (Vercel como hospedagem), aqui a Vercel \u00e9 intermedi\u00e1ria: o AI Gateway roteia para o provedor de modelo, que tem DPA e subprocessadores pr\u00f3prios; ZDR por requisi\u00e7\u00e3o \u00e9 documentado e falha fechado (no_providers_available)."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_bloqueiam_venda",
+      "label": "Fornecedores que bloqueiam venda (V-03, V-11, V-14)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "V-03 porque em plano n\u00e3o pago a Gemini API usa conte\u00fado para melhorar produtos e revisores humanos leem entrada/sa\u00edda; V-11 e V-14 porque transcri\u00e7\u00e3o de reuni\u00e3o de cliente \u00e9 o dado mais sens\u00edvel do invent\u00e1rio e o Inngest \u00e9 o caminho por onde ele passa."
+    },
+    {
+      "id": "docs_compliance_dpa_fornecedores_raci_playbook_vendas",
+      "label": "RACI do playbook de vendas \u2014 a\u00e7\u00f5es consolidadas",
+      "file_type": "concept",
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Estrutura montada e os nomes em branco \u2014 preencher \u00e9 decis\u00e3o de quem dirige a empresa; a coluna nomeia o papel, n\u00e3o a pessoa."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_charter_vendor_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_charter_nebuloz_runbook",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v01_anthropic",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v02_openai",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v03_google_gemini",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v04_langfuse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v05_neon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v06_vercel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v07_upstash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v08_sentry",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v09_liveblocks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v10_resend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v11_fireflies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v12_posthog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v13_arcjet",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v14_inngest",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v15_svix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v16_knock",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v17_basehub",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v18_stripe",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_v11_fireflies",
+      "target": "docs_compliance_dpa_fornecedores_v14_inngest",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_vercel_ai_gateway",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_typesafe_ai_inc",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_bloqueiam_venda",
+      "target": "docs_compliance_dpa_fornecedores_v03_google_gemini",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_bloqueiam_venda",
+      "target": "docs_compliance_dpa_fornecedores_v11_fireflies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_bloqueiam_venda",
+      "target": "docs_compliance_dpa_fornecedores_v14_inngest",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_dossie",
+      "target": "docs_compliance_dpa_fornecedores_raci_playbook_vendas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_dpa_fornecedores_raci_playbook_vendas",
+      "target": "docs_compliance_dpa_fornecedores_bloqueiam_venda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "fornecedores_bloqueiam_venda",
+      "label": "Fornecedores que bloqueiam venda (V-03, V-11, V-14)",
+      "nodes": [
+        "docs_compliance_dpa_fornecedores_v03_google_gemini",
+        "docs_compliance_dpa_fornecedores_v11_fireflies",
+        "docs_compliance_dpa_fornecedores_v14_inngest",
+        "docs_compliance_dpa_fornecedores_bloqueiam_venda"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/dpa-fornecedores.md"
+    }
+  ]
+}

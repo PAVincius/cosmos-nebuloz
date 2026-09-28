@@ -1,0 +1,365 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_risk_register_registro",
+      "label": "Risk Register \u2014 Cosmos Nebuloz",
+      "file_type": "document",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_neb140_source",
+      "label": "Enterprise Validation Report (NEB-140)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r001_cross_tenant_leak",
+      "label": "R-001 \u2014 Cross-tenant data leak \u2014 RLS inexistente",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Probabilidade Alta, Impacto Cr\u00edtico, Owner Backend Lead, mitiga\u00e7\u00e3o implementar RLS Postgres (NEB-112)."
+    },
+    {
+      "id": "docs_compliance_risk_register_r002_secrets_exposure",
+      "label": "R-002 \u2014 Exposi\u00e7\u00e3o de secrets \u2014 sem vault/rota\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r003_sca_vulnerabilities",
+      "label": "R-003 \u2014 Vulnerabilidades SCA (5 cr\u00edticas, 115 high)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r004_audit_trail_adulteravel",
+      "label": "R-004 \u2014 Audit trail adulter\u00e1vel \u2014 sem trigger append-only",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r005_gap_soc2",
+      "label": "R-005 \u2014 Gap SOC2 \u2014 eventos de seguran\u00e7a n\u00e3o gravados",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r006_migrations_sem_historico",
+      "label": "R-006 \u2014 Migrations sem hist\u00f3rico (prisma db push)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r007_import_sem_transacao",
+      "label": "R-007 \u2014 Import sem transa\u00e7\u00e3o \u2014 \u00f3rf\u00e3os em falha parcial",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r008_lgpd_sem_dsar",
+      "label": "R-008 \u2014 LGPD \u2014 sem DSAR (erasure/export)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r009_lgpd_sem_dpa_ropa_dpia",
+      "label": "R-009 \u2014 LGPD \u2014 sem DPA, ROPA, DPIA",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Owner CTO + Jur\u00eddico, mitiga\u00e7\u00e3o contratar DPO e assinar DPAs (NEB-120)."
+    },
+    {
+      "id": "docs_compliance_risk_register_r010_backup_sem_restore",
+      "label": "R-010 \u2014 Backup sem restore testado",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r011_sem_circuit_breaker",
+      "label": "R-011 \u2014 Sem circuit breaker em integra\u00e7\u00f5es externas",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r012_sem_rate_limiting",
+      "label": "R-012 \u2014 Sem rate limiting em auth/copilot",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_risk_register_r013_triagem_jev_llm_terceiro",
+      "label": "R-013 \u2014 Triagem Jev envia diff de commits a LLM de terceiro (V-19)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Operador identificado, DPA real, ZDR por requisi\u00e7\u00e3o documentado e fail-closed; risco residual \u00e9 o plano Vercel do time (Pro/Enterprise) n\u00e3o confirmado, sem o qual o ZDR por requisi\u00e7\u00e3o n\u00e3o vale."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_neb140_source",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r001_cross_tenant_leak",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r002_secrets_exposure",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r003_sca_vulnerabilities",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r004_audit_trail_adulteravel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r005_gap_soc2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r006_migrations_sem_historico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r007_import_sem_transacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r008_lgpd_sem_dsar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r009_lgpd_sem_dpa_ropa_dpia",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r010_backup_sem_restore",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r011_sem_circuit_breaker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r012_sem_rate_limiting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_registro",
+      "target": "docs_compliance_risk_register_r013_triagem_jev_llm_terceiro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_r009_lgpd_sem_dpa_ropa_dpia",
+      "target": "docs_compliance_dpa_modelo_anexo",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_r008_lgpd_sem_dsar",
+      "target": "docs_compliance_operadora_controladora_process_erasure_portability",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_r013_triagem_jev_llm_terceiro",
+      "target": "docs_compliance_2026_09_23_parecer_triagem_jev_parecer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_r013_triagem_jev_llm_terceiro",
+      "target": "docs_compliance_dpa_fornecedores_v19_typesafe_ai",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_risk_register_r001_cross_tenant_leak",
+      "target": "docs_compliance_dpa_modelo_adr_0012",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/compliance/risk-register.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

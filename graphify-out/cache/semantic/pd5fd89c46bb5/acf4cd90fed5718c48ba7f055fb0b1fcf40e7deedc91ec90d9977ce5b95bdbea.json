@@ -1,0 +1,517 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "label": "Scaffold \u2014 As Muta\u00e7\u00f5es Ganham Bot\u00e3o Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "label": "Finding: Product Was Inactionable \u2014 15 of 28 Actions Had Zero Callers Outside Tests",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_gate_engine_unreachable",
+      "label": "Finding: closePhase/overridePhase/reopenPhase Unreachable (Gate Engine Never Closed)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_track_promotion_broken",
+      "label": "Finding: createTrackFromGap/createTrack Unreachable (Meridian Promotion Wrote Null targetEntityId)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_signature_flow_stuck",
+      "label": "Finding: signBusinessCase/contestBusinessCase Unreachable (Case Stuck AWAITING, SG-04 Never Released)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_artefact_actions_unreachable",
+      "label": "Finding: attachArtefact/readArtefact/cancelTrack Unreachable (No Way to Attach)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_export_action_file_only",
+      "label": "Finding: exportBusinessCase Existed Only as Action, Not as File Contract",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_tests_isolated_no_ui_path",
+      "label": "Finding: 301 Green Tests Never Asked 'Is There a Button?' (Actions Tested in Isolation)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_gate_panel_component",
+      "label": "GatePanel Component (Extracted From track-detail.tsx)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_gate_panel_wired",
+      "label": "Fix: GatePanel Wires closePhase/Override/Reopen (SG-02 Refusal Stays in Panel)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_new_track_modal",
+      "label": "Fix: NewTrackModal Wires createTrackFromGap/createTrack (Portfolio 'Aguardando Trilha')",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_sign_contest_buttons",
+      "label": "Fix: baseline-detail.tsx Assinar/Contestar Buttons Wired",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_cancel_attach_wired",
+      "label": "Fix: track-detail.tsx Cancelar/Anexar Wired (Signed Case Requires Apura\u00e7\u00e3o Decision)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_export_v2_button",
+      "label": "Fix: 'Exportar v2' Button Wired to exportBusinessCase (Signed Version Only)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_deliberately_out_evaluate_gate",
+      "label": "Deliberately Out: evaluateGate Is Dry-Run, Already Covered by setStepState/closePhase",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_deliberately_out_version_editor",
+      "label": "Deliberately Out: publishVersion/saveOverlay/getTemplate Are Authoring Tools, Not This US",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_ponytail_archetype_label_duplicated",
+      "label": "Ponytail: ARCHETYPE_LABEL Duplicated Between portfolio.tsx and new-track-modal.tsx",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_ponytail_approverid_always_owner",
+      "label": "Ponytail: approverId Always track.ownerId, No Selector for Other Signer",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_lesson_action_coverage_not_product_coverage",
+      "label": "Lesson: Action Test Coverage \u2260 Product Coverage (Needs 'Is There a Button?' Check)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_worktree_disk_full_recycled",
+      "label": "Finding: Previous Worktree Recycled for Disk Full (76GB in .claude/worktrees, 24 Worktrees)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_gate_engine_unreachable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_track_promotion_broken",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_signature_flow_stuck",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_artefact_actions_unreachable",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_export_action_file_only",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_tests_isolated_no_ui_path",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_gate_engine_unreachable",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_gate_panel_component",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_gate_panel_component",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_gate_panel_wired",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_track_promotion_broken",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_new_track_modal",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_signature_flow_stuck",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_sign_contest_buttons",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_artefact_actions_unreachable",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_cancel_attach_wired",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_export_action_file_only",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_export_v2_button",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_cancel_attach_wired",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_sign_contest_buttons",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_tests_isolated_no_ui_path",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_lesson_action_coverage_not_product_coverage",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_lesson_action_coverage_not_product_coverage",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_deliberately_out_evaluate_gate",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_gate_panel_wired",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_deliberately_out_version_editor",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_ponytail_archetype_label_duplicated",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_new_track_modal",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_ponytail_approverid_always_owner",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_sign_contest_buttons",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_worktree_disk_full_recycled",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_actionable_product_gap",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_gate_panel_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_new_track_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_sign_contest_buttons",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_cancel_attach_wired",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_fix_export_v2_button",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_milestone",
+      "target": "_claude_completions_2026_09_16_scaffold_ui_wiring_lesson_action_coverage_not_product_coverage",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_lesson_action_coverage_not_product_coverage",
+      "target": "_claude_completions_2026_09_07_catalogo_de_ip_bug_estado_vazando_lista",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_scaffold_ui_wiring_finding_worktree_disk_full_recycled",
+      "target": "_claude_completions_2026_09_06_mapa_de_processos_shared_stash_found",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-16-scaffold-ui-wiring.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

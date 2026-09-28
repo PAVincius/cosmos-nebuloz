@@ -1,0 +1,537 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_de_processos",
+      "label": "Mapa de processos",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "label": "StaffProcess (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+      "label": "StaffProcessEdge (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffdiagram",
+      "label": "StaffDiagram (existente, referenciado)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_nebuloz_seed",
+      "label": "processos-nebuloz.ts (seed: 21 processos, 23 liga\u00e7\u00f5es)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "label": "lib/ferramentas/processos.ts \u2014 regras puras",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "label": "app/actions/processos.ts",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_layoutpolar",
+      "label": "layoutPolar",
+      "file_type": "rationale",
+      "rationale": "Layout polar determin\u00edstico: n\u00edvel decide o raio (estrat\u00e9gico perto do centro, operacional na borda), dom\u00ednio decide o setor angular; dois n\u00f3s do mesmo par (setor, anel) se espalham em arco para n\u00e3o colidir.",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_parajsoncanvas",
+      "label": "paraJsonCanvas (export JSON Canvas)",
+      "file_type": "rationale",
+      "rationale": "Emite o JSON Canvas 1.0 com um grupo por dom\u00ednio e um n\u00f3 por processo; usa cores literais em hex porque o Obsidian l\u00ea o arquivo fora do back-office e n\u00e3o conhece os tokens CSS \u2014 \u00fanica exce\u00e7\u00e3o \u00e0 regra de s\u00f3 tokens.",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_statusde",
+      "label": "statusDe (status derivado)",
+      "file_type": "rationale",
+      "rationale": "MODELADO quando h\u00e1 diagramId, RASCUNHO quando h\u00e1 docUrl, sen\u00e3o NAO_MAPEADO, nessa ordem \u2014 o status do processo \u00e9 derivado na leitura, n\u00e3o gravado como coluna.",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_dominios",
+      "label": "DOMINIOS (seis dom\u00ednios: Comercial, Delivery, Governan\u00e7a, Plataforma, LAB, Medi\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_niveis",
+      "label": "NIVEIS (estrat\u00e9gico, t\u00e1tico, operacional)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_buscar",
+      "label": "buscar (busca por termos, ignora acento e caixa)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+      "label": "Grafo (SVG apresentacional)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_painel",
+      "label": "Painel do n\u00f3 selecionado",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processo_dialog",
+      "label": "ProcessoDialog",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "label": "mapa.tsx (client raiz)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_page_tsx",
+      "label": "page.tsx (server)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_seed_processos_sql",
+      "label": "2026-09-seed-processos.sql (seed de produ\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_mapa_de_processos_decisao_status_derivado",
+      "label": "Decis\u00e3o: status do processo \u00e9 derivado, n\u00e3o coluna",
+      "file_type": "rationale",
+      "rationale": "source, bpmn, docs e status do design de refer\u00eancia n\u00e3o viram coluna do banco: o status nasce de diagramId/docUrl na leitura, ent\u00e3o nunca fica desatualizado em rela\u00e7\u00e3o ao BPMN vinculado.",
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_de_processos",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_de_processos",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffdiagram",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_nebuloz_seed",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_nebuloz_seed",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_layoutpolar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_parajsoncanvas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_statusde",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_dominios",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_niveis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_lib",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_buscar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_layoutpolar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_statusde",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_parajsoncanvas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_painel",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffdiagram",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_painel",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processo_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_painel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processo_dialog",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_buscar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_page_tsx",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_seed_processos_sql",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_processos_nebuloz_seed",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_mapa_de_processos",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_decisao_status_derivado",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_mapa_de_processos_decisao_status_derivado",
+      "target": "docs_superpowers_plans_2026_09_06_mapa_de_processos_statusde",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyper_mapa_processos_grafo",
+      "label": "Mapa de processos \u2014 grafo naveg\u00e1vel",
+      "nodes": [
+        "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocess",
+        "docs_superpowers_plans_2026_09_06_mapa_de_processos_staffprocessedge",
+        "docs_superpowers_plans_2026_09_06_mapa_de_processos_grafo",
+        "docs_superpowers_plans_2026_09_06_mapa_de_processos_painel",
+        "docs_superpowers_plans_2026_09_06_mapa_de_processos_processo_dialog"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-mapa-de-processos.md"
+    }
+  ]
+}

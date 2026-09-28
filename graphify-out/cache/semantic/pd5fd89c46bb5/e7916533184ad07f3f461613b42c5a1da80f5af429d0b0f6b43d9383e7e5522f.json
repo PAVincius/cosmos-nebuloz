@@ -1,0 +1,410 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_backoffice_dev_backoffice_dev_ambiente_separado",
+      "label": "Back-office de dev \u2014 ambiente separado do Meridian (branch, banco e deploy pr\u00f3prios)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_projeto_vercel_producao",
+      "label": "Projeto Vercel de produ\u00e7\u00e3o prj_IKWTHf8Un5SD8z7X8BDQwdSIrs4N (cosmos-nebuloz-backoffice, backoffice.nebuloz.ai) \u2014 nunca alterar",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "label": "Projeto Vercel novo cosmos-nebuloz-backoffice-dev (Production Branch = dev, publica em dev.backoffice.nebuloz.ai)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_branch_dev_github",
+      "label": "Branch dev no GitHub, criada a partir de main via Git Data API (sem tocar worktree local)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_projeto_supabase_nebuloz_dev",
+      "label": "Projeto Supabase novo nebuloz-dev (mesma regi\u00e3o do projeto de produ\u00e7\u00e3o aosdvvluokrbgpyqwoor)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_por_que_production_branch_dev",
+      "label": "Por que Production Branch = dev, e n\u00e3o Preview",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_decidir_migration_function",
+      "label": "decidirMigration (packages/database/scripts/migration-target.ts) \u2014 decide se migra por VERCEL_ENV/DARK_MATTER_DB_HOST",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_risco_1_database_url_producao_herdada",
+      "label": "Risco n\u00ba1 \u2014 build de dev usando DATABASE_URL de produ\u00e7\u00e3o (mitigado por projeto Vercel separado)",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_inventario_read_only_antes_migrate",
+      "label": "Invent\u00e1rio read-only obrigat\u00f3rio antes do primeiro migrate:deploy no banco dev (checa se public est\u00e1 vazio)",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_migrate_deploy_step",
+      "label": "pnpm --filter @repo/database migrate:deploy com VERCEL_ENV=production, URL de sess\u00e3o porta 5432",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_seed_admin_minimo",
+      "label": "Seed m\u00ednimo \u2014 seed-admin.ts (tenant COSMOS Dev / cosmos-dev + usu\u00e1rio admin)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_env_vars_projeto_novo",
+      "label": "Env vars do projeto novo: DATABASE_URL (nebuloz-dev), BETTER_AUTH_SECRET (novo), BETTER_AUTH_URL",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_dominio_dev_backoffice_nebuloz_ai",
+      "label": "Dom\u00ednio dev.backoffice.nebuloz.ai (CNAME cname.vercel-dns.com, target Production)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_primeiro_deploy_prova_risco1",
+      "label": "Primeiro deploy \u2014 prova do risco n\u00ba1 (log do prisma migrate deploy aponta host nebuloz-dev)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_regra_nunca_prisma_migrate_resolve_applied_backoffice_dev",
+      "label": "Regra: nunca prisma migrate resolve --applied no banco dev (mascara schema divergente)",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_regra_nunca_copiar_database_url_producao",
+      "label": "Regra: nunca copiar DATABASE_URL/DIRECT_URL do projeto de produ\u00e7\u00e3o para o projeto novo, mesmo \"s\u00f3 para testar\"",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_dark_matter_workflow",
+      "label": "dark-matter.yml \u2014 branch ef\u00eamero Neon por PR, DARK_MATTER_DB_HOST, VERCEL_PROJECT_IDS",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_backoffice_dev_deploy_migrations_script",
+      "label": "deploy-migrations.mts (packages/database/scripts) \u2014 roda em todo build via turbo.json build.dependsOn",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_backoffice_dev_backoffice_dev_ambiente_separado",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_producao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_backoffice_dev_ambiente_separado",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_backoffice_dev_ambiente_separado",
+      "target": "docs_runbooks_backoffice_dev_branch_dev_github",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_backoffice_dev_ambiente_separado",
+      "target": "docs_runbooks_backoffice_dev_projeto_supabase_nebuloz_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_por_que_production_branch_dev",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_por_que_production_branch_dev",
+      "target": "docs_runbooks_backoffice_dev_decidir_migration_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_risco_1_database_url_producao_herdada",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_inventario_read_only_antes_migrate",
+      "target": "docs_runbooks_backoffice_dev_migrate_deploy_step",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_migrate_deploy_step",
+      "target": "docs_runbooks_backoffice_dev_decidir_migration_function",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_migrate_deploy_step",
+      "target": "docs_runbooks_backoffice_dev_projeto_supabase_nebuloz_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_seed_admin_minimo",
+      "target": "docs_runbooks_backoffice_dev_projeto_supabase_nebuloz_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_env_vars_projeto_novo",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_env_vars_projeto_novo",
+      "target": "docs_runbooks_backoffice_dev_regra_nunca_copiar_database_url_producao",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_dominio_dev_backoffice_nebuloz_ai",
+      "target": "docs_runbooks_backoffice_dev_projeto_vercel_backoffice_dev",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_primeiro_deploy_prova_risco1",
+      "target": "docs_runbooks_backoffice_dev_risco_1_database_url_producao_herdada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_primeiro_deploy_prova_risco1",
+      "target": "docs_runbooks_backoffice_dev_deploy_migrations_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_decidir_migration_function",
+      "target": "docs_runbooks_backoffice_dev_dark_matter_workflow",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_deploy_migrations_script",
+      "target": "docs_runbooks_backoffice_dev_decidir_migration_function",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_backoffice_dev_regra_nunca_prisma_migrate_resolve_applied_backoffice_dev",
+      "target": "docs_runbooks_backoffice_dev_migrate_deploy_step",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/backoffice-dev.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_isolamento_producao_runbooks",
+      "label": "Padr\u00e3o: nunca apontar ambiente de dev/local para produ\u00e7\u00e3o",
+      "nodes": [
+        "docs_runbooks_backoffice_dev_projeto_supabase_nebuloz_dev",
+        "docs_runbooks_backoffice_dev_regra_nunca_copiar_database_url_producao",
+        "docs_runbooks_livro_razao_em_producao_regra_nunca_prisma_migrate_resolve_applied_livro_razao",
+        "docs_runbooks_supabase_local_supabase_local_storage_runbook"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "docs/runbooks/backoffice-dev.md"
+    }
+  ]
+}

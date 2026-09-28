@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_checklists_requirements_checklist",
+      "label": "Checklist de Qualidade: Reemitir Link do Respondente",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/checklists/requirements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_checklists_requirements_clarificacao_unica",
+      "label": "Clarifica\u00e7\u00e3o \u00fanica: tokenExpiresAt j\u00e1 resolvida antes do /speckit-clarify",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/checklists/requirements.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_checklists_requirements_checklist",
+      "target": "specs_006_reemitir_link_respondente_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/checklists/requirements.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_checklists_requirements_clarificacao_unica",
+      "target": "specs_006_reemitir_link_respondente_spec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/checklists/requirements.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

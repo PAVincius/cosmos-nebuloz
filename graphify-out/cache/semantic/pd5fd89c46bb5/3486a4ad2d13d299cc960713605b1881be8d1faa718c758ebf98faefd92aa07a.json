@@ -1,0 +1,112 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_contract",
+      "label": "Contrato: dados de conta para o componente compartilhado",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_activeaccountdata",
+      "label": "ActiveAccountData type ({ activeTenantId, tenants: {id,name,role}[] })",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_account_switcher_component",
+      "label": "packages/design-system/components/account-switcher/ (componente novo compartilhado)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_api_tenants",
+      "label": "/api/tenants \u2014 leitura de TenantMember filtrada por userId (FR-014)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_workspace_switcher_roundtrip",
+      "label": "Round-trip client-side de workspace-switcher.tsx (causa a 'piscada' que SC-001 pro\u00edbe)",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_contract",
+      "target": "specs_009_conta_ativa_visivel_plan_document",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_activeaccountdata",
+      "target": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_account_switcher_component",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_activeaccountdata",
+      "target": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_api_tenants",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_contract",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_workspace_switcher_roundtrip",
+      "target": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_activeaccountdata",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/shell-data-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

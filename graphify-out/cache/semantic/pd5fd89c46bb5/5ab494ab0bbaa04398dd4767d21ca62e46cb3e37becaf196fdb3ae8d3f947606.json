@@ -1,0 +1,183 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_document",
+      "label": "Implementation Plan: Conta ativa sempre vis\u00edvel (Fase 0)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+      "label": "active-account-badge.tsx \u2014 nome da conta como texto vis\u00edvel",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_switchaccountdialog",
+      "label": "switch-account-dialog.tsx \u2014 seletor + confirma\u00e7\u00e3o expl\u00edcita",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_constitution_check",
+      "label": "Constitution Check: Multi-Tenant Safety, Result<T>, Test-First, Valida\u00e7\u00e3o em Boundaries \u2014 PASS",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_structure_decision",
+      "label": "Structure Decision: componente \u00fanico novo em packages/design-system/components/account-switcher/",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_plan_technical_context",
+      "label": "Technical Context: TS 5.9, Next.js 15 App Router, @repo/auth, @repo/database, @repo/design-system, @repo/rbac",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_plan_switchaccountdialog",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_plan_constitution_check",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_plan_technical_context",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_structure_decision",
+      "target": "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_structure_decision",
+      "target": "specs_009_conta_ativa_visivel_plan_switchaccountdialog",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_activeaccountbadge",
+      "target": "specs_009_conta_ativa_visivel_intent_componente_comum",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_spec_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_constitution_check",
+      "target": "auth_server_requiretenantsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_plan_document",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

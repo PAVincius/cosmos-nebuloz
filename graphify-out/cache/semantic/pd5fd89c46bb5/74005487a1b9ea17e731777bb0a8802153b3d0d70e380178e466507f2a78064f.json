@@ -1,0 +1,249 @@
+{
+  "nodes": [
+    {
+      "id": "_github_workflows_ci_lint_job",
+      "label": "Lint & Format (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.lint",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Materializa a ref local de main antes do biome --changed, porque checkout de PR fica em HEAD destacado; usa --no-errors-on-unmatched porque push direto pra main sem diff n\u00e3o \u00e9 falha de lint."
+    },
+    {
+      "id": "_github_workflows_ci_typecheck_job",
+      "label": "Type Check (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.typecheck",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Bloqueia merge (sem continue-on-error); gera o client do Prisma antes por ser depend\u00eancia de @repo/database no grafo turbo; NODE_OPTIONS eleva o heap porque o tsc do apps/app estoura os 2GB padr\u00e3o do runner."
+    },
+    {
+      "id": "_github_workflows_ci_cosmos_graph_job",
+      "label": "Grafo do Cosmos (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.cosmos-graph",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "pnpm cosmos:graph check reprova n\u00f3 que afirma o que n\u00e3o existe ou entrega sem commit/teste/ficha SAFe \u2014 resposta ao audit de 2026-07-23, onde o grafo divergiu do c\u00f3digo em sil\u00eancio."
+    },
+    {
+      "id": "_github_workflows_ci_schema_drift_job",
+      "label": "Schema Drift Check (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.schema-drift",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Aplica a cadeia de migrations num Postgres pgvector vazio e compara com prisma migrate diff --exit-code; banco de dev j\u00e1 est\u00e1 no formato final, por isso 61 tabelas tinham divergido sem ningu\u00e9m notar antes deste gate."
+    },
+    {
+      "id": "_github_workflows_ci_test_job",
+      "label": "Tests & Coverage (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.test",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Usa imagem pgvector/pgvector (n\u00e3o postgres puro) porque as migrations criam extension vector; RUN_DB_TESTS=1 \u00e9 opt-in s\u00f3 deste job, que tem Postgres descart\u00e1vel."
+    },
+    {
+      "id": "_github_workflows_ci_security_audit_job",
+      "label": "Security Vulnerability Scan (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.security-audit",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Port\u00e3o em critical, n\u00e3o high (125 altos eram quase todos transitivos de tooling); pnpm audit:runtime falha s\u00f3 quando aparece alta NOVA nos 14 pacotes de runtime listados em audit-runtime-baseline.json."
+    },
+    {
+      "id": "_github_workflows_ci_build_job",
+      "label": "Build (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "needs [lint, typecheck, test, security-audit, schema-drift, cosmos-graph]; exclui --filter=!email porque react-email@5.0.5 pina framer-motion, cujo motion-dom quebrou a main sem commit nenhum; NODE_OPTIONS eleva heap porque o type check do next build no apps/app estoura o padr\u00e3o."
+    },
+    {
+      "id": "_github_workflows_ci_generate_tests_job",
+      "label": "AI Test Generation (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.generate-tests",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 roda se test falhar na main; baixa os coverage-reports do job test e chama pnpm generate:tests."
+    },
+    {
+      "id": "_github_workflows_ci_fix_ci_job",
+      "label": "AI Fix CI Failure (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.fix-ci",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Roda pnpm fix:ci quando lint, typecheck ou build falham na main."
+    },
+    {
+      "id": "_github_workflows_ci_agent_governance_job",
+      "label": "Agent Governance Check (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.agent-governance",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "agent-governance-toolkit n\u00e3o exp\u00f5e o m\u00f3dulo esperado; roda com || true at\u00e9 algu\u00e9m achar o entry point certo (TODO no coment\u00e1rio) \u2014 travar a esteira por invoca\u00e7\u00e3o errada seria pior do que n\u00e3o checar."
+    },
+    {
+      "id": "_github_workflows_ci_risk_score_job",
+      "label": "AI Risk Score (CI job)",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.risk-score",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 roda em pull_request; contents: read \u00e9 obrigat\u00f3rio porque declarar permissions no job zera as outras \u2014 sem isso o checkout falhava com 404 em vez de 403 em repo privado, e o job falhava em 100% dos PRs. ANTHROPIC_API_KEY ausente vira aviso vis\u00edvel no summary, n\u00e3o vermelho silencioso."
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_lint_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_typecheck_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_test_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_security_audit_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_schema_drift_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_build_job",
+      "target": "_github_workflows_ci_cosmos_graph_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.build.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_generate_tests_job",
+      "target": "_github_workflows_ci_test_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.generate-tests.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_fix_ci_job",
+      "target": "_github_workflows_ci_lint_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.fix-ci.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_fix_ci_job",
+      "target": "_github_workflows_ci_typecheck_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.fix-ci.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_fix_ci_job",
+      "target": "_github_workflows_ci_build_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": "jobs.fix-ci.needs",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_ci_agent_governance_job",
+      "target": "ponytail_debt_marker_seed_entrypoint_guard",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

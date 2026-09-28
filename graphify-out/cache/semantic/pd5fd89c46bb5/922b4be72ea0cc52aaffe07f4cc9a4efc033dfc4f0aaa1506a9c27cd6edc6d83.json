@@ -1,0 +1,477 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_signal_design_observatorio_noturno",
+      "label": "O Observat\u00f3rio Noturno (Signal \u2014 Telemetria de Valor)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "No Signal o observat\u00f3rio \u00e9 telemetria de valor: veredito antes da m\u00e9trica, m\u00faltiplo sempre com lastro, ado\u00e7\u00e3o e resultado no mesmo quadro, sa\u00fade das fontes no topbar para quem l\u00ea saber se o n\u00famero congelou."
+    },
+    {
+      "id": "apps_app_components_signal_design_base_compartilhada",
+      "label": "Base Compartilhada (Charter/Meridian/Scaffold/Signal)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mesma paleta, escala de raio, sombras e primitivas entre os quatro produtos; cada raiz tem .css pr\u00f3prio (n\u00e3o existe arquivo comum). Mudar um token exige mudar os quatro .css."
+    },
+    {
+      "id": "apps_app_components_signal_design_signal_css",
+      "label": "signal.css (\"a quarta c\u00f3pia\")",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "C\u00f3pia reescopada do meridian.css \u2014 d\u00edvida registrada no pr\u00f3prio arquivo; raiz mais completa em acessibilidade (skip link, 44px, alto contraste, movimento reduzido); tipografia do handoff signal.html, \"nenhum valor foi alterado na porta\"."
+    },
+    {
+      "id": "apps_app_components_signal_design_colored_fact_rule",
+      "label": "The Colored Fact Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Vermelho, \u00e2mbar e verde reservados a fato; categoria, papel e decora\u00e7\u00e3o usam accent, blue ou purple."
+    },
+    {
+      "id": "apps_app_components_signal_design_color_plus_word_rule",
+      "label": "The Color-Plus-Word Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Estado nunca vai s\u00f3 na cor: StatusDot leva r\u00f3tulo, mapa de calor leva n\u00famero, gr\u00e1fico leva legenda. Requisito de acessibilidade NFR-2."
+    },
+    {
+      "id": "apps_app_components_signal_design_four_slot_rule",
+      "label": "The Four-Slot Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Todo tom existe como --x, --x-rgb, --x-soft, --x-text; no claro o tom s\u00f3lido como texto reprova AA."
+    },
+    {
+      "id": "apps_app_components_signal_design_polarity_rule",
+      "label": "The Polarity Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Glifo sobre preenchimento s\u00f3lido usa --accent-fg (aponta para --on-accent no Signal): branco no claro, canvas no escuro."
+    },
+    {
+      "id": "apps_app_components_signal_design_mono_for_measure_rule",
+      "label": "The Mono-for-Measure Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Todo identificador e medida sai em JetBrains Mono; prosa nunca sai em mono. No Signal, o n\u00famero-her\u00f3i \u00e9 exce\u00e7\u00e3o deliberada: sai em .display, n\u00e3o em mono."
+    },
+    {
+      "id": "apps_app_components_signal_design_six_step_rule",
+      "label": "The Six-Step Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tamanho de texto s\u00f3 nos seis degraus da su\u00edte. No Signal, as telas ainda usam 129 literais de fontSize em 15 tamanhos (9.5 a 34px)."
+    },
+    {
+      "id": "apps_app_components_signal_design_single_uppercase_rule",
+      "label": "The Single-Uppercase Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Caixa alta s\u00f3 no Eyebrow e carimbos mono; wordmark do produto \u00e9 exce\u00e7\u00e3o de marca (\"SIGNAL\" com entreletra .1em no topbar)."
+    },
+    {
+      "id": "apps_app_components_signal_design_one_cols_rule",
+      "label": "The One-Cols Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cabe\u00e7alho e linha de tabela compartilham um \u00fanico cols; linha clic\u00e1vel \u00e9 <button> com \"Abrir X\" em .sr-only."
+    },
+    {
+      "id": "apps_app_components_signal_design_verdict_first_rule",
+      "label": "The Verdict-First Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Veredito vem antes da m\u00e9trica: r\u00f3tulo e a\u00e7\u00e3o sugerida primeiro, n\u00fameros depois; m\u00faltiplo nunca sem f\u00f3rmula, confian\u00e7a e ado\u00e7\u00e3o. ValueReading existe para tornar a regra \"estrutural em vez de disciplinar\" (verdict-badge.tsx:3-6)."
+    },
+    {
+      "id": "apps_app_components_signal_design_own_scale_rule",
+      "label": "The Own-Scale Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00e9rie se desenha contra ela mesma (min..max), nunca a partir de zero; onde zero importa (m\u00faltiplo de ROI contra break-even) entra como linha de refer\u00eancia tracejada (charts.tsx:8-12)."
+    },
+    {
+      "id": "apps_app_components_signal_design_responding_glow_rule",
+      "label": "The Responding-Glow Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Em repouso cart\u00e3o s\u00f3 tem --card-shadow; profundidade extra \u00e9 resposta a hover; camadas do KPI s\u00f3 acordam no escuro."
+    },
+    {
+      "id": "apps_app_components_signal_design_night_texture_rule",
+      "label": "The Night-Texture Rule",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Gr\u00e3o fractal e grade de 64px existem s\u00f3 no escuro. No Signal, o alto contraste remove as camadas decorativas do KPI e a textura da grade."
+    },
+    {
+      "id": "apps_app_components_signal_design_valuereading",
+      "label": "ValueReading Component",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Assinatura do Signal (verdict-badge.tsx): p\u00edlula de veredito, m\u00faltiplo em .display 22px/800, \"f\u00f3rmula vN\", confian\u00e7a com banda, ado\u00e7\u00e3o, a\u00e7\u00e3o sugerida. Sem lastro, m\u00faltiplo aparece tachado com \"sem lastro\" \u2014 nunca escondido."
+    },
+    {
+      "id": "apps_app_components_signal_design_adoptionvaluematrix",
+      "label": "AdoptionValueMatrix Component",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Plano de 340px com r\u00e9guas de ado\u00e7\u00e3o m\u00ednima e valor m\u00ednimo por tenant; quadrantes Promessa parada (\u00e2mbar), Provado (verde), Candidata a parada (neutral), Uso sem valor (vermelho); bolha \u00e9 <button>, n\u00e3o <circle> de SVG."
+    },
+    {
+      "id": "apps_app_components_signal_design_sparkline",
+      "label": "Sparkline Component",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "SVG puro de 140x36px \u2014 \"uma linha de 6 pontos n\u00e3o justifica 40kB de runtime\"; escala relativa \u00e0 pr\u00f3pria s\u00e9rie, zero como linha tracejada de refer\u00eancia quando importa."
+    },
+    {
+      "id": "apps_app_components_signal_design_signalprefs",
+      "label": "SignalPrefs (Alto Contraste / Movimento Reduzido)",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Grava data-contrast=\"high\" e data-motion=\"reduced\" em localStorage e no <html>, por pessoa e por dispositivo; o tema continua com o next-themes."
+    },
+    {
+      "id": "apps_app_components_signal_design_skip_link",
+      "label": "Skip Link",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Primeiro Tab da p\u00e1gina, \"Pular para o conte\u00fado\"; accent com --on-accent, revelado no foco (WCAG 2.4.1), sai de top:-60px (n\u00e3o display:none) e aparece em top:12px."
+    },
+    {
+      "id": "apps_app_components_signal_design_command_palette",
+      "label": "Command Palette (\u2318K / Ctrl+K)",
+      "file_type": "document",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Navega para as dez telas e busca iniciativa por c\u00f3digo e nome; cart\u00e3o de 480px sobre scrim com blur de 6px, foco preso enquanto aberta e retorno ao gatilho."
+    },
+    {
+      "id": "apps_app_components_signal_design_outcome_tone_rule",
+      "label": "Regra de Tom do Resultado (lib/signal/outcome.ts)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tom do resultado \u00e9 regra declarada, n\u00e3o cor de narrativa: piorou \u00e9 vermelho em qualquer magnitude; melhorou menos de 10% \u00e9 \u00e2mbar; 10% ou mais \u00e9 verde; sem n\u00famero compar\u00e1vel \u00e9 neutral."
+    },
+    {
+      "id": "apps_app_components_signal_design_high_contrast_mode",
+      "label": "Modo de Alto Contraste (data-contrast=\"high\")",
+      "file_type": "concept",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Sufixos -hc e -dark-hc refor\u00e7am ink-muted, ink-subtle, ink-faint, os dois fios, chip-bg e todos os -text; remove decora\u00e7\u00e3o de baixa opacidade (.dots, .wm, .sig, textura do .bg-grid) sem apagar nenhum cont\u00eainer."
+    },
+    {
+      "id": "apps_app_components_signal_design_kpicard_unused_debt",
+      "label": "KpiCard Sem Uso nas Telas do Signal (D\u00edvida)",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "As regras .kpi do signal.css est\u00e3o l\u00e1 para o kit, mas nenhuma tela usa KpiCard nem Badge \u2014 as linhas KPI Value e Label da tipografia valem para o kit, n\u00e3o para as telas do Signal."
+    },
+    {
+      "id": "apps_app_components_signal_design_modalprovider_shell_level",
+      "label": "ModalProvider na Casca, N\u00e3o por Tela",
+      "file_type": "rationale",
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\"Um provider por tela significaria um foco preso por tela, e dois modais abertos ao mesmo tempo\" (components/signal/shell.tsx:530-532) \u2014 por isso o ModalProvider do Signal fica na casca."
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_signal_design_signal_css",
+      "target": "apps_app_components_signal_design_base_compartilhada",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_signal_css",
+      "target": "apps_app_components_scaffold_design_scaffold_css",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_verdict_first_rule",
+      "target": "apps_app_components_signal_design_valuereading",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_own_scale_rule",
+      "target": "apps_app_components_signal_design_sparkline",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_outcome_tone_rule",
+      "target": "apps_app_components_signal_design_colored_fact_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_kpicard_unused_debt",
+      "target": "apps_app_components_scaffold_design_kpicard_decorative_debt",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_high_contrast_mode",
+      "target": "apps_app_components_signal_design_four_slot_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_signalprefs",
+      "target": "apps_app_components_signal_design_high_contrast_mode",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_command_palette",
+      "target": "apps_app_components_signal_design_skip_link",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_modalprovider_shell_level",
+      "target": "apps_app_components_scaffold_design_modalprovider_debt",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_base_compartilhada",
+      "target": "apps_app_components_scaffold_design_cosmos_kit",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_base_compartilhada",
+      "target": "apps_app_components_scaffold_design_charter_base_tsx",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_adoptionvaluematrix",
+      "target": "apps_app_components_signal_design_verdict_first_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_signal_design_observatorio_noturno",
+      "target": "apps_app_components_signal_design_base_compartilhada",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/signal/DESIGN.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_duplicated_named_rules_scaffold_signal",
+      "label": "Vocabul\u00e1rio de Named Rules Duplicado Entre Scaffold e Signal",
+      "nodes": [
+        "apps_app_components_scaffold_design_colored_fact_rule",
+        "apps_app_components_scaffold_design_four_slot_rule",
+        "apps_app_components_scaffold_design_mono_for_measure_rule",
+        "apps_app_components_signal_design_colored_fact_rule",
+        "apps_app_components_signal_design_four_slot_rule",
+        "apps_app_components_signal_design_mono_for_measure_rule"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md"
+    },
+    {
+      "id": "hyperedge_shared_base_kit_products",
+      "label": "Kit de Design Base Compartilhado Entre Produtos",
+      "nodes": [
+        "apps_app_components_scaffold_design_base_compartilhada",
+        "apps_app_components_scaffold_design_cosmos_kit",
+        "apps_app_components_signal_design_base_compartilhada"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/signal/DESIGN.md"
+    }
+  ]
+}

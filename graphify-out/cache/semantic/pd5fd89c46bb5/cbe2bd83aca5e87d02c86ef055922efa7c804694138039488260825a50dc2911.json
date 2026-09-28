@@ -1,0 +1,454 @@
+{
+  "nodes": [
+    {
+      "id": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "label": "Meridian V1 \u00b7 Diagnose (feature)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_constituicao_principio_iii_tdd",
+      "label": "Constitui\u00e7\u00e3o, Princ\u00edpio III \u2014 TDD obrigat\u00f3rio",
+      "file_type": "rationale",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Em cada fase, a task de teste precede a de implementa\u00e7\u00e3o e deve falhar antes de existir c\u00f3digo."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us1_consultor_conduz_carteira",
+      "label": "US1 \u00b7 Consultor conduz a carteira (P1)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Carteira naveg\u00e1vel com indicadores, filtro e detalhe com cinco abas."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "label": "US2 \u00b7 Coleta multi-respondente (P1)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Atribuir respondentes por eixo, responder por link seguro, anexar evid\u00eancia, fechar coleta."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "label": "US3 \u00b7 Scoring determin\u00edstico e revis\u00e3o (P1)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Score e confidence por eixo, contesta\u00e7\u00e3o autom\u00e1tica, diverg\u00eancia lado a lado, override append-only, fila global."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "label": "US4 \u00b7 Gap register e plano (P2)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Registro can\u00f4nico, DAG sem ciclo, plano topol\u00f3gico, promo\u00e7\u00e3o sem transfer\u00eancia de posse."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "label": "US5 \u00b7 Relat\u00f3rio, benchmark e diff (P2)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Shape, compara\u00e7\u00e3o com coorte, narrativa e diff de reavalia\u00e7\u00e3o."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us6_benchmark_pool",
+      "label": "US6 \u00b7 Benchmark pool (P3)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Coortes an\u00f4nimas com opt-in e limiar de leitura."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_us7_escala_de_confianca",
+      "label": "US7 \u00b7 Escala de confian\u00e7a (P3)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Vocabul\u00e1rio \u00fanico da su\u00edte, vis\u00edvel e contado."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_mvp_meridian",
+      "label": "MVP = Phases 1,2,3,4,5 (US1+US2+US3)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "A consultora conduz um assessment do convite ao score revisado, com override audit\u00e1vel \u2014 produto m\u00ednimo que j\u00e1 sobrevive \u00e0 pergunta do patrocinador."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_incremento_2_meridian",
+      "label": "Incremento 2 = Phases 6,7 (US4+US5)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Gap register, plano e relat\u00f3rio \u2014 o que o cliente leva embora."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_incremento_3_meridian",
+      "label": "Incremento 3 = Phases 8,9 (US6+US7)",
+      "file_type": "concept",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Benchmark e vocabul\u00e1rio \u2014 diferencial de su\u00edte, n\u00e3o bloqueia nenhum fluxo."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "label": "A\u00e7\u00f5es server implementadas sem chamador de UI (d\u00edvida sinalizada)",
+      "file_type": "rationale",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "assignRespondent, revokeRespondent, runScoring, listOverrides, upsertGap, deleteGap, linkGapDependency, unlinkGapDependency, revokePromotion, requestEvidenceUrl, withdrawContribution e readCohortAction existem no servidor mas n\u00e3o t\u00eam chamador de UI confirmado."
+    },
+    {
+      "id": "specs_001_meridian_diagnose_tasks_seed_meridian_crivo_pendente",
+      "label": "seed-meridian.ts \u2014 101 linhas n\u00e3o commitadas do Crivo, decis\u00e3o pendente",
+      "file_type": "rationale",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Decis\u00e3o pendente: vira fixture de teste ou sai."
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_001_meridian_diagnose_tasks_constituicao_principio_iii_tdd",
+      "target": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us1_consultor_conduz_carteira",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us6_benchmark_pool",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "target": "specs_001_meridian_diagnose_tasks_us7_escala_de_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "target": "specs_001_meridian_diagnose_tasks_us1_consultor_conduz_carteira",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "target": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "target": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us6_benchmark_pool",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_us7_escala_de_confianca",
+      "target": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_mvp_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us1_consultor_conduz_carteira",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_mvp_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_mvp_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_incremento_2_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_incremento_2_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_incremento_3_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us6_benchmark_pool",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_incremento_3_meridian",
+      "target": "specs_001_meridian_diagnose_tasks_us7_escala_de_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "target": "specs_001_meridian_diagnose_tasks_us2_coleta_multi_respondente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "target": "specs_001_meridian_diagnose_tasks_us3_scoring_deterministico_revisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "target": "specs_001_meridian_diagnose_tasks_us4_gap_register_e_plano",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "target": "specs_001_meridian_diagnose_tasks_us5_relatorio_benchmark_diff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_divida_acoes_sem_chamador_ui",
+      "target": "specs_001_meridian_diagnose_tasks_us6_benchmark_pool",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_001_meridian_diagnose_tasks_seed_meridian_crivo_pendente",
+      "target": "specs_001_meridian_diagnose_tasks_meridian_v1_diagnose",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

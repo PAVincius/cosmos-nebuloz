@@ -1,0 +1,184 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "label": "Charter \u2014 Confirma\u00e7\u00e3o nos Momentos de Alto Risco Remediation (Onda 2a, PR #209)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "label": "P1 Finding: One-Click Fabricated Evidence, Role Change Fired on onChange",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_settings_role_change_modal",
+      "label": "Fix: Role Change Opens ModalCard (settings-confirm-role.tsx)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_guard_last_compliance_reused",
+      "label": "Existing Guard Against Removing Last COMPLIANCE Role Reused, Not Duplicated (settings.ts:371-381)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_onboarding_justificativa_required",
+      "label": "Fix: Third-Party Acknowledgment Requires justificativa (zod min 10, No Migration)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_policy_draft_gated_button",
+      "label": "Fix: policy-draft-preview span Replaced by GatedButton + FooterHint",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_15_charter_confirmacao_governanca_bug_span_never_blocked",
+      "label": "Bug Found by Mutation Testing: pointer-events:none Span Never Blocked Click",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_settings_role_change_modal",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_onboarding_justificativa_required",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_policy_draft_gated_button",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_settings_role_change_modal",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_guard_last_compliance_reused",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_bug_span_never_blocked",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_policy_draft_gated_button",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_settings_role_change_modal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_onboarding_justificativa_required",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_milestone",
+      "target": "_claude_completions_2026_09_15_charter_confirmacao_governanca_fix_policy_draft_gated_button",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_15_charter_confirmacao_governanca_finding_p1_fabricated_evidence",
+      "target": "_claude_completions_2026_09_15_charter_botoes_que_nao_fazem_nada_finding_p2_inert_controls",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-15-charter-confirmacao-governanca.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

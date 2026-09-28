@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_modals_barrel_removido",
+      "label": "Barrel modals.tsx removido (b8cdc019)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_type_scale_fs",
+      "label": "type-scale.ts \u2014 escala FS de 6 degraus",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_typeset_migracao_209_literais",
+      "label": "Migra\u00e7\u00e3o de 209 literais de fontSize para FS (c223abe2)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_type_scale_test_ratchet",
+      "label": "type-scale.test.ts \u2014 catraca contra literais de fontSize",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_back_link_extraido",
+      "label": "BackLink extra\u00eddo para back-link.tsx",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_policy_copy_extraido",
+      "label": "DERIVED_RULES/VERSION_DISCIPLINE extra\u00eddos para screens/policy-copy.ts",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_control_states_test_ratchet",
+      "label": "control-states.test.ts \u2014 catraca de estados de controle compartilhados",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_outline_none_inline_bug",
+      "label": "outline:none inline quebrava foco de teclado em CONTROL_STYLE/inputStyle",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_btn_disabled_charter_css",
+      "label": "charter.css ganha regra .btn:disabled",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_scrim_token_backdrop",
+      "label": "Backdrop do di\u00e1logo 'Descartar altera\u00e7\u00f5es?' passa a usar var(--scrim)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_dead_code_cleanup_css",
+      "label": "Limpeza de 109 linhas mortas de charter.css",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "label": "Cr\u00edtica de design do Charter \u2014 onda 6 (\u00faltima antes da re-cr\u00edtica)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_typeset_migracao_209_literais",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_type_scale_fs",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_type_scale_test_ratchet",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_typeset_migracao_209_literais",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_typeset_migracao_209_literais",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_back_link_extraido",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_typeset_migracao_209_literais",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_policy_copy_extraido",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_outline_none_inline_bug",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_control_states_test_ratchet",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_modals_barrel_removido",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_btn_disabled_charter_css",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_scrim_token_backdrop",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_dead_code_cleanup_css",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_18_charter_tipografia_e_polish_control_states_test_ratchet",
+      "target": "_claude_completions_2026_09_18_charter_tipografia_e_polish_critique_onda_6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-18-charter-tipografia-e-polish.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

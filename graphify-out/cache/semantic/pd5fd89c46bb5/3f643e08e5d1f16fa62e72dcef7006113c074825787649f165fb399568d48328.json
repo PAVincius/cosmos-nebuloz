@@ -1,0 +1,164 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_signal_prd_signal_product",
+      "label": "Signal",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_a_regra_mae",
+      "label": "A regra-m\u00e3e: ROI nunca sem vers\u00e3o de f\u00f3rmula e confian\u00e7a",
+      "file_type": "rationale",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_decisao_de_valor",
+      "label": "Decis\u00e3o de valor (continuar/escalar/pivotar/encerrar)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_atribuicao_de_ganho",
+      "label": "Atribui\u00e7\u00e3o de ganho (fator, contrafactual, selo)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_encerramento_de_beneficio",
+      "label": "Encerramento de benef\u00edcio (vari\u00e2ncia, li\u00e7\u00e3o)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_veredito",
+      "label": "Veredito: PROVEN/VANITY/PROMISE/STOP",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_prd_s09_multiplo_sem_lastro",
+      "label": "S-09: m\u00faltiplo aparece sem vers\u00e3o nem confian\u00e7a em v\u00e1rias telas",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_signal_prd_a_regra_mae",
+      "target": "docs_produto_signal_prd_signal_product",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_prd_decisao_de_valor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_prd_atribuicao_de_ganho",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_prd_encerramento_de_beneficio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_prd_veredito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_prd_s09_multiplo_sem_lastro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_veredito",
+      "target": "docs_produto_signal_prd_s09_multiplo_sem_lastro",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_prd_signal_product",
+      "target": "docs_produto_signal_srd_especificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-prd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

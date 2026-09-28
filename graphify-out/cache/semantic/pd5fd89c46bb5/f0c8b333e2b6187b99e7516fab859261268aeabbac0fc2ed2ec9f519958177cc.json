@@ -1,0 +1,227 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_signal_srd_especificacao",
+      "label": "Signal SRD v1.0",
+      "file_type": "document",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_guard_requiresignalcontext",
+      "label": "Guard de cinco port\u00f5es do Signal",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_formula_roi",
+      "label": "F\u00f3rmula de ROI (multiple, net, share)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Retorno sem custo aparece como travess\u00e3o, nunca como zero v\u00edrgula zero vezes, para n\u00e3o sugerir que a iniciativa destruiu valor quando na verdade falta o dado de custo."
+    },
+    {
+      "id": "docs_produto_signal_srd_formula_confianca",
+      "label": "F\u00f3rmula de confian\u00e7a (fatores ponderados)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_formula_adocao_resultado",
+      "label": "F\u00f3rmulas de ado\u00e7\u00e3o e resultado",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_alertas",
+      "label": "Regras de alertas (LOW/WEAK/STALE)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_relatorio_congelado",
+      "label": "Relat\u00f3rio congelado (ReportSnapshot)",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_signalinitiative",
+      "label": "SignalInitiative \u2014 modelo de dado",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_signal_srd_sem_criacao_de_membro",
+      "label": "Nenhuma action cria SignalMember",
+      "file_type": "concept",
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_signal_srd_guard_requiresignalcontext",
+      "target": "docs_produto_charter_srd_adr_0012_rls_anulada",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_especificacao",
+      "target": "docs_produto_signal_srd_guard_requiresignalcontext",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_especificacao",
+      "target": "docs_produto_signal_srd_formula_roi",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_formula_roi",
+      "target": "docs_produto_signal_prd_veredito",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_formula_roi",
+      "target": "docs_produto_signal_srd_formula_confianca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_formula_confianca",
+      "target": "docs_produto_signal_srd_formula_adocao_resultado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_especificacao",
+      "target": "docs_produto_signal_srd_alertas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_alertas",
+      "target": "docs_produto_signal_srd_relatorio_congelado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_especificacao",
+      "target": "docs_produto_signal_srd_signalinitiative",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_especificacao",
+      "target": "docs_produto_signal_srd_sem_criacao_de_membro",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_sem_criacao_de_membro",
+      "target": "docs_produto_signal_srd_guard_requiresignalcontext",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_signal_srd_formula_confianca",
+      "target": "docs_produto_meridian_srd_scoring_formula",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/produto/signal-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

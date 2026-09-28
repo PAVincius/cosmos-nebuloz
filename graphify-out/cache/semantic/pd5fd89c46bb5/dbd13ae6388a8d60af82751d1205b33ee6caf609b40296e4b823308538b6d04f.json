@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_contract",
+      "label": "Contrato: POST /api/auth/switch-tenant (reusado, n\u00e3o alterado)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "label": "POST /api/auth/switch-tenant (apps/app/app/api/auth/switch-tenant/route.ts)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_switchtenantschema",
+      "label": "SwitchTenantSchema (apps/app/app/actions/schemas.ts)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_response_200",
+      "label": "Resposta 200: activeTenantId gravado, cookie better-auth.session_data removido",
+      "file_type": "concept",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_fr009_garantia",
+      "label": "Garantia FR-009/SC-004: leitura imediata p\u00f3s-200 j\u00e1 enxerga conta nova (sem esperar 60s)",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_workspace_switcher_caller",
+      "label": "workspace-switcher.tsx:70 (caller existente do endpoint)",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_contract",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_switchtenantschema",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_response_200",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_fr009_garantia",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_response_200",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_fr009_garantia",
+      "target": "specs_009_conta_ativa_visivel_spec_document",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "target": "specs_009_conta_ativa_visivel_contracts_shell_data_contract_contract",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_workspace_switcher_caller",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/contracts/switch-tenant-api.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,214 @@
+{
+  "nodes": [
+    {
+      "id": "specs_009_conta_ativa_visivel_research_document",
+      "label": "Research: Conta ativa sempre vis\u00edvel (Fase 0)",
+      "file_type": "document",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_decision1_bug_tooltip",
+      "label": "Decision 1: bug 's\u00f3 tooltip' existe s\u00f3 em Meridian e Signal, n\u00e3o nos 5",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_fallback_deterministico",
+      "label": "Decision 2: fallback determin\u00edstico \u2014 orderBy createdAt asc em requireTenantSession",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_vazamento_sessao",
+      "label": "Decision 3: vazamento de sess\u00e3o em convite/onboarding \u2014 updateMany \u2192 update escopado por session.id",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_mecanismo_troca",
+      "label": "Decision 4: mecanismo de troca a reusar \u00e9 switch-tenant, n\u00e3o switchOrg",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_resolvepostlogindestination",
+      "label": "Decision 5: resolvePostLoginDestination() reusada para destino p\u00f3s-troca",
+      "file_type": "code",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_009_conta_ativa_visivel_research_componente_compartilhado_local",
+      "label": "Decision 6: componente compartilhado vive em packages/design-system/components/account-switcher/",
+      "file_type": "rationale",
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_decision1_bug_tooltip",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_fallback_deterministico",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_vazamento_sessao",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_mecanismo_troca",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_resolvepostlogindestination",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_document",
+      "target": "specs_009_conta_ativa_visivel_research_componente_compartilhado_local",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_fallback_deterministico",
+      "target": "auth_server_requiretenantsession",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_fallback_deterministico",
+      "target": "specs_009_conta_ativa_visivel_data_model_tenantmember_createdat",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_mecanismo_troca",
+      "target": "specs_009_conta_ativa_visivel_contracts_switch_tenant_api_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_mecanismo_troca",
+      "target": "specs_009_conta_ativa_visivel_intent_switchorg",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_componente_compartilhado_local",
+      "target": "specs_009_conta_ativa_visivel_plan_structure_decision",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_decision1_bug_tooltip",
+      "target": "specs_009_conta_ativa_visivel_intent_causa2_visibilidade_inconsistente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_009_conta_ativa_visivel_research_vazamento_sessao",
+      "target": "specs_009_conta_ativa_visivel_intent_causa5_vazamento_sessoes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/009-conta-ativa-visivel/research.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,290 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_repo_bpmn_pacote",
+      "label": "@repo/bpmn (pacote novo, packages/bpmn)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_esquema_ts_zod",
+      "label": "esquema.ts \u2014 esquema fechado Zod strictObject (pool, raias, n\u00f3s, fluxos)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_estrutura_ts_checagens",
+      "label": "estrutura.ts \u2014 checagens estruturais (alcan\u00e7\u00e1vel, chega a fim, gateway rotulado)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_compilar_layout_ts",
+      "label": "compilar.ts + layout.ts \u2014 bpmn-auto-layout + layout pr\u00f3prio por raia",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_lint_ts_bpmnlint",
+      "label": "lint.ts \u2014 bpmnlint recommended com resolver est\u00e1tico",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validar_ts",
+      "label": "validar.ts \u2014 XML \u2192 moddle \u2192 checagens estruturais, usado pelas actions",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_bpmn_js_no_jsdom_stubs",
+      "label": "testes/bpmn-js-no-jsdom.ts \u2014 stubs de SVG e medida de texto para bpmn-js no jsdom",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seis_definicoes_processos_bpmn",
+      "label": "Seis defini\u00e7\u00f5es em packages/provisioning/src/processos-bpmn/ (PZ-01\u2026PZ-23)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_pz22_pz23_processos_nebuloz",
+      "label": "PZ-22 (Acesso ao back-office) e PZ-23 (Resposta a incidente) entram em PROCESSOS_NEBULOZ",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seed_diagramas_nebuloz",
+      "label": "pnpm seed:diagramas:nebuloz \u2014 sincronizarDiagramasNebuloz, versiona s\u00f3 quando XML muda",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validacao_servidor_diagram_actions",
+      "label": "createDiagramAction/updateDiagramAction recusam BPMN inv\u00e1lido no servidor",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_entrega_2_gerador_llm",
+      "label": "Entrega 2 (fora deste PR): bot\u00e3o de gerar no editor via LLM, reusa esquema e validador",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_golden_bpmn_fixtures",
+      "label": "Golden .bpmn em processos-bpmn/golden/ (ATUALIZAR_GOLDEN=1 para regerar)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_esquema_ts_zod",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_repo_bpmn_pacote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_estrutura_ts_checagens",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_repo_bpmn_pacote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_compilar_layout_ts",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_esquema_ts_zod",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_compilar_layout_ts",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_estrutura_ts_checagens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_lint_ts_bpmnlint",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_compilar_layout_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validar_ts",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_estrutura_ts_checagens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_bpmn_js_no_jsdom_stubs",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_golden_bpmn_fixtures",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seis_definicoes_processos_bpmn",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_esquema_ts_zod",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seis_definicoes_processos_bpmn",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_golden_bpmn_fixtures",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_pz22_pz23_processos_nebuloz",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seis_definicoes_processos_bpmn",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seed_diagramas_nebuloz",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_seis_definicoes_processos_bpmn",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validacao_servidor_diagram_actions",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validar_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_entrega_2_gerador_llm",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_esquema_ts_zod",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_entrega_2_gerador_llm",
+      "target": "_claude_completions_2026_09_26_bpmn_processos_nebuloz_validar_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-26-bpmn-processos-nebuloz.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

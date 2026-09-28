@@ -1,0 +1,275 @@
+{
+  "nodes": [
+    {
+      "id": "apps_app_components_cosmos_product_cosmos_product",
+      "label": "Cosmos Product (EXECUTAR)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_portfolio_kanban",
+      "label": "Portfolio Kanban flow",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_wsjf",
+      "label": "WSJF prioritization",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_pi_planning",
+      "label": "PI Planning (Cosmos)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_lean_budgets",
+      "label": "Lean Budgets / Value Realization",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_value_realization_gap",
+      "label": "Value Realization boundary gap vs Signal",
+      "file_type": "rationale",
+      "rationale": "Cosmos screen creates business metrics and writes realized value by hand, but the boundary map assigns that ownership to Signal.",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_withsecureaction_gap",
+      "label": "withSecureAction guard has no caller (custom roles inert)",
+      "file_type": "rationale",
+      "rationale": "The SRD's central guard is unused, so custom roles from /settings/roles authorize nothing and denials never reach the audit trail.",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_no_signal_appears",
+      "label": "\"Nenhuma tela inventa n\u00famero\" principle",
+      "file_type": "rationale",
+      "rationale": "Metric depending on uncollected data shows 'sem sinal', never zero/average/estimate; every list opens detail; every metric is derived.",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_icp_cosmos",
+      "label": "Cosmos ICP (3+ ARTs or 100+ engineers, SAFe adopter)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_copilot_cosmos",
+      "label": "Cosmos Copilot (in-ceremony AI)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_meeting_consent_gate",
+      "label": "Meeting-transcription consent gate blocking first sale",
+      "file_type": "rationale",
+      "rationale": "Every transcript starts pending; the AI mapper only runs with per-meeting or standing consent; legal opinion on consent is the real blocker, not integrations.",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_pricing_cosmos",
+      "label": "Cosmos pricing (bundled in seat)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_boundary_map_ownership",
+      "label": "Cosmos ownership in mapa-de-fronteiras (portfolio hierarchy, iniciativa, WSJF)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_app_components_cosmos_product_state_transition_history",
+      "label": "StateTransitionHistory (sole flow-metric source)",
+      "file_type": "concept",
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_app_components_cosmos_product_cosmos_product",
+      "target": "apps_app_components_cosmos_design_system",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_wsjf",
+      "target": "apps_app_components_cosmos_product_boundary_map_ownership",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_value_realization_gap",
+      "target": "apps_app_components_cosmos_product_lean_budgets",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_withsecureaction_gap",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_icp_cosmos",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_copilot_cosmos",
+      "target": "apps_app_components_cosmos_product_meeting_consent_gate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_pricing_cosmos",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_portfolio_kanban",
+      "target": "apps_app_components_cosmos_product_boundary_map_ownership",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_pi_planning",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_state_transition_history",
+      "target": "apps_app_components_cosmos_product_portfolio_kanban",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_app_components_cosmos_product_no_signal_appears",
+      "target": "apps_app_components_cosmos_product_cosmos_product",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/app/components/cosmos/PRODUCT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

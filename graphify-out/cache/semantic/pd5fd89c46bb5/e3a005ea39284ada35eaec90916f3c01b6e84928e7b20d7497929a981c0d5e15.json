@@ -1,0 +1,410 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "label": "Signal Measure Completion (90/93 Tarefas, 10 Telas, 416 Testes)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_core_rule",
+      "label": "Core Rule: Adoption and Outcome Never Separate From ROI+Confidence",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_value_reading_component",
+      "label": "ValueReading Component (verdict-badge.tsx)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_report_initiative_line",
+      "label": "ReportInitiativeLine Type (report-payload.ts)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_ten_screens",
+      "label": "Signal's Ten Screens",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_decision_invested_returned_removed",
+      "label": "Decision: invested/returned Removed From Schema (Derived on Read)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_decision_no_persona_switcher",
+      "label": "Decision: Persona Switcher Not Ported (Signal Measure)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_signal_action_local",
+      "label": "signalAction Local Wrapper (SignalRuleError 422 / SignalStateConflictError 409)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_decision_window_prompt_to_form",
+      "label": "Decision: window.prompt Replaced by Accessible Form",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_bug_roi_zero_vs_draft",
+      "label": "Bug: computeRoi([]) Returned 0 Instead of null for Draft Initiative",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_decision_portfolio_bars_server",
+      "label": "Decision: Portfolio Thresholds Moved Server-Side Into PortfolioSummary",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_list_confidence_rules_added",
+      "label": "listConfidenceRules Action Added (Read Side Was Missing)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_e2e_location_decision",
+      "label": "Decision: E2E Specs Placed in apps/app/e2e/ (playwright.config testDir)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_coverage_results",
+      "label": "Signal Test Coverage (88.0% Lines, 416 Tests Passing)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_finding_rls_not_exercised_dev",
+      "label": "Finding: RLS Not Exercised in Dev (Signal Measure)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_finding_meridian_no_rls",
+      "label": "Finding: Meridian Has No RLS (Signal Measure)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_02_signal_measure_v15_backlog",
+      "label": "V1.5 Backlog (Real Connectors, Cross-Org Benchmarking, PDF Export)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_measure_core_rule",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_measure_value_reading_component",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_measure_report_initiative_line",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_measure_ten_screens",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_core_rule",
+      "target": "_claude_completions_2026_09_02_signal_measure_value_reading_component",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_core_rule",
+      "target": "_claude_completions_2026_09_02_signal_measure_report_initiative_line",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_ten_screens",
+      "target": "_claude_completions_2026_09_02_signal_measure_value_reading_component",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_measure_coverage_results",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_e2e_location_decision",
+      "target": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_decision_invested_returned_removed",
+      "target": "_claude_completions_2026_09_02_signal_fundacao_decision_derived_totals",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_decision_no_persona_switcher",
+      "target": "_claude_completions_2026_09_02_signal_fundacao_decision_no_persona_switcher",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_finding_rls_not_exercised_dev",
+      "target": "_claude_completions_2026_09_02_signal_fundacao_finding_rls_not_exercised_dev",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_finding_meridian_no_rls",
+      "target": "_claude_completions_2026_09_02_signal_fundacao_finding_meridian_no_rls",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_signal_action_local",
+      "target": "_claude_architecture_map_server_action_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "target": "_claude_completions_2026_09_02_signal_fundacao_milestone",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_bug_roi_zero_vs_draft",
+      "target": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_decision_portfolio_bars_server",
+      "target": "_claude_completions_2026_09_02_signal_measure_ten_screens",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_list_confidence_rules_added",
+      "target": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_v15_backlog",
+      "target": "_claude_completions_2026_09_02_signal_measure_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_02_signal_measure_signal_action_local",
+      "target": "_claude_completions_2026_09_02_signal_measure_decision_window_prompt_to_form",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_signal_delivery_stack",
+      "label": "Signal Module Delivery Stack (Schema, RBAC, Engine, Screens, Verdict UI)",
+      "nodes": [
+        "_claude_completions_2026_09_02_signal_fundacao_signal_schema",
+        "_claude_completions_2026_09_02_signal_fundacao_signal_rbac",
+        "_claude_completions_2026_09_02_signal_fundacao_signal_pure_engine",
+        "_claude_completions_2026_09_02_signal_measure_ten_screens",
+        "_claude_completions_2026_09_02_signal_measure_value_reading_component"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": ".claude/completions/2026-09-02-signal-measure.md"
+    }
+  ]
+}

@@ -1,0 +1,748 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_tasks_phase1_setup",
+      "label": "Phase 1 \u2014 Setup",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase2_foundational",
+      "label": "Phase 2 \u2014 Foundational (blocks all US)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase3_us1",
+      "label": "Phase 3 \u2014 US1 Initiative + Signed Baseline",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase4_us2",
+      "label": "Phase 4 \u2014 US2 Adoption/Outcome/ROI/Confidence/Verdict",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase5_us3",
+      "label": "Phase 5 \u2014 US3 Portfolio and Comparison",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase6_us4",
+      "label": "Phase 6 \u2014 US4 Connections, Mapping, Evidence",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase7_us5",
+      "label": "Phase 7 \u2014 US5 Alerts",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase8_us6",
+      "label": "Phase 8 \u2014 US6 Freezable Reports",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase9_us7",
+      "label": "Phase 9 \u2014 US7 Audit Trail and Settings",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_phase10_polish",
+      "label": "Phase 10 \u2014 Polish and Cross-Cutting",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_dependencies",
+      "label": "Signal Tasks \u2014 Phase Dependency Graph",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_delivery_strategy",
+      "label": "Signal Delivery Strategy (MVP \u2192 V1 completo)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_icon_set_correction",
+      "label": "Icon Set Correction (ICONS lucide-backed, not ICON_PATHS)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_fixture_divergence_finding",
+      "label": "Prototype Fixture Divergence Finding (IN-031, IN-014)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_migration_diff_correction",
+      "label": "Migration Diff Correction (migrate deploy, Signal-only SQL)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_rls_pattern_correction",
+      "label": "RLS Pattern Correction (followed Charter, not Meridian)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_seed_tenant_decision",
+      "label": "Seed Into Existing cosmos-dev Tenant",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_rbac_implementation_deviations",
+      "label": "RBAC Implementation Deviations (test relocation, module split)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_ownership_guard_addition",
+      "label": "Added Fifth Guard: requireInitiativeOwnership",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_persona_switcher_omission",
+      "label": "Persona Switcher Not Ported (Shell Implementation)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_outcome_tone_rule_finding",
+      "label": "Outcome Tone Not Reproducible by Rule \u2014 Declared Rule Instead",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_closure_modal_deviation",
+      "label": "Closure Reason Got Own Form, Not prompt()",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_vault_package_absence",
+      "label": "integrations-vault Package Absent \u2014 No Secret Path Yet",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_weak_alert_null_handling",
+      "label": "Zero-Formula ROI Translated to Null Before Alert Rules",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_coverage_result",
+      "label": "Coverage Result (88.0% lines, 79.4% functions \u2014 below floor)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_e2e_not_executed_caveat",
+      "label": "E2E Specs Written but Not Executed (needs dev server + seed)",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_tasks_build_check_status",
+      "label": "Typecheck/Build Green; pnpm check/build Fail on Unrelated Issues",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_tasks_phase1_setup",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase2_foundational",
+      "target": "specs_003_signal_measure_tasks_phase3_us1",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase3_us1",
+      "target": "specs_003_signal_measure_tasks_phase4_us2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase4_us2",
+      "target": "specs_003_signal_measure_tasks_phase5_us3",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase4_us2",
+      "target": "specs_003_signal_measure_tasks_phase6_us4",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase6_us4",
+      "target": "specs_003_signal_measure_tasks_phase7_us5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase6_us4",
+      "target": "specs_003_signal_measure_tasks_phase8_us6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase7_us5",
+      "target": "specs_003_signal_measure_tasks_phase8_us6",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase8_us6",
+      "target": "specs_003_signal_measure_tasks_phase9_us7",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_phase9_us7",
+      "target": "specs_003_signal_measure_tasks_phase10_polish",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_icon_set_correction",
+      "target": "specs_003_signal_measure_tasks_phase1_setup",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_fixture_divergence_finding",
+      "target": "specs_003_signal_measure_tasks_phase1_setup",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_migration_diff_correction",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_rls_pattern_correction",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_seed_tenant_decision",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_rbac_implementation_deviations",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_ownership_guard_addition",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_persona_switcher_omission",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_outcome_tone_rule_finding",
+      "target": "specs_003_signal_measure_tasks_phase2_foundational",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_closure_modal_deviation",
+      "target": "specs_003_signal_measure_tasks_phase3_us1",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_vault_package_absence",
+      "target": "specs_003_signal_measure_tasks_phase6_us4",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_weak_alert_null_handling",
+      "target": "specs_003_signal_measure_tasks_phase7_us5",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_coverage_result",
+      "target": "specs_003_signal_measure_tasks_phase10_polish",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_e2e_not_executed_caveat",
+      "target": "specs_003_signal_measure_tasks_phase10_polish",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_build_check_status",
+      "target": "specs_003_signal_measure_tasks_phase10_polish",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_fixture_divergence_finding",
+      "target": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_persona_switcher_omission",
+      "target": "specs_003_signal_measure_contracts_ui_contract_persona_switcher_not_ported",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_outcome_tone_rule_finding",
+      "target": "specs_003_signal_measure_data_model_signaloutcomesnapshot",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_ownership_guard_addition",
+      "target": "specs_003_signal_measure_contracts_server_actions_role_permission_matrix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_weak_alert_null_handling",
+      "target": "specs_003_signal_measure_contracts_server_actions_alerts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_vault_package_absence",
+      "target": "specs_003_signal_measure_contracts_server_actions_connections",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_vault_package_absence",
+      "target": "specs_003_signal_measure_data_model_signalconnection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_coverage_result",
+      "target": "specs_003_signal_measure_plan_constitution_check",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_e2e_not_executed_caveat",
+      "target": "specs_003_signal_measure_quickstart_journey4_isolation_roles",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_rls_pattern_correction",
+      "target": "specs_003_signal_measure_contracts_server_actions_guard_preamble",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_delivery_strategy",
+      "target": "specs_003_signal_measure_tasks_phase4_us2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_delivery_strategy",
+      "target": "specs_003_signal_measure_tasks_phase5_us3",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_delivery_strategy",
+      "target": "specs_003_signal_measure_tasks_phase7_us5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_delivery_strategy",
+      "target": "specs_003_signal_measure_tasks_phase10_polish",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_delivery_strategy",
+      "target": "specs_003_signal_measure_plan_mvp_scope",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_dependencies",
+      "target": "specs_003_signal_measure_tasks_phase5_us3",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_dependencies",
+      "target": "specs_003_signal_measure_tasks_phase7_us5",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_tasks_dependencies",
+      "target": "specs_003_signal_measure_tasks_phase9_us7",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/tasks.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "signal_persona_switcher_omission_hyperedge",
+      "label": "Persona Switcher Omission Spans Spec, UI Contract and Tasks",
+      "nodes": [
+        "specs_003_signal_measure_contracts_ui_contract_persona_switcher_not_ported",
+        "specs_003_signal_measure_tasks_persona_switcher_omission",
+        "specs_003_signal_measure_spec_personas"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/tasks.md"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "label": "AccountSwitcher (badge + dropdown + SwitchAccountDialog) em packages/design-system",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_switch_tenant_api_reuso",
+      "label": "Reusa POST /api/auth/switch-tenant e resolvePostLoginDestination",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_getshelldata_shellidentity_estendidos",
+      "label": "getShellData()/ShellIdentity dos 5 produtos estendidos com tenants[]/activeTenantId",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_edge_case_seletor_escondido",
+      "label": "Edge case: seletor escondido quando tenants.length <= 1",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_t013_parcial_seed_pendente",
+      "label": "T013 parcial \u2014 falta seed com 2+ TenantMember para testar troca real",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_achado_gitignore_fixtures_catalogo",
+      "label": "Achado de seguran\u00e7a: e2e/fixtures/catalogo/ (cookie de sess\u00e3o real) fora do .gitignore \u2014 corrigido",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "target": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_switch_tenant_api_reuso",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "target": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_getshelldata_shellidentity_estendidos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "target": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_edge_case_seletor_escondido",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_t013_parcial_seed_pendente",
+      "target": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_achado_gitignore_fixtures_catalogo",
+      "target": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.6,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_27_conta_ativa_visivel_us2_accountswitcher_component",
+      "target": "_claude_completions_2026_09_26_spec_004_quickstart_t031_cenario2_catalogo_tenant_interno_aprovado",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": ".claude/completions/2026-09-27-conta-ativa-visivel-us2.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

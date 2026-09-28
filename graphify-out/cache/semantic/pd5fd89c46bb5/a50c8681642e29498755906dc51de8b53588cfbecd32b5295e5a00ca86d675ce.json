@@ -1,0 +1,365 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_subprojeto_c",
+      "label": "Subprojeto C \u2014 Mapa de processos",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Grafo de conhecimento aplicado aos processos da casa: cada n\u00f3 \u00e9 um processo, cada aresta \u00e9 o que dispara, alimenta ou exige o outro."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_design_claude_691f7fe5_processos",
+      "label": "backoffice-process-map.jsx / backoffice-process-map-screen.jsx (Claude Design 691f7fe5)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_decisao_sem_fontes_externas",
+      "label": "Decis\u00e3o: sem fontes externas (Drive/Notion/GitHub/SharePoint fora)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O \u00fanico 'modelo' \u00e9 o BPMN j\u00e1 versionado em StaffDiagram; o n\u00f3 guarda no m\u00e1ximo um docUrl (link)."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "label": "model StaffProcess",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tenant \u00e9 sempre 'system' (artefato da Nebuloz); c\u00f3digo curto e est\u00e1vel ('PZ-01') \u00e9 o id no .canvas."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process_edge",
+      "label": "model StaffProcessEdge",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "'de \u2192 para: r\u00f3tulo'. Ex.: PZ-01 \u2192 PZ-02 'converte em'."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_migracao_mapa_de_processos",
+      "label": "Migration 20260909000000_mapa_de_processos (RLS)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_seed_processos_nebuloz",
+      "label": "Seed PROCESSOS_NEBULOZ / LIGACOES_NEBULOZ (21 n\u00f3s, 23 liga\u00e7\u00f5es)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_status_de",
+      "label": "statusDe(p)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "MODELADO se diagramId, RASCUNHO se docUrl, sen\u00e3o NAO_MAPEADO. status n\u00e3o \u00e9 coluna \u2014 uma verdade s\u00f3."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_layout_polar",
+      "label": "layoutPolar(processos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Determin\u00edstico: mesma entrada, mesma sa\u00edda. Posi\u00e7\u00e3o do n\u00f3 n\u00e3o \u00e9 persistida."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_buscar_processos",
+      "label": "buscar(q, processos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tokens \u22653 letras, sem stop-words, todos devem bater em nome+descricao+tags. Busca sem\u00e2ntica com sin\u00f4nimos cortada: \u00e9 prot\u00f3tipo, substring cobre o uso."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_para_json_canvas",
+      "label": "paraJsonCanvas(processos, ligacoes, pos)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "JSON Canvas 1.0 \u2014 grupos por dom\u00ednio, n\u00f3s type file, arestas com fromSide/toSide pela geometria."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_action_criar_processo",
+      "label": "criarProcesso(input) / atualizarProcesso(id, input)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "c\u00f3digo duplicado \u2192 erro 'J\u00e1 existe PZ-xx'."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_action_criar_ligacao",
+      "label": "criarLigacao({deId, paraId, rotulo})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "deId !== paraId, ambos do tenant, par \u00fanico \u2192 erro 'Liga\u00e7\u00e3o j\u00e1 existe'."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_grafo_svg_ui",
+      "label": "grafo.tsx (SVG, layout polar, pan/zoom)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Arrastar \u00e9 tempor\u00e1rio, retorno para casa se soltar a >190px. Respeita prefers-reduced-motion."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_painel_processo_ui",
+      "label": "painel.tsx",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Excluir com confirma\u00e7\u00e3o em duas etapas no pr\u00f3prio bot\u00e3o, como confirmar-acao."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_exportacao_json_canvas",
+      "label": "Exporta\u00e7\u00e3o .canvas (JSON Canvas 1.0)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_subprojeto_c",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_design_claude_691f7fe5_processos",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_subprojeto_c",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_decisao_sem_fontes_externas",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process_edge",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_migracao_mapa_de_processos",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_migracao_mapa_de_processos",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process_edge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_migracao_mapa_de_processos",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_migracao_funil_v2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_seed_processos_nebuloz",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_status_de",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_layout_polar",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_para_json_canvas",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process_edge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_para_json_canvas",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_exportacao_json_canvas",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_action_criar_processo",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_action_criar_ligacao",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process_edge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_grafo_svg_ui",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_layout_polar",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_grafo_svg_ui",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_fn_buscar_processos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_painel_processo_ui",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_action_criar_ligacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_painel_processo_ui",
+      "target": "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_model_staff_process",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-mapa-de-processos-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

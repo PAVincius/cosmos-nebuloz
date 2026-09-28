@@ -1,0 +1,252 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_backoffice_srd_especificacao",
+      "label": "Back-office SRD v2.0",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_guard_requireplatformstaff",
+      "label": "requirePlatformStaff \u2014 guard de quatro port\u00f5es",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O teto de requisi\u00e7\u00f5es vem antes da consulta de membership no banco, para que cada tentativa de quem n\u00e3o \u00e9 staff custe o m\u00ednimo poss\u00edvel \u2014 \u00e9 justamente quem n\u00e3o \u00e9 staff que tenta em la\u00e7o."
+    },
+    {
+      "id": "docs_produto_backoffice_srd_fila_aprovacao",
+      "label": "Fila de aprova\u00e7\u00e3o (BA-01..BA-09)",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_formula_precificacao",
+      "label": "F\u00f3rmula de precifica\u00e7\u00e3o de proposta",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_catalogo_comercial",
+      "label": "Cat\u00e1logo comercial (planos, m\u00f3dulos, prazos, add-ons)",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_platformdb_porta_cross_tenant",
+      "label": "platformDb \u2014 porta \u00fanica de leitura cross-tenant (ADR-0013)",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_rls_superuser",
+      "label": "RLS anulada por conex\u00e3o superuser (ADR-0012)",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_backoffice_srd_api_health_publico",
+      "label": "/api/health exp\u00f5e dados sens\u00edveis publicamente",
+      "file_type": "concept",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_guard_requireplatformstaff",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_fila_aprovacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_formula_precificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_formula_precificacao",
+      "target": "docs_produto_backoffice_srd_catalogo_comercial",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_platformdb_porta_cross_tenant",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_rls_superuser",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_especificacao",
+      "target": "docs_produto_backoffice_srd_api_health_publico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_fila_aprovacao",
+      "target": "docs_produto_backoffice_prd_operacao_sensivel_fila",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_prd_b17_preparar_charter_meridian",
+      "target": "docs_produto_backoffice_srd_especificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_rls_superuser",
+      "target": "docs_produto_charter_srd_adr_0012_rls_anulada",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_catalogo_comercial",
+      "target": "docs_produto_charter_prd_charter_product",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_catalogo_comercial",
+      "target": "docs_produto_meridian_prd_meridian_product",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_catalogo_comercial",
+      "target": "docs_produto_signal_prd_signal_product",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_backoffice_srd_catalogo_comercial",
+      "target": "docs_produto_scaffold_srd_especificacao",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "guard_chain_pattern",
+      "label": "Padr\u00e3o de guard em cadeia (sess\u00e3o \u2192 m\u00f3dulo \u2192 papel \u2192 permiss\u00e3o) repetido em cinco produtos",
+      "nodes": [
+        "docs_produto_backoffice_srd_guard_requireplatformstaff",
+        "docs_produto_charter_srd_guard_requirechartercontext",
+        "docs_produto_meridian_srd_guard_requiremeridiancontext",
+        "docs_produto_scaffold_srd_guard_quatro_portoes",
+        "docs_produto_signal_srd_guard_requiresignalcontext"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/produto/backoffice-srd.md"
+    }
+  ]
+}

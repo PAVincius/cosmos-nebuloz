@@ -1,0 +1,212 @@
+{
+  "nodes": [
+    {
+      "id": "specs_003_signal_measure_plan_summary",
+      "label": "Signal Implementation Plan \u2014 Summary",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_technical_context",
+      "label": "Signal Technical Context",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_constitution_check",
+      "label": "Signal Constitution Check",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_project_structure",
+      "label": "Signal Project Structure (docs + source tree)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_phase2_sequence",
+      "label": "Phase 2 \u2014 Implementation Sequence (7 blocks)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_risks",
+      "label": "Signal Plan Risks",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_meridian_imitation_pattern",
+      "label": "Deliberate Imitation of Meridian's Architecture",
+      "file_type": "rationale",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_dual_invariant_rule",
+      "label": "Signal's Two Governing Product Rules",
+      "file_type": "concept",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_003_signal_measure_plan_mvp_scope",
+      "label": "Signal MVP Scope (US1+US2)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_003_signal_measure_plan_summary",
+      "target": "specs_003_signal_measure_plan_meridian_imitation_pattern",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_meridian_imitation_pattern",
+      "target": "specs_003_signal_measure_plan_project_structure",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_dual_invariant_rule",
+      "target": "specs_003_signal_measure_contracts_ui_contract_content_rules",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_constitution_check",
+      "target": "specs_003_signal_measure_contracts_server_actions_guard_preamble",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_constitution_check",
+      "target": "specs_003_signal_measure_research_d11_risk_based_testing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_phase2_sequence",
+      "target": "specs_003_signal_measure_tasks_dependencies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_phase2_sequence",
+      "target": "specs_003_signal_measure_research_d4_pure_calc_engine",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_risks",
+      "target": "specs_003_signal_measure_data_model_roi_derivation_rationale",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_003_signal_measure_plan_mvp_scope",
+      "target": "specs_003_signal_measure_plan_dual_invariant_rule",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/003-signal-measure/plan.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "signal_meridian_imitation_hyperedge",
+      "label": "Signal's Research Decisions Implement the Meridian Imitation Pattern",
+      "nodes": [
+        "specs_003_signal_measure_plan_meridian_imitation_pattern",
+        "specs_003_signal_measure_research_d1_route_topology",
+        "specs_003_signal_measure_research_d5_transactional_audit",
+        "specs_003_signal_measure_research_d6_readable_codes",
+        "specs_003_signal_measure_research_d7_roles_permissions"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "specs/003-signal-measure/plan.md"
+    }
+  ]
+}

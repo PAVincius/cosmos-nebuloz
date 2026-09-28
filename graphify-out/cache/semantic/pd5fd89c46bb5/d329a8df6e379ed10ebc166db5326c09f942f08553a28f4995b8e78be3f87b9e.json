@@ -1,0 +1,97 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "label": "Papel efetivo (papel SAFe do usu\u00e1rio, pode variar por ART)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Atribu\u00eddo por um Admin do tenant em Settings \u2192 Membros; sem papel atribu\u00eddo, o usu\u00e1rio entra no tenant mas n\u00e3o enxerga nenhuma tela de produto."
+    },
+    {
+      "id": "docs_cliente_conceitos_permissoes_papel_customizado",
+      "label": "Papel customizado (sempre aditivo, nunca restritivo)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pode dar permiss\u00e3o a mais, nunca tirar permiss\u00e3o que a matriz padr\u00e3o j\u00e1 concede; n\u00e3o existe 'papel customizado restritivo' \u2014 para restringir, o caminho \u00e9 um papel padr\u00e3o mais enxuto."
+    },
+    {
+      "id": "docs_cliente_conceitos_permissoes_2fa",
+      "label": "Autentica\u00e7\u00e3o de dois fatores (2FA) para Admin e STE",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pap\u00e9is com privil\u00e9gio elevado exigem 2FA verificado para agir; o Cosmos pede antes de liberar a\u00e7\u00f5es sens\u00edveis."
+    },
+    {
+      "id": "docs_cliente_conceitos_permissoes_isolamento_organizacoes",
+      "label": "Isolamento entre organiza\u00e7\u00f5es (troca de tenant \u00e9 a\u00e7\u00e3o expl\u00edcita)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Nenhuma tela do Cosmos mistura dado de dois tenants; o Cosmos nunca mostra os dois ao mesmo tempo na mesma tela."
+    },
+    {
+      "id": "docs_cliente_conceitos_permissoes_falta_permissao",
+      "label": "O que acontece quando falta permiss\u00e3o (bloqueio + trilha de auditoria)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O Cosmos bloqueia e registra a tentativa negada na trilha de auditoria do tenant \u2014 comportamento esperado de rastreabilidade, n\u00e3o um bug."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "target": "docs_cliente_conceitos_permissoes_papel_customizado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_conceitos_permissoes_2fa",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_conceitos_permissoes_falta_permissao",
+      "target": "docs_cliente_conceitos_permissoes_papel_efetivo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/conceitos/permissoes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

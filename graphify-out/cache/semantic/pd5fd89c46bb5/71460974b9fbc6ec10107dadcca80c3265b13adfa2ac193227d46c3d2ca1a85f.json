@@ -1,0 +1,144 @@
+{
+  "nodes": [
+    {
+      "id": "apps_memoria_servico_requirements_fastapi",
+      "label": "Depend\u00eancia: fastapi==0.141.1 (framework web)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_pydantic",
+      "label": "Depend\u00eancia: pydantic==2.13.5 + pydantic-settings==2.15.0 (valida\u00e7\u00e3o)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_psycopg_pgvector",
+      "label": "Depend\u00eancia: psycopg[binary,pool]==3.3.6 + pgvector==0.5.0 (cliente Postgres/pgvector)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_qdrant_client",
+      "label": "Depend\u00eancia: qdrant-client==1.19.1",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_neo4j_driver",
+      "label": "Depend\u00eancia: neo4j==6.3.1 (driver)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_minio_client",
+      "label": "Depend\u00eancia: minio==7.2.20 (cliente)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "apps_memoria_servico_requirements_mcp_sdk",
+      "label": "Depend\u00eancia: mcp==2.2.0 (Model Context Protocol SDK)",
+      "file_type": "code",
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_memoria_servico_requirements_mcp_sdk",
+      "target": "apps_memoria_readme_mcp_endpoint",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_servico_requirements_fastapi",
+      "target": "apps_memoria_docker_compose_service_memoria",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_servico_requirements_psycopg_pgvector",
+      "target": "apps_memoria_docker_compose_service_postgres",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_servico_requirements_qdrant_client",
+      "target": "apps_memoria_docker_compose_service_qdrant",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_servico_requirements_neo4j_driver",
+      "target": "apps_memoria_docker_compose_service_neo4j",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_memoria_servico_requirements_minio_client",
+      "target": "apps_memoria_docker_compose_service_minio",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/memoria/servico/requirements.txt",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,117 @@
+{
+  "nodes": [
+    {
+      "id": "docs_cliente_guias_pi_planning_conceito",
+      "label": "PI Planning (ART transforma \u00e9picos priorizados em compromisso de time)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Todo o planejamento \u2014 objetivo por time, depend\u00eancia, risco e voto de confian\u00e7a \u2014 fica registrado no mesmo lugar, dispon\u00edvel depois em Analytics."
+    },
+    {
+      "id": "docs_cliente_guias_pi_planning_program_board",
+      "label": "ART Board / program board (features, depend\u00eancias, riscos do PI)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9 a vis\u00e3o que o RTE usa para conduzir o PI Planning."
+    },
+    {
+      "id": "docs_cliente_guias_pi_planning_pi_objectives",
+      "label": "PI Objectives (plannedValue por time)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00c9 esse n\u00famero que depois \u00e9 comparado com o que foi realmente entregue."
+    },
+    {
+      "id": "docs_cliente_guias_pi_planning_dependencias_riscos",
+      "label": "Depend\u00eancias e riscos entre times/ARTs",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Registradas no board de programa durante o planejamento \u2014 evita que um risco levantado numa sala de PI Planning se perca depois de a reuni\u00e3o acabar."
+    },
+    {
+      "id": "docs_cliente_guias_pi_planning_confidence_vote",
+      "label": "Confidence vote (base da previsibilidade de PI)",
+      "file_type": "concept",
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Volta a aparecer em Analytics comparado com achievedValue vs plannedValue, formando a base da m\u00e9trica de previsibilidade de PI."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_cliente_guias_pi_planning_conceito",
+      "target": "docs_cliente_guias_pi_planning_program_board",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_pi_planning_program_board",
+      "target": "docs_cliente_guias_pi_planning_pi_objectives",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_pi_planning_pi_objectives",
+      "target": "docs_cliente_guias_pi_planning_dependencias_riscos",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_pi_planning_dependencias_riscos",
+      "target": "docs_cliente_guias_pi_planning_confidence_vote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_cliente_guias_pi_planning_confidence_vote",
+      "target": "docs_cliente_guias_board_do_time_e_metricas_board_do_time",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/cliente/guias/pi-planning.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

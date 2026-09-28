@@ -1,0 +1,532 @@
+{
+  "nodes": [
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "label": "Registro de decis\u00f5es 2026-09-27 (pre\u00e7o, copiloto, raio X, modelo pr\u00f3prio, mem\u00f3ria)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_cota_tecnica_150",
+      "label": "Cota t\u00e9cnica de 150% nos pacotes",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Consumo n\u00e3o faturado continua sendo custo; registrada em docs/comercial/pacotes-e-precificacao.md, ligada a D-05."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_piknowledgevector_gap_apagamento",
+      "label": "PIKnowledgeVector sem caminho de apagamento",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Guarda texto indexado; revoga\u00e7\u00e3o de consentimento de reuni\u00e3o, pedido LGPD de titular e exclus\u00e3o de entidade (deleteRisk) n\u00e3o o tocam; documento enviado ao Copilot fica vis\u00edvel ao tenant inteiro; sem \u00edndice HNSW nem IVFFlat."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_copilot_lacunas_governanca",
+      "label": "Copilot: lacunas de governan\u00e7a e auditoria",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 a escrita confere papel; createFeature e moveFeature n\u00e3o passam pela auditoria e s\u00f3 pedem confirma\u00e7\u00e3o no prompt, contra o UC-02 FULL_REVIEW do Charter; extractCitations s\u00f3 \u00e9 usado em teste; fenceUntrusted n\u00e3o \u00e9 usado pelo Copilot; rota sem maxOutputTokens."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_corpus_fine_tune_slm_pipeline",
+      "label": "Corpus de fine-tune sem treino (experiments/slm-pipeline)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 dados, sem treino; etl_safe_corpus.py extrai perguntas de PDFs de prova SAFe (um \u00e9 arquivo \"dumps\"); train.jsonl precisa de triagem antes de qualquer treino."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_catalogo_residencia_dado_contradicao",
+      "label": "Contradi\u00e7\u00e3o SV-11 x ADR-0016 sobre resid\u00eancia de dado",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O cat\u00e1logo (SV-11) promete resid\u00eancia de dado; o ADR-0016 diz que resid\u00eancia n\u00e3o \u00e9 atend\u00edvel."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_raio_x_estado_geracao_pdf",
+      "label": "Raio X: gera\u00e7\u00e3o de PDF inconsistente entre produtos",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "\u00danico gerador de PDF \u00e9 o do Charter (@react-pdf/renderer); Signal congela e exporta JSON; Meridian n\u00e3o tem documento de entrega."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_deploy_nebuloz_web_falha_producao",
+      "label": "nebuloz-web falha em produ\u00e7\u00e3o na main",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "turbo.json faz todo build depender de @repo/database#migrate:deploy; o projeto nebuloz-web n\u00e3o tem DATABASE_URL."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_propagar_apagamento_piknowledgevector",
+      "label": "Tarefa: propagar apagamento para PIKnowledgeVector",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Propagar revoga\u00e7\u00e3o de consentimento, pedido LGPD e exclus\u00e3o de entidade para o PIKnowledgeVector; marcada fora deste PR."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_destravar_deploy_nebuloz_web",
+      "label": "Tarefa: destravar deploy do nebuloz-web",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Tirar a migration do build do site para destravar o deploy; marcada fora deste PR."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+      "label": "Laborat\u00f3rio STEC / Memory Control Plane (experiments/memoria-stec)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Docker-compose e esqueleto de Memory Control Plane, fora da produ\u00e7\u00e3o, conforme D-16; Postgres+pgvector como sistema de registro com RLS for\u00e7ada, mem\u00f3ria bitemporal imut\u00e1vel protegida por trigger, auditoria s\u00f3-INSERT, chaves de API guardadas como hash; proje\u00e7\u00f5es refeitas por rebuild (Qdrant por tenant, Neo4j, MinIO por vers\u00e3o); apagamento por origem chega aos quatro armaz\u00e9ns."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_stec_escopo_cortado",
+      "label": "STEC: escopo cortado do pacote",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Cortado: Mem0, Cognee, LangGraph, consolida\u00e7\u00e3o por LLM, Context Layer, Redis e UIs, nota de confian\u00e7a decimal, senhas padr\u00e3o; motivo de cada corte documentado no README."
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_stec_achados_verificacao",
+      "label": "STEC: achados de verifica\u00e7\u00e3o (Qdrant, pgvector)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "23 testes de integra\u00e7\u00e3o contra servi\u00e7os reais em Docker, smoke test ponta a ponta, ruff limpo; achados: Qdrant 1.19 n\u00e3o abre dados do 1.12 (rebuild resolveu); vetor sem dimens\u00e3o volta como pgvector.Vector e a primeira vers\u00e3o da proje\u00e7\u00e3o falhava em sil\u00eancio, ganhou teste."
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d01",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d02",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d03",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d04",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d05",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d06",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d07",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d08",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d09",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d10",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d11",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d12",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d13",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d14",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d15",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d16",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d17",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "docs_produto_registro_de_decisoes_d18",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_cota_tecnica_150",
+      "target": "docs_produto_registro_de_decisoes_d05",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+      "target": "docs_produto_registro_de_decisoes_d16",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_cota_tecnica_150",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_piknowledgevector_gap_apagamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_copilot_lacunas_governanca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_corpus_fine_tune_slm_pipeline",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_catalogo_residencia_dado_contradicao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_raio_x_estado_geracao_pdf",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_deploy_nebuloz_web_falha_producao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_propagar_apagamento_piknowledgevector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_destravar_deploy_nebuloz_web",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_completion_log",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_propagar_apagamento_piknowledgevector",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_piknowledgevector_gap_apagamento",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_tarefa_destravar_deploy_nebuloz_web",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_deploy_nebuloz_web_falha_producao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_stec_escopo_cortado",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_completions_2026_09_27_registro_de_decisoes_stec_achados_verificacao",
+      "target": "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_hyperedge_achados_codigo",
+      "label": "Achados de auditoria de c\u00f3digo por tr\u00e1s do registro de decis\u00f5es",
+      "nodes": [
+        "claude_completions_2026_09_27_registro_de_decisoes_piknowledgevector_gap_apagamento",
+        "claude_completions_2026_09_27_registro_de_decisoes_copilot_lacunas_governanca",
+        "claude_completions_2026_09_27_registro_de_decisoes_corpus_fine_tune_slm_pipeline",
+        "claude_completions_2026_09_27_registro_de_decisoes_catalogo_residencia_dado_contradicao",
+        "claude_completions_2026_09_27_registro_de_decisoes_raio_x_estado_geracao_pdf",
+        "claude_completions_2026_09_27_registro_de_decisoes_deploy_nebuloz_web_falha_producao"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md"
+    },
+    {
+      "id": "claude_completions_2026_09_27_registro_de_decisoes_hyperedge_stec_lab",
+      "label": "Laborat\u00f3rio STEC: escopo, implementa\u00e7\u00e3o e verifica\u00e7\u00e3o",
+      "nodes": [
+        "claude_completions_2026_09_27_registro_de_decisoes_lab_memoria_stec",
+        "claude_completions_2026_09_27_registro_de_decisoes_stec_escopo_cortado",
+        "claude_completions_2026_09_27_registro_de_decisoes_stec_achados_verificacao"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-27-registro-de-decisoes.md"
+    }
+  ]
+}

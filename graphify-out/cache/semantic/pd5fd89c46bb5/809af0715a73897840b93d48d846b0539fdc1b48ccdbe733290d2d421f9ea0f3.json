@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "id": "ponytail_debt_ledger",
+      "label": "Ledger de d\u00edvida ponytail (marcador ponytail: no c\u00f3digo)",
+      "file_type": "concept",
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": "2026-09-02",
+      "author": null,
+      "contributor": null,
+      "rationale": "Cada linha \u00e9 um atalho consciente, com teto e gatilho que manda revisitar; regenerado por grep -rnE '(#|//) ?ponytail:'."
+    },
+    {
+      "id": "ponytail_debt_marker_seed_entrypoint_guard",
+      "label": "Ponytail: spawn real de tsx em seed-entrypoint-guard.test.ts:69",
+      "file_type": "rationale",
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": "apps/app/__tests__/scripts/seed-entrypoint-guard.test.ts:69",
+      "source_url": null,
+      "captured_at": "2026-07-26",
+      "author": "PAVincius",
+      "contributor": null,
+      "rationale": "Spawn real de tsx em vez de mockar Prisma; teto ~5s por m\u00f3dulo de wall-clock; upgrade n\u00e3o declarado \u2014 o coment\u00e1rio nomeia o custo mas n\u00e3o diz quando deixa de valer a pena."
+    },
+    {
+      "id": "ponytail_debt_marker_auth_setup",
+      "label": "Ponytail: auth.setup.ts:4 depende de requireTenantSession",
+      "file_type": "rationale",
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": "apps/app/e2e/setup/auth.setup.ts:4",
+      "source_url": null,
+      "captured_at": "2026-07-10",
+      "author": "PAVincius",
+      "contributor": null,
+      "rationale": "Sem escrita direta no banco no setup de auth; depende de requireTenantSession setar activeTenantId na primeira request; teto n\u00e3o declarado; l\u00ea como nota, n\u00e3o como adiamento."
+    },
+    {
+      "id": "ponytail_debt_retirados_executive_confidence_index",
+      "label": "Marcadores retirados: Executive Confidence Index",
+      "file_type": "rationale",
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": "release-forecast.ts:16, epic-confidence.ts:54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "release-forecast.ts:16 (piso de sprints fixo) e epic-confidence.ts:54 (N+1 por epic) sa\u00edram junto com o Executive Confidence Index \u2014 d\u00edvida em cima de c\u00f3digo morto, nenhuma tela consumia getPortfolioConfidence."
+    },
+    {
+      "id": "ponytail_debt_cobertura_lacuna",
+      "label": "Lacuna de cobertura do ledger (Charter/backoffice/Meridian sem marcador)",
+      "file_type": "concept",
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Ledger cobre s\u00f3 e2e do app; zero marcadores em Charter, backoffice e meridian quer dizer n\u00e3o-marcado, n\u00e3o limpo \u2014 lib/meridian/* e packages/rbac/meridian-* subiram sem anota\u00e7\u00e3o de atalho deliberado."
+    }
+  ],
+  "edges": [
+    {
+      "source": "ponytail_debt_ledger",
+      "target": "ponytail_debt_marker_seed_entrypoint_guard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ponytail_debt_ledger",
+      "target": "ponytail_debt_marker_auth_setup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ponytail_debt_ledger",
+      "target": "ponytail_debt_retirados_executive_confidence_index",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ponytail_debt_ledger",
+      "target": "ponytail_debt_cobertura_lacuna",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PONYTAIL-DEBT.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

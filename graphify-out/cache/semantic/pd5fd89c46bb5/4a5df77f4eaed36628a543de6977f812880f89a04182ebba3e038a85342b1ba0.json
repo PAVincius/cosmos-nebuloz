@@ -1,0 +1,484 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_funil_v2",
+      "label": "Funil v2",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_lead",
+      "label": "Lead (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_estagiodofunil",
+      "label": "EstagioDoFunil (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_mudancadeestagio",
+      "label": "MudancaDeEstagio (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_canaldelead",
+      "label": "CanalDeLead (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_historicodeestagio",
+      "label": "HistoricoDeEstagio (modelo)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "label": "lib/comercial/funil.ts \u2014 regras puras",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "label": "app/actions/leads.ts",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_funil_config_actions",
+      "label": "app/actions/funil-config.ts",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_board",
+      "label": "Board arrastar-e-soltar",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_lead_dialog",
+      "label": "LeadDialog",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_novo_lead_dialog",
+      "label": "NovoLeadDialog",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_estagio_dialog",
+      "label": "Painel do est\u00e1gio (estagio-dialog.tsx)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_pipeline_ponderado",
+      "label": "Pipeline ponderado",
+      "file_type": "rationale",
+      "rationale": "Soma o ACV estimado dos leads abertos ponderado pelo peso% configurado do est\u00e1gio atual, para estimar quanto do pipeline vira receita.",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_metricas_do_estagio",
+      "label": "M\u00e9tricas do est\u00e1gio (90 dias)",
+      "file_type": "rationale",
+      "rationale": "Entraram/avan\u00e7aram/perdidos/perman\u00eancia m\u00e9dia calculados a partir do hist\u00f3rico de transi\u00e7\u00f5es dos \u00faltimos 90 dias, n\u00e3o de um contador incremental, para poder reconstituir o funil em qualquer janela.",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_motivos_perda",
+      "label": "Motivos de perda (MOTIVOS_PERDA)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_portas_entrada",
+      "label": "Portas de entrada (PORTAS)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_seed_funil_nebuloz",
+      "label": "Seed funil-nebuloz (ESTAGIOS_NEBULOZ, CANAIS_NEBULOZ)",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_plans_2026_09_06_funil_v2_estagnado",
+      "label": "Estagnado (regra de teto de dias)",
+      "file_type": "rationale",
+      "rationale": "Um lead \u00e9 estagnado quando os dias no est\u00e1gio atual excedem o tetoDias configurado por est\u00e1gio; sinaliza em vermelho no board sem bloquear o fluxo.",
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_v2",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_lead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_lead",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_estagiodofunil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_lead",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_canaldelead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_lead",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_historicodeestagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_estagiodofunil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_pipeline_ponderado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_metricas_do_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_motivos_perda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_portas_entrada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_estagnado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_funil_regras_puras",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_historicodeestagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_config_actions",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_estagiodofunil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_config_actions",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_mudancadeestagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_funil_config_actions",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_canaldelead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_board",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_lead_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_motivos_perda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_lead_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_novo_lead_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_portas_entrada",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_novo_lead_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_leads_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_estagio_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_funil_config_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_estagio_dialog",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_metricas_do_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_seed_funil_nebuloz",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_estagiodofunil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_seed_funil_nebuloz",
+      "target": "docs_superpowers_plans_2026_09_06_funil_v2_canaldelead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_plans_2026_09_06_funil_v2_estagnado",
+      "target": "docs_superpowers_plans_2026_09_06_livro_razao_e_titulos_envelhecimento",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyper_funil_v2_board_dialogos",
+      "label": "Funil v2 \u2014 board e di\u00e1logos comp\u00f5em a tela",
+      "nodes": [
+        "docs_superpowers_plans_2026_09_06_funil_v2_board",
+        "docs_superpowers_plans_2026_09_06_funil_v2_lead_dialog",
+        "docs_superpowers_plans_2026_09_06_funil_v2_novo_lead_dialog",
+        "docs_superpowers_plans_2026_09_06_funil_v2_estagio_dialog"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-09-06-funil-v2.md"
+    }
+  ]
+}

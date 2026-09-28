@@ -1,0 +1,385 @@
+{
+  "nodes": [
+    {
+      "id": "docs_comercial_icp_e_precificacao_plano_starter",
+      "label": "Plano Starter - R$89/assento, minimo 10",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_plano_scale",
+      "label": "Plano Scale - R$149/assento, minimo 25",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_plano_enterprise",
+      "label": "Plano Enterprise - R$219/assento, roles custom",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_modulo_meridian",
+      "label": "Modulo Meridian - R$1.200/mes",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_alcada_de_desconto",
+      "label": "Alcada de Desconto - LIMITE_DESCONTO_SEM_APROVACAO",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_buraco_produto_de_entrada",
+      "label": "O Buraco - Produto de Entrada Nao Vendavel Sozinho",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_dois_skus_meridian",
+      "label": "Recomendacao - Dois SKUs para o Meridian",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_sku1_diagnostico",
+      "label": "SKU 1 - Diagnostico, Entrada por Projeto",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_sku2_meridian_continuo",
+      "label": "SKU 2 - Meridian Continuo, Expansao na Renovacao",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_plano_piso_zero",
+      "label": "PlanoComercial de Piso Zero - plano diagnostico",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "label": "Ticket do Diagnostico - Decisao em Aberto",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_tres_amarras_ticket",
+      "label": "As Tres Amarras do Ticket do Diagnostico",
+      "file_type": "rationale",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_icp_meridian",
+      "label": "ICP - Meridian",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_icp_charter",
+      "label": "ICP - Charter",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_icp_cosmos",
+      "label": "ICP - Cosmos",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_icp_signal",
+      "label": "ICP - Signal",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_icp_scaffold",
+      "label": "ICP - Scaffold, Herdado do Meridian",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_comercial_icp_e_precificacao_pendencias",
+      "label": "Pendencias que Ficam",
+      "file_type": "concept",
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_comercial_icp_e_precificacao_buraco_produto_de_entrada",
+      "target": "docs_comercial_icp_e_precificacao_modulo_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_buraco_produto_de_entrada",
+      "target": "docs_comercial_icp_e_precificacao_plano_starter",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_dois_skus_meridian",
+      "target": "docs_comercial_icp_e_precificacao_buraco_produto_de_entrada",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_dois_skus_meridian",
+      "target": "docs_comercial_icp_e_precificacao_sku1_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_dois_skus_meridian",
+      "target": "docs_comercial_icp_e_precificacao_sku2_meridian_continuo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_sku2_meridian_continuo",
+      "target": "docs_comercial_icp_e_precificacao_modulo_meridian",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_sku1_diagnostico",
+      "target": "docs_comercial_icp_e_precificacao_plano_piso_zero",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_plano_piso_zero",
+      "target": "docs_comercial_icp_e_precificacao_plano_starter",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "target": "docs_comercial_icp_e_precificacao_tres_amarras_ticket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_tres_amarras_ticket",
+      "target": "docs_comercial_icp_e_precificacao_alcada_de_desconto",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "target": "docs_comercial_icp_e_precificacao_sku1_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_icp_scaffold",
+      "target": "docs_comercial_icp_e_precificacao_icp_meridian",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_icp_signal",
+      "target": "docs_comercial_icp_e_precificacao_icp_meridian",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_pendencias",
+      "target": "docs_comercial_icp_e_precificacao_plano_piso_zero",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_pendencias",
+      "target": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_pendencias",
+      "target": "docs_comercial_icp_e_precificacao_icp_scaffold",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_ticket_do_diagnostico",
+      "target": "docs_comercial_cac_modelo_cac_totalmente_carregado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_comercial_icp_e_precificacao_icp_cosmos",
+      "target": "docs_comercial_icp_e_precificacao_icp_charter",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.55,
+      "source_file": "docs/comercial/icp-e-precificacao.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

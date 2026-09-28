@@ -1,0 +1,473 @@
+{
+  "nodes": [
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_subprojeto_b",
+      "label": "Subprojeto B \u2014 Funil v2",
+      "file_type": "concept",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Substitui o funil de tr\u00eas est\u00e1gios sem peso/teto por um pipeline de quatro est\u00e1gios com peso, teto de estagna\u00e7\u00e3o, porta de entrada, canal com CAC e sa\u00edda sempre registrada."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_design_claude_691f7fe5_funil",
+      "label": "backoffice-funnel.jsx / backoffice-funnel-stage.jsx (Claude Design 691f7fe5)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_lead_extended",
+      "label": "model Lead \u2014 colunas novas (estagio, estagioDesde, entrada, canalId, acvEstimadoCentavos, perdidoNoEstagio, notaPerda)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Estados ganho/perdido/ativo s\u00e3o derivados na leitura (proposta.status), nunca gravados. motivoPerda passa a guardar c\u00f3digo tipado em vez de texto livre."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_estagio_do_funil",
+      "label": "model EstagioDoFunil (configura\u00e7\u00e3o em banco)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_mudanca_de_estagio",
+      "label": "model MudancaDeEstagio (append-only)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Mudar o peso muda o pipeline ponderado; f\u00f3rmula que muda sem registro \u00e9 n\u00famero que ningu\u00e9m aceita."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_canal_de_lead",
+      "label": "model CanalDeLead",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "cacMedioCentavos nulo = ainda n\u00e3o medido \u2014 a tela mostra 'CAC \u2014' e n\u00e3o soma. Sem chute."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_historico_de_estagio",
+      "label": "model HistoricoDeEstagio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Uma linha por transi\u00e7\u00e3o; sustenta 'convers\u00e3o 90d' e 'perman\u00eancia m\u00e9dia' do painel."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_migracao_funil_v2",
+      "label": "Migration 20260908000000_funil_v2 (RLS)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_pipeline_ponderado",
+      "label": "pipelinePonderado(leads, config)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_cac_sobre_acv_ganho",
+      "label": "cacSobreAcvGanho(leads, canais)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_metricas_do_estagio",
+      "label": "metricasDoEstagio(historico, estagio, janelaDias, hoje)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_mover_estagio",
+      "label": "moverEstagio({id, estagio})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "S\u00f3 entre LEAD/DISCOVERY/EVALUATION (PROPOSAL \u00e9 via convers\u00e3o); mover para tr\u00e1s \u00e9 permitido."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_marcar_perdido",
+      "label": "marcarPerdido({id, motivo, nota})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "motivo no enum, nota \u2265 12; tamb\u00e9m permitido em PROPOSAL (recusa da proposta pelo funil), mas a proposta N\u00c3O muda de status \u2014 isso \u00e9 da tela de propostas."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_converter_em_proposta",
+      "label": "converterEmProposta",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Passa a exigir EVALUATION, seta estagio=PROPOSAL, estagioDesde=now."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_atualizar_estagio",
+      "label": "atualizarEstagio({codigo, pesoPercent?, tetoDias?, criterios?, motivo})",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "motivo \u2265 20; uma MudancaDeEstagio por campo que mudou, em transa\u00e7\u00e3o."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_pipeline_board_ui",
+      "label": "Pipeline board (drag-and-drop entre 4 colunas)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "DnD nativo HTML5, sem lib. Vermelho acima do teto."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_lead_modal_ui",
+      "label": "LeadModal",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_stage_panel_ui",
+      "label": "StagePanel",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_regra_ganho_so_via_proposta",
+      "label": "Ganho por arrasto recusado \u2014 ganho s\u00f3 via proposta aceita",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O design mesmo recusa: ganho \u00e9 a proposta aceita, n\u00e3o um arrasto de coluna."
+    },
+    {
+      "id": "docs_superpowers_specs_2026_09_06_funil_v2_design_regra_motivo_perda_codigo",
+      "label": "motivoPerda vira c\u00f3digo tipado (PRECO, TIMING, SEM_SPONSOR, CONCORRENTE, SEM_FIT, OUTRO)",
+      "file_type": "rationale",
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Linhas antigas com texto livre s\u00e3o lidas como OUTRO com o texto preservado em notaPerda."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_subprojeto_b",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_design_claude_691f7fe5_funil",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_subprojeto_b",
+      "target": "docs_superpowers_specs_2026_09_06_periodo_e_plano_de_contas_design_subprojeto_a",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_lead_extended",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_canal_de_lead",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_lead_extended",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_historico_de_estagio",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_estagio_do_funil",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_mudanca_de_estagio",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_migracao_funil_v2",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_estagio_do_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_migracao_funil_v2",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_canal_de_lead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_migracao_funil_v2",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_historico_de_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_pipeline_ponderado",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_estagio_do_funil",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_cac_sobre_acv_ganho",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_canal_de_lead",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_metricas_do_estagio",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_historico_de_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_mover_estagio",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_historico_de_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_mover_estagio",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_regra_ganho_so_via_proposta",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_marcar_perdido",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_regra_motivo_perda_codigo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_converter_em_proposta",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_lead_extended",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_atualizar_estagio",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_model_mudanca_de_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_pipeline_board_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_mover_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_pipeline_board_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_regra_ganho_so_via_proposta",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_lead_modal_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_marcar_perdido",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_lead_modal_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_converter_em_proposta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_stage_panel_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_fn_metricas_do_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_superpowers_specs_2026_09_06_funil_v2_design_stage_panel_ui",
+      "target": "docs_superpowers_specs_2026_09_06_funil_v2_design_action_atualizar_estagio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "claude_design_691f7fe5_specs_backoffice",
+      "label": "Specs de back-office derivadas do projeto Claude Design 691f7fe5-e623-458e-aa9f-92b8c46dbbd9",
+      "nodes": [
+        "docs_superpowers_specs_2026_09_06_funil_v2_design_design_claude_691f7fe5_funil",
+        "docs_superpowers_specs_2026_09_06_mapa_de_processos_design_design_claude_691f7fe5_processos",
+        "docs_superpowers_specs_2026_09_07_catalogo_de_ip_design_design_claude_691f7fe5_ip"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-09-06-funil-v2-design.md"
+    }
+  ]
+}

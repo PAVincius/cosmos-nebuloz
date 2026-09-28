@@ -1,0 +1,238 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_milestone",
+      "label": "Telas Empresa do Back-Office Completion",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_schema_empresa_prisma",
+      "label": "empresa.prisma (7 Tabelas, Migration 20260906000000_empresa, RLS)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_derive_vendor_max_class",
+      "label": "deriveVendorMaxClass (Extracted to @repo/provisioning)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "label": "lib/empresa/ (Plano de Contas, DPA, CAC, DRE/Caixa, Aviso)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_decision_27_contas_vs_25",
+      "label": "Decision: Plano de Contas Shipped With 27 Accounts, Plan Said 25",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_decision_dre_fixture_correction",
+      "label": "Decision: DRE Fixture Line 5.2 Corrected to 150",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_decision_cac_writes_transactional",
+      "label": "Decision: CAC Writes Run in Transaction",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_decision_consentimento_created_lazily",
+      "label": "Decision: DecisaoDeConsentimento Created on First Write, Not Before",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_decision_key_persisted_not_recalculated",
+      "label": "Decision: Compet\u00eancia/Valor key Persisted in Screens, Not Recalculated Per Render",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_finding_vitest_scoped_command",
+      "label": "Finding: Scoped Test Command Is 'npx vitest run <file>', Not pnpm --filter",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_06_telas_empresa_pending_seed_empresa_nebuloz",
+      "label": "Pending: seed:empresa:nebuloz Against Production (Needs Owner Go-Ahead)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_milestone",
+      "target": "_claude_completions_2026_09_06_telas_empresa_schema_empresa_prisma",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_milestone",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_milestone",
+      "target": "_claude_completions_2026_09_06_telas_empresa_derive_vendor_max_class",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_decision_27_contas_vs_25",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_decision_dre_fixture_correction",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_decision_cac_writes_transactional",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_decision_consentimento_created_lazily",
+      "target": "_claude_completions_2026_09_06_telas_empresa_lib_empresa_dir",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_decision_key_persisted_not_recalculated",
+      "target": "_claude_completions_2026_09_06_telas_empresa_milestone",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_pending_seed_empresa_nebuloz",
+      "target": "_claude_completions_2026_09_06_telas_empresa_schema_empresa_prisma",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_finding_vitest_scoped_command",
+      "target": "_claude_quick_start_pnpm_test",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_06_telas_empresa_pending_seed_empresa_nebuloz",
+      "target": "_claude_completions_2026_09_06_funil_v2_pending_prod_seed_funil",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-06-telas-empresa.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

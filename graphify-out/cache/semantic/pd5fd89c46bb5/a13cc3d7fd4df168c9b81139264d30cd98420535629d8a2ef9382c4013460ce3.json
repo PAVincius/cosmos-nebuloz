@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "label": "reissueRespondentLink(respondentId) \u2192 Result<{id, token}>",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "label": "reissuePendingLinks(assessmentId) \u2192 Result<{reissued[]}>",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir",
+      "label": "UI: bot\u00e3o 'Reemitir link' (tab-coleta.tsx)",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir_todos",
+      "label": "UI: bot\u00e3o 'Reemitir e copiar todos os pendentes'",
+      "file_type": "document",
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "target": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenhash",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "target": "specs_006_reemitir_link_respondente_data_model_meridianrespondent_tokenexpiresat",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "target": "specs_006_reemitir_link_respondente_data_model_auditoria_reissue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "target": "specs_006_reemitir_link_respondente_data_model_reemitidopendente",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "target": "specs_006_reemitir_link_respondente_data_model_auditoria_reissue",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuerespondentlink",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "specs_006_reemitir_link_respondente_contracts_actions_ui_botao_reemitir_todos",
+      "target": "specs_006_reemitir_link_respondente_contracts_actions_reissuependinglinks",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "specs/006-reemitir-link-respondente/contracts/actions.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

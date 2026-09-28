@@ -1,0 +1,206 @@
+{
+  "nodes": [
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_subir_memoria_dos_agentes_runbook",
+      "label": "Runbook: subir a mem\u00f3ria dos agentes e ligar ao Maestri (Docker local, 127.0.0.1)",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_apps_memoria_docker",
+      "label": "apps/memoria \u2014 mem\u00f3ria de longo prazo dos agentes, roda em Docker, n\u00e3o \u00e9 produ\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "label": "Briefing para a Morgana \u2014 passos 1-9, quem executa \u00e9 a Morgana",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_pnpm_memoria_up_comando",
+      "label": "pnpm memoria:up \u2014 sobe containers, gera chaves por papel, importa dados",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_setup_canvas_script",
+      "label": ".maestri/setup-canvas.sh \u2014 registra o MCP memoria no canvas",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_mcp_memoria_registrado",
+      "label": "MCP memoria registrado \u2014 http://127.0.0.1:8003/mcp com headersHelper cabecalho.sh",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_health_check_memoria",
+      "label": "GET /health \u2014 status ok com postgres, qdrant, neo4j, minio",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_decisao_d12_memoria_fonte_da_verdade",
+      "label": "Decis\u00e3o D-12 \u2014 mem\u00f3ria como fonte da verdade, citada por memory_id",
+      "file_type": "rationale",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_runbooks_memoria_dos_agentes_portas_servicos_memoria",
+      "label": "Portas dos servi\u00e7os de mem\u00f3ria: 5433, 6333, 7474, 7687, 9000, 9001, 8003",
+      "file_type": "concept",
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_subir_memoria_dos_agentes_runbook",
+      "target": "docs_runbooks_memoria_dos_agentes_apps_memoria_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_subir_memoria_dos_agentes_runbook",
+      "target": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_pnpm_memoria_up_comando",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_setup_canvas_script",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_health_check_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_portas_servicos_memoria",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_setup_canvas_script",
+      "target": "docs_runbooks_memoria_dos_agentes_mcp_memoria_registrado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_pnpm_memoria_up_comando",
+      "target": "docs_runbooks_memoria_dos_agentes_apps_memoria_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_briefing_morgana_subir_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_decisao_d12_memoria_fonte_da_verdade",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_runbooks_memoria_dos_agentes_health_check_memoria",
+      "target": "docs_runbooks_memoria_dos_agentes_apps_memoria_docker",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runbooks/memoria-dos-agentes.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

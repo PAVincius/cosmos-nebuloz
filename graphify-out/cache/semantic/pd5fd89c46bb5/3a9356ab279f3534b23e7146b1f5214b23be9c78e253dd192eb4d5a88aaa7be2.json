@@ -1,0 +1,338 @@
+{
+  "nodes": [
+    {
+      "id": "docs_compliance_site_riscos_juridicos_registro",
+      "label": "Riscos Jur\u00eddicos do Site \u2014 registro",
+      "file_type": "document",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_placeholders_bloqueio",
+      "label": "\u00a71.1 Onze placeholders nas p\u00e1ginas legais \u2014 bloqueia publica\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "pnpm legal:guard falha o build enquanto houver marcador [[DADO NECESS\u00c1RIO]]; escape deliberado via LEGAL_GUARD=off."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_revisao_advogado_bloqueio",
+      "label": "\u00a71.2 Revis\u00e3o de advogado \u2014 bloqueia publica\u00e7\u00e3o",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "O aviso de rascunho n\u00e3o revisado deve sair junto com a aprova\u00e7\u00e3o, n\u00e3o antes; encarregado (art. 41) \u00e9 indica\u00e7\u00e3o formal, n\u00e3o um nome qualquer."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_dpo_art41",
+      "label": "LGPD art. 41 \u2014 indica\u00e7\u00e3o obrigat\u00f3ria do encarregado (DPO)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_legal_guard",
+      "label": "pnpm legal:guard (mecanismo de build)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_analytics_contradiction_fix",
+      "label": "\u00a72.1 Corre\u00e7\u00e3o \u2014 pol\u00edtica dizia analytics desativado, c\u00f3digo carregava 3 rastreadores",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Declara\u00e7\u00e3o falsa a titular \u00e9 pior que omiss\u00e3o \u2014 fere transpar\u00eancia e boa-f\u00e9 (LGPD art. 6\u00ba VI e II) e resvala em CDC art. 37; era o risco mais grave encontrado."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_marketing_provider",
+      "label": "packages/analytics/marketing-provider.tsx (s\u00f3 Vercel Web Analytics)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_formulario_aviso_coleta",
+      "label": "\u00a72.3 Formul\u00e1rio de contato com aviso de coleta",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Deliberadamente n\u00e3o \u00e9 checkbox de consentimento \u2014 base \u00e9 art. 7\u00ba V (procedimentos preliminares a pedido do titular); declarar consentimento seria base legal errada e criaria obriga\u00e7\u00e3o de apagar o lead a qualquer momento."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_reembolso_nao_se_aplica",
+      "label": "\u00a74.1 Reembolso n\u00e3o se aplica (CDC art. 49 n\u00e3o incide em B2B)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Publicar pol\u00edtica de reembolso num site que n\u00e3o vende cria expectativa que o contrato pode contradizer \u2014 risco criado, n\u00e3o mitigado."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_transferencia_internacional",
+      "label": "\u00a74.2 Transfer\u00eancia internacional de dados (Vercel, Resend nos EUA)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Pol\u00edtica declara a transfer\u00eancia mas o mecanismo n\u00e3o est\u00e1 confirmado \u2014 pend\u00eancia real para o advogado."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_tsc_erros_preexistentes",
+      "label": "\u00a74.3 apps/web n\u00e3o compila limpo (65 erros pr\u00e9-existentes)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "N\u00e3o \u00e9 risco jur\u00eddico, mas significa que o typecheck n\u00e3o serve hoje como rede de seguran\u00e7a."
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_porta_3001_colisao",
+      "label": "\u00a74.4 Duas entradas web na porta 3001 (launch.json)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_cobertura_idiomas",
+      "label": "\u00a74.5 Cobertura de idiomas (es/fr/de/zh sem se\u00e7\u00e3o legal)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_compliance_site_riscos_juridicos_verificado_sem_achado",
+      "label": "\u00a73 Itens verificados sem achado (contraste WCAG, teclado, fontes, reviews falsos)",
+      "file_type": "concept",
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_placeholders_bloqueio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_placeholders_bloqueio",
+      "target": "docs_compliance_site_riscos_juridicos_legal_guard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_placeholders_bloqueio",
+      "target": "docs_compliance_site_riscos_juridicos_dpo_art41",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_revisao_advogado_bloqueio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_revisao_advogado_bloqueio",
+      "target": "docs_compliance_site_riscos_juridicos_dpo_art41",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_analytics_contradiction_fix",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_analytics_contradiction_fix",
+      "target": "docs_compliance_site_riscos_juridicos_marketing_provider",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_formulario_aviso_coleta",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_reembolso_nao_se_aplica",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_transferencia_internacional",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_tsc_erros_preexistentes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_porta_3001_colisao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_cobertura_idiomas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_registro",
+      "target": "docs_compliance_site_riscos_juridicos_verificado_sem_achado",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_transferencia_internacional",
+      "target": "docs_compliance_dpa_fornecedores_v06_vercel",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_transferencia_internacional",
+      "target": "docs_compliance_dpa_fornecedores_v10_resend",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_compliance_site_riscos_juridicos_dpo_art41",
+      "target": "docs_compliance_operadora_controladora_perguntas_decisao",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/compliance/site-riscos-juridicos.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

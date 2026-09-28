@@ -1,0 +1,279 @@
+{
+  "nodes": [
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "label": "Charter \u2014 Modais: Split, Gating Real, Controles Mortos Remediation (Onda 4a)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "label": "Bloco 0: modals.tsx Split Into Per-Modal Files (modals/_shared.tsx, Barrel Kept)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_gated_action_to_gated_button",
+      "label": "Bloco 1: GatedAction (pointerEvents:none) Replaced by GatedButton (disabled Real)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_gate_table_eight_modals",
+      "label": "Gate Table: Per-Modal Validation Rules (Decision, Mitigation, PublishVersion...)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_publishversion_checkbox_removed",
+      "label": "Bloco 2: PublishVersion Dead Checkboxes Removed, Consequence Text Added",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_exportpackage_default_period",
+      "label": "Bloco 2: ExportPackage Fixed Period \u2192 Rolling Last 90 Days",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_newvendor_no_fake_defaults",
+      "label": "Bloco 2: NewVendor Region/Retention No Longer Default to Fake Values",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_rules_ts_categories_extracted",
+      "label": "Bloco 2: Inline Clinical Category Strings \u2192 VENDOR_CATEGORIES/rules.ts (No Clinical Wording)",
+      "file_type": "concept",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_decision_no_preselected_verdict",
+      "label": "Bloco 2: Decision Modal No Longer Preselects 'Aprovar com Restri\u00e7\u00f5es'",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_esc_closes_all_modals",
+      "label": "Bloco 2: Esc Closes All Modals via ModalHost (Was Two Only)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_fix_cases_launch_target_passthrough",
+      "label": "Bloco 3: cases.tsx Now Passes Through launchTarget From Intake",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_claude_completions_2026_09_16_charter_modais_out_of_scope_seed_charter_clinical",
+      "label": "Out of Scope: seed-charter.ts Still Seeds 'IA Cl\u00ednica' (Demo Data, Not UI)",
+      "file_type": "rationale",
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_refactor_intake_modal_extracted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_gated_action_to_gated_button",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_fix_gated_action_to_gated_button",
+      "target": "_claude_completions_2026_09_16_charter_modais_gate_table_eight_modals",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_refactor_modals_split_per_file",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_gated_action_to_gated_button",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_publishversion_checkbox_removed",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_exportpackage_default_period",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_newvendor_no_fake_defaults",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_rules_ts_categories_extracted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_milestone",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_cases_launch_target_passthrough",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_fix_newvendor_no_fake_defaults",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_rules_ts_categories_extracted",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_out_of_scope_seed_charter_clinical",
+      "target": "_claude_completions_2026_09_16_charter_modais_fix_rules_ts_categories_extracted",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_fix_cases_launch_target_passthrough",
+      "target": "_claude_completions_2026_09_15_charter_fluxo_primeiro_cliente_refactor_intake_modal_extracted",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_claude_completions_2026_09_16_charter_modais_fix_rules_ts_categories_extracted",
+      "target": "_claude_completions_2026_09_16_charter_formfield_grupo_fix_publish_track_healthtech_residue",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".claude/completions/2026-09-16-charter-modais.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

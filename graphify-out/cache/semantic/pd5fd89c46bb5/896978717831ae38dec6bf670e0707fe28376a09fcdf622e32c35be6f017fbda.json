@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "docs_produto_index_cadeia_de_produtos",
+      "label": "A cadeia: Meridian, Scaffold, Cosmos, Signal, Charter, Big Bang",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_index_lab_produto",
+      "label": "LAB \u2014 registro de modelo pr\u00f3prio",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_produto_index_jornada_comercial_site",
+      "label": "Jornada comercial do site (Diagnosticar\u2013Estruturar\u2013Medir\u2013Governar\u2013Operar)",
+      "file_type": "concept",
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_backoffice_prd_backoffice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_charter_prd_charter_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_meridian_prd_meridian_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_signal_prd_signal_product",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_scaffold_srd_especificacao",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_cadeia_de_produtos",
+      "target": "docs_produto_index_jornada_comercial_site",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_produto_index_lab_produto",
+      "target": "docs_produto_index_cadeia_de_produtos",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/produto/index.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
