@@ -8,8 +8,6 @@ M="${MAESTRI_CLI:-maestri}"
 K="$PWD/.maestri/knowledge"
 GATE="$K/compartilhado/gate-de-pr.md"
 EMPRESA="$K/maestro/memoria-empresa.md"
-# Worktree do Signal vive no repo de origem, não no clone do workspace.
-SIGNAL_DIR="/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/.claude/worktrees/signal-html-implementation-636f46"
 # Ciclo de aprendizado: registro de vereditos e propostas de skill (ver .maestri/skills/propostas/README.md).
 REG="$PWD/.maestri/registrar.mjs"
 PROPOSTAS="$PWD/.maestri/skills/propostas"
@@ -311,7 +309,7 @@ hire "Bussola"  "Dev Meridian"   sonnet
 hire "Alicerce" "Dev Plataforma" sonnet
 hire "Painel"   "Dev Backoffice" sonnet
 # Signal trabalha na worktree onde as telas vivem. Depois do merge: `maestri recruit --replace "Farol" --command "claude --model sonnet" --dir .`
-hire "Farol"    "Dev Signal"     sonnet --dir "$SIGNAL_DIR"
+hire "Farol"    "Dev Signal"     sonnet
 hire "Crivo"    "QA"             sonnet
 hire "Pilar"    "Infra"          sonnet
 # Security Reviewer: não fica no canvas. No checkpoint de PR: `maestri recruit "Vigia" --role "Security Reviewer"`; depois `maestri dismiss "Vigia"`.
