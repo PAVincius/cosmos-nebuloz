@@ -1,0 +1,217 @@
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+
+// Retenção de evidência — decisão do CEO, 2026-09-28 (atrito.md:60, parecer
+// de compliance condição 3): objeto no bucket some 90 dias após o
+// fechamento do assessment (closedAt). O registro em MeridianEvidence fica
+// — só storagePath vira o marcador. Idempotente (step.run por assessment) e
+// nunca mistura tenant num mesmo lote.
+
+const mocks = vi.hoisted(() => ({
+  createFunction: vi.fn(),
+  evidenceFindMany: vi.fn(),
+  evidenceUpdateMany: vi.fn(),
+  auditLogCreateMany: vi.fn(),
+  deleteObjects: vi.fn(),
+}));
+
+vi.mock("@/lib/inngest/client", () => ({
+  inngest: { createFunction: mocks.createFunction },
+}));
+
+vi.mock("@repo/observability/log", () => ({
+  log: { info: vi.fn(), error: vi.fn() },
+}));
+
+vi.mock("@repo/storage", () => ({
+  MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
+  deleteObjects: mocks.deleteObjects,
+}));
+
+vi.mock("@repo/database", () => ({
+  database: {
+    meridianEvidence: {
+      findMany: mocks.evidenceFindMany,
+      updateMany: mocks.evidenceUpdateMany,
+    },
+    auditLog: { createMany: mocks.auditLogCreateMany },
+  },
+}));
+
+import "@/lib/inngest/meridian-evidence-retention";
+
+type StepCtx = {
+  run: (name: string, fn: () => Promise<unknown>) => Promise<unknown>;
+};
+type HandlerFn = (ctx: { step: StepCtx }) => Promise<unknown>;
+
+let handler: HandlerFn;
+
+beforeAll(() => {
+  const [[, fn]] = mocks.createFunction.mock.calls as [[unknown, HandlerFn]];
+  handler = fn;
+});
+
+function makeStep(): StepCtx {
+  return {
+    run: vi.fn(async (_name: string, fn: () => Promise<unknown>) => fn()),
+  };
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  mocks.evidenceFindMany.mockResolvedValue([]);
+  mocks.evidenceUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.auditLogCreateMany.mockResolvedValue({ count: 0 });
+  mocks.deleteObjects.mockResolvedValue(undefined);
+});
+
+describe("eliminateExpiredMeridianEvidence — consulta", () => {
+  it("filtra por closedAt vencido e storagePath ainda não marcado", async () => {
+    await handler({ step: makeStep() });
+
+    const args = mocks.evidenceFindMany.mock.calls[0]?.[0] as {
+      where: {
+        storagePath: { not: string };
+        assessment: { closedAt: { lt: Date } };
+      };
+    };
+    expect(args.where.storagePath.not).toBe("eliminado-por-retencao");
+    expect(args.where.assessment.closedAt.lt).toBeInstanceOf(Date);
+    // ~90 dias atrás, com folga de 1s pra não quebrar por timing do teste.
+    const expected = Date.now() - 90 * 24 * 60 * 60 * 1000;
+    expect(
+      Math.abs(args.where.assessment.closedAt.lt.getTime() - expected)
+    ).toBeLessThan(1000);
+  });
+
+  it("sem nada pendente, não chama deleteObjects nem grava nada", async () => {
+    const result = await handler({ step: makeStep() });
+    expect(mocks.deleteObjects).not.toHaveBeenCalled();
+    expect(mocks.evidenceUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.auditLogCreateMany).not.toHaveBeenCalled();
+    expect(result).toEqual({ eliminated: 0, assessments: 0 });
+  });
+});
+
+describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", () => {
+  it("agrupa por assessment: um deleteObjects por assessment, com todos os paths daquele assessment", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+      {
+        id: "ev-2",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-2",
+        fileName: "f2.txt",
+      },
+    ]);
+
+    const result = await handler({ step: makeStep() });
+
+    expect(mocks.deleteObjects).toHaveBeenCalledTimes(1);
+    expect(mocks.deleteObjects).toHaveBeenCalledWith("meridian-evidence", [
+      "t1/a1/uuid-1",
+      "t1/a1/uuid-2",
+    ]);
+    expect(result).toEqual({ eliminated: 2, assessments: 1 });
+  });
+
+  it("marca storagePath com o marcador, sem apagar o registro (mesma lógica do DSAR)", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ]);
+
+    await handler({ step: makeStep() });
+
+    expect(mocks.evidenceUpdateMany).toHaveBeenCalledWith({
+      where: { id: { in: ["ev-1"] } },
+      data: { storagePath: "eliminado-por-retencao" },
+    });
+  });
+
+  it("grava auditLog com actorType system, sem apagar a linha de MeridianEvidence", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ]);
+
+    await handler({ step: makeStep() });
+
+    expect(mocks.auditLogCreateMany).toHaveBeenCalledWith({
+      data: [
+        expect.objectContaining({
+          tenantId: "t1",
+          actorType: "system",
+          action: "meridian.evidence.retention-eliminated",
+          entityType: "meridian.evidence",
+          entityId: "ev-1",
+        }),
+      ],
+    });
+  });
+
+  it("dois assessments de tenants diferentes viram dois lotes, sem misturar paths entre tenants", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+      {
+        id: "ev-2",
+        tenantId: "t2",
+        assessmentId: "a2",
+        storagePath: "t2/a2/uuid-2",
+        fileName: "f2.txt",
+      },
+    ]);
+
+    await handler({ step: makeStep() });
+
+    expect(mocks.deleteObjects).toHaveBeenCalledTimes(2);
+    const calledPaths = mocks.deleteObjects.mock.calls.map(
+      (c) => c[1] as string[]
+    );
+    expect(calledPaths).toContainEqual(["t1/a1/uuid-1"]);
+    expect(calledPaths).toContainEqual(["t2/a2/uuid-2"]);
+  });
+
+  it("cada assessment roda no próprio step.run, nomeado por assessmentId (idempotência no retry)", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ]);
+    const step = makeStep();
+
+    await handler({ step });
+
+    const stepNames = (step.run as ReturnType<typeof vi.fn>).mock.calls.map(
+      (c) => c[0]
+    );
+    expect(stepNames).toContain("eliminate-evidence-a1");
+  });
+});

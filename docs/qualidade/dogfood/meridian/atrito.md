@@ -68,6 +68,8 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
   Qualquer uma das opções A/B pede um job novo (cron/inngest) que varra assessment com `closedAt` vencido e chame `deleteObjects(MERIDIAN_EVIDENCE_BUCKET, paths)` — não implementado ainda, porque o prazo em si é a decisão pendente.
 
+  **Decisão do CEO, 2026-09-28 — opção A (90 dias)**. Implementado o mesmo dia: `apps/app/lib/inngest/meridian-evidence-retention.ts`, cron diário (`0 3 * * *`), varre `MeridianEvidence` com `assessment.closedAt` vencido há mais de 90 dias e `storagePath` ainda não marcado, chama `deleteObjects` em lote por assessment (nunca mistura tenant), marca `storagePath` com o marcador `eliminado-por-retencao` (registro em `MeridianEvidence` continua — trilha de auditoria não é apagada, mesma lógica do DSAR em `lgpd-dsr.ts`) e grava `auditLog` (`actorType: "system"`, `meridian.evidence.retention-eliminated`). `requestEvidenceUrl` (`report.ts`) recusa emitir URL assinada pra evidência já eliminada em vez de tentar assinar um objeto que não existe mais. **Estado**: resolvido.
+
 ---
 
 **P2** | Modal "Novo assessment" (`components/meridian/screens/assessments.tsx:149-172`) | Os campos Organização, Setor e Porte usam `<Field label="...">` (`components/charter/base.tsx:564`) sem passar `htmlFor`/`id` — o `<label>` renderiza mas não fica associado ao `<input>` (`Field` só liga o `for` quando o chamador passa `htmlFor`, e nenhum dos três passa). `getByLabel()` não acha nenhum dos três; só "Prazo" e "Template" têm `aria-label` explícito e funcionam. Achado rodando M1 de verdade — tive que usar `getByPlaceholder` como contorno no E2E. Efeito real: leitor de tela não anuncia o rótulo desses três campos ao focar o input.

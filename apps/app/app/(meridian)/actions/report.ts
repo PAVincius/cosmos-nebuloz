@@ -12,6 +12,7 @@ import {
   readCohort,
 } from "@/lib/meridian/benchmark";
 import { compositeOf, finalOf } from "@/lib/meridian/composite";
+import { isEvidenceRetentionEliminated } from "@/lib/meridian/evidence-retention";
 import {
   MeridianRuleError,
   requireMeridianPermissionContext,
@@ -288,6 +289,15 @@ export async function requestEvidenceUrl(
       });
       return e;
     });
+
+    // Objeto eliminado pela retenção de 90 dias (evidence-retention.ts) —
+    // o registro fica pra auditoria, mas não há mais bytes pra assinar.
+    if (isEvidenceRetentionEliminated(evidence.storagePath)) {
+      throw new MeridianRuleError(
+        "evidence.retention-eliminated",
+        "Evidência eliminada pela política de retenção (90 dias após o fechamento do assessment)."
+      );
+    }
 
     const { data, error } = await storageClient.storage
       .from(MERIDIAN_EVIDENCE_BUCKET)

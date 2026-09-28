@@ -36,7 +36,7 @@ Tarefa da Morgana (2026-09-27, restart pós setup-canvas): P2s do Vigia + condi�
 - [x] atrito.md:42 — assignRespondent TTL próprio (código, TDD)
 - [x] atrito.md:48 / parecer cond. 5 — rate limit no lookup de token (código, TDD)
 - [x] atrito.md:54 — ensureBucket por upload → cache (código, TDD)
-- [x] atrito.md:60 — lifecycle do bucket: opções de retenção documentadas em atrito.md, decisão de prazo pendente do CEO
+- [x] atrito.md:60 / parecer cond. 3 — lifecycle do bucket: CEO decidiu opção A (90 dias, 2026-09-28); job Inngest `meridian-evidence-retention.ts` implementado e testado
 - [x] parecer cond. 2 — rotina de eliminação do objeto no bucket (código)
 - [x] specs/006/tasks.md — T001-T014 marcados com evidência (testes unitários passando); T015/T016 ficaram em aberto, ver Obstáculos
 

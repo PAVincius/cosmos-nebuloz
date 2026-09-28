@@ -268,6 +268,19 @@ describe("requestEvidenceUrl", () => {
     expect(h.createSignedUrl).not.toHaveBeenCalled();
   });
 
+  it("recusa evidência eliminada pela retenção de 90 dias, sem tentar assinar URL", async () => {
+    h.evidenceFindFirst.mockResolvedValue({
+      id: EV_ID,
+      storagePath: "eliminado-por-retencao",
+      fileName: "catalogo.xlsx",
+      assessment: { code: "AS-104" },
+    });
+    const res = await requestEvidenceUrl({ evidenceId: EV_ID });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/retenção/);
+    expect(h.createSignedUrl).not.toHaveBeenCalled();
+  });
+
   it("exige permissão de leitura de evidência", async () => {
     h.requirePerm.mockRejectedValue(new Error("Requer papel Consultor"));
     const res = await requestEvidenceUrl({ evidenceId: EV_ID });
