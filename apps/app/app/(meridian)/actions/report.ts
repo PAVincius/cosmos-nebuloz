@@ -280,24 +280,27 @@ export async function requestEvidenceUrl(
           "Evidência não encontrada nesta organização."
         );
       }
+      // Objeto eliminado pela retenção de 90 dias (evidence-retention.ts) —
+      // checa ANTES do audit: sem isso, a linha gravada dizia "URL assinada
+      // emitida para download" pra uma evidência que não existe mais.
+      if (isEvidenceRetentionEliminated(e.storagePath)) {
+        throw new MeridianRuleError(
+          "evidence.retention-eliminated",
+          "Evidência eliminada pela política de retenção (90 dias após o fechamento do assessment)."
+        );
+      }
+      // Alvo pelo id, não pelo fileName: fileName pode conter dado pessoal
+      // (nome do titular no arquivo), e o audit é log de vida longa — cada
+      // download duplicaria esse dado ali, sobrevivendo à retenção e ao DSAR.
       await logMeridianAudit(db, ctx, {
         action: "meridian.evidence.read",
         entityType: "meridian.evidence",
         entityId: e.id,
-        target: `${e.assessment.code} · ${e.fileName}`,
+        target: `${e.assessment.code} · ${e.id}`,
         note: "URL assinada emitida para download.",
       });
       return e;
     });
-
-    // Objeto eliminado pela retenção de 90 dias (evidence-retention.ts) —
-    // o registro fica pra auditoria, mas não há mais bytes pra assinar.
-    if (isEvidenceRetentionEliminated(evidence.storagePath)) {
-      throw new MeridianRuleError(
-        "evidence.retention-eliminated",
-        "Evidência eliminada pela política de retenção (90 dias após o fechamento do assessment)."
-      );
-    }
 
     const { data, error } = await storageClient.storage
       .from(MERIDIAN_EVIDENCE_BUCKET)

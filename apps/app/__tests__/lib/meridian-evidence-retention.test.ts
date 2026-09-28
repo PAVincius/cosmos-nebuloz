@@ -174,6 +174,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     expect(mocks.auditLogCreateMany).toHaveBeenCalledWith({
       data: [
         {
+          id: "meridian-evidence-retention:ev-1",
           tenantId: "t1",
           actorType: "system",
           action: "meridian.evidence.retention-eliminated",
@@ -182,11 +183,41 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
           metadata: { assessmentId: "a1" },
         },
       ],
+      skipDuplicates: true,
     });
     const [{ data }] = mocks.auditLogCreateMany.mock.calls[0] as [
       { data: Array<{ metadata: Record<string, unknown> }> },
     ];
     expect(data[0].metadata).not.toHaveProperty("fileName");
+  });
+
+  it("id do audit é determinístico por evidência — retry do step não duplica linha (skipDuplicates + id estável)", async () => {
+    const rows = [
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ];
+    mocks.evidenceFindMany.mockResolvedValue(rows);
+
+    await handler({ step: makeStep() });
+    const firstCall = mocks.auditLogCreateMany.mock.calls[0]?.[0] as {
+      data: Array<{ id: string }>;
+      skipDuplicates: boolean;
+    };
+
+    mocks.auditLogCreateMany.mockClear();
+    await handler({ step: makeStep() });
+    const secondCall = mocks.auditLogCreateMany.mock.calls[0]?.[0] as {
+      data: Array<{ id: string }>;
+      skipDuplicates: boolean;
+    };
+
+    expect(firstCall.data[0].id).toBe(secondCall.data[0].id);
+    expect(firstCall.skipDuplicates).toBe(true);
   });
 
   it("dois assessments de tenants diferentes viram dois lotes, sem misturar paths entre tenants", async () => {

@@ -100,8 +100,17 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
         // Sem fileName no metadata: um log de auditoria é de vida longa —
         // duplicar ali o mesmo dado pessoal que acabamos de anonimizar no
         // registro principal reabriria a mesma exposição.
+        //
+        // `id` determinístico (por evidência, nunca muda) + `skipDuplicates`:
+        // `createMany` não tem memoização parcial dentro de um `step.run` —
+        // se delete+update já commitaram mas o passo falhar depois (rede,
+        // timeout) e o Inngest reexecutar o passo inteiro do zero, um
+        // `createMany` sem chave estável duplicaria a linha de auditoria.
+        // Com o mesmo `id` toda vez, o retry vira um upsert-por-omissão: a
+        // linha já existente é ignorada, não duplicada.
         await database.auditLog.createMany({
           data: rows.map((r) => ({
+            id: `meridian-evidence-retention:${r.id}`,
             tenantId: r.tenantId,
             actorType: "system",
             action: "meridian.evidence.retention-eliminated",
@@ -109,6 +118,7 @@ export const eliminateExpiredMeridianEvidence = inngest.createFunction(
             entityId: r.id,
             metadata: { assessmentId },
           })),
+          skipDuplicates: true,
         });
       });
       eliminated += rows.length;
