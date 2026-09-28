@@ -26,13 +26,22 @@ const initials = (name: string) =>
     .join("")
     .toUpperCase() || "?";
 
-async function resolveIdentity(): Promise<ShellIdentity | null> {
+export async function resolveIdentity(): Promise<ShellIdentity | null> {
   try {
     const ctx = await requireTenantSession(await headers());
-    const tenant = await database.tenant.findUnique({
-      where: { id: ctx.tenantId },
-      select: { name: true, plan: true },
-    });
+    // Mesma leitura de /api/tenants (TenantMember por userId, sem
+    // cross-tenant — FR-014, spec 009): a lista de contas da pessoa,
+    // separada da leitura escopada ao tenant ativo logo acima.
+    const [tenant, memberships] = await Promise.all([
+      database.tenant.findUnique({
+        where: { id: ctx.tenantId },
+        select: { name: true, plan: true },
+      }),
+      database.tenantMember.findMany({
+        where: { userId: ctx.userId },
+        include: { tenant: { select: { id: true, name: true } } },
+      }),
+    ]);
 
     return {
       userName: ctx.user.name || ctx.user.email,
@@ -41,6 +50,12 @@ async function resolveIdentity(): Promise<ShellIdentity | null> {
       tenantInitials: initials(tenant?.name ?? "?"),
       planLabel: titleCase(tenant?.plan ?? "ORBIT"),
       role: ACRONYM_ROLES.has(ctx.role) ? ctx.role : titleCase(ctx.role),
+      activeTenantId: ctx.tenantId,
+      tenants: memberships.map((m) => ({
+        id: m.tenant.id,
+        name: m.tenant.name,
+        role: m.role,
+      })),
     };
   } catch (error) {
     if (error instanceof AuthError) {

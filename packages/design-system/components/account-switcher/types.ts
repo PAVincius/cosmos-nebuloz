@@ -13,3 +13,12 @@ export type ActiveAccountData = {
   activeTenantId: string;
   tenants: ActiveAccountTenant[];
 };
+
+/**
+ * Shape estrutural do `Result<T>` de `apps/app/app/actions/_base.ts` — sem
+ * importar de lá (este pacote não depende de `apps/app`); qualquer ação do
+ * app que já siga esse padrão serve aqui por compatibilidade estrutural.
+ */
+export type DestinationResult =
+  | { ok: true; data: string }
+  | { ok: false; error: string };

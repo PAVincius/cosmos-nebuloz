@@ -39,7 +39,7 @@ a instalar, sem schema/migration (Assumptions do spec.md).
 fase — podem começar em paralelo assim que a Foundational de UI existir ou
 mesmo antes, já que não a usam.
 
-- [ ] T001 [P] Criar esqueleto do módulo compartilhado com o tipo
+- [x] T001 [P] Criar esqueleto do módulo compartilhado com o tipo
   `ActiveAccountData` (`{ activeTenantId, tenants: {id, name, role}[] }`,
   ver [contracts/shell-data-contract.md](./contracts/shell-data-contract.md))
   em `packages/design-system/components/account-switcher/types.ts`
@@ -65,30 +65,30 @@ seletor. Os 5 precisam convergir para o componente novo.
 
 ### Tests for User Story 1
 
-- [ ] T002 [P] [US1] Teste unitário: `ActiveAccountBadge` renderiza o nome da
+- [x] T002 [P] [US1] Teste unitário: `ActiveAccountBadge` renderiza o nome da
   conta como nó de texto visível (não só no atributo `title`) em
   `apps/app/__tests__/design-system/active-account-badge.test.tsx` (novo)
-- [ ] T003 [P] [US1] Teste E2E: para cada um dos 5 produtos, o nome da conta
+- [x] T003 [P] [US1] Teste E2E: para cada um dos 5 produtos, o nome da conta
   aparece sem interação de mouse, em
   `apps/app/e2e/active-account-badge.spec.ts` (novo)
 
 ### Implementation for User Story 1
 
-- [ ] T004 [US1] Implementar `ActiveAccountBadge` (recebe `{ name: string }`,
+- [x] T004 [US1] Implementar `ActiveAccountBadge` (recebe `{ name: string }`,
   renderiza texto visível, sem tooltip-only) em
   `packages/design-system/components/account-switcher/active-account-badge.tsx`
   (depende de T001; deve falhar T002 antes de existir)
-- [ ] T005 [P] [US1] Trocar o `<span title={organization}>{user.role} · {user.name}</span>`
+- [x] T005 [P] [US1] Trocar o `<span title={organization}>{user.role} · {user.name}</span>`
   por `<ActiveAccountBadge name={organization} />` em
   `apps/app/components/meridian/shell.tsx` (linhas 513-523 hoje)
-- [ ] T006 [P] [US1] Mesma troca em `apps/app/components/signal/shell.tsx`
+- [x] T006 [P] [US1] Mesma troca em `apps/app/components/signal/shell.tsx`
   (bloco `title={organization}`, ~linha 618-632)
-- [ ] T007 [P] [US1] Trocar o `<span>{organization}</span>` próprio por
+- [x] T007 [P] [US1] Trocar o `<span>{organization}</span>` próprio por
   `<ActiveAccountBadge name={organization} />` em
   `apps/app/components/scaffold/shell.tsx` (linhas 264-267 hoje)
-- [ ] T008 [P] [US1] Mesma troca no `<Link>{organization}</Link>` de
+- [x] T008 [P] [US1] Mesma troca no `<Link>{organization}</Link>` de
   `apps/app/components/charter/shell.tsx` (linhas 625-637 hoje)
-- [ ] T009 [P] [US1] Trocar o bloco `identity.tenantInitials` /
+- [x] T009 [P] [US1] Trocar o bloco `identity.tenantInitials` /
   `identity.tenantName` (botão sem `onClick`) por
   `<ActiveAccountBadge name={identity.tenantName} />` em
   `apps/app/components/cosmos/shell.tsx` (linhas 312-368 hoje, preservando o
@@ -112,62 +112,65 @@ nova — ver [quickstart.md#us2](./quickstart.md#us2--trocar-de-conta-com-confir
 
 ### Tests for User Story 2
 
-- [ ] T010 [P] [US2] Teste unitário: `SwitchAccountDialog` só dispara a troca
+- [x] T010 [P] [US2] Teste unitário: `SwitchAccountDialog` só dispara a troca
   após confirmação explícita; cancelar não chama a troca em
   `apps/app/__tests__/design-system/switch-account-dialog.test.tsx` (novo)
-- [ ] T011 [P] [US2] Teste de integração: `getShellData()`/`ShellIdentity` de
+- [x] T011 [P] [US2] Teste de integração: `getShellData()`/`ShellIdentity` de
   cada um dos 5 produtos devolve `tenants[]` + `activeTenantId` no formato de
   [contracts/shell-data-contract.md](./contracts/shell-data-contract.md) em
   `apps/app/__tests__/produto/shell-data.test.ts` (novo)
-- [ ] T012 [US2] Teste de integração (FR-009/SC-004): depois de um 200 de
+- [x] T012 [US2] Teste de integração (FR-009/SC-004): depois de um 200 de
   `POST /api/auth/switch-tenant`, uma chamada imediata a
   `requireTenantSession` já enxerga a conta nova, sem esperar a janela de
   cache de 60s — em
   `apps/app/__tests__/actions/auth/switch-tenant-cache.test.ts` (novo)
-- [ ] T013 [US2] Teste E2E: escolher outra conta → diálogo de confirmação →
+- [~] T013 [US2] Teste E2E: escolher outra conta → diálogo de confirmação →
   cancelar mantém a conta; confirmar leva ao destino certo com feedback
   visível da conta nova — estender `apps/app/e2e/workspace-switcher.spec.ts`
+  (PARCIAL: edge case `tenants.length <= 1` coberto — nenhum seed atual
+  dá 2+ `TenantMember` à mesma pessoa para exercitar o fluxo de troca de
+  verdade; falta seed antes de fechar)
 
 ### Implementation for User Story 2
 
-- [ ] T014 [US2] Implementar `SwitchAccountDialog` (passo de confirmação
+- [x] T014 [US2] Implementar `SwitchAccountDialog` (passo de confirmação
   explícito, chama `POST /api/auth/switch-tenant` — ver
   [contracts/switch-tenant-api.md](./contracts/switch-tenant-api.md), sem
   endpoint novo) em
   `packages/design-system/components/account-switcher/switch-account-dialog.tsx`
   (depende de T010)
-- [ ] T015 [US2] Compor `AccountSwitcher` (badge + seletor; esconde o
+- [x] T015 [US2] Compor `AccountSwitcher` (badge + seletor; esconde o
   seletor quando `tenants.length <= 1`, edge case do spec) em
   `packages/design-system/components/account-switcher/index.tsx` (depende de
   T004, T014)
-- [ ] T016 [US2] Server action fina que envolve
+- [x] T016 [US2] Server action fina que envolve
   `resolvePostLoginDestination()` (`apps/app/app/(authenticated)/_lib/resolve-post-login-destination.ts`)
   para uso pelo cliente depois de confirmar a troca, em
   `apps/app/app/actions/auth/resolve-active-account-destination.ts` (novo)
-- [ ] T017 [P] [US2] Estender `getShellData()` para incluir `tenants[]` +
+- [x] T017 [P] [US2] Estender `getShellData()` para incluir `tenants[]` +
   `activeTenantId` (mesma leitura de `TenantMember` de
   `apps/app/app/api/tenants/route.ts:12-30`) em
   `apps/app/app/(meridian)/actions/shell.ts`
-- [ ] T018 [P] [US2] Mesma extensão em
+- [x] T018 [P] [US2] Mesma extensão em
   `apps/app/app/(signal)/actions/shell.ts`
-- [ ] T019 [P] [US2] Mesma extensão em
+- [x] T019 [P] [US2] Mesma extensão em
   `apps/app/app/(scaffold)/actions/shell.ts`
-- [ ] T020 [P] [US2] Mesma extensão em
+- [x] T020 [P] [US2] Mesma extensão em
   `apps/app/app/(charter)/actions/shell.ts`
-- [ ] T021 [P] [US2] Mesma extensão em `ShellIdentity` e sua resolução
+- [x] T021 [P] [US2] Mesma extensão em `ShellIdentity` e sua resolução
   (`apps/app/components/cosmos/shell.tsx:266-273` e o `layout.tsx` que a
   monta) em `apps/app/app/(cosmos)/layout.tsx`
-- [ ] T022 [P] [US2] Trocar `ActiveAccountBadge` por `AccountSwitcher`
+- [x] T022 [P] [US2] Trocar `ActiveAccountBadge` por `AccountSwitcher`
   (passa `tenants` + `activeTenantId`, usa T016 + `router.push`/`refresh` no
   confirmar) em `apps/app/components/meridian/shell.tsx` (depende de T015,
   T017)
-- [ ] T023 [P] [US2] Mesma troca em `apps/app/components/signal/shell.tsx`
+- [x] T023 [P] [US2] Mesma troca em `apps/app/components/signal/shell.tsx`
   (depende de T015, T018)
-- [ ] T024 [P] [US2] Mesma troca em `apps/app/components/scaffold/shell.tsx`
+- [x] T024 [P] [US2] Mesma troca em `apps/app/components/scaffold/shell.tsx`
   (depende de T015, T019)
-- [ ] T025 [P] [US2] Mesma troca em `apps/app/components/charter/shell.tsx`
+- [x] T025 [P] [US2] Mesma troca em `apps/app/components/charter/shell.tsx`
   (depende de T015, T020)
-- [ ] T026 [P] [US2] Mesma troca em `apps/app/components/cosmos/shell.tsx`
+- [x] T026 [P] [US2] Mesma troca em `apps/app/components/cosmos/shell.tsx`
   (depende de T015, T021)
 
 **Checkpoint**: US1 + US2 completas e testáveis juntas — MVP da Fase 0
@@ -193,7 +196,7 @@ necessária.
 
 ### Tests for User Story 3
 
-- [ ] T027 [P] [US3] Teste unitário: `requireTenantSession` sem
+- [x] T027 [P] [US3] Teste unitário: `requireTenantSession` sem
   `activeTenantId` sempre escolhe o `TenantMember` de `createdAt` mais
   antigo, de forma repetível; com uma única membership, escolhe ela sem
   ambiguidade — em
@@ -202,7 +205,7 @@ necessária.
 
 ### Implementation for User Story 3
 
-- [ ] T028 [US3] Adicionar `orderBy: { createdAt: "asc" }` à query
+- [x] T028 [US3] Adicionar `orderBy: { createdAt: "asc" }` à query
   `tenantMember.findFirst` em `packages/auth/server.ts:209-212` (depende de
   T027 falhando antes)
 
@@ -226,11 +229,11 @@ padrão já correto de `switch-tenant/route.ts:42-45` e `switch-org.ts:39-42`.
 
 ### Tests for User Story 4
 
-- [ ] T029 [P] [US4] Teste: aceitar convite na sessão B não altera
+- [x] T029 [P] [US4] Teste: aceitar convite na sessão B não altera
   `activeTenantId` de outra sessão (A) da mesma pessoa — em
   `apps/app/__tests__/actions/invite/complete.test.ts` (novo; não existe
   teste hoje para esta página)
-- [ ] T030 [P] [US4] Atualizar
+- [x] T030 [P] [US4] Atualizar
   `apps/app/__tests__/actions/create-onboarding-workspace.test.ts`: o teste
   "sets activeTenantId on all user sessions after creation" (linhas 135-142)
   afirma hoje o comportamento que este FR proíbe — trocar a asserção para
@@ -240,11 +243,11 @@ padrão já correto de `switch-tenant/route.ts:42-45` e `switch-org.ts:39-42`.
 
 ### Implementation for User Story 4
 
-- [ ] T031 [US4] Trocar `database.session.updateMany({ where: { userId: session.user.id } })`
+- [x] T031 [US4] Trocar `database.session.updateMany({ where: { userId: session.user.id } })`
   por `database.session.update({ where: { id: session.session.id } })` em
   `apps/app/app/(unauthenticated)/invite/[token]/complete/page.tsx:53-56`
   (depende de T029)
-- [ ] T032 [US4] Mesma troca em `apps/app/app/actions/onboarding.ts:57-60`
+- [x] T032 [US4] Mesma troca em `apps/app/app/actions/onboarding.ts:57-60`
   (depende de T030)
 
 **Checkpoint**: todas as 4 user stories completas e testáveis

@@ -1,6 +1,6 @@
 "use client";
 
-import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
+import { AccountSwitcher } from "@repo/design-system/components/account-switcher";
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { Eyebrow, StatusDot } from "./base";
 import { NAV, navIdFor, TITLES } from "./nav";
 
@@ -35,13 +36,14 @@ type NavSection = { section: string; items: NavItem[] };
 
 export type ScaffoldShellProps = {
   children: ReactNode;
-  organization: string;
   user: { name: string; role: string };
   screenIds: string[];
   badges: Record<string, number>;
   stalledCount: number;
   totalTracks: number;
   stallThresholdDays: number;
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 function NavRow({
@@ -123,13 +125,14 @@ function NavRow({
 
 export function ScaffoldShell({
   children,
-  organization,
   user,
   screenIds,
   badges,
   stalledCount,
   totalTracks,
   stallThresholdDays,
+  activeTenantId,
+  tenants,
 }: ScaffoldShellProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -263,8 +266,9 @@ export function ScaffoldShell({
               gap: 10,
             }}
           >
-            <ActiveAccountBadge
-              name={organization}
+            <AccountSwitcher
+              data={{ activeTenantId, tenants }}
+              resolveDestination={resolveActiveAccountDestination}
               style={{ fontSize: 12, color: "var(--ink-faint)" }}
             />
             <IconButton

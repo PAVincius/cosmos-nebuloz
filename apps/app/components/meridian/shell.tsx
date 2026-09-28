@@ -17,7 +17,7 @@
 // (fixed + translateX, scrim, botão de menu, Escape fecha, foco volta ao
 // gatilho). A regra visual mora em meridian.css; aqui só o estado.
 
-import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
+import { AccountSwitcher } from "@repo/design-system/components/account-switcher";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -31,6 +31,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { Eyebrow } from "./base";
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL" | "MERIDIAN";
@@ -111,8 +112,9 @@ export type MeridianShellProps = {
   screenIds: string[];
   modules: ModuleId[];
   user: { name: string; role: string };
-  organization: string;
   badges?: ShellBadges;
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 function href(id: string) {
@@ -294,8 +296,9 @@ export function MeridianShell({
   screenIds,
   modules,
   user,
-  organization,
   badges = {},
+  activeTenantId,
+  tenants,
 }: MeridianShellProps) {
   const pathname = usePathname() || "/meridian";
   const router = useRouter();
@@ -511,8 +514,9 @@ export function MeridianShell({
             </span>
             <div style={{ flex: 1 }} />
             <AppSwitcher modules={modules} />
-            <ActiveAccountBadge
-              name={organization}
+            <AccountSwitcher
+              data={{ activeTenantId, tenants }}
+              resolveDestination={resolveActiveAccountDestination}
               style={{ fontSize: 11, color: "var(--ink-subtle)" }}
             />
             <span

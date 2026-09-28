@@ -38,11 +38,12 @@ const CharterLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <CharterShell
+      activeTenantId={data.activeTenantId}
       badges={data.badges}
       modules={data.modules}
-      organization={data.organization}
       policy={data.policy}
       screenIds={Object.keys(SCREENS)}
+      tenants={data.tenants}
       user={data.user}
     >
       {children}

@@ -15,7 +15,7 @@
 //  3. Estado da política vive na sidebar: é o que o Compliance Lead olha
 //     primeiro de manhã.
 
-import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
+import { AccountSwitcher } from "@repo/design-system/components/account-switcher";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
@@ -30,6 +30,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { Eyebrow, StatusDot } from "./base";
 import { FS } from "./type-scale";
 
@@ -114,10 +115,11 @@ export type CharterShellProps = {
   screenIds: string[];
   modules: ModuleId[];
   user: { name: string; role: string };
-  organization: string;
   policy: { version: string | null; daysToReview: number | null } | null;
   /** Contagens por item de nav, calculadas no servidor. */
   badges?: ShellBadges;
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 function href(id: string) {
@@ -588,13 +590,15 @@ function Topbar({
   theme,
   onToggleTheme,
   modules,
-  organization,
+  activeTenantId,
+  tenants,
 }: {
   activeId: string;
   theme: "light" | "dark";
   onToggleTheme: () => void;
   modules: ModuleId[];
-  organization: string;
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 }) {
   const [title, parent] = TITLES[activeId] ?? ["Charter", "Nebuloz"];
   return (
@@ -623,8 +627,9 @@ function Topbar({
           flexShrink: 1,
         }}
       >
-        <ActiveAccountBadge
-          name={organization}
+        <AccountSwitcher
+          data={{ activeTenantId, tenants }}
+          resolveDestination={resolveActiveAccountDestination}
           style={{
             fontSize: FS.nota,
             color: "var(--ink-faint)",
@@ -682,9 +687,10 @@ export function CharterShell({
   screenIds,
   modules,
   user,
-  organization,
   policy,
   badges = {},
+  activeTenantId,
+  tenants,
 }: CharterShellProps) {
   const pathname = usePathname() || "/charter";
   const router = useRouter();
@@ -723,9 +729,10 @@ export function CharterShell({
         >
           <Topbar
             activeId={activeId}
+            activeTenantId={activeTenantId}
             modules={modules}
             onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
-            organization={organization}
+            tenants={tenants}
             theme={theme}
           />
           {/* Região rolável precisa de tab stop, senão quem usa só teclado não

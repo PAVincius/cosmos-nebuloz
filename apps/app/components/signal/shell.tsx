@@ -20,13 +20,14 @@
 //     da ideia é o efeito: o papel real fica visível no topbar. A lente de
 //     leitura volta quando houver comportamento especificado por trás dela.
 
-import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
+import { AccountSwitcher } from "@repo/design-system/components/account-switcher";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { type ReactNode, useCallback, useMemo } from "react";
+import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { fmtBRL, fmtMultiple } from "@/lib/signal/roi";
 import { Eyebrow, ModalProvider } from "./base";
 import { SignalPalette } from "./palette";
@@ -119,8 +120,9 @@ export type SignalShellProps = {
   screenIds: string[];
   modules: ModuleId[];
   user: { name: string; role: string };
-  organization: string;
   badges?: ShellBadges;
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
   /** Vermelho quando há alerta de uso sem valor; âmbar com qualquer outro. */
   alertsTone?: "red" | "amber" | null;
   brokenConnections?: number;
@@ -499,12 +501,13 @@ export function SignalShell({
   screenIds,
   modules,
   user,
-  organization,
   badges = {},
   alertsTone = null,
   brokenConnections = 0,
   portfolio,
   valueBar = 1.5,
+  activeTenantId,
+  tenants,
 }: SignalShellProps) {
   const pathname = usePathname() || "/signal";
   const router = useRouter();
@@ -621,8 +624,9 @@ export function SignalShell({
               <div style={{ flex: 1 }} />
               <SourcesChip broken={brokenConnections} />
               <AppSwitcher modules={modules} />
-              <ActiveAccountBadge
-                name={organization}
+              <AccountSwitcher
+                data={{ activeTenantId, tenants }}
+                resolveDestination={resolveActiveAccountDestination}
                 style={{ fontSize: 11, color: "var(--ink-subtle)" }}
               />
               <span

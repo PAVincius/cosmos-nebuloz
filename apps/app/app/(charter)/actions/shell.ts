@@ -1,6 +1,6 @@
 import "server-only";
 
-import { withTenantDb } from "@repo/database";
+import { database, withTenantDb } from "@repo/database";
 import { CHARTER_ROLE_LABEL, listModules } from "@repo/rbac";
 import type { ModuleId } from "@/components/charter/shell";
 import {
@@ -18,6 +18,9 @@ export type ShellData = {
   user: { name: string; role: string };
   policy: { version: string | null; daysToReview: number | null } | null;
   badges: Record<string, number>;
+  /** Conta ativa + contas da pessoa — AccountSwitcher (spec 009, US2). */
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 /** Dias corridos até a próxima revisão. Negativo = vencida. */
@@ -32,7 +35,7 @@ function daysUntil(date: Date | null): number | null {
 export async function getShellData(): Promise<ShellData> {
   const ctx = await requireCharterContext();
 
-  const [modules, data] = await Promise.all([
+  const [modules, data, memberships] = await Promise.all([
     listModules(ctx.tenantId),
     withTenantDb(ctx.tenantId, async (db) => {
       const [tenant, policy, casesAwaiting, openMitigations, vendorsAtRisk] =
@@ -70,6 +73,13 @@ export async function getShellData(): Promise<ShellData> {
         ]);
       return { tenant, policy, casesAwaiting, openMitigations, vendorsAtRisk };
     }),
+    // Mesma leitura de /api/tenants (TenantMember por userId, sem
+    // cross-tenant — FR-014); não escopada a um tenant, então fora de
+    // withTenantDb.
+    database.tenantMember.findMany({
+      where: { userId: ctx.userId },
+      include: { tenant: { select: { id: true, name: true } } },
+    }),
   ]);
 
   return {
@@ -91,5 +101,11 @@ export async function getShellData(): Promise<ShellData> {
       risk: data.openMitigations,
       vendors: data.vendorsAtRisk,
     },
+    activeTenantId: ctx.tenantId,
+    tenants: memberships.map((m) => ({
+      id: m.tenant.id,
+      name: m.tenant.name,
+      role: m.role,
+    })),
   };
 }

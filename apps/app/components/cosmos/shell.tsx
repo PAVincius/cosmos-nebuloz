@@ -1,6 +1,6 @@
 "use client";
 
-import { ActiveAccountBadge } from "@repo/design-system/components/account-switcher/active-account-badge";
+import { AccountSwitcher } from "@repo/design-system/components/account-switcher";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import {
   Avatar,
@@ -26,6 +26,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { CommandPalette } from "./command-palette";
 
 type NavChild = { id: string; label: string };
@@ -271,6 +272,9 @@ export type ShellIdentity = {
   tenantInitials: string;
   planLabel: string;
   role: string;
+  /** Conta ativa + contas da pessoa — AccountSwitcher (spec 009, US2). */
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 function Sidebar({
@@ -311,8 +315,7 @@ function Sidebar({
       tabIndex={-1}
     >
       <div style={{ padding: "12px 12px 10px" }}>
-        <button
-          className="btn navitem"
+        <div
           style={{
             display: "flex",
             alignItems: "center",
@@ -323,7 +326,6 @@ function Sidebar({
             border: "1px solid var(--hairline)",
             background: "var(--surface)",
             color: "var(--ink)",
-            fontFamily: "inherit",
           }}
         >
           <span
@@ -345,8 +347,12 @@ function Sidebar({
             {identity.tenantInitials}
           </span>
           <span style={{ flex: 1, textAlign: "left", minWidth: 0 }}>
-            <ActiveAccountBadge
-              name={identity.tenantName}
+            <AccountSwitcher
+              data={{
+                activeTenantId: identity.activeTenantId,
+                tenants: identity.tenants,
+              }}
+              resolveDestination={resolveActiveAccountDestination}
               style={{
                 display: "block",
                 fontSize: 13.5,
@@ -365,12 +371,7 @@ function Sidebar({
               Plano {identity.planLabel} · {identity.role}
             </span>
           </span>
-          <Icon
-            name="chevronsUpDown"
-            size={14}
-            style={{ color: "var(--ink-faint)" }}
-          />
-        </button>
+        </div>
       </div>
 
       <div style={{ padding: "0 12px 6px" }}>

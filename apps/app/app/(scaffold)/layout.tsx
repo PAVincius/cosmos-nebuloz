@@ -39,11 +39,12 @@ const ScaffoldLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <ScaffoldShell
+      activeTenantId={data.activeTenantId}
       badges={data.badges}
-      organization={data.organization}
       screenIds={Object.keys(SCREENS)}
       stalledCount={data.stalledCount}
       stallThresholdDays={data.stallThresholdDays}
+      tenants={data.tenants}
       totalTracks={data.totalTracks}
       user={data.user}
     >

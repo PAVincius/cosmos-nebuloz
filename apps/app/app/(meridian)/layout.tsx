@@ -39,10 +39,11 @@ const MeridianLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <MeridianShell
+      activeTenantId={data.activeTenantId}
       badges={data.badges}
       modules={data.modules}
-      organization={data.organization}
       screenIds={Object.keys(SCREENS)}
+      tenants={data.tenants}
       user={data.user}
     >
       {children}

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { withTenantDb } from "@repo/database";
+import { database, withTenantDb } from "@repo/database";
 import { listModules, SIGNAL_ROLE_LABEL } from "@repo/rbac";
 import { adoptionPct } from "@/lib/signal/adoption";
 import { requireSignalContext, type SignalContext } from "@/lib/signal/guards";
@@ -46,6 +46,9 @@ export type SignalShellData = {
   brokenConnections: number;
   portfolio: SignalPortfolio;
   bars: { adoptionBar: number; valueBar: number };
+  /** Conta ativa + contas da pessoa — AccountSwitcher (spec 009, US2). */
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 const DEFAULT_BARS = { adoptionBar: 60, valueBar: 1.5 };
@@ -66,7 +69,7 @@ function alertsToneOf(open: number, weak: number): "red" | "amber" | null {
 export async function getShellData(): Promise<SignalShellData> {
   const ctx = await requireSignalContext();
 
-  const [modules, data] = await Promise.all([
+  const [modules, data, memberships] = await Promise.all([
     listModules(ctx.tenantId),
     withTenantDb(ctx.tenantId, async (db) => {
       const where = { tenantId: ctx.tenantId };
@@ -128,6 +131,13 @@ export async function getShellData(): Promise<SignalShellData> {
         unhealthyConnections,
         mappings,
       };
+    }),
+    // Mesma leitura de /api/tenants (TenantMember por userId, sem
+    // cross-tenant — FR-014); não escopada a um tenant, então fora de
+    // withTenantDb.
+    database.tenantMember.findMany({
+      where: { userId: ctx.userId },
+      include: { tenant: { select: { id: true, name: true } } },
     }),
   ]);
 
@@ -199,5 +209,11 @@ export async function getShellData(): Promise<SignalShellData> {
       currency: data.settings?.currency ?? "BRL",
     },
     bars,
+    activeTenantId: ctx.tenantId,
+    tenants: memberships.map((m) => ({
+      id: m.tenant.id,
+      name: m.tenant.name,
+      role: m.role,
+    })),
   };
 }
