@@ -6,11 +6,19 @@ import {
   type MeridianContext,
   requireMeridianContext,
 } from "@/lib/meridian/guards";
+import { pickKnownModules } from "@/lib/shell-modules";
 
 // Dados da casca. Uma consulta por render de layout — o layout não remonta
 // entre rotas, então isto roda uma vez por navegação server-side, não por tela.
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL" | "MERIDIAN";
+
+const MODULE_IDS: readonly ModuleId[] = [
+  "COSMOS",
+  "CHARTER",
+  "SIGNAL",
+  "MERIDIAN",
+];
 
 export type MeridianShellData = {
   ctx: MeridianContext;
@@ -56,7 +64,7 @@ export async function getShellData(): Promise<MeridianShellData> {
 
   return {
     ctx,
-    modules: modules as ModuleId[],
+    modules: pickKnownModules(modules, MODULE_IDS),
     organization: data.organization,
     user: {
       name: ctx.user.name ?? ctx.user.email ?? "—",

@@ -2,6 +2,7 @@ import "server-only";
 
 import { database, withTenantDb } from "@repo/database";
 import { listModules, SIGNAL_ROLE_LABEL } from "@repo/rbac";
+import { pickKnownModules } from "@/lib/shell-modules";
 import { adoptionPct } from "@/lib/signal/adoption";
 import { requireSignalContext, type SignalContext } from "@/lib/signal/guards";
 import { computePortfolioRoi } from "@/lib/signal/roi";
@@ -11,6 +12,13 @@ import { isAtRisk, verdictOf } from "@/lib/signal/verdict";
 // entre rotas, então isto roda uma vez por navegação server-side, não por tela.
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL" | "MERIDIAN";
+
+const MODULE_IDS: readonly ModuleId[] = [
+  "COSMOS",
+  "CHARTER",
+  "SIGNAL",
+  "MERIDIAN",
+];
 
 /** Contadores do sidebar. A chave é o id da tela, para a casca não precisar de
  *  um mapa paralelo. */
@@ -186,7 +194,7 @@ export async function getShellData(): Promise<SignalShellData> {
 
   return {
     ctx,
-    modules: modules as ModuleId[],
+    modules: pickKnownModules(modules, MODULE_IDS),
     organization: data.organization,
     user: {
       name: ctx.user.name ?? ctx.user.email ?? "—",
