@@ -4,7 +4,16 @@
 # serviço refaz a partir dele (registro de decisões, D-12 e D-16). Os agentes
 # falam com ele por MCP em http://127.0.0.1:8003/mcp.
 #
-#   pnpm memoria:up        # gera .env, sobe tudo, cria a chave e liga ao Claude Code
+#   pnpm memoria:up        # gera .env, sobe, cria as chaves e importa
+#
+# Por padrão sobe só o Postgres e o serviço (~250 MB): a busca vetorial e por texto
+# roda no próprio Postgres (D-16: Postgres até medir o limite). As projeções são
+# perfis, ligados no .env com COMPOSE_PROFILES:
+#   vetor   → Qdrant (candidatos da busca vetorial vêm dele)
+#   grafo   → Neo4j (ferramenta `relacionadas`)
+#   arquivo → MinIO (um JSON por versão, a camada fria)
+# Ex.: COMPOSE_PROFILES=vetor,grafo,arquivo liga tudo (~1,2 GB parado). Depois de ligar
+# uma projeção com memória já gravada: POST /api/v1/maintenance/rebuild.
 #
 # Portas só em 127.0.0.1: nada aqui fica exposto na rede.
 
@@ -32,16 +41,20 @@ services:
   qdrant:
     <<: *padrao
     image: qdrant/qdrant:v1.19.1
+    profiles: [vetor]
     ports: ["127.0.0.1:6333:6333"]
     volumes: [qdrant_data:/qdrant/storage]
 
   neo4j:
     <<: *padrao
     image: neo4j:5.26-community
+    profiles: [grafo]
     environment:
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?defina NEO4J_PASSWORD no .env}  # ggignore: interpolação do .env, sem valor literal
-      NEO4J_server_memory_heap_max__size: 1g
-      NEO4J_server_memory_pagecache_size: 512m
+      # Grafo pequeno (entidades e relações da memória): 512 MB de heap sobram.
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
     ports:
       - "127.0.0.1:7474:7474"
       - "127.0.0.1:7687:7687"
@@ -56,6 +69,7 @@ services:
     <<: *padrao
     image: ${MINIO_IMAGE:-quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z}
     command: ["server", "/data", "--console-address", ":9001"]
+    profiles: [arquivo]
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?defina MINIO_ROOT_USER no .env}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?defina MINIO_ROOT_PASSWORD no .env}  # ggignore: interpolação do .env, sem valor literal
@@ -82,19 +96,19 @@ services:
     image: nebuloz/memoria:local
     depends_on:
       postgres: {condition: service_healthy}
-      neo4j: {condition: service_healthy}
-      qdrant: {condition: service_started}
-      minio: {condition: service_started}
+      # Projeções opcionais: só esperam quando o perfil está ligado.
+      neo4j: {condition: service_healthy, required: false}
+      qdrant: {condition: service_started, required: false}
+      minio: {condition: service_started, required: false}
     environment:
       STEC_ADMIN_DATABASE_URL: postgresql://stec_admin:${POSTGRES_PASSWORD}@postgres:5432/memoria  # ggignore: interpolação do .env, sem valor literal
       STEC_DATABASE_URL: postgresql://stec_app:${STEC_APP_DB_PASSWORD:?defina STEC_APP_DB_PASSWORD no .env}@postgres:5432/memoria  # ggignore: interpolação do .env, sem valor literal
       STEC_APP_DB_PASSWORD: ${STEC_APP_DB_PASSWORD}  # ggignore: interpolação do .env, sem valor literal
       STEC_EMBEDDING_PROVIDER: ${STEC_EMBEDDING_PROVIDER:-hash}
       STEC_OLLAMA_URL: http://ollama:11434
-      STEC_QDRANT_URL: http://qdrant:6333
-      STEC_NEO4J_URL: bolt://neo4j:7687
+      # Liga cada projeção cujo perfil está ativo (vetor, grafo, arquivo).
+      STEC_PROJECOES: ${COMPOSE_PROFILES:-}
       STEC_NEO4J_PASSWORD: ${NEO4J_PASSWORD}  # ggignore: interpolação do .env, sem valor literal
-      STEC_MINIO_ENDPOINT: minio:9000
       STEC_MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       STEC_MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}  # ggignore: interpolação do .env, sem valor literal
     # Fontes que o importador lê (lições do Maestri, ADRs, registro de decisões). Só leitura.

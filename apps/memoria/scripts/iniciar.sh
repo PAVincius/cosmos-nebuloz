@@ -28,6 +28,8 @@ NEO4J_PASSWORD=$(senha)
 MINIO_ROOT_USER=memoria
 MINIO_ROOT_PASSWORD=$(senha)
 STEC_EMBEDDING_PROVIDER=hash
+# Projeções opcionais: vetor (Qdrant), grafo (Neo4j), arquivo (MinIO). Vazio = só Postgres.
+COMPOSE_PROFILES=
 EOF
   umask 022
   echo "• .env criado com senhas aleatórias"
@@ -81,6 +83,14 @@ install -m 700 scripts/cabecalho.sh "$CASA/cabecalho.sh"
 
 echo "• importando lições do Maestri, ADRs e registro de decisões"
 cli importar "$TENANT" --raiz /fontes
+
+# Projeção ligada depois de haver memória nasce vazia: refaz a partir do Postgres (idempotente).
+perfis="$(sed -n 's/^COMPOSE_PROFILES=//p' .env | tail -n1)"
+perfis="${COMPOSE_PROFILES:-$perfis}"
+if [ -n "$perfis" ]; then
+  echo "• refazendo projeções ligadas ($perfis)"
+  cli reconstruir "$TENANT"
+fi
 
 cat <<EOF
 
