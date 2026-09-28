@@ -250,6 +250,15 @@ describe("requestEvidenceUrl", () => {
     expect(audit.data.entityType).toBe("meridian.evidence");
   });
 
+  it("target do audit não carrega fileName (dado pessoal em log de vida longa, achado da Morgana)", async () => {
+    await requestEvidenceUrl({ evidenceId: EV_ID });
+    const audit = h.auditCreate.mock.calls[0]?.[0] as {
+      data: { metadata: { target: string } };
+    };
+    expect(audit.data.metadata.target).not.toContain("catalogo.xlsx");
+    expect(audit.data.metadata.target).toBe(`AS-104 · ${EV_ID}`);
+  });
+
   it("cada abertura grava exatamente 1 linha na trilha — a tela 'Ver evidência' chama isto por clique", async () => {
     const res = await requestEvidenceUrl({ evidenceId: EV_ID });
     expect(res.ok).toBe(true);
@@ -266,6 +275,23 @@ describe("requestEvidenceUrl", () => {
     const res = await requestEvidenceUrl({ evidenceId: EV_ID });
     expect(res.ok).toBe(false);
     expect(h.createSignedUrl).not.toHaveBeenCalled();
+  });
+
+  it("recusa evidência eliminada pela retenção de 90 dias, sem tentar assinar URL nem gravar audit falso", async () => {
+    h.evidenceFindFirst.mockResolvedValue({
+      id: EV_ID,
+      storagePath: "eliminado-por-retencao",
+      fileName: "catalogo.xlsx",
+      assessment: { code: "AS-104" },
+    });
+    const res = await requestEvidenceUrl({ evidenceId: EV_ID });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/retenção/);
+    expect(h.createSignedUrl).not.toHaveBeenCalled();
+    // A checagem de retenção roda ANTES do audit — sem isso, o log dizia
+    // "URL assinada emitida para download" pra uma evidência que não existe
+    // mais (achado P3 da Morgana).
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 
   it("exige permissão de leitura de evidência", async () => {

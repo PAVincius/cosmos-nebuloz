@@ -405,3 +405,25 @@ describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
     expect(h.ensureBucket).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("attachEvidence — target do audit (achado da Morgana sobre report.ts, mesmo padrão aqui)", () => {
+  it("não carrega o nome original do arquivo no target — usa o id da evidência", async () => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    h.evidenceCreate.mockResolvedValue({ id: "e1", fileName: "ev.txt" });
+    const file = {
+      size: 3,
+      type: "text/plain",
+      name: "ev.txt",
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    } as unknown as File;
+
+    await attachEvidence(TOKEN, "q1", file);
+
+    const audit = h.auditCreate.mock.calls[0]?.[0] as {
+      data: { metadata: { target: string } };
+    };
+    expect(audit.data.metadata.target).not.toContain("ev.txt");
+    expect(audit.data.metadata.target).toBe("AS-104 · e1");
+  });
+});

@@ -460,7 +460,10 @@ export async function attachEvidence(
       action: "meridian.evidence.attach",
       entityType: "meridian.evidence",
       entityId: evidence.id,
-      target: `${r.assessment.code} · ${file.name}`,
+      // Alvo pelo id, não por file.name: nome original do arquivo pode
+      // carregar dado pessoal, e o audit é log de vida longa (mesmo achado
+      // da Morgana sobre requestEvidenceUrl, report.ts).
+      target: `${r.assessment.code} · ${evidence.id}`,
     });
 
     return evidence;
