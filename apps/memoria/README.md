@@ -65,7 +65,7 @@ As ferramentas do MCP:
 
 | Ferramenta | Papel | O que faz |
 |---|---|---|
-| `lembrar` | escrita | grava uma decisão, compromisso, lição, fato ou preferência, com origem e confiança (medido, estimado ou declarado); o agente é o da chave |
+| `lembrar` | escrita | grava uma decisão, compromisso, lição, fato ou preferência, com origem e confiança (medido, estimado ou declarado); o agente é o da chave. Texto idêntico a uma memória vigente do mesmo projeto não é gravado de novo. Fato atômico que contradiz um vigente volta em `conflitos` |
 | `buscar` | leitura | busca híbrida (vetor e texto). `valido_em` responde "o que valia em março"; `sabido_em` responde "o que sabíamos em março" |
 | `listar` | leitura | lista as memórias vigentes |
 | `substituir` | escrita | cria a versão nova de uma memória; a anterior fica no histórico |
@@ -146,18 +146,29 @@ processo contínuo. Para servir fora da máquina, o caminho é um host de contê
 | Nota de confiança 0–1 | O mapa de fronteiras proíbe uma segunda escala. |
 | Senhas padrão no compose | Toda senha é obrigatória no `.env`, e as portas só escutam em 127.0.0.1. |
 
+Do segundo pacote (2026-09-28: `mcp_main.py` de fatos atômicos, `nebulus-stack.md`), entraram duas ideias:
+- **o conflito de fato atômico:** mesmo sujeito e predicado, com outro objeto. Ele é apontado, não resolvido, porque
+  a D-13 manda manter a contradição viva e datada;
+- **a recusa de duplicata.**
+
+Ficaram de fora, pelos motivos da tabela:
+- o armazenamento em dicionário;
+- o tenant vindo do corpo e a chave não validada;
+- o `update` capaz de trocar o tenant e o `delete` sem checar o tenant;
+- o Cognee como motor, o LangGraph Server e as senhas padrão.
+
 ## Testar
 
 ```bash
 pnpm memoria:test
 ```
 
-São 32 testes de integração contra os serviços reais. Eles usam tenants
+São 34 testes de integração contra os serviços reais. Eles usam tenants
 temporários e os purgam no fim, sem tocar no tenant `nebuloz`. Os testes cobrem:
 - **segurança:** chave, papel, isolamento de tenant, RLS e imutabilidade;
 - **memória:** bitemporal, revogação, busca, apagamento por origem e retenção;
 - **projeções:** falha visível, isolamento e `rebuild`;
-- **MCP:** chave, host, papel, isolamento e ausência de apagamento;
+- **MCP:** chave, host, papel, agente pela chave, isolamento, duplicata, conflito de fato atômico e ausência de apagamento;
 - **importador:** sincronização, versão nova e lição riscada.
 
 Nenhum script do pacote se chama `test`, `build` ou `dev`. Assim, `pnpm test`,

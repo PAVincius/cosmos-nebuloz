@@ -128,3 +128,42 @@ def test_mcp_memory_id_invalido(client, tenants, valor):
     a, _ = tenants
     _, erro = _chamar(client, a.leitura, "historico", memory_id=valor)
     assert erro and "UUID" in erro
+
+
+def test_mcp_nao_duplica_texto_vigente(client, tenants):
+    a, _ = tenants
+    fato = {"texto": "Sprint de 2 semanas", "categoria": "fact"}
+    primeira, _ = _chamar(client, a.escrita, "lembrar", projeto="p-dup", **fato)
+    segunda, erro = _chamar(client, a.escrita, "lembrar", projeto="p-dup", **fato)
+    assert erro is None, erro
+    assert segunda["ja_existia"] and segunda["memory_id"] == primeira["memory_id"]
+    outro_projeto, _ = _chamar(client, a.escrita, "lembrar", projeto="p-x", **fato)
+    assert not outro_projeto["ja_existia"]
+
+
+def test_mcp_aponta_conflito_de_fato_atomico_sem_resolver(client, tenants):
+    a, b = tenants
+    fato = {"subject": "Cliente Acme", "predicate": "prefere", "object": "e-mail"}
+    antigo, _ = _chamar(
+        client, a.escrita, "lembrar", texto="A Acme prefere e-mail", categoria="preference", relacoes=[fato]
+    )
+    assert antigo["conflitos"] == []
+    novo, erro = _chamar(
+        client,
+        a.escrita,
+        "lembrar",
+        texto="A Acme agora prefere reunião",
+        categoria="preference",
+        relacoes=[{**fato, "object": "reunião"}],
+    )
+    assert erro is None, erro
+    assert [c["memory_id"] for c in novo["conflitos"]] == [antigo["memory_id"]]
+    assert novo["conflitos"][0]["fato_vigente"] == "Cliente Acme prefere e-mail"
+    # A contradição fica viva: as duas continuam vigentes até alguém substituir ou revogar.
+    vigentes = {m["memory_id"] for m in _chamar(client, a.leitura, "listar", categoria="preference")[0]}
+    assert {antigo["memory_id"], novo["memory_id"]} <= vigentes
+    # Outro tenant não vê o conflito de A.
+    de_b, _ = _chamar(
+        client, b.escrita, "lembrar", texto="Acme em B", categoria="preference", relacoes=[{**fato, "object": "fax"}]
+    )
+    assert de_b["conflitos"] == []

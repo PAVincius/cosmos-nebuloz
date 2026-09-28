@@ -27,6 +27,7 @@ from .schemas import (
     MemorySupersede,
     MemoryVersion,
     Provenance,
+    Relation,
     SearchHit,
 )
 
@@ -348,6 +349,51 @@ class Motor:
                 {"results": len(melhores), "query_hash": hashlib.sha256(busca.query.encode()).hexdigest()},
             )
         return [SearchHit(score=round(p, 6), memory=_para_versao(linhas[v])) for v, p in melhores if v in linhas]
+
+    def duplicata(self, ctx: Contexto, texto: str, project_id: str | None) -> MemoryVersion | None:
+        """Memória vigente com o mesmo texto, no mesmo projeto: gravar de novo só duplicaria."""
+        filtro, parametros = _filtro_temporal(None, None)
+        with db.tenant_tx(ctx.tenant_id) as conn:
+            linha = conn.execute(
+                f"""
+                SELECT * FROM stec.memoria
+                WHERE {filtro} AND text = %s AND project_id IS NOT DISTINCT FROM %s
+                ORDER BY tx_from LIMIT 1
+                """,
+                [*parametros, texto, project_id],
+            ).fetchone()
+        return _para_versao(linha) if linha else None
+
+    def conflitos(self, ctx: Contexto, relacoes: list[Relation]) -> list[dict[str, Any]]:
+        """Fatos atômicos vigentes com o mesmo sujeito e predicado e outro objeto.
+
+        Não resolve nada sozinho (D-13: a contradição fica viva e datada). Quem
+        grava decide se a antiga deve ser substituída ou revogada."""
+        if not relacoes:
+            return []
+        filtro, parametros = _filtro_temporal(None, None)
+        achados: list[dict[str, Any]] = []
+        with db.tenant_tx(ctx.tenant_id) as conn:
+            for r in relacoes:
+                for linha in conn.execute(
+                    f"""
+                    SELECT m.memory_id, m.text, rel->>'object' AS objeto
+                    FROM stec.memoria m, jsonb_array_elements(m.relations) rel
+                    WHERE {filtro}
+                      AND lower(rel->>'subject') = lower(%s) AND rel->>'predicate' = %s
+                      AND lower(rel->>'object') <> lower(%s)
+                    """,
+                    [*parametros, r.subject, r.predicate, r.object],
+                ).fetchall():
+                    achados.append(
+                        {
+                            "memory_id": str(linha["memory_id"]),
+                            "texto": linha["text"],
+                            "fato_vigente": f"{r.subject} {r.predicate} {linha['objeto']}",
+                            "fato_novo": f"{r.subject} {r.predicate} {r.object}",
+                        }
+                    )
+        return achados
 
     def auditoria(self, ctx: Contexto, limite: int) -> list[AuditEntry]:
         with db.tenant_tx(ctx.tenant_id) as conn:

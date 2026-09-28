@@ -133,8 +133,15 @@ def lembrar(
 ) -> dict[str, Any]:
     """Grava uma memória nova. Quem lembra é o agente dono da chave (ex.: Crivo, Norte), não um parâmetro.
     `origem`/`origem_id` apontam de onde veio (ex.: "pr" / "PAVincius/cosmos-nebuloz#266") e permitem apagar
-    tudo o que veio de uma origem. `valido_desde`: quando o fato passou a valer; padrão, agora."""
+    tudo o que veio de uma origem. `valido_desde`: quando o fato passou a valer; padrão, agora.
+    `relacoes` são fatos atômicos (sujeito, predicado, objeto). Se um fato vigente tiver o mesmo sujeito e predicado
+    com outro objeto, ele volta em `conflitos`: decida se o antigo deve ser substituído ou revogado.
+    Texto idêntico a uma memória vigente do mesmo projeto não é gravado de novo (`ja_existia`)."""
     identidade = _contexto(ctx, "escrita")
+    existente = _motor().duplicata(identidade, texto, projeto)
+    if existente is not None:
+        return {**_resumo(existente), "ja_existia": True, "conflitos": []}
+    conflitos = _motor().conflitos(identidade, relacoes or [])
     entrada = MemoryIngest(
         agent_id=identidade.actor,
         project_id=projeto,
@@ -150,7 +157,7 @@ def lembrar(
         ),
         metadata=MemoryMetadata(tags=tags or []),
     )
-    return _resumo(_motor().ingerir(identidade, entrada))
+    return {**_resumo(_motor().ingerir(identidade, entrada)), "ja_existia": False, "conflitos": conflitos}
 
 
 @servidor_mcp.tool()

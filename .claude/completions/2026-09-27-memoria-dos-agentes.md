@@ -33,3 +33,13 @@ Compose, testado, rodando, e acessível aos agentes do Maestri.
 - **Imagem neste sandbox.** `python:3.11-slim` deu 429 no Docker Hub, e o pip precisa do CA do proxy; a imagem foi
   montada numa cópia fora do repo, sobre a imagem anterior. O `Dockerfile` versionado é o padrão.
 - **Stack rodando:** está no contêiner desta sessão, que é efêmero e não é alcançável do Mac. No Mac: `pnpm memoria:up`.
+
+## 2026-09-28 — Chave por papel e o segundo pacote
+- **Chave por papel:** `iniciar.sh` lê `hire`/`recruit` de `.maestri/setup-canvas.sh` e cria 17 chaves (rótulo = agente) em
+  `~/.nebuloz/memoria/chaves/<papel>.json`. `scripts/cabecalho.sh` (headersHelper) escolhe pela `role.json` da pasta.
+  Verificado antes que o Claude Code roda o headersHelper na pasta do agente. `lembrar` perdeu o parâmetro `agente`.
+  Bug achado no caminho: `docker compose exec` consumia o stdin do laço e só a primeira chave saía.
+- **E2E:** agente numa pasta de papel QA gravou como Crivo; fora de pasta de papel, como `maestri`.
+- **Segundo pacote do CEO** (`mcp_main.py`, `nebulus-stack.md`, compose e main.py repetidos): não substitui o serviço
+  (dicionário em memória, tenant do corpo, chave não validada, update troca tenant, delete sem tenant). Entraram
+  duplicata e conflito de fato atômico (apontado, não resolvido, D-13). 34 testes passando.
