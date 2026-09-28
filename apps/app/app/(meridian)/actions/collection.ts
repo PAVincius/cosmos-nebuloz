@@ -75,6 +75,7 @@ export async function assignRespondent(
       }
 
       const token = issueToken();
+      const now = new Date();
       const respondent = await db.meridianRespondent.create({
         data: {
           tenantId: ctx.tenantId,
@@ -85,8 +86,13 @@ export async function assignRespondent(
           axis: input.axis,
           status: "INVITED",
           tokenHash: hashToken(token),
-          tokenExpiresAt: assessment.deadline,
-          invitedAt: new Date(),
+          // TTL próprio (min(agora + 14d, deadline)), não o deadline copiado
+          // direto — achado P2 do Vigia, atrito.md:42.
+          tokenExpiresAt: calcularExpiracaoDaReemissao(
+            assessment.deadline,
+            now
+          ),
+          invitedAt: now,
         },
         select: { id: true },
       });
