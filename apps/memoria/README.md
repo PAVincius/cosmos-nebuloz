@@ -15,7 +15,8 @@ corpo da requisição. Aqui tudo funciona e tem testes.
 
 ## Subir
 
-Precisa do Docker Desktop aberto.
+Precisa do Docker Desktop aberto. Para subir pelo Maestri, com conferência e o que fazer quando algo falha, use o
+[runbook](../../docs/runbooks/memoria-dos-agentes.md).
 
 ```bash
 pnpm memoria:up

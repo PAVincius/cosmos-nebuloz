@@ -20,7 +20,7 @@ The six products, by the boundary map's verbs. Suite-level product truth lives i
 - **Boundary map** — `docs/produto/mapa-de-fronteiras.md` is the target architecture: every shared entity (tenant, permission, baseline, portfolio, confidence scale…) has exactly one owner; the others read it or annex facts without changing it. Where the code diverges, that is a gap to close, not a precedent to copy.
 - **Shared platform** — tenant, session, RBAC, provisioning and database (`packages/auth`, `packages/rbac`, `packages/provisioning`, `packages/database`) serve all six.
 - **Agent notes (Maestri)** — `.maestri/knowledge/<produto>/note.md` is each specialist's starting point; regenerate with `pnpm knowledge:refresh`, never edit by hand (runbook: `docs/runbooks/maestri-conhecimento.md`).
-- **Agent memory** — `apps/memoria` is the long-term memory the agents query over MCP (`http://127.0.0.1:8003/mcp`, tools `mcp__memoria__*`). It runs locally in Docker (`pnpm memoria:up`), is not production, and indexes files that keep their owners: Maestri lessons, ADRs, the decision register. Setup: `apps/memoria/README.md`.
+- **Agent memory** — `apps/memoria` is the long-term memory the agents query over MCP (`http://127.0.0.1:8003/mcp`, tools `mcp__memoria__*`). It runs locally in Docker (`pnpm memoria:up`), is not production, and indexes files that keep their owners: Maestri lessons, ADRs, the decision register. Setup: `apps/memoria/README.md`; bring-up via Morgana: `docs/runbooks/memoria-dos-agentes.md`.
 
 ---
 
