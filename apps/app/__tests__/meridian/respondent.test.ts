@@ -18,6 +18,21 @@ const h = vi.hoisted(() => ({
   responseFindUnique: vi.fn(),
   evidenceCreate: vi.fn(),
   auditCreate: vi.fn(),
+  headersGet: vi.fn(),
+  rateLimiterLimit: vi.fn(),
+  rateLimiterPeek: vi.fn(),
+  ensureBucket: vi.fn(),
+}));
+
+vi.mock("next/headers", () => ({
+  headers: vi.fn().mockResolvedValue({ get: h.headersGet }),
+}));
+vi.mock("@repo/rate-limit", () => ({
+  createRateLimiter: vi.fn(() => ({
+    limit: h.rateLimiterLimit,
+    peek: h.rateLimiterPeek,
+  })),
+  fixedWindow: vi.fn((max: number, window: string) => ({ max, window })),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -39,7 +54,7 @@ vi.mock("@/lib/meridian/guards", () => ({
   },
 }));
 vi.mock("@repo/storage", () => ({
-  ensureBucket: vi.fn(),
+  ensureBucket: h.ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
   storageClient: {
     storage: {
@@ -70,6 +85,7 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
+  attachEvidence,
   getBattery,
   resolveRespondentToken,
   saveDraft,
@@ -98,6 +114,20 @@ const respondent = (over: Record<string, unknown> = {}) => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  h.headersGet.mockReturnValue(null);
+  h.rateLimiterLimit.mockResolvedValue({
+    success: true,
+    limit: 30,
+    remaining: 29,
+    reset: 0,
+  });
+  h.rateLimiterPeek.mockResolvedValue({
+    success: true,
+    limit: 30,
+    remaining: 30,
+    reset: 0,
+  });
+  h.ensureBucket.mockResolvedValue(undefined);
   h.respondentFindUnique.mockResolvedValue(respondent());
   h.questionFindMany.mockResolvedValue([
     {
@@ -244,5 +274,134 @@ describe("submitBattery", () => {
     };
     expect(audit.data.actorType).toBe("respondent");
     expect(audit.data.actorId).toBe("r1");
+  });
+});
+
+describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () => {
+  // Duas etapas — revisão da Morgana sobre 9468abd9: checar (peek, só
+  // leitura) ANTES da consulta por hash; incrementar (limit) só DEPOIS de um
+  // miss. Checar só depois do miss deixava um IP já acima do teto continuar
+  // acertando token válido — sucesso nunca chamava o limitador.
+
+  it("(a) IP acima do teto + token VÁLIDO → RATE_LIMIT_ERROR, sem consultar o banco", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    // respondentFindUnique segue mockado com um respondente válido —
+    // mesmo assim tem que barrar, porque o peek roda antes da consulta.
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("(b) sucesso não incrementa — só o peek (só leitura) é consultado", async () => {
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(true);
+    expect(h.rateLimiterPeek).toHaveBeenCalledTimes(1);
+    expect(h.rateLimiterLimit).not.toHaveBeenCalled();
+  });
+
+  it("(c) miss incrementa — dentro do teto, consulta o banco e grava a falha", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
+    expect(h.rateLimiterLimit).toHaveBeenCalledTimes(1);
+  });
+
+  it("resolveRespondentToken também passa pelo peek — bypass corrigido", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await resolveRespondentToken(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("prefere x-real-ip a x-forwarded-for como identificador", async () => {
+    h.headersGet.mockImplementation((name: string) =>
+      name === "x-real-ip" ? "8.8.8.8" : "9.9.9.9, 1.1.1.1"
+    );
+    await getBattery(TOKEN);
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("8.8.8.8");
+  });
+
+  it("cai para o primeiro IP de x-forwarded-for quando não há x-real-ip", async () => {
+    h.headersGet.mockImplementation((name: string) =>
+      name === "x-forwarded-for" ? "9.9.9.9, 1.1.1.1" : null
+    );
+    await getBattery(TOKEN);
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("9.9.9.9");
+  });
+
+  it("usa 'anonymous' quando não há x-real-ip nem x-forwarded-for", async () => {
+    h.headersGet.mockReturnValue(null);
+    await getBattery(TOKEN);
+    expect(h.rateLimiterPeek).toHaveBeenCalledWith("anonymous");
+  });
+
+  it("aplica o mesmo mecanismo a saveDraft — também passa por loadRespondent", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await saveDraft({ token: TOKEN, answers: [] });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+  });
+
+  it("em produção, trata peek indisponível como limite excedido (fail-closed)", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
+    vi.unstubAllEnvs();
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("fora de produção, peek indisponível não bloqueia — segue pro banco normalmente", async () => {
+    vi.stubEnv("NODE_ENV", "test");
+    h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
+    vi.unstubAllEnvs();
+    expect(res.ok).toBe(true);
+  });
+
+  it("falha ao gravar o miss (limit indisponível) não muda o erro devolvido", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
+    h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
+  });
+});
+
+describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
+  it("chama ensureBucket uma vez só, mesmo com duas evidências anexadas", async () => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    h.evidenceCreate.mockResolvedValue({ id: "e1", fileName: "ev.txt" });
+    const file = {
+      size: 3,
+      type: "text/plain",
+      name: "ev.txt",
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    } as unknown as File;
+
+    await attachEvidence(TOKEN, "q1", file);
+    await attachEvidence(TOKEN, "q1", file);
+
+    expect(h.ensureBucket).toHaveBeenCalledTimes(1);
   });
 });

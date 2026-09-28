@@ -207,6 +207,54 @@ describe("assignRespondent", () => {
     expect(res.ok).toBe(false);
     expect(h.respondentCreate).not.toHaveBeenCalled();
   });
+
+  it("fixa tokenExpiresAt em min(agora + 14 dias, deadline) — não copia o deadline direto quando ele está longe (atrito.md:42)", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      code: "AS-104",
+      deadline: new Date("2030-01-01"),
+      status: "DRAFT",
+    });
+    await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Jonas",
+      role: "Eng",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    const created = h.respondentCreate.mock.calls[0]?.[0] as {
+      data: { tokenExpiresAt: Date };
+    };
+    const tetoEsperado = Date.now() + 14 * 24 * 60 * 60 * 1000;
+    expect(
+      Math.abs(created.data.tokenExpiresAt.getTime() - tetoEsperado)
+    ).toBeLessThan(5000);
+    expect(created.data.tokenExpiresAt.getTime()).toBeLessThan(
+      new Date("2030-01-01").getTime()
+    );
+  });
+
+  it("usa o deadline quando ele chega antes de 14 dias", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_ID,
+      code: "AS-104",
+      deadline: new Date("2026-09-30"),
+      status: "DRAFT",
+    });
+    await assignRespondent({
+      assessmentId: AS_ID,
+      name: "Jonas",
+      role: "Eng",
+      email: "j@x.com",
+      axis: "DATA",
+    });
+    const created = h.respondentCreate.mock.calls[0]?.[0] as {
+      data: { tokenExpiresAt: Date };
+    };
+    expect(created.data.tokenExpiresAt.toISOString()).toBe(
+      new Date("2026-09-30").toISOString()
+    );
+  });
 });
 
 describe("revokeRespondent", () => {

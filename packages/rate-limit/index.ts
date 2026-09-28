@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import { keys } from "./keys";
 
 export { buildRateLimitHeaders, type RateLimitResult } from "./headers";
+
 import type { RateLimitResult } from "./headers";
 
 // Teto de requisição no Postgres.
@@ -37,7 +38,26 @@ export function fixedWindow(
 
 export type RateLimiter = {
   limit: (identifier: string) => Promise<RateLimitResult>;
+  /** Só leitura — nunca incrementa. Prevê o resultado do próximo `limit()`
+   *  pro mesmo identificador, pra quem precisa recusar ANTES de fazer
+   *  trabalho caro (ex. consulta ao banco) quando o identificador já está
+   *  no teto, sem gastar uma tentativa só pra descobrir isso. */
+  peek: (identifier: string) => Promise<RateLimitResult>;
 };
+
+function windowSlot(
+  prefix: string,
+  identifier: string,
+  windowMs: number,
+  now: number
+) {
+  const bucket = BigInt(Math.floor(now / windowMs));
+  return {
+    key: `${prefix}:${identifier}`,
+    bucket,
+    reset: (Number(bucket) + 1) * windowMs,
+  };
+}
 
 export function createRateLimiter(props: {
   limiter?: { max: number; windowMs: number };
@@ -55,9 +75,12 @@ export function createRateLimiter(props: {
       const { database } = await import("@repo/database");
 
       const now = Date.now();
-      const bucket = BigInt(Math.floor(now / windowMs));
-      const key = `${prefix}:${identifier}`;
-      const reset = (Number(bucket) + 1) * windowMs;
+      const { key, bucket, reset } = windowSlot(
+        prefix,
+        identifier,
+        windowMs,
+        now
+      );
 
       const row = await database.rateLimitBucket.upsert({
         where: { key_bucket: { key, bucket } },
@@ -91,6 +114,33 @@ export function createRateLimiter(props: {
         success: row.count <= max,
         limit: max,
         remaining: Math.max(0, max - row.count),
+        reset,
+      };
+    },
+
+    async peek(identifier: string): Promise<RateLimitResult> {
+      const { database } = await import("@repo/database");
+
+      const now = Date.now();
+      const { key, bucket, reset } = windowSlot(
+        prefix,
+        identifier,
+        windowMs,
+        now
+      );
+
+      const row = await database.rateLimitBucket.findUnique({
+        where: { key_bucket: { key, bucket } },
+        select: { count: true },
+      });
+      const count = row?.count ?? 0;
+
+      return {
+        // count < max, não <=: prevê se o PRÓXIMO limit() (que incrementa
+        // antes de checar) ainda passaria.
+        success: count < max,
+        limit: max,
+        remaining: Math.max(0, max - count),
         reset,
       };
     },

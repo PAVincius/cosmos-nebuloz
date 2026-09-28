@@ -20,9 +20,11 @@ const mocks = vi.hoisted(() => ({
   meetingParticipantUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   meridianRespondentFindMany: vi.fn().mockResolvedValue([]),
   meridianRespondentUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
+  meridianEvidenceFindMany: vi.fn().mockResolvedValue([]),
   meridianEvidenceUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   auditCreate: vi.fn().mockResolvedValue({}),
   transaction: vi.fn(),
+  deleteObjects: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("@/lib/inngest/client", () => ({
@@ -31,6 +33,11 @@ vi.mock("@/lib/inngest/client", () => ({
 
 vi.mock("@repo/observability/log", () => ({
   log: { error: vi.fn() },
+}));
+
+vi.mock("@repo/storage", () => ({
+  MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
+  deleteObjects: mocks.deleteObjects,
 }));
 
 vi.mock("@repo/database", () => ({
@@ -48,7 +55,10 @@ vi.mock("@repo/database", () => ({
       findMany: mocks.meridianRespondentFindMany,
       updateMany: mocks.meridianRespondentUpdateMany,
     },
-    meridianEvidence: { updateMany: mocks.meridianEvidenceUpdateMany },
+    meridianEvidence: {
+      findMany: mocks.meridianEvidenceFindMany,
+      updateMany: mocks.meridianEvidenceUpdateMany,
+    },
     auditLog: { create: mocks.auditCreate },
     $transaction: mocks.transaction,
   },
@@ -90,8 +100,10 @@ beforeEach(() => {
   mocks.meetingParticipantUpdateMany.mockResolvedValue({ count: 0 });
   mocks.meridianRespondentFindMany.mockResolvedValue([]);
   mocks.meridianRespondentUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.meridianEvidenceFindMany.mockResolvedValue([]);
   mocks.meridianEvidenceUpdateMany.mockResolvedValue({ count: 0 });
   mocks.auditCreate.mockResolvedValue({});
+  mocks.deleteObjects.mockResolvedValue(undefined);
   mocks.transaction.mockImplementation(async (fn: (tx: unknown) => unknown) =>
     fn({
       meetingInsight: { deleteMany: vi.fn(), updateMany: vi.fn() },
@@ -206,7 +218,7 @@ describe("processErasureRequest reaching MeridianRespondent", () => {
     expect(mocks.transaction).not.toHaveBeenCalled();
   });
 
-  it("respondente encontrado → anonimiza fileName do anexo (MeridianEvidence), storagePath fica fora do alcance", async () => {
+  it("respondente encontrado → anonimiza fileName do anexo (MeridianEvidence)", async () => {
     mocks.userFindUnique.mockResolvedValue({ email: "alice@example.com" });
     mocks.meridianRespondentFindMany.mockResolvedValue([{ id: "resp-1" }]);
 
@@ -218,6 +230,36 @@ describe("processErasureRequest reaching MeridianRespondent", () => {
       // tabela obrigaria quem audita a conhecer cada variação.
       data: { fileName: expect.stringMatching(/^\{subject_anonymized_/) },
     });
+  });
+
+  it("respondente encontrado → apaga o objeto do bucket, não só o metadado (parecer cond. 2)", async () => {
+    mocks.userFindUnique.mockResolvedValue({ email: "alice@example.com" });
+    mocks.meridianRespondentFindMany.mockResolvedValue([{ id: "resp-1" }]);
+    mocks.meridianEvidenceFindMany.mockResolvedValue([
+      { storagePath: "t1/as-1/uuid-1" },
+      { storagePath: "t1/as-1/uuid-2" },
+    ]);
+
+    await handler({ event: baseEvent, step: makeStep() });
+
+    expect(mocks.meridianEvidenceFindMany).toHaveBeenCalledWith({
+      where: { tenantId: "t1", uploadedByRespondentId: { in: ["resp-1"] } },
+      select: { storagePath: true },
+    });
+    expect(mocks.deleteObjects).toHaveBeenCalledWith("meridian-evidence", [
+      "t1/as-1/uuid-1",
+      "t1/as-1/uuid-2",
+    ]);
+  });
+
+  it("respondente sem evidência anexada → não chama deleteObjects", async () => {
+    mocks.userFindUnique.mockResolvedValue({ email: "alice@example.com" });
+    mocks.meridianRespondentFindMany.mockResolvedValue([{ id: "resp-1" }]);
+    mocks.meridianEvidenceFindMany.mockResolvedValue([]);
+
+    await handler({ event: baseEvent, step: makeStep() });
+
+    expect(mocks.deleteObjects).not.toHaveBeenCalled();
   });
 });
 

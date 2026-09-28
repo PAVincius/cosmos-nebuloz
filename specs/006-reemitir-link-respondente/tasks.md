@@ -14,7 +14,7 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Confirmar que `hashToken`/`issueToken` (`apps/app/lib/meridian/respondent-token.ts`) já exportam o necessário pra reemissão — sem mudança esperada, só checagem antes de codar.
+- [x] T001 Confirmar que `hashToken`/`issueToken` (`apps/app/lib/meridian/respondent-token.ts`) já exportam o necessário pra reemissão — sem mudança esperada, só checagem antes de codar.
 
 ---
 
@@ -22,8 +22,8 @@
 
 **Purpose**: Cálculo de `tokenExpiresAt` da reemissão — usado por US1 e, através dela, por US2.
 
-- [ ] T002 [P] Teste unitário de `calcularExpiracaoDaReemissao(deadline, now)` = `min(now + 14 dias, deadline)` — `apps/app/__tests__/meridian/respondent-token.test.ts`. Escrever e confirmar que FALHA.
-- [ ] T003 Implementar `calcularExpiracaoDaReemissao` em `apps/app/lib/meridian/respondent-token.ts` (depende de T002 falhando).
+- [x] T002 [P] Teste unitário de `calcularExpiracaoDaReemissao(deadline, now)` = `min(now + 14 dias, deadline)` — `apps/app/__tests__/meridian/respondent-token.test.ts`. Escrever e confirmar que FALHA.
+- [x] T003 Implementar `calcularExpiracaoDaReemissao` em `apps/app/lib/meridian/respondent-token.ts` (depende de T002 falhando).
 
 **Checkpoint**: Helper de expiração pronto — US1 pode prosseguir.
 
@@ -37,14 +37,14 @@
 
 ### Tests for User Story 1
 
-- [ ] T004 [P] [US1] Teste de `reissueRespondentLink`: sucesso (preserva id/axis/status, invalida link antigo, grava auditoria `meridian.respondent.reissue`) — `apps/app/__tests__/meridian/collection.test.ts`. Escrever e confirmar que FALHA.
-- [ ] T005 [P] [US1] Teste de `reissueRespondentLink`: bloqueio para `DONE`, para `REVOKED`, e para assessment com `deadline` vencido — mesmo arquivo de T004. Escrever e confirmar que FALHA.
-- [ ] T006 [P] [US1] Teste E2E (Playwright) dos cenários 1–3 do quickstart — `apps/app/e2e/meridian-reemitir-link.spec.ts`. Escrever e confirmar que FALHA.
+- [x] T004 [P] [US1] Teste de `reissueRespondentLink`: sucesso (preserva id/axis/status, invalida link antigo, grava auditoria `meridian.respondent.reissue`) — `apps/app/__tests__/meridian/collection.test.ts`. Escrever e confirmar que FALHA.
+- [x] T005 [P] [US1] Teste de `reissueRespondentLink`: bloqueio para `DONE`, para `REVOKED`, e para assessment com `deadline` vencido — mesmo arquivo de T004. Escrever e confirmar que FALHA.
+- [x] T006 [P] [US1] Teste E2E (Playwright) dos cenários 1–3 do quickstart — `apps/app/e2e/meridian-reemitir-link.spec.ts`. Escrever e confirmar que FALHA.
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Implementar `reissueRespondentLink` em `apps/app/app/(meridian)/actions/collection.ts` (usa T003, segue o padrão de `revokeRespondent`/`assignRespondent`; depende de T004/T005 falhando).
-- [ ] T008 [US1] Adicionar botão "Reemitir link" na linha do respondente em `apps/app/components/meridian/screens/tab-coleta.tsx` (perto de "Lembrar"/"Revogar"), mostrando o link novo no mesmo padrão de `AssignRespondentModal` (depende de T007).
+- [x] T007 [US1] Implementar `reissueRespondentLink` em `apps/app/app/(meridian)/actions/collection.ts` (usa T003, segue o padrão de `revokeRespondent`/`assignRespondent`; depende de T004/T005 falhando).
+- [x] T008 [US1] Adicionar botão "Reemitir link" na linha do respondente em `apps/app/components/meridian/screens/tab-coleta.tsx` (perto de "Lembrar"/"Revogar"), mostrando o link novo no mesmo padrão de `AssignRespondentModal` (depende de T007).
 
 **Checkpoint**: US1 completa e testável de forma independente — T004/T005/T006 devem passar.
 
@@ -60,15 +60,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T009 [P] [US2] Teste de `reissuePendingLinks`: reemite só `INVITED`/`PENDING`/`OVERDUE`, não toca `DONE`/`REVOKED`, grava auditoria por respondente — `apps/app/__tests__/meridian/collection.test.ts`. Escrever e confirmar que FALHA.
-- [ ] T010 [P] [US2] Teste de `reissuePendingLinks`: assessment sem nenhum pendente devolve resultado informativo (não lista vazia como sucesso silencioso) — mesmo arquivo de T009. Escrever e confirmar que FALHA.
-- [ ] T011 [P] [US2] Teste E2E (Playwright) dos cenários 4–5 do quickstart (lista, copiar tudo, baixar arquivo, caso sem pendentes) — `apps/app/e2e/meridian-reemitir-lote.spec.ts`. Escrever e confirmar que FALHA.
+- [x] T009 [P] [US2] Teste de `reissuePendingLinks`: reemite só `INVITED`/`PENDING`/`OVERDUE`, não toca `DONE`/`REVOKED`, grava auditoria por respondente — `apps/app/__tests__/meridian/collection.test.ts`. Escrever e confirmar que FALHA.
+- [x] T010 [P] [US2] Teste de `reissuePendingLinks`: assessment sem nenhum pendente devolve resultado informativo (não lista vazia como sucesso silencioso) — mesmo arquivo de T009. Escrever e confirmar que FALHA.
+- [x] T011 [P] [US2] Teste E2E (Playwright) dos cenários 4–5 do quickstart (lista, copiar tudo, baixar arquivo, caso sem pendentes) — `apps/app/e2e/meridian-reemitir-lote.spec.ts`. Escrever e confirmar que FALHA.
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Implementar `reissuePendingLinks` em `apps/app/app/(meridian)/actions/collection.ts`, reaproveitando a lógica de reemissão de T007 numa transação por assessment (depende de T007, T009/T010 falhando).
-- [ ] T013 [US2] Adicionar botão "Reemitir e copiar todos os pendentes" em `apps/app/components/meridian/screens/tab-coleta.tsx`, abrindo modal de lista (nome · eixo · link) com "copiar tudo" (depende de T012).
-- [ ] T014 [P] [US2] Adicionar "baixar `.txt`/`.csv`" no mesmo modal de T013.
+- [x] T012 [US2] Implementar `reissuePendingLinks` em `apps/app/app/(meridian)/actions/collection.ts`, reaproveitando a lógica de reemissão de T007 numa transação por assessment (depende de T007, T009/T010 falhando).
+- [x] T013 [US2] Adicionar botão "Reemitir e copiar todos os pendentes" em `apps/app/components/meridian/screens/tab-coleta.tsx`, abrindo modal de lista (nome · eixo · link) com "copiar tudo" (depende de T012).
+- [x] T014 [P] [US2] Adicionar "baixar `.txt`/`.csv`" no mesmo modal de T013.
 
 **Checkpoint**: US1 e US2 funcionando juntas — T009/T010/T011 devem passar.
 

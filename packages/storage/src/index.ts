@@ -34,6 +34,23 @@ export async function ensureBucket(
   }
 }
 
+/** Remove objetos do bucket pelo `storagePath`. Usado pela rotina de
+ *  eliminação LGPD (art. 18) para apagar o arquivo em si, não só o metadado no
+ *  banco — parecer de compliance
+ *  (docs/compliance/2026-09-24-parecer-meridian-respondente.md, condição 2). */
+export async function deleteObjects(
+  bucket: string,
+  paths: string[]
+): Promise<void> {
+  if (paths.length === 0) {
+    return;
+  }
+  const { error } = await storageClient.storage.from(bucket).remove(paths);
+  if (error) {
+    throw new Error(`Falha ao eliminar objeto(s) do bucket: ${error.message}`);
+  }
+}
+
 export type ArtifactType =
   | "prompt"
   | "prd"

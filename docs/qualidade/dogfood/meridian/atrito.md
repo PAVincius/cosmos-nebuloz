@@ -59,7 +59,14 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
 
 **P2** | `packages/storage/src/index.ts:21` (`ensureBucket`) | Bucket de evidência criado sem política de lifecycle (retenção/expiração de objetos) — evidência anexada por um respondente sem conta fica armazenada indefinidamente, sem uma regra declarada de por quanto tempo. Achado do security review do Vigia sobre `4cf68a24`.
 
-  **Dono**: Bussola. **Estado**: backlog.
+  **Dono**: Bussola. **Estado**: aguardando decisão do CEO sobre o prazo — código pronto pra qualquer uma das opções (`deleteObjects`, `packages/storage/src/index.ts`, entregue na rotina de eliminação DSAR, `apps/app/lib/inngest/lgpd-dsr.ts`).
+
+  **Opções de retenção** (2026-09-28, Bussola — trago as opções, quem decide o prazo é o CEO, condição 3 do parecer de compliance):
+  - **A — 90 dias após o fechamento do assessment** (`status` vira `REVIEW`/`FINALISED`, `closedAt` gravado em `closeCollection`, `collection.ts:451`): janela mínima pra revisão pós-fechamento; mais restritiva das três, menor exposição.
+  - **B — 180 dias após o fechamento**: alinha com um ciclo semestral de reavaliação, prazo mais folgado pra reabrir uma conversa com o cliente sobre o mesmo diagnóstico sem pedir evidência de novo.
+  - **C — sem expiração automática, só DSAR sob pedido** (o que já existe hoje, incompleto até a rotina de eliminação de objeto que acabei de entregar): mais simples — não pede job novo de varredura —, mas é exatamente o que o Vigia sinalizou como risco de proporcionalidade (art. 6º, III, LGPD) se virar política permanente para cliente externo, e o próprio parecer da Compliance (`docs/compliance/2026-09-24-parecer-meridian-respondente.md`, condição 3) trata isso como bloqueador pra abrir o fluxo a cliente externo.
+
+  Qualquer uma das opções A/B pede um job novo (cron/inngest) que varra assessment com `closedAt` vencido e chame `deleteObjects(MERIDIAN_EVIDENCE_BUCKET, paths)` — não implementado ainda, porque o prazo em si é a decisão pendente.
 
 ---
 
