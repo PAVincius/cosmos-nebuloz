@@ -6,6 +6,9 @@
 // Concessões: o superior libera, por tempo, que o subordinado aja dentro do domínio DO SUPERIOR.
 //   node .maestri/registrar.mjs conceder --de Norte --para Regua --escopo "editar docs/produto/x.md" --motivo "..." --horas 4
 //   node .maestri/registrar.mjs concessoes [--para Regua]   (só as ativas)
+// Pedidos entre agentes (maestri ask): mede quanto pedido volta com pergunta e quanto demora a fechar.
+//   node .maestri/registrar.mjs pedido --de Norte --para Regua --tarefa "spec do raio X" --estado aberto|voltou|fechado
+//   node .maestri/registrar.mjs pedidos [--dias 7]   (o resumo semanal também traz esta parte)
 // ponytail: é trilha de auditoria + regra de prompt; as permissões do Claude Code não mudam. Quem aplica é o agente.
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -17,8 +20,13 @@ export const ARQUIVO = fileURLToPath(
 export const CONCESSOES = fileURLToPath(
   new URL("./concessoes.jsonl", import.meta.url)
 );
+export const PEDIDOS = fileURLToPath(
+  new URL("./pedidos.jsonl", import.meta.url)
+);
 const MAX_HORAS = 24;
 const VEREDITOS = ["aprovado", "reprovado", "achado"];
+const ESTADOS = ["aberto", "voltou", "fechado"];
+const PARADO_HORAS = 24;
 const PREFIXO_FLAG = /^--/;
 
 export function registrar(
@@ -111,6 +119,106 @@ export function resumo(arquivo = ARQUIVO, dias = 7, agora = new Date()) {
   return { code: 0, out: linhas.join("\n") };
 }
 
+export function pedido(
+  { de, para, tarefa, estado },
+  arquivo = PEDIDOS,
+  agora = new Date()
+) {
+  for (const [campo, valor] of Object.entries({ de, para, tarefa })) {
+    if (!valor) {
+      throw new Error(`falta --${campo}`);
+    }
+  }
+  if (!ESTADOS.includes(estado)) {
+    throw new Error(`estado deve ser um de: ${ESTADOS.join(", ")}`);
+  }
+  const e = { ts: agora.toISOString(), de, para, tarefa, estado };
+  appendFileSync(arquivo, `${JSON.stringify(e)}\n`);
+  return e;
+}
+
+function lerLinhas(arquivo) {
+  return existsSync(arquivo)
+    ? readFileSync(arquivo, "utf8")
+        .split("\n")
+        .filter(Boolean)
+        .map((l) => JSON.parse(l))
+    : [];
+}
+
+function mediana(valores) {
+  const v = [...valores].sort((a, b) => a - b);
+  const meio = Math.floor(v.length / 2);
+  return v.length % 2 ? v[meio] : (v[meio - 1] + v[meio]) / 2;
+}
+
+export function resumoPedidos(arquivo = PEDIDOS, dias = 7, agora = new Date()) {
+  const desde = agora - dias * 864e5;
+  const eventos = lerLinhas(arquivo).filter((e) => Date.parse(e.ts) >= desde);
+  if (!eventos.length) {
+    return { code: 1, out: "" };
+  }
+  // Um pedido é de + para + tarefa; a tarefa se compara sem caixa e sem espaço nas pontas.
+  const pedidos = new Map();
+  for (const e of eventos) {
+    const chave = `${e.de}\u0000${e.para}\u0000${e.tarefa.trim().toLowerCase()}`;
+    const p = pedidos.get(chave) ?? {
+      de: e.de,
+      para: e.para,
+      tarefa: e.tarefa.trim(),
+      aberto: null,
+      fechado: null,
+      voltas: 0,
+    };
+    const t = Date.parse(e.ts);
+    if (e.estado === "aberto" && (p.aberto === null || t < p.aberto)) {
+      p.aberto = t;
+    }
+    if (e.estado === "fechado") {
+      p.fechado = Math.max(p.fechado ?? t, t);
+    }
+    if (e.estado === "voltou") {
+      p.voltas += 1;
+    }
+    pedidos.set(chave, p);
+  }
+  const lista = [...pedidos.values()].filter((p) => p.aberto !== null);
+  const fechados = lista.filter((p) => p.fechado !== null);
+  const voltaram = lista.filter((p) => p.voltas > 0);
+  const horas = fechados.map((p) => (p.fechado - p.aberto) / 36e5);
+  const parados = lista
+    .filter((p) => p.fechado === null && agora - p.aberto > PARADO_HORAS * 36e5)
+    .sort((a, b) => a.aberto - b.aberto);
+  const porAutor = new Map();
+  for (const p of voltaram) {
+    porAutor.set(p.de, (porAutor.get(p.de) ?? 0) + 1);
+  }
+  const pct = lista.length
+    ? Math.round((100 * voltaram.length) / lista.length)
+    : 0;
+  const linhas = [
+    `Pedidos: ${lista.length} abertos em ${dias} dias, ${fechados.length} fechados, ${voltaram.length} voltaram com pergunta (${pct}%)`,
+  ];
+  if (horas.length) {
+    linhas.push(`Tempo até fechar (mediana): ${mediana(horas).toFixed(1)} h`);
+  }
+  if (porAutor.size) {
+    linhas.push(
+      `Pedidos que voltaram, por quem pediu: ${[...porAutor]
+        .sort((a, b) => b[1] - a[1])
+        .map(([a, n]) => `${a} ${n}`)
+        .join(", ")}`
+    );
+  }
+  if (parados.length) {
+    linhas.push(`Abertos há mais de ${PARADO_HORAS} h:`);
+    for (const p of parados.slice(0, 5)) {
+      linhas.push(`- ${p.de} → ${p.para}: ${p.tarefa}`);
+    }
+  }
+  return { code: 0, out: linhas.join("\n") };
+}
+
 export function conceder(
   { de, para, escopo, motivo, horas },
   arquivo = CONCESSOES,
@@ -167,14 +275,29 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const args = process.argv.slice(2);
   try {
     if (args[0] === "resumo") {
-      const { code, out } = resumo(
-        ARQUIVO,
+      const dias = Number(flags(args.slice(1)).dias ?? 7);
+      const vereditos = resumo(ARQUIVO, dias);
+      const pedidos = resumoPedidos(PEDIDOS, dias);
+      const out = [vereditos.out, pedidos.out].filter(Boolean).join("\n\n");
+      if (out) {
+        console.log(out);
+      }
+      process.exit(vereditos.code && pedidos.code);
+    }
+    if (args[0] === "pedidos") {
+      const { code, out } = resumoPedidos(
+        PEDIDOS,
         Number(flags(args.slice(1)).dias ?? 7)
       );
       if (out) {
         console.log(out);
       }
       process.exit(code);
+    }
+    if (args[0] === "pedido") {
+      const e = pedido(flags(args.slice(1)));
+      console.log(`pedido ${e.estado}: ${e.de} → ${e.para}: ${e.tarefa}`);
+      process.exit(0);
     }
     if (args[0] === "conceder") {
       const c = conceder(flags(args.slice(1)));

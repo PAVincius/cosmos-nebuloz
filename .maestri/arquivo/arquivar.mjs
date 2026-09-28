@@ -3,7 +3,7 @@
 // 1. Transcrições do Claude Code (~/.claude/projects/<projeto>/*.jsonl) com mais de ARQUIVO_DIAS dias:
 //    segredos redigidos, um .tar.gz por projeto e mês, enviado para <remoto>transcricoes/<projeto>/.
 //    Só depois de o Drive confirmar o mesmo tamanho, os originais vão para a Lixeira (o CEO esvazia).
-// 2. Espelho da memória: .maestri/memoria e os registros (aprendizado, concessões, sugestões) em <remoto>espelho/.
+// 2. Espelho da memória: .maestri/memoria e os registros (aprendizado, concessões, pedidos, sugestões) em <remoto>espelho/.
 //    Continuam no disco: são contexto vivo dos agentes.
 //   node .maestri/arquivo/arquivar.mjs [--seco]
 // Remote (uma vez por máquina): rclone config create nebuloz-drive drive scope=drive \
@@ -35,6 +35,7 @@ const ESPELHO = [
   "memoria",
   "aprendizado.jsonl",
   "concessoes.jsonl",
+  "pedidos.jsonl",
   "sugestoes.md",
 ];
 
