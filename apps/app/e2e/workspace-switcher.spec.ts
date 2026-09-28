@@ -140,3 +140,35 @@ test.describe("WorkspaceSwitcher — Visual @auth", () => {
     await expect(dropdownContent).toBeVisible();
   });
 });
+
+/**
+ * E2E — AccountSwitcher (spec 009, US2)
+ *
+ * `admin@cosmos.local` (fixture `auth-session.json`) tem só 1 `TenantMember`
+ * hoje — cobre o edge case do spec (badge sem seletor quando
+ * `tenants.length <= 1`, T015). O fluxo de troca com confirmação
+ * (T013 completo — escolher conta → diálogo → cancelar mantém, confirmar
+ * troca e mostra a conta nova) exige uma persona com 2+ memberships, que
+ * nenhum seed atual (`seed-e2e`, `seed-catalogo-e2e`, `seed-meridian`,
+ * `seed-charter`) provê — falta reportada, não implementada aqui.
+ */
+test.describe("AccountSwitcher — Visual @auth", () => {
+  test.skip(
+    () => !process.env.AUTH_TEST,
+    "Auth tests disabled (set AUTH_TEST=true)"
+  );
+
+  test.use({
+    storageState: "./e2e/fixtures/auth-session.json",
+  });
+
+  test("single-tenant account shows only the badge, no switcher", async ({
+    page,
+  }) => {
+    await page.goto("/cosmos/dashboard");
+    await expect(page.getByTestId("active-account-badge").first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByTestId("account-switcher-trigger")).toHaveCount(0);
+  });
+});

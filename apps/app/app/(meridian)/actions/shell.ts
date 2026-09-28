@@ -1,6 +1,6 @@
 import "server-only";
 
-import { withTenantDb } from "@repo/database";
+import { database, withTenantDb } from "@repo/database";
 import { listModules, MERIDIAN_ROLE_LABEL } from "@repo/rbac";
 import {
   type MeridianContext,
@@ -18,12 +18,15 @@ export type MeridianShellData = {
   organization: string;
   user: { name: string; role: string };
   badges: Record<string, number>;
+  /** Conta ativa + contas da pessoa — AccountSwitcher (spec 009, US2). */
+  activeTenantId: string;
+  tenants: Array<{ id: string; name: string; role: string }>;
 };
 
 export async function getShellData(): Promise<MeridianShellData> {
   const ctx = await requireMeridianContext();
 
-  const [modules, data] = await Promise.all([
+  const [modules, data, memberships] = await Promise.all([
     listModules(ctx.tenantId),
     withTenantDb(ctx.tenantId, async (db) => {
       const [tenant, contested, gapsOpen] = await Promise.all([
@@ -42,6 +45,13 @@ export async function getShellData(): Promise<MeridianShellData> {
       ]);
       return { organization: tenant?.name ?? "—", contested, gapsOpen };
     }),
+    // Mesma leitura de /api/tenants (TenantMember por userId, sem
+    // cross-tenant — FR-014); não escopada a um tenant, então fora de
+    // withTenantDb.
+    database.tenantMember.findMany({
+      where: { userId: ctx.userId },
+      include: { tenant: { select: { id: true, name: true } } },
+    }),
   ]);
 
   return {
@@ -53,5 +63,11 @@ export async function getShellData(): Promise<MeridianShellData> {
       role: MERIDIAN_ROLE_LABEL[ctx.meridianRole],
     },
     badges: { queue: data.contested, registry: data.gapsOpen },
+    activeTenantId: ctx.tenantId,
+    tenants: memberships.map((m) => ({
+      id: m.tenant.id,
+      name: m.tenant.name,
+      role: m.role,
+    })),
   };
 }

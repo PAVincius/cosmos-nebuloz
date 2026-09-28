@@ -11,10 +11,14 @@ const h = vi.hoisted(() => ({
   requireSignalContext: vi.fn(),
   withTenantDb: vi.fn(),
   listModules: vi.fn(),
+  tenantMemberFindMany: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
-vi.mock("@repo/database", () => ({ withTenantDb: h.withTenantDb }));
+vi.mock("@repo/database", () => ({
+  withTenantDb: h.withTenantDb,
+  database: { tenantMember: { findMany: h.tenantMemberFindMany } },
+}));
 vi.mock("@repo/rbac", async () => {
   const actual = await vi.importActual<
     typeof import("@repo/rbac/src/signal-matrix")
@@ -103,6 +107,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   h.requireSignalContext.mockResolvedValue(CTX);
   h.listModules.mockResolvedValue(["COSMOS", "SIGNAL"]);
+  h.tenantMemberFindMany.mockResolvedValue([]);
 });
 
 describe("guard", () => {
@@ -266,6 +271,7 @@ describe("limiares do tenant", () => {
     vi.clearAllMocks();
     h.requireSignalContext.mockResolvedValue(CTX);
     h.listModules.mockResolvedValue(["SIGNAL"]);
+    h.tenantMemberFindMany.mockResolvedValue([]);
     mockDb({
       initiatives,
       settings: {

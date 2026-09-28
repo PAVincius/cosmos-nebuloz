@@ -163,6 +163,27 @@ describe("requireTenantSession — sem tenant ativo", () => {
     });
   });
 
+  // US3 (spec 009, FR-007/008): sem orderBy, o vínculo escolhido depende de
+  // ordem não determinística de banco — a mesma pessoa poderia cair numa
+  // conta diferente em cada acesso. `createdAt: "asc"` torna a escolha
+  // repetível (a membership mais antiga sempre ganha).
+  it("busca o vínculo mais antigo por createdAt, não ordem arbitrária de banco", async () => {
+    mocks.getSession.mockResolvedValue(session(null));
+    mocks.tenantMemberFindFirst.mockResolvedValue({
+      tenantId: "tenant-9",
+      role: "PO",
+    });
+
+    await requireTenantSession(HEADERS);
+
+    expect(mocks.tenantMemberFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: "user-1" },
+        orderBy: { createdAt: "asc" },
+      })
+    );
+  });
+
   // P2025 = linha de Session não encontrada, o que acontece quando o cookie
   // cache do better-auth carrega um id já rotacionado. A sessão já foi
   // validada e o vínculo confirmado: persistir é best-effort, negar acesso

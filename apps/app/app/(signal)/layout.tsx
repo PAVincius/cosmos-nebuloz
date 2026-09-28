@@ -36,13 +36,14 @@ const SignalLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <SignalShell
+      activeTenantId={data.activeTenantId}
       alertsTone={data.alertsTone}
       badges={data.badges}
       brokenConnections={data.brokenConnections}
       modules={data.modules}
-      organization={data.organization}
       portfolio={data.portfolio}
       screenIds={Object.keys(SCREENS)}
+      tenants={data.tenants}
       user={data.user}
       valueBar={data.bars.valueBar}
     >

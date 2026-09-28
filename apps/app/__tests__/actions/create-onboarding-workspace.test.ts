@@ -9,7 +9,7 @@ const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   getSession: vi.fn(),
   userFindUnique: vi.fn(),
-  sessionUpdateMany: vi.fn(),
+  sessionUpdate: vi.fn(),
   onboardingProgressUpsert: vi.fn(),
   provisionTenant: vi.fn(),
   invalidateModuleCache: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock("@repo/database", () => ({
       findUnique: mocks.userFindUnique,
     },
     session: {
-      updateMany: mocks.sessionUpdateMany,
+      update: mocks.sessionUpdate,
     },
     onboardingProgress: {
       upsert: mocks.onboardingProgressUpsert,
@@ -49,6 +49,7 @@ import { createOnboardingWorkspace } from "../../app/actions/onboarding";
 
 const defaultSession = {
   user: { id: "user-1", email: "user@example.com" },
+  session: { id: "session-1" },
 };
 
 const defaultDbUser = {
@@ -70,7 +71,7 @@ describe("createOnboardingWorkspace", () => {
     mocks.getSession.mockResolvedValue(defaultSession);
     mocks.userFindUnique.mockResolvedValue(defaultDbUser);
     mocks.provisionTenant.mockResolvedValue(defaultProvisionResult);
-    mocks.sessionUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.sessionUpdate.mockResolvedValue({});
     mocks.onboardingProgressUpsert.mockResolvedValue({});
   });
 
@@ -132,11 +133,13 @@ describe("createOnboardingWorkspace", () => {
     );
   });
 
-  it("sets activeTenantId on all user sessions after creation", async () => {
+  // FR-011 (spec 009): só a sessão que completou o onboarding troca de
+  // conta — outras sessões da mesma pessoa não devem pular sozinhas.
+  it("sets activeTenantId só na sessão que completou o onboarding", async () => {
     await createOnboardingWorkspace("Acme Corp");
 
-    expect(mocks.sessionUpdateMany).toHaveBeenCalledWith({
-      where: { userId: "user-1" },
+    expect(mocks.sessionUpdate).toHaveBeenCalledWith({
+      where: { id: "session-1" },
       data: { activeTenantId: "tenant-new" },
     });
   });
