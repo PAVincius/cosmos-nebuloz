@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { bootstrapCharter, POLICY_SECTIONS } from "../charter";
+import { CHARTER_CLAUSES } from "../charter-clauses";
 
 function makeDb(
   options: {
@@ -41,6 +42,11 @@ function makeDb(
     },
     charterPolicySection: {
       createMany: vi.fn().mockResolvedValue({ count: 9 }),
+    },
+    charterClause: {
+      createMany: vi.fn().mockResolvedValue({ count: 8 }),
+      update: vi.fn(),
+      upsert: vi.fn(),
     },
     auditLog: { create: vi.fn().mockResolvedValue({ id: "audit-1" }) },
   };
@@ -142,6 +148,57 @@ describe("bootstrapCharter", () => {
     expect(db.charterMembership.upsert).toHaveBeenCalledTimes(1);
   });
 
+  it("cria as cláusulas faltantes mesmo quando a política já existe", async () => {
+    const db = makeDb({ policyExists: true });
+
+    await bootstrapCharter(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      complianceEmail: "ana@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    expect(db.charterClause.createMany).toHaveBeenCalledTimes(1);
+    const args = db.charterClause.createMany.mock.calls[0][0];
+    expect(args.skipDuplicates).toBe(true);
+    expect(args.data).toHaveLength(8);
+  });
+
+  it("nunca atualiza uma cláusula existente", async () => {
+    for (const policyExists of [false, true]) {
+      const db = makeDb({ policyExists });
+
+      await bootstrapCharter(depsFor(db) as never, {
+        tenantId: "tenant-abc",
+        complianceEmail: "ana@vanta.exemplo",
+        actorUserId: "user-staff",
+      });
+
+      expect(db.charterClause.update).not.toHaveBeenCalled();
+      expect(db.charterClause.upsert).not.toHaveBeenCalled();
+    }
+  });
+
+  it("cria as 8 cláusulas quando o tenant ainda não tem Charter", async () => {
+    const db = makeDb({ policyExists: false });
+
+    await bootstrapCharter(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      complianceEmail: "ana@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    expect(db.charterClause.createMany).toHaveBeenCalledTimes(1);
+    const args = db.charterClause.createMany.mock.calls[0][0];
+    expect(args.skipDuplicates).toBe(true);
+    expect(args.data).toHaveLength(8);
+    expect(
+      args.data.every((c: { tenantId: string }) => c.tenantId === "tenant-abc")
+    ).toBe(true);
+    expect(args.data.map((c: { code: string }) => c.code)).toEqual(
+      CHARTER_CLAUSES.map((c) => c.code)
+    );
+  });
+
   it("falha com USER_NOT_FOUND quando o e-mail não tem conta", async () => {
     const db = makeDb({ userExists: false });
 
@@ -152,6 +209,8 @@ describe("bootstrapCharter", () => {
         actorUserId: "user-staff",
       })
     ).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
+
+    expect(db.charterClause.createMany).not.toHaveBeenCalled();
   });
 
   it("falha com TENANT_NOT_FOUND antes de consultar usuário ou escrever", async () => {
@@ -172,6 +231,7 @@ describe("bootstrapCharter", () => {
     expect(db.user.findUnique).not.toHaveBeenCalled();
     expect(db.charterMembership.upsert).not.toHaveBeenCalled();
     expect(db.charterPolicy.create).not.toHaveBeenCalled();
+    expect(db.charterClause.createMany).not.toHaveBeenCalled();
     expect(db.auditLog.create).not.toHaveBeenCalled();
   });
 
