@@ -162,7 +162,7 @@ Ordem de preocupação:
 3. **`processErasureRequest` (DSAR) não reprocessa o passado.** Pedidos de
    apagamento criados enquanto o Inngest estava fora ficaram PENDING sem evento
    e o dedup impede o reenvio (§1.2). Contar com
-   `SELECT status, count(*), min("createdAt") FROM "DataSubjectRequest" WHERE type='ERASURE' GROUP BY 1`
+   `SELECT status, count(*), min("requestedAt") FROM "DataSubjectRequest" WHERE type='ERASURE' GROUP BY 1`
    **[VAI]**. Se houver, é **prazo LGPD** correndo: reemitir `lgpd/erasure.requested`
    à mão para cada um (operação de escrita **[VAI]**, uma por pedido) — ou
    corrigir a ação para reenviar quando achar PENDING (tarefa da Plataforma).
