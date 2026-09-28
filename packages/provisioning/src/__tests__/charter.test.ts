@@ -163,6 +163,39 @@ describe("bootstrapCharter", () => {
     expect(args.data).toHaveLength(8);
   });
 
+  it("grava clauses_bootstrapped com o count real quando cria cláusulas", async () => {
+    const db = makeDb({ policyExists: false });
+    db.charterClause.createMany = vi.fn().mockResolvedValue({ count: 8 });
+
+    await bootstrapCharter(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      complianceEmail: "ana@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    const clauseAuditCall = db.auditLog.create.mock.calls.find(
+      (call) => call[0].data.action === "charter.clauses_bootstrapped"
+    );
+    expect(clauseAuditCall).toBeDefined();
+    expect(clauseAuditCall?.[0].data.metadata.target).toContain("8");
+  });
+
+  it("não grava clauses_bootstrapped quando nenhuma cláusula nova foi criada (re-provisionamento)", async () => {
+    const db = makeDb({ policyExists: true });
+    db.charterClause.createMany = vi.fn().mockResolvedValue({ count: 0 });
+
+    await bootstrapCharter(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      complianceEmail: "ana@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    const clauseAuditCall = db.auditLog.create.mock.calls.find(
+      (call) => call[0].data.action === "charter.clauses_bootstrapped"
+    );
+    expect(clauseAuditCall).toBeUndefined();
+  });
+
   it("nunca atualiza uma cláusula existente", async () => {
     for (const policyExists of [false, true]) {
       const db = makeDb({ policyExists });

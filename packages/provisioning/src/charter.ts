@@ -67,13 +67,20 @@ async function ensureCharterClauses(
   tenant: { id: string; slug: string },
   input: BootstrapCharterInput
 ): Promise<void> {
-  await db.charterClause.createMany({
+  const { count } = await db.charterClause.createMany({
     data: CHARTER_CLAUSES.map((clause) => ({
       tenantId: input.tenantId,
       ...clause,
     })),
     skipDuplicates: true,
   });
+
+  // Re-provisionamento com as 8 já presentes cria 0 — nada de novo aconteceu,
+  // então não há evento pra auditar (mesmo raciocínio de `bootstrap_skipped`
+  // pra política, mas por contagem em vez de por existência).
+  if (count === 0) {
+    return;
+  }
 
   await logPlatformAudit(db, {
     tenantId: input.tenantId,
@@ -82,7 +89,7 @@ async function ensureCharterClauses(
     action: "charter.clauses_bootstrapped",
     entityType: "CharterClause",
     entityId: input.tenantId,
-    target: `${tenant.slug} · ${CHARTER_CLAUSES.length} cláusulas`,
+    target: `${tenant.slug} · ${count} cláusulas`,
   });
 }
 
