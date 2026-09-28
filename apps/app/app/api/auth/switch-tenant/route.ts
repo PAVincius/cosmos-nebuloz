@@ -46,14 +46,25 @@ export const POST = async (request: NextRequest) => {
   });
 
   // Better Auth caches session data (including activeTenantId) in a signed
-  // cookie. Delete it so the next getSession() re-reads the updated row from DB.
-  // The cookie name depends on the deployment: over https Better Auth prefixes
-  // it with "__Secure-" (better-auth/dist/cookies/index.mjs, secureCookiePrefix),
-  // so the name must be derived the same way it names the cookie, not hardcoded.
+  // cookie. Clear it so the next getSession() re-reads the updated row from DB.
+  // Both name and attributes must match how better-auth sets the cookie
+  // (better-auth/dist/cookies/index.mjs, secureCookiePrefix/createCookie):
+  // over https the name gets a "__Secure-" prefix, and a Set-Cookie clearing
+  // a "__Secure-" cookie without the Secure attribute is dropped by the
+  // browser — the stale cookie would survive and the cache bug would persist.
   const response = NextResponse.json({
     success: true,
     activeTenantId: tenantId,
   });
-  response.cookies.delete(getCookies(auth.options).sessionData.name);
+  const sessionDataCookie = getCookies(auth.options).sessionData;
+  const sameSite = sessionDataCookie.attributes.sameSite
+    ?.toString()
+    .toLowerCase() as "lax" | "strict" | "none" | undefined;
+  response.cookies.set(sessionDataCookie.name, "", {
+    ...sessionDataCookie.attributes,
+    sameSite,
+    maxAge: 0,
+    expires: new Date(0),
+  });
   return response;
 };

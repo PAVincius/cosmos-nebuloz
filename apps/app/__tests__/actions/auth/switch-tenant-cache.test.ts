@@ -99,6 +99,12 @@ describe("POST /api/auth/switch-tenant — limpa o cache no 200 (FR-009)", () =>
     expect(setCookie).toMatch(
       /__Secure-better-auth\.session_data=;.*Expires=Thu, 01 Jan 1970/i
     );
+    // Sem o atributo Secure, o navegador descarta um Set-Cookie de nome
+    // __Secure- (regra do próprio navegador) — o cookie antigo sobrevive e
+    // o bug persiste mesmo com o nome certo. Precisa vir com os mesmos
+    // atributos que o better-auth usa pra setar esse cookie (secure, path).
+    expect(setCookie).toMatch(/;\s*Secure/i);
+    expect(setCookie).toContain("Path=/");
   });
 
   it("não apaga o cookie quando a troca é recusada (FORBIDDEN)", async () => {
