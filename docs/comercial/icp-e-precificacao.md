@@ -1,7 +1,13 @@
 # ICP e precificação
 
 **Onda 0 do lançamento comercial.** O checklist trata "ICP, precificação e CRM
-básico" como uma pendência só. São três coisas em estágios muito diferentes: o
+básico" como uma pendência só.
+
+> **Atualização (2026-09-27):** pacotes, franquia de IA, piso do produto avulso e
+> abatimento do diagnóstico estão em [`pacotes-e-precificacao.md`](pacotes-e-precificacao.md),
+> validados contra LTV/CAC ≥ 3. Três afirmações abaixo envelheceram: o ticket do
+> diagnóstico já existe (SV-01, R$ 48.000, em produção), e Scaffold e Signal já
+> têm código na `main`. São três coisas em estágios muito diferentes: o
 catálogo de preço está semeado e o motor de cálculo está testado; o ICP não
 existe em lugar nenhum; e há um descasamento estrutural entre como o Meridian é
 vendido no catálogo e o papel que ele tem na estratégia de entrada.

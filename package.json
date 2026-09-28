@@ -35,7 +35,11 @@
     "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma migrate deploy",
     "clean": "git clean -xdf node_modules",
     "mail:dev": "docker compose -f docker-compose.dev.yml up -d mailpit && echo \"Mailpit em http://localhost:8025 — SMTP em localhost:1025\"",
-    "mail:stop": "docker compose -f docker-compose.dev.yml down"
+    "mail:stop": "docker compose -f docker-compose.dev.yml down",
+    "memoria:up": "pnpm --filter memoria run up",
+    "memoria:down": "pnpm --filter memoria run down",
+    "memoria:importar": "pnpm --filter memoria run importar",
+    "memoria:test": "pnpm --filter memoria run test:integracao"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",
