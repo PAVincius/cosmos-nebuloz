@@ -17,10 +17,16 @@ pids=()
 parar() { kill "${pids[@]}" 2>/dev/null; wait 2>/dev/null; }
 trap parar EXIT INT TERM HUP
 
-mlx_lm.server --model "$MODELO_DIR" --host 127.0.0.1 --port 8080 >"$LOGS/modelo.log" 2>&1 &
-pids+=($!)
+# Desktop da Nebuloz no ar? Usa ele e deixa a memória do Mac livre. Senão, sobe o modelo MLX aqui.
+if [ -n "${LLM_LOCAL_BASE:-}" ] && curl -sf -m 3 "${LLM_LOCAL_BASE%/v1}/health" >/dev/null; then
+  export VIGILANTE_MODELO="${VIGILANTE_MODELO:-desktop}"
+  echo "Vigilante: modelo do desktop (${LLM_LOCAL_BASE})."
+else
+  mlx_lm.server --model "$MODELO_DIR" --host 127.0.0.1 --port 8080 >"$LOGS/modelo.log" 2>&1 &
+  pids+=($!)
+fi
 "$LITELLM" --config "$AQUI/litellm.yaml" --host 127.0.0.1 --port 4000 >"$LOGS/litellm.log" 2>&1 &
 pids+=($!)
 
-echo "Vigilante: modelo $(basename "$MODELO_DIR") em :8080, LiteLLM em :4000. Logs em $LOGS."
+echo "Vigilante: LiteLLM em :4000 (modelo ${VIGILANTE_MODELO:-local}). Logs em $LOGS."
 node "$AQUI/vigilante.mjs" "$@"
