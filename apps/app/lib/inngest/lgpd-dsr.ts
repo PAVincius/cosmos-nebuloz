@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { database, Prisma } from "@repo/database";
 import { log } from "@repo/observability/log";
+import { deleteObjects, MERIDIAN_EVIDENCE_BUCKET } from "@repo/storage";
 import { inngest } from "./client";
 
 // ─── Erasure request (LGPD Art. 18 — right to erasure) ───────────────────────
@@ -216,12 +217,7 @@ export const processErasureRequest = inngest.createFunction(
         );
 
         // MeridianEvidence: `fileName` é metadado barato de anonimizar aqui
-        // — pode conter dado pessoal (ex. nome do titular no arquivo). O
-        // objeto em si, em `storagePath`, vive no bucket privado
-        // `meridian-evidence`, fora do banco e fora do alcance deste job.
-        // Apagá-lo pede uma rotina própria de limpeza de storage; até lá, o
-        // arquivo permanece no bucket mesmo com o respondente anonimizado —
-        // lacuna real, registrada aqui em vez de fingida como coberta.
+        // — pode conter dado pessoal (ex. nome do titular no arquivo).
         await step.run("anonymize-meridian-evidence-filename", () =>
           database.meridianEvidence.updateMany({
             where: { tenantId, uploadedByRespondentId: { in: respondentIds } },
@@ -231,6 +227,32 @@ export const processErasureRequest = inngest.createFunction(
             data: { fileName: replacement },
           })
         );
+
+        // Objeto em si, em `storagePath`, vive no bucket privado
+        // `meridian-evidence` — fora do banco, fora do alcance do update
+        // acima. Parecer de compliance
+        // (docs/compliance/2026-09-24-parecer-meridian-respondente.md,
+        // condição 2): sem apagar o arquivo, o direito de eliminação fica só
+        // no metadado.
+        const evidencePaths = await step.run(
+          "find-meridian-evidence-paths",
+          async () => {
+            const rows = await database.meridianEvidence.findMany({
+              where: {
+                tenantId,
+                uploadedByRespondentId: { in: respondentIds },
+              },
+              select: { storagePath: true },
+            });
+            return rows.map((r) => r.storagePath);
+          }
+        );
+
+        if (evidencePaths.length > 0) {
+          await step.run("delete-meridian-evidence-objects", () =>
+            deleteObjects(MERIDIAN_EVIDENCE_BUCKET, evidencePaths)
+          );
+        }
       }
     }
 
