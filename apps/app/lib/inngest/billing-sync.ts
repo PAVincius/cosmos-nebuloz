@@ -218,7 +218,8 @@ export const billingSyncFunction = inngest.createFunction(
     triggers: [{ event: "billing/sync.requested" }],
     concurrency: [
       { key: "event.data.integrationId", limit: 1 },
-      { scope: "fn" as const, limit: 50 },
+      // Teto do plano gratuito do Inngest é 5; acima disso o sync do app é recusado.
+      { scope: "fn" as const, limit: 5 },
     ],
     retries: 3,
   },
