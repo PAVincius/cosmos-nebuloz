@@ -1,4 +1,5 @@
 import { type AuditWriter, logPlatformAudit } from "./audit";
+import { CHARTER_CLAUSES } from "./charter-clauses";
 import { ProvisioningError } from "./errors";
 
 /** As nove seções do Charter, na ordem do SRD. Só a estrutura: o corpo nasce
@@ -38,6 +39,9 @@ export type CharterDb = AuditWriter & {
   charterPolicySection: {
     createMany(args: unknown): Promise<{ count: number }>;
   };
+  charterClause: {
+    createMany(args: unknown): Promise<{ count: number }>;
+  };
 };
 
 export type BootstrapCharterDeps = {
@@ -53,6 +57,34 @@ export type BootstrapCharterInput = {
   actorUserId: string;
   actorName?: string | null;
 };
+
+/** Cria as cláusulas do catálogo que ainda faltam para o tenant, sem duplicar
+ *  nem sobrescrever cláusula existente (`skipDuplicates` sobre a chave natural
+ *  `(tenantId, code)`, já garantida pelo schema). Chamada tanto quando a
+ *  política nasce quanto quando ela já existia (US2): re-provisionar é seguro. */
+async function ensureCharterClauses(
+  db: CharterDb,
+  tenant: { id: string; slug: string },
+  input: BootstrapCharterInput
+): Promise<void> {
+  await db.charterClause.createMany({
+    data: CHARTER_CLAUSES.map((clause) => ({
+      tenantId: input.tenantId,
+      ...clause,
+    })),
+    skipDuplicates: true,
+  });
+
+  await logPlatformAudit(db, {
+    tenantId: input.tenantId,
+    actorUserId: input.actorUserId,
+    actorName: input.actorName,
+    action: "charter.clauses_bootstrapped",
+    entityType: "CharterClause",
+    entityId: input.tenantId,
+    target: `${tenant.slug} · ${CHARTER_CLAUSES.length} cláusulas`,
+  });
+}
 
 /**
  * Deixa o Charter utilizável para um tenant: papel COMPLIANCE, configurações e
@@ -132,6 +164,8 @@ export async function bootstrapCharter(
     });
 
     if (existing) {
+      await ensureCharterClauses(db, tenant, input);
+
       await logPlatformAudit(db, {
         tenantId: input.tenantId,
         actorUserId: input.actorUserId,
@@ -158,6 +192,8 @@ export async function bootstrapCharter(
         body: "",
       })),
     });
+
+    await ensureCharterClauses(db, tenant, input);
 
     await logPlatformAudit(db, {
       tenantId: input.tenantId,

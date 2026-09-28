@@ -5,6 +5,7 @@ export {
   bootstrapCharter,
   POLICY_SECTIONS,
 } from "./charter";
+export { CHARTER_CLAUSES } from "./charter-clauses";
 export {
   CLAUSE_LABEL,
   deriveVendorMaxClass,
