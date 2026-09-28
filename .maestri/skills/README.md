@@ -11,8 +11,15 @@ então só aquele agente a carrega. Atualizar = copiar de novo do commit novo e 
 | prisma-client-api | prisma/skills | 1123817 | MIT | todos os Devs |
 | agent-browser | vercel-labs/agent-browser `skill-data/core` (v0.38.1) | 021d925 | Apache-2.0 | QA, todos os Devs |
 | agent-browser-dogfood | vercel-labs/agent-browser `skill-data/dogfood` (v0.38.1) | 021d925 | Apache-2.0 | QA |
-| sales-enablement | coreyhaines31/marketingskills | 5b2c000 | MIT | CRO |
-| pricing | coreyhaines31/marketingskills | 5b2c000 | MIT | CRO, CFO |
+| sales-enablement | coreyhaines31/marketingskills | 5b2c000 | MIT | CRO, Propostas |
+| pricing | coreyhaines31/marketingskills | 5b2c000 | MIT | CRO, CFO, Propostas |
+| prospecting, cold-email | coreyhaines31/marketingskills | 5b2c000 | MIT | Pré-vendas |
+| customer-research | coreyhaines31/marketingskills | 5b2c000 | MIT | Pré-vendas, Sucesso do Cliente |
+| offers | coreyhaines31/marketingskills | 5b2c000 | MIT | Propostas |
+| revops, attribution, analytics | coreyhaines31/marketingskills | 5b2c000 | MIT | RevOps |
+| churn-prevention, onboarding | coreyhaines31/marketingskills | 5b2c000 | MIT | Sucesso do Cliente |
+| content-strategy, seo-audit, launch, competitors | coreyhaines31/marketingskills | 5b2c000 | MIT | Growth |
+| copywriting, copy-editing, social, emails | coreyhaines31/marketingskills | 5b2c000 | MIT | Conteúdo |
 
 Não vieram: `mattpocock/skills` qa e to-prd (removidas do repo; `to-spec` já instalada é a sucessora),
 `prisma-postgres` (é do banco hospedado da Prisma, não do ORM). ADR do repo vence skill:
@@ -21,3 +28,5 @@ o supabase-postgres empurra RLS, mas ADR-0012 registra RLS anulada pela conexão
 `agent-browser` substituiu o `playwright-cli` nos agentes (2026-09-27). Das skills dele vieram só os markdown:
 sem os `templates/*.sh` e sem as referências de proxy, profiling e WebGPU. O `name` do frontmatter foi trocado
 (`core` → `agent-browser`, `dogfood` → `agent-browser-dogfood`) para não colidir com outras skills.
+
+Camada de Receita (2026-09-27): da marketingskills vieram só os `.md`; os `evals/evals.json` ficaram de fora.

@@ -6,6 +6,12 @@ model_list:
       model: openai/default_model
       api_base: http://127.0.0.1:8080/v1
       api_key: sem-chave-local
+  # Desktop da Nebuloz (RX 580, Qwen3-8B), pela rede privada. Ver docs/runbooks/llm-desktop-windows.md.
+  - model_name: desktop
+    litellm_params:
+      model: openai/local
+      api_base: os.environ/LLM_LOCAL_BASE
+      api_key: os.environ/LLM_LOCAL_KEY
 litellm_settings:
   telemetry: false
   drop_params: true
