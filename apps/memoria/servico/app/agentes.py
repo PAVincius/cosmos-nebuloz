@@ -1,7 +1,8 @@
 """Memória para agentes, por MCP (Model Context Protocol), em /mcp.
 
-É o mesmo serviço e a mesma chave de API da rota HTTP: o tenant e o papel vêm
-da chave, nunca do agente. As ferramentas cobrem lembrar, buscar, listar,
+É o mesmo serviço e a mesma chave de API da rota HTTP: o tenant, o papel e o
+agente vêm da chave, nunca do que o agente declara. No Maestri, cada papel tem
+a sua chave (scripts/cabecalho.sh escolhe pela pasta do papel). As ferramentas cobrem lembrar, buscar, listar,
 substituir, revogar, histórico e relações. Apagar fica fora do MCP de
 propósito: apagamento é decisão de gente, pela API de governança com chave
 admin.
@@ -120,7 +121,6 @@ def lembrar(
     texto: str,
     categoria: Category,
     ctx: Context,
-    agente: str | None = None,
     tipo: Kind = Kind.semantic,
     confianca: Confidence = Confidence.declarado,
     projeto: str | None = None,
@@ -131,12 +131,12 @@ def lembrar(
     origem_id: str | None = None,
     valido_desde: datetime | None = None,
 ) -> dict[str, Any]:
-    """Grava uma memória nova. `agente` é quem lembra (ex.: Crivo, Norte); sem ele, vale o rótulo da chave.
+    """Grava uma memória nova. Quem lembra é o agente dono da chave (ex.: Crivo, Norte), não um parâmetro.
     `origem`/`origem_id` apontam de onde veio (ex.: "pr" / "PAVincius/cosmos-nebuloz#266") e permitem apagar
     tudo o que veio de uma origem. `valido_desde`: quando o fato passou a valer; padrão, agora."""
     identidade = _contexto(ctx, "escrita")
     entrada = MemoryIngest(
-        agent_id=agente or identidade.actor,
+        agent_id=identidade.actor,
         project_id=projeto,
         type=tipo,
         category=categoria,

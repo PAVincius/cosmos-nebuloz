@@ -25,8 +25,8 @@ O script (`scripts/iniciar.sh`) pode rodar quantas vezes quiser:
 
 1. Na primeira vez, gera o `.env` com senhas aleatórias. O arquivo fica fora do git.
 2. Sobe Postgres, Qdrant, Neo4j, MinIO e o serviço.
-3. Cria o tenant `nebuloz` e a chave do Maestri, com papel de escrita. A chave
-   fica em `~/.nebuloz/memoria/cabecalhos.json`, com permissão 600, fora do repo.
+3. Cria o tenant `nebuloz`, uma chave de escrita por papel do Maestri e a chave geral.
+   Elas ficam em `~/.nebuloz/memoria`, com permissão 600, fora do repo.
 4. Importa as lições do Maestri, as ADRs e o registro de decisões.
 
 | Comando | O que faz |
@@ -42,18 +42,30 @@ Rode uma vez por máquina. O registro vale para todas as pastas de papel do Maes
 
 ```bash
 claude mcp add-json --scope user memoria \
-  '{"type":"http","url":"http://127.0.0.1:8003/mcp","headersHelper":"cat ~/.nebuloz/memoria/cabecalhos.json"}'
+  '{"type":"http","url":"http://127.0.0.1:8003/mcp","headersHelper":"sh ~/.nebuloz/memoria/cabecalho.sh"}'
 ```
 
-O `headersHelper` lê a chave do arquivo a cada conexão, então a chave nunca
-entra na configuração do Claude Code. As sessões abertas depois disso já
-enxergam as ferramentas `mcp__memoria__*`.
+Se o MCP já estava registrado com `cat ~/.nebuloz/memoria/cabecalhos.json`, remova antes com
+`claude mcp remove --scope user memoria` e registre de novo.
+
+**Uma chave por papel.** O `pnpm memoria:up` lê os papéis de `.maestri/setup-canvas.sh`
+(`hire "Crivo" "QA"`, `recruit "Vigia" --role "Security Reviewer"`). Para cada papel, ele cria
+uma chave de escrita, com o nome do agente como rótulo, e a guarda em `~/.nebuloz/memoria/chaves/<papel>.json`.
+Papel novo no canvas ganha chave na próxima subida.
+
+O Claude Code roda o `cabecalho.sh` a cada conexão, na pasta onde o agente trabalha:
+- na pasta de um papel (`.maestri/roles/<id>/role.json`, no Ground ou num andar), ele manda a chave daquele papel;
+- fora dela (o terminal Maestro, uma sessão avulsa), ele manda a chave geral, que grava como `maestri`.
+
+O agente de cada memória vem da chave, e o `lembrar` não aceita outro. A auditoria mostra qual papel fez o quê,
+e revogar a chave de um papel (`python -m app.cli revogar-chave <prefixo>`) não afeta os outros. A chave nunca entra
+na configuração do Claude Code.
 
 As ferramentas do MCP:
 
 | Ferramenta | Papel | O que faz |
 |---|---|---|
-| `lembrar` | escrita | grava uma decisão, compromisso, lição, fato ou preferência, com agente, origem e confiança (medido, estimado ou declarado) |
+| `lembrar` | escrita | grava uma decisão, compromisso, lição, fato ou preferência, com origem e confiança (medido, estimado ou declarado); o agente é o da chave |
 | `buscar` | leitura | busca híbrida (vetor e texto). `valido_em` responde "o que valia em março"; `sabido_em` responde "o que sabíamos em março" |
 | `listar` | leitura | lista as memórias vigentes |
 | `substituir` | escrita | cria a versão nova de uma memória; a anterior fica no histórico |
@@ -140,7 +152,7 @@ processo contínuo. Para servir fora da máquina, o caminho é um host de contê
 pnpm memoria:test
 ```
 
-São 31 testes de integração contra os serviços reais. Eles usam tenants
+São 32 testes de integração contra os serviços reais. Eles usam tenants
 temporários e os purgam no fim, sem tocar no tenant `nebuloz`. Os testes cobrem:
 - **segurança:** chave, papel, isolamento de tenant, RLS e imutabilidade;
 - **memória:** bitemporal, revogação, busca, apagamento por origem e retenção;
@@ -160,8 +172,9 @@ Nenhum script do pacote se chama `test`, `build` ou `dev`. Assim, `pnpm test`,
 - **Projeção síncrona.** Uma falha vira pendência, e o `rebuild` refaz. Não há fila.
 - **Uma camada só.** Ainda faltam a camada morna (resumo por período) e a
   movimentação para a camada fria por idade.
-- **Uma chave para todo o Maestri.** O agente se identifica no campo `agente`
-  do `lembrar`, sem prova. Uma chave por papel resolve, quando valer o custo.
+- **A chave por papel separa papéis, mas não isola um do outro.** Todos rodam com o mesmo usuário do sistema, então
+  um agente que quisesse ler a chave de outro papel em `~/.nebuloz/memoria/chaves` conseguiria. A chave evita
+  erro de atribuição e dá auditoria por papel; contra um agente mal-intencionado, não protege.
 - **Nada liga isto ao app.** Os índices do app (`PIKnowledgeVector`) continuam
   onde estão, com os problemas de apagamento descritos na D-14.
 

@@ -2,7 +2,7 @@
 # Sobe a memória dos agentes. Idempotente: pode rodar de novo.
 #   1. gera o .env com senhas aleatórias, na primeira vez;
 #   2. sobe Postgres, Qdrant, Neo4j, MinIO e o serviço;
-#   3. cria o tenant "nebuloz" e a chave do Maestri (guardada em ~/.nebuloz/memoria, fora do repo);
+#   3. cria o tenant "nebuloz", uma chave por papel do Maestri e a chave geral (em ~/.nebuloz/memoria, fora do repo);
 #   4. importa lições do Maestri, ADRs e registro de decisões.
 # Ligar ao Claude Code é um passo seu, uma vez: o comando aparece no fim (README, "Ligar aos agentes").
 # Variáveis: MEMORIA_PORTA (8003), MEMORIA_HOME (~/.nebuloz/memoria), MEMORIA_SEM_BUILD=1.
@@ -48,24 +48,36 @@ done
 echo
 curl -fsS "$URL/health" >/dev/null || { echo "O serviço não respondeu. Veja: docker compose logs memoria" >&2; exit 1; }
 
-cli() { docker compose exec -T memoria python -m app.cli "$@"; }
+cli() { docker compose exec -T memoria python -m app.cli "$@" </dev/null; }
 cli criar-tenant "$TENANT" "Nebuloz" >/dev/null
 
-mkdir -p "$CASA" && chmod 700 "$CASA"
-chave_ok() {
-  [ -s "$CABECALHOS" ] || return 1
+mkdir -p "$CASA/chaves" && chmod 700 "$CASA" "$CASA/chaves"
+chave_ok() { # $1=arquivo
+  [ -s "$1" ] || return 1
   local chave
-  chave="$(sed -n 's/.*"X-API-Key": *"\([^"]*\)".*/\1/p' "$CABECALHOS")"
+  chave="$(sed -n 's/.*"X-API-Key": *"\([^"]*\)".*/\1/p' "$1")"
   [ -n "$chave" ] && curl -fsS -o /dev/null -H "X-API-Key: $chave" "$URL/api/v1/memories?limit=1"
 }
-if chave_ok; then
-  echo "• chave do Maestri já existe e vale ($CABECALHOS)"
-else
-  chave="$(cli criar-chave "$TENANT" maestri escrita 2>/dev/null | head -n1)"
-  (umask 077 && printf '{"X-API-Key": "%s"}\n' "$chave" > "$CABECALHOS")
-  unset chave
-  echo "• chave nova do Maestri em $CABECALHOS (só você lê)"
-fi
+garantir_chave() { # $1=arquivo $2=rótulo (vira o agente de toda memória gravada com a chave)
+  chave_ok "$1" && return 1
+  local chave
+  chave="$(cli criar-chave "$TENANT" "$2" escrita 2>/dev/null | head -n1)"
+  (umask 077 && printf '{"X-API-Key": "%s"}\n' "$chave" > "$1")
+}
+# Chave geral: sessões fora de uma pasta de papel (o terminal Maestro, uma sessão avulsa no repo).
+garantir_chave "$CABECALHOS" maestri && echo "• chave geral nova em $CABECALHOS"
+
+# Uma chave por papel do Maestri, lida do setup do canvas: `hire "Crivo" "QA"` → chaves/qa.json, rótulo Crivo.
+novas=0
+while read -r agente papel; do
+  slug=$(printf '%s' "$papel" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+  garantir_chave "$CASA/chaves/$slug.json" "$agente" && novas=$((novas + 1))
+done < <(grep -oE '(hire|recruit) "[A-Za-z]+" +(--role +)?"[^"]+"' ../../.maestri/setup-canvas.sh \
+  | sed -E 's/^(hire|recruit) "([A-Za-z]+)" +(--role +)?"([^"]+)"$/\2 \4/' | sort -u)
+echo "• chaves por papel em $CASA/chaves: $(ls "$CASA/chaves" | wc -l | tr -d ' ') ($novas nova(s))"
+
+# O Claude Code chama este script a cada conexão; ele escolhe a chave pela pasta do papel.
+install -m 700 scripts/cabecalho.sh "$CASA/cabecalho.sh"
 
 echo "• importando lições do Maestri, ADRs e registro de decisões"
 cli importar "$TENANT" --raiz /fontes
@@ -75,5 +87,5 @@ cat <<EOF
 Memória no ar: $URL/health · API em $URL/docs · MCP em $URL/mcp
 
 Para os agentes enxergarem, uma vez por máquina (vale para todas as pastas de papel do Maestri):
-  claude mcp add-json --scope user memoria '{"type":"http","url":"$URL/mcp","headersHelper":"cat $CABECALHOS"}'
+  claude mcp add-json --scope user memoria '{"type":"http","url":"$URL/mcp","headersHelper":"sh $CASA/cabecalho.sh"}'
 EOF

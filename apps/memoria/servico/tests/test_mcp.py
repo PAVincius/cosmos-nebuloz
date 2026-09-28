@@ -66,13 +66,12 @@ def test_mcp_lembra_busca_e_isola_tenant(client, tenants):
         "lembrar",
         texto="Postgres é a fonte da verdade da memória; Qdrant é projeção",
         categoria="decision",
-        agente="Pilar",
         projeto="proj-mcp",
         confianca="medido",
         entidades=[{"name": "Qdrant", "type": "sistema"}],
     )
     assert erro is None, erro
-    assert criada["agente"] == "Pilar" and criada["confianca"] == "medido"
+    assert criada["agente"] == "teste-escrita" and criada["confianca"] == "medido"
 
     achados, _ = _chamar(client, a.leitura, "buscar", consulta="fonte da verdade da memória", projeto="proj-mcp")
     assert achados and achados[0]["memory_id"] == criada["memory_id"]
@@ -81,6 +80,15 @@ def test_mcp_lembra_busca_e_isola_tenant(client, tenants):
     assert do_outro == []
     _, erro = _chamar(client, b.leitura, "historico", memory_id=criada["memory_id"])
     assert erro and "não encontrada" in erro
+
+
+def test_mcp_agente_vem_da_chave(client, tenants):
+    a, _ = tenants
+    criada, erro = _chamar(
+        client, a.escrita, "lembrar", texto="tentando assinar como outro", categoria="fact", agente="Norte"
+    )
+    # O parâmetro não existe: ou a chamada é recusada, ou o agente gravado é o da chave. Nunca "Norte".
+    assert erro is not None or criada["agente"] == "teste-escrita"
 
 
 def test_mcp_respeita_papel(client, tenants):
