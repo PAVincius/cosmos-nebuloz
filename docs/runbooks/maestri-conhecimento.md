@@ -84,7 +84,7 @@ maestri routine run "refresh-conhecimento"
 
 | Sintoma | Causa provável | Ação |
 |---|---|---|
-| Produto com menos de 20 nós no relatório | prefixo errado em `scripts/knowledge/produtos.mts`, ou o mestre é anterior ao código (o Signal entrou em 2026-09-04; o mestre é de 2026-09-03) | corrigir a tabela e rodar `pnpm test:knowledge`; se o prefixo está certo, atualizar o mestre com `/graphify --update`; refresh |
+| Produto com menos de 20 nós no relatório | prefixo errado em `scripts/knowledge/produtos.mts`, ou o mestre é anterior ao código (a data do mestre está no `CLAUDE.md`, seção Knowledge Graph) | corrigir a tabela e rodar `pnpm test:knowledge`; se o prefixo está certo, atualizar o mestre com `/graphify --update`; refresh |
 | `nao-roteados.md` crescendo | completion nova sem palavra-chave | acrescentar termo em `PALAVRAS_CHAVE` ou aceitar como compartilhado |
 | note perdeu o "Estado de tarefa" | alguém apagou a seção à mão | a rotina recria vazia e avisa no `refresh-<data>.md` |
 | mestre com muito menos nós depois de um update | `graphify update` só AST descartou os nós semânticos | restaurar com `git checkout -- graphify-out && git clean -fdq graphify-out` (há backup em `graphify-out/<data>/`); atualizar com `/graphify --update` |
