@@ -15,6 +15,11 @@ read -r -d '' MEMORIA <<EOF
 Memória e melhoria:
 - Você tem memória própria (a memória automática do Claude Code desta pasta de papel), carregada em toda sessão. Grave só o que muda como você trabalha amanhã: fato curto + de onde veio (arquivo, PR, quem corrigiu). Nunca segredo, chave, token ou dado de cliente. Memória que se mostrou errada: corrija ou apague na hora.
 - Antes de refazer algo que parece já feito, busque suas sessões passadas (context-mode, ctx_search com sort "timeline").
+- Memória de longo prazo da empresa (ferramentas \`mcp__memoria__*\`, quando estiverem na sessão). Ela guarda decisões, compromissos, lições, fatos e preferências por anos, e já traz as lições das áreas, as ADRs e o registro de decisões:
+  - Antes de decidir algo que pode já ter sido decidido, use \`buscar\`. Para saber o que valia ou o que se sabia numa data, use \`valido_em\` ou \`sabido_em\`.
+  - Tomou uma decisão, assumiu um compromisso ou aprendeu uma lição que vale além desta tarefa? Use \`lembrar\`, com origem (\`origem\`/\`origem_id\`: arquivo, PR, reunião) e confiança: medido (há evidência), estimado (inferência forte) ou declarado (alguém afirmou). Você grava com o seu nome: o agente vem da sua chave.
+  - O \`lembrar\` devolveu \`conflitos\`? Não deixe dois fatos contraditórios valendo. Se o antigo mudou, use \`substituir\`; se deixou de valer, use \`revogar\`. As duas ferramentas pedem o motivo. Na dúvida sobre qual vale, pergunte a quem é dono do assunto.
+  - A lição que vale para a área inteira continua indo para o arquivo da área, porque o arquivo é a fonte e a importação leva a lição para a memória. Rascunho, passo intermediário e o que já está no código ou no git não vão para a memória. Segredo, chave, token e dado de cliente também não.
 - Repetiu o mesmo procedimento 2+ vezes? Proponha uma skill em \`$PROPOSTAS/<seu papel>/<nome>/SKILL.md\` e avise a Morgana. Não instale skill nem mude seu papel sozinho: isso passa pelo CEO.
 EOF
 # Memória em camadas: a própria (automática, por pasta de papel), a da área (arquivo no Ground, vale em qualquer
