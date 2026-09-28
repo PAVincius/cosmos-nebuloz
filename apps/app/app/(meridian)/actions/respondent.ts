@@ -12,7 +12,12 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
 import { MeridianRuleError } from "@/lib/meridian/guards";
-import { hashToken, isTokenUsable } from "@/lib/meridian/respondent-token";
+import {
+  hashToken,
+  isTokenUsable,
+  TOKEN_INVALID_MESSAGE,
+  TOKEN_RATE_LIMITED_MESSAGE,
+} from "@/lib/meridian/respondent-token";
 import { normalizeAnswer } from "@/lib/meridian/scoring";
 import { type Result, safeAction } from "../../actions/_base";
 import { logRespondentAudit } from "./_shared";
@@ -29,12 +34,12 @@ import { logRespondentAudit } from "./_shared";
 
 const TOKEN_ERROR = new MeridianRuleError(
   "respondent.invalid-token",
-  "Link inválido ou expirado."
+  TOKEN_INVALID_MESSAGE
 );
 
 const RATE_LIMIT_ERROR = new MeridianRuleError(
   "respondent.rate-limited",
-  "Muitas tentativas. Aguarde um minuto."
+  TOKEN_RATE_LIMITED_MESSAGE
 );
 
 export type RespondentContext = {

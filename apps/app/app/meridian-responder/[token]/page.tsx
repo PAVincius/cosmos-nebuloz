@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getBattery } from "@/app/(meridian)/actions/respondent";
 import { RespondentForm } from "@/components/meridian/respondent-form";
+import { respondentErrorCopy } from "@/lib/meridian/respondent-error-copy";
 import "@/components/meridian/meridian.css";
 
 // Visão do respondente — a única rota do Meridian fora do guard de sessão.
@@ -15,7 +16,10 @@ import "@/components/meridian/meridian.css";
 // /meridian/responder/<token>: `/meridian` é prefixo protegido no proxy.
 //
 // Token inválido, expirado e revogado caem no mesmo texto. Diferenciar
-// confirmaria a um estranho que aquele assessment existe.
+// confirmaria a um estranho que aquele assessment existe. O limite de
+// tentativas (rate limit) tem texto próprio — `respondentErrorCopy` só
+// reconhece essas duas mensagens; qualquer outra cai no texto genérico de
+// link inválido, pra nunca mostrar detalhe interno nesta tela sem sessão.
 
 export const metadata: Metadata = {
   title: "Bateria de prontidão · Meridian",
@@ -32,6 +36,7 @@ export default async function RespondentPage({
   const res = await getBattery(token);
 
   if (!res.ok) {
+    const copy = respondentErrorCopy(res.error);
     return (
       <div className="meridian-root" style={{ minHeight: "100dvh" }}>
         <main
@@ -62,7 +67,7 @@ export default async function RespondentPage({
             className="display"
             style={{ fontSize: 22, fontWeight: 700, margin: "0 0 12px" }}
           >
-            Link inválido ou expirado
+            {copy.title}
           </h1>
           <p
             style={{
@@ -72,8 +77,7 @@ export default async function RespondentPage({
               margin: 0,
             }}
           >
-            Este link não está mais válido. Peça um novo à pessoa que conduz o
-            diagnóstico na sua organização.
+            {copy.body}
           </p>
         </main>
       </div>
