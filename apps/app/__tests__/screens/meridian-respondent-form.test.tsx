@@ -76,4 +76,12 @@ describe("RespondentForm — aviso ao titular", () => {
     const link = screen.getByText("privacy@nebuloz.com");
     expect(link.getAttribute("href")).toBe("mailto:privacy@nebuloz.com");
   });
+
+  it("avisa que evidência anexada some em 90 dias, prazo fixo da Nebuloz — não da organização cliente (parecer 2026-09-28)", () => {
+    render(<RespondentForm battery={BATTERY} token="tok-abc" />);
+    expect(screen.getByText(/90 dias/)).toBeTruthy();
+    expect(
+      screen.getByText(/organização que convidou você não escolhe/)
+    ).toBeTruthy();
+  });
 });
