@@ -32,6 +32,11 @@ const TOKEN_ERROR = new MeridianRuleError(
   "Link inválido ou expirado."
 );
 
+const RATE_LIMIT_ERROR = new MeridianRuleError(
+  "respondent.rate-limited",
+  "Muitas tentativas. Aguarde um minuto."
+);
+
 export type RespondentContext = {
   respondentId: string;
   tenantId: string;
@@ -45,6 +50,74 @@ export type RespondentContext = {
   status: string;
 };
 
+// Rate limit do lookup de token — condição 5 do parecer de compliance
+// (docs/compliance/2026-09-24-parecer-meridian-respondente.md) e P2 do Vigia
+// (docs/qualidade/dogfood/meridian/atrito.md:48): sem isso, nada impedia
+// tentativa repetida de adivinhar um hash de token válido. Sem sessão, IP é o
+// único identificador disponível — prefere `x-real-ip` (posto pelo proxy,
+// não editável pelo cliente) e só cai para o primeiro `x-forwarded-for`
+// quando aquele não vem.
+//
+// Só é chamado depois que o lookup por hash JÁ falhou (revisão da Morgana
+// sobre a primeira versão): um respondente legítimo nunca erra o próprio
+// link, então nunca soma contra o teto — só tentativa de adivinhação gera
+// falha atrás de falha. Um escritório inteiro atrás do mesmo IP, respondendo
+// de verdade, não é barrado.
+//
+// Fecha em produção quando o contador está fora do ar — mesmo raciocínio do
+// copiloto (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse,
+// derrubar o contador viraria a forma de remover o freio.
+async function enforceTokenLookupRateLimit(): Promise<void> {
+  const headerStore = await headers();
+  const ip =
+    headerStore.get("x-real-ip")?.trim() ||
+    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "anonymous";
+
+  let dentroDoLimite: boolean;
+  try {
+    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
+    const limiter = createRateLimiter({
+      limiter: fixedWindow(30, "1 m"),
+      prefix: "meridian-token-lookup",
+    });
+    dentroDoLimite = (await limiter.limit(ip)).success;
+  } catch (erro) {
+    if (process.env.NODE_ENV === "production") {
+      log.error("[meridian] rate limit de lookup de token indisponível", {
+        error: String(erro),
+      });
+      dentroDoLimite = false;
+    } else {
+      dentroDoLimite = true;
+    }
+  }
+
+  if (!dentroDoLimite) {
+    throw RATE_LIMIT_ERROR;
+  }
+}
+
+/** Consulta única por `tokenHash`, usada por toda a superfície do respondente
+ *  (`resolveRespondentToken` e `loadRespondent`) — as duas precisam do mesmo
+ *  freio contra adivinhação, então compartilham a mesma implementação em vez
+ *  de cada uma reimplementar a checagem. */
+async function findRespondentByTokenOrThrow(token: string) {
+  const r = await database.meridianRespondent.findUnique({
+    where: { tokenHash: hashToken(token) },
+    include: {
+      assessment: {
+        select: { id: true, code: true, orgName: true, templateId: true },
+      },
+    },
+  });
+  if (r && isTokenUsable(r, new Date())) {
+    return r;
+  }
+  await enforceTokenLookupRateLimit();
+  throw TOKEN_ERROR;
+}
+
 /**
  * Resolve o token para um respondente.
  *
@@ -56,15 +129,7 @@ export async function resolveRespondentToken(
   token: string
 ): Promise<Result<RespondentContext>> {
   return safeAction(async () => {
-    const r = await database.meridianRespondent.findUnique({
-      where: { tokenHash: hashToken(token) },
-      include: {
-        assessment: { select: { id: true, code: true, orgName: true } },
-      },
-    });
-    if (!(r && isTokenUsable(r, new Date()))) {
-      throw TOKEN_ERROR;
-    }
+    const r = await findRespondentByTokenOrThrow(token);
     return {
       respondentId: r.id,
       tenantId: r.tenantId,
@@ -95,57 +160,8 @@ export type Battery = {
   questions: BatteryQuestion[];
 };
 
-// Rate limit do lookup de token — condição 5 do parecer de compliance
-// (docs/compliance/2026-09-24-parecer-meridian-respondente.md) e P2 do Vigia
-// (docs/qualidade/dogfood/meridian/atrito.md:48): sem isso, nada impedia
-// tentativa repetida de adivinhar um hash de token válido. Sem sessão, IP é o
-// único identificador disponível. Fecha em produção quando o contador está
-// fora do ar — mesmo raciocínio do copiloto
-// (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse, derrubar o
-// contador viraria a forma de remover o freio.
-async function enforceTokenLookupRateLimit(): Promise<void> {
-  const headerStore = await headers();
-  const ip =
-    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
-
-  let dentroDoLimite: boolean;
-  try {
-    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
-    const limiter = createRateLimiter({
-      limiter: fixedWindow(30, "1 m"),
-      prefix: "meridian-token-lookup",
-    });
-    dentroDoLimite = (await limiter.limit(ip)).success;
-  } catch (erro) {
-    if (process.env.NODE_ENV === "production") {
-      log.error("[meridian] rate limit de lookup de token indisponível", {
-        error: String(erro),
-      });
-      dentroDoLimite = false;
-    } else {
-      dentroDoLimite = true;
-    }
-  }
-
-  if (!dentroDoLimite) {
-    throw TOKEN_ERROR;
-  }
-}
-
 async function loadRespondent(token: string) {
-  await enforceTokenLookupRateLimit();
-  const r = await database.meridianRespondent.findUnique({
-    where: { tokenHash: hashToken(token) },
-    include: {
-      assessment: {
-        select: { id: true, code: true, orgName: true, templateId: true },
-      },
-    },
-  });
-  if (!(r && isTokenUsable(r, new Date()))) {
-    throw TOKEN_ERROR;
-  }
-  return r;
+  return findRespondentByTokenOrThrow(token);
 }
 
 /** Só as perguntas do eixo daquele respondente, daquele assessment. Ele nunca

@@ -268,7 +268,22 @@ describe("submitBattery", () => {
 });
 
 describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () => {
-  it("recusa quando o rate limiter reporta limite excedido, sem consultar o banco", async () => {
+  it("sucesso nunca consulta o limitador — só falha conta (revisão da Morgana sobre 9468abd9)", async () => {
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(true);
+    expect(h.rateLimiterLimit).not.toHaveBeenCalled();
+  });
+
+  it("token inexistente conta como falha, mas segue com o erro genérico enquanto dentro do teto", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
+    expect(h.rateLimiterLimit).toHaveBeenCalledTimes(1);
+  });
+
+  it("acima do teto de falhas, devolve mensagem própria de limite, não a de link inválido", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
     h.rateLimiterLimit.mockResolvedValue({
       success: false,
       limit: 30,
@@ -277,22 +292,49 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     });
     const res = await getBattery(TOKEN);
     expect(res.ok).toBe(false);
-    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
   });
 
-  it("usa o primeiro IP de x-forwarded-for como identificador do limitador", async () => {
-    h.headersGet.mockReturnValue("9.9.9.9, 1.1.1.1");
+  it("resolveRespondentToken também passa pelo limite de falhas — bypass corrigido", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
+    h.rateLimiterLimit.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await resolveRespondentToken(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+  });
+
+  it("prefere x-real-ip a x-forwarded-for como identificador", async () => {
+    h.headersGet.mockImplementation((name: string) =>
+      name === "x-real-ip" ? "8.8.8.8" : "9.9.9.9, 1.1.1.1"
+    );
+    h.respondentFindUnique.mockResolvedValue(null);
+    await getBattery(TOKEN);
+    expect(h.rateLimiterLimit).toHaveBeenCalledWith("8.8.8.8");
+  });
+
+  it("cai para o primeiro IP de x-forwarded-for quando não há x-real-ip", async () => {
+    h.headersGet.mockImplementation((name: string) =>
+      name === "x-forwarded-for" ? "9.9.9.9, 1.1.1.1" : null
+    );
+    h.respondentFindUnique.mockResolvedValue(null);
     await getBattery(TOKEN);
     expect(h.rateLimiterLimit).toHaveBeenCalledWith("9.9.9.9");
   });
 
-  it("usa 'anonymous' quando não há x-forwarded-for", async () => {
+  it("usa 'anonymous' quando não há x-real-ip nem x-forwarded-for", async () => {
     h.headersGet.mockReturnValue(null);
+    h.respondentFindUnique.mockResolvedValue(null);
     await getBattery(TOKEN);
     expect(h.rateLimiterLimit).toHaveBeenCalledWith("anonymous");
   });
 
-  it("aplica o mesmo teto a saveDraft — também passa por loadRespondent", async () => {
+  it("aplica o mesmo mecanismo a saveDraft — também passa por loadRespondent", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
     h.rateLimiterLimit.mockResolvedValue({
       success: false,
       limit: 30,
@@ -301,24 +343,27 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     });
     const res = await saveDraft({ token: TOKEN, answers: [] });
     expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
   });
 
-  it("em produção, fecha quando o contador de limite está indisponível", async () => {
-    const original = process.env.NODE_ENV;
+  it("em produção, trata contador indisponível como limite excedido", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
     vi.stubEnv("NODE_ENV", "production");
     h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
     const res = await getBattery(TOKEN);
-    vi.stubEnv("NODE_ENV", original ?? "test");
+    vi.unstubAllEnvs();
     expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
   });
 
-  it("fora de produção, segue quando o contador de limite está indisponível", async () => {
-    const original = process.env.NODE_ENV;
+  it("fora de produção, contador indisponível não bloqueia além do erro genérico de token", async () => {
+    h.respondentFindUnique.mockResolvedValue(null);
     vi.stubEnv("NODE_ENV", "test");
     h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
     const res = await getBattery(TOKEN);
-    vi.stubEnv("NODE_ENV", original ?? "test");
-    expect(res.ok).toBe(true);
+    vi.unstubAllEnvs();
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
   });
 });
 
