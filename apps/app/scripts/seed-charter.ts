@@ -34,7 +34,7 @@ dotenv.config({ path: ".env.local" });
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { CHARTER_CLAUSES } from "@repo/provisioning";
+import { CHARTER_CLAUSES } from "@repo/provisioning/src/charter-clauses";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";
