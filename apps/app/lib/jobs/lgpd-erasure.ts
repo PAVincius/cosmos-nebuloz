@@ -7,8 +7,13 @@ import { deleteObjects, MERIDIAN_EVIDENCE_BUCKET } from "@repo/storage";
 //
 // ADR-0021 fase 1: sem Inngest. O `DataSubjectRequest` PENDING é o próprio
 // outbox; `/api/cron/lgpd-erasure` chama `processPendingErasureRequests`.
-// Cada passo abaixo é idempotente (anonimização/exclusão repetida não tem
-// efeito extra), então repetir o pedido depois de uma falha parcial é seguro.
+// O pedido pode ser repetido depois de uma falha parcial (o Inngest
+// memoizava os ids entre tentativas; aqui cada tentativa refaz os `find`).
+// Por isso a ordem importa: as linhas que carregam o e-mail do titular
+// (perfil, participante de reunião, respondente) só são anonimizadas DEPOIS
+// de o conteúdo ligado a elas ter sido eliminado. Cada passo repetido não
+// tem efeito extra, e uma falha deixa a chave intacta para a nova tentativa
+// achar o que falta.
 
 const MAX_ATTEMPTS = 3;
 const BATCH_SIZE = 5;
@@ -159,13 +164,6 @@ export async function runErasure({
       }
     );
 
-    await stage("anonymize-meeting-participant", () =>
-      database.meetingParticipant.updateMany({
-        where: { tenantId, email: subjectEmail },
-        data: { email: `${hash}@erased.cosmos`, name: replacement },
-      })
-    );
-
     // Mesmo espírito de revokeConsent (actions/meeting/consent.ts): o
     // conteúdo derivado da fala precisa sair. Insight ainda
     // PENDING/DISMISSED é rascunho que nunca virou dado do produto —
@@ -206,6 +204,17 @@ export async function runErasure({
         })
       );
     }
+
+    // Linha-chave por ÚLTIMO: `MeetingParticipant` é o que liga o e-mail às
+    // transcrições. Se este passo rodasse antes da eliminação do conteúdo e
+    // esta falhasse, a nova tentativa não acharia mais o participante e a
+    // transcrição sobreviveria com o pedido fechado como COMPLETED.
+    await stage("anonymize-meeting-participant", () =>
+      database.meetingParticipant.updateMany({
+        where: { tenantId, email: subjectEmail },
+        data: { email: `${hash}@erased.cosmos`, name: replacement },
+      })
+    );
   }
 
   // §5: a eliminação alcança MeridianRespondent. Diferente de
@@ -237,29 +246,6 @@ export async function runErasure({
     });
 
     if (respondentIds.length > 0) {
-      await stage("anonymize-meridian-respondent", () =>
-        database.meridianRespondent.updateMany({
-          where: { tenantId, id: { in: respondentIds } },
-          data: {
-            name: replacement,
-            email: `${hash}@erased.cosmos`,
-            tokenExpiresAt: new Date(0),
-          },
-        })
-      );
-
-      // MeridianEvidence: `fileName` é metadado barato de anonimizar aqui
-      // — pode conter dado pessoal (ex. nome do titular no arquivo).
-      await stage("anonymize-meridian-evidence-filename", () =>
-        database.meridianEvidence.updateMany({
-          where: { tenantId, uploadedByRespondentId: { in: respondentIds } },
-          // `replacement`, o mesmo substituto dos demais campos: um marcador
-          // de eliminação diferente por tabela obrigaria quem audita a
-          // conhecer cada variação para reconhecer o que foi apagado.
-          data: { fileName: replacement },
-        })
-      );
-
       // Objeto em si, em `storagePath`, vive no bucket privado
       // `meridian-evidence` — fora do banco, fora do alcance do update
       // acima. Parecer de compliance
@@ -285,6 +271,33 @@ export async function runErasure({
           deleteObjects(MERIDIAN_EVIDENCE_BUCKET, evidencePaths)
         );
       }
+
+      // MeridianEvidence: `fileName` é metadado barato de anonimizar aqui
+      // — pode conter dado pessoal (ex. nome do titular no arquivo).
+      await stage("anonymize-meridian-evidence-filename", () =>
+        database.meridianEvidence.updateMany({
+          where: { tenantId, uploadedByRespondentId: { in: respondentIds } },
+          // `replacement`, o mesmo substituto dos demais campos: um marcador
+          // de eliminação diferente por tabela obrigaria quem audita a
+          // conhecer cada variação para reconhecer o que foi apagado.
+          data: { fileName: replacement },
+        })
+      );
+
+      // Linha-chave por ÚLTIMO (mesmo motivo do bloco de reunião): o
+      // respondente é o que liga o e-mail aos anexos. Anonimizá-lo antes de
+      // apagar o objeto e o fileName deixaria a nova tentativa sem achar
+      // nada.
+      await stage("anonymize-meridian-respondent", () =>
+        database.meridianRespondent.updateMany({
+          where: { tenantId, id: { in: respondentIds } },
+          data: {
+            name: replacement,
+            email: `${hash}@erased.cosmos`,
+            tokenExpiresAt: new Date(0),
+          },
+        })
+      );
     }
   }
 
@@ -469,7 +482,14 @@ export async function processPendingErasureRequests(): Promise<ErasureQueueResul
     }
     result.claimed += 1;
 
+    // Teto no claim: a tentativa que estourou o lease (timeout da função) não
+    // passa por `recordFailure`, então uma execução que sempre morre voltaria
+    // a ser retomada para sempre. Passou de MAX_ATTEMPTS, fecha como FAILED
+    // sem executar.
     try {
+      if (attempts > MAX_ATTEMPTS) {
+        throw new Error("tentativas esgotadas (execução anterior expirou)");
+      }
       await runErasure({
         subjectId: row.subjectId,
         tenantId: row.tenantId,
@@ -477,7 +497,17 @@ export async function processPendingErasureRequests(): Promise<ErasureQueueResul
       });
       result.completed += 1;
     } catch (error) {
-      result[await recordFailure(row, attempts, error, now)] += 1;
+      try {
+        result[await recordFailure(row, attempts, error, now)] += 1;
+      } catch (recordError) {
+        // Falha ao gravar a falha não derruba o lote: o pedido fica
+        // IN_PROGRESS e é retomado quando o lease vencer.
+        result.failed += 1;
+        log.error("[lgpd-erasure] não gravou a falha do pedido", {
+          requestId: row.id,
+          error: recordError,
+        });
+      }
     }
   }
 

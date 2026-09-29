@@ -249,3 +249,49 @@ describe("processPendingErasureRequests — falha e tentativas", () => {
     expect(JSON.stringify(data)).not.toContain("a@b.com");
   });
 });
+
+describe("processPendingErasureRequests — teto e robustez do lote", () => {
+  it("lease vencido com tentativas esgotadas (timeout na última): grava FAILED + audit e NÃO executa a eliminação", async () => {
+    const lockedAt = new Date(NOW.getTime() - 30 * 60_000).toISOString();
+    mocks.dsrFindMany.mockResolvedValue([
+      pendingRow({
+        status: "IN_PROGRESS",
+        metadata: { attempts: 3, lockedAt },
+      }),
+    ]);
+    const res = await processPendingErasureRequests();
+
+    expect(mocks.userUpdate).not.toHaveBeenCalled();
+    expect(mocks.dsrUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "dsr-1" },
+        data: expect.objectContaining({ status: "FAILED", processedAt: NOW }),
+      })
+    );
+    expect(mocks.auditCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        action: "compliance.lgpd_erasure.failed",
+      }),
+    });
+    expect(res).toEqual({ claimed: 1, completed: 0, retried: 0, failed: 1 });
+  });
+
+  it("recordFailure lançando não derruba o lote: o pedido seguinte ainda é processado", async () => {
+    mocks.dsrFindMany.mockResolvedValue([
+      pendingRow({ id: "dsr-a", subjectId: "u-a" }),
+      pendingRow({ id: "dsr-b", subjectId: "u-b" }),
+    ]);
+    mocks.userFindUnique
+      .mockRejectedValueOnce(new Error("boom"))
+      .mockResolvedValueOnce({ email: "b@b.com" });
+    mocks.dsrUpdate
+      .mockRejectedValueOnce(new Error("db caiu ao gravar a falha"))
+      .mockResolvedValue({});
+
+    const res = await processPendingErasureRequests();
+
+    expect(res.completed).toBe(1);
+    expect(res.failed).toBe(1);
+    expect(mocks.logError).toHaveBeenCalled();
+  });
+});

@@ -22,3 +22,9 @@ Build da Vercel de `cosmos-nebuloz-app` (`dpl_6Ds1MEtFxLAxEQKJhaLdgsTFGMME`) rod
 
 ## Testes
 App inteiro: 522 arquivos, 5662 testes verdes. Novos: validate-cron-secret, cron-fase1-routes (401/200/500), vercel-crons, lgpd-erasure-queue (lock, concorrência, lease, tentativas), retenção (falha isolada, idempotência).
+
+## Correções pós-Vigia (reprovação de 1cbac7dc)
+- ALTO: retry após falha parcial deixava dado pessoal com o pedido COMPLETED. Agora o conteúdo (transcrição; objeto do bucket e fileName) é eliminado ANTES de anonimizar a linha-chave (participante/respondente), e o perfil do usuário por último. Teste `lgpd-erasure-retry.test.ts` (banco fake com estado; falha em erase-meeting-transcript-content, delete-meridian-evidence-objects e fileName; nova execução elimina o conteúdo). Comentário de "idempotente" reescrito.
+- MÉDIO: claim com `attempts > 3` grava FAILED + audit sem executar.
+- BAIXO: `recordFailure` lançando é logado e não derruba o lote.
+- Bearer nas outras 5 rotas: nenhum chamador no repositório (ci.yml, dark-matter.yml, scripts, docker-compose não chamam /api/cron; `docker-start.sh` só exige a env). A Vercel envia Bearer. Chamadores fora do repositório (n8n etc.) não verificados: se houver algum mandando o segredo cru, precisa passar a mandar `Bearer <segredo>`.
