@@ -23,7 +23,8 @@ export type ScaffoldEntity =
   | "scaffold.override"
   | "scaffold.businesscase"
   | "scaffold.template"
-  | "scaffold.overlay";
+  | "scaffold.overlay"
+  | "scaffold.processlink";
 
 /**
  * Grava entrada de auditoria do Scaffold (SN-03).

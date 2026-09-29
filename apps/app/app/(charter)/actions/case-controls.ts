@@ -17,6 +17,7 @@ import {
   controlProgress,
   EDITABLE_STATES,
   expiresAtFor,
+  isTenantFileKey,
   MAX_DISPENSE_DAYS,
   nextControlState,
   partitionByClass,
@@ -40,6 +41,7 @@ import { type Db, GovernanceError, logCharterAudit } from "./_shared";
 // aconteceu. Eventos entre produtos (X-04) saem só depois da transação.
 
 const MAX_COMMENT = 2000;
+const MAX_EXTRA_ATTEMPTS = 5;
 
 const Ref = z.object({
   code: z.string().trim().min(1),
@@ -171,12 +173,57 @@ async function applyTransition(args: {
 }
 
 function assertFileOfTenant(tenantId: string, fileKey: string): void {
-  // Chave opaca do bucket privado, sempre prefixada pelo tenant (mesmo padrão do
-  // Scaffold). Chave de outro tenant é tentativa de anexar arquivo alheio.
-  if (!fileKey.startsWith(`${tenantId}/`)) {
+  // Chave opaca do bucket privado, `<tenantId>/<segmentos>`. Validada inteira:
+  // "t1/../t2/x.pdf" começa com "t1/" e resolve em outro tenant.
+  if (!isTenantFileKey(tenantId, fileKey)) {
     throw new GovernanceError(
       "control.file.tenant",
       "Arquivo fora do armazenamento desta organização."
+    );
+  }
+}
+
+/**
+ * Separação de deveres. Quem produziu a evidência não a aceita, dispensa, nem
+ * pede ajuste ou reabre: senão uma pessoa só fecha o controle sozinha.
+ *
+ * "Produziu" = responsável (ownerId) do controle ou autor do último ATTACH/SUBMIT
+ * dele. Para aceitar e dispensar, o dono do CASO também fica de fora (interesse
+ * direto no resultado: CH-PO-04 veda dispensa pelo próprio solicitante).
+ */
+async function assertNotProducer(args: {
+  db: Db;
+  ctx: Ctx;
+  uc: { ownerId: string | null };
+  control: Loaded;
+  includeCaseOwner: boolean;
+}): Promise<void> {
+  const { db, ctx, uc, control, includeCaseOwner } = args;
+  const last = await db.charterCaseControlEvent.findMany({
+    where: {
+      caseControlId: control.id,
+      action: { in: ["ATTACH", "SUBMIT"] },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 1,
+    select: { actorId: true },
+  });
+  const forbidden = new Set<string>();
+  if (control.ownerId) {
+    forbidden.add(control.ownerId);
+  }
+  if (includeCaseOwner && uc.ownerId) {
+    forbidden.add(uc.ownerId);
+  }
+  for (const event of last) {
+    if (event.actorId) {
+      forbidden.add(event.actorId);
+    }
+  }
+  if (forbidden.has(ctx.userId)) {
+    throw new GovernanceError(
+      "control.separation",
+      `Quem produziu ou responde por ${control.code} não pode decidir sobre a própria evidência. Peça a outra pessoa com permissão de decidir.`
     );
   }
 }
@@ -301,29 +348,39 @@ export async function generateCaseControlPlan(
         skipDuplicates: true,
       });
 
-      const rows = await db.charterCaseControl.findMany({
-        where: { tenantId: ctx.tenantId, useCaseId: uc.id },
-        select: { id: true },
-      });
-      await db.charterCaseControlEvent.createMany({
-        data: rows.map((row) => ({
-          tenantId: ctx.tenantId,
-          caseControlId: row.id,
-          action: "START" as const,
-          actorId: ctx.userId,
-          fromState: null,
-          toState: "NO_EVIDENCE" as const,
-          comment: null,
-        })),
-      });
-
-      await logCharterAudit(db, ctx, {
-        action: "Plano de controles gerado",
-        entityType: "charter.usecase",
-        entityId: uc.id,
-        target: `${uc.code} · ${uc.title}`,
-        note: `${applicable.length} controle(s) aplicável(is), ${notApplicable.length} fora da classe ${uc.dataClass}.`,
-      });
+      // Quem perdeu a corrida (count 0) não repete o START nem a auditoria: o
+      // outro processo já os gravou. Quem ganhou registra START só dos controles
+      // que ainda não têm evento nenhum.
+      if (inserted.count > 0) {
+        const fresh = await db.charterCaseControl.findMany({
+          where: {
+            tenantId: ctx.tenantId,
+            useCaseId: uc.id,
+            events: { none: {} },
+          },
+          select: { id: true },
+        });
+        if (fresh.length > 0) {
+          await db.charterCaseControlEvent.createMany({
+            data: fresh.map((row) => ({
+              tenantId: ctx.tenantId,
+              caseControlId: row.id,
+              action: "START" as const,
+              actorId: ctx.userId,
+              fromState: null,
+              toState: "NO_EVIDENCE" as const,
+              comment: null,
+            })),
+          });
+        }
+        await logCharterAudit(db, ctx, {
+          action: "Plano de controles gerado",
+          entityType: "charter.usecase",
+          entityId: uc.id,
+          target: `${uc.code} · ${uc.title}`,
+          note: `${applicable.length} controle(s) aplicável(is), ${notApplicable.length} fora da classe ${uc.dataClass}.`,
+        });
+      }
       return { ...base, created: inserted.count };
     });
 
@@ -495,6 +552,20 @@ export async function editControl(
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
       const control = await loadControl(db, uc.id, data.controlCode);
+      if (data.ownerId) {
+        // Responsável de outro tenant seria um vínculo com pessoa que não pode
+        // nem abrir o caso.
+        const member = await db.tenantMember.findFirst({
+          where: { tenantId: ctx.tenantId, userId: data.ownerId },
+          select: { id: true },
+        });
+        if (!member) {
+          throw new GovernanceError(
+            "control.owner.notMember",
+            "O responsável precisa ser membro desta organização."
+          );
+        }
+      }
       if (!EDITABLE_STATES.includes(control.state)) {
         throw new ControlStateConflict(
           "control.notEditable",
@@ -577,46 +648,79 @@ export async function addExtraControl(
 
     const controlCode = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const existing = await db.charterCaseControl.count({
+      // Próximo número = maior X-n existente + 1 (não a contagem: controle
+      // extra removido deixaria buraco e a contagem repetiria número). Em
+      // corrida, ON CONFLICT DO NOTHING devolve count 0 e tenta o seguinte.
+      const rows = await db.charterCaseControl.findMany({
         where: { useCaseId: uc.id, isExtra: true },
+        select: { code: true },
       });
-      const code = `X-${existing + 1}`;
-      const created = await db.charterCaseControl.create({
-        data: {
-          tenantId: ctx.tenantId,
-          useCaseId: uc.id,
-          code,
-          profileControlCode: null,
-          name: data.name,
-          category: data.category,
-          evidence: data.evidence,
-          acceptanceCriteria: data.acceptanceCriteria ?? null,
-          role: data.role,
-          cadence: data.cadence,
-          // Extra vale para o caso qualquer que seja a classe: nasce na mínima.
-          minClass: "PUBLIC",
-          isExtra: true,
-        },
-        select: { id: true },
-      });
-      await db.charterCaseControlEvent.create({
-        data: {
-          tenantId: ctx.tenantId,
-          caseControlId: created.id,
-          action: "START",
-          actorId: ctx.userId,
-          fromState: null,
-          toState: "NO_EVIDENCE",
-          comment: null,
-        },
-      });
-      await logCharterAudit(db, ctx, {
-        action: "Controle adicional criado",
-        entityType: "charter.casecontrol",
-        entityId: created.id,
-        target: `${uc.code} · ${code} ${data.name}`,
-      });
-      return code;
+      let next =
+        rows.reduce((max, r) => {
+          const n = Number(r.code.replace(/^X-/, ""));
+          return Number.isFinite(n) ? Math.max(max, n) : max;
+        }, 0) + 1;
+
+      for (let attempt = 0; attempt < MAX_EXTRA_ATTEMPTS; attempt += 1) {
+        const code = `X-${next}`;
+        const inserted = await db.charterCaseControl.createMany({
+          data: [
+            {
+              tenantId: ctx.tenantId,
+              useCaseId: uc.id,
+              code,
+              profileControlCode: null,
+              name: data.name,
+              category: data.category,
+              evidence: data.evidence,
+              acceptanceCriteria: data.acceptanceCriteria ?? null,
+              role: data.role,
+              cadence: data.cadence,
+              // Extra vale para o caso qualquer que seja a classe: nasce na mínima.
+              minClass: "PUBLIC",
+              isExtra: true,
+            },
+          ],
+          skipDuplicates: true,
+        });
+        if (inserted.count === 0) {
+          next += 1;
+          continue;
+        }
+
+        const created = await db.charterCaseControl.findUnique({
+          where: { useCaseId_code: { useCaseId: uc.id, code } },
+          select: { id: true },
+        });
+        if (!created) {
+          throw new GovernanceError(
+            "control.unknown",
+            "Controle adicional não encontrado depois do insert."
+          );
+        }
+        await db.charterCaseControlEvent.create({
+          data: {
+            tenantId: ctx.tenantId,
+            caseControlId: created.id,
+            action: "START",
+            actorId: ctx.userId,
+            fromState: null,
+            toState: "NO_EVIDENCE",
+            comment: null,
+          },
+        });
+        await logCharterAudit(db, ctx, {
+          action: "Controle adicional criado",
+          entityType: "charter.casecontrol",
+          entityId: created.id,
+          target: `${uc.code} · ${code} ${data.name}`,
+        });
+        return code;
+      }
+      throw new GovernanceError(
+        "control.extra.busy",
+        "Não foi possível numerar o controle adicional: muitas criações ao mesmo tempo. Tente de novo."
+      );
     });
     revalidatePath("/charter", "layout");
     return { controlCode };
@@ -636,6 +740,7 @@ export async function acceptControl(
     const accepted = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
       const control = await loadControl(db, uc.id, data.controlCode);
+      await assertNotProducer({ db, ctx, uc, control, includeCaseOwner: true });
       const acceptedAt = new Date();
       const expiresAt = expiresAtFor(
         control.cadence as ControlCadence,
@@ -682,6 +787,13 @@ export async function requestControlAdjustment(
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
       const control = await loadControl(db, uc.id, data.controlCode);
+      await assertNotProducer({
+        db,
+        ctx,
+        uc,
+        control,
+        includeCaseOwner: false,
+      });
       return applyTransition({
         db,
         ctx,
@@ -731,13 +843,8 @@ export async function dispenseControl(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      if (uc.ownerId && uc.ownerId === ctx.userId) {
-        throw new GovernanceError(
-          "control.dispense.own",
-          "Quem é dono do caso não pode dispensar controle dele."
-        );
-      }
       const control = await loadControl(db, uc.id, data.controlCode);
+      await assertNotProducer({ db, ctx, uc, control, includeCaseOwner: true });
       if (!control.dispensable) {
         throw new GovernanceError(
           "control.notDispensable",
@@ -778,6 +885,13 @@ export async function reopenControl(
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
       const control = await loadControl(db, uc.id, data.controlCode);
+      await assertNotProducer({
+        db,
+        ctx,
+        uc,
+        control,
+        includeCaseOwner: false,
+      });
       return applyTransition({
         db,
         ctx,

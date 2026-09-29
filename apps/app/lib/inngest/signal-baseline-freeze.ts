@@ -1,4 +1,5 @@
 import { withTenantDb } from "@repo/database";
+import { resolveBaselineValue } from "@/lib/signal/plan-freeze";
 import { inngest } from "./client";
 import {
   PRODUCT_EVENT_SCHEMAS,
@@ -55,13 +56,6 @@ export async function applyBaselineFrozen(
       return { skipped: "baseline-not-signed" as const };
     }
 
-    const valueByKey = new Map(
-      baseline.dimensions.map((d) => [
-        d.key,
-        d.numericValue === null ? null : String(d.numericValue),
-      ])
-    );
-
     const metrics = await db.signalPlanMetric.findMany({
       where: {
         tenantId: data.tenantId,
@@ -91,9 +85,15 @@ export async function applyBaselineFrozen(
     let alreadyFrozen = 0;
 
     for (const metric of metrics) {
-      const value = metric.baselineDimensionKey
-        ? (valueByKey.get(metric.baselineDimensionKey) ?? null)
-        : null;
+      // valor assinado ?? valor que a métrica já tinha: congelar nunca apaga um
+      // baseline existente.
+      const value = resolveBaselineValue(
+        baseline.dimensions,
+        metric.baselineDimensionKey,
+        metric.baselineValue
+      );
+      const previous =
+        metric.baselineValue === null ? null : String(metric.baselineValue);
 
       const updated = await db.signalPlanMetric.updateMany({
         where: {
@@ -122,11 +122,15 @@ export async function applyBaselineFrozen(
         version: metric.version + 1,
         changes: [
           ["state", metric.state, "FROZEN"],
-          [
-            "baselineValue",
-            metric.baselineValue === null ? null : String(metric.baselineValue),
-            value,
-          ],
+          ...(value === previous
+            ? []
+            : [
+                ["baselineValue", previous, value] as [
+                  string,
+                  string | null,
+                  string | null,
+                ],
+              ]),
         ],
         comment: value === null ? NO_VALUE_NOTE : null,
       });

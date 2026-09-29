@@ -9,6 +9,8 @@ const h = vi.hoisted(() => ({
   ccFindMany: vi.fn(),
   ccUpdateMany: vi.fn(),
   evCreateMany: vi.fn(),
+  auditCreateMany: vi.fn(),
+  captureException: vi.fn(),
   withTenantDb: vi.fn(),
   emit: vi.fn(),
 }));
@@ -28,6 +30,7 @@ vi.mock("@repo/database", () => ({
 vi.mock("@/lib/inngest/emit-product-event", () => ({
   emitProductEvent: h.emit,
 }));
+vi.mock("@sentry/nextjs", () => ({ captureException: h.captureException }));
 vi.mock("@repo/observability/log", () => ({
   log: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
@@ -43,6 +46,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   h.ccUpdateMany.mockResolvedValue({ count: 1 });
   h.evCreateMany.mockResolvedValue({ count: 1 });
+  h.auditCreateMany.mockResolvedValue({ count: 1 });
   h.emit.mockResolvedValue(undefined);
   h.ccFindMany.mockImplementation(async (args: { where: { state: string } }) =>
     args.where.state === "ACCEPTED"
@@ -60,6 +64,7 @@ beforeEach(() => {
           updateMany: h.ccUpdateMany,
         },
         charterCaseControlEvent: { createMany: h.evCreateMany },
+        auditLog: { createMany: h.auditCreateMany },
       })
   );
 });
@@ -85,8 +90,16 @@ describe("expireDueControls", () => {
   it("Aceita -> Vencida, guardando o estado esperado no UPDATE", async () => {
     await expireDueControls("t-1", NOW);
 
+    // A condição de vencimento repete no UPDATE: entre o SELECT e o UPDATE a
+    // pessoa pode ter renovado a evidência (expiresAt novo), e um UPDATE só por
+    // estado a venceria à força.
     expect(h.ccUpdateMany).toHaveBeenCalledWith({
-      where: { id: "cc1", tenantId: "t-1", state: "ACCEPTED" },
+      where: {
+        id: "cc1",
+        tenantId: "t-1",
+        state: "ACCEPTED",
+        expiresAt: { lte: NOW },
+      },
       data: { state: "EXPIRED" },
     });
   });
@@ -111,7 +124,12 @@ describe("expireDueControls", () => {
     await expireDueControls("t-1", NOW);
 
     expect(h.ccUpdateMany).toHaveBeenCalledWith({
-      where: { id: "cc3", tenantId: "t-1", state: "DISPENSED" },
+      where: {
+        id: "cc3",
+        tenantId: "t-1",
+        state: "DISPENSED",
+        dispensedUntil: { lte: NOW },
+      },
       data: {
         state: "REOPENED",
         dispensedUntil: null,
@@ -130,6 +148,25 @@ describe("expireDueControls", () => {
     expect(reopen.comment).toMatch(/prazo/i);
   });
 
+  it("audita cada mudança com ator system (a trilha do Charter não some no job)", async () => {
+    await expireDueControls("t-1", NOW);
+
+    const rows = h.auditCreateMany.mock.calls[0][0].data;
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toMatchObject({
+      tenantId: "t-1",
+      actorType: "system",
+      actorId: null,
+      userId: null,
+      action: "Controle vencido",
+      entityType: "charter.casecontrol",
+      entityId: "cc1",
+    });
+    expect(rows.map((r: { action: string }) => r.action)).toContain(
+      "Controle reaberto por prazo de dispensa"
+    );
+  });
+
   it("devolve os vencidos para o chamador anunciar depois da transação", async () => {
     const r = await expireDueControls("t-1", NOW);
 
@@ -146,6 +183,7 @@ describe("expireDueControls", () => {
     expect(r.expired).toEqual([]);
     expect(r.reopened).toBe(0);
     expect(h.evCreateMany).not.toHaveBeenCalled();
+    expect(h.auditCreateMany).not.toHaveBeenCalled();
   });
 
   it("nada vencido: nada é escrito", async () => {
@@ -215,6 +253,7 @@ describe("expireCharterControls (função Inngest)", () => {
               updateMany: h.ccUpdateMany,
             },
             charterCaseControlEvent: { createMany: h.evCreateMany },
+            auditLog: { createMany: h.auditCreateMany },
           })
       );
     const step = { run: vi.fn(async (_id: string, f: () => unknown) => f()) };
@@ -222,5 +261,12 @@ describe("expireCharterControls (função Inngest)", () => {
     const r = await fn.handler({ step });
 
     expect(r).toMatchObject({ expired: 2, failedTenants: 1 });
+    // Falha de tenant vai ao Sentry, não só ao log: job noturno que falha em
+    // silêncio deixa controle vencido sem bloquear a decisão.
+    expect(h.captureException).toHaveBeenCalledTimes(1);
+    expect(h.captureException.mock.calls[0][1]).toMatchObject({
+      tags: { job: "charter-control-expiry" },
+      extra: { tenantId: "t-ruim" },
+    });
   });
 });

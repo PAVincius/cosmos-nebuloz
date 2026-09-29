@@ -4,6 +4,7 @@ import {
   caseDecisionBlockers,
   controlProgress,
   expiresAtFor,
+  isTenantFileKey,
   MAX_DISPENSE_DAYS,
   nextControlState,
   partitionByClass,
@@ -168,5 +169,49 @@ describe("MAX_DISPENSE_DAYS (CH-PO-04, hipótese do Norte)", () => {
   it("prazo máximo de dispensa é de 6 meses", () => {
     expect(MAX_DISPENSE_DAYS).toBeGreaterThanOrEqual(180);
     expect(MAX_DISPENSE_DAYS).toBeLessThanOrEqual(186);
+  });
+});
+
+describe("isTenantFileKey (IDOR em chave de arquivo)", () => {
+  it("aceita chave do próprio tenant, com subpastas", () => {
+    expect(isTenantFileKey("t1", "t1/evidencias/rollback.pdf")).toBe(true);
+    expect(isTenantFileKey("t1", "t1/a.pdf")).toBe(true);
+    expect(isTenantFileKey("t1", "t1/2026/09/relatorio-v2_final.pdf")).toBe(
+      true
+    );
+  });
+
+  it("recusa chave de outro tenant", () => {
+    expect(isTenantFileKey("t1", "t2/a.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t10/a.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1x/a.pdf")).toBe(false);
+  });
+
+  it("recusa travessia com '..' (A/../B/x.pdf começa com A/ mas resolve em B)", () => {
+    expect(isTenantFileKey("t1", "t1/../t2/x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/evidencias/../../t2/x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/..")).toBe(false);
+  });
+
+  it("recusa '.' como segmento, '//' e '\\'", () => {
+    expect(isTenantFileKey("t1", "t1/./x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1//x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/evidencias\\x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1\\x.pdf")).toBe(false);
+  });
+
+  it("recusa chave vazia depois do tenant, terminada em '/' ou com caractere fora do conjunto", () => {
+    expect(isTenantFileKey("t1", "t1/")).toBe(false);
+    expect(isTenantFileKey("t1", "t1")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/a b.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/a%2e%2e/x.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/a?b.pdf")).toBe(false);
+    expect(isTenantFileKey("t1", "t1/x.pdf\n")).toBe(false);
+  });
+
+  it("não deixa o tenantId virar regex", () => {
+    expect(isTenantFileKey("t.1", "tX1/a.pdf")).toBe(false);
+    expect(isTenantFileKey("t.1", "t.1/a.pdf")).toBe(true);
+    expect(isTenantFileKey("t1|t2", "t2/a.pdf")).toBe(false);
   });
 });

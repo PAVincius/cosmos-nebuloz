@@ -141,6 +141,37 @@ describe("applyBaselineFrozen", () => {
     );
   });
 
+  it("NÃO apaga um baselineValue que a métrica já tinha quando a dimensão não traz valor", async () => {
+    h.metricFindMany.mockResolvedValue([
+      metric({ baselineDimensionKey: "QUALITY", baselineValue: "12" }),
+      metric({ id: "m-2", baselineDimensionKey: null, baselineValue: "7" }),
+    ]);
+
+    await applyBaselineFrozen(base);
+
+    const updates = h.metricUpdateMany.mock.calls.map((c) => c[0].data);
+    expect(updates[0].baselineValue).toBe("12");
+    expect(updates[1].baselineValue).toBe("7");
+    const events = h.eventCreateMany.mock.calls[0][0].data;
+    // Ficou com valor: sem a nota de "congelada sem valor".
+    expect(events[0].comment).toBeNull();
+    expect(events[1].comment).toBeNull();
+    // E o histórico não inventa mudança de baseline que não houve.
+    expect(events[0].changes).toEqual([["state", "MEASURING", "FROZEN"]]);
+  });
+
+  it("a nota de 'sem valor' só aparece se o valor ficou nulo mesmo", async () => {
+    h.metricFindMany.mockResolvedValue([
+      metric({ baselineDimensionKey: "QUALITY", baselineValue: null }),
+    ]);
+
+    await applyBaselineFrozen(base);
+
+    expect(h.eventCreateMany.mock.calls[0][0].data[0].comment).toMatch(
+      /sem valor de baseline/i
+    );
+  });
+
   it("métrica sem dimensão correspondente congela com baselineValue nulo e diz isso", async () => {
     h.metricFindMany.mockResolvedValue([
       metric({ baselineDimensionKey: null }),
