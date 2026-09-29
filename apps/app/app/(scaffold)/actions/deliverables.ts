@@ -30,6 +30,7 @@ import {
   decideLink,
   decideTransition,
   deliverableGrants,
+  effectiveStatus,
   type TransitionDenial,
 } from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
@@ -496,6 +497,8 @@ function publicRow<
   return { ...rest, hasFile: fileKey !== null };
 }
 
+const DERIVED_REASON = "Aprovado pela assinatura do caso de negócio.";
+
 export type LastReview = {
   action: "REQUEST_ADJUSTMENT" | "REOPEN";
   comment: string;
@@ -600,7 +603,7 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("deliverable.read");
     const input = TrackIdSchema.parse(raw);
-    const { rows, reviews, links } = await withTenantDb(
+    const { rows, reviews, links, signed } = await withTenantDb(
       ctx.tenantId,
       async (db) => {
         const found = await db.scaffoldDeliverableInstance.findMany({
@@ -608,10 +611,19 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
           orderBy: [{ code: "asc" }],
           select: LIST_SELECT,
         });
+        // O A3.2 é o caso de negócio: a lista precisa saber se ele está assinado
+        // para mostrar o que o gate já conta (Crivo G1).
+        const bc = found.length
+          ? await db.scaffoldBusinessCase.findFirst({
+              where: { tenantId: ctx.tenantId, trackId: input.trackId },
+              select: { signedVersionId: true },
+            })
+          : null;
         return {
           rows: found,
           reviews: await lastReviews(db, ctx.tenantId, found),
           links: await linksOf(db, ctx.tenantId, found),
+          signed: Boolean(bc?.signedVersionId),
         };
       }
     );
@@ -620,16 +632,38 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
     const actor = actorOf(ctx);
     return rows.map((d) => {
       const subject = toSubject(d);
+      const shown = effectiveStatus(
+        d.code,
+        d.status as DeliverableSubject["status"],
+        signed
+      );
+      // Derivado da assinatura: a lista mostra o que o gate conta, e nenhuma ação
+      // manual mexe nele (aprovar, reabrir ou enviar à mão contradiria a
+      // assinatura, que é a única fonte).
+      const derived = shown !== d.status;
       const attach = decideAttach(subject, actor);
+      const denied = { allowed: false, reason: DERIVED_REASON };
       return {
         ...publicRow(d),
+        status: shown,
+        derived,
         lastReview: reviews.get(d.id) ?? null,
         links: links.get(d.id) ?? [],
         linkAccess: linkAccessOf(decideLink(subject, actor)),
-        actions: availableActions(subject, actor),
-        attach: attach.ok
-          ? { allowed: true, reason: null }
-          : { allowed: false, reason: attach.message },
+        actions: derived
+          ? {
+              START: denied,
+              SUBMIT: denied,
+              APPROVE: denied,
+              REQUEST_ADJUSTMENT: denied,
+              REOPEN: denied,
+            }
+          : availableActions(subject, actor),
+        attach: derived
+          ? denied
+          : attach.ok
+            ? { allowed: true, reason: null }
+            : { allowed: false, reason: attach.message },
       };
     });
   });

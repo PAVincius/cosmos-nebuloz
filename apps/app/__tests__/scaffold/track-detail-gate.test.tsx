@@ -1421,3 +1421,40 @@ describe("upload que falha na rede", () => {
     ).toBe(false);
   });
 });
+
+describe("A3.2 derivado na tela (Crivo G1)", () => {
+  it("mostra Aprovado, a origem, e nenhum botão que mexa nele", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    const NOPE = {
+      allowed: false,
+      reason: "Aprovado pela assinatura do caso de negócio.",
+    };
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [
+        deliverable("APPROVED", {
+          code: "A3.2",
+          title: "Caso de negócio assinado",
+          derived: true,
+          actions: {
+            START: NOPE,
+            SUBMIT: NOPE,
+            APPROVE: NOPE,
+            REQUEST_ADJUSTMENT: NOPE,
+            REOPEN: NOPE,
+          },
+          attach: NOPE,
+        }),
+      ],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    expect(await screen.findByText("Aprovado")).toBeDefined();
+    expect(
+      screen.getByText("Aprovado pela assinatura do caso de negócio.")
+    ).toBeDefined();
+    expect(
+      (screen.getByRole("button", { name: /reabrir/i }) as HTMLButtonElement)
+        .disabled
+    ).toBe(true);
+  });
+});

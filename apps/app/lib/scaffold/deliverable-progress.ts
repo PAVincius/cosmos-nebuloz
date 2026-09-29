@@ -1,4 +1,4 @@
-import { BUSINESS_CASE_DELIVERABLE_CODE } from "./deliverable-machine";
+import { type DeliverableStatus, effectiveStatus } from "./deliverable-machine";
 
 /**
  * "X/Y entregáveis" do portfólio: aprovados sobre obrigatórios. Opcional e
@@ -16,9 +16,13 @@ export function deliverableProgress(
       continue;
     }
     required += 1;
-    const derived =
-      d.code === BUSINESS_CASE_DELIVERABLE_CODE && businessCaseSigned;
-    if (derived || d.status === "APPROVED") {
+    if (
+      effectiveStatus(
+        d.code,
+        d.status as DeliverableStatus,
+        businessCaseSigned
+      ) === "APPROVED"
+    ) {
       approved += 1;
     }
   }

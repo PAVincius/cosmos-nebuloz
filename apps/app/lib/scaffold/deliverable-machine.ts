@@ -396,6 +396,22 @@ export function availableActions(
   return out;
 }
 
+/**
+ * Estado que vale para o gate, o contador e a lista. O A3.2 é o caso de negócio:
+ * o estado dele deriva da assinatura (SG-04) e ninguém o aprova à mão, então é
+ * aprovado quando o caso está assinado, seja qual for o estado gravado. Uma regra
+ * só, para os três lugares não divergirem (Crivo G1).
+ */
+export function effectiveStatus(
+  code: string,
+  status: DeliverableStatus,
+  businessCaseSigned: boolean
+): DeliverableStatus {
+  return code === BUSINESS_CASE_DELIVERABLE_CODE && businessCaseSigned
+    ? "APPROVED"
+    : status;
+}
+
 export type PhaseDeliverable = GateDeliverable & { phaseInstanceId: string };
 
 /**
@@ -422,10 +438,7 @@ export function phaseGateState(
         code: d.code,
         title: d.title,
         required: d.required,
-        status:
-          d.code === BUSINESS_CASE_DELIVERABLE_CODE && businessCaseSigned
-            ? "APPROVED"
-            : d.status,
+        status: effectiveStatus(d.code, d.status, businessCaseSigned),
       }))
   );
 }

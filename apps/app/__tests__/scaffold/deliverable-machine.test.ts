@@ -8,6 +8,7 @@ import {
   decideLink,
   decideTransition,
   deliverableGrants,
+  effectiveStatus,
   gateReviewState,
   MIN_COMMENT_LENGTH,
   phaseGateState,
@@ -776,5 +777,29 @@ describe("decideLink", () => {
         as("CONSULTANT", "u-c")
       )
     ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+  });
+});
+
+// Crivo G1: o A3.2 é o caso de negócio, e o estado dele deriva da assinatura. A
+// mesma regra vale no gate, no contador e na lista.
+describe("effectiveStatus", () => {
+  it("A3.2 com o caso assinado é aprovado, seja qual for o estado gravado", () => {
+    for (const s of [
+      "NOT_STARTED",
+      "IN_PROGRESS",
+      "IN_REVIEW",
+      "REOPENED",
+    ] as const) {
+      expect(effectiveStatus("A3.2", s, true)).toBe("APPROVED");
+    }
+  });
+
+  it("sem assinatura, vale o gravado", () => {
+    expect(effectiveStatus("A3.2", "NOT_STARTED", false)).toBe("NOT_STARTED");
+  });
+
+  it("outro código nunca é derivado, com ou sem assinatura", () => {
+    expect(effectiveStatus("A3.1", "NOT_STARTED", true)).toBe("NOT_STARTED");
+    expect(effectiveStatus("X-001", "IN_PROGRESS", true)).toBe("IN_PROGRESS");
   });
 });

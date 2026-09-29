@@ -34,6 +34,7 @@ const h = vi.hoisted(() => ({
   linkCount: vi.fn(),
   linkCreate: vi.fn(),
   linkDelete: vi.fn(),
+  bcFindFirst: vi.fn(),
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -112,6 +113,7 @@ vi.mock("@repo/database", () => ({
         create: h.linkCreate,
         delete: h.linkDelete,
       },
+      scaffoldBusinessCase: { findFirst: h.bcFindFirst },
       tenantMember: { findFirst: h.memberFindFirst },
       user: { findMany: h.userFindMany },
       scaffoldPhaseInstance: {
@@ -204,6 +206,7 @@ beforeEach(() => {
   h.linkCount.mockResolvedValue(0);
   h.linkCreate.mockResolvedValue({ id: "lnk1" });
   h.linkDelete.mockResolvedValue({});
+  h.bcFindFirst.mockResolvedValue(null);
 });
 
 describe("transições gravam status, evento append-only e auditoria", () => {
@@ -1540,5 +1543,79 @@ describe("vínculos na lista", () => {
     h.findMany.mockResolvedValue([row("IN_PROGRESS")]);
     const r = await listDeliverables({ trackId: TRACK });
     expect(r.ok && r.data[0]?.linkAccess.allowed).toBe(false);
+  });
+});
+
+// Crivo G1: A3.2 aprovado pela assinatura aparecia "Não iniciado" na lista.
+describe("A3.2 derivado do caso de negócio na lista", () => {
+  const A32 = (status = "NOT_STARTED") =>
+    row(status, { id: "d32", code: "A3.2" });
+
+  it("com o caso assinado, a lista mostra Aprovado e diz de onde vem", async () => {
+    h.bcFindFirst.mockResolvedValue({ signedVersionId: "v1" });
+    h.findMany.mockResolvedValue([A32()]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]).toMatchObject({
+      code: "A3.2",
+      status: "APPROVED",
+      derived: true,
+    });
+  });
+
+  it("derivado não tem ação: ninguém aprova, reabre nem envia à mão", async () => {
+    h.bcFindFirst.mockResolvedValue({ signedVersionId: "v1" });
+    h.findMany.mockResolvedValue([A32()]);
+    const r = await listDeliverables({ trackId: TRACK });
+    const a = r.ok ? r.data[0]?.actions : null;
+    for (const t of Object.values(a ?? {})) {
+      expect(t.allowed).toBe(false);
+      expect(t.reason).toMatch(/assinatura do caso de negócio/i);
+    }
+    expect(r.ok && r.data[0]?.attach.allowed).toBe(false);
+  });
+
+  it("sem assinatura, é o gravado, sem marca de derivado", async () => {
+    h.bcFindFirst.mockResolvedValue({ signedVersionId: null });
+    h.findMany.mockResolvedValue([A32()]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]).toMatchObject({
+      status: "NOT_STARTED",
+      derived: false,
+    });
+  });
+
+  it("trilha sem caso (antiga): nada muda", async () => {
+    h.bcFindFirst.mockResolvedValue(null);
+    h.findMany.mockResolvedValue([A32()]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.status).toBe("NOT_STARTED");
+  });
+
+  it("só o A3.2 é derivado: os outros ficam como estão", async () => {
+    h.bcFindFirst.mockResolvedValue({ signedVersionId: "v1" });
+    h.findMany.mockResolvedValue([
+      A32(),
+      row("IN_PROGRESS", { id: "d2", code: "A3.1" }),
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data.map((d) => [d.code, d.status, d.derived])).toEqual([
+      ["A3.2", "APPROVED", true],
+      ["A3.1", "IN_PROGRESS", false],
+    ]);
+  });
+
+  it("consulta o caso da própria trilha, do tenant da sessão", async () => {
+    h.findMany.mockResolvedValue([A32()]);
+    await listDeliverables({ trackId: TRACK });
+    expect(h.bcFindFirst.mock.calls[0]?.[0].where).toEqual({
+      tenantId: "t1",
+      trackId: TRACK,
+    });
+  });
+
+  it("trilha sem entregável não consulta o caso", async () => {
+    h.findMany.mockResolvedValue([]);
+    await listDeliverables({ trackId: TRACK });
+    expect(h.bcFindFirst).not.toHaveBeenCalled();
   });
 });
