@@ -68,6 +68,7 @@ export type SignalEntity =
   | "signal.initiative"
   | "signal.baseline"
   | "signal.baselinedimension"
+  | "signal.planmetric"
   | "signal.connection"
   | "signal.mapping"
   | "signal.observation"
