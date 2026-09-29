@@ -43,6 +43,16 @@ describe("MeridianBenchmarkControle", () => {
     expect(screen.getByRole("button", { name: "Ligar" })).toBeTruthy();
   });
 
+  it("dica do campo: só o número do aditivo, sem nome de pessoa", () => {
+    render(
+      <MeridianBenchmarkControle canWrite estado={DESLIGADO} slug="acme" />
+    );
+
+    expect(
+      screen.getByText(/só o número do aditivo, sem nome de pessoa/i)
+    ).toBeTruthy();
+  });
+
   it("ligado: diz o estado, a referência gravada e oferece desligar", () => {
     render(<MeridianBenchmarkControle canWrite estado={LIGADO} slug="acme" />);
 

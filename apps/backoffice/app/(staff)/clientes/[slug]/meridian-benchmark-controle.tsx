@@ -137,7 +137,8 @@ export function MeridianBenchmarkControle({
               />
               <p style={NOTA}>
                 Obrigatória para ligar um cliente: a referência do aditivo
-                contratual assinado (DPA §2.1).
+                contratual assinado (DPA §2.1). Só o número do aditivo, sem nome
+                de pessoa: a referência vai para a trilha de auditoria.
               </p>
             </>
           )}
