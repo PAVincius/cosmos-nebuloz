@@ -1,0 +1,121 @@
+// RASCUNHO — SC-DEV-03 (correcoes.pdf). NÃO É DECISÃO FECHADA.
+//
+// Depende do Norte: o mapeamento dos códigos A1..E3 sobre as 4 fases atuais e a
+// matriz de papéis (SC-PO-04). Por isso `code` é texto livre e `ownerId` /
+// `approverId` não fixam papel. Revisar antes de qualquer uso por código de
+// produto; nenhuma action lê estas tabelas ainda.
+//
+// Convenções herdadas de scaffold.prisma: tenantId em toda tabela; histórico
+// append-only; arquivo por chave opaca, nunca URL (toda leitura passa pelo log
+// de acesso, SN-06).
+
+/// Fluxo do entregável: Não iniciado → Em elaboração → Em revisão →
+/// Ajuste pedido / Aprovado → Reaberto. Pedir ajuste e reabrir exigem comentário
+/// (SC-PO-03), regra de action, não de banco.
+enum ScaffoldDeliverableStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  IN_REVIEW
+  ADJUSTMENT_REQUESTED
+  APPROVED
+  REOPENED
+}
+
+/// Ação registrada no histórico. Uma por transição ou edição.
+enum ScaffoldDeliverableAction {
+  START
+  ATTACH_VERSION
+  SUBMIT
+  REQUEST_ADJUSTMENT
+  APPROVE
+  REOPEN
+  EDIT
+}
+
+/// Entregável de uma trilha, gerado na criação a partir do template pinado
+/// (SC-DEV-02). Texto copiado do template, como no passo (ST-03).
+model ScaffoldDeliverableInstance {
+  id              String @id @default(cuid())
+  tenantId        String
+  trackId         String
+  phaseInstanceId String
+
+  /// Código do template, ex. "A1.1". Estável dentro da versão do template.
+  /// Vazio/livre para o extra. Formato pendente do Norte.
+  code        String
+  /// `key` do entregável no template de origem. Sem FK, como stepTemplateKey.
+  templateKey String?
+  title       String
+  /// "O que ele diz" — para que serve, copiado do template.
+  description String  @db.Text
+
+  /// Entregável fora do template (overlay). Pode ser obrigatório para o gate.
+  isExtra  Boolean @default(false)
+  /// Obrigatório para o gate "Revisar e assinar" (SG-01).
+  required Boolean @default(true)
+
+  status     ScaffoldDeliverableStatus @default(NOT_STARTED)
+  ownerId    String?
+  approverId String?
+  summary    String?                   @db.Text
+  dueAt      DateTime?
+
+  /// Versão atual (vN). Sobe a cada `ATTACH_VERSION`.
+  version  Int     @default(0)
+  /// Chave opaca do arquivo da versão atual no bucket privado do tenant.
+  fileKey  String?
+  fileName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant        Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  track         ScaffoldTrack                @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  phaseInstance ScaffoldPhaseInstance        @relation(fields: [phaseInstanceId], references: [id], onDelete: Cascade)
+  events        ScaffoldDeliverableEvent[]
+  comments      ScaffoldDeliverableComment[]
+
+  @@unique([trackId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([phaseInstanceId])
+}
+
+/// Histórico do entregável. Append-only: nunca editado, sem updatedAt. Cada ação
+/// grava ator e data (SC-DEV-05).
+model ScaffoldDeliverableEvent {
+  id            String                     @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  action        ScaffoldDeliverableAction
+  actorId       String
+  fromStatus    ScaffoldDeliverableStatus?
+  toStatus      ScaffoldDeliverableStatus?
+  /// Versão do arquivo no momento (só em ATTACH_VERSION).
+  version       Int?
+  /// Obrigatório em REQUEST_ADJUSTMENT e REOPEN (regra de action).
+  comment       String?                    @db.Text
+  createdAt     DateTime                   @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([deliverableId, createdAt])
+}
+
+/// Conversa livre no entregável, fora do fluxo de estados.
+model ScaffoldDeliverableComment {
+  id            String   @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  authorId      String
+  body          String   @db.Text
+  createdAt     DateTime @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([deliverableId, createdAt])
+}

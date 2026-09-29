@@ -250,6 +250,9 @@ model Tenant {
   scaffoldSettings         ScaffoldSettings?
   scaffoldTracks           ScaffoldTrack[]
   processRegistries        ProcessRegistry[]
+  scaffoldDeliverables     ScaffoldDeliverableInstance[]
+  scaffoldDeliverableEvents ScaffoldDeliverableEvent[]
+  scaffoldDeliverableComments ScaffoldDeliverableComment[]
   scaffoldGateResults      ScaffoldGateResult[]
   scaffoldGateOverrides    ScaffoldGateOverride[]
   scaffoldBusinessCases    ScaffoldBusinessCase[]
