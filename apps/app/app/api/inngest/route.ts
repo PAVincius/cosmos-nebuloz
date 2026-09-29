@@ -18,6 +18,7 @@ import { closeScaffoldObservation } from "@/lib/inngest/scaffold-observation";
 import { checkScaffoldStall } from "@/lib/inngest/scaffold-stall";
 import { scheduledReportDispatch } from "@/lib/inngest/scheduled-report-dispatch";
 import { runScheduledReport } from "@/lib/inngest/scheduled-report-runner";
+import { freezePlanOnBaseline } from "@/lib/inngest/signal-baseline-freeze";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
 import { deliverWebhookEvent } from "@/lib/inngest/webhook-delivery";
 import { checkWorkflowSla } from "@/lib/inngest/workflow-sla";
@@ -48,5 +49,6 @@ export const { GET, POST, PUT } = serve({
     releaseWorkflowWaitState,
     checkWorkflowSla,
     consumeScaffoldGateClosed,
+    freezePlanOnBaseline,
   ],
 });

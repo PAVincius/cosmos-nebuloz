@@ -139,4 +139,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929010100_signal_plan_metric",
   "20260929010200_charter_control_profiles",
   "20260929010300_charter_case_controls",
+  "20260929010400_signal_plan_metric_baseline_key",
 ];
