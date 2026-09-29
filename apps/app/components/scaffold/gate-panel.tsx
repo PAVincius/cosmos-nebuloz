@@ -265,7 +265,7 @@ export function GatePanel({
             size="sm"
             title={closeBlockedReason ?? undefined}
           >
-            Fechar gate
+            Revisar e assinar
           </Button>
         </div>
       ) : null}

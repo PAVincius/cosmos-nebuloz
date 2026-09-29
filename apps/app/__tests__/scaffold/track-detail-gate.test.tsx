@@ -121,7 +121,7 @@ describe("GatePanel — fechar", () => {
 
     fireEvent.click(await screen.findByLabelText("Piloto vence o baseline"));
     fireEvent.click(screen.getByLabelText("Nenhum risco novo"));
-    fireEvent.click(screen.getByRole("button", { name: /fechar gate/i }));
+    fireEvent.click(screen.getByRole("button", { name: /revisar e assinar/i }));
 
     await waitFor(() => expect(h.closePhase).toHaveBeenCalledTimes(1));
     expect(h.closePhase.mock.calls[0][0]).toEqual({
@@ -138,7 +138,9 @@ describe("GatePanel — fechar", () => {
     h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
     render(<TrackDetailScreen param="trk1" />);
     await screen.findByText("Gate da fase");
-    expect(screen.queryByRole("button", { name: /fechar gate/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /revisar e assinar/i })
+    ).toBeNull();
   });
 });
 
@@ -156,7 +158,7 @@ describe("GatePanel — recusa SG-02 vira override", () => {
     fireEvent.click(await screen.findByLabelText("Piloto vence o baseline"));
     // Depois da recusa o servidor já moveu a fase para BLOCKED.
     h.getTrack.mockResolvedValue({ ok: true, data: trackWith("BLOCKED") });
-    fireEvent.click(screen.getByRole("button", { name: /fechar gate/i }));
+    fireEvent.click(screen.getByRole("button", { name: /revisar e assinar/i }));
 
     const alert = await screen.findByRole("alert");
     expect(alert.textContent).toContain("Há critério de gate não atendido.");
@@ -427,7 +429,9 @@ describe("entregáveis na tela", () => {
     });
     render(<TrackDetailScreen param="trk1" />);
 
-    const close = await screen.findByRole("button", { name: /fechar gate/i });
+    const close = await screen.findByRole("button", {
+      name: /revisar e assinar/i,
+    });
     await waitFor(() => expect(close).toHaveProperty("disabled", true));
     expect(
       screen.getByText("1 entregável obrigatório pendente: B1.2.")
@@ -443,7 +447,9 @@ describe("entregáveis na tela", () => {
       data: [deliverable("APPROVED")],
     });
     render(<TrackDetailScreen param="trk1" />);
-    const close = await screen.findByRole("button", { name: /fechar gate/i });
+    const close = await screen.findByRole("button", {
+      name: /revisar e assinar/i,
+    });
     expect(close).toHaveProperty("disabled", false);
   });
 
