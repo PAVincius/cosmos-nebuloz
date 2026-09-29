@@ -32,6 +32,31 @@ ENV SKIP_ENV_VALIDATION=${SKIP_ENV_VALIDATION}
 ENV DOCKER_BUILD=true
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# O `next build` estoura o heap padrão (~2 GB) no type check do apps/app — o
+# mesmo motivo do NODE_OPTIONS no job Build do ci.yml.
+ENV NODE_OPTIONS=--max-old-space-size=6144
+
+# Placeholders de build, não segredos — mesma política do job Build do ci.yml.
+# `prisma generate` valida DATABASE_URL sem conectar; `packages/auth/server.ts`
+# valida o segredo no import, e o "Collecting page data" importa a rota de
+# auth. Nada disso vai para o estágio `runner`: os valores reais entram em
+# runtime, por variável de ambiente do container.
+ARG DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+ARG BETTER_AUTH_SECRET=docker-build-placeholder-nao-e-segredo-0123456789
+# As `NEXT_PUBLIC_*` são inlinadas no bundle pelo Next — é a exceção conhecida
+# ao "mesmo artefato em todo ambiente". O pipeline passa as URLs reais por
+# --build-arg; sem elas, `.invalid` (RFC 2606) garante que nada saia para a
+# rede de ninguém.
+ARG NEXT_PUBLIC_APP_URL=https://app.placeholder.invalid
+ARG NEXT_PUBLIC_WEB_URL=https://web.placeholder.invalid
+ARG NEXT_PUBLIC_POSTHOG_KEY=phc_docker_build_placeholder
+ARG NEXT_PUBLIC_POSTHOG_HOST=https://posthog.placeholder.invalid
+ENV DATABASE_URL=${DATABASE_URL} \
+    BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET} \
+    NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL} \
+    NEXT_PUBLIC_WEB_URL=${NEXT_PUBLIC_WEB_URL} \
+    NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY} \
+    NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
 
 WORKDIR /app
 
@@ -73,13 +98,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/app/.next/static ./apps/app/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/app/public ./apps/app/public
 
-# Copy Prisma schema + client + migrations for runtime migration
+# Client do Prisma gerado. As migrations NÃO rodam aqui: a imagem não leva o
+# CLI do Prisma, e o Prisma 7 exige o prisma.config.ts com a datasource. Quem
+# migra é o pipeline, antes de subir o container (job `staging` do
+# pipeline.yml). Os COPY de `node_modules/.prisma` que ficavam aqui apontavam
+# para caminhos que o Prisma 7 não gera mais e quebravam o build da imagem.
 COPY --from=builder --chown=nextjs:nodejs /app/packages/database/generated ./packages/database/generated
-COPY --from=builder --chown=nextjs:nodejs /app/packages/database/prisma.config.ts ./packages/database/
-COPY --from=builder /app/packages/database/node_modules/.prisma ./packages/database/node_modules/.prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # Startup script
 COPY --chown=nextjs:nodejs apps/app/scripts/docker-start.sh /app/docker-start.sh

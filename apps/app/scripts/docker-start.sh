@@ -46,15 +46,10 @@ fi
 ok "Environment validated"
 
 # ─── 2. Database migration ────────────────────────────────────────────────────
-log "Running database migrations..."
-if node_modules/.bin/prisma migrate deploy --schema=/app/packages/database/generated/schema.prisma 2>&1; then
-  ok "Migrations applied"
-else
-  MIGRATE_EXIT=$?
-  # Don't block startup if migrate deploy fails due to no pending migrations
-  # (exit code 0 for no-op, non-zero only on actual errors)
-  warn "Migration step exited with code $MIGRATE_EXIT — check logs"
-fi
+# Fora do container de propósito: migrar é um passo do pipeline, feito uma vez
+# antes do deploy, e não algo que cada réplica tenta ao subir (N réplicas
+# disputando o advisory lock do `migrate deploy`). A imagem nem leva o CLI.
+log "Migrations are applied by the pipeline before deploy — skipping here."
 
 # ─── 3. Start Next.js ────────────────────────────────────────────────────────
 ok "Starting Cosmos Enterprise on port ${PORT:-3000}..."
