@@ -34,6 +34,7 @@ dotenv.config({ path: ".env.local" });
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { CHARTER_CLAUSES } from "@repo/provisioning/src/charter-clauses";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";
@@ -205,31 +206,6 @@ const VERSIONS = [
     summary: "Primeira versão com requisitos de aprovação por criticidade.",
     changes: 5,
   },
-];
-
-// ── Cláusulas ─────────────────────────────────────────────────────────────────
-
-const CLAUSES = [
-  {
-    code: "CL-01",
-    name: "Proibição de treinamento com dados do cliente",
-    critical: true,
-  },
-  { code: "CL-02", name: "Retenção zero de prompt e resposta", critical: true },
-  { code: "CL-03", name: "Notificação de incidente em 24h", critical: true },
-  {
-    code: "CL-04",
-    name: "Lista de sub-processadores e direito de objeção",
-    critical: true,
-  },
-  {
-    code: "CL-05",
-    name: "Localidade de processamento definida contratualmente",
-    critical: false,
-  },
-  { code: "CL-06", name: "Direito de auditoria anual", critical: false },
-  { code: "CL-07", name: "Indenização por violação de PI", critical: false },
-  { code: "CL-08", name: "BAA / adendo de dado de saúde", critical: true },
 ];
 
 // ── Fornecedores ──────────────────────────────────────────────────────────────
@@ -1172,7 +1148,7 @@ async function main() {
 
       // ── Cláusulas ──
       const clauseIds: Record<string, string> = {};
-      for (const c of CLAUSES) {
+      for (const c of CHARTER_CLAUSES) {
         const created = await tx.charterClause.create({
           data: { tenantId, code: c.code, name: c.name, critical: c.critical },
         });
@@ -1220,7 +1196,7 @@ async function main() {
         }
       }
       console.log(
-        `  ✓ ${CLAUSES.length} cláusulas · ${VENDORS.length} fornecedores`
+        `  ✓ ${CHARTER_CLAUSES.length} cláusulas · ${VENDORS.length} fornecedores`
       );
       console.log(`    teto derivado: ${derived.join("  ")}`);
 
