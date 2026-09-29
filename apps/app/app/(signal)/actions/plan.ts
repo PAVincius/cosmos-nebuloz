@@ -1,0 +1,640 @@
+"use server";
+
+import { type WorkForm, withTenantDb } from "@repo/database";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { emitProductEvent } from "@/lib/inngest/emit-product-event";
+import { SignalRuleError, SignalStateConflictError } from "@/lib/signal/errors";
+import {
+  requireInitiativeOwnership,
+  requireSignalPermissionContext,
+  type SignalContext,
+} from "@/lib/signal/guards";
+import {
+  COMMENT_REQUIRED,
+  diffMetricEdit,
+  nextStateFor,
+  PLAN_STATE_META,
+  type PlanAction,
+  type PlanState,
+  planActionDenial,
+} from "@/lib/signal/plan";
+import { nnStr } from "../../actions/_base";
+import {
+  type AuditDiff,
+  type Db,
+  FIELD_LABELS,
+  logSignalAudit,
+  type SignalResult,
+  signalAction,
+} from "./_shared";
+
+// Plano de medição da iniciativa — SG-DEV-05.
+//
+// Toda mutação segue a mesma ordem: sessão + módulo + papel → papel pode mover
+// o plano (ADMIN não, SG-PO-03) → a métrica é lida pelo tenant do contexto →
+// posse da iniciativa → regra de estado → escrita + histórico + trilha, na
+// mesma transação. O histórico da métrica (SignalPlanMetricEvent) é o "antes e
+// depois" do plano; a trilha (AuditLog) é a prova para fora do produto.
+
+const Id = z.object({ id: nnStr });
+const Comment = z.string().trim().min(3).max(2000);
+
+type Loaded = NonNullable<Awaited<ReturnType<typeof loadMetric>>>;
+
+/** Permissão de escrever no plano + papel que decide. */
+async function decisionContext(action: PlanAction): Promise<SignalContext> {
+  const ctx = await requireSignalPermissionContext("signal.initiative.write");
+  const denial = planActionDenial(ctx.signalRole, action);
+  if (denial) {
+    throw new SignalRuleError("plan.role.denied", denial);
+  }
+  return ctx;
+}
+
+/** A métrica é procurada pelo tenant do contexto, nunca só por id: id de outro
+ *  tenant vira "não encontrada", não "proibida" (não confirma que existe). */
+async function loadMetric(db: Db, tenantId: string, id: string) {
+  const metric = await db.signalPlanMetric.findFirst({
+    where: { id, tenantId },
+    include: {
+      initiative: {
+        select: {
+          id: true,
+          code: true,
+          name: true,
+          ownerId: true,
+          scaffoldTrackId: true,
+        },
+      },
+    },
+  });
+  if (!metric) {
+    throw new SignalRuleError(
+      "plan.not-found",
+      "Métrica não encontrada nesta organização."
+    );
+  }
+  return metric;
+}
+
+async function loadInitiative(db: Db, tenantId: string, code: string) {
+  const initiative = await db.signalInitiative.findUnique({
+    where: { tenantId_code: { tenantId, code } },
+  });
+  if (!initiative) {
+    throw new SignalRuleError(
+      "initiative.not-found",
+      `Iniciativa ${code} não encontrada nesta organização.`
+    );
+  }
+  return initiative;
+}
+
+function recordEvent(
+  db: Db,
+  ctx: SignalContext,
+  metric: { id: string },
+  event: {
+    action:
+      | "PROPOSE"
+      | "APPROVE"
+      | "MAP_SOURCE"
+      | "START_MEASURING"
+      | "PAUSE"
+      | "RESUME"
+      | "REQUEST_TARGET_REVIEW"
+      | "EDIT";
+    fromState: PlanState | null;
+    toState: PlanState | null;
+    version: number;
+    changes?: AuditDiff;
+    comment?: string;
+  }
+) {
+  return db.signalPlanMetricEvent.create({
+    data: {
+      tenantId: ctx.tenantId,
+      planMetricId: metric.id,
+      actorId: ctx.userId,
+      action: event.action,
+      fromState: event.fromState,
+      toState: event.toState,
+      version: event.version,
+      changes: event.changes ?? undefined,
+      comment: event.comment ?? null,
+    },
+    select: { id: true },
+  });
+}
+
+const stateLabel = (s: PlanState) => PLAN_STATE_META[s].label;
+
+function invalidTransition(metric: Loaded, verb: string): never {
+  throw new SignalStateConflictError(
+    "plan.transition.invalid",
+    `Não dá para ${verb} uma métrica ${stateLabel(metric.state).toLowerCase()}.`
+  );
+}
+
+function revalidate(code: string) {
+  revalidatePath(`/signal/initiative/${code}`);
+  revalidatePath("/signal/models");
+}
+
+// ── Gerar o plano do modelo (SG-DEV-02) ───────────────────────────────────────
+
+/** Versão do modelo que o plano usa. A iniciativa pina a versão ao gerar o
+ *  plano: publicar versão nova do modelo não reescreve o plano de quem já está
+ *  medindo. */
+async function resolveModelVersion(
+  db: Db,
+  initiative: {
+    id: string;
+    workForm: WorkForm | null;
+    measureModelVersionId: string | null;
+  }
+) {
+  let versionId = initiative.measureModelVersionId;
+  if (!versionId) {
+    if (!initiative.workForm) {
+      throw new SignalRuleError(
+        "plan.no-model",
+        "Classifique a forma de trabalho da iniciativa antes de gerar o plano: é dela que vem o modelo de medição."
+      );
+    }
+    const model = await db.signalMeasureModel.findUnique({
+      where: { workForm: initiative.workForm },
+    });
+    const latest = model
+      ? await db.signalMeasureModelVersion.findFirst({
+          where: { modelId: model.id },
+          orderBy: { publishedAt: "desc" },
+        })
+      : null;
+    if (!latest) {
+      throw new SignalRuleError(
+        "plan.no-model",
+        "Não há modelo de medição publicado para esta forma de trabalho."
+      );
+    }
+    versionId = latest.id;
+    await db.signalInitiative.update({
+      where: { id: initiative.id },
+      data: { measureModelVersionId: versionId },
+    });
+  }
+
+  const version = await db.signalMeasureModelVersion.findUnique({
+    where: { id: versionId },
+    include: { metrics: { orderBy: { seq: "asc" } } },
+  });
+  if (!version || version.metrics.length === 0) {
+    throw new SignalRuleError(
+      "plan.no-model",
+      "O modelo pinado nesta iniciativa não tem métricas."
+    );
+  }
+  return version;
+}
+
+export async function generatePlan(raw: {
+  initiativeCode: string;
+}): Promise<SignalResult<{ metrics: number }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("edit");
+    const { initiativeCode } = z.object({ initiativeCode: nnStr }).parse(raw);
+
+    const created = await withTenantDb(ctx.tenantId, async (db) => {
+      const initiative = await loadInitiative(db, ctx.tenantId, initiativeCode);
+      requireInitiativeOwnership(ctx, initiative);
+
+      const existing = await db.signalPlanMetric.count({
+        where: { tenantId: ctx.tenantId, initiativeId: initiative.id },
+      });
+      if (existing > 0) {
+        throw new SignalRuleError(
+          "plan.exists",
+          "Esta iniciativa já tem plano de medição. Proponha métrica nova em vez de gerar de novo."
+        );
+      }
+
+      const version = await resolveModelVersion(db, initiative);
+
+      // isCurrentPrimary é `true` na primária e NULL nas demais, nunca `false`:
+      // é o par com o unique do banco que garante UMA primária por iniciativa.
+      await db.signalPlanMetric.createMany({
+        data: version.metrics.map((m) => ({
+          tenantId: ctx.tenantId,
+          initiativeId: initiative.id,
+          modelMetricId: m.id,
+          role: m.role,
+          name: m.name,
+          formula: m.formula,
+          direction: m.direction,
+          state: "NO_SOURCE" as const,
+          isCurrentPrimary: m.role === "PRIMARY" ? true : null,
+        })),
+      });
+
+      await logSignalAudit(db, ctx, {
+        action: "Plano de medição gerado",
+        entityType: "signal.planmetric",
+        entityId: initiative.id,
+        target: `${initiative.code} · ${initiative.name}`,
+        note: `${version.metrics.length} métricas do modelo`,
+      });
+      return version.metrics.length;
+    });
+
+    revalidate(initiativeCode);
+    return { metrics: created };
+  });
+}
+
+// ── Propor métrica fora do modelo (SG-PO-05) ──────────────────────────────────
+
+const ProposeSchema = z.object({
+  initiativeCode: nnStr,
+  role: z.enum(["PRIMARY", "GUARD", "ADOPTION", "VALUE"]),
+  name: nnStr,
+  formula: z.string().trim().min(3).max(2000),
+  direction: z.enum(["UP", "DOWN"]),
+  targetValue: z.number().finite().nullable().optional(),
+});
+
+export async function proposeMetric(
+  raw: z.input<typeof ProposeSchema>
+): Promise<SignalResult<{ id: string }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("propose");
+    const input = ProposeSchema.parse(raw);
+
+    // Primária tem regra própria (SG-PO-02): trocar exige justificativa e cria
+    // versão do plano. Uma proposta que já nascesse primária furaria isso.
+    if (input.role === "PRIMARY") {
+      throw new SignalRuleError(
+        "plan.proposal.primary",
+        "Métrica proposta não pode ser a primária. Só uma proposta de guarda, adoção ou valor; a troca de primária tem regra própria."
+      );
+    }
+
+    const saved = await withTenantDb(ctx.tenantId, async (db) => {
+      const initiative = await loadInitiative(
+        db,
+        ctx.tenantId,
+        input.initiativeCode
+      );
+      requireInitiativeOwnership(ctx, initiative);
+
+      const metric = await db.signalPlanMetric.create({
+        data: {
+          tenantId: ctx.tenantId,
+          initiativeId: initiative.id,
+          modelMetricId: null,
+          role: input.role,
+          name: input.name,
+          formula: input.formula,
+          direction: input.direction,
+          state: "PROPOSED",
+          targetValue: input.targetValue ?? null,
+        },
+      });
+      await recordEvent(db, ctx, metric, {
+        action: "PROPOSE",
+        fromState: null,
+        toState: "PROPOSED",
+        version: 1,
+      });
+      await logSignalAudit(db, ctx, {
+        action: "Métrica proposta",
+        entityType: "signal.planmetric",
+        entityId: metric.id,
+        target: `${initiative.code} · ${input.name}`,
+        note: "Fora do modelo: não entra no veredito até ser aprovada.",
+      });
+      return { id: metric.id };
+    });
+
+    revalidate(input.initiativeCode);
+    return saved;
+  });
+}
+
+// ── Transições de estado ──────────────────────────────────────────────────────
+
+type TransitionSpec = {
+  action: "approve" | "pause" | "resume";
+  event: "APPROVE" | "PAUSE" | "RESUME";
+  verb: string;
+  audit: string;
+};
+
+async function applyTransition(args: {
+  db: Db;
+  ctx: SignalContext;
+  id: string;
+  spec: TransitionSpec;
+  comment: string | undefined;
+}): Promise<{ state: PlanState; code: string }> {
+  const { db, ctx, id, spec, comment } = args;
+  const metric = await loadMetric(db, ctx.tenantId, id);
+  requireInitiativeOwnership(ctx, metric.initiative);
+
+  const next = nextStateFor(metric.state, spec.action);
+  if (!next) {
+    invalidTransition(metric, spec.verb);
+  }
+
+  await db.signalPlanMetric.update({
+    where: { id: metric.id },
+    data: { state: next },
+  });
+  await recordEvent(db, ctx, metric, {
+    action: spec.event,
+    fromState: metric.state,
+    toState: next,
+    version: metric.version,
+    comment,
+  });
+  await logSignalAudit(db, ctx, {
+    action: spec.audit,
+    entityType: "signal.planmetric",
+    entityId: metric.id,
+    target: `${metric.initiative.code} · ${metric.name}`,
+    note: comment,
+    diff: [[FIELD_LABELS.state, stateLabel(metric.state), stateLabel(next)]],
+  });
+  return { state: next, code: metric.initiative.code };
+}
+
+async function moveState(
+  raw: unknown,
+  spec: TransitionSpec
+): Promise<SignalResult<{ state: PlanState }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext(spec.action);
+    const input = Id.extend({
+      comment: COMMENT_REQUIRED.includes(spec.action)
+        ? Comment
+        : Comment.optional(),
+    }).parse(raw);
+    const { comment } = input;
+
+    const result = await withTenantDb(ctx.tenantId, (db) =>
+      applyTransition({ db, ctx, id: input.id, spec, comment })
+    );
+
+    revalidate(result.code);
+    return { state: result.state };
+  });
+}
+
+/** Proposta → Sem fonte. Só o OWNER (ou o Analista, que o alcança). */
+export function approveMetric(raw: { id: string }) {
+  return moveState(raw, {
+    action: "approve",
+    event: "APPROVE",
+    verb: "aprovar",
+    audit: "Métrica aprovada no plano",
+  });
+}
+
+export function pauseMetric(raw: { id: string; comment: string }) {
+  return moveState(raw, {
+    action: "pause",
+    event: "PAUSE",
+    verb: "pausar",
+    audit: "Métrica pausada",
+  });
+}
+
+export function resumeMetric(raw: { id: string; comment: string }) {
+  return moveState(raw, {
+    action: "resume",
+    event: "RESUME",
+    verb: "retomar",
+    audit: "Métrica retomada",
+  });
+}
+
+// ── Mapear fonte (SG-PM-03) ───────────────────────────────────────────────────
+
+/** Valida o mapeamento contra a métrica e decide se ela passa a Medindo. */
+async function resolveSource(
+  db: Db,
+  tenantId: string,
+  metric: Loaded,
+  mappingId: string
+) {
+  if (metric.state === "PROPOSED") {
+    throw new SignalRuleError(
+      "plan.source.not-approved",
+      "Aprove a métrica no plano antes de mapear a fonte: proposta não é medida."
+    );
+  }
+
+  const mapping = await db.signalMetricMapping.findFirst({
+    where: { id: mappingId, tenantId },
+    include: { connection: { select: { health: true } } },
+  });
+  if (!mapping) {
+    throw new SignalRuleError(
+      "plan.source.not-found",
+      "Mapeamento não encontrado nesta organização."
+    );
+  }
+  // Mapeamento global (initiativeId nulo) serve a qualquer iniciativa; o de
+  // outra iniciativa não pode alimentar esta.
+  if (mapping.initiativeId && mapping.initiativeId !== metric.initiativeId) {
+    throw new SignalRuleError(
+      "plan.source.foreign",
+      "Este mapeamento é de outra iniciativa."
+    );
+  }
+
+  // Sem fonte → Medindo é do sistema, e só com a conexão saudável: medir por
+  // fonte parada ou caída produziria um número sem lastro.
+  const starts =
+    metric.state === "NO_SOURCE" && mapping.connection.health === "HEALTHY";
+  const next: PlanState = starts ? "MEASURING" : metric.state;
+  return { mapping, starts, next };
+}
+
+export async function mapMetricSource(raw: {
+  id: string;
+  mappingId: string;
+}): Promise<SignalResult<{ state: PlanState }>> {
+  return await signalAction(async () => {
+    const ctx = await requireSignalPermissionContext("signal.mapping.write");
+    const input = Id.extend({ mappingId: nnStr }).parse(raw);
+
+    const result = await withTenantDb(ctx.tenantId, async (db) => {
+      const metric = await loadMetric(db, ctx.tenantId, input.id);
+
+      const { mapping, starts, next } = await resolveSource(
+        db,
+        ctx.tenantId,
+        metric,
+        input.mappingId
+      );
+
+      await db.signalPlanMetric.update({
+        where: { id: metric.id },
+        data: { sourceMappingId: mapping.id, state: next },
+      });
+      await recordEvent(db, ctx, metric, {
+        action: "MAP_SOURCE",
+        fromState: metric.state,
+        toState: metric.state,
+        version: metric.version,
+        changes: [[FIELD_LABELS.sourceMappingId, "—", mapping.code]],
+      });
+      if (starts) {
+        await recordEvent(db, ctx, metric, {
+          action: "START_MEASURING",
+          fromState: metric.state,
+          toState: next,
+          version: metric.version,
+        });
+      }
+      await logSignalAudit(db, ctx, {
+        action: "Fonte mapeada na métrica",
+        entityType: "signal.planmetric",
+        entityId: metric.id,
+        target: `${metric.initiative.code} · ${metric.name}`,
+        note: starts
+          ? "Conexão saudável: a métrica passou a Medindo."
+          : "Conexão não saudável: a métrica espera a fonte voltar.",
+        diff: [[FIELD_LABELS.sourceMappingId, "—", mapping.code]],
+      });
+      return { state: next, code: metric.initiative.code };
+    });
+
+    revalidate(result.code);
+    return { state: result.state };
+  });
+}
+
+// ── Pedir revisão de meta (métrica congelada) ─────────────────────────────────
+
+export async function requestTargetReview(raw: {
+  id: string;
+  comment: string;
+}): Promise<SignalResult<{ requested: true }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("requestTargetReview");
+    const input = Id.extend({ comment: Comment }).parse(raw);
+
+    const sent = await withTenantDb(ctx.tenantId, async (db) => {
+      const metric = await loadMetric(db, ctx.tenantId, input.id);
+      requireInitiativeOwnership(ctx, metric.initiative);
+
+      if (!nextStateFor(metric.state, "requestTargetReview")) {
+        throw new SignalStateConflictError(
+          "plan.review.not-frozen",
+          "Só métrica congelada pede revisão de meta. Nas outras, a meta se edita direto."
+        );
+      }
+
+      // A meta não muda aqui: baseline e caso de negócio são do Scaffold. O que
+      // o Signal registra é o pedido.
+      const event = await recordEvent(db, ctx, metric, {
+        action: "REQUEST_TARGET_REVIEW",
+        fromState: metric.state,
+        toState: metric.state,
+        version: metric.version,
+        comment: input.comment,
+      });
+      await logSignalAudit(db, ctx, {
+        action: "Revisão de meta pedida ao Scaffold",
+        entityType: "signal.planmetric",
+        entityId: metric.id,
+        target: `${metric.initiative.code} · ${metric.name}`,
+        note: input.comment,
+      });
+      return { metric, eventId: event.id };
+    });
+
+    // Depois da transação: o pedido é fato consumado e o Inngest fora do ar não
+    // pode fazer a tela dizer que falhou (mesmo critério de signBaseline).
+    await emitProductEvent("signalTargetReviewRequested", {
+      tenantId: ctx.tenantId,
+      initiativeId: sent.metric.initiative.id,
+      initiativeCode: sent.metric.initiative.code,
+      scaffoldTrackId: sent.metric.initiative.scaffoldTrackId ?? null,
+      planMetricId: sent.metric.id,
+      metricName: sent.metric.name,
+      eventId: sent.eventId,
+      at: new Date().toISOString(),
+    });
+
+    revalidate(sent.metric.initiative.code);
+    return { requested: true as const };
+  });
+}
+
+// ── Editar (nova versão) ──────────────────────────────────────────────────────
+
+const EditSchema = Id.extend({
+  name: nnStr.optional(),
+  formula: z.string().trim().min(3).max(2000).optional(),
+  targetValue: z.number().finite().nullable().optional(),
+  ownerId: nnStr.nullable().optional(),
+});
+
+export async function editMetric(
+  raw: z.input<typeof EditSchema>
+): Promise<SignalResult<{ version: number }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("edit");
+    const input = EditSchema.parse(raw);
+
+    const result = await withTenantDb(ctx.tenantId, async (db) => {
+      const metric = await loadMetric(db, ctx.tenantId, input.id);
+      requireInitiativeOwnership(ctx, metric.initiative);
+
+      const { patch, changes } = diffMetricEdit(metric, input);
+      if (patch.ownerId) {
+        await requireTenantMember(db, ctx.tenantId, String(patch.ownerId));
+      }
+
+      const version = metric.version + 1;
+      await db.signalPlanMetric.update({
+        where: { id: metric.id },
+        data: { ...patch, version },
+      });
+      await recordEvent(db, ctx, metric, {
+        action: "EDIT",
+        fromState: metric.state,
+        toState: metric.state,
+        version,
+        changes,
+      });
+      await logSignalAudit(db, ctx, {
+        action: "Métrica editada (nova versão)",
+        entityType: "signal.planmetric",
+        entityId: metric.id,
+        target: `${metric.initiative.code} · ${metric.name}`,
+        diff: changes,
+      });
+      return { version, code: metric.initiative.code };
+    });
+
+    revalidate(result.code);
+    return { version: result.version };
+  });
+}
+
+async function requireTenantMember(db: Db, tenantId: string, userId: string) {
+  const member = await db.tenantMember.findFirst({
+    where: { tenantId, userId },
+    select: { id: true },
+  });
+  if (!member) {
+    throw new SignalRuleError(
+      "plan.owner.not-member",
+      "O responsável precisa ser membro desta organização."
+    );
+  }
+}

@@ -48,11 +48,30 @@ describe("nomes dos eventos", () => {
       scaffoldGateReopened: "scaffold/gate.reopened",
       signalBaselineFrozen: "signal/baseline.frozen",
       signalVerdict: "signal/verdict",
+      signalTargetReviewRequested: "signal/target-review.requested",
       charterControlAccepted: "charter/control.accepted",
       charterControlExpired: "charter/control.expired",
     });
     const nomes = Object.values(PRODUCT_EVENTS);
     expect(new Set(nomes).size).toBe(nomes.length);
+  });
+});
+
+describe("signal/target-review.requested", () => {
+  it("id de idempotência sai do evento de histórico, não do relógio", () => {
+    const data = {
+      tenantId: "t1",
+      initiativeId: "i1",
+      initiativeCode: "IN-014",
+      scaffoldTrackId: "tr1",
+      planMetricId: "pm1",
+      metricName: "Tempo até o destino correto",
+      eventId: "ev-9",
+      at: "2026-09-29T12:00:00.000Z",
+    };
+    const e = buildProductEvent("signalTargetReviewRequested", data);
+    expect(e.name).toBe("signal/target-review.requested");
+    expect(e.id).toBe("signal/target-review.requested:ev-9");
   });
 });
 

@@ -70,6 +70,7 @@ export type SignalEntity =
   | "signal.baselinedimension"
   | "signal.connection"
   | "signal.mapping"
+  | "signal.planmetric"
   | "signal.observation"
   | "signal.roiformula"
   | "signal.confidence"
@@ -268,5 +269,8 @@ export const FIELD_LABELS = {
   lowAdoptionPct: "Limiar de adoção baixa",
   lowAdoptionWeeks: "Semanas para adoção baixa",
   role: "Papel",
+  formula: "Fórmula",
+  targetValue: "Meta",
+  sourceMappingId: "Fonte",
   flag: "Ressalva",
 } as const;
