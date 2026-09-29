@@ -9,7 +9,7 @@ import { charterStorageState } from "./setup/auth.setup";
  * modal list blockers by name instead of just disabling the button
  * (docs/design-handoff/charter-prototype/HANDOFF.md §6, flow 3).
  *
- * Persona: Marina Alves (Compliance, tenant `medcore`) — has `policy.publish`.
+ * Persona: Marina Alves (Compliance, tenant do e2e `cosmos-dev`) — has `policy.publish`.
  */
 test.describe("Charter policy publish gate @auth", () => {
   test.use({ storageState: charterStorageState("compliance") });
