@@ -1,6 +1,6 @@
--- RASCUNHO (SC-DEV-03): ScaffoldDeliverableInstance e tabelas filhas. Códigos
--- A1..E3 e papéis dependem do Norte; não aplicar em produção antes dessa decisão.
--- Append-only do histórico ainda é só convenção (sem trigger).
+-- ScaffoldDeliverableInstance e tabelas filhas (SC-DEV-03). Primeira versão, fechada
+-- por 20260929000300_scaffold_deliverable_v1, que soma o que faltava e o trigger
+-- de histórico append-only.
 
 -- CreateEnum
 CREATE TYPE "ScaffoldDeliverableStatus" AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'IN_REVIEW', 'ADJUSTMENT_REQUESTED', 'APPROVED', 'REOPENED');
@@ -107,3 +107,29 @@ ALTER TABLE "ScaffoldDeliverableComment" ADD CONSTRAINT "ScaffoldDeliverableComm
 -- AddForeignKey
 ALTER TABLE "ScaffoldDeliverableComment" ADD CONSTRAINT "ScaffoldDeliverableComment_deliverableId_fkey" FOREIGN KEY ("deliverableId") REFERENCES "ScaffoldDeliverableInstance"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- RLS (padrão de 20260902150000/190000). ADR-0012: inerte enquanto a aplicação
+-- conectar como superuser; o filtro por tenant na query segue sendo o isolamento.
+ALTER TABLE "ScaffoldDeliverableInstance" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ScaffoldDeliverableInstance" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation" ON "ScaffoldDeliverableInstance";
+CREATE POLICY "tenant_isolation" ON "ScaffoldDeliverableInstance"
+  USING ("tenantId" = current_tenant_id())
+  WITH CHECK ("tenantId" = current_tenant_id());
+
+-- RLS (padrão de 20260902150000/190000). ADR-0012: inerte enquanto a aplicação
+-- conectar como superuser; o filtro por tenant na query segue sendo o isolamento.
+ALTER TABLE "ScaffoldDeliverableEvent" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ScaffoldDeliverableEvent" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation" ON "ScaffoldDeliverableEvent";
+CREATE POLICY "tenant_isolation" ON "ScaffoldDeliverableEvent"
+  USING ("tenantId" = current_tenant_id())
+  WITH CHECK ("tenantId" = current_tenant_id());
+
+-- RLS (padrão de 20260902150000/190000). ADR-0012: inerte enquanto a aplicação
+-- conectar como superuser; o filtro por tenant na query segue sendo o isolamento.
+ALTER TABLE "ScaffoldDeliverableComment" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ScaffoldDeliverableComment" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation" ON "ScaffoldDeliverableComment";
+CREATE POLICY "tenant_isolation" ON "ScaffoldDeliverableComment"
+  USING ("tenantId" = current_tenant_id())
+  WITH CHECK ("tenantId" = current_tenant_id());
