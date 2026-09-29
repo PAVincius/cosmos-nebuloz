@@ -360,6 +360,7 @@ model ScaffoldTrack {
   overlay         ScaffoldTemplateOverlay? @relation(fields: [overlayId], references: [id], onDelete: Restrict)
   phases          ScaffoldPhaseInstance[]
   businessCase    ScaffoldBusinessCase?
+  deliverables    ScaffoldDeliverableInstance[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -406,6 +407,7 @@ model ScaffoldPhaseInstance {
 
   track   ScaffoldTrack        @relation(fields: [trackId], references: [id], onDelete: Cascade)
   steps   ScaffoldStepInstance[]
+  deliverables ScaffoldDeliverableInstance[]
   results ScaffoldGateResult[]
 
   @@unique([trackId, phase])
