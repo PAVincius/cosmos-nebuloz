@@ -12,7 +12,7 @@ import { charterStorageState } from "./setup/auth.setup";
  *   2. Reavaliação ao vivo — trocar classe de dado muda caminho e SLA no
  *      trilho, antes de qualquer submissão (FR-4.2).
  *
- * Persona: Marina Alves (Compliance, tenant `medcore`) — has `case.submit`.
+ * Persona: Marina Alves (Compliance, tenant do e2e `cosmos-dev`) — has `case.submit`.
  */
 test.describe("Charter intake @auth", () => {
   test.use({ storageState: charterStorageState("compliance") });

@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import { type Browser, chromium, type FullConfig } from "@playwright/test";
 import { isPostLoginLanding } from "./landing";
+import { SEEDS } from "./seeds";
 
 // ponytail: no direct DB — requireTenantSession auto-sets activeTenantId on first request
 
@@ -32,7 +33,7 @@ export const SEEDED_ROLE_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
 
 /**
  * As quatro personas de governança do Charter, semeadas por `seed-charter.ts`
- * no tenant `medcore`. Sem sessão própria por papel, os specs de RBAC do
+ * no tenant do e2e (`cosmos-dev`). Sem sessão própria por papel, os specs de RBAC do
  * Charter (`case.decide`, `policy.publish`, ...) não teriam quem fazer os
  * gates falharem ou passarem — mesmo motivo dos papéis SAFe acima.
  */
@@ -75,15 +76,6 @@ export type CatalogoPersonaRole = keyof typeof CATALOGO_PERSONAS;
 export const catalogoStorageState = (role: CatalogoPersonaRole) =>
   fixture("catalogo", role);
 
-/** Falha de seed derruba o setup: sessão sem seed só apareceria depois como
- *  spec vermelho sem causa aparente. */
-const SEEDS = [
-  "seed:e2e",
-  "seed:charter",
-  "seed:meridian cosmos-dev",
-  "seed:catalogo-e2e",
-] as const;
-
 /**
  * Grupos de persona que dependem de um seed opcional.
  *
@@ -99,7 +91,7 @@ const GRUPOS_OPCIONAIS = [
     landingPath: "/charter",
     envSenha: "CHARTER_SEED_PASSWORD",
     senhaPadrao: "charter123",
-    ausente: "seed do medcore ausente?",
+    ausente: "seed:charter ausente?",
   },
   {
     nome: "Meridian",
