@@ -35,6 +35,8 @@ const h = vi.hoisted(() => ({
   linkCreate: vi.fn(),
   linkDelete: vi.fn(),
   bcFindFirst: vi.fn(),
+  smFindFirst: vi.fn(),
+  smFindMany: vi.fn(),
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -114,6 +116,10 @@ vi.mock("@repo/database", () => ({
         delete: h.linkDelete,
       },
       scaffoldBusinessCase: { findFirst: h.bcFindFirst },
+      scaffoldMembership: {
+        findFirst: h.smFindFirst,
+        findMany: h.smFindMany,
+      },
       tenantMember: { findFirst: h.memberFindFirst },
       user: { findMany: h.userFindMany },
       scaffoldPhaseInstance: {
@@ -134,6 +140,7 @@ import {
   attachDeliverableVersion,
   editDeliverableSummary,
   getDeliverable,
+  listDeliverableAssignees,
   listDeliverables,
   readDeliverableFile,
   removeDeliverableLink,
@@ -207,6 +214,8 @@ beforeEach(() => {
   h.linkCreate.mockResolvedValue({ id: "lnk1" });
   h.linkDelete.mockResolvedValue({});
   h.bcFindFirst.mockResolvedValue(null);
+  h.smFindFirst.mockResolvedValue({ role: "CONSULTANT" });
+  h.smFindMany.mockResolvedValue([]);
 });
 
 describe("transições gravam status, evento append-only e auditoria", () => {
@@ -433,8 +442,7 @@ describe("listDeliverables e getDeliverable", () => {
 });
 
 describe("assignDeliverable", () => {
-  it("atribui responsável e aprovador do mesmo tenant", async () => {
-    h.memberFindFirst.mockResolvedValue({ userId: OWNER });
+  it("atribui responsável e aprovador que têm papel no Scaffold do mesmo tenant", async () => {
     const r = await assignDeliverable({
       deliverableId: DEL,
       ownerId: OWNER,
@@ -445,16 +453,94 @@ describe("assignDeliverable", () => {
       ownerId: OWNER,
       approverId: APPROVER,
     });
-    expect(h.memberFindFirst.mock.calls[0]?.[0].where).toMatchObject({
+    expect(h.smFindFirst.mock.calls[0]?.[0].where).toEqual({
       tenantId: "t1",
+      userId: OWNER,
     });
   });
 
-  it("recusa pessoa de fora do tenant", async () => {
-    h.memberFindFirst.mockResolvedValue(null);
+  it("recusa quem não tem papel no Scaffold (ou é de fora do tenant)", async () => {
+    h.smFindFirst.mockResolvedValue(null);
     const r = await assignDeliverable({ deliverableId: DEL, ownerId: OWNER });
-    expect(r).toMatchObject({ ok: false, code: "MEMBER_NOT_IN_TENANT" });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
+    });
     expect(h.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "SPONSOR",
+    "TEAM_LEAD",
+    "ADMIN",
+  ])("responsável com papel %s é recusado: quem só lê não produz", async (role) => {
+    h.smFindFirst.mockResolvedValue({ role });
+    const r = await assignDeliverable({ deliverableId: DEL, ownerId: OWNER });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
+    });
+    expect(h.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "TEAM_MEMBER",
+    "SPONSOR",
+    "TEAM_LEAD",
+    "ADMIN",
+  ])("aprovador com papel %s é recusado: quem não revisa deixaria o entregável sem aprovação", async (role) => {
+    h.smFindFirst.mockResolvedValue({ role });
+    const r = await assignDeliverable({
+      deliverableId: DEL,
+      approverId: APPROVER,
+    });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
+    });
+    expect(h.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "TEAM_MEMBER",
+    "PROCESS_OWNER",
+    "TRANSFORMATION_LEAD",
+    "CONSULTANT",
+  ])("responsável com papel %s serve", async (role) => {
+    h.smFindFirst.mockResolvedValue({ role });
+    expect(
+      (await assignDeliverable({ deliverableId: DEL, ownerId: OWNER })).ok
+    ).toBe(true);
+  });
+
+  it.each([
+    "PROCESS_OWNER",
+    "TRANSFORMATION_LEAD",
+    "CONSULTANT",
+  ])("aprovador com papel %s serve", async (role) => {
+    h.smFindFirst.mockResolvedValue({ role });
+    expect(
+      (await assignDeliverable({ deliverableId: DEL, approverId: APPROVER })).ok
+    ).toBe(true);
+  });
+
+  it("o entregável extra segue a mesma regra de quem pode ser designado", async () => {
+    h.smFindFirst.mockResolvedValue({ role: "SPONSOR" });
+    const r = await addDeliverable({
+      trackId: TRACK,
+      phase: "PILOT",
+      title: "Extra",
+      description: "d",
+      kind: "DOCUMENT",
+      producer: "OWNER",
+      required: false,
+      ownerId: OWNER,
+    });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
+    });
+    expect(h.create).not.toHaveBeenCalled();
   });
 
   it("recusa responsável igual ao aprovador: ninguém aprova o que é seu", async () => {
@@ -1617,5 +1703,115 @@ describe("A3.2 derivado do caso de negócio na lista", () => {
     h.findMany.mockResolvedValue([]);
     await listDeliverables({ trackId: TRACK });
     expect(h.bcFindFirst).not.toHaveBeenCalled();
+  });
+});
+
+// Tela de responsável e aprovador: quem pode ser escolhido e quem pode escolher.
+describe("candidatos a responsável e aprovador", () => {
+  const MEMBERS = [
+    { userId: "u-po", role: "PROCESS_OWNER" },
+    { userId: "u-tm", role: "TEAM_MEMBER" },
+    { userId: "u-sp", role: "SPONSOR" },
+    { userId: "u-ad", role: "ADMIN" },
+    { userId: "u-co", role: "CONSULTANT" },
+  ];
+
+  beforeEach(() => {
+    h.smFindMany.mockResolvedValue(MEMBERS);
+    h.userFindMany.mockResolvedValue([
+      { id: "u-po", name: "Paula", email: "p@x.com" },
+      { id: "u-tm", name: null, email: "t@x.com" },
+      { id: "u-sp", name: "Sofia", email: "s@x.com" },
+      { id: "u-ad", name: "Beto", email: "b@x.com" },
+      { id: "u-co", name: "Marina", email: "m@x.com" },
+    ]);
+  });
+
+  it("lista quem tem papel no Scaffold, com o que cada um pode ser", async () => {
+    const r = await listDeliverableAssignees();
+    expect(r.ok && r.data).toEqual([
+      {
+        userId: "u-po",
+        name: "Paula",
+        role: "PROCESS_OWNER",
+        canOwn: true,
+        canReview: true,
+      },
+      {
+        userId: "u-tm",
+        name: "t@x.com",
+        role: "TEAM_MEMBER",
+        canOwn: true,
+        canReview: false,
+      },
+      {
+        userId: "u-sp",
+        name: "Sofia",
+        role: "SPONSOR",
+        canOwn: false,
+        canReview: false,
+      },
+      {
+        userId: "u-ad",
+        name: "Beto",
+        role: "ADMIN",
+        canOwn: false,
+        canReview: false,
+      },
+      {
+        userId: "u-co",
+        name: "Marina",
+        role: "CONSULTANT",
+        canOwn: true,
+        canReview: true,
+      },
+    ]);
+  });
+
+  it("só do tenant da sessão", async () => {
+    await listDeliverableAssignees();
+    expect(h.smFindMany.mock.calls[0]?.[0].where).toEqual({ tenantId: "t1" });
+  });
+
+  it.each([
+    "SPONSOR",
+    "TEAM_LEAD",
+    "ADMIN",
+    "TEAM_MEMBER",
+  ])("%s lê a lista (é leitura, como o resto dos entregáveis)", async (role) => {
+    asUser(role, OWNER);
+    expect((await listDeliverableAssignees()).ok).toBe(true);
+  });
+
+  it("sem ninguém com papel: lista vazia, sem consulta de nomes", async () => {
+    h.smFindMany.mockResolvedValue([]);
+    h.userFindMany.mockClear();
+    const r = await listDeliverableAssignees();
+    expect(r).toEqual({ ok: true, data: [] });
+    expect(h.userFindMany).not.toHaveBeenCalled();
+  });
+
+  it("a lista de entregáveis diz se o ator pode designar, com o motivo quando não", async () => {
+    h.findMany.mockResolvedValue([row("IN_PROGRESS")]);
+    const ok = await listDeliverables({ trackId: TRACK });
+    expect(ok.ok && ok.data[0]?.assignAccess).toEqual({
+      allowed: true,
+      reason: null,
+    });
+
+    asUser("TEAM_MEMBER", OWNER);
+    const no = await listDeliverables({ trackId: TRACK });
+    expect(no.ok && no.data[0]?.assignAccess.allowed).toBe(false);
+    expect(no.ok && no.data[0]?.assignAccess.reason).toMatch(/Requer papel/);
+  });
+
+  it("quem não tem deliverable.add não designa: 403 pela matriz", async () => {
+    for (const role of ["TEAM_MEMBER", "SPONSOR", "TEAM_LEAD", "ADMIN"]) {
+      asUser(role, OWNER);
+      const r = await assignDeliverable({ deliverableId: DEL, ownerId: OWNER });
+      expect(r.ok).toBe(false);
+      expect(!r.ok && r.error).toContain("Requer papel");
+    }
+    expect(h.update).not.toHaveBeenCalled();
   });
 });

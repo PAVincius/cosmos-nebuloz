@@ -28,6 +28,8 @@ const h = vi.hoisted(() => ({
   addLink: vi.fn(),
   removeLink: vi.fn(),
   addDeliverable: vi.fn(),
+  listAssignees: vi.fn(),
+  assign: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -61,6 +63,8 @@ vi.mock("@/app/(scaffold)/actions/deliverables", () => ({
   addDeliverableLink: h.addLink,
   removeDeliverableLink: h.removeLink,
   addDeliverable: h.addDeliverable,
+  listDeliverableAssignees: h.listAssignees,
+  assignDeliverable: h.assign,
 }));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
@@ -117,6 +121,37 @@ function trackWith(state: string, result: unknown = null) {
   };
 }
 
+const ASSIGNEES = [
+  {
+    userId: "u-paula",
+    name: "Paula",
+    role: "PROCESS_OWNER",
+    canOwn: true,
+    canReview: true,
+  },
+  {
+    userId: "u-marina",
+    name: "Marina",
+    role: "CONSULTANT",
+    canOwn: true,
+    canReview: true,
+  },
+  {
+    userId: "u-tiago",
+    name: "Tiago",
+    role: "TEAM_MEMBER",
+    canOwn: true,
+    canReview: false,
+  },
+  {
+    userId: "u-sofia",
+    name: "Sofia",
+    role: "SPONSOR",
+    canOwn: false,
+    canReview: false,
+  },
+];
+
 const PERMISSIONS = [
   "track.manage",
   "step.complete",
@@ -156,6 +191,7 @@ function accessWithout(denied: string[] = []) {
 beforeEach(() => {
   vi.clearAllMocks();
   h.getAccess.mockResolvedValue(accessWithout());
+  h.listAssignees.mockResolvedValue({ ok: true, data: ASSIGNEES });
   h.setStepState.mockResolvedValue({ ok: true, data: undefined });
   h.closePhase.mockResolvedValue({ ok: true, data: { gateResultId: "gr1" } });
   h.overridePhase.mockResolvedValue({
@@ -472,6 +508,9 @@ function deliverable(status: string, over: Record<string, unknown> = {}) {
     attach: YES,
     links: [],
     linkAccess: YES,
+    assignAccess: YES,
+    ownerId: null,
+    approverId: null,
     hasFile: false,
     fileName: null,
     version: 0,
@@ -1454,6 +1493,162 @@ describe("A3.2 derivado na tela (Crivo G1)", () => {
     ).toBeDefined();
     expect(
       (screen.getByRole("button", { name: /reabrir/i }) as HTMLButtonElement)
+        .disabled
+    ).toBe(true);
+  });
+});
+
+// Tela de responsável e aprovador do entregável (assignDeliverable já existia).
+describe("responsável e aprovador do entregável", () => {
+  const open = async (over: Record<string, unknown> = {}) => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_PROGRESS", over)],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+  };
+  const openModal = async () =>
+    fireEvent.click(await screen.findByRole("button", { name: /designar/i }));
+  const optionsOf = (label: string) =>
+    [...(screen.getByLabelText(label) as HTMLSelectElement).options].map(
+      (o) => o.textContent
+    );
+
+  it("a linha diz quem é o responsável e o aprovador, e quando faltam", async () => {
+    await open({ ownerId: "u-paula", approverId: "u-marina" });
+    expect(
+      await screen.findByText(/Responsável: Paula · Aprovador: Marina/)
+    ).toBeDefined();
+  });
+
+  it("sem designação, diz o que vale: sem responsável, qualquer revisor", async () => {
+    await open();
+    expect(
+      await screen.findByText(
+        /Responsável: sem responsável · Aprovador: qualquer revisor/
+      )
+    ).toBeDefined();
+  });
+
+  it("o modal só oferece quem tem papel que trabalha (responsável) ou revisa (aprovador)", async () => {
+    await open();
+    await openModal();
+    await screen.findByLabelText("Responsável");
+    expect(optionsOf("Responsável")).toEqual([
+      "Manter atual",
+      "Paula",
+      "Marina",
+      "Tiago",
+    ]);
+    expect(optionsOf("Aprovador")).toEqual(["Manter atual", "Paula", "Marina"]);
+  });
+
+  it("o mesmo nome não pode ser responsável e aprovador: a opção some do outro", async () => {
+    await open();
+    await openModal();
+    fireEvent.change(await screen.findByLabelText("Responsável"), {
+      target: { value: "u-paula" },
+    });
+    const approver = screen.getByLabelText("Aprovador") as HTMLSelectElement;
+    const paula = [...approver.options].find((o) => o.textContent === "Paula");
+    expect(paula?.disabled).toBe(true);
+
+    fireEvent.change(approver, { target: { value: "u-marina" } });
+    const owner = screen.getByLabelText("Responsável") as HTMLSelectElement;
+    const marina = [...owner.options].find((o) => o.textContent === "Marina");
+    expect(marina?.disabled).toBe(true);
+  });
+
+  it("salva só o que mudou e recarrega", async () => {
+    await open({ ownerId: "u-paula", approverId: null });
+    h.assign.mockResolvedValue({ ok: true, data: undefined });
+    await openModal();
+    fireEvent.change(await screen.findByLabelText("Aprovador"), {
+      target: { value: "u-marina" },
+    });
+    const before = h.listDeliverables.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: /^salvar$/i }));
+
+    await waitFor(() =>
+      expect(h.assign).toHaveBeenCalledWith({
+        deliverableId: "del-1",
+        approverId: "u-marina",
+      })
+    );
+    await waitFor(() =>
+      expect(h.listDeliverables.mock.calls.length).toBeGreaterThan(before)
+    );
+  });
+
+  it("Salvar só habilita quando algo muda", async () => {
+    await open({ ownerId: "u-paula", approverId: "u-marina" });
+    await openModal();
+    const save = (await screen.findByRole("button", {
+      name: /^salvar$/i,
+    })) as HTMLButtonElement;
+    expect(save.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText("Responsável"), {
+      target: { value: "u-tiago" },
+    });
+    expect(save.disabled).toBe(false);
+  });
+
+  it("o responsável e o aprovador atuais já vêm marcados", async () => {
+    await open({ ownerId: "u-paula", approverId: "u-marina" });
+    await openModal();
+    expect(
+      ((await screen.findByLabelText("Responsável")) as HTMLSelectElement).value
+    ).toBe("u-paula");
+    expect(
+      (screen.getByLabelText("Aprovador") as HTMLSelectElement).value
+    ).toBe("u-marina");
+  });
+
+  it("sem permissão de designar, o botão fica desabilitado, com o motivo escrito", async () => {
+    await open({
+      assignAccess: {
+        allowed: false,
+        reason:
+          "Requer papel Dono do processo, Líder de transformação ou Consultor",
+      },
+    });
+    const btn = (await screen.findByRole("button", {
+      name: /designar/i,
+    })) as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+    expect(screen.getByText(/Requer papel Dono do processo/)).toBeDefined();
+  });
+
+  it("recusa do servidor aparece no modal, sem perder a escolha", async () => {
+    await open();
+    h.assign.mockResolvedValue({
+      ok: false,
+      error: "Esta pessoa não pode ser designada.",
+      code: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
+    });
+    await openModal();
+    fireEvent.change(await screen.findByLabelText("Responsável"), {
+      target: { value: "u-tiago" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^salvar$/i }));
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      "não pode ser designada"
+    );
+    expect(
+      (screen.getByLabelText("Responsável") as HTMLSelectElement).value
+    ).toBe("u-tiago");
+  });
+
+  it("falha ao carregar as pessoas: avisa e não deixa escolher", async () => {
+    h.listAssignees.mockResolvedValue({ ok: false, error: "Sem acesso" });
+    await open();
+    await openModal();
+    expect(
+      await screen.findByText(/não foi possível carregar as pessoas/i)
+    ).toBeDefined();
+    expect(
+      (screen.getByRole("button", { name: /^salvar$/i }) as HTMLButtonElement)
         .disabled
     ).toBe(true);
   });

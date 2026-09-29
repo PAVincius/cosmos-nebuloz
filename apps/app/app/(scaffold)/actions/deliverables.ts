@@ -10,6 +10,7 @@ import type {
 } from "@repo/database";
 import { withTenantDb } from "@repo/database";
 import { log } from "@repo/observability/log";
+import { hasScaffoldPermission, scaffoldDenialReason } from "@repo/rbac";
 import {
   ensureBucket,
   SCAFFOLD_ALLOWED_MIME_TYPES,
@@ -129,13 +130,26 @@ function toSubject(d: {
   };
 }
 
-async function assertTenantMember(db: Db, tenantId: string, userId: string) {
-  const m = await db.tenantMember.findFirst({
+/**
+ * Quem pode ser designado (Norte, SC-PO-04): só quem tem papel no Scaffold deste
+ * tenant, e pela matriz. O responsável precisa poder trabalhar no entregável, e o
+ * aprovador, revisar; sponsor, líder do time e administrador só leem, e designá-los
+ * deixaria o entregável sem quem o produza ou o aprove.
+ */
+async function assertAssignee(
+  db: Db,
+  tenantId: string,
+  userId: string,
+  slot: "owner" | "approver"
+) {
+  const m = await db.scaffoldMembership.findFirst({
     where: { tenantId, userId },
-    select: { userId: true },
+    select: { role: true },
   });
-  if (!m) {
-    throw new ScaffoldRuleError("MEMBER_NOT_IN_TENANT");
+  const permission =
+    slot === "owner" ? "deliverable.work" : "deliverable.review";
+  if (!(m && hasScaffoldPermission(m.role, permission))) {
+    throw new ScaffoldRuleError("DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE");
   }
 }
 
@@ -363,10 +377,11 @@ export async function assignDeliverable(
       if (ownerId && approverId && ownerId === approverId) {
         throw new ScaffoldRuleError("DELIVERABLE_SELF_REVIEW");
       }
-      for (const id of [input.ownerId, input.approverId]) {
-        if (id) {
-          await assertTenantMember(db, ctx.tenantId, id);
-        }
+      if (input.ownerId) {
+        await assertAssignee(db, ctx.tenantId, input.ownerId, "owner");
+      }
+      if (input.approverId) {
+        await assertAssignee(db, ctx.tenantId, input.approverId, "approver");
       }
       await db.scaffoldDeliverableInstance.update({
         where: { id: d.id },
@@ -414,10 +429,11 @@ export async function addDeliverable(
       if (!phase) {
         throw new ScaffoldRuleError("PHASE_NOT_CLOSABLE");
       }
-      for (const id of [input.ownerId, input.approverId]) {
-        if (id) {
-          await assertTenantMember(db, ctx.tenantId, id);
-        }
+      if (input.ownerId) {
+        await assertAssignee(db, ctx.tenantId, input.ownerId, "owner");
+      }
+      if (input.approverId) {
+        await assertAssignee(db, ctx.tenantId, input.approverId, "approver");
       }
       if (input.ownerId && input.ownerId === input.approverId) {
         throw new ScaffoldRuleError("DELIVERABLE_SELF_REVIEW");
@@ -496,6 +512,12 @@ function publicRow<
 >({ fileKey, phaseInstance: _phase, ...rest }: T) {
   return { ...rest, hasFile: fileKey !== null };
 }
+
+/** Quem designa responsável e aprovador é quem adiciona entregável (SC-PO-04). */
+const assignAccess = (role: ScaffoldContext["scaffoldRole"]) =>
+  hasScaffoldPermission(role, "deliverable.add")
+    ? { allowed: true, reason: null }
+    : { allowed: false, reason: scaffoldDenialReason("deliverable.add") };
 
 const DERIVED_REASON = "Aprovado pela assinatura do caso de negócio.";
 
@@ -650,6 +672,7 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
         lastReview: reviews.get(d.id) ?? null,
         links: links.get(d.id) ?? [],
         linkAccess: linkAccessOf(decideLink(subject, actor)),
+        assignAccess: assignAccess(ctx.scaffoldRole),
         actions: derived
           ? {
               START: denied,
@@ -1004,5 +1027,47 @@ export async function removeDeliverableLink(
     });
 
     revalidatePath("/scaffold");
+  });
+}
+
+export type Assignee = {
+  userId: string;
+  name: string;
+  role: string;
+  canOwn: boolean;
+  canReview: boolean;
+};
+
+/**
+ * Quem tem papel no Scaffold deste tenant, e o que cada um pode ser num
+ * entregável (pela matriz). É leitura, como o resto dos entregáveis: o portfólio
+ * já mostra essas pessoas a quem lê.
+ */
+export async function listDeliverableAssignees() {
+  return scaffoldAction(async (): Promise<Assignee[]> => {
+    const ctx = await requireScaffoldPermissionContext("deliverable.read");
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const members = await db.scaffoldMembership.findMany({
+        where: { tenantId: ctx.tenantId },
+        select: { userId: true, role: true },
+      });
+      if (members.length === 0) {
+        return [];
+      }
+      const people = await db.user.findMany({
+        where: { id: { in: members.map((m) => m.userId) } },
+        select: { id: true, name: true, email: true },
+      });
+      const nameOf = new Map(
+        people.map((u) => [u.id, u.name ?? u.email ?? u.id])
+      );
+      return members.map((m) => ({
+        userId: m.userId,
+        name: nameOf.get(m.userId) ?? m.userId,
+        role: m.role,
+        canOwn: hasScaffoldPermission(m.role, "deliverable.work"),
+        canReview: hasScaffoldPermission(m.role, "deliverable.review"),
+      }));
+    });
   });
 }

@@ -9,6 +9,7 @@ import type { IconName } from "@repo/design-system/cosmos/icons";
 import { Badge, Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import {
+  type Assignee,
   approveDeliverable,
   attachDeliverableVersion,
   type listDeliverables,
@@ -24,6 +25,7 @@ import {
   MIN_COMMENT_LENGTH,
 } from "@/lib/scaffold/deliverable-machine";
 import { Field, ModalShell, Textarea } from "./base";
+import { DeliverableAssign } from "./deliverable-assign";
 import { DeliverableLinks } from "./deliverable-links";
 
 export type DeliverableItem = Extract<
@@ -110,9 +112,12 @@ function requirement(d: DeliverableItem): {
 
 export function DeliverableList({
   items,
+  assignees,
   onChanged,
 }: {
   items: DeliverableItem[];
+  /** Nulo = não deu para carregar as pessoas com papel no Scaffold. */
+  assignees: Assignee[] | null;
   onChanged: () => void;
 }) {
   const [busy, setBusy] = useState(false);
@@ -123,6 +128,11 @@ export function DeliverableList({
   } | null>(null);
   const [comment, setComment] = useState("");
   const [linksOf, setLinksOf] = useState<string | null>(null);
+  const [assignOf, setAssignOf] = useState<string | null>(null);
+  const nameOf = (id: string | null, none: string) =>
+    id === null
+      ? none
+      : (assignees?.find((a) => a.userId === id)?.name ?? "designado");
 
   const run = async (
     item: DeliverableItem,
@@ -270,6 +280,35 @@ export function DeliverableList({
                 </span>
                 <Badge tone={req.tone}>{req.label}</Badge>
                 <Badge tone={s.tone}>{s.label}</Badge>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  marginTop: 4,
+                  fontSize: 11.5,
+                  color: "var(--ink-muted)",
+                }}
+              >
+                <span>
+                  Responsável: {nameOf(d.ownerId, "sem responsável")} ·
+                  Aprovador: {nameOf(d.approverId, "qualquer revisor")}
+                </span>
+                <Button
+                  disabled={busy || !d.assignAccess.allowed}
+                  icon="users"
+                  onClick={() => setAssignOf(d.id)}
+                  size="sm"
+                  title={d.assignAccess.reason ?? undefined}
+                  variant="secondary"
+                >
+                  Designar
+                </Button>
+                {d.assignAccess.allowed ? null : (
+                  <span>{d.assignAccess.reason}</span>
+                )}
               </div>
               {d.lastReview?.comment ? (
                 <div
@@ -420,6 +459,21 @@ export function DeliverableList({
           );
         })}
       </ul>
+
+      {(() => {
+        const item = items.find((i) => i.id === assignOf);
+        return item ? (
+          <DeliverableAssign
+            approverId={item.approverId}
+            assignees={assignees}
+            code={item.code}
+            deliverableId={item.id}
+            onChanged={onChanged}
+            onClose={() => setAssignOf(null)}
+            ownerId={item.ownerId}
+          />
+        ) : null;
+      })()}
 
       {(() => {
         const item = items.find((i) => i.id === linksOf);

@@ -14,7 +14,11 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { listDeliverables } from "@/app/(scaffold)/actions/deliverables";
+import {
+  type Assignee,
+  listDeliverableAssignees,
+  listDeliverables,
+} from "@/app/(scaffold)/actions/deliverables";
 import { exportHandoverPack } from "@/app/(scaffold)/actions/export";
 import {
   acknowledgeCharterPolicy,
@@ -115,6 +119,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   >(null);
   const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
   const [adding, setAdding] = useState(false);
+  const [assignees, setAssignees] = useState<Assignee[] | null>(null);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
@@ -131,9 +136,10 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       return;
     }
     setError(null);
-    const [res, dels] = await Promise.all([
+    const [res, dels, people] = await Promise.all([
       getTrack({ trackId: param }),
       listDeliverables({ trackId: param }),
+      listDeliverableAssignees(),
     ]);
     if (res.ok) {
       setTrack(res.data);
@@ -141,6 +147,9 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       // Falha ao ler entregáveis não derruba a trilha: a tela cai na regra de
       // passos e o servidor continua sendo quem decide o fechamento.
       setDeliverables(dels.ok ? dels.data : []);
+      // Sem as pessoas, a tela ainda funciona; só a designação avisa que não
+      // conseguiu carregar quem pode ser escolhido.
+      setAssignees(people.ok ? people.data : null);
     } else {
       setError(res.error);
     }
@@ -522,6 +531,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
             tone="accent"
           >
             <DeliverableList
+              assignees={assignees}
               items={deliverables.filter(
                 (d) => d.phaseInstanceId === activePhase.id
               )}
