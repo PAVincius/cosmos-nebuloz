@@ -17,6 +17,10 @@ const h = vi.hoisted(() => ({
   attachArtefact: vi.fn(),
   readArtefact: vi.fn(),
   push: vi.fn(),
+  listDeliverables: vi.fn(),
+  startDeliverable: vi.fn(),
+  approveDeliverable: vi.fn(),
+  requestAdjustment: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -34,6 +38,14 @@ vi.mock("@/app/(scaffold)/actions/steps", () => ({
   setStepState: vi.fn(),
   attachArtefact: h.attachArtefact,
   readArtefact: h.readArtefact,
+}));
+vi.mock("@/app/(scaffold)/actions/deliverables", () => ({
+  listDeliverables: h.listDeliverables,
+  startDeliverable: h.startDeliverable,
+  submitDeliverable: vi.fn(),
+  approveDeliverable: h.approveDeliverable,
+  requestDeliverableAdjustment: h.requestAdjustment,
+  reopenDeliverable: vi.fn(),
 }));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
@@ -98,6 +110,8 @@ beforeEach(() => {
     data: { gateResultId: "gr2" },
   });
   h.reopenPhase.mockResolvedValue({ ok: true, data: undefined });
+  // Trilha legada: sem entregável, a tela segue só os passos.
+  h.listDeliverables.mockResolvedValue({ ok: true, data: [] });
 });
 
 describe("GatePanel — fechar", () => {
@@ -377,5 +391,149 @@ describe("artefato do passo", () => {
       )
     );
     openSpy.mockRestore();
+  });
+});
+
+// Entregáveis — SG-01 / SC-DEV-03. O servidor decide; a tela só mostra o motivo.
+const NO = { allowed: false, reason: "Seu papel não revisa entregável." };
+const YES = { allowed: true, reason: null };
+
+function deliverable(status: string, over: Record<string, unknown> = {}) {
+  return {
+    id: "del-1",
+    phaseInstanceId: PHASE_ID,
+    code: "B1.2",
+    title: "Configuração do piloto",
+    status,
+    required: true,
+    dispensedReason: null,
+    actions: {
+      START: YES,
+      SUBMIT: YES,
+      APPROVE: YES,
+      REQUEST_ADJUSTMENT: YES,
+      REOPEN: YES,
+    },
+    ...over,
+  };
+}
+
+describe("entregáveis na tela", () => {
+  it("obrigatório pendente desabilita o gate e escreve o motivo", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_REVIEW")],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+
+    const close = await screen.findByRole("button", { name: /fechar gate/i });
+    await waitFor(() => expect(close).toHaveProperty("disabled", true));
+    expect(
+      screen.getByText("1 entregável obrigatório pendente: B1.2.")
+    ).toBeDefined();
+    fireEvent.click(close);
+    expect(h.closePhase).not.toHaveBeenCalled();
+  });
+
+  it("tudo aprovado libera o gate", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("APPROVED")],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    const close = await screen.findByRole("button", { name: /fechar gate/i });
+    expect(close).toHaveProperty("disabled", false);
+  });
+
+  it("mostra o estado por extenso e dispara a ação permitida", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("NOT_STARTED")],
+    });
+    h.startDeliverable.mockResolvedValue({ ok: true, data: undefined });
+    render(<TrackDetailScreen param="trk1" />);
+
+    expect(await screen.findByText("Não iniciado")).toBeDefined();
+    expect(screen.getByText("Obrigatório")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /iniciar/i }));
+    await waitFor(() =>
+      expect(h.startDeliverable).toHaveBeenCalledWith({
+        deliverableId: "del-1",
+        comment: undefined,
+      })
+    );
+  });
+
+  it("ação sem permissão fica desabilitada com o motivo escrito", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [
+        deliverable("IN_REVIEW", {
+          actions: {
+            START: NO,
+            SUBMIT: NO,
+            APPROVE: NO,
+            REQUEST_ADJUSTMENT: NO,
+            REOPEN: NO,
+          },
+        }),
+      ],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+
+    const approve = await screen.findByRole("button", { name: /aprovar/i });
+    expect(approve).toHaveProperty("disabled", true);
+    expect(screen.getByText("Seu papel não revisa entregável.")).toBeDefined();
+  });
+
+  it("pedir ajuste exige comentário e o manda junto", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_REVIEW")],
+    });
+    h.requestAdjustment.mockResolvedValue({ ok: true, data: undefined });
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /pedir ajuste/i })
+    );
+    const send = screen
+      .getAllByRole("button", { name: /pedir ajuste/i })
+      .at(-1) as HTMLElement;
+    expect(send).toHaveProperty("disabled", true);
+
+    fireEvent.change(screen.getByLabelText(/o que precisa ser ajustado/i), {
+      target: { value: "Falta o volume por canal." },
+    });
+    fireEvent.click(send);
+    await waitFor(() =>
+      expect(h.requestAdjustment).toHaveBeenCalledWith({
+        deliverableId: "del-1",
+        comment: "Falta o volume por canal.",
+      })
+    );
+  });
+
+  it("recusa do servidor aparece na lista, sem derrubar a tela", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_REVIEW")],
+    });
+    h.approveDeliverable.mockResolvedValue({
+      ok: false,
+      error: "Ninguém aprova nem pede ajuste no que é seu.",
+      code: "FORBIDDEN",
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    fireEvent.click(await screen.findByRole("button", { name: /aprovar/i }));
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("no que é seu");
+    expect(screen.getByText("Gate da fase")).toBeDefined();
   });
 });

@@ -14,6 +14,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { listDeliverables } from "@/app/(scaffold)/actions/deliverables";
 import { exportHandoverPack } from "@/app/(scaffold)/actions/export";
 import {
   acknowledgeCharterPolicy,
@@ -31,6 +32,7 @@ import {
   getTrack,
   type TrackDetail,
 } from "@/app/(scaffold)/actions/tracks";
+import { phaseGateState } from "@/lib/scaffold/deliverable-machine";
 import { PHASE, PHASE_STATE } from "@/lib/scaffold/phases";
 import {
   Eyebrow,
@@ -44,6 +46,7 @@ import {
   StatusDot,
   Textarea,
 } from "../base";
+import { type DeliverableItem, DeliverableList } from "../deliverable-list";
 import { type CriterionFacts, type GateNotice, GatePanel } from "../gate-panel";
 import {
   CharterPolicyCard,
@@ -104,6 +107,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     | { kind: "cancel" }
     | null
   >(null);
+  const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
@@ -120,10 +124,16 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       return;
     }
     setError(null);
-    const res = await getTrack({ trackId: param });
+    const [res, dels] = await Promise.all([
+      getTrack({ trackId: param }),
+      listDeliverables({ trackId: param }),
+    ]);
     if (res.ok) {
       setTrack(res.data);
       setPhase((p) => p ?? res.data.currentPhase);
+      // Falha ao ler entregáveis não derruba a trilha: a tela cai na regra de
+      // passos e o servidor continua sendo quem decide o fechamento.
+      setDeliverables(dels.ok ? dels.data : []);
     } else {
       setError(res.error);
     }
@@ -416,6 +426,19 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           }}
         >
           <SectionCard
+            icon="fileText"
+            subtitle="SG-01 · o gate só fecha com todo obrigatório aprovado"
+            title={`Entregáveis — ${PHASE[activePhase.phase].label}`}
+            tone="accent"
+          >
+            <DeliverableList
+              items={deliverables.filter(
+                (d) => d.phaseInstanceId === activePhase.id
+              )}
+              onChanged={load}
+            />
+          </SectionCard>
+          <SectionCard
             icon="check"
             subtitle="S-04 · cada passo produz um artefato esperado"
             title={`Passos — ${PHASE[activePhase.phase].label}`}
@@ -439,6 +462,13 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           <GatePanel
             busy={busy}
+            closeBlockedReason={
+              phaseGateState(
+                deliverables,
+                activePhase.id,
+                Boolean(track.businessCase?.signed)
+              ).reason
+            }
             // Trocar de fase zera o que foi marcado: os critérios são outros.
             key={activePhase.id}
             notice={gateNotice}
