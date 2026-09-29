@@ -63,7 +63,7 @@ Cada linha é um "vai". "Reversível" quer dizer por tela; o que não desfaz, ni
 
 ### B.0 O que é e o que não é
 
-Medir o **mesmo código de produção** (mesmo sha do deploy) em infraestrutura **igual à de produção, mas de teste**: um deployment de preview da Vercel, com banco e Storage próprios de teste. Não é carga em produção: o script recusa `*.nebuloz.ai` e não há variável que libere.
+Medir o **mesmo código de produção** (mesmo sha do deploy) em infraestrutura **igual à de produção, mas de teste**: um deployment de preview da Vercel, com banco e Storage próprios de teste. Não é carga em produção: o script recusa `*.nebuloz.ai` e o alias `<projeto>.vercel.app` dos quatro projetos, e não há variável que libere.
 
 Não mede: o tamanho real dos dados de produção, a rede dos clientes, o comportamento com tráfego misturado. Serve para trocar "26 ms no meu computador" por "p95 no preview com banco e Storage remotos".
 

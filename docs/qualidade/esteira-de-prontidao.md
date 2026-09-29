@@ -10,7 +10,7 @@ Este documento é o **como**. O **porquê** e a ordem dos produtos estão em `do
 |---|---|---|
 | Roteiro de dogfood do produto | `docs/qualidade/dogfood/<produto>/roteiro.md` | `docs/qualidade/dogfood/_roteiro-modelo.md` |
 | Diário e atritos das rodadas | `docs/qualidade/dogfood/<produto>/diario.md`, `atrito.md`, `evidencias/<data>/` | idem (fim do modelo) |
-| Script de carga | `apps/app/load/k6/<produto>-<fluxo>.js` | `apps/app/load/k6/README.md` |
+| Script de carga | `apps/app/load/k6/<produto>-<fluxo>.js` (**único lugar** dos scripts k6; a lib comum está em `apps/app/load/k6/lib/`) | `apps/app/load/k6/README.md` |
 | Parecer de prontidão com veredito | `docs/qualidade/prontidao/<produto>.md` | `docs/qualidade/prontidao/_modelo.md` |
 
 ## Três regras antes de começar
@@ -111,7 +111,7 @@ Meta: 0 violações nas telas e modais que o produto entregou (abra o modal **an
 
 ## Passo 6 — Carga (k6, local)
 
-Fluxo de carga e criação do script: `apps/app/load/k6/README.md`. Em resumo:
+Fluxo de carga e criação do script: `apps/app/load/k6/README.md`. Hoje há dois exemplos prontos: `meridian-responder.js` (onda de respondentes) e `meridian-concorrencia.js` (SC-011, dois cenários: consultores e respondentes); não crie scripts fora de `apps/app/load/k6/`. Em resumo:
 
 ```bash
 cd apps/app

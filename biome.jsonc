@@ -406,7 +406,7 @@
       // runtime do k6, não algo pra declarar; ver a nota de research.md §3
       // (specs/007-gate-maturidade-carga/) sobre manter esses scripts fora
       // do tooling de TS/lint do monorepo.
-      "includes": ["k6/**"],
+      "includes": ["apps/app/load/k6/**"],
       "linter": {
         "rules": {
           "correctness": { "noUndeclaredVariables": "off" },

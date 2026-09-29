@@ -10,7 +10,7 @@
  *     conhecido (pro cenário "respondentes" — k6 não navega, só faz HTTP puro
  *     com o token, então precisa dele de antemão)
  *
- * Escreve os tokens em `k6/.fixtures/meridian-concorrencia.json` — arquivo
+ * Escreve os tokens em `apps/app/load/k6/.fixtures/meridian-concorrencia.json` — arquivo
  * local, gitignorado (`.gitignore`), nunca comitado.
  *
  *   pnpm seed:meridian:concorrencia                → tenant "cosmos-dev", 200 respondentes
@@ -40,6 +40,7 @@ import type {
 } from "../../../packages/database/generated";
 import { PrismaClient } from "../../../packages/database/generated";
 import { hashToken, issueToken } from "../lib/meridian/respondent-token";
+import { findServerActionId } from "../load/k6/find-action-id";
 import { assertLocalDatabaseUrl, pinPersonaToTenant } from "./seed-meridian";
 
 const TENANT_SLUG = process.argv[2] ?? "cosmos-dev";
@@ -53,7 +54,7 @@ const AXES: MeridianAxis[] = [
   "GOVERNANCE",
   "INFRASTRUCTURE",
 ];
-const OUTPUT_PATH = "../../../k6/.fixtures/meridian-concorrencia.json";
+const OUTPUT_PATH = "../load/k6/.fixtures/meridian-concorrencia.json";
 
 async function main() {
   assertLocalDatabaseUrl(process.env.DATABASE_URL);
@@ -247,8 +248,24 @@ async function main() {
     questionsByAxis.set(q.axis, list);
   }
 
+  // O id da action muda a cada build; sem o manifesto (app ainda não compilou
+  // a tela do respondente) o fixture sai sem ele e o k6 recusa rodar com uma
+  // mensagem que manda repetir o seed.
+  let saveDraftActionId: string | null = null;
+  try {
+    saveDraftActionId = findServerActionId(
+      "saveDraft",
+      "(meridian)/actions/respondent"
+    );
+  } catch (err) {
+    console.warn(
+      `  ! ${err instanceof Error ? err.message : String(err)}\n    Fixture gravado sem saveDraftActionId.`
+    );
+  }
+
   const output = {
     generatedAt: new Date().toISOString(),
+    saveDraftActionId,
     tenantSlug: tenant.slug,
     assessmentId: assessment.id,
     consultant: { email: PERSONA_EMAIL, password: PERSONA_PASSWORD },

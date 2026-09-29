@@ -1,4 +1,3 @@
-// biome-ignore-all lint/correctness/noUndeclaredVariables: __ENV e __VU são globais do k6
 // Carga do respondente do Meridian: pessoas sem conta abrindo o link
 // (/meridian-responder/<token>) e gravando respostas (server action saveDraft).
 //

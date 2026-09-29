@@ -16,7 +16,7 @@
  * tem a action.
  */
 
-import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import dotenv from "dotenv";
 
@@ -27,6 +27,7 @@ import { Pool } from "pg";
 import type { PrismaClient as PrismaClientType } from "../../../../packages/database/generated";
 import { PrismaClient } from "../../../../packages/database/generated";
 import { hashToken, issueToken } from "../../lib/meridian/respondent-token";
+import { findServerActionId } from "./find-action-id";
 
 const TENANT_SLUG = "cosmos-dev";
 const ASSESSMENT_CODE = "AS-K6-001";
@@ -42,35 +43,6 @@ function assertLocalDatabaseUrl(url: string | undefined): void {
       `DATABASE_URL não é local (host: ${host || "vazio"}). Esta preparação só roda em localhost.`
     );
   }
-}
-
-function findSaveDraftActionId(): string {
-  // `next dev` grava em .next/dev/server; `next build` em .next/server. Vale o
-  // mais recente: sobra manifesto do outro modo no mesmo .next.
-  const manifestPath = [
-    "../../.next/dev/server/server-reference-manifest.json",
-    "../../.next/server/server-reference-manifest.json",
-  ]
-    .map((p) => join(here, p))
-    .filter((p) => existsSync(p))
-    .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
-  if (!manifestPath) {
-    throw new Error("manifesto de server actions não encontrado em .next");
-  }
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
-    node?: Record<string, { exportedName?: string; filename?: string }>;
-  };
-  const hit = Object.entries(manifest.node ?? {}).find(
-    ([, v]) =>
-      v.exportedName === "saveDraft" &&
-      (v.filename ?? "").includes("(meridian)/actions/respondent")
-  );
-  if (!hit) {
-    throw new Error(
-      "saveDraft não está no manifesto de server actions: abra o link de um respondente no next dev uma vez e rode de novo."
-    );
-  }
-  return hit[0];
 }
 
 async function main() {
@@ -148,7 +120,10 @@ async function main() {
 
     const out = {
       assessment: ASSESSMENT_CODE,
-      saveDraftActionId: findSaveDraftActionId(),
+      saveDraftActionId: findServerActionId(
+        "saveDraft",
+        "(meridian)/actions/respondent"
+      ),
       questions: questions.map((q) => ({
         id: q.id,
         max: Math.max(0, q.scaleLabels.length - 1),

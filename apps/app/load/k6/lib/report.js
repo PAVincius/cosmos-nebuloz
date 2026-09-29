@@ -53,14 +53,24 @@ function headerLines(name, metrics) {
  * @param {string} name nome do script (aparece no título)
  * @param {string[]} names nomes das requisições (tag `name`)
  * @param {Record<string,string>} env normalmente `__ENV`
+ * @param {{label: string, trend: string, errors: string}[]} [extras] métricas
+ *   próprias do script (uma por cenário): `trend` é a Trend de duração e
+ *   `errors` a Rate de erro, reportadas em linhas separadas
  * @returns função para `export const handleSummary = ...`
  */
-export function makeSummary(name, names, env) {
+export function makeSummary(name, names, env, extras) {
   return function handleSummary(data) {
     const metrics = data.metrics;
     const lines = headerLines(name, metrics);
     for (const n of names) {
       lines.push(row(n, metrics[`http_req_duration{name:${n}}`]));
+    }
+    for (const x of extras || []) {
+      const errRate = values(metrics[x.errors]).rate;
+      lines.push(row(x.label, metrics[x.trend]));
+      lines.push(
+        `  ${"".padEnd(28)} erro ${((errRate || 0) * 100).toFixed(2)} %`
+      );
     }
     lines.push("  metas:", ...thresholdLines(metrics), "");
 
