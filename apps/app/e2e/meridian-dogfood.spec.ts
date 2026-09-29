@@ -447,6 +447,8 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
     await infraGapRow.click();
 
     await page.getByRole("button", { name: "Virar caso de negócio" }).click();
+    // A promoção só grava depois da confirmação (atrito A2 do dogfood).
+    await page.getByRole("button", { name: "Confirmar promoção" }).click();
     await expect(page.getByText(/Promovido para o SCAFFOLD/)).toBeVisible();
   });
 });

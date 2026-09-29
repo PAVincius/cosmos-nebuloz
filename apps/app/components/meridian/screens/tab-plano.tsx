@@ -279,36 +279,6 @@ export default function PlanoTab({
           })}
         </div>
       </SectionCard>
-
-      <SectionCard
-        bodyStyle={{ padding: 0 }}
-        icon="upload"
-        subtitle="Contrato estável — campo removido daqui é quebra para quem consome"
-        title="Export para o Scaffold"
-        tone="accent"
-      >
-        <pre
-          className="mono scroll"
-          style={{
-            margin: 0,
-            padding: "14px 18px",
-            fontSize: 10.5,
-            lineHeight: 1.7,
-            color: "var(--ink-muted)",
-            overflowX: "auto",
-            background: "var(--surface-2)",
-            borderRadius: "0 0 var(--r-lg) var(--r-lg)",
-          }}
-        >
-          {`{
-  "assessment": "${a.code}", "template_version": "${a.templateVersion}",
-  "axes": [{ "axis": "governance", "score": 66, "status": "overridden", "confidence": 0.91 }, …],
-  "gaps": [{ "id": "G-01", "axis": "data", "severity": "high", "cost_of_delay": 88,
-             "depends_on": [], "target_quarter": "Q1" }, …],
-  "plan": { "capacity_assumption": null, "items": ${items.length} }
-}`}
-        </pre>
-      </SectionCard>
     </div>
   );
 }

@@ -45,6 +45,7 @@ import {
   useModal,
 } from "../base";
 import { CONFIDENCE, ConfPill } from "../seams";
+import { PromoteConfirm, type PromoteTarget } from "./promote-confirm";
 
 export const GAP_STATE: Record<
   MeridianGapState,
@@ -91,10 +92,9 @@ function GapDetail({ gap, onClose }: { gap: GapRow; onClose: () => void }) {
   const st = GAP_STATE[gap.state];
   const c = CONFIDENCE[gap.confidence];
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<PromoteTarget | null>(null);
 
-  const promote = async (
-    targetProduct: "COSMOS" | "CHARTER" | "SIGNAL" | "SCAFFOLD"
-  ) => {
+  const promote = async (targetProduct: PromoteTarget) => {
     setBusy(true);
     await runWithToast(
       () =>
@@ -280,25 +280,35 @@ function GapDetail({ gap, onClose }: { gap: GapRow; onClose: () => void }) {
                 ? "Nenhum trabalho foi criado para esta lacuna. O custo de atraso segue correndo e não há dono de execução."
                 : "Sequenciado no plano de 12 meses, mas ainda não virou trabalho em nenhum produto."}
             </div>
-            <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
-              <Button
-                disabled={busy}
-                icon="outbound"
-                onClick={() => promote("COSMOS")}
-                size="sm"
-              >
-                Promover a iniciativa
-              </Button>
-              <Button
-                disabled={busy}
-                icon="fileText"
-                onClick={() => promote("SCAFFOLD")}
-                size="sm"
-                variant="secondary"
-              >
-                Virar caso de negócio
-              </Button>
-            </div>
+            {pending ? (
+              <PromoteConfirm
+                busy={busy}
+                defaultProduct={pending}
+                gapCode={gap.code}
+                onCancel={() => setPending(null)}
+                onConfirm={promote}
+              />
+            ) : (
+              <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
+                <Button
+                  disabled={busy}
+                  icon="outbound"
+                  onClick={() => setPending("COSMOS")}
+                  size="sm"
+                >
+                  Promover a iniciativa
+                </Button>
+                <Button
+                  disabled={busy}
+                  icon="fileText"
+                  onClick={() => setPending("SCAFFOLD")}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Virar caso de negócio
+                </Button>
+              </div>
+            )}
           </SectionCard>
         )}
       </div>
