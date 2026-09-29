@@ -27,10 +27,6 @@
   "langsmith": [
     "packages/payments>@stripe/agent-toolkit"
   ],
-  "next": [
-    "apps/api>next",
-    "apps/app>next"
-  ],
   "path-to-regexp": [
     "apps/web>@rescale/nemo",
     "apps/web>fumadocs-core"

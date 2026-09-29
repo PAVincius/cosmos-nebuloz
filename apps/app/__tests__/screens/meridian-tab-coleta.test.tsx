@@ -65,6 +65,15 @@ const ASSESSMENT: AssessmentDetail = {
 
 /** Mesma forma de `assessment-detail.tsx`: `loading` desmonta o
  *  `ModalProvider` inteiro pra skeleton. */
+/** O modal foca o primeiro controle num `useEffect`, depois do render. Um
+ *  Esc disparado antes disso sai do <body> e não passa pelo
+ *  `onKeyDownCapture` do modal — o usuário real sempre tecla depois. */
+async function focoDentroDoDialogo() {
+  await waitFor(() => {
+    expect(document.activeElement?.closest('[role="dialog"]')).not.toBeNull();
+  });
+}
+
 function Harness() {
   const [loading, setLoading] = useState(false);
   if (loading) {
@@ -206,6 +215,9 @@ describe("ColetaTab — atribuir respondente", () => {
     // O Esc de verdade tem como alvo o elemento focado (o modal foca o
     // primeiro controle ao abrir) — disparar em `document` não passaria
     // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    // O foco chega por `useEffect` depois do render: sob carga o efeito
+    // atrasa, o Esc saía do <body> e o teste falhava de forma intermitente.
+    await focoDentroDoDialogo();
     fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
 
     // Esc sozinho não fecha nem recarrega — só abre a confirmação.
@@ -501,6 +513,9 @@ describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
     // O Esc de verdade tem como alvo o elemento focado (o modal foca o
     // primeiro controle ao abrir) — disparar em `document` não passaria
     // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    // O foco chega por `useEffect` depois do render: sob carga o efeito
+    // atrasa, o Esc saía do <body> e o teste falhava de forma intermitente.
+    await focoDentroDoDialogo();
     fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
     expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
     expect(
@@ -756,6 +771,9 @@ describe("ColetaTab — reemitir e copiar todos os pendentes (spec 006 US2)", ()
     // O Esc de verdade tem como alvo o elemento focado (o modal foca o
     // primeiro controle ao abrir) — disparar em `document` não passaria
     // pelo `onKeyDownCapture` do React, que fica num nó mais profundo.
+    // O foco chega por `useEffect` depois do render: sob carga o efeito
+    // atrasa, o Esc saía do <body> e o teste falhava de forma intermitente.
+    await focoDentroDoDialogo();
     fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
     expect(
       screen.getByText("Fechar sem copiar ou baixar a lista?")
