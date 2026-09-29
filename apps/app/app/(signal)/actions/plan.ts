@@ -415,8 +415,8 @@ async function moveState(
 }
 
 /** Proposta → Sem fonte. Só o OWNER (ou o Analista, que o alcança). */
-export function approveMetric(raw: { id: string }) {
-  return moveState(raw, {
+export async function approveMetric(raw: { id: string }) {
+  return await moveState(raw, {
     action: "approve",
     event: "APPROVE",
     verb: "aprovar",
@@ -424,8 +424,8 @@ export function approveMetric(raw: { id: string }) {
   });
 }
 
-export function pauseMetric(raw: { id: string; comment: string }) {
-  return moveState(raw, {
+export async function pauseMetric(raw: { id: string; comment: string }) {
+  return await moveState(raw, {
     action: "pause",
     event: "PAUSE",
     verb: "pausar",
@@ -433,8 +433,8 @@ export function pauseMetric(raw: { id: string; comment: string }) {
   });
 }
 
-export function resumeMetric(raw: { id: string; comment: string }) {
-  return moveState(raw, {
+export async function resumeMetric(raw: { id: string; comment: string }) {
+  return await moveState(raw, {
     action: "resume",
     event: "RESUME",
     verb: "retomar",
