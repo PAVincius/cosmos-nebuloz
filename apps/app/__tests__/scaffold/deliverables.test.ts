@@ -568,6 +568,20 @@ describe("fase futura é só leitura", () => {
     expect(r.ok && r.data[0]?.actions.START.reason).toMatch(/ainda não abriu/i);
   });
 
+  it("a lista diz se o ator pode anexar arquivo, com o motivo quando não pode", async () => {
+    h.findMany.mockResolvedValue([
+      row("IN_PROGRESS"),
+      row("IN_REVIEW", { id: "d2" }),
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.attach).toEqual({ allowed: true, reason: null });
+    expect(r.ok && r.data[1]?.attach.allowed).toBe(false);
+    expect(r.ok && r.data[1]?.attach.reason).toMatch(/anexa/i);
+    asUser("SPONSOR", OWNER);
+    const s = await listDeliverables({ trackId: TRACK });
+    expect(s.ok && s.data[0]?.attach.allowed).toBe(false);
+  });
+
   it("a lista não expõe a chave do objeto, só se há arquivo", async () => {
     h.findMany.mockResolvedValue([row("IN_PROGRESS")]);
     const r = await listDeliverables({ trackId: TRACK });

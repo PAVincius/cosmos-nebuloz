@@ -472,10 +472,17 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
     // O que o ator pode fazer, calculado no servidor: a tela desabilita o
     // controle com o motivo e nunca precisa conhecer papel nem regra.
     const actor = actorOf(ctx);
-    return rows.map((d) => ({
-      ...publicRow(d),
-      actions: availableActions(toSubject(d), actor),
-    }));
+    return rows.map((d) => {
+      const subject = toSubject(d);
+      const attach = decideAttach(subject, actor);
+      return {
+        ...publicRow(d),
+        actions: availableActions(subject, actor),
+        attach: attach.ok
+          ? { allowed: true, reason: null }
+          : { allowed: false, reason: attach.message },
+      };
+    });
   });
 }
 

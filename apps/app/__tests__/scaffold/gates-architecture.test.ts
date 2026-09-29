@@ -104,11 +104,18 @@ describe("a invariante do gate tem um único dono", () => {
   });
 
   it("quem mais escreve estado de fase só escreve estados reversíveis", () => {
-    // Hoje só `steps.ts`, movendo a fase entre OPEN e GATE_READY conforme os
-    // passos (SG-01). Se aparecer outro escritor, ele entra nesta lista de
+    // `steps.ts` move a fase entre OPEN e GATE_READY conforme os passos
+    // (SG-01). `_phase-reopen.ts` a tira de GATE_READY, BLOCKED, CLOSED ou
+    // OBSERVING quando um entregável aprovado é reaberto (SC-PO-03) e só
+    // escreve OPEN, como `reopenPhase`. Outro escritor entra nesta lista de
     // propósito — e o teste acima continua garantindo que ele não fecha nada.
     const writers = scan(WRITES_PHASE_STATE, { except: GATES_ACTION });
-    expect(writers).toEqual([join("app", "(scaffold)", "actions", "steps.ts")]);
+    expect([...writers].sort()).toEqual(
+      [
+        join("app", "(scaffold)", "actions", "_phase-reopen.ts"),
+        join("app", "(scaffold)", "actions", "steps.ts"),
+      ].sort()
+    );
   });
 
   it("nenhum arquivo atualiza ou apaga resultado de gate ou override (SG-07)", () => {

@@ -21,6 +21,8 @@ const h = vi.hoisted(() => ({
   startDeliverable: vi.fn(),
   approveDeliverable: vi.fn(),
   requestAdjustment: vi.fn(),
+  attachVersion: vi.fn(),
+  readFile: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -46,6 +48,8 @@ vi.mock("@/app/(scaffold)/actions/deliverables", () => ({
   approveDeliverable: h.approveDeliverable,
   requestDeliverableAdjustment: h.requestAdjustment,
   reopenDeliverable: vi.fn(),
+  attachDeliverableVersion: h.attachVersion,
+  readDeliverableFile: h.readFile,
 }));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
@@ -416,6 +420,10 @@ function deliverable(status: string, over: Record<string, unknown> = {}) {
       REQUEST_ADJUSTMENT: YES,
       REOPEN: YES,
     },
+    attach: YES,
+    hasFile: false,
+    fileName: null,
+    version: 0,
     ...over,
   };
 }
@@ -541,5 +549,149 @@ describe("entregáveis na tela", () => {
     const alert = await screen.findByRole("alert");
     expect(alert.textContent).toContain("no que é seu");
     expect(screen.getByText("Gate da fase")).toBeDefined();
+  });
+});
+
+describe("arquivo do entregável", () => {
+  const open = async (item: Record<string, unknown>) => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({ ok: true, data: [item] });
+    render(<TrackDetailScreen param="trk1" />);
+  };
+
+  it("anexa: pede a URL assinada, faz o PUT direto no storage e recarrega", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    h.attachVersion.mockResolvedValue({
+      ok: true,
+      data: {
+        uploadUrl: "https://storage.test/put",
+        version: 1,
+        fileName: "plano.pdf",
+      },
+    });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue({ ok: true, status: 200 } as Response);
+
+    const input = (await screen.findByLabelText(
+      /anexar arquivo: B1\.2/i
+    )) as HTMLInputElement;
+    const file = new File(["abc"], "plano.pdf", { type: "application/pdf" });
+    fireEvent.change(input, { target: { files: [file] } });
+
+    await waitFor(() => expect(h.attachVersion).toHaveBeenCalledTimes(1));
+    expect(h.attachVersion.mock.calls[0]?.[0]).toEqual({
+      deliverableId: "del-1",
+      filename: "plano.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 3,
+    });
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe("https://storage.test/put");
+    expect((fetchSpy.mock.calls[0]?.[1] as RequestInit).method).toBe("PUT");
+    fetchSpy.mockRestore();
+  });
+
+  it("PUT que falha avisa na lista, sem derrubar a tela", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    h.attachVersion.mockResolvedValue({
+      ok: true,
+      data: {
+        uploadUrl: "https://storage.test/put",
+        version: 1,
+        fileName: "a.pdf",
+      },
+    });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue({ ok: false, status: 403 } as Response);
+    const input = (await screen.findByLabelText(
+      /anexar arquivo: B1\.2/i
+    )) as HTMLInputElement;
+    fireEvent.change(input, {
+      target: {
+        files: [new File(["a"], "a.pdf", { type: "application/pdf" })],
+      },
+    });
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/upload falhou/i);
+    expect(screen.getByText("Gate da fase")).toBeDefined();
+    fetchSpy.mockRestore();
+  });
+
+  it("mostra versão e nome do arquivo, e baixa pela URL auditada", async () => {
+    await open(
+      deliverable("IN_REVIEW", {
+        hasFile: true,
+        fileName: "plano.pdf",
+        version: 2,
+      })
+    );
+    h.readFile.mockResolvedValue({
+      ok: true,
+      data: {
+        url: "https://storage.test/get",
+        expiresIn: 300,
+        fileName: "plano.pdf",
+        version: 2,
+      },
+    });
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+
+    expect(await screen.findByText(/v2 · plano\.pdf/)).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /baixar plano\.pdf/i }));
+    await waitFor(() =>
+      expect(h.readFile).toHaveBeenCalledWith({ deliverableId: "del-1" })
+    );
+    await waitFor(() =>
+      expect(openSpy).toHaveBeenCalledWith(
+        "https://storage.test/get",
+        "_blank",
+        "noopener,noreferrer"
+      )
+    );
+    openSpy.mockRestore();
+  });
+
+  it("sem permissão para anexar, o controle fica desabilitado com o motivo", async () => {
+    await open(
+      deliverable("IN_PROGRESS", {
+        attach: { allowed: false, reason: "Só o responsável anexa." },
+      })
+    );
+    const input = (await screen.findByLabelText(
+      /anexar arquivo: B1\.2/i
+    )) as HTMLInputElement;
+    expect(input.disabled).toBe(true);
+    expect(screen.getByText("Só o responsável anexa.")).toBeDefined();
+  });
+
+  it("estado que não admite anexo não mostra o controle", async () => {
+    await open(deliverable("IN_REVIEW"));
+    await screen.findByText("Em revisão");
+    expect(screen.queryByLabelText(/anexar arquivo/i)).toBeNull();
+  });
+
+  it("enviar sem arquivo: o botão vem desabilitado com o motivo da máquina", async () => {
+    await open(
+      deliverable("IN_PROGRESS", {
+        actions: {
+          START: NO,
+          SUBMIT: {
+            allowed: false,
+            reason:
+              "Anexe o arquivo do entregável antes de enviar para revisão.",
+          },
+          APPROVE: NO,
+          REQUEST_ADJUSTMENT: NO,
+          REOPEN: NO,
+        },
+      })
+    );
+    const send = await screen.findByRole("button", {
+      name: /enviar para revisão/i,
+    });
+    expect(send).toHaveProperty("disabled", true);
+    expect(screen.getByText(/anexe o arquivo do entregável/i)).toBeDefined();
   });
 });

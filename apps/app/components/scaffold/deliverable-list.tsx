@@ -10,7 +10,9 @@ import { Badge, Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import {
   approveDeliverable,
+  attachDeliverableVersion,
   type listDeliverables,
+  readDeliverableFile,
   reopenDeliverable,
   requestDeliverableAdjustment,
   startDeliverable,
@@ -76,6 +78,14 @@ const ACTION: Record<
   },
 };
 
+/** Estados em que se anexa arquivo (espelha `decideAttach`; quem decide é o
+ *  servidor, e `d.attach` diz se este ator pode). */
+const ATTACHABLE: DeliverableStatus[] = [
+  "IN_PROGRESS",
+  "ADJUSTMENT_REQUESTED",
+  "REOPENED",
+];
+
 const RUN = {
   START: startDeliverable,
   SUBMIT: submitDeliverable,
@@ -127,6 +137,47 @@ export function DeliverableList({
       setPending(null);
       setComment("");
       onChanged();
+    } else {
+      setError(res.error);
+    }
+  };
+
+  // A URL é assinada para PUT direto no storage: o byte não passa pelo
+  // servidor da aplicação.
+  const attach = async (item: DeliverableItem, file: File) => {
+    setBusy(true);
+    setError(null);
+    const contentType = file.type || "application/octet-stream";
+    const res = await attachDeliverableVersion({
+      deliverableId: item.id,
+      filename: file.name,
+      contentType,
+      sizeBytes: file.size,
+    });
+    if (!res.ok) {
+      setBusy(false);
+      setError(res.error);
+      return;
+    }
+    const put = await fetch(res.data.uploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": contentType },
+    });
+    setBusy(false);
+    if (!put.ok) {
+      setError(
+        `Upload falhou (${put.status}). Tente anexar de novo: enviar para revisão só vale com o arquivo no storage.`
+      );
+      return;
+    }
+    onChanged();
+  };
+
+  const download = async (item: DeliverableItem) => {
+    const res = await readDeliverableFile({ deliverableId: item.id });
+    if (res.ok) {
+      window.open(res.data.url, "_blank", "noopener,noreferrer");
     } else {
       setError(res.error);
     }
@@ -204,6 +255,32 @@ export function DeliverableList({
                 <Badge tone={req.tone}>{req.label}</Badge>
                 <Badge tone={s.tone}>{s.label}</Badge>
               </div>
+              {d.hasFile && d.fileName ? (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    alignItems: "center",
+                    marginTop: 4,
+                  }}
+                >
+                  <span
+                    className="mono"
+                    style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
+                  >
+                    v{d.version} · {d.fileName}
+                  </span>
+                  <Button
+                    disabled={busy}
+                    icon="download"
+                    onClick={() => download(d)}
+                    size="sm"
+                    variant="secondary"
+                  >
+                    Baixar <span className="sr-only">{d.fileName}</span>
+                  </Button>
+                </div>
+              ) : null}
               {d.dispensedReason ? (
                 <div
                   style={{
@@ -240,6 +317,45 @@ export function DeliverableList({
                     {ACTION[t].label}
                   </Button>
                 ))}
+                {ATTACHABLE.includes(d.status as DeliverableStatus) ? (
+                  <>
+                    <label
+                      style={{
+                        cursor:
+                          busy || !d.attach.allowed ? "not-allowed" : "pointer",
+                        opacity: busy || !d.attach.allowed ? 0.5 : 1,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        padding: "7px 12px",
+                        borderRadius: "var(--r-md)",
+                        border: "1px solid var(--hairline-strong)",
+                        background: "var(--surface)",
+                      }}
+                    >
+                      <input
+                        aria-label={`Anexar arquivo: ${d.code}`}
+                        disabled={busy || !d.attach.allowed}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) {
+                            attach(d, f);
+                          }
+                          e.target.value = "";
+                        }}
+                        style={{ display: "none" }}
+                        type="file"
+                      />
+                      {d.hasFile ? "Nova versão do arquivo" : "Anexar arquivo"}
+                    </label>
+                    {d.attach.allowed ? null : (
+                      <span
+                        style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
+                      >
+                        {d.attach.reason}
+                      </span>
+                    )}
+                  </>
+                ) : null}
                 {blocked?.av.reason ? (
                   <span style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
                     {blocked.av.reason}
