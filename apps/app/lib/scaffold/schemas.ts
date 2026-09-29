@@ -337,3 +337,16 @@ export const AddDeliverableSchema = z.object({
   ownerId: optCuid,
   approverId: optCuid,
 });
+
+export const AttachDeliverableVersionSchema = z.object({
+  deliverableId: cuid,
+  filename: nnStr,
+  contentType: nnStr,
+  sizeBytes: z.number().int().positive(),
+});
+
+export const ReadDeliverableFileSchema = z.object({
+  deliverableId: cuid,
+  /** Ausente = a versão atual. */
+  version: z.number().int().positive().optional(),
+});

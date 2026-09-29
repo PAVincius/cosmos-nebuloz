@@ -82,11 +82,42 @@ export function deliverableGrants(role: string): DeliverableGrants {
   return GRANTS[role] ?? NONE;
 }
 
+/** Estado da fase do entregável (`ScaffoldPhaseState`), declarado aqui para o
+ *  módulo seguir puro e cliente-seguro. */
+export type PhaseState =
+  | "IDLE"
+  | "OPEN"
+  | "GATE_READY"
+  | "BLOCKED"
+  | "CLOSED"
+  | "OBSERVING"
+  | "REOPENED";
+
 export type DeliverableSubject = {
   status: DeliverableStatus;
   ownerId: string | null;
   approverId: string | null;
+  phaseState: PhaseState;
+  /** Há arquivo anexado na versão atual. Enviar para revisão exige. */
+  hasFile: boolean;
 };
+
+/** Fases em que se trabalha num entregável. A que ainda não abriu (IDLE) é só
+ *  leitura, e a fechada só admite reabrir (SC-PO-03). */
+const WORKABLE_PHASES: readonly PhaseState[] = [
+  "OPEN",
+  "GATE_READY",
+  "BLOCKED",
+  "REOPENED",
+];
+const REOPENABLE_PHASES: readonly PhaseState[] = [
+  ...WORKABLE_PHASES,
+  "CLOSED",
+  "OBSERVING",
+];
+
+const PHASE_NOT_OPEN_MESSAGE =
+  "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.";
 
 export type DeliverableActor = { userId: string; grants: DeliverableGrants };
 
@@ -94,7 +125,9 @@ export type TransitionDenial =
   | "INVALID_TRANSITION"
   | "FORBIDDEN"
   | "SELF_REVIEW"
-  | "COMMENT_REQUIRED";
+  | "COMMENT_REQUIRED"
+  | "FILE_REQUIRED"
+  | "PHASE_NOT_OPEN";
 
 export type TransitionResult =
   | { ok: true; to: DeliverableStatus }
@@ -127,6 +160,11 @@ export function decideTransition(
     );
   }
 
+  const phases = transition === "REOPEN" ? REOPENABLE_PHASES : WORKABLE_PHASES;
+  if (!phases.includes(subject.phaseState)) {
+    return deny("PHASE_NOT_OPEN", PHASE_NOT_OPEN_MESSAGE);
+  }
+
   const isOwner = subject.ownerId !== null && subject.ownerId === actor.userId;
 
   if (transition === "START" || transition === "SUBMIT") {
@@ -137,6 +175,13 @@ export function decideTransition(
         "Só o responsável, o líder de transformação ou o consultor trabalham neste entregável."
       );
     }
+  }
+
+  if (transition === "SUBMIT" && !subject.hasFile) {
+    return deny(
+      "FILE_REQUIRED",
+      "Anexe o arquivo do entregável antes de enviar para revisão."
+    );
   }
 
   if (transition === "APPROVE" || transition === "REQUEST_ADJUSTMENT") {
@@ -185,18 +230,27 @@ const EDITABLE: readonly DeliverableStatus[] = [
   "REOPENED",
 ];
 
-/** Edição do resumo: mesmo escopo de `work` e só nos estados editáveis. */
-export function decideEdit(
+type WorkDecision =
+  | { ok: true }
+  | { ok: false; code: TransitionDenial; message: string };
+
+/** Escopo de `work` (próprio ou qualquer), a fase aberta e o estado do
+ *  entregável: o que edição de resumo e anexo de versão têm em comum. */
+function decideWorkOn(
   subject: DeliverableSubject,
-  actor: DeliverableActor
-): { ok: true } | { ok: false; code: TransitionDenial; message: string } {
-  if (!EDITABLE.includes(subject.status)) {
+  actor: DeliverableActor,
+  allowed: readonly DeliverableStatus[],
+  stateMessage: string
+): WorkDecision {
+  if (!WORKABLE_PHASES.includes(subject.phaseState)) {
     return {
       ok: false,
-      code: "INVALID_TRANSITION",
-      message:
-        "O entregável não está num estado editável. Reabra o aprovado ou aguarde a revisão.",
+      code: "PHASE_NOT_OPEN",
+      message: PHASE_NOT_OPEN_MESSAGE,
     };
+  }
+  if (!allowed.includes(subject.status)) {
+    return { ok: false, code: "INVALID_TRANSITION", message: stateMessage };
   }
   const { work } = actor.grants;
   const isOwner = subject.ownerId !== null && subject.ownerId === actor.userId;
@@ -205,10 +259,43 @@ export function decideEdit(
       ok: false,
       code: "FORBIDDEN",
       message:
-        "Só o responsável, o líder de transformação ou o consultor editam este entregável.",
+        "Só o responsável, o líder de transformação ou o consultor trabalham neste entregável.",
     };
   }
   return { ok: true };
+}
+
+/** Edição do resumo: mesmo escopo de `work` e só nos estados editáveis. */
+export function decideEdit(
+  subject: DeliverableSubject,
+  actor: DeliverableActor
+): WorkDecision {
+  return decideWorkOn(
+    subject,
+    actor,
+    EDITABLE,
+    "O entregável não está num estado editável. Reabra o aprovado ou aguarde a revisão."
+  );
+}
+
+/** Estados em que se anexa versão de arquivo: já iniciado e ainda não enviado.
+ *  Em revisão o que foi enviado não muda; aprovado pede reabrir. */
+const ATTACHABLE: readonly DeliverableStatus[] = [
+  "IN_PROGRESS",
+  "ADJUSTMENT_REQUESTED",
+  "REOPENED",
+];
+
+export function decideAttach(
+  subject: DeliverableSubject,
+  actor: DeliverableActor
+): WorkDecision {
+  return decideWorkOn(
+    subject,
+    actor,
+    ATTACHABLE,
+    "Só se anexa arquivo a entregável em elaboração, com ajuste pedido ou reaberto. Inicie antes, ou reabra."
+  );
 }
 
 export type GateDeliverable = {

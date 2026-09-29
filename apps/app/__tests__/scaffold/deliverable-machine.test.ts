@@ -3,6 +3,7 @@ import {
   availableActions,
   type DeliverableStatus,
   type DeliverableTransition,
+  decideAttach,
   decideEdit,
   decideTransition,
   deliverableGrants,
@@ -27,6 +28,8 @@ const subject = (status: DeliverableStatus, over = {}) => ({
   status,
   ownerId: OWNER,
   approverId: APPROVER,
+  phaseState: "OPEN" as const,
+  hasFile: true,
   ...over,
 });
 
@@ -471,5 +474,185 @@ describe("phaseGateState", () => {
     expect(phaseGateState(all, "p1", false).pending.map((p) => p.code)).toEqual(
       ["A3.2"]
     );
+  });
+});
+
+// SC-PO-03 (Norte, seção a): enviar exige arquivo; fase futura é só leitura.
+describe("enviar exige arquivo", () => {
+  it.each([
+    "IN_PROGRESS",
+    "ADJUSTMENT_REQUESTED",
+    "REOPENED",
+  ] as const)("enviar de %s sem arquivo é recusado", (status) => {
+    const r = decideTransition(
+      "SUBMIT",
+      subject(status, { hasFile: false }),
+      as("CONSULTANT", "u-c")
+    );
+    expect(r).toMatchObject({ ok: false, code: "FILE_REQUIRED" });
+    expect(!r.ok && r.message).toMatch(/arquivo/i);
+  });
+
+  it("com arquivo, envia", () => {
+    expect(
+      decideTransition(
+        "SUBMIT",
+        subject("IN_PROGRESS", { hasFile: true }),
+        as("CONSULTANT", "u-c")
+      ).ok
+    ).toBe(true);
+  });
+
+  it("quem não pode trabalhar ouve o motivo de papel, não o do arquivo", () => {
+    expect(
+      decideTransition(
+        "SUBMIT",
+        subject("IN_PROGRESS", { hasFile: false }),
+        as("SPONSOR", OWNER)
+      )
+    ).toMatchObject({ code: "FORBIDDEN" });
+  });
+
+  it("os demais movimentos não exigem arquivo", () => {
+    expect(
+      decideTransition(
+        "START",
+        subject("NOT_STARTED", { hasFile: false }),
+        as("CONSULTANT", "u-c")
+      ).ok
+    ).toBe(true);
+  });
+});
+
+describe("fase que ainda não abriu é só leitura", () => {
+  const IDLE = { phaseState: "IDLE" as const };
+
+  it.each([
+    ["START", "NOT_STARTED"],
+    ["SUBMIT", "IN_PROGRESS"],
+    ["APPROVE", "IN_REVIEW"],
+    ["REQUEST_ADJUSTMENT", "IN_REVIEW"],
+  ] as const)("%s em fase IDLE é recusado", (t, status) => {
+    const r = decideTransition(
+      t,
+      subject(status, IDLE),
+      as("CONSULTANT", APPROVER),
+      "comentário"
+    );
+    expect(r).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+    expect(!r.ok && r.message).toMatch(/ainda não abriu/i);
+  });
+
+  it.each([
+    "OPEN",
+    "GATE_READY",
+    "BLOCKED",
+  ] as const)("fase %s deixa trabalhar", (phaseState) => {
+    expect(
+      decideTransition(
+        "START",
+        subject("NOT_STARTED", { phaseState }),
+        as("CONSULTANT", "u-c")
+      ).ok
+    ).toBe(true);
+  });
+
+  it.each([
+    "CLOSED",
+    "OBSERVING",
+  ] as const)("fase %s: trabalhar e revisar param, reabrir continua possível", (phaseState) => {
+    expect(
+      decideTransition(
+        "APPROVE",
+        subject("IN_REVIEW", { phaseState }),
+        as("CONSULTANT", APPROVER)
+      )
+    ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+    expect(
+      decideTransition(
+        "REOPEN",
+        subject("APPROVED", { phaseState }),
+        as("CONSULTANT", "u-c"),
+        "motivo"
+      ).ok
+    ).toBe(true);
+  });
+
+  it("nem reabrir em fase que nunca abriu", () => {
+    expect(
+      decideTransition(
+        "REOPEN",
+        subject("APPROVED", IDLE),
+        as("CONSULTANT", "u-c"),
+        "motivo"
+      )
+    ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+  });
+
+  it("availableActions carrega o motivo da fase", () => {
+    const a = availableActions(
+      subject("NOT_STARTED", IDLE),
+      as("CONSULTANT", "u-c")
+    );
+    expect(a.START.allowed).toBe(false);
+    expect(a.START.reason).toMatch(/ainda não abriu/i);
+  });
+
+  it("editar resumo em fase futura também é recusado", () => {
+    expect(
+      decideEdit(subject("NOT_STARTED", IDLE), as("CONSULTANT", "u-c"))
+    ).toMatchObject({
+      ok: false,
+      code: "PHASE_NOT_OPEN",
+    });
+  });
+});
+
+describe("decideAttach", () => {
+  it.each([
+    "IN_PROGRESS",
+    "ADJUSTMENT_REQUESTED",
+    "REOPENED",
+  ] as const)("anexa versão em %s", (status) => {
+    expect(decideAttach(subject(status), as("CONSULTANT", "u-c")).ok).toBe(
+      true
+    );
+  });
+
+  it.each([
+    "NOT_STARTED",
+    "IN_REVIEW",
+    "APPROVED",
+  ] as const)("não anexa em %s: inicie antes, ou reabra", (status) => {
+    expect(
+      decideAttach(subject(status), as("CONSULTANT", "u-c"))
+    ).toMatchObject({
+      ok: false,
+      code: "INVALID_TRANSITION",
+    });
+  });
+
+  it("mesmo escopo de trabalho: membro só no que é dele; sponsor nunca", () => {
+    expect(
+      decideAttach(subject("IN_PROGRESS"), as("TEAM_MEMBER", "u-x"))
+    ).toMatchObject({
+      ok: false,
+      code: "FORBIDDEN",
+    });
+    expect(
+      decideAttach(subject("IN_PROGRESS"), as("TEAM_MEMBER", OWNER)).ok
+    ).toBe(true);
+    expect(decideAttach(subject("IN_PROGRESS"), as("SPONSOR", OWNER)).ok).toBe(
+      false
+    );
+  });
+
+  it("fase futura é só leitura", () => {
+    expect(
+      decideAttach(
+        subject("IN_PROGRESS", { phaseState: "IDLE" }),
+        as("CONSULTANT", "u-c")
+      )
+    ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
   });
 });

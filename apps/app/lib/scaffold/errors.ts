@@ -26,6 +26,9 @@ export const SCAFFOLD_ERROR = {
   DELIVERABLE_TRANSITION_INVALID: "DELIVERABLE_TRANSITION_INVALID",
   DELIVERABLE_COMMENT_REQUIRED: "DELIVERABLE_COMMENT_REQUIRED",
   DELIVERABLE_SELF_REVIEW: "DELIVERABLE_SELF_REVIEW",
+  DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
+  DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
+  DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -69,6 +72,11 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Pedir ajuste e reabrir exigem um comentário dizendo o motivo.",
   DELIVERABLE_SELF_REVIEW:
     "Responsável e aprovador não podem ser a mesma pessoa: ninguém aprova o que é seu.",
+  DELIVERABLE_FILE_REQUIRED:
+    "Anexe o arquivo do entregável antes de enviar para revisão.",
+  DELIVERABLE_PHASE_NOT_OPEN:
+    "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
+  DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
   DELIVERABLES_PENDING:
     "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:
