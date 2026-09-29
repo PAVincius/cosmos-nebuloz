@@ -138,11 +138,31 @@ export async function seedTrack(db: Db, input: SeedInput) {
   });
 
   const businessCaseCode = await openBusinessCase(db, input, track.id);
-  await instantiateDeliverables(db, input.tenantId, track.id, version.id);
+  await instantiateDeliverables(db, input.tenantId, track.id, version.id, {
+    ownerId: input.ownerId,
+    consultantId: input.consultantId ?? null,
+  });
   return { ...track, businessCaseCode };
 }
 
 const MODULE_LABEL: Record<string, string> = { CHARTER: "Charter" };
+
+type TrackPeople = { ownerId: string; consultantId: string | null };
+
+/**
+ * Responsável e aprovador padrão de um entregável (backlog DEV-06): o dono do
+ * processo aprova o que não é dele, e a consultora aprova o que é do dono. O
+ * que o cliente produz (produtor OWNER) é do dono; o resto é da consultoria.
+ * Sem consultora, esse resto fica sem responsável, e o dono o aprova.
+ *
+ * É o que impede a mesma pessoa de iniciar, enviar e aprovar: com responsável e
+ * aprovador distintos, "ninguém aprova o que é seu" tem sobre o que valer.
+ */
+function defaultPeople(producer: string, p: TrackPeople) {
+  return producer === "OWNER"
+    ? { ownerId: p.ownerId, approverId: p.consultantId }
+    : { ownerId: p.consultantId, approverId: p.ownerId };
+}
 
 /**
  * Entregáveis da trilha, copiados do template pinado (SC-DEV-02, ST-03).
@@ -157,7 +177,8 @@ async function instantiateDeliverables(
   db: Db,
   tenantId: string,
   trackId: string,
-  versionId: string
+  versionId: string,
+  people: TrackPeople
 ): Promise<void> {
   const templates = await db.scaffoldDeliverableTemplate.findMany({
     where: { versionId },
@@ -214,6 +235,7 @@ async function instantiateDeliverables(
           ? `O módulo ${MODULE_LABEL[t.requiresModule as string] ?? t.requiresModule} não está contratado por esta organização; dispensado pelo sistema.`
           : null,
         status: "NOT_STARTED" as const,
+        ...defaultPeople(t.producer, people),
       };
     }),
   });

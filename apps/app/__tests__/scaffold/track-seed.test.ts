@@ -422,6 +422,68 @@ describe("entregáveis nascem com a trilha (SC-DEV-02)", () => {
   });
 });
 
+// Responsável e aprovador padrão (backlog DEV-06): o dono aprova o que não é
+// dele, e a consultora aprova o que é do dono. Sem isso, entregável nasce sem
+// dono e a mesma pessoa poderia iniciar, enviar e aprovar.
+describe("responsável e aprovador padrão", () => {
+  const T = (over: Record<string, unknown>) => ({
+    phase: "ASSESS",
+    stepCode: "A1",
+    seq: 1,
+    title: "t",
+    description: "d",
+    kind: "DOCUMENT",
+    requiresModule: null,
+    required: true,
+    ...over,
+  });
+  const CONSULTANT = "clx00000000000000consul01";
+
+  const run = async (withConsultant: boolean) => {
+    h.delTplFindMany.mockResolvedValue([
+      T({ code: "A1.1", producer: "OWNER" }),
+      T({ code: "B1.1", phase: "PILOT", producer: "CONSULTANT" }),
+      T({ code: "B1.2", phase: "PILOT", producer: "TECHNICAL" }),
+      T({ code: "C1.1", phase: "SCALE", producer: "LEGAL" }),
+    ]);
+    await createTrackFromGap({
+      ...INPUT,
+      ...(withConsultant ? { consultantId: CONSULTANT } : {}),
+    });
+    const rows = h.delCreateMany.mock.calls[0]?.[0].data as {
+      code: string;
+      ownerId: string | null;
+      approverId: string | null;
+    }[];
+    return Object.fromEntries(rows.map((r) => [r.code, r]));
+  };
+
+  it("o que o dono produz: dono responsável, consultora aprova", async () => {
+    const r = await run(true);
+    expect(r["A1.1"]).toMatchObject({ ownerId: OWNER, approverId: CONSULTANT });
+  });
+
+  it("o que a consultoria produz: consultora responsável, dono aprova", async () => {
+    const r = await run(true);
+    for (const c of ["B1.1", "B1.2", "C1.1"]) {
+      expect(r[c]).toMatchObject({ ownerId: CONSULTANT, approverId: OWNER });
+    }
+  });
+
+  it("responsável e aprovador nunca são a mesma pessoa", async () => {
+    const r = await run(true);
+    for (const d of Object.values(r)) {
+      expect(d.ownerId).not.toBe(d.approverId);
+    }
+  });
+
+  it("sem consultora: o dono produz o seu; o resto fica sem responsável e o dono aprova", async () => {
+    const r = await run(false);
+    expect(r["A1.1"]).toMatchObject({ ownerId: OWNER, approverId: null });
+    expect(r["B1.1"]).toMatchObject({ ownerId: null, approverId: OWNER });
+  });
+});
+
 describe("listTracks", () => {
   it("deriva stalledDays do último gate, não de coluna", async () => {
     const ONZE_DIAS = new Date(Date.now() - 11 * 86_400_000);
