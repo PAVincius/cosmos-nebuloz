@@ -12,10 +12,7 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
-import type {
-  VersionDiff,
-  VersionDiffRow,
-} from "@/app/(charter)/actions/policy";
+import type { VersionDiff } from "@/app/(charter)/actions/policy";
 import {
   agruparSegmentos,
   type BlocoDiff,
@@ -23,6 +20,7 @@ import {
   type Segmento,
   type TipoSegmento,
 } from "@/lib/charter/diff";
+import type { VersionDiffRow } from "@/lib/charter/version-diff";
 import { TableHead } from "../base";
 import { Callout, FooterHint, Kbd } from "../form-kit";
 import { ModalShell } from "../modal";
