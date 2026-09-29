@@ -7,9 +7,9 @@ import { useNav } from "@repo/design-system/cosmos/kit";
 // mounting <CommandPalette /> once inside CosmosShell is all that's needed.
 // RF-91 (F/G+letter single-key shortcuts) is explicitly out of scope here.
 import { Command } from "cmdk";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { NAV } from "./shell";
+import { NAV } from "./nav";
 
 type PaletteEntry = {
   id: string;
@@ -38,10 +38,9 @@ function flattenNav(): PaletteEntry[] {
   return entries;
 }
 
+const ENTRIES = flattenNav();
+
 export function CommandPalette() {
-  // Computed lazily (not at module load) to avoid a temporal-dead-zone crash:
-  // shell.tsx imports this module before its own `NAV` const is initialized.
-  const ENTRIES = useMemo(() => flattenNav(), []);
   const [open, setOpen] = useState(false);
   const { navigate, isComingSoon } = useNav();
 

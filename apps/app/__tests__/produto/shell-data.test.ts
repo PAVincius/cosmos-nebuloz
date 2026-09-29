@@ -186,6 +186,9 @@ describe("Charter — getShellData devolve tenants[] + activeTenantId", () => {
 });
 
 describe("Cosmos — resolveIdentity devolve tenants[] + activeTenantId", () => {
+  // ponytail: resolveIdentity mora no layout, e importar o layout traz o shell
+  // client inteiro (~3 s isolado); os 5 s padrão estouram com a suíte toda.
+  // Tirar resolveIdentity para (cosmos)/actions/shell.ts dispensa o timeout.
   it("shape do contrato", async () => {
     h.requireTenantSession.mockResolvedValue({
       tenantId: "tenant-1",
@@ -197,5 +200,5 @@ describe("Cosmos — resolveIdentity devolve tenants[] + activeTenantId", () => 
     const identity = await resolveIdentity();
     expect(identity?.activeTenantId).toBe("tenant-1");
     expect(identity?.tenants).toEqual(EXPECTED_TENANTS);
-  });
+  }, 20_000);
 });

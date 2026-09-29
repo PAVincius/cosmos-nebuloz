@@ -30,6 +30,7 @@ import { type ReactNode, useCallback, useMemo } from "react";
 import { resolveActiveAccountDestination } from "@/app/actions/auth/resolve-active-account-destination";
 import { fmtBRL, fmtMultiple } from "@/lib/signal/roi";
 import { Eyebrow, ModalProvider } from "./base";
+import { NAV, type NavItem } from "./nav";
 import { SignalPalette } from "./palette";
 import { SignalPrefs } from "./prefs";
 
@@ -64,41 +65,6 @@ const MODULE_META: Record<
     blurb: "Valor realizado de IA",
   },
 };
-
-export type NavItem = { id: string; icon: IconName; label: string };
-type NavSection = { label: string; items: NavItem[] };
-
-/** Ordem e agrupamento do handoff (signal-shell.jsx). Valor primeiro porque é
- *  a pergunta; Prova e Dado são o que sustenta a resposta. */
-export const NAV: NavSection[] = [
-  {
-    label: "Valor",
-    items: [
-      { id: "overview", icon: "signal", label: "Visão geral" },
-      { id: "initiatives", icon: "target", label: "Iniciativas" },
-      { id: "alerts", icon: "alert", label: "Alertas" },
-    ],
-  },
-  {
-    label: "Prova",
-    items: [
-      { id: "evidence", icon: "fileText", label: "Evidências" },
-      { id: "audit", icon: "history", label: "Trilha de auditoria" },
-      { id: "reports", icon: "download", label: "Relatórios" },
-    ],
-  },
-  {
-    label: "Dado",
-    items: [
-      { id: "connections", icon: "plug", label: "Conexões" },
-      { id: "mapping", icon: "ruler", label: "Mapeamento de métricas" },
-    ],
-  },
-  {
-    label: "Sistema",
-    items: [{ id: "settings", icon: "settings", label: "Configurações" }],
-  },
-];
 
 export const TITLES: Record<string, [string, string]> = {
   overview: ["Visão geral", "Valor"],
