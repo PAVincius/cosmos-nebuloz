@@ -347,3 +347,12 @@ export const ReadDeliverableFileSchema = z.object({
   /** Ausente = a versão atual. */
   version: z.number().int().positive().optional(),
 });
+
+export const AddDeliverableLinkSchema = z.object({
+  deliverableId: cuid,
+  provider: z.enum(["COSMOS", "LINEAR", "GITHUB", "JIRA"]),
+  externalId: nnStr,
+  url: nnStr,
+});
+
+export const RemoveDeliverableLinkSchema = z.object({ linkId: cuid });

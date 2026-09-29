@@ -306,6 +306,27 @@ export function decideAttach(
   );
 }
 
+/** Vínculo com item externo (S6): referência, vale em qualquer estado do
+ *  entregável, com o mesmo escopo de `work` e a fase aberta. */
+export function decideLink(
+  subject: DeliverableSubject,
+  actor: DeliverableActor
+): WorkDecision {
+  return decideWorkOn(
+    subject,
+    actor,
+    [
+      "NOT_STARTED",
+      "IN_PROGRESS",
+      "IN_REVIEW",
+      "ADJUSTMENT_REQUESTED",
+      "APPROVED",
+      "REOPENED",
+    ],
+    "O entregável não está num estado que admita vínculo."
+  );
+}
+
 export type GateDeliverable = {
   code: string;
   title: string;

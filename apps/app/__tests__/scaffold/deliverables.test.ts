@@ -30,6 +30,10 @@ const h = vi.hoisted(() => ({
   userFindMany: vi.fn(),
   emitReopened: vi.fn(),
   ensureBucket: vi.fn(),
+  linkFindFirst: vi.fn(),
+  linkCount: vi.fn(),
+  linkCreate: vi.fn(),
+  linkDelete: vi.fn(),
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -101,7 +105,13 @@ vi.mock("@repo/database", () => ({
         findMany: h.eventFindMany,
       },
       scaffoldDeliverableComment: { findMany: h.commentFindMany },
-      scaffoldDeliverableLink: { findMany: h.linkFindMany },
+      scaffoldDeliverableLink: {
+        findMany: h.linkFindMany,
+        findFirst: h.linkFindFirst,
+        count: h.linkCount,
+        create: h.linkCreate,
+        delete: h.linkDelete,
+      },
       tenantMember: { findFirst: h.memberFindFirst },
       user: { findMany: h.userFindMany },
       scaffoldPhaseInstance: {
@@ -116,6 +126,7 @@ vi.mock("@repo/database", () => ({
 
 import {
   addDeliverable,
+  addDeliverableLink,
   approveDeliverable,
   assignDeliverable,
   attachDeliverableVersion,
@@ -123,6 +134,7 @@ import {
   getDeliverable,
   listDeliverables,
   readDeliverableFile,
+  removeDeliverableLink,
   reopenDeliverable,
   requestDeliverableAdjustment,
   startDeliverable,
@@ -187,6 +199,11 @@ beforeEach(() => {
   h.userFindMany.mockResolvedValue([]);
   h.emitReopened.mockResolvedValue(undefined);
   h.ensureBucket.mockResolvedValue(undefined);
+  h.linkFindMany.mockResolvedValue([]);
+  h.linkFindFirst.mockResolvedValue(null);
+  h.linkCount.mockResolvedValue(0);
+  h.linkCreate.mockResolvedValue({ id: "lnk1" });
+  h.linkDelete.mockResolvedValue({});
 });
 
 describe("transições gravam status, evento append-only e auditoria", () => {
@@ -1276,5 +1293,252 @@ describe("o bucket do Scaffold leva as regras de tipo e tamanho", () => {
     expect((await mod.attachDeliverableVersion(INPUT)).ok).toBe(true);
     await mod.attachDeliverableVersion(INPUT);
     expect(h.ensureBucket).toHaveBeenCalledTimes(2);
+  });
+});
+
+// ── S6: vínculos com item externo (Norte e.2) ────────────────────────────────
+
+describe("vínculo do entregável com item externo", () => {
+  const LINK = {
+    deliverableId: DEL,
+    provider: "LINEAR" as const,
+    externalId: "ENG-123",
+    url: "https://linear.app/nebuloz/issue/ENG-123/titulo",
+  };
+
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://app.nebuloz.ai");
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+  });
+
+  it("liga: grava o vínculo do tenant, com a URL normalizada e o autor da sessão", async () => {
+    const r = await addDeliverableLink({ ...LINK, url: `  ${LINK.url}  ` });
+    expect(r.ok).toBe(true);
+    expect(h.linkCreate.mock.calls[0]?.[0].data).toEqual({
+      tenantId: "t1",
+      deliverableId: DEL,
+      provider: "LINEAR",
+      externalId: "ENG-123",
+      url: LINK.url,
+      createdById: h.userId,
+    });
+  });
+
+  it("audita a ligação, sem repetir a URL digitada", async () => {
+    await addDeliverableLink(LINK);
+    const audit = h.auditCreate.mock.calls[0]?.[0].data;
+    expect(audit).toMatchObject({
+      action: "scaffold.deliverable.link-add",
+      entityType: "scaffold.deliverable",
+      entityId: DEL,
+      tenantId: "t1",
+    });
+    expect(JSON.stringify(audit)).toContain("ENG-123");
+    expect(JSON.stringify(audit)).not.toContain("linear.app");
+  });
+
+  it("nunca busca a URL do lado do servidor, e o estado do entregável não muda", async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    await addDeliverableLink(LINK);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(h.updateMany).not.toHaveBeenCalled();
+    expect(h.update).not.toHaveBeenCalled();
+    expect(h.eventCreate).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it.each([
+    ["http", "https://linear.app.evil.com/x"],
+    ["host trocado", "https://github.com/a/b/issues/1"],
+    ["javascript", "javascript:alert(1)"],
+    ["credencial", "https://user:pw@linear.app/x"],
+  ])("URL inválida (%s) é recusada com a razão, e nada é gravado", async (_n, url) => {
+    const r = await addDeliverableLink({ ...LINK, url });
+    expect(r).toMatchObject({ ok: false, code: "DELIVERABLE_LINK_INVALID" });
+    expect(!r.ok && "blockers" in r && r.blockers?.[0]).toMatch(
+      /linear\.app|https|usuário/i
+    );
+    expect(h.linkCreate).not.toHaveBeenCalled();
+  });
+
+  it("Cosmos vale só para o host do próprio app, lido do ambiente", async () => {
+    const good = await addDeliverableLink({
+      deliverableId: DEL,
+      provider: "COSMOS",
+      externalId: "clx0000000000000000epic01",
+      url: "https://app.nebuloz.ai/cosmos/epics/clx0000000000000000epic01",
+    });
+    expect(good.ok).toBe(true);
+    const bad = await addDeliverableLink({
+      deliverableId: DEL,
+      provider: "COSMOS",
+      externalId: "x",
+      url: "https://outro.com/cosmos",
+    });
+    expect(bad).toMatchObject({ ok: false, code: "DELIVERABLE_LINK_INVALID" });
+  });
+
+  it("o mesmo item não liga duas vezes", async () => {
+    h.linkFindFirst.mockResolvedValue({ id: "ja-existe" });
+    const r = await addDeliverableLink(LINK);
+    expect(r).toMatchObject({ ok: false, code: "DELIVERABLE_LINK_DUPLICATE" });
+    expect(h.linkFindFirst.mock.calls[0]?.[0].where).toEqual({
+      tenantId: "t1",
+      deliverableId: DEL,
+      provider: "LINEAR",
+      externalId: "ENG-123",
+    });
+    expect(h.linkCreate).not.toHaveBeenCalled();
+  });
+
+  it("no máximo 20 vínculos por entregável", async () => {
+    h.linkCount.mockResolvedValue(20);
+    const r = await addDeliverableLink(LINK);
+    expect(r).toMatchObject({ ok: false, code: "DELIVERABLE_LINK_LIMIT" });
+    expect(h.linkCount.mock.calls[0]?.[0].where).toEqual({
+      tenantId: "t1",
+      deliverableId: DEL,
+    });
+  });
+
+  it.each(["SPONSOR", "TEAM_LEAD", "ADMIN"])("%s recebe 403", async (role) => {
+    asUser(role, OWNER);
+    const r = await addDeliverableLink(LINK);
+    expect(r.ok).toBe(false);
+    expect(!r.ok && r.error).toContain("Requer papel");
+    expect(h.linkCreate).not.toHaveBeenCalled();
+  });
+
+  it("membro do time liga no que é dele, não no dos outros", async () => {
+    asUser("TEAM_MEMBER", "clx0000000000000000other001");
+    expect((await addDeliverableLink(LINK)).ok).toBe(false);
+    asUser("TEAM_MEMBER", OWNER);
+    expect((await addDeliverableLink(LINK)).ok).toBe(true);
+  });
+
+  it("entregável já aprovado aceita vínculo: é referência, não conteúdo", async () => {
+    h.findFirst.mockResolvedValue(row("APPROVED"));
+    expect((await addDeliverableLink(LINK)).ok).toBe(true);
+  });
+
+  it("fase futura é só leitura", async () => {
+    h.findFirst.mockResolvedValue(
+      row("NOT_STARTED", {
+        phaseInstance: { id: "ph2", phase: "SCALE", state: "IDLE" },
+      })
+    );
+    expect(await addDeliverableLink(LINK)).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_PHASE_NOT_OPEN",
+    });
+  });
+
+  it("entregável de outro tenant não existe", async () => {
+    h.findFirst.mockResolvedValue(null);
+    expect(await addDeliverableLink(LINK)).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_NOT_FOUND",
+    });
+  });
+});
+
+describe("desligar vínculo", () => {
+  const LINK_ID = "clx00000000000000000lnk001";
+  beforeEach(() => {
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+    h.linkFindFirst.mockResolvedValue({
+      id: LINK_ID,
+      deliverableId: DEL,
+      provider: "LINEAR",
+      externalId: "ENG-123",
+    });
+  });
+
+  it("apaga o vínculo do tenant e audita", async () => {
+    const r = await removeDeliverableLink({ linkId: LINK_ID });
+    expect(r.ok).toBe(true);
+    expect(h.linkFindFirst.mock.calls[0]?.[0].where).toEqual({
+      id: LINK_ID,
+      tenantId: "t1",
+    });
+    expect(h.linkDelete).toHaveBeenCalledWith({ where: { id: LINK_ID } });
+    expect(h.auditCreate.mock.calls[0]?.[0].data.action).toBe(
+      "scaffold.deliverable.link-remove"
+    );
+  });
+
+  it("vínculo de outro tenant não existe", async () => {
+    h.linkFindFirst.mockResolvedValue(null);
+    expect(await removeDeliverableLink({ linkId: LINK_ID })).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_LINK_NOT_FOUND",
+    });
+    expect(h.linkDelete).not.toHaveBeenCalled();
+  });
+
+  it.each(["SPONSOR", "TEAM_LEAD", "ADMIN"])("%s recebe 403", async (role) => {
+    asUser(role, OWNER);
+    expect((await removeDeliverableLink({ linkId: LINK_ID })).ok).toBe(false);
+    expect(h.linkDelete).not.toHaveBeenCalled();
+  });
+
+  it("segue a mesma regra de escopo e de fase de ligar", async () => {
+    h.findFirst.mockResolvedValue(
+      row("NOT_STARTED", {
+        phaseInstance: { id: "ph2", phase: "SCALE", state: "IDLE" },
+      })
+    );
+    expect((await removeDeliverableLink({ linkId: LINK_ID })).ok).toBe(false);
+    expect(h.linkDelete).not.toHaveBeenCalled();
+  });
+});
+
+describe("vínculos na lista", () => {
+  it("cada entregável traz os seus vínculos e se o ator pode mexer neles", async () => {
+    h.findMany.mockResolvedValue([
+      row("IN_PROGRESS"),
+      row("IN_PROGRESS", { id: "d2" }),
+    ]);
+    h.linkFindMany.mockResolvedValue([
+      {
+        id: "l1",
+        deliverableId: DEL,
+        provider: "LINEAR",
+        externalId: "ENG-123",
+        url: "https://linear.app/x/issue/ENG-123",
+      },
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.links).toEqual([
+      {
+        id: "l1",
+        provider: "LINEAR",
+        externalId: "ENG-123",
+        url: "https://linear.app/x/issue/ENG-123",
+      },
+    ]);
+    expect(r.ok && r.data[1]?.links).toEqual([]);
+    expect(r.ok && r.data[0]?.linkAccess).toEqual({
+      allowed: true,
+      reason: null,
+    });
+    expect(h.linkFindMany.mock.calls[0]?.[0].where).toMatchObject({
+      tenantId: "t1",
+      deliverableId: { in: [DEL, "d2"] },
+    });
+  });
+
+  it("sem entregável, sem consulta de vínculo", async () => {
+    h.findMany.mockResolvedValue([]);
+    await listDeliverables({ trackId: TRACK });
+    expect(h.linkFindMany).not.toHaveBeenCalled();
+  });
+
+  it("sponsor lê os vínculos mas não os altera", async () => {
+    asUser("SPONSOR", OWNER);
+    h.findMany.mockResolvedValue([row("IN_PROGRESS")]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.linkAccess.allowed).toBe(false);
   });
 });

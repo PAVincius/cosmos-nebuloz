@@ -5,6 +5,7 @@ import {
   type DeliverableTransition,
   decideAttach,
   decideEdit,
+  decideLink,
   decideTransition,
   deliverableGrants,
   gateReviewState,
@@ -724,5 +725,56 @@ describe("comentário com o mínimo de uma frase", () => {
         as("PROCESS_OWNER", APPROVER)
       ).ok
     ).toBe(true);
+  });
+});
+
+// S6 (Norte e.2): quem é responsável liga o entregável a um item externo. É
+// referência, não conteúdo: vale em qualquer estado (até aprovado), mas não em
+// fase que ainda não abriu.
+describe("decideLink", () => {
+  it.each([
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "IN_REVIEW",
+    "ADJUSTMENT_REQUESTED",
+    "APPROVED",
+    "REOPENED",
+  ] as const)("liga em %s", (status) => {
+    expect(decideLink(subject(status), as("CONSULTANT", "u-c")).ok).toBe(true);
+  });
+
+  it("mesmo escopo de trabalho: membro só no que é dele; sponsor, team lead e admin nunca", () => {
+    expect(
+      decideLink(subject("IN_PROGRESS"), as("TEAM_MEMBER", "u-x"))
+    ).toMatchObject({
+      ok: false,
+      code: "FORBIDDEN",
+    });
+    expect(
+      decideLink(subject("IN_PROGRESS"), as("TEAM_MEMBER", OWNER)).ok
+    ).toBe(true);
+    for (const role of ["SPONSOR", "TEAM_LEAD", "ADMIN"]) {
+      expect(decideLink(subject("IN_PROGRESS"), as(role, OWNER)).ok).toBe(
+        false
+      );
+    }
+  });
+
+  it("fase futura é só leitura, vínculo incluído", () => {
+    expect(
+      decideLink(
+        subject("NOT_STARTED", { phaseState: "IDLE" }),
+        as("CONSULTANT", "u-c")
+      )
+    ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+  });
+
+  it("fase fechada não deixa mexer nos vínculos: reabra primeiro", () => {
+    expect(
+      decideLink(
+        subject("APPROVED", { phaseState: "CLOSED" }),
+        as("CONSULTANT", "u-c")
+      )
+    ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
   });
 });

@@ -27,11 +27,17 @@ import {
   type DeliverableTransition,
   decideAttach,
   decideEdit,
+  decideLink,
   decideTransition,
   deliverableGrants,
   type TransitionDenial,
 } from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
+import {
+  appHostsFromEnv,
+  checkExternalLink,
+  PROVIDER_LABEL,
+} from "@/lib/scaffold/external-links";
 import { safeFileName } from "@/lib/scaffold/file-name";
 import { emitGateReopened } from "@/lib/scaffold/gate-events";
 import {
@@ -39,6 +45,7 @@ import {
   type ScaffoldContext,
 } from "@/lib/scaffold/guards";
 import {
+  AddDeliverableLinkSchema,
   AddDeliverableSchema,
   AssignDeliverableSchema,
   AttachDeliverableVersionSchema,
@@ -46,6 +53,7 @@ import {
   DeliverableTransitionSchema,
   EditDeliverableSummarySchema,
   ReadDeliverableFileSchema,
+  RemoveDeliverableLinkSchema,
   TrackIdSchema,
 } from "@/lib/scaffold/schemas";
 import { reopenPhaseForDeliverable } from "./_phase-reopen";
@@ -546,22 +554,67 @@ async function lastReviews(
   return out;
 }
 
+export type LinkView = {
+  id: string;
+  provider: string;
+  externalId: string;
+  url: string;
+};
+
+/** Vínculos externos de cada entregável, numa consulta só. */
+async function linksOf(
+  db: Db,
+  tenantId: string,
+  rows: { id: string }[]
+): Promise<Map<string, LinkView[]>> {
+  const out = new Map<string, LinkView[]>();
+  if (rows.length === 0) {
+    return out;
+  }
+  const found = await db.scaffoldDeliverableLink.findMany({
+    where: { tenantId, deliverableId: { in: rows.map((d) => d.id) } },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      deliverableId: true,
+      provider: true,
+      externalId: true,
+      url: true,
+    },
+  });
+  for (const { deliverableId, ...link } of found) {
+    out.set(deliverableId, [...(out.get(deliverableId) ?? []), link]);
+  }
+  return out;
+}
+
+const linkAccessOf = (
+  d: { ok: true } | { ok: false; message: string }
+): { allowed: boolean; reason: string | null } =>
+  d.ok
+    ? { allowed: true, reason: null }
+    : { allowed: false, reason: d.message };
+
 /** Entregáveis da trilha, na ordem do método. Qualquer papel lê (SC-PO-04). */
 export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("deliverable.read");
     const input = TrackIdSchema.parse(raw);
-    const { rows, reviews } = await withTenantDb(ctx.tenantId, async (db) => {
-      const found = await db.scaffoldDeliverableInstance.findMany({
-        where: { tenantId: ctx.tenantId, trackId: input.trackId },
-        orderBy: [{ code: "asc" }],
-        select: LIST_SELECT,
-      });
-      return {
-        rows: found,
-        reviews: await lastReviews(db, ctx.tenantId, found),
-      };
-    });
+    const { rows, reviews, links } = await withTenantDb(
+      ctx.tenantId,
+      async (db) => {
+        const found = await db.scaffoldDeliverableInstance.findMany({
+          where: { tenantId: ctx.tenantId, trackId: input.trackId },
+          orderBy: [{ code: "asc" }],
+          select: LIST_SELECT,
+        });
+        return {
+          rows: found,
+          reviews: await lastReviews(db, ctx.tenantId, found),
+          links: await linksOf(db, ctx.tenantId, found),
+        };
+      }
+    );
     // O que o ator pode fazer, calculado no servidor: a tela desabilita o
     // controle com o motivo e nunca precisa conhecer papel nem regra.
     const actor = actorOf(ctx);
@@ -571,6 +624,8 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
       return {
         ...publicRow(d),
         lastReview: reviews.get(d.id) ?? null,
+        links: links.get(d.id) ?? [],
+        linkAccess: linkAccessOf(decideLink(subject, actor)),
         actions: availableActions(subject, actor),
         attach: attach.ok
           ? { allowed: true, reason: null }
@@ -794,5 +849,126 @@ export async function readDeliverableFile(
       fileName: target.fileName,
       version: target.version,
     };
+  });
+}
+
+// ── Vínculos com item externo (S6, Norte e.2) ─────────────────────────────────
+
+const MAX_LINKS = 20;
+
+/**
+ * Liga o entregável a um item externo (Cosmos, Linear, GitHub ou Jira).
+ *
+ * É REFERÊNCIA: o servidor não busca a URL (sem fetch, sem SSRF) e o estado do
+ * item externo nunca muda o do entregável. A URL vem do usuário e vira link
+ * clicável para outras pessoas, então só entra host da lista do provedor, em
+ * https (ver `checkExternalLink`). Quem é responsável liga; aprovado também
+ * aceita, porque referência não é conteúdo, mas fase que não abriu é só leitura.
+ */
+export async function addDeliverableLink(
+  raw: z.input<typeof AddDeliverableLinkSchema>
+) {
+  return scaffoldAction(async () => {
+    const ctx = await requireScaffoldPermissionContext("deliverable.work");
+    const input = AddDeliverableLinkSchema.parse(raw);
+
+    const checked = checkExternalLink(input, {
+      appHosts: appHostsFromEnv(process.env.NEXT_PUBLIC_APP_URL),
+    });
+    if (!checked.ok) {
+      throw new ScaffoldRuleError("DELIVERABLE_LINK_INVALID", [
+        checked.message,
+      ]);
+    }
+
+    const created = await withTenantDb(ctx.tenantId, async (db) => {
+      const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
+      const decision = decideLink(toSubject(d), actorOf(ctx));
+      if (!decision.ok) {
+        refuse(decision.code, decision.message);
+      }
+
+      const same = await db.scaffoldDeliverableLink.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          deliverableId: d.id,
+          provider: input.provider,
+          externalId: checked.externalId,
+        },
+        select: { id: true },
+      });
+      if (same) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_DUPLICATE");
+      }
+      const total = await db.scaffoldDeliverableLink.count({
+        where: { tenantId: ctx.tenantId, deliverableId: d.id },
+      });
+      if (total >= MAX_LINKS) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_LIMIT");
+      }
+
+      const link = await db.scaffoldDeliverableLink.create({
+        data: {
+          tenantId: ctx.tenantId,
+          deliverableId: d.id,
+          provider: input.provider,
+          externalId: checked.externalId,
+          url: checked.url,
+          createdById: ctx.userId,
+        },
+        select: { id: true },
+      });
+      // O id externo, e não a URL: o log de auditoria não é lugar de URL de
+      // terceiro.
+      await logScaffoldAudit(db, ctx, {
+        action: "scaffold.deliverable.link-add",
+        entityType: "scaffold.deliverable",
+        entityId: d.id,
+        target: `${d.code} · ${PROVIDER_LABEL[input.provider]} ${checked.externalId}`,
+      });
+      return link;
+    });
+
+    revalidatePath("/scaffold");
+    return { linkId: created.id };
+  });
+}
+
+/** Desliga o vínculo. Mesma regra de escopo e de fase de ligar. */
+export async function removeDeliverableLink(
+  raw: z.input<typeof RemoveDeliverableLinkSchema>
+) {
+  return scaffoldAction(async () => {
+    const ctx = await requireScaffoldPermissionContext("deliverable.work");
+    const input = RemoveDeliverableLinkSchema.parse(raw);
+
+    await withTenantDb(ctx.tenantId, async (db) => {
+      const link = await db.scaffoldDeliverableLink.findFirst({
+        where: { id: input.linkId, tenantId: ctx.tenantId },
+        select: {
+          id: true,
+          deliverableId: true,
+          provider: true,
+          externalId: true,
+        },
+      });
+      if (!link) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_NOT_FOUND");
+      }
+      const d = await loadSubject(db, ctx.tenantId, link.deliverableId);
+      const decision = decideLink(toSubject(d), actorOf(ctx));
+      if (!decision.ok) {
+        refuse(decision.code, decision.message);
+      }
+      await db.scaffoldDeliverableLink.delete({ where: { id: link.id } });
+      await logScaffoldAudit(db, ctx, {
+        action: "scaffold.deliverable.link-remove",
+        entityType: "scaffold.deliverable",
+        entityId: d.id,
+        target: `${d.code} · ${PROVIDER_LABEL[link.provider]} ${link.externalId}`,
+      });
+    });
+
+    revalidatePath("/scaffold");
   });
 }

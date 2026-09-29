@@ -25,6 +25,8 @@ const h = vi.hoisted(() => ({
   readFile: vi.fn(),
   getAccess: vi.fn(),
   setStepState: vi.fn(),
+  addLink: vi.fn(),
+  removeLink: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -55,6 +57,8 @@ vi.mock("@/app/(scaffold)/actions/deliverables", () => ({
   reopenDeliverable: vi.fn(),
   attachDeliverableVersion: h.attachVersion,
   readDeliverableFile: h.readFile,
+  addDeliverableLink: h.addLink,
+  removeDeliverableLink: h.removeLink,
 }));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
@@ -464,6 +468,8 @@ function deliverable(status: string, over: Record<string, unknown> = {}) {
       REOPEN: YES,
     },
     attach: YES,
+    links: [],
+    linkAccess: YES,
     hasFile: false,
     fileName: null,
     version: 0,
@@ -990,5 +996,178 @@ describe("comentário com o mínimo na tela (Crivo F6)", () => {
 
     fireEvent.change(box, { target: { value: "Falta o volume." } });
     expect(send().disabled).toBe(false);
+  });
+});
+
+// S6 (Norte e.2): vínculos com item externo no modal do entregável.
+describe("vínculos com item externo", () => {
+  const LINEAR = {
+    id: "clx00000000000000000lnk001",
+    provider: "LINEAR",
+    externalId: "ENG-123",
+    url: "https://linear.app/nebuloz/issue/ENG-123/titulo",
+  };
+  const open = async (item: Record<string, unknown>) => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({ ok: true, data: [item] });
+    render(<TrackDetailScreen param="trk1" />);
+  };
+  const openModal = async (n: number) => {
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: new RegExp(`vínculos \\(${n}\\)`, "i"),
+      })
+    );
+  };
+
+  it("o botão diz quantos vínculos há", async () => {
+    await open(deliverable("IN_PROGRESS", { links: [LINEAR] }));
+    expect(
+      await screen.findByRole("button", { name: /vínculos \(1\)/i })
+    ).toBeDefined();
+  });
+
+  it("lista os vínculos como link externo seguro, com o provedor por extenso", async () => {
+    await open(deliverable("IN_PROGRESS", { links: [LINEAR] }));
+    await openModal(1);
+    const a = (await screen.findByRole("link", {
+      name: /Linear · ENG-123/,
+    })) as HTMLAnchorElement;
+    expect(a.href).toBe(LINEAR.url);
+    expect(a.target).toBe("_blank");
+    expect(a.rel).toContain("noopener");
+    expect(a.rel).toContain("noreferrer");
+    expect(
+      screen.getByText(/estado do item externo não muda o entregável/i)
+    ).toBeDefined();
+  });
+
+  it("URL que não é https não vira link clicável, mesmo vinda do banco", async () => {
+    await open(
+      deliverable("IN_PROGRESS", {
+        links: [{ ...LINEAR, url: "javascript:alert(1)" }],
+      })
+    );
+    await openModal(1);
+    expect(
+      (await screen.findAllByText(/Linear · ENG-123/)).length
+    ).toBeGreaterThan(0);
+    expect(screen.queryByRole("link", { name: /ENG-123/ })).toBeNull();
+  });
+
+  it("sem vínculo, diz isso", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    await openModal(0);
+    expect(await screen.findByText(/nenhum vínculo/i)).toBeDefined();
+  });
+
+  it("liga: manda provedor, identificador e URL, e recarrega", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    h.addLink.mockResolvedValue({ ok: true, data: { linkId: "l1" } });
+    await openModal(0);
+
+    fireEvent.change(await screen.findByLabelText(/^provedor/i), {
+      target: { value: "GITHUB" },
+    });
+    fireEvent.change(screen.getByLabelText(/^identificador/i), {
+      target: { value: "nebuloz/app#42" },
+    });
+    fireEvent.change(screen.getByLabelText(/^url/i), {
+      target: { value: "https://github.com/nebuloz/app/issues/42" },
+    });
+    const before = h.listDeliverables.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: /^ligar$/i }));
+
+    await waitFor(() =>
+      expect(h.addLink).toHaveBeenCalledWith({
+        deliverableId: "del-1",
+        provider: "GITHUB",
+        externalId: "nebuloz/app#42",
+        url: "https://github.com/nebuloz/app/issues/42",
+      })
+    );
+    await waitFor(() =>
+      expect(h.listDeliverables.mock.calls.length).toBeGreaterThan(before)
+    );
+  });
+
+  it("Ligar só habilita com identificador e URL", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    await openModal(0);
+    const ligar = (await screen.findByRole("button", {
+      name: /^ligar$/i,
+    })) as HTMLButtonElement;
+    expect(ligar.disabled).toBe(true);
+  });
+
+  it("recusa do servidor aparece no modal, com a razão, sem perder o que foi digitado", async () => {
+    await open(deliverable("IN_PROGRESS"));
+    h.addLink.mockResolvedValue({
+      ok: false,
+      error:
+        "Vínculo recusado. O link precisa ser de um host aceito para o provedor.",
+      code: "DELIVERABLE_LINK_INVALID",
+      blockers: ["Só links de linear.app valem para Linear."],
+    });
+    await openModal(0);
+    fireEvent.change(await screen.findByLabelText(/^identificador/i), {
+      target: { value: "ENG-1" },
+    });
+    fireEvent.change(screen.getByLabelText(/^url/i), {
+      target: { value: "https://evil.example/x" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^ligar$/i }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain(
+      "Só links de linear.app valem para Linear."
+    );
+    expect((screen.getByLabelText(/^url/i) as HTMLInputElement).value).toBe(
+      "https://evil.example/x"
+    );
+  });
+
+  it("desliga o vínculo", async () => {
+    await open(deliverable("IN_PROGRESS", { links: [LINEAR] }));
+    h.removeLink.mockResolvedValue({ ok: true, data: undefined });
+    await openModal(1);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /remover vínculo linear · eng-123/i,
+      })
+    );
+    await waitFor(() =>
+      expect(h.removeLink).toHaveBeenCalledWith({ linkId: LINEAR.id })
+    );
+  });
+
+  it("sem permissão, o formulário e o remover ficam desabilitados, com o motivo", async () => {
+    await open(
+      deliverable("IN_PROGRESS", {
+        links: [LINEAR],
+        linkAccess: {
+          allowed: false,
+          reason: "Só o responsável liga o entregável.",
+        },
+      })
+    );
+    await openModal(1);
+    expect(
+      await screen.findByText("Só o responsável liga o entregável.")
+    ).toBeDefined();
+    expect((screen.getByLabelText(/^url/i) as HTMLInputElement).disabled).toBe(
+      true
+    );
+    expect(
+      (
+        screen.getByRole("button", {
+          name: /remover vínculo/i,
+        }) as HTMLButtonElement
+      ).disabled
+    ).toBe(true);
+    expect(
+      (screen.getByRole("button", { name: /^ligar$/i }) as HTMLButtonElement)
+        .disabled
+    ).toBe(true);
   });
 });
