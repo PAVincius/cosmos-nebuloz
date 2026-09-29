@@ -57,8 +57,14 @@ function MemberRow({
   const [choice, setChoice] = useState<string>(member.role ?? NO_ROLE);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // A escolha que o servidor recusou: repetir o mesmo clique não muda nada, então
+  // o Salvar só volta quando a escolha muda (Crivo F5).
+  const [refused, setRefused] = useState<string | null>(null);
 
   const changed = choice !== (member.role ?? NO_ROLE);
+  const offered = ROLE_OPTIONS.filter((o) =>
+    member.assignable.includes(o.value)
+  );
 
   const save = async () => {
     if (!choice) {
@@ -75,7 +81,13 @@ function MemberRow({
       onSaved();
     } else {
       setError(res.error);
+      setRefused(choice);
     }
+  };
+
+  const pick = (next: string) => {
+    setChoice(next);
+    setError(null);
   };
 
   return (
@@ -117,28 +129,43 @@ function MemberRow({
             {member.role ? ROLE_LABEL[member.role] : "Sem papel"}
           </Badge>
         </div>
-        <Select
-          ariaLabel={`Papel de adoção de ${member.name}`}
-          onChange={setChoice}
-          options={[
-            ...(member.role
-              ? []
-              : [
-                  { value: NO_ROLE, label: "Escolha um papel", disabled: true },
-                ]),
-            ...ROLE_OPTIONS,
-          ]}
-          value={choice}
-        />
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            disabled={busy || !changed || !choice}
-            onClick={save}
-            variant="secondary"
-          >
-            Salvar
-          </Button>
-        </div>
+        {member.lockedReason ? (
+          <>
+            <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+              {member.lockedReason}
+            </span>
+            <span />
+          </>
+        ) : (
+          <>
+            <Select
+              ariaLabel={`Papel de adoção de ${member.name}`}
+              onChange={pick}
+              options={[
+                ...(member.role
+                  ? []
+                  : [
+                      {
+                        value: NO_ROLE,
+                        label: "Escolha um papel",
+                        disabled: true,
+                      },
+                    ]),
+                ...offered,
+              ]}
+              value={choice}
+            />
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                disabled={busy || !changed || !choice || choice === refused}
+                onClick={save}
+                variant="secondary"
+              >
+                Salvar
+              </Button>
+            </div>
+          </>
+        )}
       </div>
       {error && (
         <div

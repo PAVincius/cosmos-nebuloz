@@ -2,7 +2,11 @@
 
 import type { ScaffoldRole } from "@repo/database";
 import { withTenantDb } from "@repo/database";
-import { canAssignScaffoldRole, invalidateScaffoldRoleCache } from "@repo/rbac";
+import {
+  canAssignScaffoldRole,
+  invalidateScaffoldRoleCache,
+  SCAFFOLD_ROLE_LABEL,
+} from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
@@ -30,7 +34,14 @@ export type ScaffoldMemberRow = {
   email: string | null;
   /** Nulo = a pessoa está na organização mas não tem papel no Scaffold. */
   role: ScaffoldRole | null;
+  /** Papéis que o ator pode atribuir a esta pessoa. Vazio = a linha está
+   *  travada e `lockedReason` diz por quê. É a MESMA regra de
+   *  `assignScaffoldRole`: a tela nunca oferece o que o servidor vai recusar. */
+  assignable: ScaffoldRole[];
+  lockedReason: string | null;
 };
+
+const ALL_ROLES = Object.keys(SCAFFOLD_ROLE_LABEL) as ScaffoldRole[];
 
 /** Todas as pessoas da organização, com o papel de adoção de cada uma. */
 export async function listScaffoldMembers(): Promise<
@@ -55,14 +66,30 @@ export async function listScaffoldMembers(): Promise<
       ]);
       const roleOf = new Map(memberships.map((m) => [m.userId, m.role]));
 
-      return people.map(
-        (p): ScaffoldMemberRow => ({
+      return people.map((p): ScaffoldMemberRow => {
+        const role = roleOf.get(p.userId) ?? null;
+        const isSelf = p.userId === ctx.userId;
+        const assignable = isSelf
+          ? []
+          : ALL_ROLES.filter((next) =>
+              canAssignScaffoldRole(ctx.scaffoldRole, role, next)
+            );
+        let lockedReason: string | null = null;
+        if (isSelf) {
+          lockedReason = "Ninguém altera o próprio papel.";
+        } else if (assignable.length === 0) {
+          lockedReason =
+            "Só um administrador altera o papel de administrador ou de consultor.";
+        }
+        return {
           userId: p.userId,
           name: p.user.name ?? p.user.email ?? p.userId,
           email: p.user.email ?? null,
-          role: roleOf.get(p.userId) ?? null,
-        })
-      );
+          role,
+          assignable,
+          lockedReason,
+        };
+      });
     });
   });
 }

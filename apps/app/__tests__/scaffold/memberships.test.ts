@@ -349,6 +349,107 @@ describe("assignScaffoldRole — tentativas negadas viram auditoria", () => {
   });
 });
 
+describe("listScaffoldMembers — o que cada linha aceita (Crivo F5)", () => {
+  const ALL = [
+    "TEAM_MEMBER",
+    "PROCESS_OWNER",
+    "TRANSFORMATION_LEAD",
+    "SPONSOR",
+    "TEAM_LEAD",
+    "CONSULTANT",
+    "ADMIN",
+  ];
+  const people = [
+    { userId: "p-membro", user: { name: "Membro", email: "m@x.com" } },
+    { userId: "p-admin", user: { name: "Admin", email: "a@x.com" } },
+    { userId: "p-cons", user: { name: "Consultor", email: "c@x.com" } },
+    { userId: "p-sem", user: { name: "Sem papel", email: "s@x.com" } },
+    { userId: ACTOR, user: { name: "Eu", email: "eu@x.com" } },
+  ];
+  const memberships = [
+    { userId: "p-membro", role: "TEAM_MEMBER" },
+    { userId: "p-admin", role: "ADMIN" },
+    { userId: "p-cons", role: "CONSULTANT" },
+    { userId: ACTOR, role: "CONSULTANT" },
+  ];
+  const row = (rows: { userId: string }[], id: string) =>
+    rows.find((r) => r.userId === id) as unknown as {
+      assignable: string[];
+      lockedReason: string | null;
+    };
+
+  beforeEach(() => {
+    h.tenantMemberFindMany.mockResolvedValue(people);
+    h.membershipFindMany.mockResolvedValue(memberships);
+  });
+
+  it("consultor oferece só os papéis abaixo dele, nunca ADMIN nem CONSULTANT", async () => {
+    const r = await listScaffoldMembers();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const below = ALL.filter(
+        (x) => x !== "ADMIN" && x !== "CONSULTANT"
+      ).sort();
+      expect([...row(r.data, "p-membro").assignable].sort()).toEqual(below);
+      expect([...row(r.data, "p-sem").assignable].sort()).toEqual(below);
+      expect(row(r.data, "p-membro").lockedReason).toBeNull();
+    }
+  });
+
+  it("papel que o consultor não mexe vem travado, com o motivo", async () => {
+    const r = await listScaffoldMembers();
+    if (r.ok) {
+      for (const id of ["p-admin", "p-cons"]) {
+        expect(row(r.data, id).assignable).toEqual([]);
+        expect(row(r.data, id).lockedReason).toMatch(/administrador/i);
+      }
+    }
+  });
+
+  it("ninguém altera o próprio papel: a própria linha vem travada", async () => {
+    const r = await listScaffoldMembers();
+    if (r.ok) {
+      expect(row(r.data, ACTOR).assignable).toEqual([]);
+      expect(row(r.data, ACTOR).lockedReason).toMatch(/próprio/i);
+    }
+  });
+
+  it("administrador oferece todos os papéis, menos na própria linha", async () => {
+    h.role = "ADMIN";
+    const r = await listScaffoldMembers();
+    if (r.ok) {
+      expect([...row(r.data, "p-cons").assignable].sort()).toEqual(
+        [...ALL].sort()
+      );
+      expect([...row(r.data, "p-admin").assignable].sort()).toEqual(
+        [...ALL].sort()
+      );
+      expect(row(r.data, ACTOR).assignable).toEqual([]);
+    }
+  });
+
+  it("o que a lista oferece é exatamente o que assignScaffoldRole aceita", async () => {
+    // A tela nunca oferece o que o servidor vai recusar, e nunca esconde o que
+    // ele aceitaria: as duas pontas usam a mesma regra.
+    const { canAssignScaffoldRole } = await import(
+      "../../../../packages/rbac/src/scaffold-matrix"
+    );
+    const r = await listScaffoldMembers();
+    if (r.ok) {
+      for (const p of r.data) {
+        const current = (p.role ?? null) as never;
+        const offered = new Set(row([p], p.userId).assignable);
+        for (const target of ALL) {
+          const expected =
+            p.userId !== ACTOR &&
+            canAssignScaffoldRole("CONSULTANT", current, target as never);
+          expect(offered.has(target), `${p.userId} → ${target}`).toBe(expected);
+        }
+      }
+    }
+  });
+});
+
 describe("listScaffoldMembers", () => {
   it("lista membros do tenant com papel atual e sem papel", async () => {
     h.tenantMemberFindMany.mockResolvedValue([
@@ -363,7 +464,7 @@ describe("listScaffoldMembers", () => {
 
     expect(r.ok).toBe(true);
     if (r.ok) {
-      expect(r.data).toEqual([
+      expect(r.data).toMatchObject([
         { userId: "a", name: "Ana", email: "a@x.com", role: "CONSULTANT" },
         { userId: "b", name: "b@x.com", email: "b@x.com", role: null },
       ]);
