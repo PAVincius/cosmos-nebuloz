@@ -1,5 +1,7 @@
 import { execSync } from "node:child_process";
 import { type Browser, chromium, type FullConfig } from "@playwright/test";
+import { isPostLoginLanding } from "./landing";
+import { SEEDS } from "./seeds";
 
 // ponytail: no direct DB — requireTenantSession auto-sets activeTenantId on first request
 
@@ -31,7 +33,7 @@ export const SEEDED_ROLE_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
 
 /**
  * As quatro personas de governança do Charter, semeadas por `seed-charter.ts`
- * no tenant `medcore`. Sem sessão própria por papel, os specs de RBAC do
+ * no tenant do e2e (`cosmos-dev`). Sem sessão própria por papel, os specs de RBAC do
  * Charter (`case.decide`, `policy.publish`, ...) não teriam quem fazer os
  * gates falharem ou passarem — mesmo motivo dos papéis SAFe acima.
  */
@@ -74,15 +76,6 @@ export type CatalogoPersonaRole = keyof typeof CATALOGO_PERSONAS;
 export const catalogoStorageState = (role: CatalogoPersonaRole) =>
   fixture("catalogo", role);
 
-/** Erro vira aviso: o seed pode já estar aplicado, e abortar aqui jogaria
- *  fora as suítes que não dependem dele. */
-const SEEDS = [
-  "seed:e2e",
-  "seed:charter",
-  "seed:meridian cosmos-dev",
-  "seed:catalogo-e2e",
-] as const;
-
 /**
  * Grupos de persona que dependem de um seed opcional.
  *
@@ -98,7 +91,7 @@ const GRUPOS_OPCIONAIS = [
     landingPath: "/charter",
     envSenha: "CHARTER_SEED_PASSWORD",
     senhaPadrao: "charter123",
-    ausente: "seed do medcore ausente?",
+    ausente: "seed:charter ausente?",
   },
   {
     nome: "Meridian",
@@ -147,7 +140,9 @@ async function signInAndSave(
     await page.locator('input[type="email"]').fill(email);
     await page.locator('input[type="password"]').fill(password);
     await page.locator('button[type="submit"]').click();
-    await page.waitForURL(/dashboard|portfolio|\/$/, { timeout: 30_000 });
+    await page.waitForURL((url) => isPostLoginLanding(url.toString()), {
+      timeout: 30_000,
+    });
 
     // Hit an authenticated route so requireTenantSession runs and auto-sets
     // activeTenantId
@@ -171,8 +166,10 @@ async function signInAndSave(
 
 async function globalSetup(config: FullConfig) {
   if (!process.env.AUTH_TEST) {
-    console.log("⏭  Skipping auth setup (AUTH_TEST not set)");
-    return;
+    throw new Error(
+      "AUTH_TEST=1 não definido: o globalSetup do E2E não gera as sessões sem ele. " +
+        "Rode com `AUTH_TEST=1 pnpm --filter @repo/app exec playwright test <spec>`."
+    );
   }
 
   const { baseURL } = config.projects[0].use;
@@ -182,8 +179,10 @@ async function globalSetup(config: FullConfig) {
     console.log(`🌱 Executing ${seed} before E2E tests...`);
     try {
       execSync(`pnpm ${seed}`, { stdio: "inherit" });
-    } catch (_err) {
-      console.warn(`⚠️ pnpm ${seed} had warnings/errors but continuing...`);
+    } catch (err) {
+      throw new Error(
+        `pnpm ${seed} falhou: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 
