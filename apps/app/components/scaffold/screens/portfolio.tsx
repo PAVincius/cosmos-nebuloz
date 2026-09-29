@@ -22,6 +22,11 @@ import {
   type PendingPromotion,
   type PortfolioSummary,
 } from "@/app/(scaffold)/actions/tracks";
+import {
+  WORK_FORM_LABEL,
+  WORK_FORMS,
+  workFormLabel,
+} from "@/lib/scaffold/forms";
 import { PHASE, PHASE_ORDER, PHASE_STATE } from "@/lib/scaffold/phases";
 import {
   BarRow,
@@ -37,12 +42,6 @@ import {
 } from "../base";
 import { NewTrackModal } from "../new-track-modal";
 import { useScaffoldAccess } from "../use-access";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
 
 const PHASE_TONES = ["blue", "accent", "purple", "green"] as const;
 
@@ -451,9 +450,9 @@ export default function PortfolioScreen() {
             allLabel="Todos os arquétipos"
             ariaLabel="Filtrar por arquétipo de processo"
             onChange={setArchetype}
-            options={Object.entries(ARCHETYPE_LABEL).map(([id, label]) => ({
+            options={WORK_FORMS.map((id) => ({
               id,
-              label,
+              label: WORK_FORM_LABEL[id],
             }))}
             value={archetype}
           />
@@ -548,10 +547,8 @@ export default function PortfolioScreen() {
                       marginTop: 1,
                     }}
                   >
-                    {t.archetype
-                      ? ARCHETYPE_LABEL[t.archetype]
-                      : "sem arquétipo"}{" "}
-                    · {t.templateLabel}
+                    {workFormLabel(t.archetype) || "sem arquétipo"} ·{" "}
+                    {t.templateLabel}
                   </span>
                 </span>
                 <span

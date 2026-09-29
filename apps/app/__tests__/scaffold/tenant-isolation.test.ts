@@ -182,6 +182,7 @@ beforeEach(() => {
     id: "clx00000000000000000ver01",
     label: "v4",
     steps: [],
+    template: { archetype: "TRIAGE" },
   });
   h.sequenceUpsert.mockResolvedValue({ next: 2 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-001" });

@@ -16,13 +16,8 @@ import {
   type PendingPromotion,
   type ScaffoldMember,
 } from "@/app/(scaffold)/actions/tracks";
+import { workFormLabel } from "@/lib/scaffold/forms";
 import { Field, Input, ModalShell, Select } from "./base";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
 
 type TemplateOption = { id: string; name: string; archetype: string };
 
@@ -114,7 +109,7 @@ export function NewTrackModal({
   ];
   const templateOptions = (templates ?? []).map((t) => ({
     value: t.id,
-    label: `${t.name} · ${ARCHETYPE_LABEL[t.archetype] ?? t.archetype}`,
+    label: `${t.name} · ${workFormLabel(t.archetype)}`,
   }));
 
   return (

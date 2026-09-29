@@ -1,6 +1,7 @@
 import "server-only";
 
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
+import type { WorkFormCode } from "@/lib/scaffold/forms";
 import { PHASE_ORDER } from "@/lib/scaffold/phases";
 import { type Db, nextCode } from "./_shared";
 
@@ -24,6 +25,9 @@ async function resolveTemplateVersion(db: Db, templateId: string) {
     select: {
       id: true,
       label: true,
+      // A forma do trabalho é do template: a tela não a manda, e a trilha não
+      // pode ficar "sem arquétipo" (Crivo F4).
+      template: { select: { archetype: true } },
       steps: {
         select: {
           phase: true,
@@ -50,7 +54,7 @@ export type SeedInput = {
   /** Quem abre o rascunho do caso de negócio: o ator da sessão. */
   authorId: string;
   consultantId?: string;
-  archetype?: "TRIAGE" | "DOC_REVIEW" | "REPORTING";
+  archetype?: WorkFormCode;
   templateId: string;
   overlayId?: string;
   sourceGapId?: string;
@@ -143,7 +147,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
       tenantId: input.tenantId,
       code,
       processName: input.processName,
-      archetype: input.archetype ?? null,
+      archetype: input.archetype ?? version.template.archetype,
       ownerId: input.ownerId,
       consultantId: input.consultantId ?? null,
       templateVersionId: version.id,

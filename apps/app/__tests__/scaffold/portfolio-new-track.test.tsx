@@ -278,3 +278,101 @@ describe("modal — quem pode ser dono do processo (Crivo F3)", () => {
     expect(await screen.findByText(/papéis de adoção/i)).toBeDefined();
   });
 });
+
+describe("as cinco formas na tela (Crivo F4)", () => {
+  const TEMPLATES = [
+    ["templ1", "triage", "Triagem de suporte", "TRIAGE"],
+    ["templ2", "conversational", "Assistente conversacional", "CONVERSATIONAL"],
+    ["templ3", "analysis", "Análise e priorização", "ANALYSIS"],
+    ["templ4", "docreview", "Revisão de documentos", "DOC_REVIEW"],
+    ["templ5", "reporting", "Relatórios", "REPORTING"],
+  ].map(([id, key, name, archetype]) => ({
+    id: `clx00000000000000000${id}`,
+    key,
+    name,
+    archetype,
+    currentLabel: "v1",
+    publishedAt: new Date(),
+    versions: [],
+    overlays: [],
+  }));
+
+  it("o seletor de template mostra o rótulo, nunca o código cru", async () => {
+    h.listTemplates.mockResolvedValue({ ok: true, data: TEMPLATES });
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /nova trilha/i })
+    );
+    const select = (await screen.findByLabelText(
+      /^template/i
+    )) as HTMLSelectElement;
+    await waitFor(() => expect(select.options.length).toBe(5));
+    const labels = [...select.options].map((o) => o.textContent ?? "");
+    for (const raw of [
+      "ANALYSIS",
+      "CONVERSATIONAL",
+      "DOC_REVIEW",
+      "TRIAGE",
+      "REPORTING",
+    ]) {
+      expect(labels.some((l) => l.includes(raw))).toBe(false);
+    }
+    expect(
+      labels.some((l) =>
+        l.includes("Análise e priorização · Análise e priorização")
+      )
+    ).toBe(true);
+    expect(labels.some((l) => l.includes("Assistente conversacional"))).toBe(
+      true
+    );
+  });
+
+  it("o filtro do portfólio tem um chip por forma", async () => {
+    render(<PortfolioScreen />);
+    await screen.findByText("G-07");
+    for (const label of [
+      "Assistente conversacional",
+      "Análise e priorização",
+      "Revisão de documentos",
+      "Triagem de demanda",
+      "Relatórios recorrentes",
+    ]) {
+      expect(screen.getByRole("button", { name: label })).toBeDefined();
+    }
+  });
+
+  it("trilha de análise mostra a forma, e não fica em branco", async () => {
+    h.listTracks.mockResolvedValue({
+      ok: true,
+      data: {
+        ...SUMMARY,
+        orgCount: 1,
+        tracks: [
+          {
+            id: "trk1",
+            code: "TR-114",
+            processName: "Glosas hospitalares",
+            archetype: "ANALYSIS",
+            currentPhase: "ASSESS",
+            phaseState: "OPEN",
+            status: "ACTIVE",
+            ownerId: "clx0000000000000000owner1",
+            ownerName: "Marina",
+            consultantId: null,
+            templateLabel: "v1",
+            sourceGapId: null,
+            startedAt: new Date("2026-09-01"),
+            lastGateAt: null,
+            lastGateLabel: null,
+            stalledDays: 0,
+          },
+        ],
+      },
+    });
+    render(<PortfolioScreen />);
+    await screen.findByText("Glosas hospitalares");
+    expect(screen.getAllByText(/Análise e priorização/).length).toBeGreaterThan(
+      0
+    );
+  });
+});

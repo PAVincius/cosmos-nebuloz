@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cuid, nnStr, optCuid, optStr } from "@/app/actions/_base";
+import { WORK_FORMS } from "./forms";
 
 // Schemas Zod do Scaffold.
 //
@@ -18,11 +19,7 @@ export const ScaffoldTrackStatusEnum = z.enum([
   "CANCELLED",
 ]);
 
-export const ScaffoldArchetypeEnum = z.enum([
-  "TRIAGE",
-  "DOC_REVIEW",
-  "REPORTING",
-]);
+export const ScaffoldArchetypeEnum = z.enum(WORK_FORMS);
 
 /**
  * Justificativa de override (SG-03).

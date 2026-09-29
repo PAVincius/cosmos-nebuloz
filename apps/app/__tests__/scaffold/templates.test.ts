@@ -489,6 +489,7 @@ describe("overlay com conflito pendente não gera trilha", () => {
       id: V3,
       label: "v3",
       steps: [],
+      template: { archetype: "TRIAGE" },
     });
     h.sequenceUpsert.mockResolvedValue({ next: 2 });
     h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-001" });

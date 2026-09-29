@@ -138,7 +138,12 @@ beforeEach(() => {
     targetProduct: "SCAFFOLD",
   });
   h.promotionUpdate.mockResolvedValue({});
-  h.versionFindFirst.mockResolvedValue({ id: VER, label: "v4", steps: STEPS });
+  h.versionFindFirst.mockResolvedValue({
+    id: VER,
+    label: "v4",
+    steps: STEPS,
+    template: { archetype: "ANALYSIS" },
+  });
   h.sequenceUpsert.mockResolvedValue({ next: 105 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-104" });
   h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
@@ -708,5 +713,35 @@ describe("quem pode ser dono e consultor da trilha", () => {
     expect(res.ok).toBe(true);
     const roles = h.membershipFindFirst.mock.calls.map((c) => c[0].where.role);
     expect(roles).toEqual(["PROCESS_OWNER", "CONSULTANT"]);
+  });
+});
+
+// Crivo F4: a trilha criada do catálogo saía "sem arquétipo": o modal não manda a
+// forma, e só gravava se viesse. A forma é do template.
+describe("forma do trabalho da trilha", () => {
+  it("vem do template pinado quando a tela não manda", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("ANALYSIS");
+  });
+
+  it("vale também para a trilha sem lacuna", async () => {
+    await createTrack({
+      templateId: TPL,
+      processName: "Triagem",
+      ownerId: OWNER,
+    });
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("ANALYSIS");
+  });
+
+  it("o que a tela manda explicitamente prevalece", async () => {
+    await createTrackFromGap({ ...INPUT, archetype: "REPORTING" });
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("REPORTING");
+  });
+
+  it("pede a forma na mesma consulta da versão, sem ida extra ao banco", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.versionFindFirst.mock.calls[0][0].select.template).toEqual({
+      select: { archetype: true },
+    });
   });
 });
