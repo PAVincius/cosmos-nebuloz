@@ -18,6 +18,7 @@ export type CharterEntity =
   | "charter.policy"
   | "charter.section"
   | "charter.usecase"
+  | "charter.casecontrol"
   | "charter.decision"
   | "charter.risk"
   | "charter.mitigation"
