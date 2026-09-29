@@ -274,14 +274,19 @@ em [`operadora-controladora.md`](operadora-controladora.md) §6.
 - **2026-09-29 — Decisão do CEO: a Nebuloz é operadora no Meridian** (finalidade
   5, respondente sem conta). Fecha a decisão que a §4 e o passo 2 da §8 deixavam
   aberta para o respondente do Meridian: a base legal é a do cliente, e o pedido
-  do titular vai a ele. Para o participante de reunião (finalidade 7), a resposta
-  não o citou; segue como recomendação.
+  do titular vai a ele. **Vale só para o Meridian, por ora.** O participante de
+  reunião (finalidade 7) fica para decisão separada do CEO (opção C do memo de
+  2026-09-29); a finalidade 7 segue sem enquadramento decidido.
 - **2026-09-29 — Decisão do CEO: conteúdo de cliente não é usado para
   demonstração, ajuste de prompt ou avaliação de modelo.** Nenhuma linha nova de
   finalidade própria da Nebuloz nasce disso.
 - **2026-09-29 — Decisão do CEO: canal público `privacy@nebuloz.com`.** Falta
   confirmar que a caixa existe e é lida.
-- **Em aberto com o CEO:** `benchmarkOptIn` no primeiro contrato; encarregado.
-  Enquanto a primeira estiver aberta, a operadora vale só com a função desligada:
-  ligada, a Nebuloz é controladora do conjunto comparativo e a finalidade 5 ganha
-  uma linha própria.
+- **2026-09-29 — Decisão do CEO: `benchmarkOptIn` desligado no primeiro contrato,
+  com trava no produto** (`assessments.tsx:211`, Norte e Bussola). A operadora
+  vale só com a função desligada: ligada, a Nebuloz é controladora do conjunto
+  comparativo e a finalidade 5 ganha uma linha própria, com aviso ao respondente.
+  Enquanto a trava não existir, a decisão vale no contrato e não no produto.
+- **2026-09-29 — Decisão do CEO: Dono do SLA do repasse = Ordem**, com delegação
+  escrita do CEO para o envio (a delegação ainda precisa ser escrita).
+- **Em aberto com o CEO:** encarregado; cláusula C8.
