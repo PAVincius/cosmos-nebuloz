@@ -48,6 +48,18 @@ vi.mock("@/lib/guard", () => ({
 }));
 vi.mock("@/lib/modulos", () => ({ MODULOS_DA_PLATAFORMA: [] }));
 vi.mock("@/app/actions/clients", () => ({ getClient: mocks.getClient }));
+vi.mock("@/app/actions/meridian-benchmark", () => ({
+  getMeridianBenchmark: vi.fn(async () => ({
+    ok: true,
+    data: {
+      enabled: false,
+      agreementRef: null,
+      updatedAt: null,
+      isInternalTenant: false,
+    },
+  })),
+  setMeridianBenchmarkAction: vi.fn(),
+}));
 vi.mock("@/app/actions/tenant-members", () => ({
   listTenantMembers: vi.fn(),
 }));

@@ -163,6 +163,18 @@ vi.mock("@/app/actions/services", () => ({
   getServiceDetail: mocks.getServiceDetail,
   listServices: mocks.listServices,
 }));
+vi.mock("@/app/actions/meridian-benchmark", () => ({
+  getMeridianBenchmark: vi.fn(async () => ({
+    ok: true,
+    data: {
+      enabled: false,
+      agreementRef: null,
+      updatedAt: null,
+      isInternalTenant: false,
+    },
+  })),
+  setMeridianBenchmarkAction: vi.fn(),
+}));
 vi.mock("@/app/actions/tenant-members", () => ({
   listTenantMembers: mocks.listTenantMembers,
 }));
