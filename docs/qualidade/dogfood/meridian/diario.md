@@ -33,3 +33,11 @@ Pré-condição do M2-bis: deploy `dpl_4QSbrS8MQjs3zF85o1LWVv3KXMJk` READY, comm
 | M10 `meridian-load` | não rodou | `pnpm seed:meridian:load techcorp-sa` → `Tenant "techcorp-sa" não encontrado` (`scripts/seed-meridian-load.ts:63`); o tenant só nasce em `scripts/seed-tenants.ts:140`, que o setup não roda |
 
 Reset local (`apps/app/scripts/sql/meridian-reset.sql`, inteiro, `-v ON_ERROR_STOP=1`): exit 0, BEGIN…COMMIT, guarda de vínculo com Scaffold = 0. Antes → depois: GapPromotion 1→0, PlanItem 8→0, GapDependency 5→0, Gap 8→0, Evidence 2→0, Response 39→0, Override 1→0, AxisScore 10→0, Respondent 22→0, Assessment 13→0, BenchmarkContribution 5→0, BenchmarkCohort 3→0, Sequence 3→0. Mantidos: Template 1, Question 15, Membership 4. Schema `backup_meridian_20260929` criado no banco local.
+
+### 2026-09-29 · M1–M11 no local, segunda rodada (7af22365) · QA
+
+Após 889c91af (seletor por role, backdrop fora da faixa de ambiente, copiar o link antes de Concluir) e 0483f3ea (seed de carga cria `techcorp-sa`). Banco local `cosmos_dev`, `AUTH_TEST=1 pnpm exec playwright test e2e/meridian- --grep-invert load` de dentro de `apps/app`: **25 passaram, 0 falharam** (1,8 min). Inclui `meridian-collection-as112:38`, `meridian-reemitir-link:68/239`, `meridian-dogfood:162/262/328` e M8 (`:464/:507/:523`), que antes falhavam; M8 confirma que era cascata. M11 (benchmark <5 não mostra) em `meridian-diagnose.spec.ts:161`, passou.
+
+M10 (`e2e/meridian-load`): **passou** — `/meridian` 525 ms com 200 assessments, `/meridian/registry` 273 ms com 2.000 gaps (orçamento SC-010: 2 s). O seed criou 200 assessments `LOAD-` no tenant `techcorp-sa` local.
+
+Schema `backup_meridian_20260929` do banco local removido (`DROP SCHEMA … CASCADE`, só `cosmos_dev` em localhost:5434).
