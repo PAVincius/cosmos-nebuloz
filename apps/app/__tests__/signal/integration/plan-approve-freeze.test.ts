@@ -35,7 +35,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
   return { ...actual, logSignalAudit: h.logSignalAudit };
 });
 
-import { approveMetric } from "@/app/(signal)/actions/plan";
+import { approveMetric, pauseMetric } from "@/app/(signal)/actions/plan-flow";
 
 const CTX = {
   tenantId: "tnt_1",
@@ -191,13 +191,84 @@ describe("aprovar métrica proposta (SG-PO-05)", () => {
     expect(db.signalPlanMetricEvent?.create).not.toHaveBeenCalled();
   });
 
+  // ── Casos que existiam em plan-approve.test.ts (approvePlanMetric descartada) ──
+
+  it("exige signal.initiative.write e ser dono da iniciativa", async () => {
+    await approveMetric({ id: "pm_1" });
+
+    expect(h.requireSignalPermissionContext).toHaveBeenCalledWith(
+      "signal.initiative.write"
+    );
+    expect(h.requireInitiativeOwnership).toHaveBeenCalled();
+  });
+
+  it("só aprova métrica PROPOSED", async () => {
+    db.signalPlanMetric!.findFirst = vi
+      .fn()
+      .mockResolvedValue(metric({ state: "MEASURING" }));
+
+    const r = await approveMetric({ id: "pm_1" });
+
+    expect(r.ok).toBe(false);
+    expect(db.signalPlanMetric?.updateMany).not.toHaveBeenCalled();
+    expect(db.signalPlanMetricEvent?.create).not.toHaveBeenCalled();
+  });
+
+  it("métrica de outra iniciativa ou tenant não existe (procurada pelo tenant do contexto)", async () => {
+    db.signalPlanMetric!.findFirst = vi.fn().mockResolvedValue(null);
+
+    const r = await approveMetric({ id: "pm_de_outro_tenant" });
+
+    expect(r.ok).toBe(false);
+    expect(db.signalPlanMetric?.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "pm_de_outro_tenant", tenantId: "tnt_1" },
+      })
+    );
+    expect(db.signalPlanMetric?.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("audita a aprovação; congelada na hora, o rótulo diz que congelou", async () => {
+    await approveMetric({ id: "pm_1" });
+    expect(h.logSignalAudit).toHaveBeenLastCalledWith(
+      db,
+      CTX,
+      expect.objectContaining({
+        action: "Métrica aprovada no plano",
+        entityType: "signal.planmetric",
+        entityId: "pm_1",
+      })
+    );
+
+    db.signalBaseline!.findFirst = signed([
+      { key: "TIME", numericValue: "46" },
+    ]);
+    await approveMetric({ id: "pm_1" });
+    expect(h.logSignalAudit).toHaveBeenLastCalledWith(
+      db,
+      CTX,
+      expect.objectContaining({ action: "Métrica aprovada e congelada" })
+    );
+  });
+
+  it("ADMIN não aprova métrica proposta (SG-PO-03)", async () => {
+    h.requireSignalPermissionContext.mockResolvedValue({
+      ...CTX,
+      signalRole: "ADMIN",
+    });
+
+    const r = await approveMetric({ id: "pm_1" });
+
+    expect(r.ok).toBe(false);
+    expect(db.signalPlanMetric?.updateMany).not.toHaveBeenCalled();
+  });
+
   it("outras transições (pausar) não consultam baseline", async () => {
     // pausar exige comentário e métrica em Medindo: só confirma que o baseline
     // não é lido fora da aprovação.
     db.signalPlanMetric!.findFirst = vi
       .fn()
       .mockResolvedValue(metric({ state: "MEASURING" }));
-    const { pauseMetric } = await import("@/app/(signal)/actions/plan");
 
     await pauseMetric({ id: "pm_1", comment: "Fonte em manutenção." });
 

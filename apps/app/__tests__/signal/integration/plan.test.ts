@@ -39,17 +39,21 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
   return { ...actual, logSignalAudit: h.logSignalAudit };
 });
 
+import { editMetric } from "@/app/(signal)/actions/plan-edit";
 import {
-  changePrimary,
-  classifyInitiative,
-  editMetric,
-  generatePlan,
   mapMetricSource,
   pauseMetric,
-  proposeMetric,
-  requestTargetReview,
   resumeMetric,
-} from "@/app/(signal)/actions/plan";
+} from "@/app/(signal)/actions/plan-flow";
+import {
+  changePrimary,
+  requestTargetReview,
+} from "@/app/(signal)/actions/plan-review";
+import {
+  classifyInitiative,
+  generatePlan,
+  proposeMetric,
+} from "@/app/(signal)/actions/plan-setup";
 
 const CTX = {
   tenantId: "tnt_1",

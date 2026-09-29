@@ -13,12 +13,15 @@
 
 import { Button, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
-import { classifyInitiative, generatePlan } from "@/app/(signal)/actions/plan";
 import {
   getInitiativePlan,
   type InitiativePlan,
   type PlanMetricRow,
 } from "@/app/(signal)/actions/plan-read";
+import {
+  classifyInitiative,
+  generatePlan,
+} from "@/app/(signal)/actions/plan-setup";
 import {
   filterPlan,
   formatMetricValue,
