@@ -70,3 +70,47 @@ Revisões: Vigia aprovou para produção; Lacre OK com condições (`docs/compli
 Bucket `meridian-evidence`: 0 objetos antes e depois (nada a esvaziar). Vínculo `ScaffoldTrack` → gap/promoção: 0.
 
 Backup `backup_meridian_20260929`: 13 tabelas com RLS ligada e forçada, sem grants; `anon` sem USAGE. Contagens conferem com o antes (Assessment 3, Gap 37, Respondent 10, Response 30). `DROP SCHEMA` previsto para 2026-10-29 (condição C2 do Lacre). Pendentes: declarar no RoPA; registrar a janela de PITR do Supabase (Pilar). Runtime da Vercel sem erro nos 30 min seguintes.
+
+## Rodada local · dogfood M1–M11 + carga k6 (2026-09-29, só local, QA)
+
+Base: `github/main` `8d1a17fe` (#286), worktree `wt-dogfood`, banco `cosmos_dev` (localhost:5434, `migrate deploy`: 0 pendentes), `seed:e2e` + `seed:meridian cosmos-dev`. Navegador: sessão `meridian-local` (Portal Meridian), consultora `marina.duarte@nebuloz.exemplo`. Nada em produção. Evidências em `evidencias/local-2026-09-29/`.
+
+Assessment novo do zero: **AS-110** "Nebuloz (dogfood local)". Diferença para o roteiro de produção: em vez dos dez respondentes do AS-NBZ-001 usei oito (um por eixo, quatro no eixo Process por engano meu ao atribuir) com respostas quaisquer; portanto não há comparação com gabarito no M4(a).
+
+| Passo | Resultado | O que vi |
+|---|---|---|
+| M1 novo assessment pela carteira | OK | Carteira com 5 assessments do seed; "Novo assessment" (organização, setor, porte, template v3.2, prazo) criou o AS-110 em Rascunho e abriu o detalhe (`m1-carteira-com-novo.png`). O prazo é `input type=date` nativo |
+| M2 convidar respondentes | OK | Cinco eixos, cada um com "Atribuir respondente"; 8 links gerados. "Concluir" do diálogo do link só habilita depois de "Copiar" (guarda do P1 AS-112 funcionando). Assessment vai a Coletando ao atribuir o primeiro (`m2-coleta.png`) |
+| M3 responder (meridian-responder) | OK | Data: 3 perguntas, evidência `evidencia.pdf` anexada (linha em `MeridianEvidence`, arquivo no bucket `meridian-evidence`), "Enviar respostas" fechou o respondente (DONE). Os outros 7 responderam sem evidência. Cada sessão levou cerca de 10 s (SC-006: meta < 10 min) |
+| M4 fechar coleta e scoring | OK | "Fechar coleta e rodar scoring" levou o assessment a REVIEW. Scores: Data 67 (conf 50 %), Process 50 (conf 100 %, 4 resp.), People 33, Governance 25, Infrastructure 33; spread 0, nada contestado (`m4-scoring.png`). SC-002(b): `vitest run __tests__/lib/meridian-scoring.test.ts` = 13/13 |
+| M5 fila de revisão e override | OK | O AS-110 não tem eixo contestado, então usei o AS-104 do seed (Data contestado): fila global lista "Revisar Data de Vanta Saúde" (`m5-fila.png`). Rationale curto ("Curto demais") mantém "Registrar override" desabilitado; rationale longo + score diferente do computado habilita. Override 40 → 45 gravado (`m5-override-depois.png`); a trilha mostra "Score final: 40 → 45" |
+| M6 gaps, dependências, plano | OK | AS-110: 4 gaps derivados dos eixos abaixo do limiar (G-11 Governance CoD 93, G-10 People 72, G-12 Infrastructure 72, G-09 Process 27); "Gerar plano de 12 meses" distribuiu G-11/G-10/G-12/G-09 em Q1..Q4. Topologia conferida por SQL no AS-104 (o único com dependências): 5 dependências, 0 violações. Ciclo de dependência não foi exercitado pela tela |
+| M7 relatório | OK | Aba Relatório & Benchmark: shape dos 5 eixos com confiança, composto 42, narrativa dos três gaps de maior custo, sem ferramenta externa (`m7-relatorio.png`) |
+| M8 auditoria | OK | `meridian.assessment.create`, `respondent.assign` (8), `respondent.submit`, `evidence.attach`, `collection.close`, `scoring.run`, `gap.derive`, `plan.generate`, `gap.promote`, `respondent.reissue` presentes; override mostra antes → depois (FR-038) (`m8-auditoria.png`) |
+| M9 promoção e Scaffold (X-03) | OK | G-10 "Virar caso de negócio" → `MeridianGapPromotion` SCAFFOLD; o portfólio do Scaffold mostra "S-01 · lacunas promovidas ainda não viraram trilha" com G-10; "Criar trilha" abriu com o processo preenchido, criou a TR-910 com `sourceGapId`, e a promoção passou a apontar para a trilha. A trilha mostra "Semeada da lacuna G-10 do Meridian" sem controle de edição (`m9-registry.png`, `m9-trilha-origem.png`). G-11 foi promovido a COSMOS por engano ("Promover a iniciativa" age direto) e ficou "pendente" |
+| Reemissão de link | OK | AS-200: "Reemitir e copiar todos os pendentes" abre lista com "Copiar tudo", "Baixar .txt/.csv"; `meridian.respondent.reissue` +1 |
+| M10 carga 200/2.000 | OK | `e2e/meridian-load`: `/meridian` 1004 ms (200 assessments), `/meridian/registry` 351 ms (2.000 gaps); meta 2 s |
+| M11 benchmark < 5 | OK | Pool: agronegócio · 200–1.000 com n = 2 "agregado existe, leitura bloqueada"; relatório do AS-110: "A coorte tecnologia · 1–50 tem n = 0, abaixo do mínimo de 5", sem percentil (`m11-benchmark.png`). Não capturei o corpo da resposta da action |
+
+### Carga k6 · `apps/app/load/k6/meridian-responder.js`
+
+Respondentes sem conta abrindo o link (`GET /meridian-responder/<token>`) e gravando respostas (server action `saveDraft` com `Next-Action`, 3 respostas por chamada). Rampa 1 → 50 VUs em 3 min, um respondente (token) por VU, 50 respondentes dedicados no AS-K6-001 (`load/k6/prepare-meridian-responder.ts`). Alvo só `localhost:3012` (o script recusa outro host). Metas: p95 < 800 ms, erro < 1 %.
+
+| Alvo | Requisições | Erro | p50 | p95 | Veredito |
+|---|---|---|---|---|---|
+| `next dev` (turbopack) | 2.212 (1.106 iterações) | 0 % | 193 ms | **2,92 s** | p95 acima da meta; abrir_link p50 224 ms / p95 2,91 s; gravar p50 156 ms / p95 2,93 s |
+| `next build` + `next start` (mesma máquina) | 2.852 (1.426 iterações) | 0 % | 13 ms | 26 ms | dentro da meta; abrir_link p95 24 ms, gravar p95 27 ms |
+
+Leitura: o app não erra sob 50 respondentes concorrentes (4.424 checks, 100 %), e o p95 fora da meta no `next dev` é custo do modo de desenvolvimento (uma instância, sem otimização); no build de produção local o p95 é 26 ms. A meta de 800 ms só vale como aceite contra o build, não contra `next dev`. Isso não mede a infraestrutura de produção (Vercel, banco remoto), só o código no localhost.
+
+### Atritos com causa e dono (nenhum quebrou um passo)
+
+| # | Sev. | Atrito | Onde | Dono |
+|---|---|---|---|---|
+| A1 | Baixa | Rationale curto de override só desabilita o botão; a tela não diz o mínimo (o roteiro espera "recusa explicando o mínimo") | modal de override, `components/meridian/screens/` | Bussola |
+| A2 | Baixa | "Promover a iniciativa" e "Virar caso de negócio" agem no clique, sem confirmação nem escolha de destino; o primeiro clique foi para o produto errado | modal do gap, `components/meridian/screens/registry.tsx` | Bussola |
+| A3 | Baixa | Nenhum caminho na tela do consultor para abrir a evidência anexada (Coleta e gap só mostram "1 anexos"); `meridian.evidence.read` só nasce por action | Coleta e gap | Bussola (decisão de produto) |
+| A4 | Info | O JSON "Export para o Scaffold" na aba Plano é um exemplo fixo (G-01, governance 66 overridden), não os dados do assessment | aba Plano 12 meses | Bussola |
+| A5 | Info | Ciclo de dependência entre gaps e o botão de ajuste de severidade/esforço não foram exercitados pela tela | Gap register | QA (próxima rodada) |
+
+Limpeza: servidor derrubado, `.next` apagado, `load/k6/.tokens.json` fora do git. Estado local deixado: AS-110, AS-K6-001 (50 respondentes), G-10/G-11 promovidos, TR-910, override no AS-104.
