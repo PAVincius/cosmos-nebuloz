@@ -122,7 +122,7 @@ Preencher os nomes é decisão de quem dirige a empresa; a estrutura é esta:
 |---|---|---|---|---|---|
 | Dono do roadmap | | | | | |
 | Responsável pela entrega | | | | | |
-| **Dono do SLA** | | | | | |
+| **Dono do SLA** | Ordem — repasse de pedido de titular em 5 dias úteis, envio por [delegação do CEO](../compliance/2026-09-29-delegacao-ceo-ordem-pedido-do-titular.md) (decisão do CEO, 2026-09-29); demais itens do SLA em branco | | | | |
 | Auditor / revisor | | | | | |
 
 Três regras que a estrutura precisa respeitar:
