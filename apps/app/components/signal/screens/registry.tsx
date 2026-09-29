@@ -6,6 +6,7 @@ import EvidenceScreen from "./evidence";
 import InitiativeDetailScreen from "./initiative-detail";
 import InitiativesScreen from "./initiatives";
 import MappingScreen from "./mapping";
+import ModelsScreen from "./models";
 import OverviewScreen from "./overview";
 import ReportsScreen from "./reports";
 import SettingsScreen from "./settings";
@@ -28,6 +29,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   initiative: InitiativeDetailScreen,
   connections: ConnectionsScreen,
   mapping: MappingScreen,
+  models: ModelsScreen,
   evidence: EvidenceScreen,
   alerts: AlertsScreen,
   reports: ReportsScreen,
