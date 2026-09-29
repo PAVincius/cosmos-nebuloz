@@ -138,9 +138,14 @@ export async function seedTrack(db: Db, input: SeedInput) {
   });
 
   const businessCaseCode = await openBusinessCase(db, input, track.id);
-  await instantiateDeliverables(db, input.tenantId, track.id, version.id, {
-    ownerId: input.ownerId,
-    consultantId: input.consultantId ?? null,
+  await instantiateDeliverables(db, {
+    tenantId: input.tenantId,
+    trackId: track.id,
+    versionId: version.id,
+    people: {
+      ownerId: input.ownerId,
+      consultantId: input.consultantId ?? null,
+    },
   });
   return { ...track, businessCaseCode };
 }
@@ -175,10 +180,17 @@ function defaultPeople(producer: string, p: TrackPeople) {
  */
 async function instantiateDeliverables(
   db: Db,
-  tenantId: string,
-  trackId: string,
-  versionId: string,
-  people: TrackPeople
+  {
+    tenantId,
+    trackId,
+    versionId,
+    people,
+  }: {
+    tenantId: string;
+    trackId: string;
+    versionId: string;
+    people: TrackPeople;
+  }
 ): Promise<void> {
   const templates = await db.scaffoldDeliverableTemplate.findMany({
     where: { versionId },

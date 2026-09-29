@@ -64,15 +64,24 @@ const STEPS: { phase: Phase; step: Omit<StepSeed, "expectedArtefact"> }[] = [
 
 /** Esqueleto comum (tabela c.1). Os três `null` são o específico da forma. */
 function skeleton(f: FormSpec): (DeliverableSeed & { phase: Phase })[] {
-  const d = (
-    phase: Phase,
-    code: string,
-    title: string,
-    description: string,
-    kind: DeliverableSeed["kind"],
-    producer: DeliverableSeed["producer"],
-    requiresModule?: DeliverableSeed["requiresModule"]
-  ) => ({
+  type Row = [
+    Phase,
+    string,
+    string,
+    string,
+    DeliverableSeed["kind"],
+    DeliverableSeed["producer"],
+    DeliverableSeed["requiresModule"]?,
+  ];
+  const toItem = ([
+    phase,
+    code,
+    title,
+    description,
+    kind,
+    producer,
+    requiresModule,
+  ]: Row) => ({
     phase,
     stepCode: code.split(".")[0] as string,
     code,
@@ -82,128 +91,131 @@ function skeleton(f: FormSpec): (DeliverableSeed & { phase: Phase })[] {
     producer,
     ...(requiresModule ? { requiresModule } : {}),
   });
-  return [
-    d(
+  const rows: Row[] = [
+    [
       "ASSESS",
       "A1.1",
       "Mapa do processo atual e volume",
       "Quem toca o processo hoje, em que ordem e com que volume por período.",
       "SPREADSHEET",
-      "OWNER"
-    ),
-    d(
+      "OWNER",
+    ],
+    [
       "ASSESS",
       "A2.1",
       f.a21.title,
       f.a21.description,
       f.a21.kind,
-      f.a21.producer
-    ),
-    d(
+      f.a21.producer,
+    ],
+    [
       "ASSESS",
       "A3.1",
       "Baseline medido, com ao menos 4 semanas de dado",
       "Volume, cycle time e taxa de erro de hoje, medidos sobre dado real de no mínimo quatro semanas.",
       "SPREADSHEET",
-      "TECHNICAL"
-    ),
-    d(
+      "TECHNICAL",
+    ],
+    [
       "ASSESS",
       "A3.2",
       "Caso de negócio assinado",
       "A promessa que o Signal vai apurar: métricas, linha de base, meta e janela, assinada pelo dono do processo. O estado deriva da assinatura; ninguém o aprova à mão.",
       "SIGNATURE",
-      "OWNER"
-    ),
-    d(
+      "OWNER",
+    ],
+    [
       "PILOT",
       "B1.1",
       "Critério de vitória e contrafactual escritos",
       "Métrica primária, métricas guarda, limiar de vitória, tolerância de piora e amostra mínima, mais como será o grupo sem a mudança.",
       "DOCUMENT",
-      "CONSULTANT"
-    ),
-    d(
+      "CONSULTANT",
+    ],
+    [
       "PILOT",
       "B1.2",
       f.b12.title,
       f.b12.description,
       "CONFIGURATION",
-      "TECHNICAL"
-    ),
-    d(
+      "TECHNICAL",
+    ],
+    [
       "PILOT",
       "B2.1",
       "Plano de rollback testado",
       "Como voltar ao caminho antigo, com o registro de ao menos uma execução do rollback em produção.",
       "DOCUMENT",
-      "TECHNICAL"
-    ),
-    d(
+      "TECHNICAL",
+    ],
+    [
       "PILOT",
       "B3.1",
       "Relatório do piloto contra o contrafactual",
       "O resultado do piloto contra o contrafactual do B1.1, com o número que sustenta o critério de gate.",
       "REPORT",
-      "CONSULTANT"
-    ),
-    d(
+      "CONSULTANT",
+    ],
+    [
       "SCALE",
       "C1.1",
       "Política do Charter vinculada ao fluxo",
       "A política do Charter aplicável ao fluxo, aceita pelo dono do processo. Só é obrigatório quando o Charter está contratado.",
       "SIGNATURE",
       "LEGAL",
-      "CHARTER"
-    ),
-    d(
+      "CHARTER",
+    ],
+    [
       "SCALE",
       "C2.1",
       "Registro de treinamento",
       "Quem foi treinado no caminho novo, quando e por quem.",
       "TRAINING",
-      "OWNER"
-    ),
-    d(
+      "OWNER",
+    ],
+    [
       "SCALE",
       "C3.1",
       f.c31.title,
       f.c31.description,
       "SPREADSHEET",
-      "TECHNICAL"
-    ),
-    d(
+      "TECHNICAL",
+    ],
+    [
       "EMBED",
       "D1.1",
       "Registro de desativação",
       "O caminho antigo desligado: o que foi desativado, quando, e a contagem de transações depois.",
       "DOCUMENT",
-      "TECHNICAL"
-    ),
-    d(
+      "TECHNICAL",
+    ],
+    [
       "EMBED",
       "E1.1",
       "Runbook e onboarding do time",
       "O processo novo escrito para quem chega depois: passo a passo, exceções e a quem recorrer.",
       "DOCUMENT",
-      "OWNER"
-    ),
-    d(
+      "OWNER",
+    ],
+    [
       "EMBED",
       "E2.1",
       "Handover pack",
       "O pacote de transferência da posse. O aceite do time é a aprovação dele pelo dono do processo.",
       "PACKAGE",
-      "CONSULTANT"
-    ),
-    d(
+      "CONSULTANT",
+    ],
+    [
       "EMBED",
       "E3.1",
       "Plano de sustentação: dono da métrica e cadência pós-entrega",
       "Quem cuida da métrica depois da entrega e com que cadência ela é revista. A lição de encerramento é do Signal.",
       "DOCUMENT",
-      "OWNER"
-    ),
+      "OWNER",
+    ],
+  ];
+  return [
+    ...rows.map(toItem),
     {
       ...f.extra,
       phase: "PILOT" as Phase,
