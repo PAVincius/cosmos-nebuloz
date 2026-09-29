@@ -73,15 +73,21 @@ enum ScaffoldTrackStatus {
 /// pessoa pode ser DEV no Cosmos e PROCESS_OWNER aqui.
 ///
 /// O protótipo tem cinco personas, mas o seletor de persona NÃO é portado —
-/// ADR-0004 o mantém fora de produção. O papel vem da sessão. `sponsor` do
-/// protótipo lê como TRANSFORMATION_LEAD com direito de assinar caso de
-/// negócio; não é papel separado porque o que o distingue é o ato, não o acesso.
+/// ADR-0004 o mantém fora de produção. O papel vem da sessão.
+///
+/// SPONSOR e TEAM_LEAD (decisão provisória do Norte, 2026-09-29, seção d) são
+/// só de leitura: "sponsor e team lead só leem" (SC-PO-04). Mapear o sponsor em
+/// TRANSFORMATION_LEAD daria gate.close e businesscase.write; mapear o team lead
+/// em TEAM_MEMBER daria step.complete. O sponsor é observador, não signatário:
+/// businesscase.sign continua com PROCESS_OWNER.
 enum ScaffoldRole {
   TEAM_MEMBER
   PROCESS_OWNER
   TRANSFORMATION_LEAD
   CONSULTANT
   ADMIN
+  SPONSOR
+  TEAM_LEAD
 }
 
 /// Como o critério é avaliado no gate. MANUAL = alguém marca. DERIVED = o

@@ -158,3 +158,74 @@ describe("canAssignScaffoldRole (SA-05: sem escalada de privilégio)", () => {
     );
   });
 });
+
+// SC-PO-04 / SC-DEV-07 — matriz do entregável (decisões do Norte, seção d).
+describe("permissões de entregável", () => {
+  const ESCRITA = [
+    "deliverable.work",
+    "deliverable.review",
+    "deliverable.reopen",
+    "deliverable.add",
+  ] as const;
+
+  it("SPONSOR e TEAM_LEAD só leem: escrita é negada (403 no backend)", () => {
+    for (const role of ["SPONSOR", "TEAM_LEAD"] as const) {
+      expect(hasScaffoldPermission(role, "deliverable.read")).toBe(true);
+      expect(hasScaffoldPermission(role, "portfolio.read")).toBe(true);
+      expect(hasScaffoldPermission(role, "artefact.read")).toBe(true);
+      for (const p of ESCRITA) {
+        expect(hasScaffoldPermission(role, p)).toBe(false);
+      }
+      expect(hasScaffoldPermission(role, "gate.close")).toBe(false);
+      expect(hasScaffoldPermission(role, "step.complete")).toBe(false);
+      expect(hasScaffoldPermission(role, "businesscase.sign")).toBe(false);
+    }
+  });
+
+  it("todo papel lê entregável", () => {
+    for (const role of Object.keys(SCAFFOLD_MATRIX)) {
+      expect(
+        hasScaffoldPermission(
+          role as keyof typeof SCAFFOLD_MATRIX,
+          "deliverable.read"
+        )
+      ).toBe(true);
+    }
+  });
+
+  it("trabalhar: membro, dono, líder e consultora; ADMIN não", () => {
+    expect(scaffoldRolesGranting("deliverable.work")).toEqual([
+      "TEAM_MEMBER",
+      "PROCESS_OWNER",
+      "TRANSFORMATION_LEAD",
+      "CONSULTANT",
+    ]);
+  });
+
+  it("aprovar, reabrir e adicionar: dono, líder e consultora", () => {
+    for (const p of [
+      "deliverable.review",
+      "deliverable.reopen",
+      "deliverable.add",
+    ] as const) {
+      expect(scaffoldRolesGranting(p)).toEqual([
+        "PROCESS_OWNER",
+        "TRANSFORMATION_LEAD",
+        "CONSULTANT",
+      ]);
+    }
+  });
+
+  it("reabrir vale o mesmo que fechar gate", () => {
+    expect(scaffoldRolesGranting("deliverable.reopen")).toEqual(
+      scaffoldRolesGranting("gate.close")
+    );
+  });
+
+  it("ADMIN não mexe em entregável", () => {
+    for (const p of ESCRITA) {
+      expect(hasScaffoldPermission("ADMIN", p)).toBe(false);
+    }
+    expect(hasScaffoldPermission("ADMIN", "deliverable.read")).toBe(true);
+  });
+});
