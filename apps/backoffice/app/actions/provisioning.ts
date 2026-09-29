@@ -1,17 +1,19 @@
 "use server";
 
 import { type ProductModule, withTenantDb } from "@repo/database";
+import { log } from "@repo/observability/log";
 import {
   bootstrapCharter,
   bootstrapMeridian,
   bootstrapScaffold,
+  bootstrapSignal,
   contractModule,
   ProvisioningError,
   platformDb,
   provisionTenant,
   setModuleStatus,
 } from "@repo/provisioning";
-import { invalidateModuleCache } from "@repo/rbac";
+import { invalidateModuleCache, invalidateSignalRoleCache } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { assertCanWrite, requirePlatformStaff } from "@/lib/guard";
 import { assertDentroDoLimite } from "@/lib/rate-limit";
@@ -168,6 +170,45 @@ export async function bootstrapScaffoldAction(input: {
 
     revalidatePath(`/clientes/${input.slug}`);
     return { created: result.created };
+  });
+}
+
+export async function bootstrapSignalAction(input: {
+  slug: string;
+  adminEmail: string;
+}): Promise<Result<{ created: boolean; role: string }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+    // Mesma cota dos outros bootstraps: escreve papel, e o teto de navegação
+    // seria teto nenhum para ela.
+    await assertDentroDoLimite("provisionamento", staff.userId);
+
+    const tenantId = await tenantIdBySlug(input.slug);
+
+    const result = await bootstrapSignal(
+      { withTenantDb },
+      {
+        tenantId,
+        adminEmail: input.adminEmail,
+        actorUserId: staff.userId,
+        actorName: staff.name,
+      }
+    );
+
+    // Melhor-esforço, depois do commit: o papel vem de cache (300 s) e "sem
+    // papel" também fica lá, então a pessoa continuaria em signal-indisponivel
+    // até ele expirar. Redis fora do ar não desfaz o bootstrap.
+    try {
+      await invalidateSignalRoleCache(tenantId, result.userId);
+    } catch (error) {
+      log.error("[bootstrapSignalAction] cache de papel não invalidado", {
+        error: String(error),
+      });
+    }
+
+    revalidatePath(`/clientes/${input.slug}`);
+    return { created: result.created, role: result.role };
   });
 }
 

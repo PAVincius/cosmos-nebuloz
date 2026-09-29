@@ -90,6 +90,19 @@ async function loadInitiative(db: Db, tenantId: string, code: string) {
   return initiative;
 }
 
+/**
+ * Carrega a iniciativa e toma o trinco dela até o fim da transação. Classificar
+ * e gerar o plano leem "há plano?" e depois escrevem: sem o trinco, duas
+ * chamadas ao mesmo tempo passam as duas pela leitura e geram o plano duas
+ * vezes (ou classificam depois que o outro já gerou). Relê depois do trinco,
+ * porque a primeira leitura pode ter ficado velha esperando a vez.
+ */
+async function loadInitiativeLocked(db: Db, tenantId: string, code: string) {
+  const first = await loadInitiative(db, tenantId, code);
+  await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`signal-plan:${tenantId}:${first.id}`}, 0))`;
+  return loadInitiative(db, tenantId, code);
+}
+
 function recordEvent(
   db: Db,
   ctx: SignalContext,
@@ -200,7 +213,7 @@ export async function classifyInitiative(raw: {
       .parse(raw);
 
     await withTenantDb(ctx.tenantId, async (db) => {
-      const initiative = await loadInitiative(
+      const initiative = await loadInitiativeLocked(
         db,
         ctx.tenantId,
         input.initiativeCode
@@ -306,7 +319,11 @@ export async function generatePlan(raw: {
     const { initiativeCode } = z.object({ initiativeCode: nnStr }).parse(raw);
 
     const created = await withTenantDb(ctx.tenantId, async (db) => {
-      const initiative = await loadInitiative(db, ctx.tenantId, initiativeCode);
+      const initiative = await loadInitiativeLocked(
+        db,
+        ctx.tenantId,
+        initiativeCode
+      );
       requireInitiativeOwnership(ctx, initiative);
 
       const existing = await db.signalPlanMetric.count({
@@ -566,7 +583,8 @@ async function moveState(
   });
 }
 
-/** Proposta → Sem fonte. Só o OWNER (ou o Analista, que o alcança). */
+/** Proposta → Sem fonte. Só o OWNER (ou o Analista, que o alcança). Se a
+ *  iniciativa já tem baseline assinado, a métrica congela na hora (SG-PO-05). */
 export async function approveMetric(raw: { id: string }) {
   return await moveState(raw, {
     action: "approve",
@@ -603,6 +621,14 @@ async function resolveSource(
   metric: Loaded,
   mappingId: string
 ) {
+  // Congelado não muda fonte: o baseline do gate foi medido por aquela fonte, e
+  // trocá-la mudaria de onde vem o número contra o qual o contrato foi firmado.
+  if (metric.state === "FROZEN") {
+    throw new SignalRuleError(
+      "plan.source.frozen",
+      "Métrica congelada não muda de fonte: o baseline firmado no gate foi medido por ela."
+    );
+  }
   if (metric.state === "PROPOSED") {
     throw new SignalRuleError(
       "plan.source.not-approved",
