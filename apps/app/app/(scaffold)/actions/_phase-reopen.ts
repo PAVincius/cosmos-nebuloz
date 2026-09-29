@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { GateReopenedEvent } from "@/lib/scaffold/gate-events";
 import { nextState } from "@/lib/scaffold/gate-machine";
 import type { ScaffoldContext } from "@/lib/scaffold/guards";
 import { type Db, logScaffoldAudit } from "./_shared";
@@ -36,7 +37,7 @@ export async function reopenPhaseForDeliverable(
     trackCode: string;
     deliverableCode: string;
   }
-): Promise<void> {
+): Promise<GateReopenedEvent | null> {
   if (phase.state === "GATE_READY" || phase.state === "BLOCKED") {
     // Lança se a máquina de fase não admitir a regressão.
     nextState(phase.state, "STEPS_REGRESSED");
@@ -44,22 +45,24 @@ export async function reopenPhaseForDeliverable(
       where: { id: phase.id },
       data: { state: "OPEN" },
     });
-    return;
+    return null;
   }
   if (phase.state !== "CLOSED" && phase.state !== "OBSERVING") {
-    return;
+    return null;
   }
 
   nextState(phase.state, "REOPEN");
-  await db.scaffoldPhaseInstance.update({
+  const reopenedAt = new Date();
+  const updated = await db.scaffoldPhaseInstance.update({
     where: { id: phase.id },
     data: {
       state: "OPEN",
-      reopenedAt: new Date(),
+      reopenedAt,
       reopenCount: { increment: 1 },
       closedAt: null,
       observationEndsAt: null,
     },
+    select: { reopenCount: true },
   });
   // A trilha volta para a fase reaberta, como em `reopenPhase`.
   await db.scaffoldTrack.update({
@@ -74,4 +77,17 @@ export async function reopenPhaseForDeliverable(
     note: `Fase reaberta porque o entregável ${deliverableCode} aprovado foi reaberto.`,
     diff: [["Estado", phase.state, "OPEN"]],
   });
+  // Só a fase que estava FECHADA é notícia para o resto do produto. Quem chama
+  // emite depois de a transação fechar.
+  return {
+    tenantId: ctx.tenantId,
+    trackId,
+    trackCode,
+    phaseInstanceId: phase.id,
+    phase: phase.phase,
+    // Já incrementado: o id de idempotência do evento leva o ciclo.
+    reopenCount: updated.reopenCount,
+    at: reopenedAt.toISOString(),
+    actorId: ctx.userId,
+  };
 }

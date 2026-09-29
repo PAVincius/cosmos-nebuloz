@@ -9,7 +9,14 @@ import type {
   ScaffoldPhase,
 } from "@repo/database";
 import { withTenantDb } from "@repo/database";
-import { SCAFFOLD_ARTEFACT_BUCKET, storageClient } from "@repo/storage";
+import { log } from "@repo/observability/log";
+import {
+  ensureBucket,
+  SCAFFOLD_ALLOWED_MIME_TYPES,
+  SCAFFOLD_ARTEFACT_BUCKET,
+  scaffoldFileMimeType,
+  storageClient,
+} from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
@@ -20,17 +27,25 @@ import {
   type DeliverableTransition,
   decideAttach,
   decideEdit,
+  decideLink,
   decideTransition,
   deliverableGrants,
   type TransitionDenial,
 } from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
+import {
+  appHostsFromEnv,
+  checkExternalLink,
+  PROVIDER_LABEL,
+} from "@/lib/scaffold/external-links";
 import { safeFileName } from "@/lib/scaffold/file-name";
+import { emitGateReopened } from "@/lib/scaffold/gate-events";
 import {
   requireScaffoldPermissionContext,
   type ScaffoldContext,
 } from "@/lib/scaffold/guards";
 import {
+  AddDeliverableLinkSchema,
   AddDeliverableSchema,
   AssignDeliverableSchema,
   AttachDeliverableVersionSchema,
@@ -38,6 +53,7 @@ import {
   DeliverableTransitionSchema,
   EditDeliverableSummarySchema,
   ReadDeliverableFileSchema,
+  RemoveDeliverableLinkSchema,
   TrackIdSchema,
 } from "@/lib/scaffold/schemas";
 import { reopenPhaseForDeliverable } from "./_phase-reopen";
@@ -139,7 +155,7 @@ async function runTransition(
     const ctx = await requireScaffoldPermissionContext(step.permission);
     const input = DeliverableTransitionSchema.parse(raw);
 
-    await withTenantDb(ctx.tenantId, async (db) => {
+    const reopened = await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
       const decision = decideTransition(
         step.transition,
@@ -162,8 +178,18 @@ async function runTransition(
         }
       }
 
+      // Aprovar e pedir ajuste valem para a versão do arquivo que o revisor viu:
+      // se outra subiu no meio, nada é aprovado sem ter sido lido.
+      const reviews =
+        step.transition === "APPROVE" ||
+        step.transition === "REQUEST_ADJUSTMENT";
       const moved = await db.scaffoldDeliverableInstance.updateMany({
-        where: { id: d.id, tenantId: ctx.tenantId, status: d.status },
+        where: {
+          id: d.id,
+          tenantId: ctx.tenantId,
+          status: d.status,
+          ...(reviews ? { version: d.version } : {}),
+        },
         data: { status: decision.to },
       });
       if (moved.count !== 1) {
@@ -195,14 +221,27 @@ async function runTransition(
       // Reabrir um aprovado tira a fase do estado em que ele a fazia estar
       // pronta ou fechada (SC-PO-03).
       if (step.transition === "REOPEN") {
-        await reopenPhaseForDeliverable(db, ctx, {
+        return reopenPhaseForDeliverable(db, ctx, {
           phase: d.phaseInstance,
           trackId: d.trackId,
           trackCode: d.track.code,
           deliverableCode: d.code,
         });
       }
+      return null;
     });
+
+    // Depois da transação: evento de fase que ainda poderia desfazer não presta.
+    // Falha do emissor não desfaz a reabertura já gravada.
+    if (reopened) {
+      try {
+        await emitGateReopened(reopened);
+      } catch (e) {
+        log.error("[scaffold] gate.reopened não emitido", {
+          error: String(e),
+        });
+      }
+    }
 
     revalidatePath("/scaffold");
   });
@@ -515,22 +554,67 @@ async function lastReviews(
   return out;
 }
 
+export type LinkView = {
+  id: string;
+  provider: string;
+  externalId: string;
+  url: string;
+};
+
+/** Vínculos externos de cada entregável, numa consulta só. */
+async function linksOf(
+  db: Db,
+  tenantId: string,
+  rows: { id: string }[]
+): Promise<Map<string, LinkView[]>> {
+  const out = new Map<string, LinkView[]>();
+  if (rows.length === 0) {
+    return out;
+  }
+  const found = await db.scaffoldDeliverableLink.findMany({
+    where: { tenantId, deliverableId: { in: rows.map((d) => d.id) } },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      deliverableId: true,
+      provider: true,
+      externalId: true,
+      url: true,
+    },
+  });
+  for (const { deliverableId, ...link } of found) {
+    out.set(deliverableId, [...(out.get(deliverableId) ?? []), link]);
+  }
+  return out;
+}
+
+const linkAccessOf = (
+  d: { ok: true } | { ok: false; message: string }
+): { allowed: boolean; reason: string | null } =>
+  d.ok
+    ? { allowed: true, reason: null }
+    : { allowed: false, reason: d.message };
+
 /** Entregáveis da trilha, na ordem do método. Qualquer papel lê (SC-PO-04). */
 export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("deliverable.read");
     const input = TrackIdSchema.parse(raw);
-    const { rows, reviews } = await withTenantDb(ctx.tenantId, async (db) => {
-      const found = await db.scaffoldDeliverableInstance.findMany({
-        where: { tenantId: ctx.tenantId, trackId: input.trackId },
-        orderBy: [{ code: "asc" }],
-        select: LIST_SELECT,
-      });
-      return {
-        rows: found,
-        reviews: await lastReviews(db, ctx.tenantId, found),
-      };
-    });
+    const { rows, reviews, links } = await withTenantDb(
+      ctx.tenantId,
+      async (db) => {
+        const found = await db.scaffoldDeliverableInstance.findMany({
+          where: { tenantId: ctx.tenantId, trackId: input.trackId },
+          orderBy: [{ code: "asc" }],
+          select: LIST_SELECT,
+        });
+        return {
+          rows: found,
+          reviews: await lastReviews(db, ctx.tenantId, found),
+          links: await linksOf(db, ctx.tenantId, found),
+        };
+      }
+    );
     // O que o ator pode fazer, calculado no servidor: a tela desabilita o
     // controle com o motivo e nunca precisa conhecer papel nem regra.
     const actor = actorOf(ctx);
@@ -540,6 +624,8 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
       return {
         ...publicRow(d),
         lastReview: reviews.get(d.id) ?? null,
+        links: links.get(d.id) ?? [],
+        linkAccess: linkAccessOf(decideLink(subject, actor)),
         actions: availableActions(subject, actor),
         attach: attach.ok
           ? { allowed: true, reason: null }
@@ -588,6 +674,19 @@ export async function getDeliverable(raw: z.input<typeof DeliverableIdSchema>) {
 // ── Arquivo do entregável (SC-PO-03: enviar exige arquivo) ────────────────────
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+// O bucket nasce (ou é atualizado) com o limite de tamanho e de tipo. Uma vez
+// por processo, como o do Meridian: listar buckets a cada anexo seria custo à
+// toa. Falha não impede o anexo (a action já filtra por extensão e tamanho) e
+// a próxima tentativa refaz.
+let bucketReady: Promise<void> | null = null;
+function ensureScaffoldBucket(): Promise<void> {
+  bucketReady ??= ensureBucket(SCAFFOLD_ARTEFACT_BUCKET).catch((e) => {
+    bucketReady = null;
+    log.error("[scaffold] bucket não configurado", { error: String(e) });
+  });
+  return bucketReady;
+}
 const FILE_URL_TTL_SECONDS = 300;
 
 /**
@@ -608,6 +707,15 @@ export async function attachDeliverableVersion(
     if (input.sizeBytes > MAX_FILE_BYTES) {
       throw new ScaffoldRuleError("ARTEFACT_TOO_LARGE");
     }
+    // O cliente escolhe o arquivo: a extensão é a lista de permissão e o tipo
+    // que vale é o dela. O declarado só não pode contradizê-la (um .pdf que se
+    // diz text/html), e o PUT usa o canônico.
+    const contentType = scaffoldFileMimeType(input.filename);
+    if (
+      !(contentType && SCAFFOLD_ALLOWED_MIME_TYPES.includes(input.contentType))
+    ) {
+      throw new ScaffoldRuleError("DELIVERABLE_FILE_TYPE_NOT_ALLOWED");
+    }
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
@@ -620,6 +728,7 @@ export async function attachDeliverableVersion(
       const fileName = safeFileName(input.filename);
       const fileKey = `${ctx.tenantId}/${d.trackId}/deliverables/${d.id}/v${version}/${fileName}`;
 
+      await ensureScaffoldBucket();
       const { data, error } = await storageClient.storage
         .from(SCAFFOLD_ARTEFACT_BUCKET)
         .createSignedUploadUrl(fileKey);
@@ -632,7 +741,14 @@ export async function attachDeliverableVersion(
       // Condicional à versão lida: dois envios ao mesmo tempo não se
       // sobrescrevem em silêncio, e o número de versão não pula nem repete.
       const moved = await db.scaffoldDeliverableInstance.updateMany({
-        where: { id: d.id, tenantId: ctx.tenantId, version: d.version },
+        // Estado E versão lidos: um SUBMIT concorrente não deixa o anexo trocar o
+        // arquivo de um entregável que já foi para revisão.
+        where: {
+          id: d.id,
+          tenantId: ctx.tenantId,
+          status: d.status,
+          version: d.version,
+        },
         data: { version, fileKey, fileName },
       });
       if (moved.count !== 1) {
@@ -659,7 +775,7 @@ export async function attachDeliverableVersion(
         target: `${d.code} · ${fileName}`,
         diff: [["Versão do arquivo", `v${d.version}`, `v${version}`]],
       });
-      return { uploadUrl: data.signedUrl, version, fileName };
+      return { uploadUrl: data.signedUrl, version, fileName, contentType };
     });
 
     revalidatePath("/scaffold");
@@ -717,7 +833,11 @@ export async function readDeliverableFile(
 
     const { data, error } = await storageClient.storage
       .from(SCAFFOLD_ARTEFACT_BUCKET)
-      .createSignedUrl(target.fileKey, FILE_URL_TTL_SECONDS);
+      // `download`: o navegador baixa com o nome do arquivo, em vez de abrir
+      // inline o que o cliente subiu.
+      .createSignedUrl(target.fileKey, FILE_URL_TTL_SECONDS, {
+        download: target.fileName,
+      });
     if (error || !data) {
       throw new Error(
         `Falha ao emitir URL de arquivo: ${error?.message ?? "sem resposta"}`
@@ -729,5 +849,126 @@ export async function readDeliverableFile(
       fileName: target.fileName,
       version: target.version,
     };
+  });
+}
+
+// ── Vínculos com item externo (S6, Norte e.2) ─────────────────────────────────
+
+const MAX_LINKS = 20;
+
+/**
+ * Liga o entregável a um item externo (Cosmos, Linear, GitHub ou Jira).
+ *
+ * É REFERÊNCIA: o servidor não busca a URL (sem fetch, sem SSRF) e o estado do
+ * item externo nunca muda o do entregável. A URL vem do usuário e vira link
+ * clicável para outras pessoas, então só entra host da lista do provedor, em
+ * https (ver `checkExternalLink`). Quem é responsável liga; aprovado também
+ * aceita, porque referência não é conteúdo, mas fase que não abriu é só leitura.
+ */
+export async function addDeliverableLink(
+  raw: z.input<typeof AddDeliverableLinkSchema>
+) {
+  return scaffoldAction(async () => {
+    const ctx = await requireScaffoldPermissionContext("deliverable.work");
+    const input = AddDeliverableLinkSchema.parse(raw);
+
+    const checked = checkExternalLink(input, {
+      appHosts: appHostsFromEnv(process.env.NEXT_PUBLIC_APP_URL),
+    });
+    if (!checked.ok) {
+      throw new ScaffoldRuleError("DELIVERABLE_LINK_INVALID", [
+        checked.message,
+      ]);
+    }
+
+    const created = await withTenantDb(ctx.tenantId, async (db) => {
+      const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
+      const decision = decideLink(toSubject(d), actorOf(ctx));
+      if (!decision.ok) {
+        refuse(decision.code, decision.message);
+      }
+
+      const same = await db.scaffoldDeliverableLink.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          deliverableId: d.id,
+          provider: input.provider,
+          externalId: checked.externalId,
+        },
+        select: { id: true },
+      });
+      if (same) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_DUPLICATE");
+      }
+      const total = await db.scaffoldDeliverableLink.count({
+        where: { tenantId: ctx.tenantId, deliverableId: d.id },
+      });
+      if (total >= MAX_LINKS) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_LIMIT");
+      }
+
+      const link = await db.scaffoldDeliverableLink.create({
+        data: {
+          tenantId: ctx.tenantId,
+          deliverableId: d.id,
+          provider: input.provider,
+          externalId: checked.externalId,
+          url: checked.url,
+          createdById: ctx.userId,
+        },
+        select: { id: true },
+      });
+      // O id externo, e não a URL: o log de auditoria não é lugar de URL de
+      // terceiro.
+      await logScaffoldAudit(db, ctx, {
+        action: "scaffold.deliverable.link-add",
+        entityType: "scaffold.deliverable",
+        entityId: d.id,
+        target: `${d.code} · ${PROVIDER_LABEL[input.provider]} ${checked.externalId}`,
+      });
+      return link;
+    });
+
+    revalidatePath("/scaffold");
+    return { linkId: created.id };
+  });
+}
+
+/** Desliga o vínculo. Mesma regra de escopo e de fase de ligar. */
+export async function removeDeliverableLink(
+  raw: z.input<typeof RemoveDeliverableLinkSchema>
+) {
+  return scaffoldAction(async () => {
+    const ctx = await requireScaffoldPermissionContext("deliverable.work");
+    const input = RemoveDeliverableLinkSchema.parse(raw);
+
+    await withTenantDb(ctx.tenantId, async (db) => {
+      const link = await db.scaffoldDeliverableLink.findFirst({
+        where: { id: input.linkId, tenantId: ctx.tenantId },
+        select: {
+          id: true,
+          deliverableId: true,
+          provider: true,
+          externalId: true,
+        },
+      });
+      if (!link) {
+        throw new ScaffoldRuleError("DELIVERABLE_LINK_NOT_FOUND");
+      }
+      const d = await loadSubject(db, ctx.tenantId, link.deliverableId);
+      const decision = decideLink(toSubject(d), actorOf(ctx));
+      if (!decision.ok) {
+        refuse(decision.code, decision.message);
+      }
+      await db.scaffoldDeliverableLink.delete({ where: { id: link.id } });
+      await logScaffoldAudit(db, ctx, {
+        action: "scaffold.deliverable.link-remove",
+        entityType: "scaffold.deliverable",
+        entityId: d.id,
+        target: `${d.code} · ${PROVIDER_LABEL[link.provider]} ${link.externalId}`,
+      });
+    });
+
+    revalidatePath("/scaffold");
   });
 }

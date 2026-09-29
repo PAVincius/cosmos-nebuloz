@@ -24,6 +24,7 @@ import {
   MIN_COMMENT_LENGTH,
 } from "@/lib/scaffold/deliverable-machine";
 import { Field, ModalShell, Textarea } from "./base";
+import { DeliverableLinks } from "./deliverable-links";
 
 export type DeliverableItem = Extract<
   Awaited<ReturnType<typeof listDeliverables>>,
@@ -121,6 +122,7 @@ export function DeliverableList({
     transition: DeliverableTransition;
   } | null>(null);
   const [comment, setComment] = useState("");
+  const [linksOf, setLinksOf] = useState<string | null>(null);
 
   const run = async (
     item: DeliverableItem,
@@ -148,11 +150,10 @@ export function DeliverableList({
   const attach = async (item: DeliverableItem, file: File) => {
     setBusy(true);
     setError(null);
-    const contentType = file.type || "application/octet-stream";
     const res = await attachDeliverableVersion({
       deliverableId: item.id,
       filename: file.name,
-      contentType,
+      contentType: file.type || "application/octet-stream",
       sizeBytes: file.size,
     });
     if (!res.ok) {
@@ -163,7 +164,8 @@ export function DeliverableList({
     const put = await fetch(res.data.uploadUrl, {
       method: "PUT",
       body: file,
-      headers: { "Content-Type": contentType },
+      // O tipo é o que o servidor validou pela extensão, não o do navegador.
+      headers: { "Content-Type": res.data.contentType },
     });
     setBusy(false);
     if (!put.ok) {
@@ -347,6 +349,15 @@ export function DeliverableList({
                     {ACTION[t].label}
                   </Button>
                 ))}
+                <Button
+                  disabled={busy}
+                  icon="link2"
+                  onClick={() => setLinksOf(d.id)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Vínculos ({d.links.length})
+                </Button>
                 {ATTACHABLE.includes(d.status as DeliverableStatus) ? (
                   <>
                     <label
@@ -396,6 +407,20 @@ export function DeliverableList({
           );
         })}
       </ul>
+
+      {(() => {
+        const item = items.find((i) => i.id === linksOf);
+        return item ? (
+          <DeliverableLinks
+            access={item.linkAccess}
+            code={item.code}
+            deliverableId={item.id}
+            links={item.links}
+            onChanged={onChanged}
+            onClose={() => setLinksOf(null)}
+          />
+        ) : null;
+      })()}
 
       {pending && (
         <ModalShell

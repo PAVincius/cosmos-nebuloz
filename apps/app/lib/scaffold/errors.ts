@@ -31,6 +31,11 @@ export const SCAFFOLD_ERROR = {
   DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
   DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
   DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
+  DELIVERABLE_FILE_TYPE_NOT_ALLOWED: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
+  DELIVERABLE_LINK_INVALID: "DELIVERABLE_LINK_INVALID",
+  DELIVERABLE_LINK_DUPLICATE: "DELIVERABLE_LINK_DUPLICATE",
+  DELIVERABLE_LINK_LIMIT: "DELIVERABLE_LINK_LIMIT",
+  DELIVERABLE_LINK_NOT_FOUND: "DELIVERABLE_LINK_NOT_FOUND",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -89,6 +94,14 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
   DELIVERABLE_PHASE_NOT_OPEN:
     "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
   DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
+  DELIVERABLE_LINK_INVALID:
+    "Vínculo recusado. O link precisa ser de um host aceito para o provedor.",
+  DELIVERABLE_LINK_DUPLICATE: "Este item já está ligado a este entregável.",
+  DELIVERABLE_LINK_LIMIT:
+    "Este entregável já tem 20 vínculos, o máximo. Remova algum antes de ligar outro.",
+  DELIVERABLE_LINK_NOT_FOUND: "Vínculo não encontrado nesta organização.",
+  DELIVERABLE_FILE_TYPE_NOT_ALLOWED:
+    "Tipo de arquivo não aceito. Anexe PDF, Word (docx), Excel (xlsx), PowerPoint (pptx), imagem (png, jpg), CSV ou texto (txt).",
   DELIVERABLES_PENDING:
     "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:
