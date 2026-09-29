@@ -130,4 +130,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929000000_work_form_enum",
   "20260929000100_process_registry",
   "20260929000200_scaffold_deliverable_draft",
+  "20260929000300_scaffold_deliverable_v1",
 ];

@@ -175,6 +175,7 @@ model ScaffoldTemplateVersion {
 
   template       ScaffoldTemplate          @relation(fields: [templateId], references: [id], onDelete: Cascade)
   steps          ScaffoldStepTemplate[]
+  deliverables    ScaffoldDeliverableTemplate[]
   criteria       ScaffoldGateCriterion[]
   tracks         ScaffoldTrack[]
   overlayBases   ScaffoldTemplateOverlay[] @relation("OverlayBase")
@@ -193,6 +194,9 @@ model ScaffoldStepTemplate {
   phase            ScaffoldPhase
   seq              Int
   key              String
+  /// Código do passo, "A1"…"E3" (seção b). Nulo nas versões anteriores ao
+  /// modelo de entregável. Estável e nunca reusado depois do publish.
+  code             String?
   statement        String        @db.Text
   /// Artefato esperado ao concluir. É o que separa passo de instrução: o passo
   /// entrega alguma coisa.
@@ -203,6 +207,7 @@ model ScaffoldStepTemplate {
   version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
 
   @@unique([versionId, key])
+  @@unique([versionId, code])
   @@index([versionId, phase])
 }
 
