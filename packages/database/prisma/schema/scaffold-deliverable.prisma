@@ -110,6 +110,7 @@ model ScaffoldDeliverableInstance {
   phaseInstance ScaffoldPhaseInstance        @relation(fields: [phaseInstanceId], references: [id], onDelete: Cascade)
   events        ScaffoldDeliverableEvent[]
   comments      ScaffoldDeliverableComment[]
+  links         ScaffoldDeliverableLink[]
 
   @@unique([trackId, code])
   @@index([tenantId])
@@ -189,4 +190,38 @@ model ScaffoldDeliverableTemplate {
 
   @@unique([versionId, code])
   @@index([versionId, phase])
+}
+
+/// Sistema onde mora o item ligado ao entregável.
+enum ScaffoldDeliverableLinkProvider {
+  COSMOS
+  LINEAR
+  GITHUB
+  JIRA
+}
+
+/// Link manual entre entregável e item externo (Norte, seção e.2): de 0 a N por
+/// entregável, ligado por quem responde por ele. É referência e nada mais: o
+/// estado da issue NUNCA muda o do entregável (a aprovação é humana, no
+/// Scaffold), então a tabela não guarda estado externo. Tenant com Cosmos liga
+/// ao item do Cosmos, que já sincroniza com o Linear; tenant sem Cosmos guarda a
+/// URL do Linear, sem chamada de API. Não há integração própria do Scaffold com
+/// o Linear: seria segundo token e segunda fonte de verdade da mesma issue.
+model ScaffoldDeliverableLink {
+  id            String                          @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  provider      ScaffoldDeliverableLinkProvider
+  /// Id do item no provedor (Cosmos: id da feature ou épico; Linear: "NEB-123").
+  externalId    String
+  url           String
+  createdById   String
+  createdAt     DateTime                        @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@unique([deliverableId, provider, externalId])
+  @@index([tenantId])
+  @@index([deliverableId])
 }
