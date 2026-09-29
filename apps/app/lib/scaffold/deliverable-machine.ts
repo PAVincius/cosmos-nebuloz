@@ -9,6 +9,10 @@
 // `ScaffoldDeliverableAction`). Declarados aqui, e não importados de
 // `@repo/database`, para o módulo seguir puro e cliente-seguro.
 
+/** Código do entregável que É o caso de negócio assinado: o estado dele deriva
+ *  da assinatura (SG-04) e ninguém o aprova à mão. */
+export const BUSINESS_CASE_DELIVERABLE_CODE = "A3.2";
+
 export type DeliverableStatus =
   | "NOT_STARTED"
   | "IN_PROGRESS"

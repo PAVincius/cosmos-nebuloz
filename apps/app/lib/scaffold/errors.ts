@@ -21,6 +21,7 @@ export const SCAFFOLD_ERROR = {
   SELF_ROLE_CHANGE: "SELF_ROLE_CHANGE",
   // Gate — SG-01..SG-05
   STEPS_INCOMPLETE: "STEPS_INCOMPLETE",
+  DELIVERABLES_PENDING: "DELIVERABLES_PENDING",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -57,6 +58,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Seu papel não pode conceder nem retirar este papel. Só o administrador gere administrador e consultor; o consultor gere os papéis abaixo dele.",
   SELF_ROLE_CHANGE:
     "Ninguém altera o próprio papel de adoção. Peça a outra pessoa com permissão para fazê-lo.",
+  DELIVERABLES_PENDING:
+    "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:
     "Há passo requerido não concluído nesta fase. Um gate só é avaliado depois que o trabalho da fase terminou.",
   CRITERIA_UNMET:

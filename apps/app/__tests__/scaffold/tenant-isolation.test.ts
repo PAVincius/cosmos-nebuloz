@@ -78,6 +78,8 @@ vi.mock("@repo/database", () => ({
         findUnique: h.versionFindUnique,
       },
       scaffoldSequence: { upsert: h.sequenceUpsert },
+      // Trilha legada, sem entregável: a regra de passos vale sozinha.
+      scaffoldDeliverableInstance: { findMany: async () => [] },
       scaffoldTrack: {
         create: h.trackCreate,
         findMany: h.trackFindMany,

@@ -4,6 +4,11 @@ import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
+import {
+  BUSINESS_CASE_DELIVERABLE_CODE,
+  type GateReviewState,
+  gateReviewState,
+} from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import {
   type CriterionFact,
@@ -149,6 +154,60 @@ async function assertCharterPolicyAcked(
   }
 }
 
+/**
+ * SG-01 (SC-DEV-06) — entregáveis obrigatórios da fase aprovados.
+ *
+ * Trilha SEM nenhum entregável (criada antes de os templates os terem) segue só
+ * a regra de passos: não há o que exigir, e bloquear todas as trilhas antigas
+ * por dado ausente as prenderia sem saída. Trilha COM entregáveis é regida por
+ * eles, e fase sem nenhum obrigatório também bloqueia (ver `gateReviewState`).
+ *
+ * O A3.2 é o caso de negócio: o estado dele deriva da assinatura (SG-04) e
+ * ninguém o aprova à mão, então conta como aprovado quando o caso está assinado.
+ */
+async function loadDeliverableGate(
+  db: Db,
+  tenantId: string,
+  phase: PhaseWithContext
+): Promise<GateReviewState> {
+  const all = await db.scaffoldDeliverableInstance.findMany({
+    where: { tenantId, trackId: phase.track.id },
+    select: {
+      code: true,
+      title: true,
+      status: true,
+      required: true,
+      phaseInstanceId: true,
+    },
+  });
+  if (all.length === 0) {
+    return { blocked: false, reason: null, pending: [] };
+  }
+  const signed = Boolean(phase.track.businessCase?.signedVersionId);
+  return gateReviewState(
+    all
+      .filter((x) => x.phaseInstanceId === phase.id)
+      .map((x) => ({
+        code: x.code,
+        title: x.title,
+        required: x.required,
+        status:
+          x.code === BUSINESS_CASE_DELIVERABLE_CODE && signed
+            ? "APPROVED"
+            : x.status,
+      }))
+  );
+}
+
+function assertDeliverablesApproved(state: GateReviewState): void {
+  if (state.blocked) {
+    throw new ScaffoldRuleError(
+      "DELIVERABLES_PENDING",
+      state.pending.map((p) => p.code)
+    );
+  }
+}
+
 // ── Leitura ───────────────────────────────────────────────────────────────────
 
 export type GateEvaluation = {
@@ -159,6 +218,10 @@ export type GateEvaluation = {
   blockers: string[];
   /** Enunciado dos passos requeridos pendentes — SG-01. */
   pendingSteps: string[];
+  /** Códigos dos entregáveis obrigatórios pendentes — SG-01 (SC-DEV-06). */
+  pendingDeliverables: string[];
+  /** Motivo pronto para o controle desabilitado. Nulo quando liberado. */
+  deliverablesReason: string | null;
 };
 
 /** Avalia o gate sem escrever nada. É o que a tela do detalhe de trilha
@@ -186,13 +249,17 @@ export async function evaluateGate(
         (input.criteriaFacts ?? {}) as Record<string, CriterionFact>
       );
       const pending = pendingRequiredSteps(phase.steps).map((s) => s.statement);
+      const deliverables = await loadDeliverableGate(db, ctx.tenantId, phase);
       return {
         phase: phase.phase,
         state: phase.state,
         criteria: evaluation.criteria,
-        canClose: evaluation.canClose && pending.length === 0,
+        canClose:
+          evaluation.canClose && pending.length === 0 && !deliverables.blocked,
         blockers: evaluation.blockers,
         pendingSteps: pending,
+        pendingDeliverables: deliverables.pending.map((p) => p.code),
+        deliverablesReason: deliverables.reason,
       };
     });
   });
@@ -327,10 +394,13 @@ export async function closePhase(
         throw new ScaffoldRuleError("PHASE_NOT_CLOSABLE");
       }
 
-      // Ordem deliberada: passos (SG-01) → baseline (SG-04) → Charter (SG-05)
+      // Ordem deliberada: passos e entregáveis (SG-01) → baseline (SG-04) → Charter (SG-05)
       // → critérios (SG-02). Do mais barato e mais comum ao mais caro, para
       // que a recusa mais provável não pague uma consulta extra.
       assertStepsComplete(phase);
+      assertDeliverablesApproved(
+        await loadDeliverableGate(db, ctx.tenantId, phase)
+      );
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
 
@@ -409,6 +479,9 @@ export async function overridePhase(
       // dispensáveis por override: override cobre critério de gate, e nem a
       // assinatura do baseline nem o aceite de política são critério.
       assertStepsComplete(phase);
+      assertDeliverablesApproved(
+        await loadDeliverableGate(db, ctx.tenantId, phase)
+      );
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
 
