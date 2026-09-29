@@ -4,19 +4,23 @@
 /// e controles. A mesma chave organiza os três produtos:
 ///   Scaffold → template de trilha · Signal → modelo de medição ·
 ///   Charter → perfil de controle.
-/// Enum da plataforma (não de um produto): quem precisar da forma referencia
-/// este tipo em vez de repetir os valores. Acrescentar valor é migration nova.
+///
+/// Um enum só, da plataforma. É o antigo `ScaffoldArchetype` renomeado
+/// (decisão provisória do Norte, 2026-09-29, seção c.0): TRIAGE, DOC_REVIEW e
+/// REPORTING mantêm o nome e o dado; CONVERSATIONAL e ANALYSIS são novos. As
+/// colunas `ScaffoldTemplate.archetype` e `ScaffoldTrack.archetype` seguem com
+/// o nome, só o tipo mudou. Acrescentar valor é migration nova.
 enum WorkForm {
   /// Assistente conversacional — o público pergunta em volume, a resposta
   /// existe em fonte oficial.
-  CONVERSATIONAL_ASSISTANT
+  CONVERSATIONAL
   /// Análise e priorização — um score ordena casos para alguém decidir.
-  ANALYSIS_PRIORITIZATION
+  ANALYSIS
   /// Revisão de documentos — lê contratos, laudos e prontuários e extrai o que
   /// importa.
-  DOCUMENT_REVIEW
+  DOC_REVIEW
   /// Triagem de demanda — decide destino e urgência de pedidos.
-  DEMAND_TRIAGE
+  TRIAGE
   /// Relatórios recorrentes — gera conteúdo que sai da empresa ou vira registro.
-  RECURRING_REPORTS
+  REPORTING
 }
