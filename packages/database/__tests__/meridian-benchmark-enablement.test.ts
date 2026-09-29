@@ -58,12 +58,38 @@ describe(`migration ${DIR}`, () => {
     );
   });
 
-  it("não concede nada a anon/authenticated (fora de comentários)", () => {
-    const comandos = migration
-      .split("\n")
-      .filter((l) => !l.trim().startsWith("--"))
-      .join("\n");
-    expect(comandos).not.toMatch(/GRANT\s/i);
-    expect(comandos).not.toMatch(/\b(anon|authenticated)\b/);
+  const comandos = migration
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("--"))
+    .join("\n");
+
+  it("não concede nada a anon/authenticated e revoga o que tenham (guardado pela existência dos papéis)", () => {
+    const grants = comandos.match(/GRANT[^;]*;/gi) ?? [];
+    for (const g of grants) {
+      expect(g).not.toMatch(/\b(anon|authenticated|PUBLIC)\b/);
+    }
+    expect(comandos).toMatch(
+      /REVOKE ALL ON "MeridianBenchmarkEnablement" FROM PUBLIC, anon, authenticated/
+    );
+    expect(comandos).toMatch(/rolname = 'anon'/);
+  });
+
+  it("papel do app (cosmos_app): só SELECT — INSERT/UPDATE/DELETE reservados ao papel de plataforma", () => {
+    expect(comandos).toMatch(/rolname = 'cosmos_app'/);
+    expect(comandos).toMatch(
+      /REVOKE ALL ON "MeridianBenchmarkEnablement" FROM cosmos_app/
+    );
+    expect(comandos).toMatch(
+      /GRANT SELECT ON "MeridianBenchmarkEnablement" TO cosmos_app/
+    );
+    const grants = comandos.match(/GRANT[^;]*TO cosmos_app;/gi) ?? [];
+    for (const g of grants) {
+      expect(g).not.toMatch(/INSERT|UPDATE|DELETE|TRUNCATE|ALL/i);
+    }
+  });
+
+  it("mantém RLS FORCE + tenant_isolation junto dos grants", () => {
+    expect(comandos).toMatch(/FORCE ROW LEVEL SECURITY/);
+    expect(comandos).toMatch(/CREATE POLICY "tenant_isolation"/);
   });
 });
