@@ -96,7 +96,7 @@ Derivado do schema, não de template. Uma linha por finalidade.
 | 2 | Registro de acesso e tentativa recusada | e-mail, IP, user-agent | Usuário e quem tentou entrar | Legítimo interesse — segurança | **Não definida** |
 | 3 | Trilha de auditoria | userId, actorId, IP, user-agent, targetUserId, diff | Usuário | Legítimo interesse + obrigação contratual | 12 meses |
 | 4 | Execução de portfólio | nome, avatar, conteúdo de standup | Usuário e membro de time | Execução de contrato | Duração do contrato + 30 dias |
-| 5 | Diagnóstico de maturidade | **nome, e-mail e cargo de respondente** | **Terceiro sem conta** | A definir — ver §4 | **Não definida** |
+| 5 | Diagnóstico de maturidade | **nome, e-mail e cargo de respondente** | **Terceiro sem conta** | Base do cliente; Nebuloz operadora — decisão do CEO, 2026-09-29 (§9) | **Não definida** (evidência: 90 dias, ver parecer de 2026-09-28) |
 | 6 | Governança de IA | nome livre de dono de caso, aceites | Usuário e terceiro nomeado | Execução de contrato | Duração do contrato |
 | 7 | Inteligência de reunião | fala transcrita, resumo, **e-mail e nome de participante** | Participante, inclusive externo | Consentimento — **coletado e verificado antes do processamento** (ver §7) | **Não definida** |
 | 8 | Copiloto e geração por IA | conteúdo de conversa, dado de contexto do tenant | Usuário | Execução de contrato | Duração do contrato |
@@ -105,6 +105,28 @@ Derivado do schema, não de template. Uma linha por finalidade.
 
 As cinco retenções não definidas são decisão pendente, não omissão deste
 documento: nenhuma delas tem prazo em código nem na policy.
+
+### 3.1 Retenção transitória — backup do reset do Meridian
+
+Incluída em 2026-09-29, conforme o parecer `2026-09-29-parecer-reset-meridian-producao.md`
+§1. A execução do reset em produção é **relato da Morgana**, não conferida por
+Compliance; a linha vale enquanto o schema existir.
+
+> **Backup transitório do reset do Meridian.** Schema `backup_meridian_20260929`, 13
+> tabelas do domínio Meridian, todos os tenants. Dado pessoal: nome, e-mail e cargo
+> de respondente; conteúdo de respostas e evidências. Finalidade: restaurar em caso
+> de apagamento indevido. Base: continuação do tratamento original; art. 6º, VII e
+> VIII; art. 7º, IX. Acesso: nenhum papel da API; só o dono do banco. Eliminação:
+> `DROP SCHEMA` até 2026-10-29, roteiro em
+> `2026-09-29-roteiro-fechamento-backup-reset-meridian.md`. Cópias da plataforma
+> (backup diário e PITR do Supabase): persistem pela janela do plano,
+> `[preencher: retenção do backup diário e janela de PITR, painel Supabase]`, e não
+> são apagáveis por nós antes disso; a data efetiva de eliminação total é
+> 2026-10-29 mais essa janela. Pedido de titular dentro da janela: apagar as
+> linhas dele no backup ou antecipar o `DROP`, e reaplicar eliminações pedidas
+> depois do reset em qualquer restauração. **Ressalva a repetir em resposta a
+> titular:** o `AuditLog` retém nome de quem agiu e um identificador do
+> diagnóstico; o dado do diagnóstico é eliminado, a trilha não.
 
 ---
 
@@ -243,3 +265,23 @@ externo continua sem canal próprio — §4.
 
 Os passos 1, 2, 5 e 6 não dependem de engenharia. O 4 é o único com código, e é
 o menor deles.
+
+## 9. Decisões
+
+Fonte: relato da Morgana, 2026-09-29; não vi a resposta original do CEO. Detalhe
+em [`operadora-controladora.md`](operadora-controladora.md) §6.
+
+- **2026-09-29 — Decisão do CEO: a Nebuloz é operadora no Meridian** (finalidade
+  5, respondente sem conta). Fecha a decisão que a §4 e o passo 2 da §8 deixavam
+  aberta para o respondente do Meridian: a base legal é a do cliente, e o pedido
+  do titular vai a ele. Para o participante de reunião (finalidade 7), a resposta
+  não o citou; segue como recomendação.
+- **2026-09-29 — Decisão do CEO: conteúdo de cliente não é usado para
+  demonstração, ajuste de prompt ou avaliação de modelo.** Nenhuma linha nova de
+  finalidade própria da Nebuloz nasce disso.
+- **2026-09-29 — Decisão do CEO: canal público `privacy@nebuloz.com`.** Falta
+  confirmar que a caixa existe e é lida.
+- **Em aberto com o CEO:** `benchmarkOptIn` no primeiro contrato; encarregado.
+  Enquanto a primeira estiver aberta, a operadora vale só com a função desligada:
+  ligada, a Nebuloz é controladora do conjunto comparativo e a finalidade 5 ganha
+  uma linha própria.

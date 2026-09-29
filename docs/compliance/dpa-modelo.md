@@ -20,6 +20,18 @@
 > enquadramento operadora × controladora que elas pressupõem continua sendo a
 > decisão pendente do §1 — as cláusulas o assumem, não o decidem.
 
+> **v1.2 — o que entrou nesta versão, e por quê** (2026-09-29, contestação do
+> Sócio em `docs/socio/2026-09-29-lancamento-meridian.md`, R2). Três coisas,
+> todas marcadas onde aparecem: (1) **§2.1**, benchmark do Meridian desligado no
+> primeiro contrato, porque ligá-lo faz da Nebuloz controladora sem linha no
+> RoPA; (2) **§10.2**, que separa o prazo de eliminação (procedimento manual, já
+> exequível) dos mecanismos automáticos (que só valem depois de verificados em
+> produção); (3) **§9.3**, instrução prévia para eliminação de respondente, que
+> **só entra com decisão do CEO**. Também corrige a linha do banco de dados na
+> §5, que listava Neon enquanto produção roda em Supabase. Continua rascunho
+> pendente de revisão jurídica. Se o DPA revisado não couber no prazo do primeiro
+> contrato, vale o [aditivo provisório](dpa-aditivo-provisorio.md).
+
 **Anexo ao contrato de prestação de serviços** celebrado entre
 [[DADO NECESSÁRIO: razão social da Nebuloz]], CNPJ [[DADO NECESSÁRIO: CNPJ]],
 com sede em [[DADO NECESSÁRIO: endereço]] ("**Nebuloz**"), e o cliente
@@ -49,9 +61,11 @@ não diretamente ao titular.
 > de seus próprios colaboradores. Para esses, a Nebuloz é controladora
 > independente, e este anexo não se aplica — a Política de Privacidade do site
 > e os contratos de trabalho é que regem. O RoPA (§3, finalidades 2, 3, 9 e 10)
-> separa uma coisa da outra. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
-> divisória; é a decisão "operadora × controladora" que o RoPA §4 deixa aberta,
-> e é a que define para onde vai o pedido de um titular sem conta]]
+> separa uma coisa da outra. **Decisão do CEO, 2026-09-29: a Nebuloz é
+> operadora no Meridian** (`operadora-controladora.md` §6). Para participante de
+> reunião a resposta não o citou; até confirmação, o texto de §1.1 sobre reunião
+> segue como recomendação. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
+> divisória, inclusive para reunião]]
 
 **1.1 Titulares sem conta.** O Cliente é o controlador também quanto aos dados
 pessoais de pessoas que não possuem conta na plataforma e cujos dados são
@@ -77,9 +91,25 @@ resumo:
 
 A Nebuloz não trata dados pessoais para finalidade própria a partir dos dados
 do Cliente, e não os utiliza para treinar modelos de inteligência artificial.
-[[DADO NECESSÁRIO: confirmar essa cláusula com cada provedor de LLM — ver §5;
+[[DADO NECESSÁRIO: decisão do CEO de 2026-09-29: conteúdo de cliente não é usado
+para demonstração, ajuste de prompt nem avaliação de modelo; falta confirmar essa
+cláusula com cada provedor de LLM — ver §5;
 sem zero-retention contratual, a Nebuloz não consegue prometer o que o
 subprocessador não promete]]
+
+**2.1 Benchmark do Meridian desligado.** O Meridian possui função opcional de
+benchmark (`benchmarkOptIn`), pela qual respostas de diagnósticos compõem um
+conjunto comparativo entre organizações. Nessa função, a finalidade é da
+Nebuloz, e não do Cliente. **Nas condições deste anexo, a função permanece
+desligada**: o Cliente não a ativa em nenhum diagnóstico, e a Nebuloz não
+contribui, nem consulta, dados do Cliente para o conjunto comparativo. Ativá-la
+depende de aditivo específico, com finalidade, base legal e aviso ao titular
+próprios, em que a Nebuloz figura como controladora daquele tratamento.
+[[DECISÃO CEO: confirmar que o benchmark não será oferecido no primeiro contrato.
+Além da cláusula, é preciso um controle no produto: hoje o consultor do Cliente
+liga a opção por uma caixa de seleção em `apps/app/components/meridian/screens/assessments.tsx:211`,
+e a proposta comercial não pode prometer "compare com o mercado" enquanto a
+função estiver desligada. Ver memo de 2026-09-29, §5]]
 
 ## 3. Instruções e limites
 
@@ -148,7 +178,8 @@ serviço afetado, sem multa.
 
 | Subprocessador | Finalidade | Localização | Salvaguarda |
 |---|---|---|---|
-| Neon | Banco de dados | [[DADO NECESSÁRIO]] | [[DADO NECESSÁRIO]] |
+| Supabase | Banco de dados de produção, armazenamento de evidência do Meridian (bucket `meridian-evidence`) e cópias de segurança | [[DADO NECESSÁRIO: região do projeto]] | [[DADO NECESSÁRIO: DPA. `dpa-fornecedores.md` V-05 registra Neon e não cita Supabase; o parecer de 2026-09-29 sobre o reset abriu essa divergência]] |
+| Neon | Banco de dados (dependência do monorepo) | [[DADO NECESSÁRIO: confirmar se ainda é usado em algum ambiente; se não, remover a linha]] | [[DADO NECESSÁRIO]] |
 | Vercel | Hospedagem e execução | EUA | [[DADO NECESSÁRIO]] |
 | Upstash | Cache e limitação de taxa | EUA / UE | [[DADO NECESSÁRIO]] |
 | Sentry | Monitoramento de erros | [[DADO NECESSÁRIO]] | [[DADO NECESSÁRIO]] |
@@ -207,7 +238,8 @@ escrita.
 ## 9. Direitos dos titulares
 
 **9.1 Canal do titular sem conta.** A Nebuloz mantém canal público para
-recebimento de pedidos de titulares, divulgado em sua Política de Privacidade.
+recebimento de pedidos de titulares, em **privacy@nebuloz.com** (decisão do CEO,
+2026-09-29), divulgado em sua Política de Privacidade.
 Pedido recebido por esse canal que diga respeito a dados tratados em nome do
 Cliente não é decidido no mérito pela Nebuloz: é encaminhado ao Cliente, e o
 titular é informado de que o pedido foi encaminhado e a quem, na forma do art.
@@ -231,6 +263,16 @@ sessão. Para eles, o caminho é o Cliente, como controlador, receber o pedido e
 instruir a Nebuloz; o canal de §9.1 existe para levá-los até ele. É exatamente
 por isso que o enquadramento da §1 importa.
 
+**9.3 Instrução prévia para eliminação de respondente.** [[DECISÃO CEO: só entra
+com "sim" à cláusula C8 do memo de 2026-09-29; sem ele, apagar esta cláusula.]]
+O Cliente instrui a Nebuloz, desde já e por escrito, a executar o pedido de
+eliminação de dados de titular sem conta que a Nebuloz lhe tenha encaminhado nos
+termos da cláusula 9.1, caso o Cliente não se manifeste em **10 (dez) dias
+úteis** do encaminhamento. A instrução não se aplica a dado que o Cliente
+informe, no mesmo prazo, ter de reter por obrigação legal ou por exercício
+regular de direitos, caso em que o Cliente responde ao titular. A Nebuloz registra
+a execução e a informa ao Cliente.
+
 ## 10. Retenção e eliminação ao fim do contrato
 
 Ao término do contrato, a Nebuloz cessa o tratamento e, em até **30 (trinta)
@@ -246,6 +288,21 @@ devolvido e retido, com a base de cada retenção.
 é hoje um procedimento manual com dono nomeado, não um processo automático. O
 anexo pode prometer o prazo; não pode prometer o mecanismo. Se o jurídico quiser
 afirmar automação, ela precisa existir antes]]
+
+**10.2 Prazos e mecanismos.** Os prazos das cláusulas 9.2 e 10 (5 dias úteis, 30
+dias) são cumpridos por **procedimento manual com responsável nomeado**, e valem
+desde a assinatura. Os **mecanismos automáticos** que a plataforma possui — a
+eliminação programada da evidência 90 dias após o fechamento do diagnóstico e a
+execução automática de pedido de eliminação de titular — só são compromisso da
+Nebuloz **a partir da data em que ela comunicar ao Cliente, por escrito, que
+foram verificados em produção**. Até essa data, a Nebuloz executa o mesmo
+resultado por procedimento manual, dentro dos mesmos prazos, e o Cliente não deve
+presumir que a rotina automática esteja em operação. [[DADO NECESSÁRIO: a data de
+verificação só existe depois de o Inngest de produção estar com as chaves do alvo
+Production, `GET /api/inngest` respondendo 200 e um run real de
+`eliminateExpiredMeridianEvidence` visto no painel; condição 2 de
+`docs/qualidade/prontidao/meridian.md`. Conferido em 2026-09-29 só por relato da
+Morgana e pelo runbook `docs/runbooks/inngest-producao.md`: não está verificado]]
 
 ## 11. Auditoria
 
@@ -273,12 +330,18 @@ para cumprir a §10. É regido pela lei brasileira, em particular pela Lei
 | Salvaguarda de cada subprocessador (§5, §6) | Contratual — 18 confirmações |
 | Zero-retention dos provedores de LLM (§2) | Contratual |
 | Canal de incidente (§8) e foro (§12) | Nebuloz |
-| Endereço do canal público de titular, citado em §9.1 | Nebuloz — ver `operadora-controladora.md` §4 |
+| Endereço do canal público de titular, citado em §9.1 | Decidido pelo CEO em 2026-09-29 (`privacy@nebuloz.com`); falta confirmar que a caixa existe e é lida, e publicar |
+| Encarregado, nomeado junto ao canal | CEO — em aberto |
 | Validar os prazos de §5.1, §9.2 e §10 como redigidos | Jurídico |
+| Benchmark do Meridian desligado (§2.1) e controle no produto | CEO (decisão); Norte/Bussola (controle) |
+| Instrução prévia de eliminação de respondente (§9.3) | CEO (decisão) e jurídico |
+| Data de verificação do Inngest de produção (§10.2) | Infra/SRE, com "vai" do CEO |
 | Registro de leitura por staff, se for prometido (§4) | Engenharia — não existe |
 | Eliminação automática ao fim do contrato, se for prometida (§10) | Engenharia — não existe |
 
-Seis das sete linhas não são código. A que é está marcada como inexistente, para
-o anexo não prometer o que o sistema não faz — que foi o erro da policy anterior.
+Quase nenhuma linha é código. As que são (registro de leitura, eliminação
+automática, controle de benchmark no produto) estão marcadas como inexistentes ou
+pendentes, para o anexo não prometer o que o sistema não faz — que foi o erro da
+policy anterior.
 Os prazos que estavam em aberto (§5, §9, §10) deixaram de ser lacuna e passaram a
 ser texto: o que se pede agora é validação, não preenchimento.
