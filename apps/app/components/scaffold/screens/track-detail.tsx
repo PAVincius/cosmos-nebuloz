@@ -392,6 +392,17 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           Portfólio
         </Button>
+        {track.businessCase ? (
+          <Button
+            icon="fileText"
+            onClick={() =>
+              router.push(`/scaffold/baseline/${track.businessCase?.id}`)
+            }
+            variant="secondary"
+          >
+            Caso de negócio {track.businessCase.code}
+          </Button>
+        ) : null}
         {track.status === "ACTIVE" || track.status === "STALLED" ? (
           <Button
             disabled={busy}

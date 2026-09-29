@@ -695,3 +695,34 @@ describe("arquivo do entregável", () => {
     expect(screen.getByText(/anexe o arquivo do entregável/i)).toBeDefined();
   });
 });
+
+describe("caso de negócio a partir da trilha", () => {
+  it("leva ao caso, que é onde a promessa se escreve e se assina", async () => {
+    h.getTrack.mockResolvedValue({
+      ok: true,
+      data: {
+        ...trackWith("OPEN"),
+        businessCase: {
+          id: "bc1",
+          code: "BC-104",
+          state: "DRAFT",
+          signed: false,
+        },
+      },
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /caso de negócio BC-104/i })
+    );
+    expect(h.push).toHaveBeenCalledWith("/scaffold/baseline/bc1");
+  });
+
+  it("sem caso (trilha antiga), não oferece o atalho", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    render(<TrackDetailScreen param="trk1" />);
+    await screen.findByText("Gate da fase");
+    expect(
+      screen.queryByRole("button", { name: /caso de negócio/i })
+    ).toBeNull();
+  });
+});

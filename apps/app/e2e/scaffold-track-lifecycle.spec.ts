@@ -2,28 +2,69 @@ import { type Browser, expect, type Page, test } from "@playwright/test";
 import { roleStorageState } from "./setup/auth.setup";
 
 /**
- * E2E — Scaffold: ciclo de vida da trilha (T124, S7).
+ * E2E — Scaffold: ciclo de vida da trilha pela tela (T124, S7).
+ *
+ * Uma trilha do catálogo, criada aqui, percorre a Fase 1 e a Fase 2 sem atalho
+ * por SQL: entregáveis até Aprovado (com arquivo), caso de negócio escrito,
+ * enviado e assinado, passos concluídos e "Revisar e assinar" fechando cada gate.
  *
  * Duas pessoas, de propósito. "Ninguém aprova o que é seu": o que o cliente
  * produz é do dono do processo e a consultoria aprova; o resto é da consultoria
- * e o dono aprova. Uma sessão só não conseguiria percorrer nenhum entregável até
- * Aprovado.
+ * e o dono aprova. Uma sessão só não chegaria a Aprovado em nenhum entregável.
  *
  *   - `admin@cosmos.local`  → CONSULTANT
  *   - `po@cosmos.local`     → PROCESS_OWNER
  *
- * Pré-requisito: o globalSetup roda `seed:scaffold-e2e`, que publica o catálogo,
- * contrata o módulo, atribui os dois papéis e cria a TR-901 já na Fase 2.
+ * Pré-requisito: o globalSetup roda `seed:scaffold-e2e` (catálogo, módulo e os
+ * dois papéis) e precisa de storage: anexar arquivo faz PUT na URL assinada, e
+ * enviar para revisão confere que o arquivo chegou.
  *
- * Por que há duas partes: a tela ainda não edita as métricas do caso de
- * negócio, então uma trilha nova não passa da Fase 1 pela interface (o gate da
- * ASSESS exige o caso assinado). A primeira parte prova o começo do ciclo numa
- * trilha criada pela tela; a segunda percorre a Fase 2 até "Revisar e assinar"
- * na TR-901, que o seed deixa com a Fase 1 fechada.
+ * Para na Fase 2 fechada (a Fase 3 abre). As fases 3 e 4 repetem o mesmo
+ * movimento, e a janela de observação de 30 dias não cabe num e2e.
  */
 
 const consultant = roleStorageState("admin");
 const owner = roleStorageState("po");
+
+type Who = "consultant" | "owner";
+type Item = { code: string; producer: "OWNER" | "OTHER" };
+
+/** Quem elabora e quem aprova, pela regra do produto. */
+const workerOf = (i: Item): Who =>
+  i.producer === "OWNER" ? "owner" : "consultant";
+const reviewerOf = (i: Item): Who =>
+  i.producer === "OWNER" ? "consultant" : "owner";
+
+// Triagem v5. O A3.2 (caso de negócio) não é aprovado à mão: deriva da assinatura.
+const ASSESS: Item[] = [
+  { code: "A1.1", producer: "OWNER" },
+  { code: "A2.1", producer: "OTHER" },
+  { code: "A3.1", producer: "OTHER" },
+];
+const ASSESS_STEPS = [
+  "Mapear o processo",
+  "Mapear a fonte",
+  "Medir e prometer",
+];
+
+const PILOT: Item[] = [
+  { code: "B1.1", producer: "OTHER" },
+  { code: "B1.2", producer: "OTHER" },
+  { code: "B2.1", producer: "OTHER" },
+  { code: "B3.1", producer: "OTHER" },
+  { code: "B1.3", producer: "OWNER" },
+];
+const PILOT_STEPS = [
+  "Preparar o piloto",
+  "Garantir reversão",
+  "Rodar e comparar",
+];
+
+const FILE = {
+  name: "evidencia.pdf",
+  mimeType: "application/pdf",
+  buffer: Buffer.from("evidência do e2e"),
+};
 
 /** A linha de um entregável na lista da fase, achada pelo código. */
 const row = (page: Page, code: string) =>
@@ -31,8 +72,7 @@ const row = (page: Page, code: string) =>
     .getByRole("listitem")
     .filter({ has: page.getByText(code, { exact: true }) });
 
-/** Escolhe num <select> a opção cujo texto casa com o padrão. `selectOption`
- *  por rótulo só aceita texto exato, e aqui o rótulo leva o papel junto. */
+/** Escolhe num <select> a opção cujo texto casa com o padrão. */
 async function pick(page: Page, select: string, pattern: RegExp) {
   const value = await page
     .locator(`${select} option`, { hasText: pattern })
@@ -49,136 +89,204 @@ async function act(page: Page, code: string, action: string, becomes: string) {
   await expect(item.getByText(becomes, { exact: true })).toBeVisible();
 }
 
-/** Abre a mesma trilha numa sessão de outra pessoa. */
-async function asPerson(browser: Browser, state: string, url: string) {
-  const context = await browser.newContext({ storageState: state });
+/** Abre a mesma URL numa sessão de outra pessoa. */
+async function as(browser: Browser, who: Who, url: string) {
+  const context = await browser.newContext({
+    storageState: who === "owner" ? owner : consultant,
+  });
   const page = await context.newPage();
   await page.goto(url);
   await expect(page.getByText("Gate da fase")).toBeVisible();
   return { page, close: () => context.close() };
 }
 
-test.describe("Scaffold · trilha nova do catálogo @auth @scaffold", () => {
-  test.use({ storageState: consultant });
-
-  test("nasce com entregáveis e leva o primeiro até Aprovado", async ({
-    page,
-    browser,
-  }) => {
-    await page.goto("/scaffold");
-    await page.getByRole("button", { name: "Nova trilha" }).click();
-
-    await page.locator("#nt-name").fill("Triagem de demanda (e2e)");
-    // A versão mais nova do template é a pinada: a que tem entregáveis.
-    await pick(page, "#nt-template", /Triagem de suporte/);
-    await pick(page, "#nt-owner", /Paula Oliveira/);
-    await page.locator("#nt-consultant").selectOption({ index: 1 });
-    await page.getByRole("button", { name: "Criar trilha" }).click();
-
-    await page.waitForURL(/\/scaffold\/track\//, { timeout: 30_000 });
-    const trackUrl = page.url();
-
-    // Os entregáveis da ASSESS nascem com a trilha.
+/** Elabora (iniciar, anexar arquivo, enviar) tudo o que `who` produz. */
+async function work(browser: Browser, url: string, items: Item[], who: Who) {
+  const mine = items.filter((i) => workerOf(i) === who);
+  const s = await as(browser, who, url);
+  for (const { code } of mine) {
+    await act(s.page, code, "Iniciar", "Em elaboração");
+    // Enviar sem arquivo não deixa: o botão só habilita depois do anexo.
     await expect(
-      page.getByText("Entregáveis — ", { exact: false }).first()
-    ).toBeVisible();
-    for (const code of ["A1.1", "A2.1", "A3.1", "A3.2"]) {
-      await expect(row(page, code)).toBeVisible();
-    }
-    await expect(row(page, "A1.1").getByText("Não iniciado")).toBeVisible();
-    await expect(row(page, "A1.1").getByText("Obrigatório")).toBeVisible();
-
-    // A1.1 é do dono do processo: ele elabora e envia.
-    const po = await asPerson(browser, owner, trackUrl);
-    await act(po.page, "A1.1", "Iniciar", "Em elaboração");
-    await act(po.page, "A1.1", "Enviar para revisão", "Em revisão");
-    // Quem produziu não aprova o que é seu.
-    await expect(
-      row(po.page, "A1.1").getByRole("button", { name: "Aprovar", exact: true })
+      row(s.page, code).getByRole("button", {
+        name: "Enviar para revisão",
+        exact: true,
+      })
     ).toBeDisabled();
-    await po.close();
+    await s.page.getByLabel(`Anexar arquivo: ${code}`).setInputFiles(FILE);
+    await expect(
+      row(s.page, code).getByText(/v1 · evidencia\.pdf/)
+    ).toBeVisible();
+    await act(s.page, code, "Enviar para revisão", "Em revisão");
+  }
+  await s.close();
+}
 
-    // A consultoria aprova.
-    await page.reload();
-    await act(page, "A1.1", "Aprovar", "Aprovado");
-  });
-});
+/** Aprova tudo o que `who` revisa. */
+async function review(browser: Browser, url: string, items: Item[], who: Who) {
+  const mine = items.filter((i) => reviewerOf(i) === who);
+  const s = await as(browser, who, url);
+  for (const { code } of mine) {
+    await act(s.page, code, "Aprovar", "Aprovado");
+  }
+  await s.close();
+}
+
+/** Percorre os entregáveis de uma fase até todos Aprovados. */
+async function deliver(browser: Browser, url: string, items: Item[]) {
+  await work(browser, url, items, "owner");
+  await work(browser, url, items, "consultant");
+  await review(browser, url, items, "consultant");
+  await review(browser, url, items, "owner");
+}
+
+/** Conclui os passos e fecha o gate: "Revisar e assinar". */
+async function closeGate(browser: Browser, url: string, steps: string[]) {
+  const s = await as(browser, "consultant", url);
+  for (const statement of steps) {
+    await s.page.getByLabel(`Concluir: ${statement}`).click();
+    await expect(s.page.getByLabel(`Desmarcar: ${statement}`)).toBeVisible();
+  }
+  const gate = s.page.getByRole("button", { name: "Revisar e assinar" });
+  await expect(gate).toBeEnabled();
+  const boxes = s.page.getByRole("checkbox");
+  const n = await boxes.count();
+  expect(n).toBeGreaterThan(0);
+  for (let i = 0; i < n; i++) {
+    await boxes.nth(i).check();
+  }
+  await gate.click();
+  await expect(s.page.getByText("fechado", { exact: true })).toBeVisible();
+  await s.close();
+}
 
 test.describe
-  .serial("Scaffold · Fase 2 da TR-901 @auth @scaffold", () => {
-    const PILOT_BY_CONSULTANT = ["B1.1", "B1.2", "B2.1", "B3.1"];
+  .serial("Scaffold · ciclo pela tela @auth @scaffold", () => {
     let trackUrl = "";
+    let caseUrl = "";
 
-    test("o gate espera os entregáveis obrigatórios, e diz quais", async ({
+    test("cria a trilha do catálogo, com entregáveis e caso de negócio", async ({
       browser,
     }) => {
       const context = await browser.newContext({ storageState: consultant });
       const page = await context.newPage();
       await page.goto("/scaffold");
-      await page.getByRole("button", { name: "Abrir trilha TR-901" }).click();
+      await page.getByRole("button", { name: "Nova trilha" }).click();
+
+      await page.locator("#nt-name").fill("Triagem de demanda (e2e)");
+      // A versão mais nova do template é a pinada: a que tem entregáveis.
+      await pick(page, "#nt-template", /Triagem de suporte/);
+      await pick(page, "#nt-owner", /Paula Oliveira/);
+      await page.locator("#nt-consultant").selectOption({ index: 1 });
+      await page.getByRole("button", { name: "Criar trilha" }).click();
+
       await page.waitForURL(/\/scaffold\/track\//, { timeout: 30_000 });
       trackUrl = page.url();
 
-      const gate = page.getByRole("button", { name: "Revisar e assinar" });
-      await expect(gate).toBeDisabled();
+      for (const code of ["A1.1", "A2.1", "A3.1", "A3.2"]) {
+        await expect(row(page, code)).toBeVisible();
+      }
+      await expect(row(page, "A1.1").getByText("Não iniciado")).toBeVisible();
+      // O gate espera os entregáveis, e diz quais.
       await expect(
-        page.getByText(/entregáveis obrigatórios pendentes: B1\.1/)
+        page.getByText(/entregáveis obrigatórios pendentes: A1\.1/)
       ).toBeVisible();
+
+      // O caso de negócio nasceu com a trilha, em rascunho.
+      await page.getByRole("button", { name: /Caso de negócio BC-/ }).click();
+      await page.waitForURL(/\/scaffold\/baseline\//, { timeout: 30_000 });
+      caseUrl = page.url();
+      await expect(page.getByText("Rascunho").first()).toBeVisible();
       await context.close();
     });
 
-    test("consultoria elabora e envia o que produz; o dono aprova", async ({
+    test("Fase 1: entregáveis aprovados, caso escrito, enviado e assinado", async ({
       browser,
     }) => {
-      const c = await asPerson(browser, consultant, trackUrl);
-      for (const code of PILOT_BY_CONSULTANT) {
-        await act(c.page, code, "Iniciar", "Em elaboração");
-        await act(c.page, code, "Enviar para revisão", "Em revisão");
-      }
-      await c.close();
+      await deliver(browser, trackUrl, ASSESS);
 
-      const o = await asPerson(browser, owner, trackUrl);
-      for (const code of PILOT_BY_CONSULTANT) {
-        await act(o.page, code, "Aprovar", "Aprovado");
-      }
-      await o.close();
-    });
-
-    test("o que o dono produz é aprovado pela consultoria, e o gate libera", async ({
-      browser,
-    }) => {
-      const o = await asPerson(browser, owner, trackUrl);
-      // O 16º entregável da triagem (B1.3) é do dono.
-      await act(o.page, "B1.3", "Iniciar", "Em elaboração");
-      await act(o.page, "B1.3", "Enviar para revisão", "Em revisão");
-      await o.close();
-
-      const c = await asPerson(browser, consultant, trackUrl);
-      await act(c.page, "B1.3", "Aprovar", "Aprovado");
-
-      const gate = c.page.getByRole("button", { name: "Revisar e assinar" });
-      await expect(gate).toBeEnabled();
+      // A consultoria escreve a promessa.
+      const c = await as(browser, "consultant", trackUrl).then(async (s) => {
+        await s.page.goto(caseUrl);
+        return s;
+      });
+      await c.page.getByLabel(/^Rótulo/).fill("Cycle time da triagem");
+      await c.page.getByLabel(/^Unidade/).fill("min");
+      await c.page.getByLabel(/^Linha de base/).fill("46");
+      await c.page.getByLabel(/^Meta/).fill("34");
+      await c.page.getByLabel(/^Fonte/).fill("Log do sistema de fila");
+      await c.page.getByLabel(/^Amostra/).fill("4 semanas");
+      await c.page.getByLabel(/^Janela de apuração/).fill("6");
+      await c.page
+        .getByLabel(/^Base do benefício/)
+        .fill("Horas de triagem evitadas.");
+      await c.page.getByRole("button", { name: "Salvar rascunho" }).click();
       await expect(
-        c.page.getByText(/entregáveis? obrigatórios? pendentes?/)
-      ).toHaveCount(0);
+        c.page.getByText("Cycle time da triagem").first()
+      ).toBeVisible();
+      await c.page
+        .getByRole("button", { name: "Enviar para assinatura" })
+        .click();
+      await expect(
+        c.page.getByText("Aguardando assinatura").first()
+      ).toBeVisible();
       await c.close();
+
+      // O dono do processo assina.
+      const o = await as(browser, "owner", trackUrl).then(async (s) => {
+        await s.page.goto(caseUrl);
+        return s;
+      });
+      await o.page
+        .getByRole("button", { name: "Assinar", exact: true })
+        .click();
+      await o.page.locator("#bc-signer").fill("Paula Oliveira");
+      await o.page.getByRole("button", { name: /^Assinar v\d/ }).click();
+      await expect(o.page.getByText("Assinado").first()).toBeVisible();
+      await o.close();
     });
 
-    test("Revisar e assinar fecha a fase", async ({ browser }) => {
-      const c = await asPerson(browser, consultant, trackUrl);
-      // Todos os critérios da fase, marcados pela pessoa que assina.
-      const boxes = c.page.getByRole("checkbox");
+    test("Fase 1: Revisar e assinar fecha o gate e abre a Fase 2", async ({
+      browser,
+    }) => {
+      await closeGate(browser, trackUrl, ASSESS_STEPS);
+      // A trilha andou: reabrir a tela cai na fase corrente, a PILOT.
+      const s = await as(browser, "consultant", trackUrl);
+      await expect(s.page.getByText(/Entregáveis — /)).toContainText(
+        /Pilot|Piloto/i
+      );
+      await s.close();
+    });
+
+    test("Fase 2: entregáveis até Aprovado e o gate libera", async ({
+      browser,
+    }) => {
+      await deliver(browser, trackUrl, PILOT);
+      const s = await as(browser, "consultant", trackUrl);
+      for (const statement of PILOT_STEPS) {
+        await s.page.getByLabel(`Concluir: ${statement}`).click();
+      }
+      await expect(
+        s.page.getByRole("button", { name: "Revisar e assinar" })
+      ).toBeEnabled();
+      await expect(
+        s.page.getByText(/entregáveis? obrigatórios? pendentes?/)
+      ).toHaveCount(0);
+      await s.close();
+    });
+
+    test("Fase 2: Revisar e assinar fecha o gate", async ({ browser }) => {
+      const s = await as(browser, "consultant", trackUrl);
+      const boxes = s.page.getByRole("checkbox");
       const n = await boxes.count();
-      expect(n).toBeGreaterThan(0);
       for (let i = 0; i < n; i++) {
         await boxes.nth(i).check();
       }
-      await c.page.getByRole("button", { name: "Revisar e assinar" }).click();
-
-      await expect(c.page.getByText("fechado", { exact: true })).toBeVisible();
+      await s.page.getByRole("button", { name: "Revisar e assinar" }).click();
+      await expect(s.page.getByText("fechado", { exact: true })).toBeVisible();
       await expect(
-        c.page.getByRole("button", { name: "Reabrir fase" })
+        s.page.getByRole("button", { name: "Reabrir fase" })
       ).toBeVisible();
-      await c.close();
+      await s.close();
     });
   });
