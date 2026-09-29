@@ -147,6 +147,9 @@ export async function seedDemoTrack(
     where: { key: spec.templateKey },
     select: {
       id: true,
+      // A forma do trabalho é do template: trilha de demonstração sem ela sairia
+      // "sem arquétipo" no portfólio (Crivo G4).
+      archetype: true,
       versions: {
         orderBy: { publishedAt: "desc" },
         take: 1,
@@ -159,7 +162,7 @@ export async function seedDemoTrack(
     },
   });
   const version = template?.versions[0];
-  if (!version || version.deliverables.length === 0) {
+  if (!(template && version) || version.deliverables.length === 0) {
     throw new Error(
       `Template ${spec.templateKey} sem versão com entregáveis. Rode seed:scaffold antes.`
     );
@@ -193,6 +196,7 @@ export async function seedDemoTrack(
       tenantId: ctx.tenantId,
       code: spec.code,
       processName: spec.name,
+      archetype: template.archetype,
       ownerId: ctx.ownerId,
       templateVersionId: version.id,
       phases: {

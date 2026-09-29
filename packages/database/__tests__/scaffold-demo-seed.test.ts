@@ -104,6 +104,7 @@ describe("seedDemoTrack", () => {
       scaffoldTemplate: {
         findUnique: async () => ({
           id: "tpl",
+          archetype: "TRIAGE",
           versions: [
             {
               id: "ver",
@@ -213,6 +214,12 @@ describe("seedDemoTrack", () => {
       processName: "Triagem de autorizações prévias",
       templateVersionId: "ver",
     });
+  });
+
+  it("a trilha nasce com a forma de trabalho do template, não sem arquétipo (Crivo G4)", async () => {
+    const { db, created } = setup();
+    await seedDemoTrack(db as never, ctx, spec);
+    expect(created.track).toMatchObject({ archetype: "TRIAGE" });
   });
 
   it("idempotente: trilha com o mesmo código no tenant não é recriada", async () => {
