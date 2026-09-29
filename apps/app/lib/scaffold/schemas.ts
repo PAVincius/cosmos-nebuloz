@@ -83,6 +83,8 @@ export const ScaffoldRoleEnum = z.enum([
   "TEAM_MEMBER",
   "PROCESS_OWNER",
   "TRANSFORMATION_LEAD",
+  "SPONSOR",
+  "TEAM_LEAD",
   "CONSULTANT",
   "ADMIN",
 ]);

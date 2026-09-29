@@ -32,6 +32,8 @@ const ROLE_OPTIONS: { value: ScaffoldRole; label: string }[] = [
   { value: "TEAM_MEMBER", label: "Membro do time" },
   { value: "PROCESS_OWNER", label: "Dono do processo" },
   { value: "TRANSFORMATION_LEAD", label: "Líder de transformação" },
+  { value: "SPONSOR", label: "Patrocinador (só leitura)" },
+  { value: "TEAM_LEAD", label: "Líder do time (só leitura)" },
   { value: "CONSULTANT", label: "Consultor" },
   { value: "ADMIN", label: "Administrador" },
 ];

@@ -138,6 +138,8 @@ describe("canAssignScaffoldRole (SA-05: sem escalada de privilégio)", () => {
       "TEAM_MEMBER",
       "PROCESS_OWNER",
       "TRANSFORMATION_LEAD",
+      "SPONSOR",
+      "TEAM_LEAD",
     ] as const) {
       expect(canAssignScaffoldRole("CONSULTANT", null, r)).toBe(true);
       expect(canAssignScaffoldRole("CONSULTANT", r, "TEAM_MEMBER")).toBe(true);
