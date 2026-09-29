@@ -8,7 +8,7 @@
 
 **Como ler:** cada decisão tem **Escolha**, **Descartada** e **Reversibilidade**. Números marcados *(hipótese)* não têm fonte; são padrão proposto e o limiar real de cada trilha vem do caso de negócio assinado.
 
-**Ordem de entrega:** esta parte 1 cobre (b), (c), (d), (e) e (a). SG-PO e CH-PO (item f) vêm na parte 2, no mesmo arquivo.
+**Ordem de entrega:** a parte 1 cobre (b), (c), (d), (e) e (a); a parte 2 cobre (f), SG-PO e CH-PO.
 
 ---
 
@@ -223,13 +223,152 @@ O mapa diz: hierarquia de portfólio é do Cosmos (entidade 9, que o Scaffold l�
 
 ---
 
-## (f) SG-PO e CH-PO
+## (f) SG-PO e CH-PO (parte 2)
 
-Parte 2, a seguir neste arquivo.
+A chave dos três produtos é a mesma forma do trabalho de c.0.1. As métricas do Signal são as mesmas que decidem o gate no Scaffold (c.3), para que o baseline congelado no gate seja o mesmo número que o Signal mede depois (mapa, entidade 7: "Scaffold cria, Signal apura").
+
+### SG-PO-01 · Os 5 modelos de medição
+
+**Escolha.** Cada modelo abaixo tem uma primária com fórmula e a guarda correspondente. A janela mínima é de 4 semanas, a mesma do `baseline-measured`.
+
+| Modelo | Contrafactual | Primária (fórmula, direção) | Guarda | Adoção | Valor (R$) |
+|---|---|---|---|---|---|
+| CONVERSATIONAL | 10% das conversas sem assistente por 4 semanas (PDF p. 8) | resolvidas sem transbordo ÷ conversas, ↑ | incorretas ÷ auditadas na auditoria semanal, ↓ | conversas no assistente ÷ contatos do canal, ↑ | resolvidas sem humano × custo por atendimento humano − custo da operação |
+| ANALYSIS | 10% dos casos em ordem antiga, sorteados *(hipótese)* | valor recuperado nos top-k ÷ valor recuperável, ↑ | erro do pior segmento ÷ erro médio, ↓ | casos decididos com score visível ÷ casos decididos, ↑ | valor recuperado incremental contra o contrafactual |
+| DOC_REVIEW | amostragem dupla: humano e assistido no mesmo lote (seed docreview v2) | tempo médio por documento, ↓ | erros em campo crítico ÷ campos críticos auditados, ↓ | documentos com assistência ÷ documentos, ↑ | horas poupadas × custo-hora |
+| TRIAGE | holdout de 15% por ordem de chegada (PDF p. 8) | mediana do tempo até o destino correto, ↓ | reencaminhados ÷ pedidos, ↓ (+ urgentes rebaixados = 0) | pedidos triados pelo sistema ÷ pedidos, ↑ | horas poupadas × custo-hora |
+| REPORTING | 2 ciclos em paralelo com o processo antigo *(hipótese)*; é o contrafactual mais fraco dos cinco e o modelo diz isso na tela | horas por ciclo, ↓ | divergências não explicadas por ciclo, ↓ | relatórios gerados pelo caminho novo ÷ relatórios do ciclo, ↑ | horas poupadas × custo-hora |
+
+**Descartada:** modelo por setor, porque o PDF (p. 2) corta por forma e não por setor. **Reversibilidade:** versionado como template (SG-DEV-01), então muda com versão nova.
+
+### SG-PO-02 · Primária única e troca de primária
+
+**Escolha.**
+- Exatamente **uma primária vigente** por iniciativa.
+- A troca exige justificativa gravada no histórico e cria uma versão nova do plano.
+- **Com a métrica congelada** (baseline fixado no gate do Scaffold), a troca não é local: vira "pedido de revisão de meta" ao Scaffold. O baseline e o caso de negócio são do Scaffold (mapa, entidade 7).
+
+**Descartada:** várias primárias com peso. Um veredito com peso escolhido depois vira escolha do resultado.
+
+**Reversibilidade:** alta.
+
+### SG-PO-03 · Estados da métrica e quem transita
+
+Papéis do Signal: `SignalRole` = VIEWER, OWNER, ANALYST, ADMIN.
+
+| Transição | Quem |
+|---|---|
+| Proposta → Sem fonte (aprovar no plano) | OWNER |
+| Sem fonte → Medindo | Sistema, quando a conexão mapeada está saudável (SG-PM-03). O ANALYST mapeia a fonte |
+| Medindo → Pausada, Pausada → Medindo | OWNER, com comentário obrigatório |
+| → Congelada | Sistema, no evento de baseline congelado vindo do Scaffold (X-04) |
+| Pedir revisão de meta (métrica congelada) | OWNER |
+| Editar meta de métrica congelada | ninguém |
+
+VIEWER só lê. ADMIN não transita estado, pela mesma regra de (d): administrar acesso não é decidir.
+
+**Reversibilidade:** alta.
+
+### SG-PO-04 · Armadilhas por modelo (ao menos 2 cada)
+
+*Rascunho.* O aceite do PDF pede armadilhas "reais", e as abaixo são raciocinadas. Viram reais quando um caso de cliente confirmar.
+
+- **CONVERSATIONAL:**
+  1. Conversa abandonada contada como resolvida.
+  2. Auditoria amostrada só em horário comercial.
+- **ANALYSIS:**
+  1. Acerto medido só nos casos que o score pôs no topo (viés de seleção).
+  2. Valor recuperado que seria revertido de qualquer forma.
+- **DOC_REVIEW:**
+  1. Tempo medido sem o retrabalho posterior.
+  2. Amostra de auditoria escolhida pelo próprio revisor.
+- **TRIAGE:**
+  1. Holdout contaminado quando o atendente vê a sugestão.
+  2. Sazonalidade de pedidos dentro da janela.
+- **REPORTING:**
+  1. Horas autodeclaradas.
+  2. Janela com menos relatórios que o ciclo normal.
+
+### SG-PO-05 · Métrica proposta fora do modelo
+
+**Escolha.**
+- Entra em **Proposta**.
+- Não entra no veredito nem no ROI até o OWNER aprovar.
+- Não pode ser primária sem passar pela regra de SG-PO-02.
+
+**Descartada:** entrar direto como Medindo, porque inflaria o veredito com a métrica que convém.
+
+**Reversibilidade:** alta.
+
+### CH-PO-01 · Os 5 perfis de controle
+
+**Limite desta decisão.** O aceite do PDF exige assinatura de Jurídico/DPO e de Segurança. O que está abaixo é **rascunho para o dev modelar e semear** (CH-DEV-01). Não é perfil aprovado, e a Nebuloz não pode publicar sem essas assinaturas.
+
+**Formato de cada controle:** código, controle, categoria (`CharterRiskCategory`), evidência que conta, papel (`CharterRole`), cadência, classe mínima (`CharterDataClass`).
+
+**Caminho de decisão comum:** REQUESTER submete e um papel com `case.decide` decide. O perfil só diz **qual** papel decide.
+
+- **CV · Conversacional.** Riscos dominantes: PRIVACY, REPUTATIONAL, REGULATORY. Decide: LEGAL.
+  - CV-1 · Temas proibidos testados · REPUTATIONAL · relatório da bateria de perguntas proibidas com 0 respostas fora da política · LEGAL · trimestral · PUBLIC
+  - CV-2 · Auditoria de incorretas ≤ limite · REPUTATIONAL · planilha amostral com data e auditor · COMPLIANCE · semanal · PUBLIC
+  - CV-3 · Transbordo a humano funcionando · OPERATIONAL · log de teste de ponta a ponta · SECURITY · mensal · INTERNAL
+  - CV-4 · RIPD aprovado · PRIVACY · RIPD assinado pelo DPO · LEGAL · anual · CONFIDENTIAL. É o exemplo do PDF, p. 11.
+- **AN · Análise.** Riscos dominantes: BIAS, REGULATORY, OPERATIONAL. Decide: COMPLIANCE.
+  - AN-1 · Erro por segmento ≤ 1,5× a média *(hipótese)* · BIAS · relatório por segmento · COMPLIANCE · trimestral · INTERNAL
+  - AN-2 · Explicabilidade ao titular (LGPD art. 20) · REGULATORY · procedimento + amostra de explicações · LEGAL · anual · CONFIDENTIAL
+  - AN-3 · Decisão final humana registrada · OPERATIONAL · log com quem decidiu · COMPLIANCE · mensal · PUBLIC
+- **DR · Documentos.** Riscos dominantes: PRIVACY, SECURITY, IP. Decide: SECURITY.
+  - DR-1 · Documento só em fornecedor aprovado · SECURITY · configuração + fornecedor aprovado no Charter · SECURITY · anual · CONFIDENTIAL
+  - DR-2 · Concordância amostral ≥ limiar · OPERATIONAL · planilha de amostragem dupla · COMPLIANCE · mensal · INTERNAL
+  - DR-3 · Retenção e descarte · PRIVACY · política + log de descarte · LEGAL · anual · CONFIDENTIAL
+- **TR · Triagem.** Riscos dominantes: OPERATIONAL, BIAS, REGULATORY. Decide: COMPLIANCE.
+  - TR-1 · Nenhum urgente rebaixado · OPERATIONAL · planilha da amostra auditada · COMPLIANCE · mensal · PUBLIC
+  - TR-2 · Rollback testado · OPERATIONAL · registro de execução em produção · SECURITY · semestral · PUBLIC. É o mesmo ponto do PDF, p. 11, e a mesma evidência do B2.1 do Scaffold.
+  - TR-3 · Casos sempre-humano respeitados · BIAS · log de roteamento · COMPLIANCE · mensal · INTERNAL
+- **RP · Relatórios.** Riscos dominantes: REGULATORY, REPUTATIONAL, OPERATIONAL. Decide: COMPLIANCE.
+  - RP-1 · Revisão humana antes de sair · REPUTATIONAL · checklist assinado por ciclo · COMPLIANCE · por ciclo · PUBLIC
+  - RP-2 · Reconciliação sem divergência não explicada · REGULATORY · planilha de reconciliação · COMPLIANCE · por ciclo · INTERNAL
+  - RP-3 · Número rastreável à fonte · REGULATORY · mapa fonte → campo · COMPLIANCE · trimestral · INTERNAL
+
+**Consequência no schema:** `CharterRecertCadence` só tem ANNUAL e SEMIANNUAL. A cadência do controle precisa de enum próprio: WEEKLY, MONTHLY, QUARTERLY, SEMIANNUAL, ANNUAL, PER_CYCLE. Com isso, "evidência de um só lugar" fica verdade: a evidência do TR-2 e a do B2.1 no Scaffold são o mesmo arquivo, e o link entre eles é do Charter (entidade 3).
+
+### CH-PO-02 · Evidência que conta
+
+**Escolha.** Conta evidência que um terceiro verifica sem perguntar a ninguém: arquivo, data de produção, quem produziu e o critério de aceite objetivo escrito no controle.
+
+**Não conta:** autodeclaração, captura de tela sem data, ou link para sistema que o revisor não acessa.
+
+**Reversibilidade:** alta.
+
+### CH-PO-03 · Classe mínima de dado
+
+**Escolha.**
+- A classe mínima de cada controle é a da tabela de CH-PO-01.
+- O controle se aplica quando `classe do caso ≥ classe mínima`, na ordem PUBLIC < INTERNAL < CONFIDENTIAL < RESTRICTED.
+- Os controles que não se aplicam são contados e mostrados ("N controles não se aplicam à classe X", CH-DEV-02).
+
+### CH-PO-04 · Dispensa
+
+**Escolha.**
+- Só quem tem `case.decide` dispensa, e nunca o próprio REQUESTER do caso.
+- Comentário com motivo e **prazo de revisão** são obrigatórios; o prazo máximo é de 6 meses *(hipótese)*.
+- No vencimento do prazo, o job de cadência (CH-DEV-07) leva o controle a **Reaberto**, com evento no histórico.
+- O perfil pode marcar um controle como não dispensável. Exemplo: CV-4, RIPD, com classe ≥ CONFIDENTIAL, porque é obrigação legal.
+
+**Descartada:** dispensa sem prazo, porque vira exceção permanente sem dono.
+
+**Reversibilidade:** alta.
+
+### CH-PO-05 · Promoção de controle adicional
+
+**Escolha.** Três casos do mesmo perfil **no mesmo tenant** com o mesmo controle adicional (nome normalizado + categoria) geram proposta de promoção ao **ajuste do tenant** no perfil. Promover ao perfil global da Nebuloz é decisão humana na publicação de versão, lendo só metadado. É a mesma lógica de SC-PO-05, e com o limiar de 3 do PDF, não 2.
+
+**Reversibilidade:** alta.
 
 ## Para o CEO confirmar às 06:00 (os pontos menos reversíveis)
 
 1. Os códigos A–E com E dentro da EMBED (b): travam no primeiro publish.
 2. `SPONSOR` e `TEAM_LEAD` como papéis novos em `ScaffoldRole` (d).
 3. 16 entregáveis, todos obrigatórios, com opcional só como adicional (c.0.3).
-4. Limiares marcados *(hipótese)*: 80% por 2 semanas, 14 dias, 1,5×, 2 ciclos.
+4. Limiares marcados *(hipótese)*: 80% por 2 semanas, 14 dias, 1,5×, 2 ciclos, 10% em ANALYSIS, dispensa de até 6 meses.
+5. Os perfis de CH-PO-01 são rascunho: publicar exige assinatura de Jurídico/DPO e de Segurança.
