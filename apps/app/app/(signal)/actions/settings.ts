@@ -1,6 +1,7 @@
 "use server";
 
 import { withTenantDb } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { invalidateSignalRoleCache, SIGNAL_ROLE_LABEL } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -365,7 +366,15 @@ export async function addSignalMember(
 
     // Depois do commit: o papel vem de cache, e quem acabou de ganhar acesso
     // continuaria vendo "indisponível" até ele expirar.
-    await invalidateSignalRoleCache(ctx.tenantId, input.userId);
+    // Melhor-esforço: a linha já foi gravada e confirmada. Redis fora do ar não
+    // pode fazer a tela dizer que a adição falhou; o cache expira sozinho.
+    try {
+      await invalidateSignalRoleCache(ctx.tenantId, input.userId);
+    } catch (error) {
+      log.error("[addSignalMember] cache de papel não invalidado", {
+        error: String(error),
+      });
+    }
 
     revalidatePath("/signal/settings");
     return { role: input.role };

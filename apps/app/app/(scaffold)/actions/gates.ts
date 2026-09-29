@@ -3,6 +3,7 @@
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
+import { caseDecisionBlockers } from "@/lib/charter/case-controls";
 import { emitProductEvent } from "@/lib/inngest/emit-product-event";
 import type { ProductEventData } from "@/lib/inngest/product-events";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
@@ -151,6 +152,67 @@ async function assertCharterPolicyAcked(
   }
 }
 
+/**
+ * G-CHARTER (Norte c.2 / CH-PM-03) — a Fase 3 só fecha se o caso de uso LIGADO à
+ * trilha no Charter não tem controle sem evidência, com ajuste pedido, vencido
+ * ou reaberto. Devolve os motivos (vazio = livre).
+ *
+ * É LEITURA, não evento: o gate olha o estado no instante do fechamento, então
+ * `charter/control.accepted` não precisa de consumidor aqui. Vale só com Charter
+ * contratado E caso ligado (degradação graciosa, como SG-05); o vínculo vem do
+ * ProcessRegistry (trilha -> caso de uso).
+ */
+async function charterControlBlockers(
+  db: Db,
+  tenantId: string,
+  phase: PhaseWithContext
+): Promise<string[]> {
+  if (phase.phase !== "SCALE") {
+    return [];
+  }
+  const charter = await db.tenantModule.findFirst({
+    where: {
+      tenantId,
+      module: "CHARTER",
+      status: { in: ["ACTIVE", "TRIAL"] },
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    },
+    select: { module: true },
+  });
+  if (!charter) {
+    return [];
+  }
+  const link = await db.processRegistry.findFirst({
+    where: {
+      tenantId,
+      scaffoldTrackId: phase.track.id,
+      charterUseCaseId: { not: null },
+    },
+    select: { charterUseCaseId: true },
+  });
+  if (!link?.charterUseCaseId) {
+    return [];
+  }
+  const controls = await db.charterCaseControl.findMany({
+    where: { tenantId, useCaseId: link.charterUseCaseId },
+    select: { code: true, name: true, state: true },
+  });
+  return caseDecisionBlockers(controls).map((b) => b.reason);
+}
+
+/** Recusa o fechamento com controle do Charter pendente. NÃO é dispensável por
+ *  override: override cobre critério de gate, e controle de risco não é critério. */
+async function assertCharterControlsClear(
+  db: Db,
+  tenantId: string,
+  phase: PhaseWithContext
+): Promise<void> {
+  const blockers = await charterControlBlockers(db, tenantId, phase);
+  if (blockers.length > 0) {
+    throw new ScaffoldRuleError("CHARTER_CONTROLS_NOT_CLEAR", blockers);
+  }
+}
+
 // ── Leitura ───────────────────────────────────────────────────────────────────
 
 export type GateEvaluation = {
@@ -188,12 +250,20 @@ export async function evaluateGate(
         (input.criteriaFacts ?? {}) as Record<string, CriterionFact>
       );
       const pending = pendingRequiredSteps(phase.steps).map((s) => s.statement);
+      const controlBlockers = await charterControlBlockers(
+        db,
+        ctx.tenantId,
+        phase
+      );
       return {
         phase: phase.phase,
         state: phase.state,
         criteria: evaluation.criteria,
-        canClose: evaluation.canClose && pending.length === 0,
-        blockers: evaluation.blockers,
+        canClose:
+          evaluation.canClose &&
+          pending.length === 0 &&
+          controlBlockers.length === 0,
+        blockers: [...evaluation.blockers, ...controlBlockers],
         pendingSteps: pending,
       };
     });
@@ -358,6 +428,7 @@ export async function closePhase(
       assertStepsComplete(phase);
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
+      await assertCharterControlsClear(db, ctx.tenantId, phase);
 
       const criteria = await loadCriteria(
         db,
@@ -445,6 +516,7 @@ export async function overridePhase(
       assertStepsComplete(phase);
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
+      await assertCharterControlsClear(db, ctx.tenantId, phase);
 
       const criteria = await loadCriteria(
         db,

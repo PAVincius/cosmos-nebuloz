@@ -19,6 +19,7 @@ import {
   type PlanState,
   planActionDenial,
 } from "@/lib/signal/plan";
+import { resolveBaselineValue } from "@/lib/signal/plan-freeze";
 import { nnStr } from "../../actions/_base";
 import {
   type AuditDiff,
@@ -87,6 +88,19 @@ async function loadInitiative(db: Db, tenantId: string, code: string) {
     );
   }
   return initiative;
+}
+
+/**
+ * Carrega a iniciativa e toma o trinco dela até o fim da transação. Classificar
+ * e gerar o plano leem "há plano?" e depois escrevem: sem o trinco, duas
+ * chamadas ao mesmo tempo passam as duas pela leitura e geram o plano duas
+ * vezes (ou classificam depois que o outro já gerou). Relê depois do trinco,
+ * porque a primeira leitura pode ter ficado velha esperando a vez.
+ */
+async function loadInitiativeLocked(db: Db, tenantId: string, code: string) {
+  const first = await loadInitiative(db, tenantId, code);
+  await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`signal-plan:${tenantId}:${first.id}`}, 0))`;
+  return loadInitiative(db, tenantId, code);
 }
 
 function recordEvent(
@@ -196,7 +210,7 @@ export async function classifyInitiative(raw: {
       .parse(raw);
 
     await withTenantDb(ctx.tenantId, async (db) => {
-      const initiative = await loadInitiative(
+      const initiative = await loadInitiativeLocked(
         db,
         ctx.tenantId,
         input.initiativeCode
@@ -302,7 +316,11 @@ export async function generatePlan(raw: {
     const { initiativeCode } = z.object({ initiativeCode: nnStr }).parse(raw);
 
     const created = await withTenantDb(ctx.tenantId, async (db) => {
-      const initiative = await loadInitiative(db, ctx.tenantId, initiativeCode);
+      const initiative = await loadInitiativeLocked(
+        db,
+        ctx.tenantId,
+        initiativeCode
+      );
       requireInitiativeOwnership(ctx, initiative);
 
       const existing = await db.signalPlanMetric.count({
@@ -420,8 +438,8 @@ export async function proposeMetric(
 // ── Transições de estado ──────────────────────────────────────────────────────
 
 type TransitionSpec = {
-  action: "approve" | "pause" | "resume";
-  event: "APPROVE" | "PAUSE" | "RESUME";
+  action: "pause" | "resume";
+  event: "PAUSE" | "RESUME";
   verb: string;
   audit: string;
 };
@@ -483,16 +501,6 @@ async function moveState(
   });
 }
 
-/** Proposta → Sem fonte. Só o OWNER (ou o Analista, que o alcança). */
-export async function approveMetric(raw: { id: string }) {
-  return await moveState(raw, {
-    action: "approve",
-    event: "APPROVE",
-    verb: "aprovar",
-    audit: "Métrica aprovada no plano",
-  });
-}
-
 export async function pauseMetric(raw: { id: string; comment: string }) {
   return await moveState(raw, {
     action: "pause",
@@ -520,6 +528,14 @@ async function resolveSource(
   metric: Loaded,
   mappingId: string
 ) {
+  // Congelado não muda fonte: o baseline do gate foi medido por aquela fonte, e
+  // trocá-la mudaria de onde vem o número contra o qual o contrato foi firmado.
+  if (metric.state === "FROZEN") {
+    throw new SignalRuleError(
+      "plan.source.frozen",
+      "Métrica congelada não muda de fonte: o baseline firmado no gate foi medido por ela."
+    );
+  }
   if (metric.state === "PROPOSED") {
     throw new SignalRuleError(
       "plan.source.not-approved",
@@ -875,4 +891,201 @@ async function requireTenantMember(db: Db, tenantId: string, userId: string) {
       "O responsável precisa ser membro desta organização com papel no Signal."
     );
   }
+}
+
+// ── Aprovar métrica proposta (SG-PO-03 e SG-PO-05) ─────────────────────────────
+
+const ApproveSchema = z.object({
+  initiativeCode: nnStr,
+  metricId: nnStr,
+});
+
+async function loadProposedMetric(
+  db: Db,
+  ctx: SignalContext,
+  initiative: { id: string },
+  metricId: string
+) {
+  const metric = await db.signalPlanMetric.findFirst({
+    where: {
+      id: metricId,
+      tenantId: ctx.tenantId,
+      initiativeId: initiative.id,
+    },
+    select: {
+      id: true,
+      state: true,
+      version: true,
+      baselineDimensionKey: true,
+      baselineValue: true,
+    },
+  });
+  if (!metric) {
+    throw new SignalRuleError(
+      "plan.metric.not-found",
+      "Métrica não encontrada no plano desta iniciativa."
+    );
+  }
+  if (metric.state !== "PROPOSED") {
+    throw new SignalRuleError(
+      "plan.metric.not-proposed",
+      `Só métrica proposta se aprova; esta está em ${metric.state}.`
+    );
+  }
+  return metric;
+}
+
+/** Baseline assinado mais recente da iniciativa, com o valor numérico das
+ *  dimensões. Nulo se a iniciativa ainda não assinou nenhum. */
+function latestSignedBaseline(
+  db: Db,
+  ctx: SignalContext,
+  initiative: { id: string }
+) {
+  return db.signalBaseline.findFirst({
+    where: {
+      tenantId: ctx.tenantId,
+      initiativeId: initiative.id,
+      signedAt: { not: null },
+    },
+    orderBy: { version: "desc" },
+    select: {
+      id: true,
+      dimensions: { select: { key: true, numericValue: true } },
+    },
+  });
+}
+
+type MetricRow = Awaited<ReturnType<typeof loadProposedMetric>>;
+
+/** APPROVE (do ator) e, se congelou na hora, FREEZE (do sistema). */
+function approvalEvents(args: {
+  ctx: SignalContext;
+  metric: MetricRow;
+  freezeNow: boolean;
+  baselineValue: string | null;
+}) {
+  const { ctx, metric, freezeNow, baselineValue } = args;
+  const version = metric.version + 1;
+  const previous =
+    metric.baselineValue === null ? null : String(metric.baselineValue);
+  const approve = {
+    tenantId: ctx.tenantId,
+    planMetricId: metric.id,
+    action: "APPROVE" as const,
+    actorId: ctx.userId as string | null,
+    fromState: "PROPOSED" as const,
+    toState: "NO_SOURCE" as const,
+    version,
+    changes: [["state", "PROPOSED", "NO_SOURCE"]] as (string | null)[][],
+    comment: null as string | null,
+  };
+  if (!freezeNow) {
+    return [approve];
+  }
+  const semValor =
+    "Congelada na aprovação, sem valor de baseline: a métrica não tem dimensão correspondente no baseline assinado.";
+  const freeze = {
+    ...approve,
+    action: "FREEZE" as const,
+    actorId: null,
+    fromState: "NO_SOURCE" as const,
+    toState: "FROZEN" as const,
+    changes: [
+      ["state", "NO_SOURCE", "FROZEN"],
+      ["baselineValue", previous, baselineValue],
+    ] as (string | null)[][],
+    comment:
+      baselineValue === null
+        ? semValor
+        : "Congelada na aprovação: a iniciativa já tinha baseline assinado.",
+  };
+  return [approve, freeze];
+}
+
+async function approveInDb(
+  db: Db,
+  ctx: SignalContext,
+  input: z.infer<typeof ApproveSchema>
+) {
+  const initiative = await db.signalInitiative.findUnique({
+    where: {
+      tenantId_code: { tenantId: ctx.tenantId, code: input.initiativeCode },
+    },
+  });
+  if (!initiative) {
+    throw new SignalRuleError(
+      "initiative.not-found",
+      `Iniciativa ${input.initiativeCode} não encontrada nesta organização.`
+    );
+  }
+  requireInitiativeOwnership(ctx, initiative);
+
+  const metric = await loadProposedMetric(db, ctx, initiative, input.metricId);
+  const baseline = await latestSignedBaseline(db, ctx, initiative);
+  const freezeNow = baseline !== null;
+  const finalState = freezeNow ? ("FROZEN" as const) : ("NO_SOURCE" as const);
+  const baselineValue = baseline
+    ? resolveBaselineValue(
+        baseline.dimensions,
+        metric.baselineDimensionKey,
+        metric.baselineValue
+      )
+    : null;
+
+  const updated = await db.signalPlanMetric.updateMany({
+    where: { id: metric.id, tenantId: ctx.tenantId, state: "PROPOSED" },
+    data: {
+      state: finalState,
+      ...(freezeNow ? { baselineValue } : {}),
+      version: { increment: 1 },
+    },
+  });
+  if (updated.count === 0) {
+    throw new SignalRuleError(
+      "plan.metric.changed",
+      "A métrica mudou de estado enquanto você aprovava. Recarregue e tente de novo."
+    );
+  }
+
+  await db.signalPlanMetricEvent.createMany({
+    data: approvalEvents({ ctx, metric, freezeNow, baselineValue }),
+  });
+  await logSignalAudit(db, ctx, {
+    action: freezeNow
+      ? "Métrica aprovada e congelada"
+      : "Métrica aprovada no plano",
+    entityType: "signal.planmetric",
+    entityId: metric.id,
+    target: `${initiative.code} · métrica ${metric.id}`,
+    diff: [["Estado", "PROPOSED", finalState]],
+  });
+  return finalState;
+}
+
+/**
+ * Aprova, no plano, uma métrica proposta fora do modelo (SG-PO-05): Proposta →
+ * Sem fonte.
+ *
+ * Se a iniciativa JÁ TEM baseline assinado, a métrica congela na hora. O
+ * consumidor de `signal/baseline.frozen` só pega métrica que existia quando o
+ * baseline foi assinado; uma proposta aprovada depois nunca o veria, e ficaria
+ * medindo contra uma régua que ela mesma poderia editar. Dois eventos: APPROVE,
+ * do ator, e FREEZE, do sistema.
+ *
+ * O valor de baseline é `assinado ?? anterior`: não apaga o que já havia.
+ */
+export async function approvePlanMetric(
+  raw: z.input<typeof ApproveSchema>
+): Promise<SignalResult<{ state: "NO_SOURCE" | "FROZEN" }>> {
+  return await signalAction(async () => {
+    // Mesma negação do resto do plano: ADMIN não decide (SG-PO-03).
+    const ctx = await decisionContext("approve");
+    const input = ApproveSchema.parse(raw);
+    const state = await withTenantDb(ctx.tenantId, (db) =>
+      approveInDb(db, ctx, input)
+    );
+    revalidatePath(`/signal/initiative/${input.initiativeCode}`);
+    return { state };
+  });
 }

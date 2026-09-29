@@ -1,4 +1,4 @@
-import { database, withTenantDb } from "@repo/database";
+import { withTenantDb } from "@repo/database";
 import { inngest } from "./client";
 import {
   PRODUCT_EVENT_SCHEMAS,
@@ -22,6 +22,18 @@ import {
 //     `scaffold/gate.reopened` aqui — a decisão é manter.
 //   • Tenant sem o módulo Cosmos não gera nada (mesma degradação graciosa do
 //     SG-05).
+//   • `OVERRIDDEN` gera épico e feature igual a `PASSED`. DECISÃO: o override é
+//     um fechamento de gate com autor, justificativa e critérios dispensados
+//     gravados; a fase seguinte abre do mesmo jeito e o trabalho de engenharia
+//     dela existe. O Cosmos não julga o gate do Scaffold. O `outcome` vai para a
+//     auditoria do item criado.
+//
+// O evento é só um AVISO. Nada do que o Cosmos escreve sai dele além dos ids: a
+// trilha é relida DENTRO do `withTenantDb` (id e tenant conferidos pela RLS e
+// pelo filtro) e o código e o nome do processo vêm do banco. Evento forjado ou
+// defasado não põe texto arbitrário no funil de outro tenant; trilha que não
+// existe no tenant é no-op. Cada épico e feature criado deixa entrada de
+// auditoria, ator "system", com a origem (gateResultId) e o outcome do gate.
 //
 // Idempotência de verdade no banco: Epic (tenantId, originTrackId) e Feature
 // (tenantId, originTrackId, originPhase) são únicos, e a criação é INSERT ... ON
@@ -30,9 +42,10 @@ import {
 
 type ScaffoldGateClosed = ProductEventData<"scaffoldGateClosed">;
 type TenantDb = Parameters<Parameters<typeof withTenantDb>[1]>[0];
+type Track = { id: string; code: string; processName: string };
 
 export type ScaffoldGateResult =
-  | { skipped: "cosmos-not-contracted" }
+  | { skipped: "cosmos-not-contracted" | "track-not-found" }
   | {
       epic: "created" | "existing" | "none";
       feature: "created" | "existing" | "none";
@@ -44,14 +57,47 @@ const FEATURE_TITLE: Partial<Record<string, string>> = {
   SCALE: "Escala",
 };
 
+/** Auditoria de item criado pelo Cosmos a partir de evento do Scaffold. Ator
+ *  "system": não há pessoa no consumidor, e a origem é o resultado do gate. */
+async function auditCreated(
+  db: TenantDb,
+  data: ScaffoldGateClosed,
+  track: Track,
+  entityType: "epic" | "feature",
+  entityId: string,
+  target: string
+): Promise<void> {
+  await db.auditLog.create({
+    data: {
+      tenantId: data.tenantId,
+      userId: null,
+      actorId: null,
+      actorType: "system",
+      action: `cosmos.${entityType}.created_from_scaffold`,
+      entityType,
+      entityId,
+      diff: [["Origem", "—", `${track.code} · ${data.closedPhase}`]],
+      metadata: {
+        origin: PRODUCT_EVENTS.scaffoldGateClosed,
+        gateResultId: data.gateResultId,
+        trackId: track.id,
+        trackCode: track.code,
+        outcome: data.outcome,
+        target,
+      },
+    },
+  });
+}
+
 async function ensureEpic(
   db: TenantDb,
-  data: ScaffoldGateClosed
+  data: ScaffoldGateClosed,
+  track: Track
 ): Promise<{ id: string; created: boolean }> {
   const where = {
     tenantId_originTrackId: {
       tenantId: data.tenantId,
-      originTrackId: data.trackId,
+      originTrackId: track.id,
     },
   };
   const found = await db.epic.findUnique({ where, select: { id: true } });
@@ -64,11 +110,13 @@ async function ensureEpic(
     where: {
       tenantId: data.tenantId,
       signedAt: { not: null },
-      businessCase: { trackId: data.trackId },
+      businessCase: { trackId: track.id },
     },
     orderBy: { signedAt: "desc" },
     select: { note: true },
   });
+
+  const title = `${track.processName} · ${track.code}`;
 
   // createMany + skipDuplicates vira INSERT ... ON CONFLICT DO NOTHING. Não usar
   // create + captura de P2002: dentro do `withTenantDb` (uma transação), a
@@ -79,10 +127,10 @@ async function ensureEpic(
     data: [
       {
         tenantId: data.tenantId,
-        title: `${data.processName} · ${data.trackCode}`,
+        title,
         lifecycleStatus: "FUNNEL",
         hypothesis: version?.note ?? null,
-        originTrackId: data.trackId,
+        originTrackId: track.id,
       },
     ],
     skipDuplicates: true,
@@ -90,22 +138,27 @@ async function ensureEpic(
   const epic = await db.epic.findUnique({ where, select: { id: true } });
   if (!epic) {
     throw new Error(
-      `Épico da trilha ${data.trackCode} não encontrado depois do insert.`
+      `Épico da trilha ${track.code} não encontrado depois do insert.`
     );
   }
-  return { id: epic.id, created: inserted.count === 1 };
+  const created = inserted.count === 1;
+  if (created) {
+    await auditCreated(db, data, track, "epic", epic.id, title);
+  }
+  return { id: epic.id, created };
 }
 
 async function ensureFeature(
   db: TenantDb,
   data: ScaffoldGateClosed,
+  track: Track,
   epicId: string,
   phase: "PILOT" | "SCALE"
 ): Promise<"created" | "existing"> {
   const where = {
     tenantId_originTrackId_originPhase: {
       tenantId: data.tenantId,
-      originTrackId: data.trackId,
+      originTrackId: track.id,
       originPhase: phase,
     },
   };
@@ -114,13 +167,14 @@ async function ensureFeature(
     return "existing";
   }
 
+  const title = `${FEATURE_TITLE[phase]} ${track.code}`;
   const inserted = await db.feature.createMany({
     data: [
       {
         tenantId: data.tenantId,
         epicId,
-        title: `${FEATURE_TITLE[phase]} ${data.trackCode}`,
-        originTrackId: data.trackId,
+        title,
+        originTrackId: track.id,
         originPhase: phase,
       },
     ],
@@ -129,6 +183,11 @@ async function ensureFeature(
   if (inserted.count === 0) {
     // Outra entrega criou entre o find e o insert.
     return "existing";
+  }
+
+  const feature = await db.feature.findUnique({ where, select: { id: true } });
+  if (feature) {
+    await auditCreated(db, data, track, "feature", feature.id, title);
   }
 
   // Contador desnormalizado do card do épico no kanban.
@@ -142,19 +201,6 @@ async function ensureFeature(
 export async function applyScaffoldGateClosed(
   data: ScaffoldGateClosed
 ): Promise<ScaffoldGateResult> {
-  const cosmos = await database.tenantModule.findFirst({
-    where: {
-      tenantId: data.tenantId,
-      module: "COSMOS",
-      status: { in: ["ACTIVE", "TRIAL"] },
-      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-    },
-    select: { id: true },
-  });
-  if (!cosmos) {
-    return { skipped: "cosmos-not-contracted" };
-  }
-
   const opens =
     data.openedPhase === "PILOT" || data.openedPhase === "SCALE"
       ? data.openedPhase
@@ -165,11 +211,35 @@ export async function applyScaffoldGateClosed(
   }
 
   return await withTenantDb(data.tenantId, async (db) => {
+    // Dentro do withTenantDb: a leitura do módulo passa pelo mesmo contexto de
+    // tenant que as escritas.
+    const cosmos = await db.tenantModule.findFirst({
+      where: {
+        tenantId: data.tenantId,
+        module: "COSMOS",
+        status: { in: ["ACTIVE", "TRIAL"] },
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      },
+      select: { id: true },
+    });
+    if (!cosmos) {
+      return { skipped: "cosmos-not-contracted" as const };
+    }
+
+    // O evento só carrega ids. Trilha, código e nome vêm do banco.
+    const track = await db.scaffoldTrack.findFirst({
+      where: { id: data.trackId, tenantId: data.tenantId },
+      select: { id: true, code: true, processName: true },
+    });
+    if (!track) {
+      return { skipped: "track-not-found" as const };
+    }
+
     // Épico primeiro, mesmo se o evento da ASSESS se perdeu: a feature da
     // PILOT/SCALE precisa de onde pendurar.
-    const epic = await ensureEpic(db, data);
+    const epic = await ensureEpic(db, data, track);
     const feature = opens
-      ? await ensureFeature(db, data, epic.id, opens)
+      ? await ensureFeature(db, data, track, epic.id, opens)
       : "none";
     return {
       epic: epic.created ? ("created" as const) : ("existing" as const),

@@ -11,9 +11,13 @@ const h = vi.hoisted(() => ({
   logSignalAudit: vi.fn(),
   revalidatePath: vi.fn(),
   invalidate: vi.fn(),
+  logError: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@repo/observability/log", () => ({
+  log: { error: h.logError, warn: vi.fn(), info: vi.fn() },
+}));
 vi.mock("next/cache", () => ({ revalidatePath: h.revalidatePath }));
 vi.mock("@repo/database", () => ({ withTenantDb: h.withTenantDb }));
 vi.mock("@repo/rbac", () => ({
@@ -160,6 +164,15 @@ describe("addSignalMember", () => {
       entityType: "signal.member",
     });
     expect(h.invalidate).toHaveBeenCalledWith("tnt_1", "usr_2");
+  });
+});
+
+describe("cache de papel é melhor-esforço", () => {
+  it("falha ao invalidar não desfaz a adição: registra e segue", async () => {
+    h.invalidate.mockRejectedValue(new Error("redis fora"));
+    const res = await addSignalMember({ userId: "usr_2", role: "ANALYST" });
+    expect(res).toMatchObject({ ok: true });
+    expect(h.logError).toHaveBeenCalled();
   });
 });
 

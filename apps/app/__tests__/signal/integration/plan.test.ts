@@ -40,7 +40,6 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
 });
 
 import {
-  approveMetric,
   changePrimary,
   classifyInitiative,
   editMetric,
@@ -121,6 +120,7 @@ beforeEach(() => {
       findFirst: vi.fn().mockResolvedValue({ id: "mmv_1", metrics: [] }),
       findUnique: vi.fn().mockResolvedValue({ id: "mmv_1", metrics: [] }),
     },
+    $executeRaw: vi.fn().mockResolvedValue(1) as unknown as Record<string, Fn>,
     signalMetricMapping: {
       findFirst: vi.fn().mockResolvedValue({
         id: "mp_1",
@@ -235,62 +235,6 @@ describe("propor métrica (SG-PO-05)", () => {
       }
     );
     expect(h.logSignalAudit).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("aprovar (Proposta → Sem fonte)", () => {
-  it("OWNER aprova e o estado vira NO_SOURCE", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED" })
-    );
-    const res = await approveMetric({ id: "pm_1" });
-    expect(res).toMatchObject({ ok: true, data: { state: "NO_SOURCE" } });
-    expect(db.signalPlanMetric.updateMany.mock.calls[0][0].data.state).toBe(
-      "NO_SOURCE"
-    );
-  });
-
-  it("aprovar o que já foi aprovado é conflito de estado (409)", async () => {
-    const res = await approveMetric({ id: "pm_1" });
-    expect(res).toMatchObject({ ok: false, status: 409 });
-  });
-
-  it("ADMIN não transita estado (SG-PO-03)", async () => {
-    h.requireSignalPermissionContext.mockResolvedValue({
-      ...CTX,
-      signalRole: "ADMIN",
-    });
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED" })
-    );
-    const res = await approveMetric({ id: "pm_1" });
-    expect(res).toMatchObject({ ok: false, rule: "plan.role.denied" });
-    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
-  });
-
-  it("consulta a métrica pelo tenant do contexto, nunca por id solto", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED" })
-    );
-    await approveMetric({ id: "pm_1" });
-    expect(db.signalPlanMetric.findFirst.mock.calls[0][0].where).toMatchObject({
-      id: "pm_1",
-      tenantId: "tnt_1",
-    });
-  });
-
-  it("métrica inexistente neste tenant é 422 com regra nomeada", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(null);
-    const res = await approveMetric({ id: "pm_x" });
-    expect(res).toMatchObject({ ok: false, rule: "plan.not-found" });
-  });
-
-  it("passa pela posse da iniciativa", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED" })
-    );
-    await approveMetric({ id: "pm_1" });
-    expect(h.requireInitiativeOwnership).toHaveBeenCalledWith(CTX, INITIATIVE);
   });
 });
 
@@ -492,25 +436,26 @@ describe("editar cria versão nova", () => {
 });
 
 describe("concorrência: transição só vale sobre o estado lido", () => {
+  const measuring = () => metric({ state: "MEASURING", version: 4 });
+
   it("grava com where {id, tenantId, state, version} do que foi lido", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED", version: 4 })
-    );
-    await approveMetric({ id: "pm_1" });
+    db.signalPlanMetric.findFirst.mockResolvedValue(measuring());
+    await pauseMetric({ id: "pm_1", comment: "Fonte em manutenção" });
     expect(db.signalPlanMetric.updateMany.mock.calls[0][0].where).toEqual({
       id: "pm_1",
       tenantId: "tnt_1",
-      state: "PROPOSED",
+      state: "MEASURING",
       version: 4,
     });
   });
 
   it("count 0 (alguém mudou antes) vira conflito e não grava histórico", async () => {
-    db.signalPlanMetric.findFirst.mockResolvedValue(
-      metric({ state: "PROPOSED" })
-    );
+    db.signalPlanMetric.findFirst.mockResolvedValue(measuring());
     db.signalPlanMetric.updateMany.mockResolvedValue({ count: 0 });
-    const res = await approveMetric({ id: "pm_1" });
+    const res = await pauseMetric({
+      id: "pm_1",
+      comment: "Fonte em manutenção",
+    });
     expect(res).toMatchObject({
       ok: false,
       status: 409,
@@ -763,5 +708,58 @@ describe("classificar a forma de trabalho (P1-b)", () => {
       workForm: "REPORTING",
     });
     expect(h.requireInitiativeOwnership).toHaveBeenCalled();
+  });
+});
+
+describe("congelado não muda fonte", () => {
+  it("mapear fonte de métrica FROZEN é recusado e nada é gravado", async () => {
+    db.signalPlanMetric.findFirst.mockResolvedValue(
+      metric({ state: "FROZEN", sourceMappingId: "mp_0" })
+    );
+    const res = await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    expect(res).toMatchObject({ ok: false, rule: "plan.source.frozen" });
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
+    expect(db.signalPlanMetricEvent.create).not.toHaveBeenCalled();
+  });
+});
+
+const rawFn = () => db.$executeRaw as unknown as Fn;
+const lockCall = () => rawFn().mock.invocationCallOrder[0];
+
+describe("trinco por iniciativa (advisory lock)", () => {
+  it("classificar toma o lock da iniciativa antes de contar o plano", async () => {
+    db.signalInitiative.update = vi.fn().mockResolvedValue({});
+    db.signalPlanMetric.count.mockResolvedValue(0);
+    await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "REPORTING",
+    });
+    expect(rawFn()).toHaveBeenCalledTimes(1);
+    const order = [
+      lockCall(),
+      db.signalPlanMetric.count.mock.invocationCallOrder[0],
+    ];
+    expect(order[0]).toBeLessThan(order[1]);
+  });
+
+  it("gerar plano também toma o lock, antes de contar", async () => {
+    db.signalMeasureModelVersion.findUnique.mockResolvedValue({
+      id: "mmv_1",
+      metrics: [
+        {
+          id: "m1",
+          role: "PRIMARY",
+          name: "T",
+          formula: "f",
+          direction: "DOWN",
+          seq: 0,
+        },
+      ],
+    });
+    await generatePlan({ initiativeCode: "IN-014" });
+    expect(rawFn()).toHaveBeenCalledTimes(1);
+    expect(lockCall()).toBeLessThan(
+      db.signalPlanMetric.count.mock.invocationCallOrder[0]
+    );
   });
 });

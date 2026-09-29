@@ -11,7 +11,7 @@
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useCallback, useId, useState } from "react";
 import {
-  approveMetric,
+  approvePlanMetric,
   changePrimary,
   editMetric,
   mapMetricSource,
@@ -251,12 +251,14 @@ function CommentBox({
 }
 
 function ActionsPanel({
+  initiativeCode,
   m,
   denial,
   mapDenial,
   mappings,
   done,
 }: {
+  initiativeCode: string;
   m: PlanMetricHistory["metric"];
   denial: string | null;
   mapDenial: string | null;
@@ -331,7 +333,9 @@ function ActionsPanel({
         {m.state === "PROPOSED" ? (
           <Button
             disabled={busy || denial !== null}
-            onClick={() => run(() => approveMetric({ id: m.id }))}
+            onClick={() =>
+              run(() => approvePlanMetric({ initiativeCode, metricId: m.id }))
+            }
             title={denial ?? undefined}
           >
             Aprovar no plano
@@ -623,6 +627,7 @@ export function MetricModal({
         <ActionsPanel
           denial={denial}
           done={done}
+          initiativeCode={data.initiativeCode}
           m={m}
           mapDenial={mapDenial}
           mappings={mappings}

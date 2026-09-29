@@ -142,6 +142,11 @@ model SignalPlanMetric {
   /// Baseline copiado no instante do congelamento (evento do Scaffold, X-04).
   /// Antes disso o baseline é lido de SignalBaseline; depois é contrato firmado,
   /// e mudar a fonte não pode reescrever o que o gate congelou.
+  /// Dimensão do baseline assinado (`SignalBaselineDimension.key`, ex. "TIME")
+  /// de onde sai o `baselineValue` no congelamento. Texto sem FK: a dimensão
+  /// pertence a uma versão de baseline e a métrica sobrevive a versões novas.
+  /// Nulo = a métrica não tem dimensão de baseline correspondente.
+  baselineDimensionKey String?
   baselineValue Decimal? @db.Decimal(18, 6)
   targetValue   Decimal? @db.Decimal(18, 6)
   ownerId       String?

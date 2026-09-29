@@ -106,6 +106,8 @@ export type InitiativePlan = {
 };
 
 export type PlanMetricHistory = {
+  /** Código da iniciativa dona da métrica; o aprovar usa. */
+  initiativeCode: string;
   metric: PlanMetricRow & { fromModelName: string | null };
   /** Últimas leituras da fonte mapeada (as "observações" do modal). */
   observations: {
@@ -470,6 +472,7 @@ export async function getPlanMetric(raw: {
               connection: { select: { name: true, health: true } },
             },
           },
+          initiative: { select: { code: true } },
           modelMetric: {
             select: {
               version: { select: { model: { select: { name: true } } } },
@@ -508,6 +511,7 @@ export async function getPlanMetric(raw: {
       ]);
 
       return {
+        initiativeCode: m.initiative.code,
         metric: {
           ...toRow(m, null, actors),
           fromModelName: m.modelMetric?.version.model.name ?? null,

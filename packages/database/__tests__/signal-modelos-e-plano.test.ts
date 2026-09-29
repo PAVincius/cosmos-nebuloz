@@ -124,6 +124,26 @@ describe("SignalPlanMetric", () => {
     expect(m).not.toMatch(/\bcurrentValue\b|\bnowValue\b/);
   });
 
+  it("aponta a dimensão do baseline de onde vem o baselineValue", () => {
+    expect(m).toMatch(/baselineDimensionKey\s+String\?/);
+    const sql = ler(
+      "migrations",
+      "20260929010400_signal_plan_metric_baseline_key",
+      "migration.sql"
+    );
+    expect(sql).toContain('"baselineDimensionKey"');
+    expect(
+      existsSync(
+        join(
+          PRISMA,
+          "migrations",
+          "20260929010400_signal_plan_metric_baseline_key",
+          "down.sql"
+        )
+      )
+    ).toBe(true);
+  });
+
   it("primária vigente única por iniciativa, garantida no banco", () => {
     expect(m).toContain("@@unique([initiativeId, isCurrentPrimary])");
     expect(sql).toMatch(/CHECK \("isCurrentPrimary" IS NULL OR/);

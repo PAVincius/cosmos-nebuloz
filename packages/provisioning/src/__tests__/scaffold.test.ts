@@ -6,6 +6,8 @@ function makeDb(
     membershipExists?: boolean;
     existingRole?: string;
     userExists?: boolean;
+    isMember?: boolean;
+    raceLost?: boolean;
     tenantExists?: boolean;
   } = {}
 ) {
@@ -13,6 +15,8 @@ function makeDb(
     membershipExists = false,
     existingRole = "CONSULTANT",
     userExists = true,
+    isMember = true,
+    raceLost = false,
     tenantExists = true,
   } = options;
   return {
@@ -28,13 +32,22 @@ function makeDb(
           tenantExists ? { id: "tenant-abc", slug: "vanta-saude" } : null
         ),
     },
+    tenantMember: {
+      findFirst: vi.fn().mockResolvedValue(isMember ? { id: "tm-1" } : null),
+    },
     scaffoldMembership: {
+      // Depois do insert (ou do ON CONFLICT DO NOTHING) a linha existe. `raceLost`
+      // = outro processo inseriu antes de nós: count 0 e o papel é o dele.
       findUnique: vi
         .fn()
         .mockResolvedValue(
-          membershipExists ? { id: "sm-0", role: existingRole } : null
+          membershipExists || raceLost
+            ? { id: "sm-0", role: raceLost ? "CONSULTANT" : existingRole }
+            : { id: "sm-1", role: "ADMIN" }
         ),
-      create: vi.fn().mockResolvedValue({ id: "sm-1" }),
+      createMany: vi
+        .fn()
+        .mockResolvedValue({ count: membershipExists || raceLost ? 0 : 1 }),
     },
     scaffoldSettings: { upsert: vi.fn().mockResolvedValue({ id: "ss-1" }) },
     auditLog: { create: vi.fn().mockResolvedValue({ id: "audit-1" }) },
@@ -63,12 +76,18 @@ describe("bootstrapScaffold", () => {
 
     const result = await bootstrapScaffold(depsFor(db) as never, INPUT);
 
-    expect(result).toEqual({ membershipId: "sm-1", created: true });
+    expect(result).toEqual({
+      membershipId: "sm-1",
+      created: true,
+      role: "ADMIN",
+    });
     expect(db.user.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({ where: { email: "ana@vanta.exemplo" } })
     );
-    const { data } = db.scaffoldMembership.create.mock.calls[0][0];
-    expect(data).toMatchObject({
+    const { data, skipDuplicates } =
+      db.scaffoldMembership.createMany.mock.calls[0][0];
+    expect(skipDuplicates).toBe(true);
+    expect(data[0]).toMatchObject({
       tenantId: "tenant-abc",
       userId: "user-admin",
       role: "ADMIN",
@@ -113,8 +132,12 @@ describe("bootstrapScaffold", () => {
 
     const result = await bootstrapScaffold(depsFor(db) as never, INPUT);
 
-    expect(result).toEqual({ membershipId: "sm-0", created: false });
-    expect(db.scaffoldMembership.create).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      membershipId: "sm-0",
+      created: false,
+      // Devolve o papel que a pessoa JÁ tem, para o chamador não achar que virou ADMIN.
+      role: "CONSULTANT",
+    });
     const { data } = db.auditLog.create.mock.calls[0][0];
     expect(data.action).toBe("scaffold.bootstrap_skipped");
   });
@@ -125,7 +148,7 @@ describe("bootstrapScaffold", () => {
     await expect(
       bootstrapScaffold(depsFor(db) as never, INPUT)
     ).rejects.toMatchObject({ code: "TENANT_NOT_FOUND" });
-    expect(db.scaffoldMembership.create).not.toHaveBeenCalled();
+    expect(db.scaffoldMembership.createMany).not.toHaveBeenCalled();
   });
 
   it("recusa e-mail sem conta, dizendo o que fazer", async () => {
@@ -134,6 +157,39 @@ describe("bootstrapScaffold", () => {
     await expect(
       bootstrapScaffold(depsFor(db) as never, INPUT)
     ).rejects.toMatchObject({ code: "USER_NOT_FOUND" });
-    expect(db.scaffoldMembership.create).not.toHaveBeenCalled();
+    expect(db.scaffoldMembership.createMany).not.toHaveBeenCalled();
+  });
+
+  it("recusa conta que existe mas não é membro DESTE tenant (USER_NOT_MEMBER)", async () => {
+    // Sem isto, bastava saber o e-mail de qualquer conta da plataforma para
+    // enfiá-la como ADMIN no tenant de um cliente.
+    const db = makeDb({ isMember: false });
+
+    await expect(
+      bootstrapScaffold(depsFor(db) as never, INPUT)
+    ).rejects.toMatchObject({ code: "USER_NOT_MEMBER" });
+
+    expect(db.tenantMember.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tenant-abc", userId: "user-admin" },
+      })
+    );
+    expect(db.scaffoldMembership.createMany).not.toHaveBeenCalled();
+    expect(db.scaffoldSettings.upsert).not.toHaveBeenCalled();
+  });
+
+  it("corrida: outro processo criou o papel entre o find e o insert vira 'já existia', sem erro", async () => {
+    const db = makeDb({ raceLost: true });
+
+    const result = await bootstrapScaffold(depsFor(db) as never, INPUT);
+
+    expect(result).toEqual({
+      membershipId: "sm-0",
+      created: false,
+      role: "CONSULTANT",
+    });
+    expect(db.auditLog.create.mock.calls[0][0].data.action).toBe(
+      "scaffold.bootstrap_skipped"
+    );
   });
 });

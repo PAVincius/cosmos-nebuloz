@@ -28,7 +28,7 @@ vi.mock("@/app/(signal)/actions/plan-read", () => ({
   getPlanMetric: h.getPlanMetric,
 }));
 vi.mock("@/app/(signal)/actions/plan", () => ({
-  approveMetric: vi.fn(),
+  approvePlanMetric: vi.fn(),
   changePrimary: h.changePrimary,
   editMetric: h.editMetric,
   generatePlan: h.generatePlan,

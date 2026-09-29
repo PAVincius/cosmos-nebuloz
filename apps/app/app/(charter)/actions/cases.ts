@@ -11,6 +11,7 @@ import {
 import { denialReason, hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { caseDecisionBlockers } from "@/lib/charter/case-controls";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
@@ -590,6 +591,31 @@ export async function decideCase(
           "case.archived",
           "Caso arquivado não aceita nova decisão."
         );
+      }
+
+      // CH-DEV-06. Aprovar (com ou sem restrições) fica bloqueado enquanto houver
+      // controle sem evidência, com ajuste pedido, vencido ou reaberto. Pedir
+      // mudança e bloquear seguem livres: recusar um caso por falta de controle
+      // não pode depender de o controle estar pronto. Caso sem plano de controles
+      // decide como sempre.
+      if (data.outcome === "APPROVED" || data.outcome === "RESTRICTED") {
+        const controls = await db.charterCaseControl.findMany({
+          where: { tenantId: ctx.tenantId, useCaseId: uc.id },
+          select: { code: true, name: true, state: true },
+        });
+        const blockers = caseDecisionBlockers(controls);
+        if (blockers.length > 0) {
+          const shown = blockers
+            .slice(0, 3)
+            .map((b) => b.reason)
+            .join("; ");
+          const rest =
+            blockers.length > 3 ? ` e mais ${blockers.length - 3}` : "";
+          throw new GovernanceError(
+            "case.controls.pending",
+            `${blockers.length} controle(s) impedem a decisão: ${shown}${rest}. Aceite, dispense com prazo ou peça ajuste antes de aprovar.`
+          );
+        }
       }
 
       const status = OUTCOME_STATUS[data.outcome];

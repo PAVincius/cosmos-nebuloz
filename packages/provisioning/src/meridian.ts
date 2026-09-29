@@ -195,10 +195,11 @@ export type MeridianDb = AuditWriter & {
   user: {
     findUnique(args: unknown): Promise<{ id: string } | null>;
   };
+  tenantMember: { findFirst(args: unknown): Promise<{ id: string } | null> };
   meridianMembership: { upsert(args: unknown): Promise<{ id: string }> };
   meridianTemplate: {
     findFirst(args: unknown): Promise<{ id: string } | null>;
-    create(args: unknown): Promise<{ id: string }>;
+    createMany(args: unknown): Promise<{ count: number }>;
   };
   meridianQuestion: { createMany(args: unknown): Promise<{ count: number }> };
 };
@@ -228,6 +229,12 @@ export type BootstrapMeridianInput = {
  * O template nasce sem `lockedAt`: travar é decisão do primeiro uso, não do
  * provisionamento — enquanto está destravado o consultor ainda pode ajustar a
  * bateria antes do primeiro assessment.
+ *
+ * Só dá o papel a quem já é membro do tenant (`TenantMember`): ter conta na
+ * plataforma não basta. E o template nasce por INSERT ... ON CONFLICT DO NOTHING,
+ * não por find + create: a violação de unicidade de dois bootstraps em corrida
+ * aborta a transação do `withTenantDb`. Quem perde a corrida não semeia
+ * perguntas em cima do template do outro.
  */
 export async function bootstrapMeridian(
   deps: BootstrapMeridianDeps,
@@ -254,6 +261,17 @@ export async function bootstrapMeridian(
       throw new ProvisioningError(
         "USER_NOT_FOUND",
         `Nenhuma conta com o e-mail ${email}. A pessoa precisa entrar ao menos uma vez antes de receber o papel.`
+      );
+    }
+
+    const member = await db.tenantMember.findFirst({
+      where: { tenantId: input.tenantId, userId: user.id },
+      select: { id: true },
+    });
+    if (!member) {
+      throw new ProvisioningError(
+        "USER_NOT_MEMBER",
+        `${email} tem conta, mas não é membro desta organização. Convide a pessoa para o tenant antes de dar o papel.`
       );
     }
 
@@ -288,13 +306,40 @@ export async function bootstrapMeridian(
       return { templateId: existing.id, created: false };
     }
 
-    const template = await db.meridianTemplate.create({
-      data: {
-        tenantId: input.tenantId,
-        name: MERIDIAN_TEMPLATE_NAME,
-        version: MERIDIAN_TEMPLATE_VERSION,
-      },
+    const inserted = await db.meridianTemplate.createMany({
+      data: [
+        {
+          tenantId: input.tenantId,
+          name: MERIDIAN_TEMPLATE_NAME,
+          version: MERIDIAN_TEMPLATE_VERSION,
+        },
+      ],
+      skipDuplicates: true,
     });
+    const template = await db.meridianTemplate.findFirst({
+      where: { tenantId: input.tenantId },
+      select: { id: true },
+    });
+    if (!template) {
+      throw new ProvisioningError(
+        "TENANT_NOT_FOUND",
+        `Template do Meridian não encontrado depois do insert no tenant ${input.tenantId}.`
+      );
+    }
+
+    if (inserted.count === 0) {
+      // Outro processo criou o template entre a consulta e o insert.
+      await logPlatformAudit(db, {
+        tenantId: input.tenantId,
+        actorUserId: input.actorUserId,
+        actorName: input.actorName,
+        action: "meridian.bootstrap_skipped",
+        entityType: "MeridianTemplate",
+        entityId: template.id,
+        target: `${tenant.slug} · template já existia`,
+      });
+      return { templateId: template.id, created: false };
+    }
 
     await db.meridianQuestion.createMany({
       data: MERIDIAN_BATTERY.map((question) => ({
@@ -309,6 +354,7 @@ export async function bootstrapMeridian(
         inverted: question.inverted,
         scaleLabels: question.scaleLabels,
       })),
+      skipDuplicates: true,
     });
 
     await logPlatformAudit(db, {

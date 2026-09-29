@@ -16,6 +16,8 @@ const h = vi.hoisted(() => ({
   featureFindUnique: vi.fn(),
   featureCreateMany: vi.fn(),
   versionFindFirst: vi.fn(),
+  trackFindFirst: vi.fn(),
+  auditCreate: vi.fn(),
   withTenantDb: vi.fn(),
 }));
 
@@ -27,10 +29,7 @@ vi.mock("@/lib/inngest/client", () => ({
     ) => ({ config, handler }),
   },
 }));
-vi.mock("@repo/database", () => ({
-  database: { tenantModule: { findFirst: h.tenantModuleFindFirst } },
-  withTenantDb: h.withTenantDb,
-}));
+vi.mock("@repo/database", () => ({ withTenantDb: h.withTenantDb }));
 vi.mock("@repo/observability/log", () => ({
   log: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
@@ -55,6 +54,12 @@ const base = {
 beforeEach(() => {
   vi.clearAllMocks();
   h.tenantModuleFindFirst.mockResolvedValue({ id: "tm-1" });
+  h.trackFindFirst.mockResolvedValue({
+    id: "tr-1",
+    code: "TR-104",
+    processName: "Triagem de autorizações prévias",
+  });
+  h.auditCreate.mockResolvedValue({});
   // Sem épico até o insert; com épico depois dele.
   let epicInserted = false;
   h.epicFindUnique.mockImplementation(async () =>
@@ -65,8 +70,14 @@ beforeEach(() => {
     return { count: 1 };
   });
   h.epicUpdate.mockResolvedValue({});
-  h.featureFindUnique.mockResolvedValue(null);
-  h.featureCreateMany.mockResolvedValue({ count: 1 });
+  let featureInserted = false;
+  h.featureFindUnique.mockImplementation(async () =>
+    featureInserted ? { id: "ft-1" } : null
+  );
+  h.featureCreateMany.mockImplementation(async () => {
+    featureInserted = true;
+    return { count: 1 };
+  });
   h.versionFindFirst.mockResolvedValue({
     note: "Reduzir o tempo de triagem em 30%.",
   });
@@ -83,6 +94,9 @@ beforeEach(() => {
           createMany: h.featureCreateMany,
         },
         scaffoldBusinessCaseVersion: { findFirst: h.versionFindFirst },
+        tenantModule: { findFirst: h.tenantModuleFindFirst },
+        scaffoldTrack: { findFirst: h.trackFindFirst },
+        auditLog: { create: h.auditCreate },
       })
   );
 });
@@ -210,7 +224,11 @@ describe("applyScaffoldGateClosed", () => {
     const r = await applyScaffoldGateClosed(base);
 
     expect(r).toEqual({ skipped: "cosmos-not-contracted" });
-    expect(h.withTenantDb).not.toHaveBeenCalled();
+    expect(h.epicCreateMany).not.toHaveBeenCalled();
+    expect(h.featureCreateMany).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+    // A leitura do módulo passa pelo mesmo contexto de tenant das escritas.
+    expect(h.withTenantDb).toHaveBeenCalledWith("t-1", expect.any(Function));
     expect(h.tenantModuleFindFirst).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -219,6 +237,93 @@ describe("applyScaffoldGateClosed", () => {
           status: { in: ["ACTIVE", "TRIAL"] },
         }),
       })
+    );
+  });
+
+  it("trilha que não existe neste tenant é no-op, mesmo com evento válido", async () => {
+    h.trackFindFirst.mockResolvedValue(null);
+
+    const r = await applyScaffoldGateClosed(base);
+
+    expect(r).toEqual({ skipped: "track-not-found" });
+    expect(h.epicCreateMany).not.toHaveBeenCalled();
+    expect(h.featureCreateMany).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("relê a trilha pelo id E pelo tenant do evento, dentro do withTenantDb", async () => {
+    await applyScaffoldGateClosed(base);
+
+    expect(h.trackFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "tr-1", tenantId: "t-1" } })
+    );
+  });
+
+  it("código e nome do processo vêm do BANCO, não do evento", async () => {
+    h.trackFindFirst.mockResolvedValue({
+      id: "tr-1",
+      code: "TR-777",
+      processName: "Nome real da trilha",
+    });
+
+    await applyScaffoldGateClosed({
+      ...base,
+      trackCode: "TEXTO-FORJADO",
+      processName: "Texto forjado pelo evento",
+    });
+
+    const epic = h.epicCreateMany.mock.calls[0][0].data[0];
+    expect(epic.title).toBe("Nome real da trilha · TR-777");
+    expect(epic.title).not.toContain("forjado");
+    expect(h.featureCreateMany.mock.calls[0][0].data[0].title).toBe(
+      "Piloto TR-777"
+    );
+  });
+
+  it("audita épico e feature criados: ator system, origem no gateResultId", async () => {
+    await applyScaffoldGateClosed(base);
+
+    expect(h.auditCreate).toHaveBeenCalledTimes(2);
+    const [epicAudit, featureAudit] = h.auditCreate.mock.calls.map(
+      (c) => c[0].data
+    );
+    expect(epicAudit).toMatchObject({
+      tenantId: "t-1",
+      actorType: "system",
+      actorId: null,
+      userId: null,
+      action: "cosmos.epic.created_from_scaffold",
+      entityType: "epic",
+      entityId: "ep-1",
+    });
+    expect(epicAudit.metadata).toMatchObject({
+      origin: "scaffold/gate.closed",
+      gateResultId: "gr-1",
+      trackId: "tr-1",
+      outcome: "PASSED",
+    });
+    expect(featureAudit).toMatchObject({
+      actorType: "system",
+      action: "cosmos.feature.created_from_scaffold",
+      entityType: "feature",
+    });
+  });
+
+  it("não audita o que já existia (reprocessar não polui a trilha)", async () => {
+    h.epicFindUnique.mockResolvedValue({ id: "ep-1" });
+    h.featureFindUnique.mockResolvedValue({ id: "ft-1" });
+
+    await applyScaffoldGateClosed(base);
+
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("OVERRIDDEN gera épico e feature igual a PASSED, e a auditoria registra o override", async () => {
+    const r = await applyScaffoldGateClosed({ ...base, outcome: "OVERRIDDEN" });
+
+    expect(r).toEqual({ epic: "created", feature: "created" });
+    expect(h.auditCreate.mock.calls[0][0].data.metadata.outcome).toBe(
+      "OVERRIDDEN"
     );
   });
 
