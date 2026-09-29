@@ -29,6 +29,7 @@ const gap = (
 ): GapRow => ({
   id: `id-${code}`,
   code,
+  assessmentId: "clx0000000000000000000as4",
   assessmentCode: "AS-104",
   orgName: "Vanta Saúde",
   axis: "DATA",

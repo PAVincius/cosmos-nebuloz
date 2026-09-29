@@ -45,6 +45,7 @@ import {
   useModal,
 } from "../base";
 import { CONFIDENCE, ConfPill } from "../seams";
+import { EvidenceList } from "./evidence-list";
 import { PromoteConfirm, type PromoteTarget } from "./promote-confirm";
 
 export const GAP_STATE: Record<
@@ -188,6 +189,12 @@ function GapDetail({ gap, onClose }: { gap: GapRow; onClose: () => void }) {
               ? `${gap.evidenceCount} evidência(s) anexada(s) no assessment de origem.`
               : "Sem evidência anexada — o achado vale como declaração, não como medição."}
           </div>
+          {gap.evidenceCount > 0 && (
+            <EvidenceList
+              assessmentId={gap.assessmentId}
+              total={gap.evidenceCount}
+            />
+          )}
           <div
             style={{
               fontSize: 11.5,

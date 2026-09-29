@@ -41,6 +41,7 @@ const StateEnum = z.enum(["OPEN", "PLANNED", "PROMOTED", "RESOLVED"]);
 export type GapRow = {
   id: string;
   code: string;
+  assessmentId: string;
   assessmentCode: string;
   orgName: string;
   axis: MeridianAxis;
@@ -109,6 +110,7 @@ export async function listGapRegister(
         return {
           id: g.id,
           code: g.code,
+          assessmentId: g.assessmentId,
           assessmentCode: g.assessment.code,
           orgName: g.assessment.orgName,
           axis: g.axis,
