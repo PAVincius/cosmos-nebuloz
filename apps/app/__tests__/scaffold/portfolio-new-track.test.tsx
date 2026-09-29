@@ -13,6 +13,7 @@ const h = vi.hoisted(() => ({
   createTrack: vi.fn(),
   push: vi.fn(),
   getAccess: vi.fn(),
+  listScaffoldGaps: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -23,6 +24,9 @@ vi.mock("@/app/(scaffold)/actions/tracks", () => ({
 }));
 vi.mock("@/app/(scaffold)/actions/access", () => ({
   getScaffoldAccess: h.getAccess,
+}));
+vi.mock("@/app/(scaffold)/actions/gaps", () => ({
+  listScaffoldGaps: h.listScaffoldGaps,
 }));
 vi.mock("@/app/(scaffold)/actions/templates", () => ({
   listTemplates: h.listTemplates,
@@ -69,6 +73,7 @@ const ACCESS = (allowed: boolean) => ({
 beforeEach(() => {
   vi.clearAllMocks();
   h.getAccess.mockResolvedValue(ACCESS(true));
+  h.listScaffoldGaps.mockResolvedValue({ ok: true, data: [] });
   h.listTracks.mockResolvedValue({ ok: true, data: SUMMARY });
   h.listTemplates.mockResolvedValue({
     ok: true,
@@ -374,5 +379,182 @@ describe("as cinco formas na tela (Crivo F4)", () => {
     expect(screen.getAllByText(/Análise e priorização/).length).toBeGreaterThan(
       0
     );
+  });
+});
+
+// PDF p.3 "Gaps reais do Meridian": a Nova trilha lista os gaps ranqueados e
+// escolher um cria a trilha por createTrackFromGap.
+describe("Nova trilha a partir dos gaps do Meridian", () => {
+  const RANKED = (over: Record<string, unknown>) => ({
+    rank: 1,
+    id: "clx000000000000000000gapA1",
+    code: "G-01",
+    statement:
+      "Triagem de autorizações: 40% das guias voltam por dado faltante",
+    axis: "PROCESS",
+    severity: "HIGH",
+    effort: "S",
+    costOfDelay: 80,
+    confidence: "MEASURED",
+    state: "OPEN",
+    assessmentId: "a1",
+    assessmentCode: "AS-1",
+    promotion: {
+      id: "clx0000000000000000promA1",
+      product: "SCAFFOLD",
+      landed: false,
+    },
+    ...over,
+  });
+
+  const GAPS = [
+    RANKED({}),
+    RANKED({
+      rank: 2,
+      id: "clx000000000000000000gapB2",
+      code: "G-02",
+      statement: "Glosas hospitalares sem priorização",
+      severity: "MEDIUM",
+      promotion: null,
+    }),
+    RANKED({
+      rank: 3,
+      id: "clx000000000000000000gapC3",
+      code: "G-03",
+      statement: "Relatório regulatório manual",
+      promotion: {
+        id: "clx0000000000000000promC3",
+        product: "SCAFFOLD",
+        landed: true,
+      },
+    }),
+    RANKED({
+      rank: 4,
+      id: "clx000000000000000000gapD4",
+      code: "G-04",
+      statement: "Atendimento ao beneficiário",
+      promotion: {
+        id: "clx0000000000000000promD4",
+        product: "COSMOS",
+        landed: false,
+      },
+    }),
+  ];
+
+  const openModal = async () => {
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /nova trilha/i })
+    );
+  };
+
+  it("lista os gaps na ordem do ranking, com o vocabulário do Meridian", async () => {
+    h.listScaffoldGaps.mockResolvedValue({ ok: true, data: GAPS });
+    await openModal();
+
+    await screen.findByText("G-01");
+    // O G-07 é a promoção pendente do portfólio, atrás do modal: fora da conta.
+    const list = screen.getByRole("region", {
+      name: /gaps reais do meridian/i,
+    });
+    const codes = [...list.querySelectorAll(".mono")]
+      .map((n) => n.textContent ?? "")
+      .filter((t) => /^G-\d+$/.test(t));
+    expect(codes).toEqual(["G-01", "G-02", "G-03", "G-04"]);
+    expect(screen.getByText(/gaps reais do meridian/i)).toBeDefined();
+    expect(screen.getAllByText(/Gravidade alta/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Confiança medida/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Custo de atraso 80/).length).toBeGreaterThan(0);
+  });
+
+  it("só o gap promovido e sem trilha pode ser usado; os outros dizem por quê", async () => {
+    h.listScaffoldGaps.mockResolvedValue({ ok: true, data: GAPS });
+    await openModal();
+    await screen.findByText("G-01");
+
+    expect(
+      screen.getAllByRole("button", { name: /usar este gap/i })
+    ).toHaveLength(1);
+    expect(screen.getByText(/ainda não promovido/i)).toBeDefined();
+    expect(screen.getByText(/já tem trilha/i)).toBeDefined();
+    expect(screen.getByText(/outro produto/i)).toBeDefined();
+  });
+
+  it("escolher o gap preenche o processo e cria a trilha com gapId e promotionId", async () => {
+    h.listScaffoldGaps.mockResolvedValue({ ok: true, data: GAPS });
+    await openModal();
+    fireEvent.click(
+      await screen.findByRole("button", { name: /usar este gap/i })
+    );
+
+    const name = (await screen.findByLabelText(
+      /^processo/i
+    )) as HTMLInputElement;
+    expect(name.value).toBe("Triagem de autorizações");
+    expect(screen.getByText(/nasce do gap G-01/i)).toBeDefined();
+
+    await waitFor(() =>
+      expect(screen.getByLabelText(/^template/i)).toHaveProperty(
+        "value",
+        "clx0000000000000000templ1"
+      )
+    );
+    fireEvent.change(screen.getByLabelText(/dono do processo/i), {
+      target: { value: "clx0000000000000000owner1" },
+    });
+    fireEvent.click(
+      screen
+        .getAllByRole("button", { name: /criar trilha/i })
+        .at(-1) as HTMLElement
+    );
+
+    await waitFor(() => expect(h.createTrackFromGap).toHaveBeenCalledTimes(1));
+    expect(h.createTrackFromGap.mock.calls[0][0]).toMatchObject({
+      gapId: "clx000000000000000000gapA1",
+      promotionId: "clx0000000000000000promA1",
+      processName: "Triagem de autorizações",
+    });
+    expect(h.createTrack).not.toHaveBeenCalled();
+  });
+
+  it("dá para desistir do gap e criar sem lacuna", async () => {
+    h.listScaffoldGaps.mockResolvedValue({ ok: true, data: GAPS });
+    await openModal();
+    fireEvent.click(
+      await screen.findByRole("button", { name: /usar este gap/i })
+    );
+    fireEvent.click(
+      await screen.findByRole("button", { name: /tirar o gap/i })
+    );
+    expect(screen.queryByText(/nasce do gap/i)).toBeNull();
+    expect(
+      (screen.getByLabelText(/^processo/i) as HTMLInputElement).value
+    ).toBe("");
+  });
+
+  it("Meridian indisponível: avisa e a criação sem lacuna continua", async () => {
+    h.listScaffoldGaps.mockResolvedValue({
+      ok: false,
+      error: "Módulo MERIDIAN não contratado por esta organização.",
+    });
+    await openModal();
+    expect(
+      await screen.findByText(/gaps do meridian indisponíveis/i)
+    ).toBeDefined();
+    expect(screen.getByLabelText(/^processo/i)).toBeDefined();
+  });
+
+  it("sem gap finalizado: diz isso, sem lista vazia", async () => {
+    h.listScaffoldGaps.mockResolvedValue({ ok: true, data: [] });
+    await openModal();
+    expect(await screen.findByText(/nenhum gap finalizado/i)).toBeDefined();
+  });
+
+  it("a promoção pendente do portfólio segue direta: não consulta a lista de gaps", async () => {
+    render(<PortfolioScreen />);
+    await screen.findByText("G-07");
+    fireEvent.click(screen.getByRole("button", { name: /criar trilha/i }));
+    await screen.findByLabelText(/^processo/i);
+    expect(h.listScaffoldGaps).not.toHaveBeenCalled();
   });
 });
