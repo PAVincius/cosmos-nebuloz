@@ -314,6 +314,44 @@ atrito aberto. A3 e A5 foram confirmados pelo CEO em 2026-09-29 (D-19 e D-20 em
 | **Foco inicial do `ModalShell`** — ao abrir o modal, o foco fica no `body` | Corrigir: o foco vai ao primeiro controle do modal e volta ao gatilho ao fechar | Bussola | Em `github/main` até **2026-10-06**. Critério: abrir qualquer modal do Meridian pelo teclado leva o foco para dentro do modal |
 | **A5** — ciclo de dependência e ajuste de severidade/esforço sem tela | Depois (D-20). Enquanto isso, prova pelo servidor | Crivo (teste de action) · Regua (backlog M-14) | Teste do ciclo (FR-023) pelo servidor até **2026-10-10**. Tela entra pelo evento que vier primeiro: (1) em produção, um `MeridianAssessment` de tenant com `isInternalTenant = false` chega a `status = REVIEW`, ou seja, fecha a coleta; (2) a consultora registra no `diario.md` um ajuste de gap sem caminho; (3) o teste de action acha defeito na recusa de ciclo. Data-limite para rever, mesmo sem evento: **2026-12-15** |
 
+### 2026-09-29 · Benchmark travado por tenant, só a Nebuloz liga (CPO, sobre decisão do CEO)
+
+**Contexto.** O CEO decidiu em 2026-09-29 que o benchmark fica desligado no primeiro contrato **e**
+travado no produto (`docs/compliance/2026-09-29-memo-ceo-operadora-controladora-meridian.md`, item 4 e
+§5 a). Hoje o default é `false`, mas o consultor do cliente liga a caixa ao criar o assessment
+(`screens/assessments.tsx:211`), e o scoring passa a contribuir para a coorte (`actions/scoring.ts:200`,
+`actions/benchmark.ts:55-72`). Ligado, a Nebuloz vira controladora sem linha no RoPA e sem aviso ao
+respondente. A cláusula do DPA (§2.1) sozinha não impede o clique.
+
+**Regra.**
+1. **A permissão é do tenant, não do assessment.** Cada tenant tem uma habilitação de benchmark do
+   Meridian, desligada por padrão. Enquanto estiver desligada, nenhum assessment desse tenant pode ter
+   `benchmarkOptIn = true`.
+2. **Só a Nebuloz liga, e só pelo back-office.** Quem liga é staff Nebuloz, na ficha do cliente em
+   backoffice.nebuloz.ai. É obrigatório informar a referência do aditivo contratual (DPA §2.1). A ação
+   grava auditoria com ator, data e referência. Nenhum papel do tenant do cliente liga ou desliga,
+   inclusive ADMIN e CONSULTANT.
+3. **Com a habilitação ligada, o opt-in continua por assessment.** A caixa aparece e o consultor decide
+   assessment a assessment, como hoje.
+4. **O servidor recusa, não só a tela.** `createAssessment` recusa `benchmarkOptIn = true` com a
+   habilitação desligada. `runScoring`/`contributeToBenchmark` não contribui se a habilitação estiver
+   desligada no momento do scoring, mesmo com um `benchmarkOptIn = true` antigo. Desligar a habilitação
+   trava as contribuições futuras. Retirar o que já contribuiu segue a regra atual de
+   `withdrawContribution`.
+5. **Tenant interno.** `isInternalTenant = true` segue a mesma regra. Staff liga quando quiser, sem
+   aditivo, porque a Nebuloz já é controladora do próprio dado.
+
+**Fora desta regra.** Linha no RoPA e aviso próprio ao respondente são pré-requisito para ligar a
+habilitação de um cliente externo (memo, §5 a). São da Lacre e não bloqueiam a trava.
+
+**Dono e data.** Regua (spec curta) até **2026-10-01**; Bussola, em `github/main` até **2026-10-07**.
+Critério de pronto: com a habilitação desligada, a caixa não aparece; chamar `createAssessment` direto
+com `benchmarkOptIn: true` volta erro; e um assessment antigo com opt-in não gera contribuição no
+scoring. **Bloqueia cliente externo.**
+
+Antes do primeiro contrato, Pilar confere em produção se algum assessment de tenant externo tem
+`benchmarkOptIn = true`, com o "vai" do CEO.
+
 ---
 
 *Draft para revisão interna. Documento companheiro: Meridian SRD v1.0.*
