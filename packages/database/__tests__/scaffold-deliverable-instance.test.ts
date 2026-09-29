@@ -59,7 +59,7 @@ describe("ScaffoldDeliverableInstance", () => {
     ]) {
       expect(modelo).toMatch(new RegExp(`\\b${campo}\\b`));
     }
-    expect(modelo).toContain("@@unique([trackId, code])");
+    expect(modelo).toContain("@@unique([tenantId, trackId, code])");
   });
 
   it("tipos e responsáveis do esqueleto (c.0)", () => {

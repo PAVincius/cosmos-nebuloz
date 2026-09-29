@@ -187,7 +187,7 @@ model CharterCaseControl {
   mitigation CharterMitigation?  @relation(fields: [mitigationId], references: [id], onDelete: SetNull)
   events     CharterCaseControlEvent[]
 
-  @@unique([useCaseId, code])
+  @@unique([tenantId, useCaseId, code])
   @@index([tenantId])
   @@index([tenantId, state])
   @@index([useCaseId, state])

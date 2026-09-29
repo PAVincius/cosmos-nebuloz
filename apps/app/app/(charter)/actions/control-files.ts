@@ -54,7 +54,13 @@ async function loadControl(db: Db, tenantId: string, ref: z.infer<typeof Ref>) {
     throw new GovernanceError("case.unknown", "Caso não encontrado.");
   }
   const control = await db.charterCaseControl.findUnique({
-    where: { useCaseId_code: { useCaseId: uc.id, code: ref.controlCode } },
+    where: {
+      tenantId_useCaseId_code: {
+        tenantId,
+        useCaseId: uc.id,
+        code: ref.controlCode,
+      },
+    },
   });
   if (!control) {
     throw new GovernanceError(

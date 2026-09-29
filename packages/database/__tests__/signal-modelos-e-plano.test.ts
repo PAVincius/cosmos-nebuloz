@@ -145,7 +145,7 @@ describe("SignalPlanMetric", () => {
   });
 
   it("primária vigente única por iniciativa, garantida no banco", () => {
-    expect(m).toContain("@@unique([initiativeId, isCurrentPrimary])");
+    expect(m).toContain("@@unique([tenantId, initiativeId, isCurrentPrimary])");
     expect(sql).toMatch(/CHECK \("isCurrentPrimary" IS NULL OR/);
   });
 

@@ -39,7 +39,9 @@ describe("ScaffoldDeliverableLink", () => {
   });
 
   it("0..N por entregável, sem repetir o mesmo item", () => {
-    expect(modelo).toContain("@@unique([deliverableId, provider, externalId])");
+    expect(modelo).toContain(
+      "@@unique([tenantId, deliverableId, provider, externalId])"
+    );
     expect(modelo).toContain("@@index([deliverableId])");
   });
 

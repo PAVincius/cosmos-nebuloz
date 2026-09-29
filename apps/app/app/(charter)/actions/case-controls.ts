@@ -90,9 +90,16 @@ async function loadUseCase(db: Db, tenantId: string, code: string) {
   return uc;
 }
 
-async function loadControl(db: Db, useCaseId: string, controlCode: string) {
+async function loadControl(
+  db: Db,
+  tenantId: string,
+  useCaseId: string,
+  controlCode: string
+) {
   const control = await db.charterCaseControl.findUnique({
-    where: { useCaseId_code: { useCaseId, code: controlCode } },
+    where: {
+      tenantId_useCaseId_code: { tenantId, useCaseId, code: controlCode },
+    },
   });
   if (!control) {
     throw new GovernanceError(
@@ -506,7 +513,12 @@ export async function attachControlEvidence(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       return applyTransition({
         db,
         ctx,
@@ -541,7 +553,12 @@ export async function submitControl(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       if (!control.fileKey) {
         throw new GovernanceError(
           "control.file.required",
@@ -586,7 +603,12 @@ export async function editControl(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       if (data.ownerId) {
         // Responsável de outro tenant seria um vínculo com pessoa que não pode
         // nem abrir o caso.
@@ -724,7 +746,13 @@ export async function addExtraControl(
         }
 
         const created = await db.charterCaseControl.findUnique({
-          where: { useCaseId_code: { useCaseId: uc.id, code } },
+          where: {
+            tenantId_useCaseId_code: {
+              tenantId: ctx.tenantId,
+              useCaseId: uc.id,
+              code,
+            },
+          },
           select: { id: true },
         });
         if (!created) {
@@ -774,7 +802,12 @@ export async function acceptControl(
 
     const accepted = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       await assertNotProducer({ db, ctx, uc, control, includeCaseOwner: true });
       const acceptedAt = new Date();
       const expiresAt = expiresAtFor(
@@ -821,7 +854,12 @@ export async function requestControlAdjustment(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       await assertNotProducer({
         db,
         ctx,
@@ -878,7 +916,12 @@ export async function dispenseControl(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       await assertNotProducer({ db, ctx, uc, control, includeCaseOwner: true });
       if (!control.dispensable) {
         throw new GovernanceError(
@@ -919,7 +962,12 @@ export async function reopenControl(
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
-      const control = await loadControl(db, uc.id, data.controlCode);
+      const control = await loadControl(
+        db,
+        ctx.tenantId,
+        uc.id,
+        data.controlCode
+      );
       await assertNotProducer({
         db,
         ctx,

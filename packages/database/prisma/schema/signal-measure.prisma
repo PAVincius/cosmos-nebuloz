@@ -168,7 +168,7 @@ model SignalPlanMetric {
   mapping     SignalMetricMapping?     @relation(fields: [sourceMappingId], references: [id], onDelete: SetNull)
   events      SignalPlanMetricEvent[]
 
-  @@unique([initiativeId, isCurrentPrimary])
+  @@unique([tenantId, initiativeId, isCurrentPrimary])
   @@index([tenantId])
   @@index([initiativeId, state])
 }

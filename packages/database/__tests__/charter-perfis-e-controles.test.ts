@@ -128,7 +128,7 @@ describe("CharterCaseControl", () => {
     ]) {
       expect(m).toMatch(new RegExp(`\\b${campo}\\b`));
     }
-    expect(m).toContain("@@unique([useCaseId, code])");
+    expect(m).toContain("@@unique([tenantId, useCaseId, code])");
   });
 
   it("dispensa tem prazo: CHECK amarra estado, prazo e motivo", () => {

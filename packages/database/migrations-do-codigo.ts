@@ -142,4 +142,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929010400_signal_plan_metric_baseline_key",
   "20260929010500_signal_frozen_terminal",
   "20260929010600_imutabilidade_de_versoes_publicadas",
+  "20260929010700_unique_com_tenant",
 ];

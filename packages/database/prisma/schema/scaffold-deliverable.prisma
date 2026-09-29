@@ -112,7 +112,7 @@ model ScaffoldDeliverableInstance {
   comments      ScaffoldDeliverableComment[]
   links         ScaffoldDeliverableLink[]
 
-  @@unique([trackId, code])
+  @@unique([tenantId, trackId, code])
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([trackId, stepCode])
@@ -221,7 +221,7 @@ model ScaffoldDeliverableLink {
   tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
 
-  @@unique([deliverableId, provider, externalId])
+  @@unique([tenantId, deliverableId, provider, externalId])
   @@index([tenantId])
   @@index([deliverableId])
 }
