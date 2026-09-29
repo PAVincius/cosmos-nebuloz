@@ -10,20 +10,22 @@
 
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useCallback, useId, useState } from "react";
+import { approvePlanMetric } from "@/app/(signal)/actions/plan-approve";
+import { editMetric } from "@/app/(signal)/actions/plan-edit";
 import {
-  approvePlanMetric,
-  changePrimary,
-  editMetric,
   mapMetricSource,
   pauseMetric,
-  proposeMetric,
-  requestTargetReview,
   resumeMetric,
-} from "@/app/(signal)/actions/plan";
+} from "@/app/(signal)/actions/plan-flow";
 import {
   getPlanMetric,
   type PlanMetricHistory,
 } from "@/app/(signal)/actions/plan-read";
+import {
+  changePrimary,
+  requestTargetReview,
+} from "@/app/(signal)/actions/plan-review";
+import { proposeMetric } from "@/app/(signal)/actions/plan-setup";
 import { formatMetricValue, PLAN_STATE_META } from "@/lib/signal/plan";
 import {
   Eyebrow,

@@ -27,18 +27,27 @@ vi.mock("@/app/(signal)/actions/plan-read", () => ({
   getInitiativePlan: h.getInitiativePlan,
   getPlanMetric: h.getPlanMetric,
 }));
-vi.mock("@/app/(signal)/actions/plan", () => ({
+vi.mock("@/app/(signal)/actions/plan-approve", () => ({
   approvePlanMetric: vi.fn(),
-  changePrimary: h.changePrimary,
+}));
+vi.mock("@/app/(signal)/actions/plan-edit", () => ({
   editMetric: h.editMetric,
-  generatePlan: h.generatePlan,
-  classifyInitiative: h.classifyInitiative,
+}));
+vi.mock("@/app/(signal)/actions/plan-flow", () => ({
   mapMetricSource: vi.fn(),
   pauseMetric: h.pauseMetric,
-  proposeMetric: vi.fn(),
-  requestTargetReview: h.requestTargetReview,
   resumeMetric: vi.fn(),
 }));
+vi.mock("@/app/(signal)/actions/plan-review", () => ({
+  changePrimary: h.changePrimary,
+  requestTargetReview: h.requestTargetReview,
+}));
+vi.mock("@/app/(signal)/actions/plan-setup", () => ({
+  classifyInitiative: h.classifyInitiative,
+  generatePlan: h.generatePlan,
+  proposeMetric: vi.fn(),
+}));
+
 vi.mock("@/components/signal/base", async () => {
   const primitives = await vi.importActual<
     typeof import("@/components/charter/base")

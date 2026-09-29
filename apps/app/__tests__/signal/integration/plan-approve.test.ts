@@ -32,7 +32,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
   return { ...actual, logSignalAudit: h.logSignalAudit };
 });
 
-import { approvePlanMetric } from "@/app/(signal)/actions/plan";
+import { approvePlanMetric } from "@/app/(signal)/actions/plan-approve";
 
 const CTX = {
   tenantId: "tnt_1",
