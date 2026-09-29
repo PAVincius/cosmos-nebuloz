@@ -27,6 +27,7 @@ const h = vi.hoisted(() => ({
   setStepState: vi.fn(),
   addLink: vi.fn(),
   removeLink: vi.fn(),
+  addDeliverable: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -59,6 +60,7 @@ vi.mock("@/app/(scaffold)/actions/deliverables", () => ({
   readDeliverableFile: h.readFile,
   addDeliverableLink: h.addLink,
   removeDeliverableLink: h.removeLink,
+  addDeliverable: h.addDeliverable,
 }));
 vi.mock("@/app/(scaffold)/actions/export", () => ({
   exportHandoverPack: vi.fn(),
@@ -1169,5 +1171,141 @@ describe("vínculos com item externo", () => {
       (screen.getByRole("button", { name: /^ligar$/i }) as HTMLButtonElement)
         .disabled
     ).toBe(true);
+  });
+});
+
+// SC-PO-05 (Norte): entregável fora do template, com a escolha de ser
+// obrigatório. A action existia sem tela.
+describe("adicionar entregável fora do template", () => {
+  const open = async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    render(<TrackDetailScreen param="trk1" />);
+    const add = await screen.findByRole("button", {
+      name: /adicionar entregável/i,
+    });
+    await waitFor(() => expect(add).toHaveProperty("disabled", false));
+    fireEvent.click(add);
+  };
+  const fillTitle = (v: string) =>
+    fireEvent.change(screen.getByLabelText(/^título/i), {
+      target: { value: v },
+    });
+
+  it("cria na fase aberta, com o que foi digitado, e recarrega", async () => {
+    h.addDeliverable.mockResolvedValue({
+      ok: true,
+      data: { deliverableId: "d9", code: "X-001" },
+    });
+    await open();
+    fillTitle("Parecer jurídico");
+    fireEvent.change(screen.getByLabelText(/^descrição/i), {
+      target: { value: "Parecer sobre o uso do dado." },
+    });
+    fireEvent.change(screen.getByLabelText(/^tipo/i), {
+      target: { value: "DOCUMENT" },
+    });
+    fireEvent.change(screen.getByLabelText(/^produzido por/i), {
+      target: { value: "LEGAL" },
+    });
+    const before = h.listDeliverables.mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: /^adicionar$/i }));
+
+    await waitFor(() => expect(h.addDeliverable).toHaveBeenCalledTimes(1));
+    expect(h.addDeliverable.mock.calls[0]?.[0]).toEqual({
+      trackId: "trk1",
+      phase: "PILOT",
+      title: "Parecer jurídico",
+      description: "Parecer sobre o uso do dado.",
+      kind: "DOCUMENT",
+      producer: "LEGAL",
+      required: false,
+    });
+    await waitFor(() =>
+      expect(h.listDeliverables.mock.calls.length).toBeGreaterThan(before)
+    );
+  });
+
+  it("nasce opcional; a pessoa escolhe se trava o gate", async () => {
+    h.addDeliverable.mockResolvedValue({
+      ok: true,
+      data: { deliverableId: "d9", code: "X-001" },
+    });
+    await open();
+    fillTitle("Parecer");
+    const box = screen.getByLabelText(
+      /obrigatório para o gate/i
+    ) as HTMLInputElement;
+    expect(box.checked).toBe(false);
+    fireEvent.click(box);
+    fireEvent.click(screen.getByRole("button", { name: /^adicionar$/i }));
+    await waitFor(() => expect(h.addDeliverable).toHaveBeenCalled());
+    expect(h.addDeliverable.mock.calls[0]?.[0].required).toBe(true);
+  });
+
+  it("Adicionar só habilita com título", async () => {
+    await open();
+    const send = screen.getByRole("button", {
+      name: /^adicionar$/i,
+    }) as HTMLButtonElement;
+    expect(send.disabled).toBe(true);
+    fillTitle("  ");
+    expect(send.disabled).toBe(true);
+    fillTitle("Parecer");
+    expect(send.disabled).toBe(false);
+  });
+
+  it("oferece só os tipos e produtores do catálogo, por extenso", async () => {
+    await open();
+    const kinds = [
+      ...(screen.getByLabelText(/^tipo/i) as HTMLSelectElement).options,
+    ].map((o) => o.textContent);
+    expect(kinds).toEqual([
+      "Documento",
+      "Planilha",
+      "Conjunto de dados",
+      "Configuração",
+      "Assinatura",
+      "Treinamento",
+      "Relatório",
+      "Pacote",
+    ]);
+    const producers = [
+      ...(screen.getByLabelText(/^produzido por/i) as HTMLSelectElement)
+        .options,
+    ].map((o) => o.textContent);
+    expect(producers).toEqual([
+      "Dono do processo",
+      "Consultoria",
+      "Área técnica",
+      "Jurídico",
+    ]);
+  });
+
+  it("recusa do servidor aparece no modal, sem perder o que foi digitado", async () => {
+    h.addDeliverable.mockResolvedValue({
+      ok: false,
+      error:
+        "Requer papel Dono do processo, Líder de transformação ou Consultor — Adicionar entregável fora do template",
+    });
+    await open();
+    fillTitle("Parecer");
+    fireEvent.click(screen.getByRole("button", { name: /^adicionar$/i }));
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      "Requer papel"
+    );
+    expect((screen.getByLabelText(/^título/i) as HTMLInputElement).value).toBe(
+      "Parecer"
+    );
+  });
+
+  it("sem deliverable.add, o botão fica desabilitado com o motivo", async () => {
+    h.getAccess.mockResolvedValue(accessWithout(["deliverable.add"]));
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    render(<TrackDetailScreen param="trk1" />);
+    const add = await screen.findByRole("button", {
+      name: /adicionar entregável/i,
+    });
+    await waitFor(() => expect(add).toHaveProperty("disabled", true));
+    expect(add.getAttribute("title")).toMatch(/Requer papel/);
   });
 });

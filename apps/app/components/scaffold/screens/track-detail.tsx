@@ -34,6 +34,7 @@ import {
 } from "@/app/(scaffold)/actions/tracks";
 import { phaseGateState } from "@/lib/scaffold/deliverable-machine";
 import { PHASE, PHASE_STATE } from "@/lib/scaffold/phases";
+import { AddDeliverableModal } from "../add-deliverable-modal";
 import {
   Eyebrow,
   Field,
@@ -113,6 +114,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     | null
   >(null);
   const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
+  const [adding, setAdding] = useState(false);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
@@ -363,6 +365,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       activePhase.state === "GATE_READY" ||
       activePhase.state === "BLOCKED");
   const manageAccess = can("track.manage");
+  const addAccess = can("deliverable.add");
   // Só-leitura de verdade: nem passo nem trilha. Diz por que, uma vez, no topo.
   const readOnlyReason =
     !(stepAccess.allowed || manageAccess.allowed) && stepAccess.reason
@@ -444,6 +447,19 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         </div>
       ) : null}
 
+      {adding ? (
+        <AddDeliverableModal
+          onClose={() => setAdding(false)}
+          onCreated={() => {
+            setAdding(false);
+            load();
+          }}
+          phase={activePhase.phase}
+          phaseLabel={PHASE[activePhase.phase].label}
+          trackId={track.id}
+        />
+      ) : null}
+
       {notice ? (
         <div
           role="alert"
@@ -488,6 +504,18 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           }}
         >
           <SectionCard
+            action={
+              <Button
+                disabled={!addAccess.allowed}
+                icon="plus"
+                onClick={() => setAdding(true)}
+                size="sm"
+                title={addAccess.reason ?? undefined}
+                variant="secondary"
+              >
+                Adicionar entregável
+              </Button>
+            }
             icon="fileText"
             subtitle="SG-01 · o gate só fecha com todo obrigatório aprovado"
             title={`Entregáveis — ${PHASE[activePhase.phase].label}`}
