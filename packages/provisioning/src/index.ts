@@ -34,6 +34,11 @@ export {
   type BootstrapScaffoldInput,
   bootstrapScaffold,
 } from "./scaffold";
+export {
+  type BootstrapSignalDeps,
+  type BootstrapSignalInput,
+  bootstrapSignal,
+} from "./signal";
 export { type SlugChecker, slugify, uniqueSlug } from "./slug";
 export {
   type ProvisionTenantInput,
