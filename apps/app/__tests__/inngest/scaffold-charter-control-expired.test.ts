@@ -166,7 +166,7 @@ describe("applyCharterControlExpired", () => {
     expect(data.action).toBe(
       "scaffold.gate.charter_control_expired_after_close"
     );
-    expect(data.diff).toBeNull();
+    expect(data.diff).toBeUndefined();
   });
 
   it.each(["IDLE", "BLOCKED"])("SCALE em %s: nada a fazer", async (state) => {

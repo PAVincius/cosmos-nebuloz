@@ -77,7 +77,8 @@ export async function applyCharterControlExpired(
             action,
             entityType: "scaffold.phase",
             entityId: phase.id,
-            diff,
+            // Json nulo do Prisma não aceita `null` puro: sem mudança de estado, omite.
+            ...(diff ? { diff } : {}),
             metadata: {
               origin: PRODUCT_EVENTS.charterControlExpired,
               caseControlId: data.caseControlId,
