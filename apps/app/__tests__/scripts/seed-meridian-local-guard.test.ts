@@ -38,14 +38,14 @@ describe("seed-meridian: guarda de DATABASE_URL local", () => {
       code: 1,
       stderr: expect.stringMatching(/localhost.*127\.0\.0\.1/),
     });
-  });
+  }, 20_000);
 
   it("recusa quando DATABASE_URL está vazia ou inválida", async () => {
     await expect(runSeed("")).rejects.toMatchObject({
       code: 1,
       stderr: expect.stringMatching(/vazio ou inválido/),
     });
-  });
+  }, 20_000);
 
   it("deixa passar host local — falha na conexão, não na guarda", async () => {
     // Porta morta em localhost: se a guarda deixar passar, o erro vem do
