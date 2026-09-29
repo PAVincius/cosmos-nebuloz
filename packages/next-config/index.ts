@@ -1,6 +1,27 @@
 import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
+/**
+ * Origem (esquema + host + porta) do Supabase a partir de uma URL, ou null se a
+ * URL não existe ou não é válida.
+ *
+ * O navegador faz o PUT direto na URL assinada do Storage (artefato de passo do
+ * Scaffold, entregável, evidência do Charter). Sem a origem no `connect-src`, o
+ * CSP barra a requisição (securitypolicyviolation) e o upload nunca chega ao
+ * bucket. Só a origem, nunca o caminho, e só se a env existir: URL inválida não
+ * pode derrubar o `headers()` nem entrar no cabeçalho.
+ */
+export function supabaseOrigin(url: string | undefined): string | null {
+  if (!url) {
+    return null;
+  }
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
 export const config: NextConfig = {
   output: process.env.DOCKER_BUILD === "true" ? "standalone" : undefined,
 
@@ -25,7 +46,12 @@ export const config: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "connect-src 'self' wss://*.liveblocks.io https://*.liveblocks.io https://*.anthropic.com https://*.googleapis.com https://us.i.posthog.com https://us-assets.i.posthog.com https://api.inngest.com",
+              [
+                "connect-src 'self' wss://*.liveblocks.io https://*.liveblocks.io https://*.anthropic.com https://*.googleapis.com https://us.i.posthog.com https://us-assets.i.posthog.com https://api.inngest.com",
+                supabaseOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL),
+              ]
+                .filter(Boolean)
+                .join(" "),
               process.env.NODE_ENV === "development"
                 ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'"
                 : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",

@@ -78,23 +78,83 @@ export function bucketOptionsFor(bucket: string) {
   };
 }
 
+/** O que o `ensureBucket` usa do client de storage. Exposto para o teste dar um
+ *  client falso sem precisar de um Supabase. */
+export type BucketAdmin = {
+  storage: {
+    listBuckets(): Promise<{
+      data: { name: string }[] | null;
+      error: { message: string } | null;
+    }>;
+    createBucket(
+      name: string,
+      options: ReturnType<typeof bucketOptionsFor>
+    ): Promise<{
+      data: unknown;
+      error: { message: string; statusCode?: string | number } | null;
+    }>;
+    updateBucket(
+      name: string,
+      options: ReturnType<typeof bucketOptionsFor>
+    ): Promise<{ data: unknown; error: { message: string } | null }>;
+  };
+};
+
+/** "Já existe" na criação: duas requisições criando o mesmo bucket ao mesmo tempo.
+ *  Quem perdeu a corrida tem o que queria, então não é falha. */
+function isAlreadyExists(error: {
+  message: string;
+  statusCode?: string | number;
+}): boolean {
+  return (
+    String(error.statusCode) === "409" ||
+    /already exists|duplicate/i.test(error.message)
+  );
+}
+
+/**
+ * Garante o bucket, e FALHA ALTO se não conseguir. Antes, o retorno de
+ * `createBucket` (e de `listBuckets`/`updateBucket`) era ignorado: bucket que não
+ * nascia só aparecia como "Bucket not found" no upload, longe da causa.
+ */
+export async function ensureBucketWith(
+  client: BucketAdmin,
+  bucket: string
+): Promise<void> {
+  const options = bucketOptionsFor(bucket);
+  const { data: buckets, error: listError } =
+    await client.storage.listBuckets();
+  if (listError) {
+    throw new Error(
+      `Falha ao listar buckets ao garantir "${bucket}": ${listError.message}`
+    );
+  }
+  const exists = buckets?.some((b) => b.name === bucket);
+  if (!exists) {
+    const { error } = await client.storage.createBucket(bucket, options);
+    if (error && !isAlreadyExists(error)) {
+      throw new Error(`Falha ao criar o bucket "${bucket}": ${error.message}`);
+    }
+    return;
+  }
+  // O bucket do Scaffold pode ter nascido sem limite de tipo: reaplica.
+  if (bucket === SCAFFOLD_ARTEFACT_BUCKET) {
+    const { error } = await client.storage.updateBucket(bucket, options);
+    if (error) {
+      throw new Error(
+        `Falha ao atualizar o bucket "${bucket}": ${error.message}`
+      );
+    }
+  }
+}
+
 export async function ensureBucket(
   bucket: string = AI_PLAYGROUND_BUCKET
 ): Promise<void> {
   if (!(supabaseUrl && supabaseServiceKey)) {
     return;
   }
-  const options = bucketOptionsFor(bucket);
-  const { data: buckets } = await storageClient.storage.listBuckets();
-  const exists = buckets?.some((b) => b.name === bucket);
-  if (!exists) {
-    await storageClient.storage.createBucket(bucket, options);
-    return;
-  }
-  // O bucket do Scaffold pode ter nascido sem limite de tipo: reaplica.
-  if (bucket === SCAFFOLD_ARTEFACT_BUCKET) {
-    await storageClient.storage.updateBucket(bucket, options);
-  }
+  await ensureBucketWith(storageClient as unknown as BucketAdmin, bucket);
 }
 
 /** Remove objetos do bucket pelo `storagePath`. Usado pela rotina de
