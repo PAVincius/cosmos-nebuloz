@@ -258,3 +258,25 @@ na linha **Dono do SLA** do RACI do
 [playbook de vendas](../comercial/playbook-de-vendas.md) §4, que segue em branco.
 Enquanto estiver, esta decisão não tem dono — e é isso que a mantém aberta desde
 o RoPA.
+
+## 6. Decisões
+
+Respostas às perguntas do §5, na numeração deste documento. Fonte: relato da
+Morgana, 2026-09-29; não vi a resposta original do CEO.
+
+- **2026-09-29 — Decisão do CEO (pergunta 1): a Nebuloz é operadora no
+  Meridian.** O enquadramento vale, com o texto do CEO, para o Meridian. A
+  resposta não disse se vale também para o participante de reunião; até haver
+  confirmação, o DPA mantém §1.1 como está e o enquadramento de reunião segue
+  como recomendação (§2), não como decisão.
+- **2026-09-29 — Decisão do CEO (pergunta 3): não.** Conteúdo de cliente não é
+  usado para demonstração, ajuste de prompt nem avaliação de modelo. Mantém o §2 do
+  DPA modelo como redigido e a Nebuloz operadora.
+- **2026-09-29 — Decisão do CEO (pergunta 4): o canal público é
+  `privacy@nebuloz.com`.** Falta confirmar que a caixa existe e tem dono que a
+  leia em 1 dia útil (a decisão fixa o endereço, não prova a caixa).
+- **Em aberto com o CEO:** pergunta 2 (`benchmarkOptIn` no primeiro contrato) e
+  pergunta 5 (encarregado). Enquanto a 2 estiver aberta, o DPA §2.1 e o aditivo
+  provisório §3.3 (benchmark desligado) seguem como proposta; a Nebuloz é
+  operadora só enquanto a função permanecer desligada.
+- **Em aberto com o jurídico:** perguntas 6 a 8.

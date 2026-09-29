@@ -96,7 +96,7 @@ Derivado do schema, não de template. Uma linha por finalidade.
 | 2 | Registro de acesso e tentativa recusada | e-mail, IP, user-agent | Usuário e quem tentou entrar | Legítimo interesse — segurança | **Não definida** |
 | 3 | Trilha de auditoria | userId, actorId, IP, user-agent, targetUserId, diff | Usuário | Legítimo interesse + obrigação contratual | 12 meses |
 | 4 | Execução de portfólio | nome, avatar, conteúdo de standup | Usuário e membro de time | Execução de contrato | Duração do contrato + 30 dias |
-| 5 | Diagnóstico de maturidade | **nome, e-mail e cargo de respondente** | **Terceiro sem conta** | A definir — ver §4 | **Não definida** |
+| 5 | Diagnóstico de maturidade | **nome, e-mail e cargo de respondente** | **Terceiro sem conta** | Base do cliente; Nebuloz operadora — decisão do CEO, 2026-09-29 (§9) | **Não definida** (evidência: 90 dias, ver parecer de 2026-09-28) |
 | 6 | Governança de IA | nome livre de dono de caso, aceites | Usuário e terceiro nomeado | Execução de contrato | Duração do contrato |
 | 7 | Inteligência de reunião | fala transcrita, resumo, **e-mail e nome de participante** | Participante, inclusive externo | Consentimento — **coletado e verificado antes do processamento** (ver §7) | **Não definida** |
 | 8 | Copiloto e geração por IA | conteúdo de conversa, dado de contexto do tenant | Usuário | Execução de contrato | Duração do contrato |
@@ -265,3 +265,23 @@ externo continua sem canal próprio — §4.
 
 Os passos 1, 2, 5 e 6 não dependem de engenharia. O 4 é o único com código, e é
 o menor deles.
+
+## 9. Decisões
+
+Fonte: relato da Morgana, 2026-09-29; não vi a resposta original do CEO. Detalhe
+em [`operadora-controladora.md`](operadora-controladora.md) §6.
+
+- **2026-09-29 — Decisão do CEO: a Nebuloz é operadora no Meridian** (finalidade
+  5, respondente sem conta). Fecha a decisão que a §4 e o passo 2 da §8 deixavam
+  aberta para o respondente do Meridian: a base legal é a do cliente, e o pedido
+  do titular vai a ele. Para o participante de reunião (finalidade 7), a resposta
+  não o citou; segue como recomendação.
+- **2026-09-29 — Decisão do CEO: conteúdo de cliente não é usado para
+  demonstração, ajuste de prompt ou avaliação de modelo.** Nenhuma linha nova de
+  finalidade própria da Nebuloz nasce disso.
+- **2026-09-29 — Decisão do CEO: canal público `privacy@nebuloz.com`.** Falta
+  confirmar que a caixa existe e é lida.
+- **Em aberto com o CEO:** `benchmarkOptIn` no primeiro contrato; encarregado.
+  Enquanto a primeira estiver aberta, a operadora vale só com a função desligada:
+  ligada, a Nebuloz é controladora do conjunto comparativo e a finalidade 5 ganha
+  uma linha própria.

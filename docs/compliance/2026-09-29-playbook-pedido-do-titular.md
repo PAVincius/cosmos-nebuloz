@@ -6,7 +6,7 @@
 
 | # | Passo | Quem | Quando |
 |---|---|---|---|
-| 1 | Pedido chega em `{{E-MAIL DO CANAL}}`. Abrir registro (planilha ou nota em `docs/compliance/`, sem colar o conteúdo do dado pessoal, só nome, e-mail, data, tipo, organização) e **marcar a data de recebimento**: o relógio corre de aqui | Lacre | dia 0 |
+| 1 | Pedido chega em `privacy@nebuloz.com`. Abrir registro (planilha ou nota em `docs/compliance/`, sem colar o conteúdo do dado pessoal, só nome, e-mail, data, tipo, organização) e **marcar a data de recebimento**: o relógio corre de aqui | Lacre | dia 0 |
 | 2 | Classificar: (a) dado tratado em nome de cliente → segue; (b) dado em que a Nebuloz é controladora (site, segurança, comercial) → Nebuloz responde, sair deste playbook; (c) não achei o titular ou a organização → pedir esclarecimento **sem confirmar nem negar** que os dados existem | Lacre | até dia 1 |
 | 3 | Identificar a organização: por e-mail do titular em `MeridianRespondent` / `MeetingParticipant`, ou pelo nome que ele informou. Quem tem leitura em produção consulta; sem credencial, Lacre pede a quem tem. **Nunca deduzir a organização.** | Lacre → Pilar | até dia 1 |
 | 4 | Redigir dois textos: **repasse ao cliente** (quem pediu, o quê, prazo legal, a instrução que se pede, o que a Nebuloz pode executar, DPA §9.2) e **aviso ao titular** ("encaminhamos seu pedido à [organização] em [data]; ela decide o pedido"). Nenhum dos dois decide o mérito | Lacre | até dia 2 |

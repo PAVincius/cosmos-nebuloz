@@ -5,6 +5,8 @@
 - **Destrava:** condição 1 de `docs/qualidade/prontidao/meridian.md` (Meridian para cliente externo) e condição 4 do parecer de 2026-09-24 (`2026-09-24-parecer-meridian-respondente.md` §4).
 - **Natureza:** memo para decisão. A decisão é sua; a validação jurídica das cláusulas é de quem responde juridicamente pela Nebuloz. Isto não é aconselhamento jurídico.
 
+> **Atualização, 2026-09-29 (mesmo dia):** o CEO decidiu que a Nebuloz é operadora no Meridian, que conteúdo de cliente não serve a demonstração, ajuste de prompt ou avaliação de modelo, e que o canal é `privacy@nebuloz.com` (ver "Decisões", ao fim; fonte: relato da Morgana). **O que resta ao CEO:** confirmar se o enquadramento vale também para reunião; benchmark no primeiro contrato; encarregado; C8; Dono do SLA. O texto abaixo é o memo original e está mantido como registro.
+
 ## O que você precisa decidir
 
 **Uma escolha: A, B ou C** (abaixo). Recomendo **A**. É a decisão que trava o DPA. Junto dela, duas respostas de sim/não que entram no primeiro contrato: benchmark desligado e (opcional) a cláusula C8. As demais perguntas (§4) são de dado ou de nomeação e destravam o canal do titular.
@@ -102,9 +104,15 @@ Proposta de divisão, a preencher no RACI (`playbook-de-vendas.md` §4, coluna M
 
 ## Decisões
 
-Preenchido depois que o CEO responder. Enquanto estiver em branco, a condição 1 do relatório de prontidão segue aberta.
+Fonte das três primeiras: relato da Morgana, 2026-09-29; não vi a resposta original. A numeração do CEO segue a de `operadora-controladora.md` §5, não a da tabela do §4 deste memo.
 
-- **CEO — enquadramento (A / B / C):** _aguardando_
+- **2026-09-29 — Decisão do CEO — enquadramento:** a Nebuloz é **operadora no Meridian** (pergunta 1). Corresponde à opção A para o Meridian. A resposta não citou o participante de reunião: **fica a confirmar** se A vale para reunião ou se o caminho é C (reunião fora do contrato até decidir). Isso muda o DPA §1.1, §2 e §9, e é a única pergunta que o CEO ainda precisa responder para fechar a condição 1.
+- **2026-09-29 — Decisão do CEO — uso de conteúdo:** **não** usar conteúdo de cliente para demonstração, ajuste de prompt nem avaliação de modelo (pergunta 3). Fecha a trava 2 da §3.
+- **2026-09-29 — Decisão do CEO — canal:** `privacy@nebuloz.com` (pergunta 4). Falta confirmar que a caixa existe e tem dono.
+- **Em aberto com o CEO:** benchmark desligado no primeiro contrato (pergunta 2, item 4 da §4); encarregado (pergunta 5, item 3 da §4); C8; Dono do SLA e quem envia.
+- **Jurídico — revisão do `dpa-modelo.md`:** _aguardando_
+
+Ainda sem resposta do CEO:
 - **CEO — C8 (sim / não):** _aguardando_
 - **CEO — benchmark desligado no primeiro contrato (sim / não):** _aguardando_
 - **CEO — Dono do SLA e quem envia:** _aguardando_

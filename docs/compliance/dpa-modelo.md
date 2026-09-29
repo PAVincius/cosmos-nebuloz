@@ -61,9 +61,11 @@ não diretamente ao titular.
 > de seus próprios colaboradores. Para esses, a Nebuloz é controladora
 > independente, e este anexo não se aplica — a Política de Privacidade do site
 > e os contratos de trabalho é que regem. O RoPA (§3, finalidades 2, 3, 9 e 10)
-> separa uma coisa da outra. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
-> divisória; é a decisão "operadora × controladora" que o RoPA §4 deixa aberta,
-> e é a que define para onde vai o pedido de um titular sem conta]]
+> separa uma coisa da outra. **Decisão do CEO, 2026-09-29: a Nebuloz é
+> operadora no Meridian** (`operadora-controladora.md` §6). Para participante de
+> reunião a resposta não o citou; até confirmação, o texto de §1.1 sobre reunião
+> segue como recomendação. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
+> divisória, inclusive para reunião]]
 
 **1.1 Titulares sem conta.** O Cliente é o controlador também quanto aos dados
 pessoais de pessoas que não possuem conta na plataforma e cujos dados são
@@ -89,7 +91,9 @@ resumo:
 
 A Nebuloz não trata dados pessoais para finalidade própria a partir dos dados
 do Cliente, e não os utiliza para treinar modelos de inteligência artificial.
-[[DADO NECESSÁRIO: confirmar essa cláusula com cada provedor de LLM — ver §5;
+[[DADO NECESSÁRIO: decisão do CEO de 2026-09-29: conteúdo de cliente não é usado
+para demonstração, ajuste de prompt nem avaliação de modelo; falta confirmar essa
+cláusula com cada provedor de LLM — ver §5;
 sem zero-retention contratual, a Nebuloz não consegue prometer o que o
 subprocessador não promete]]
 
@@ -234,7 +238,8 @@ escrita.
 ## 9. Direitos dos titulares
 
 **9.1 Canal do titular sem conta.** A Nebuloz mantém canal público para
-recebimento de pedidos de titulares, divulgado em sua Política de Privacidade.
+recebimento de pedidos de titulares, em **privacy@nebuloz.com** (decisão do CEO,
+2026-09-29), divulgado em sua Política de Privacidade.
 Pedido recebido por esse canal que diga respeito a dados tratados em nome do
 Cliente não é decidido no mérito pela Nebuloz: é encaminhado ao Cliente, e o
 titular é informado de que o pedido foi encaminhado e a quem, na forma do art.
@@ -325,7 +330,8 @@ para cumprir a §10. É regido pela lei brasileira, em particular pela Lei
 | Salvaguarda de cada subprocessador (§5, §6) | Contratual — 18 confirmações |
 | Zero-retention dos provedores de LLM (§2) | Contratual |
 | Canal de incidente (§8) e foro (§12) | Nebuloz |
-| Endereço do canal público de titular, citado em §9.1 | Nebuloz — ver `operadora-controladora.md` §4 |
+| Endereço do canal público de titular, citado em §9.1 | Decidido pelo CEO em 2026-09-29 (`privacy@nebuloz.com`); falta confirmar que a caixa existe e é lida, e publicar |
+| Encarregado, nomeado junto ao canal | CEO — em aberto |
 | Validar os prazos de §5.1, §9.2 e §10 como redigidos | Jurídico |
 | Benchmark do Meridian desligado (§2.1) e controle no produto | CEO (decisão); Norte/Bussola (controle) |
 | Instrução prévia de eliminação de respondente (§9.3) | CEO (decisão) e jurídico |

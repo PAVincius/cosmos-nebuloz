@@ -39,7 +39,7 @@
 
 ## 4. Titulares sem conta e prazos
 
-4.1. A Nebuloz mantém canal público para pedidos de titulares, em [[DADO NECESSÁRIO: endereço do canal]], divulgado em sua Política de Privacidade. Pedido que diga respeito a dados tratados em nome do Cliente é **encaminhado ao Cliente em até 5 (cinco) dias úteis** do recebimento, e o titular é informado do encaminhamento e de a quem foi, na forma do art. 18, § 4º, I. A Nebuloz não decide o mérito.
+4.1. A Nebuloz mantém canal público para pedidos de titulares, em privacy@nebuloz.com, divulgado em sua Política de Privacidade. Pedido que diga respeito a dados tratados em nome do Cliente é **encaminhado ao Cliente em até 5 (cinco) dias úteis** do recebimento, e o titular é informado do encaminhamento e de a quem foi, na forma do art. 18, § 4º, I. A Nebuloz não decide o mérito.
 
 4.2. A Nebuloz presta ao Cliente a assistência técnica necessária para responder no prazo legal (localização de registros, eliminação ou anonimização, export de portabilidade), mediante instrução escrita dele.
 
