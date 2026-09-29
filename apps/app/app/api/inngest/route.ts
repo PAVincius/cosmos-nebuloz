@@ -1,6 +1,7 @@
 import { serve } from "inngest/next";
 import { aiLawWatchFunction } from "@/lib/inngest/ai-law-watch";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
+import { expireCharterControls } from "@/lib/inngest/charter-control-expiry";
 import { inngest } from "@/lib/inngest/client";
 import { consumeScaffoldGateClosed } from "@/lib/inngest/cosmos-scaffold-origin";
 import { runExport } from "@/lib/inngest/export-runner";
@@ -50,5 +51,6 @@ export const { GET, POST, PUT } = serve({
     checkWorkflowSla,
     consumeScaffoldGateClosed,
     freezePlanOnBaseline,
+    expireCharterControls,
   ],
 });
