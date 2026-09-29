@@ -85,6 +85,7 @@ export function DecisionModal({
   vendorName,
   deciderName,
   deciderRole,
+  controlBlockers = [],
   onClose,
   onSubmit,
   pending,
@@ -100,6 +101,9 @@ export function DecisionModal({
   vendorName: string | null;
   deciderName: string;
   deciderRole: string;
+  /** Controles sem evidência, com ajuste pedido ou vencidos (CH-DEV-06). Barram
+   *  aprovar e aprovar com restrições; pedir ajustes e bloquear seguem livres. */
+  controlBlockers?: string[];
   onClose: () => void;
   onSubmit: (input: DecisionSubmit) => void;
   pending: boolean;
@@ -114,15 +118,19 @@ export function DecisionModal({
   const [draft, setDraft] = useState("");
   const sel = DECISIONS.find((d) => d.value === decision) ?? null;
   const needsCond = decision === "RESTRICTED";
+  const approving = decision === "APPROVED" || decision === "RESTRICTED";
+  const controlsBlock = approving && controlBlockers.length > 0;
   // Motivo do gate como texto no rodapé; null quando está pronto.
   const gateReason =
     decision === null
       ? "Escolha o veredito"
-      : needsCond && conds.length === 0
-        ? "Aprovação com restrições exige ao menos uma condição"
-        : note.trim().length < 12
-          ? "Escreva a justificativa"
-          : null;
+      : controlsBlock
+        ? `${controlBlockers.length} controle(s) impedem aprovar`
+        : needsCond && conds.length === 0
+          ? "Aprovação com restrições exige ao menos uma condição"
+          : note.trim().length < 12
+            ? "Escreva a justificativa"
+            : null;
   // O detalhe do caso passa "—" quando getSettings falhou; sem papel, o rodapé
   // mostra só o nome, sem o separador.
   const role = deciderRole && deciderRole !== "—" ? deciderRole : null;
@@ -243,6 +251,20 @@ export function DecisionModal({
             value={decision ?? ""}
           />
         </FormField>
+
+        {controlsBlock && (
+          <Callout icon="ban" tone="red">
+            <strong>
+              {controlBlockers.length} controle(s) impedem aprovar.
+            </strong>{" "}
+            Aceite, dispense com prazo ou peça ajuste antes:
+            <ul style={{ margin: "6px 0 0", paddingLeft: 18 }}>
+              {controlBlockers.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </Callout>
+        )}
 
         {needsCond && (
           <div>
