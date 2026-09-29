@@ -63,7 +63,10 @@ test.describe("Meridian · diagnóstico @auth @meridian", () => {
     page,
   }) => {
     await page.goto("/meridian");
-    await page.getByText("Vanta Saúde").first().click();
+    await page
+      .getByRole("button", { name: /Vanta Saúde/ })
+      .first()
+      .click();
     await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
 
     // "Governance" aparece no card do eixo e de novo na linha do histórico de
@@ -85,7 +88,10 @@ test.describe("Meridian · diagnóstico @auth @meridian", () => {
     page.on("pageerror", (e) => quebras.push(e.message));
 
     await page.goto("/meridian");
-    await page.getByText("Vanta Saúde").first().click();
+    await page
+      .getByRole("button", { name: /Vanta Saúde/ })
+      .first()
+      .click();
     await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
     await page.getByRole("button", { name: /Gap register/ }).click();
 
@@ -96,7 +102,10 @@ test.describe("Meridian · diagnóstico @auth @meridian", () => {
 
   test("plano gravado aparece sem precisar regerar", async ({ page }) => {
     await page.goto("/meridian");
-    await page.getByText("Vanta Saúde").first().click();
+    await page
+      .getByRole("button", { name: /Vanta Saúde/ })
+      .first()
+      .click();
     await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
     await page.getByRole("button", { name: /Plano 12 meses/ }).click();
 
@@ -108,7 +117,10 @@ test.describe("Meridian · diagnóstico @auth @meridian", () => {
     page,
   }) => {
     await page.goto("/meridian");
-    await page.getByText("Vanta Saúde").first().click();
+    await page
+      .getByRole("button", { name: /Vanta Saúde/ })
+      .first()
+      .click();
     await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
     await page.getByRole("button", { name: /Revisar e decidir/ }).click();
 

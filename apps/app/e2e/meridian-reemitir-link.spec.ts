@@ -154,9 +154,13 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       await page.getByRole("button", { name: "Voltar e copiar" }).click();
       await expect(linkDialog("Link reemitido")).toBeVisible();
 
-      await page
-        .getByRole("button", { name: "Fechar modal" })
-        .click({ position: { x: 10, y: 10 } });
+      // Canto inferior esquerdo: o superior fica sob a faixa "AMBIENTE LOCAL"
+      // (fixed, z 9999), que interceptaria o clique.
+      const backdrop = page.getByRole("button", { name: "Fechar modal" });
+      const backdropBox = await backdrop.boundingBox();
+      await backdrop.click({
+        position: { x: 10, y: (backdropBox?.height ?? 100) - 10 },
+      });
       await expect(page.getByText("Descartar alterações?")).toBeVisible();
       await page.getByRole("button", { name: "Continuar editando" }).click();
       await expect(linkDialog("Link reemitido")).toBeVisible();

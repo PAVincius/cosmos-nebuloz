@@ -161,7 +161,11 @@ test.describe("Meridian dogfood · M1/M2, CEO cria assessment e convida responde
 
   test("M1 cria o assessment do zero pela carteira, M2 convida os dois respondentes por eixo (SC-001 início)", async ({
     page,
+    context,
   }) => {
+    // "Concluir" só habilita depois de copiar o link (guarda AS-112,
+    // tab-coleta.tsx): o botão Copiar usa a Clipboard API.
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await test.step("M1 — Novo assessment pela carteira", async () => {
       await page.goto("/meridian");
       await page.getByRole("button", { name: /Novo assessment/ }).click();
@@ -239,6 +243,7 @@ test.describe("Meridian dogfood · M1/M2, CEO cria assessment e convida responde
           await expect(linkDialog.getByRole("textbox")).toHaveValue(
             /\/meridian-responder\//
           );
+          await linkDialog.getByRole("button", { name: "Copiar" }).click();
           await linkDialog.getByRole("button", { name: "Concluir" }).click();
           await expect(page.getByText(name, { exact: true })).toBeVisible({
             timeout: 15_000,
@@ -324,7 +329,10 @@ test.describe("Meridian dogfood · consultora conduz até promover pro Scaffold 
     page,
   }) => {
     await page.goto("/meridian");
-    await page.getByText("Solaris Digital").first().click();
+    await page
+      .getByRole("button", { name: /Solaris Digital/ })
+      .first()
+      .click();
     await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
 
     // Coleta — todos os 5 eixos respondidos (4 pelo seed, 1 pelo teste
