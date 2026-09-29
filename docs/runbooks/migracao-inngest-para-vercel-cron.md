@@ -30,13 +30,14 @@ evento     ação/webhook ──enqueueJob(tipo, payload, {dedupeKey, tenantId, 
 
 ### Cron por rotina × despachante
 
-Depende do plano do time (**a confirmar no painel; não consegui ler o plano**):
-
-| Plano | Consequência |
-|---|---|
-| Pro (dezenas de crons/projeto, até 1 min) | **Um cron por rotina agendada** (10) + `queue` a cada minuto = 11 entradas em `vercel.json`. Recomendado. |
-| Hobby (poucos crons, diário) | Não comporta `*/5`, `*/15` nem drenagem em minutos, e uso comercial contraria os termos. Exige Pro. Até lá, nada de migrar. |
-| Se o limite de quantidade apertar | **Despachante** `/api/cron/tick` a cada 5 min, lendo um registro `SCHEDULES` em código e uma tabela `CronRun(id, lastRunAt)` para decidir o que venceu. Mesmas rotinas, só muda quem chama. |
+O time está no **plano Pro** (confirmado pelo CEO em 29/09). Pela documentação da
+Vercel ([Usage & Pricing for Cron Jobs](https://vercel.com/docs/cron-jobs/usage-and-pricing),
+lida em 29/09/2026): **100 crons por projeto** (todos os planos), **mínimo de 1 minuto
+e precisão por minuto no Pro**; Hobby seria diário, com precisão de hora, e falharia o
+deploy com `*/5` ou `*/15`. Portanto: **um cron por rotina agendada** (10) + `queue`
+a cada minuto = 11 entradas em `apps/app/vercel.json`, mais as rotas existentes que
+forem agendadas (§2.5). O despachante `tick` não é necessário por quantidade; só
+reconsiderar se surgir outro motivo.
 
 ## 2. As 25 funções
 
@@ -101,16 +102,26 @@ Achado de 29/09: **nenhuma está agendada** no `apps/app/vercel.json` (que só t
 | `ai-law-watch` | `GET`→`POST`; dispara `ai-law/watch.requested` (Inngest). Só no `vercel.json` da raiz | Chamar o handler direto (#17), agendar `0 8 * * *` em `apps/app/vercel.json` | 3 |
 | `billing-sync-dispatch` | `GET`→`POST`; dispara `billing/sync.requested` por integração. Só no `vercel.json` da raiz | Trocar `inngest.send` por `enqueueJob` (#16), agendar `0 2 * * *` | 3 |
 | `staleness-check` | Só `POST`; trabalho real (`FlowMetricSnapshot.lastStalenessCheck`, até 50 tenants × 20 linhas); **não agendada em lugar nenhum** | Adicionar `GET`, agendar (frequência a decidir com o dono do Cosmos; o corte de 20 h sugere diária), monitor Sentry | 3 |
-| `anomaly-scheduler` | Só `POST`; **esqueleto**: responde `ok` sem fazer nada | Decisão de produto: implementar ou apagar. Não agendar até fazer algo | — |
-| `reindex-knowledge` | Só `POST`; **esqueleto**: exige `tenantId` no corpo (cron não manda) e não reindexa | Idem; se for por tenant, vira tipo de job na fila em vez de cron | — |
+| `anomaly-scheduler` | Só `POST`; **esqueleto**: responde `ok` sem fazer nada | **Apagar a rota** (decisão do Norte, 29/09). A anomalia (C-17) volta depois, chamando `lib/cost/detect-cost-anomalies.ts` a partir de um cron de verdade | 0 (apagar) |
+| `reindex-knowledge` | Só `POST`; **esqueleto**: exige `tenantId` no corpo (cron não manda) e não reindexa | **Apagar a rota** (decisão do Norte). Reindexação por tenant, quando existir, vira **tipo de job na fila** do Postgres, não cron | 0 (apagar) |
 
 Um cron agendado que só responde `ok` é pior que nenhum: acende o monitor verde
-sem entregar nada. Por isso os esqueletos **não** entram no agendamento.
+sem entregar nada. Por isso os esqueletos foram **apagados** em vez de agendados.
 
-**Fora da migração, precisa de decisão de produto:** os eventos
+### 2.6 Os três eventos sem função ouvindo — decisão do Norte (29/09)
+
 `portfolio/analysis.requested`, `epic/status.changed` e `billing/remap.requested`
-são enviados e **nenhuma função os ouve**. Ligar o mecanismo novo não os faz rodar.
-Opções: apagar o envio, ou implementar o handler (Norte/PO decide).
+são enviados e **nenhuma função os ouve**. Decisão: **remover o envio dos três**
+(o mecanismo novo não os "liga"; ligar seria inventar produto).
+
+| Evento | Emissor | O que fazer | Fase |
+|---|---|---|---|
+| `portfolio/analysis.requested` | `apps/app/app/actions/portfolio/analysis.ts` (cria relatório QUEUED e envia) | Remover o envio. A action passa a **recusar com "não disponível"** ou é apagada; quem implementa decide, sem deixar relatório QUEUED para sempre | 0 |
+| `epic/status.changed` | `apps/app/app/actions/epics/transition-status.ts` (depois de commitar a transição) | Remover o envio. **Sem backlog** | 0 |
+| `billing/remap.requested` | `apps/app/app/actions/billing/tag-rules.ts` | Remover o envio. **Vai para o backlog** como spec do Cosmos (a cargo da Régua): reaplicar regra de tag a custo já lançado, como **tipo de job na fila** do Postgres, na Fase 3. Até lá, a tela de tag rules deve dizer que **a regra vale para custo novo** | 0 (remoção) / 3 (tipo de job) |
+
+Remover o envio também fecha três defeitos do levantamento de 28/09: o `send`
+que lança depois de a escrita já ter sido feita nas três actions.
 
 ## 3. Fases e estimativas
 
@@ -120,7 +131,7 @@ espera de aprovação do CEO, QA do Crivo e janelas de deploy. São estimativas
 
 | Fase | Conteúdo | Estimativa | Saída verificável |
 |---|---|---|---|
-| **0 — Fundação** | Confirmar plano da Vercel e onde vive o `vercel.json` do app; corrigir `validateCronSecret` (Bearer) + teste; adicionar `GET` às rotas que só têm `POST`; **agendar em `apps/app/vercel.json`** (hoje sem `crons`) as rotas que já fazem trabalho, decidindo sobre os dois esqueletos (§2.5); migration aditiva da fila (`runAt`, `lockedAt`, `dedupeKey` único parcial, `priority`); `enqueueJob`; drenador `/api/cron/queue` com `SKIP LOCKED`, backoff e visibility timeout; monitores Sentry; `CRON_SECRET` em Production **[VAI]**; migration em produção **[VAI]**; `vercel crons run` de teste | 3,5 dias | Job de teste enfileirado e drenado em Production; Sentry recebe o check-in; alerta dispara ao forçar uma falha |
+| **0 — Fundação** | Confirmar o plano no painel e onde vive o `vercel.json` do app; corrigir `validateCronSecret` (Bearer) + teste; adicionar `GET` às rotas que só têm `POST`; **agendar em `apps/app/vercel.json`** (hoje sem `crons`) as rotas que já fazem trabalho, apagando as rotas `anomaly-scheduler` e `reindex-knowledge` (§2.5) e removendo o envio dos três eventos sem ouvinte (§2.6); migration aditiva da fila (`runAt`, `lockedAt`, `dedupeKey` único parcial, `priority`); `enqueueJob`; drenador `/api/cron/queue` com `SKIP LOCKED`, backoff e visibility timeout; monitores Sentry; `CRON_SECRET` em Production **[VAI]**; migration em produção **[VAI]**; `vercel crons run` de teste | 3,5 dias | Job de teste enfileirado e drenado em Production; Sentry recebe o check-in; alerta dispara ao forçar uma falha |
 | **1 — Meridian** | #1 retenção 90d; #2 DSAR com outbox transacional e reprocessamento dos PENDING antigos | 2 dias | Evidência vencida eliminada por cron em Production; pedido de titular percorre a fila até o fim; **só aí** o Lacre libera o aviso de 90 dias (`feat/aviso-90-dias`) |
 | **2 — Charter** | #3, #4 | 1 dia | Controle vencido detectado e reação aplicada no Scaffold |
 | **3 — Scaffold / Signal / Cosmos / plataforma** | #5 a #19 (15 funções, várias com o mesmo molde) | 5 dias | Cada rotina com monitor Sentry verde por 3 execuções |
@@ -193,8 +204,8 @@ que o último deploy de Production já não referencia `inngest` (busca no build
 
 | Item | Quem | Bloqueia |
 |---|---|---|
-| Plano da Vercel do time (Hobby × Pro) e limites de cron | CEO / dono da conta (Infra não vê billing) | Fase 0 |
+| Confirmar no painel (Settings → Billing) que o time está mesmo no Pro; o plano é declarado pelo CEO, não lido | Infra | Fase 0 |
 | O projeto do app lê o `vercel.json` da raiz? (`apps/app/vercel.json` não tem `crons`; os dois crons da raiz podem nunca ter valido) | Infra (Settings → General → Root Directory; `vercel crons ls`) | Fase 0 |
 | Aprovação do ADR-0021 | CEO | tudo |
 | `CRON_SECRET` em Production | Infra gera, CEO dá o "vai" | Fase 0 |
-| Destino dos três eventos sem ouvinte e dos dois esqueletos de cron (`anomaly-scheduler`, `reindex-knowledge`) | Norte / PO | nenhuma fase |
+| Spec do Cosmos para `billing/remap` (tipo de job, Fase 3) e da anomalia C-17 (usa `lib/cost/detect-cost-anomalies.ts`) | Régua / Norte | Fase 3 |
