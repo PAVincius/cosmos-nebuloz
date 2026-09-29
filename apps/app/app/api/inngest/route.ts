@@ -15,6 +15,7 @@ import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
 import { linearFullPullDispatch } from "@/lib/inngest/linear-full-pull-dispatch";
 import { consumeLinearWebhook } from "@/lib/inngest/linear-webhook-consumer";
 import { eliminateExpiredMeridianEvidence } from "@/lib/inngest/meridian-evidence-retention";
+import { reactToCharterControlExpired } from "@/lib/inngest/scaffold-charter-control-expired";
 import { closeScaffoldObservation } from "@/lib/inngest/scaffold-observation";
 import { checkScaffoldStall } from "@/lib/inngest/scaffold-stall";
 import { scheduledReportDispatch } from "@/lib/inngest/scheduled-report-dispatch";
@@ -52,5 +53,6 @@ export const { GET, POST, PUT } = serve({
     consumeScaffoldGateClosed,
     freezePlanOnBaseline,
     expireCharterControls,
+    reactToCharterControlExpired,
   ],
 });
