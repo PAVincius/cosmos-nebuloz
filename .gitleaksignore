@@ -1,0 +1,28 @@
+# Achados do gitleaks triados como falso positivo (varredura do histórico
+# completo em 2026-09-29, gitleaks 8.30.1). Nenhum é credencial real:
+#   - placeholders de teste/CI ("test…", "knip-placeholder…", "*_e2e_placeholder")
+#   - fixture de token GitLab inválido em teste de redação de erro
+#   - hashes de conteúdo do cache do graphify e nomes de migration
+#   - chave de localStorage do walkthrough do portfólio
+# Formato: commit:arquivo:regra:linha. Achado novo não entra aqui sem triagem.
+
+747cb078bb7d5c663280570618daf19ab3169f0c:apps/app/__tests__/reset-password/reset-password.test.tsx:generic-api-key:59
+ad4e9d0e061c8c9d5392f30e9e59c2ca8f1d875c:apps/app/__tests__/scripts/seed-entrypoint-guard.test.ts:generic-api-key:42
+54605de2becc1f1dade518644f4bcb8b56526acf:apps/app/__tests__/scripts/seed-meridian-local-guard.test.ts:generic-api-key:22
+747cb078bb7d5c663280570618daf19ab3169f0c:apps/app/__tests__/settings/security.test.tsx:generic-api-key:40
+d96cb704e58aa1cba298f2d70ba9badeeb61773b:apps/app/app/(authenticated)/portfolio/components/walkthrough-modal.tsx:generic-api-key:6
+e112babd293d37d0c3383e3ea104c75d949104a7:apps/app/app/(authenticated)/portfolio/components/walkthrough-modal.tsx:generic-api-key:6
+b49e7540ad5849ddc3392c7a0ff1601f55269a06:apps/backoffice/__tests__/erro-de-integracao.test.ts:gitlab-pat:36
+02c8225bf57070b3093cb98b5408581a1d61d073:docker-compose.e2e.yml:generic-api-key:59
+30aba5fbcc9797bc84f256e97042e9dbf744d860:docker-compose.e2e.yml:generic-api-key:65
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:9898
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:10828
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:13768
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:14353
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:14457
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:14465
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:14601
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:15729
+e3a88b6c96b158d3a791db030a6d3aba25965556:graphify-out/cache/stat-index.json:generic-api-key:15801
+c47e4a05d833ed15be1e37aba3b8df47d5d5a75a:package.json:generic-api-key:20
+3cd1a8f35a4919cc9964c7ad9827cce4b202af32:packages/database/migrations-do-codigo.ts:generic-api-key:79

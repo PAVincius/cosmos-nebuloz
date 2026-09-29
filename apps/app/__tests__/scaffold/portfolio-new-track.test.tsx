@@ -603,7 +603,8 @@ describe("portfólio — sub-linha de entregáveis e atalho (PDF p.3)", () => {
     render(<PortfolioScreen />);
     await screen.findByText("Glosas hospitalares");
     expect(screen.queryByText(/entregáveis$/)).toBeNull();
-    expect(screen.queryByText(/0\/0/)).toBeNull();
+    // \b nas duas pontas: sem ela, "0/0" casa dentro de datas como "10/09/2026".
+    expect(screen.queryByText(/\b0\/0\b/)).toBeNull();
   });
 
   it("'Trilhas disponíveis' leva ao catálogo, com o nome antigo aposentado", async () => {

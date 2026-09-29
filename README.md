@@ -1,140 +1,100 @@
-# ▲ / next-forge
+# Nebuloz
 
-**Production-grade Turborepo template for Next.js apps.**
+**Seis produtos que deixam uma organização pronta para usar IA, numa ordem fixa, com o método ficando com o time do cliente.**
 
-<div>
-  <img src="https://img.shields.io/npm/dy/next-forge" alt="" />
-  <img src="https://img.shields.io/npm/v/next-forge" alt="" />
-  <img src="https://img.shields.io/github/license/vercel/next-forge" alt="" />
-</div>
+Este é o monorepo da suíte: cinco produtos de cliente num único app (`app.nebuloz.ai`) e o back-office que vende e opera todos eles (`backoffice.nebuloz.ai`).
 
-## Overview
+## Os produtos
 
-[next-forge](https://github.com/vercel/next-forge) is a production-grade [Turborepo](https://turborepo.com) template for [Next.js](https://nextjs.org/) apps. It's designed to be a comprehensive starting point for building SaaS applications, providing a solid, opinionated foundation with minimal configuration required.
+Cada produto responde a uma pergunta. Quando dois produtos respondem à mesma pergunta, um dos dois está fora do lugar.
 
-Built on a decade of experience building web applications, next-forge balances speed and quality to help you ship thoroughly-built products faster.
+| Produto | Papel | Pergunta | Onde vive |
+|---|---|---|---|
+| **Meridian** | Avaliar | Estamos prontos? | `apps/app` · `/meridian` |
+| **Scaffold** | Contratar | O que foi prometido? | `apps/app` · `/scaffold` |
+| **Cosmos** | Executar | O que estamos fazendo? | `apps/app` · `/cosmos`, `packages/safe-engine` |
+| **Signal** | Apurar | Valeu a pena? | `apps/app` · `/signal` |
+| **Charter** | Governar (transversal) | É permitido? Sob qual risco? | `apps/app` · `/charter` |
+| **Big Bang** | Vender e operar (transversal) | Como isso entra e roda? | `apps/backoffice` |
 
-### Philosophy
+Os quatro primeiros correm em sequência; Charter e o back-office atravessam todas as fases. Cada estágio deixa um artefato versionado, com autor e justificativa, que o estágio seguinte lê sem editar.
 
-next-forge is built around five core principles:
+A fronteira entre eles é explícita: toda entidade compartilhada (tenant, permissão, baseline, portfólio, escala de confiança…) tem exatamente um dono. O mapa está em [`docs/produto/mapa-de-fronteiras.md`](docs/produto/mapa-de-fronteiras.md), e cada produto tem PRD e SRD em [`docs/produto/`](docs/produto/).
 
-- **Fast** — Quick to build, run, deploy, and iterate on
-- **Cheap** — Free to start with services that scale with you
-- **Opinionated** — Integrated tooling designed to work together
-- **Modern** — Latest stable features with healthy community support
-- **Safe** — End-to-end type safety and robust security posture
+## Stack
 
-## Demo
+| Camada | Tecnologia |
+|---|---|
+| Framework | Next.js 16 (App Router), React 19, TypeScript 5.9 |
+| Monorepo | pnpm + Turborepo |
+| Dados | PostgreSQL (pgvector) via Prisma 7 |
+| Auth | Better Auth, multi-tenant, com RBAC próprio (`packages/rbac`) |
+| UI | Tailwind + shadcn/ui, design system em `packages/design-system` |
+| Estado e tempo real | XState, Liveblocks, Tiptap |
+| Qualidade | Biome, Vitest, Playwright |
+| Observabilidade | Sentry, Better Stack |
+| Deploy | Vercel |
 
-Experience next-forge in action:
-
-- [Web](https://demo.next-forge.com) — Marketing website
-- [App](https://app.demo.next-forge.com) — Main application
-- [Storybook](https://storybook.demo.next-forge.com) — Component library
-- [API](https://api.demo.next-forge.com/health) — API health check
-
-## Features
-
-next-forge comes with batteries included:
-
-### Apps
-
-- **Web** — Marketing site built with Tailwind CSS and TWBlocks
-- **App** — Main application with authentication and database integration
-- **API** — RESTful API with health checks and monitoring
-- **Docs** — Documentation site powered by Mintlify
-- **Email** — Email templates with React Email
-- **Storybook** — Component development environment
-
-### Packages
-
-- **Authentication** — Powered by [Clerk](https://clerk.com)
-- **Database** — Type-safe ORM with migrations
-- **Design System** — Comprehensive component library with dark mode
-- **Payments** — Subscription management via [Stripe](https://stripe.com)
-- **Email** — Transactional emails via [Resend](https://resend.com)
-- **Analytics** — Web ([Google Analytics](https://developers.google.com/analytics)) and product ([Posthog](https://posthog.com))
-- **Observability** — Error tracking ([Sentry](https://sentry.io)), logging, and uptime monitoring ([BetterStack](https://betterstack.com))
-- **Security** — Application security ([Arcjet](https://arcjet.com)), rate limiting, and secure headers
-- **CMS** — Type-safe content management for blogs and documentation
-- **SEO** — Metadata management, sitemaps, and JSON-LD
-- **AI** — AI integration utilities
-- **Webhooks** — Inbound and outbound webhook handling
-- **Collaboration** — Real-time features with avatars and live cursors
-- **Feature Flags** — Feature flag management
-- **Cron** — Scheduled job management
-- **Storage** — File upload and management
-- **Internationalization** — Multi-language support
-- **Notifications** — In-app notification system
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- [pnpm](https://pnpm.io) (or npm/yarn/bun)
-- [Stripe CLI](https://docs.stripe.com/stripe-cli) for local webhook testing
-
-### Installation
-
-Create a new next-forge project:
-
-```sh
-npx next-forge@latest init
-```
-
-### Setup
-
-1. Configure your environment variables
-2. Set up required service accounts (Clerk, Stripe, Resend, etc.)
-3. Run the development server
-
-For detailed setup instructions, read the [documentation](https://www.next-forge.com/docs).
-
-## Structure
-
-next-forge uses a monorepo structure managed by Turborepo:
+## Estrutura
 
 ```
-next-forge/
-├── apps/           # Deployable applications
-│   ├── web/        # Marketing website (port 3001)
-│   ├── app/        # Main application (port 3000)
-│   ├── api/        # API server
-│   ├── docs/       # Documentation
-│   ├── email/      # Email templates
-│   └── storybook/  # Component library
-└── packages/       # Shared packages
-    ├── design-system/
-    ├── database/
-    ├── auth/
-    └── ...
+apps/
+├── app/            # os cinco produtos de cliente (porta 3012)
+├── backoffice/     # Big Bang — vender e operar (3013)
+├── api/            # webhooks, cron e integrações
+├── web/            # site nebuloz.ai (3001)
+├── docs/           # documentação pública, gera de docs/cliente (3004)
+├── docs-internal/  # PRDs e SRDs, gera de docs/produto (3014)
+├── email/          # preview dos templates de e-mail (3003)
+├── storybook/      # catálogo de componentes (6006)
+└── memoria/        # memória de longo prazo dos agentes (local, MCP)
+packages/
+├── auth · rbac · provisioning · database   # plataforma comum aos seis produtos
+├── safe-engine                              # motor SAFe do Cosmos
+├── design-system                            # componentes e tokens
+└── …                                        # observability, security, rate-limit, webhooks…
 ```
 
-Each app is self-contained and independently deployable. Packages are shared across apps for consistency and maintainability.
+## Rodando localmente
 
-## Documentation
+Pré-requisitos: Node 20+, pnpm 10 e um PostgreSQL com a extensão `vector`.
 
-Full documentation is available at [next-forge.com/docs](https://www.next-forge.com/docs), including:
+```bash
+pnpm install
+cp apps/app/.env.example apps/app/.env.local   # preencha DATABASE_URL e BETTER_AUTH_SECRET
+pnpm migrate                                   # gera o client e aplica as migrations
+pnpm dev                                       # sobe todos os apps; o produto fica em :3012
+```
 
-- Detailed setup guides
-- Package documentation
-- Migration guides for swapping providers
-- Deployment instructions
-- Examples and recipes
+Comandos do dia a dia:
 
-## Contributing
+```bash
+pnpm test         # Vitest em todos os pacotes
+pnpm check        # Biome (lint + format)
+pnpm build        # build de todos os apps via Turborepo
+pnpm size:guard   # nenhum arquivo novo acima de 800 linhas
+```
 
-We welcome contributions! See the [contributing guide](https://github.com/vercel/next-forge/blob/main/.github/CONTRIBUTING.md) for details.
+## CI/CD
 
-## Contributors
+Três workflows em `.github/workflows/`:
 
-<a href="https://github.com/vercel/next-forge/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vercel/next-forge" />
-</a>
+- **`ci.yml`**: lint, typecheck, testes com cobertura contra Postgres efêmero, *schema drift*, auditoria de dependências, o grafo de completude do Cosmos e o build. Tem três jobs de IA: nota de risco no PR, geração de testes e correção de CI quebrado na `main`.
+- **`pipeline.yml`**: o caminho até produção. Roda o CI e SAST (CodeQL e gitleaks), gera uma imagem imutável por commit com scan do Trivy, sobe um staging efêmero com smoke test e DAST (OWASP ZAP) e promove para produção com aprovação manual.
+- **`dark-matter.yml`**: um ambiente efêmero por PR, com branch de banco no Neon e preview na Vercel, destruído quando o PR fecha.
 
-Made with [contrib.rocks](https://contrib.rocks).
+Detalhes do pipeline em [`PIPELINE-CICD.md`](PIPELINE-CICD.md).
 
-## License
+## Documentação
 
-MIT
+| O quê | Onde |
+|---|---|
+| Verdade de produto da suíte | [`PRODUCT.md`](PRODUCT.md) |
+| PRD e SRD por produto | [`docs/produto/`](docs/produto/) |
+| Decisões de arquitetura | [`docs/adr/`](docs/adr/) |
+| Documentação para clientes | [`docs/cliente/`](docs/cliente/) |
+| Guia para agentes de código | [`CLAUDE.md`](CLAUDE.md) |
+
+## Origem e licença
+
+A base do monorepo começou no template [next-forge](https://github.com/vercel/next-forge), da Vercel, sob licença MIT ([`license.md`](license.md)). Tudo que é produto — os seis produtos, o motor SAFe, a plataforma multi-tenant e o pipeline — foi construído aqui.

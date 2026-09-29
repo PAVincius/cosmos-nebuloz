@@ -45,6 +45,7 @@ apps/storybook
 
 # Scripts that aren't needed at runtime
 apps/app/scripts
+!apps/app/scripts/docker-start.sh
 apps/app/e2e
 
 # CI/CD (not needed in image)
