@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 
 /**
  * Origem (esquema + host + porta) do Supabase a partir de uma URL, ou null se a
- * URL não existe ou não é válida.
+ * URL não existe, não é válida ou não é http/https.
  *
  * O navegador faz o PUT direto na URL assinada do Storage (artefato de passo do
  * Scaffold, entregável, evidência do Charter). Sem a origem no `connect-src`, o
@@ -16,7 +16,12 @@ export function supabaseOrigin(url: string | undefined): string | null {
     return null;
   }
   try {
-    return new URL(url).origin;
+    const parsed = new URL(url);
+    // Só http(s): `new URL("file:///x").origin` é a STRING "null", que iria
+    // literal para o cabeçalho.
+    return parsed.protocol === "https:" || parsed.protocol === "http:"
+      ? parsed.origin
+      : null;
   } catch {
     return null;
   }

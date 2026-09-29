@@ -68,6 +68,23 @@ describe("connect-src do CSP e o Supabase Storage", () => {
     expect(supabaseOrigin("nao-e-url")).toBeNull();
   });
 
+  it.each([
+    "file:///etc/passwd",
+    "javascript:alert(1)",
+    "data:text/plain,x",
+    "ftp://x.supabase.co",
+    "blob:https://x.supabase.co/uuid",
+  ])("só http: e https: viram origem: %s não (new URL(...).origin vira a string 'null')", async (url) => {
+    expect(supabaseOrigin(url)).toBeNull();
+
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", url);
+    const sources = await connectSrc();
+    expect(sources).not.toContain("null");
+    expect(
+      sources.some((s) => /^(file|javascript|data|ftp|blob):/.test(s))
+    ).toBe(false);
+  });
+
   it("não afrouxa o resto do CSP", async () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://abcd1234.supabase.co");
     const headers = await config.headers?.();

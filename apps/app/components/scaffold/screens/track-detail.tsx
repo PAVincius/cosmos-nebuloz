@@ -14,7 +14,11 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { listDeliverables } from "@/app/(scaffold)/actions/deliverables";
+import {
+  type Assignee,
+  listDeliverableAssignees,
+  listDeliverables,
+} from "@/app/(scaffold)/actions/deliverables";
 import { exportHandoverPack } from "@/app/(scaffold)/actions/export";
 import {
   acknowledgeCharterPolicy,
@@ -34,6 +38,7 @@ import {
 } from "@/app/(scaffold)/actions/tracks";
 import { phaseGateState } from "@/lib/scaffold/deliverable-machine";
 import { PHASE, PHASE_STATE } from "@/lib/scaffold/phases";
+import { AddDeliverableModal } from "../add-deliverable-modal";
 import {
   Eyebrow,
   Field,
@@ -113,6 +118,8 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     | null
   >(null);
   const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [assignees, setAssignees] = useState<Assignee[] | null>(null);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
@@ -129,9 +136,10 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       return;
     }
     setError(null);
-    const [res, dels] = await Promise.all([
+    const [res, dels, people] = await Promise.all([
       getTrack({ trackId: param }),
       listDeliverables({ trackId: param }),
+      listDeliverableAssignees(),
     ]);
     if (res.ok) {
       setTrack(res.data);
@@ -139,6 +147,9 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       // Falha ao ler entregáveis não derruba a trilha: a tela cai na regra de
       // passos e o servidor continua sendo quem decide o fechamento.
       setDeliverables(dels.ok ? dels.data : []);
+      // Sem as pessoas, a tela ainda funciona; só a designação avisa que não
+      // conseguiu carregar quem pode ser escolhido.
+      setAssignees(people.ok ? people.data : null);
     } else {
       setError(res.error);
     }
@@ -363,6 +374,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       activePhase.state === "GATE_READY" ||
       activePhase.state === "BLOCKED");
   const manageAccess = can("track.manage");
+  const addAccess = can("deliverable.add");
   // Só-leitura de verdade: nem passo nem trilha. Diz por que, uma vez, no topo.
   const readOnlyReason =
     !(stepAccess.allowed || manageAccess.allowed) && stepAccess.reason
@@ -444,6 +456,19 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         </div>
       ) : null}
 
+      {adding ? (
+        <AddDeliverableModal
+          onClose={() => setAdding(false)}
+          onCreated={() => {
+            setAdding(false);
+            load();
+          }}
+          phase={activePhase.phase}
+          phaseLabel={PHASE[activePhase.phase].label}
+          trackId={track.id}
+        />
+      ) : null}
+
       {notice ? (
         <div
           role="alert"
@@ -488,12 +513,25 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           }}
         >
           <SectionCard
+            action={
+              <Button
+                disabled={!addAccess.allowed}
+                icon="plus"
+                onClick={() => setAdding(true)}
+                size="sm"
+                title={addAccess.reason ?? undefined}
+                variant="secondary"
+              >
+                Adicionar entregável
+              </Button>
+            }
             icon="fileText"
             subtitle="SG-01 · o gate só fecha com todo obrigatório aprovado"
             title={`Entregáveis — ${PHASE[activePhase.phase].label}`}
             tone="accent"
           >
             <DeliverableList
+              assignees={assignees}
               items={deliverables.filter(
                 (d) => d.phaseInstanceId === activePhase.id
               )}

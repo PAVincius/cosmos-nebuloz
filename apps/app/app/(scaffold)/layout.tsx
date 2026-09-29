@@ -48,6 +48,10 @@ const ScaffoldLayout = async ({ children }: { children: ReactNode }) => {
           data.ctx.scaffoldRole,
           "membership.manage"
         ),
+        canSeeMetrics: hasScaffoldPermission(
+          data.ctx.scaffoldRole,
+          "product.metrics"
+        ),
       })}
       stalledCount={data.stalledCount}
       stallThresholdDays={data.stallThresholdDays}

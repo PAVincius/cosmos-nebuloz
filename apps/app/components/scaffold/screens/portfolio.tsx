@@ -316,7 +316,7 @@ export default function PortfolioScreen() {
           onClick={() => router.push("/scaffold/templates")}
           variant="secondary"
         >
-          Templates
+          Trilhas disponíveis
         </Button>
         <Button
           disabled={loading || !manageAccess.allowed}
@@ -549,6 +549,9 @@ export default function PortfolioScreen() {
                   >
                     {workFormLabel(t.archetype) || "sem arquétipo"} ·{" "}
                     {t.templateLabel}
+                    {t.deliverables.required > 0
+                      ? ` · ${t.deliverables.approved}/${t.deliverables.required} entregáveis`
+                      : null}
                   </span>
                 </span>
                 <span

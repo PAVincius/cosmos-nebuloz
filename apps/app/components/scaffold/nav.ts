@@ -14,8 +14,9 @@ export const TITLES: Record<string, [string, string]> = {
   track: ["Trilha", "Portfólio"],
   baselines: ["Casos de negócio", "Método"],
   baseline: ["Caso de negócio", "Método"],
-  templates: ["Biblioteca de templates", "Método"],
+  templates: ["Versões e overlays", "Método"],
   members: ["Papéis de adoção", "Adoção"],
+  metrics: ["Métricas do produto", "Método"],
 };
 
 export type NavItem = { id: string; icon: string; label: string };
@@ -42,7 +43,8 @@ export const NAV: { section: string; items: NavItem[] }[] = [
     section: "Método",
     items: [
       { id: "baselines", icon: "fileText", label: "Casos de negócio" },
-      { id: "templates", icon: "puzzle", label: "Biblioteca de templates" },
+      { id: "templates", icon: "puzzle", label: "Versões e overlays" },
+      { id: "metrics", icon: "chart", label: "Métricas do produto" },
     ],
   },
 ];
@@ -60,12 +62,20 @@ export function navIdFor(screenId: string): string {
   return screenId;
 }
 
-/** Telas que o papel pode abrir. "Papéis de adoção" só para quem atribui papel:
+/** Telas que o papel pode abrir. "Papéis de adoção" só para quem atribui papel e
+ *  "Métricas do produto" só para a consultoria e a administração:
  *  oferecê-la a quem vai bater na recusa é oferecer um link morto. O registry
  *  segue com todas as telas; isto filtra só o que o menu mostra. */
 export function screensFor(
   screenIds: string[],
-  { canManageMembers }: { canManageMembers: boolean }
+  {
+    canManageMembers,
+    canSeeMetrics,
+  }: { canManageMembers: boolean; canSeeMetrics: boolean }
 ): string[] {
-  return screenIds.filter((id) => id !== "members" || canManageMembers);
+  return screenIds.filter(
+    (id) =>
+      (id !== "members" || canManageMembers) &&
+      (id !== "metrics" || canSeeMetrics)
+  );
 }

@@ -113,16 +113,36 @@ describe("screensFor — o menu só oferece o que o papel pode abrir", () => {
     "baseline",
     "templates",
     "members",
+    "metrics",
   ];
 
   it("quem gere papel vê Papéis de adoção", () => {
-    expect(screensFor(ALL, { canManageMembers: true })).toContain("members");
+    expect(
+      screensFor(ALL, { canManageMembers: true, canSeeMetrics: true })
+    ).toContain("members");
   });
 
   it("quem não gere não vê o link morto (Crivo F2)", () => {
-    const out = screensFor(ALL, { canManageMembers: false });
+    const out = screensFor(ALL, {
+      canManageMembers: false,
+      canSeeMetrics: true,
+    });
     expect(out).not.toContain("members");
     expect(out).toContain("portfolio");
     expect(out).toHaveLength(ALL.length - 1);
+  });
+
+  it("Métricas do produto só para quem lê métricas (consultoria e administração)", () => {
+    const yes = screensFor(ALL, {
+      canManageMembers: true,
+      canSeeMetrics: true,
+    });
+    const no = screensFor(ALL, {
+      canManageMembers: true,
+      canSeeMetrics: false,
+    });
+    expect(yes).toContain("metrics");
+    expect(no).not.toContain("metrics");
+    expect(no).toContain("members");
   });
 });

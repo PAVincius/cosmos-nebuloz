@@ -187,10 +187,14 @@ test.describe
         await expect(row(page, code)).toBeVisible();
       }
       await expect(row(page, "A1.1").getByText("Não iniciado")).toBeVisible();
-      // O gate espera os entregáveis, e diz quais.
+      await expect(row(page, "A1.1").getByText("Obrigatório")).toBeVisible();
+      // Com a Fase 1 em andamento o painel do gate só mostra os critérios: o
+      // botão e o motivo "obrigatórios pendentes" só aparecem quando os passos
+      // terminam e a fase fica pronta para o gate (GATE_READY).
       await expect(
-        page.getByText(/entregáveis obrigatórios pendentes: A1\.1/)
-      ).toBeVisible();
+        page.getByRole("button", { name: "Revisar e assinar" })
+      ).toHaveCount(0);
+      await expect(page.getByText(/obrigatórios pendentes/)).toHaveCount(0);
 
       // O caso de negócio nasceu com a trilha, em rascunho.
       await page.getByRole("button", { name: /Caso de negócio BC-/ }).click();
