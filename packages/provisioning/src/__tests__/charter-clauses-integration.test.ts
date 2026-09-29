@@ -18,6 +18,7 @@ function makeDb() {
         .fn()
         .mockResolvedValue({ id: "tenant-novo", slug: "cliente-novo" }),
     },
+    tenantMember: { findFirst: vi.fn().mockResolvedValue({ id: "tm-1" }) },
     charterMembership: { upsert: vi.fn().mockResolvedValue({ id: "cm-1" }) },
     charterSettings: { upsert: vi.fn().mockResolvedValue({ id: "cs-1" }) },
     charterPolicy: {
