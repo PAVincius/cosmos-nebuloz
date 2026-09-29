@@ -235,6 +235,7 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - **SC-008**: Toda leitura de evidência aparece na trilha de auditoria, sem lacuna, verificável por amostragem.
 - **SC-009**: Um gap promovido continua editável apenas no Meridian — nenhuma superfície de outro produto oferece edição do enunciado.
 - **SC-010**: A carteira de assessments e o registro de gaps respondem em menos de 2 segundos com 200 assessments e 2.000 gaps.
+- **SC-011**: Com 50 respondentes sem conta abrindo o link e gravando rascunho ao mesmo tempo, a rota do respondente responde com p95 abaixo de 800 ms e taxa de erro abaixo de 1%, sustentado por pelo menos 60 segundos no pico de carga. Medido contra um build de produção, não contra o servidor de desenvolvimento. A mesma meta, medida em infraestrutura real (não local), é condição para liberar o primeiro cliente externo, com aprovação do CEO. Fora do critério: upload de evidência e envio final da bateria, que não formam pico.
 
 ## Assumptions
 
