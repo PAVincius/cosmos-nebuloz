@@ -265,18 +265,26 @@ Respostas às perguntas do §5, na numeração deste documento. Fonte: relato da
 Morgana, 2026-09-29; não vi a resposta original do CEO.
 
 - **2026-09-29 — Decisão do CEO (pergunta 1): a Nebuloz é operadora no
-  Meridian.** O enquadramento vale, com o texto do CEO, para o Meridian. A
-  resposta não disse se vale também para o participante de reunião; até haver
-  confirmação, o DPA mantém §1.1 como está e o enquadramento de reunião segue
-  como recomendação (§2), não como decisão.
+  Meridian.** O enquadramento vale **só para o Meridian, por ora**. O
+  participante de reunião fica para decisão separada do CEO (**opção C** do memo
+  de 2026-09-29): a inteligência de reunião fica fora do escopo do DPA até essa
+  decisão, e o §2 deste documento segue como recomendação, não como decisão,
+  quanto a reunião. (Esclarecimento do CEO, também de 2026-09-29, mesmo dia.)
 - **2026-09-29 — Decisão do CEO (pergunta 3): não.** Conteúdo de cliente não é
   usado para demonstração, ajuste de prompt nem avaliação de modelo. Mantém o §2 do
   DPA modelo como redigido e a Nebuloz operadora.
 - **2026-09-29 — Decisão do CEO (pergunta 4): o canal público é
   `privacy@nebuloz.com`.** Falta confirmar que a caixa existe e tem dono que a
   leia em 1 dia útil (a decisão fixa o endereço, não prova a caixa).
-- **Em aberto com o CEO:** pergunta 2 (`benchmarkOptIn` no primeiro contrato) e
-  pergunta 5 (encarregado). Enquanto a 2 estiver aberta, o DPA §2.1 e o aditivo
-  provisório §3.3 (benchmark desligado) seguem como proposta; a Nebuloz é
-  operadora só enquanto a função permanecer desligada.
+- **2026-09-29 — Decisão do CEO (pergunta 2): `benchmarkOptIn` desligado no
+  primeiro contrato, com trava no produto.** A cláusula (DPA §2.1; aditivo
+  provisório §3.3) fica. A guarda em
+  `apps/app/components/meridian/screens/assessments.tsx:211` é de Norte e Bussola;
+  até ela existir, a cláusula pode ser descumprida por um clique do consultor do
+  cliente, e a Nebuloz é operadora só enquanto a função permanecer desligada.
+- **2026-09-29 — Decisão do CEO: Dono do SLA do repasse de pedido de titular =
+  Ordem**, com delegação escrita do CEO para o envio. A delegação é do CEO e
+  ainda precisa ser escrita; este registro não a substitui.
+- **Em aberto com o CEO:** pergunta 5 (encarregado) e a cláusula C8 (instrução
+  prévia de eliminação de respondente, DPA §9.3).
 - **Em aberto com o jurídico:** perguntas 6 a 8.
