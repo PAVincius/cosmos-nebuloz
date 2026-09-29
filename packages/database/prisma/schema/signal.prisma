@@ -140,6 +140,14 @@ model SignalInitiative {
   closedAt      DateTime?
   closedById    String?
   closureReason String?                @db.Text
+  /// Forma de trabalho (WorkForm) e versão do modelo de medição pinada ao gerar
+  /// o plano (SG-DEV-02). Nulos até a iniciativa ser classificada.
+  workForm      WorkForm?
+  measureModelVersionId String?
+  /// Trilha do Scaffold e gap do Meridian de origem: texto sem FK, como
+  /// ScaffoldTrack.sourceGapId (cada produto é dono da sua entidade).
+  scaffoldTrackId String?
+  meridianGapId   String?
   createdAt     DateTime               @default(now())
   updatedAt     DateTime               @updatedAt
   updatedBy     String?
@@ -156,12 +164,15 @@ model SignalInitiative {
   observations     SignalMetricObservation[]
   mappings         SignalMetricMapping[]
   alerts           SignalAlert[]
+  planMetrics      SignalPlanMetric[]
+  measureModelVersion SignalMeasureModelVersion? @relation(fields: [measureModelVersionId], references: [id], onDelete: Restrict)
 
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([tenantId, category])
   @@index([tenantId, ownerId])
+  @@index([measureModelVersionId])
 }
 
 // ── Baseline ──────────────────────────────────────────────────────────────────
@@ -302,6 +313,7 @@ model SignalMetricMapping {
   @@index([tenantId, connectionId])
   @@index([tenantId, initiativeId])
   @@index([tenantId, state])
+  planMetrics SignalPlanMetric[]
 }
 
 // ── Evidência ─────────────────────────────────────────────────────────────────

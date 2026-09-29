@@ -227,6 +227,8 @@ model Tenant {
   signalSettings            SignalSettings?
   signalSequences           SignalSequence[]
   signalInitiatives         SignalInitiative[]
+  signalPlanMetrics         SignalPlanMetric[]
+  signalPlanMetricEvents    SignalPlanMetricEvent[]
   signalBaselines           SignalBaseline[]
   signalBaselineDimensions  SignalBaselineDimension[]
   signalConnections         SignalConnection[]
