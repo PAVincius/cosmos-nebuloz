@@ -1,6 +1,13 @@
 # Carga com k6
 
-Scripts de carga dos produtos. Cada produto tem o seu (`<produto>-<fluxo>.js`) e todos usam a biblioteca comum em `lib/`. Hoje existe `meridian-responder.js`.
+Scripts de carga dos produtos, **num lugar só**. Cada produto tem o seu (`<produto>-<fluxo>.js`) e todos usam a biblioteca comum em `lib/`. Hoje:
+
+| Script | O que mede | Preparo |
+|---|---|---|
+| `meridian-responder.js` | onda de respondentes sem conta abrindo o link e gravando respostas (rampa 1 a 50 VUs, 3 min) | `npx tsx load/k6/prepare-meridian-responder.ts 50` |
+| `meridian-concorrencia.js` | SC-011 do Meridian: dois cenários simultâneos, consultores (carteira e detalhe) e respondentes, reportados separados | `pnpm seed:meridian:concorrencia` (grava `.fixtures/meridian-concorrencia.json`, ignorado pelo git) |
+
+`find-action-id.ts` é o auxiliar de Node dos dois preparos: lê no manifesto do Next o id de uma server action (o k6 a chama por HTTP puro com `Next-Action`); o id muda a cada build, então o preparo roda **depois** de o app ter compilado a tela.
 
 Regra do gate de maturidade: carga "de verdade" só vale como validação de um produto depois que os critérios C1 e C2 estão fechados (ver `docs/qualidade/esteira-de-prontidao.md`). Antes disso ela serve para achar problema, não para aprovar.
 
@@ -9,8 +16,8 @@ Regra do gate de maturidade: carga "de verdade" só vale como validação de um 
 | Arquivo | O que resolve |
 |---|---|
 | `lib/target.js` | `resolveTarget(__ENV)`: só `localhost`/`127.0.0.1` por padrão; produção (`*.nebuloz.ai`) é sempre recusada; alvo remoto exige `BASE_URL`, `K6_ALLOW_REMOTE` (a mesma origem, repetida) e `K6_APPROVAL` (o id do "vai" do CEO). `requestParams()` põe o cabeçalho de bypass da Vercel (`K6_BYPASS_TOKEN`) só em alvo remoto |
-| `lib/options.js` | `buildOptions({...})`: rampa em três degraus (1 a `peakVus`), metas p95 e erro, uma meta por requisição nomeada. Em alvo remoto: teto de 20 VUs e 5 minutos, e aborta sozinho se o erro passar de 5 % depois dos primeiros 30 s |
-| `lib/report.js` | `makeSummary(nome, requisições, __ENV)`: tabela com requisições, erro, p50/p95/max e o veredito de cada meta; grava o JSON completo se `SUMMARY_FILE` estiver definido |
+| `lib/options.js` | `buildOptions({...})`: rampa em três degraus (1 a `peakVus`), metas p95 e erro, uma meta por requisição nomeada. Em alvo remoto: teto de 20 VUs e 5 minutos, e aborta sozinho se o erro passar de 5 % depois dos primeiros 30 s. Para script com cenários próprios (como `meridian-concorrencia.js`): `limitsFor(target)` (os tetos), `p95Threshold(ms)` e `abortOnRemoteErrors()` |
+| `lib/report.js` | `makeSummary(nome, requisições, __ENV, extras?)`: tabela com requisições, erro, p50/p95/max e o veredito de cada meta; `extras` lista métricas próprias do script (uma por cenário: rótulo, Trend de duração e Rate de erro); grava o JSON completo se `SUMMARY_FILE` estiver definido |
 
 ## Rodar
 
@@ -41,4 +48,4 @@ Teste a trava sem gerar carga: `k6 inspect -e BASE_URL=https://app.nebuloz.ai lo
 5. **Confira em duas etapas.** `k6 run --vus 1 --iterations 1 load/k6/<script>.js` (todos os `check` verdes e o dado realmente gravado no banco) e só depois a rampa inteira.
 6. **Registre** no diário do produto (`docs/qualidade/dogfood/<produto>/diario.md`): alvo, requisições, erro, p50, p95 no dev e no build, e o veredito das metas.
 
-Biome: os scripts `.js` do k6 usam `__ENV` e `__VU`, que o Biome não conhece; a primeira linha do script tem o `biome-ignore-all` correspondente.
+Biome: os scripts `.js` do k6 usam `__ENV` e `__VU`, que o Biome não conhece; o `biome.jsonc` tem um override para `apps/app/load/k6/**` que desliga essas regras.

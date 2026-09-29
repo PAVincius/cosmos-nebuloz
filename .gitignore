@@ -299,6 +299,3 @@ experiments/**/data/graph/
 playwright-report/
 test-results/
 
-# Fixture do k6 gerada por scripts/seed-meridian-concorrencia.ts — tokens de
-# respondente sintéticos, locais, regerados a cada corrida do seed.
-k6/.fixtures/

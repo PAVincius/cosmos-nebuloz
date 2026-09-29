@@ -4,7 +4,8 @@
 //
 // Regras:
 //   - padrão: só localhost / 127.0.0.1 (o app local sobe na 3012);
-//   - produção (`*.nebuloz.ai`) é recusada sempre, sem variável que a libere;
+//   - produção (`*.nebuloz.ai` e o alias `<projeto>.vercel.app` dos quatro
+//     projetos) é recusada sempre, sem variável que a libere;
 //   - alvo remoto (preview ou infra de teste) exige TRÊS coisas explícitas:
 //       BASE_URL=https://<host>             o alvo
 //       K6_ALLOW_REMOTE=https://<host>      a mesma origem, repetida de propósito
@@ -16,6 +17,14 @@ const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const ORIGIN_HOST = /^https?:\/\/([^/:]+)/;
 const TRAILING_SLASHES = /\/+$/;
 const PRODUCTION_DOMAINS = ["nebuloz.ai"];
+// O alias `<projeto>.vercel.app` é a produção do projeto na Vercel; só o nome
+// distingue de um preview (`<projeto>-<hash>-<time>.vercel.app`). Recusa exata.
+const PRODUCTION_HOSTS = [
+  "cosmos-nebuloz-app.vercel.app",
+  "cosmos-nebuloz-backoffice.vercel.app",
+  "cosmos-nebuloz-api.vercel.app",
+  "nebuloz-web.vercel.app",
+];
 
 function hostOf(origin) {
   const m = ORIGIN_HOST.exec(origin);
@@ -23,7 +32,10 @@ function hostOf(origin) {
 }
 
 function isProduction(host) {
-  return PRODUCTION_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`));
+  return (
+    PRODUCTION_HOSTS.includes(host) ||
+    PRODUCTION_DOMAINS.some((d) => host === d || host.endsWith(`.${d}`))
+  );
 }
 
 /**
