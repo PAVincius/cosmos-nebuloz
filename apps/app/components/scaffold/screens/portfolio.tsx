@@ -22,6 +22,11 @@ import {
   type PendingPromotion,
   type PortfolioSummary,
 } from "@/app/(scaffold)/actions/tracks";
+import {
+  WORK_FORM_LABEL,
+  WORK_FORMS,
+  workFormLabel,
+} from "@/lib/scaffold/forms";
 import { PHASE, PHASE_ORDER, PHASE_STATE } from "@/lib/scaffold/phases";
 import {
   BarRow,
@@ -36,12 +41,7 @@ import {
   TableRow,
 } from "../base";
 import { NewTrackModal } from "../new-track-modal";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
+import { useScaffoldAccess } from "../use-access";
 
 const PHASE_TONES = ["blue", "accent", "purple", "green"] as const;
 
@@ -251,6 +251,7 @@ export default function PortfolioScreen() {
   const [archetype, setArchetype] = useState("all");
   const [phase, setPhase] = useState("all");
   // `null` fechado; `{ promotion: null }` trilha sem lacuna; com promoção, S-01.
+  const manageAccess = useScaffoldAccess().can("track.manage");
   const [creating, setCreating] = useState<{
     promotion: PendingPromotion | null;
   } | null>(null);
@@ -318,9 +319,10 @@ export default function PortfolioScreen() {
           Templates
         </Button>
         <Button
-          disabled={loading}
+          disabled={loading || !manageAccess.allowed}
           icon="plus"
           onClick={() => setCreating({ promotion: null })}
+          title={manageAccess.reason ?? undefined}
         >
           Nova trilha
         </Button>
@@ -363,9 +365,11 @@ export default function PortfolioScreen() {
                   promovida {p.promotedAt.toLocaleDateString("pt-BR")}
                 </span>
                 <Button
+                  disabled={!manageAccess.allowed}
                   icon="layers"
                   onClick={() => setCreating({ promotion: p })}
                   size="sm"
+                  title={manageAccess.reason ?? undefined}
                 >
                   Criar trilha
                 </Button>
@@ -446,9 +450,9 @@ export default function PortfolioScreen() {
             allLabel="Todos os arquétipos"
             ariaLabel="Filtrar por arquétipo de processo"
             onChange={setArchetype}
-            options={Object.entries(ARCHETYPE_LABEL).map(([id, label]) => ({
+            options={WORK_FORMS.map((id) => ({
               id,
-              label,
+              label: WORK_FORM_LABEL[id],
             }))}
             value={archetype}
           />
@@ -543,10 +547,8 @@ export default function PortfolioScreen() {
                       marginTop: 1,
                     }}
                   >
-                    {t.archetype
-                      ? ARCHETYPE_LABEL[t.archetype]
-                      : "sem arquétipo"}{" "}
-                    · {t.templateLabel}
+                    {workFormLabel(t.archetype) || "sem arquétipo"} ·{" "}
+                    {t.templateLabel}
                   </span>
                 </span>
                 <span

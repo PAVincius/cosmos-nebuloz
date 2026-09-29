@@ -16,13 +16,8 @@ import {
   type PendingPromotion,
   type ScaffoldMember,
 } from "@/app/(scaffold)/actions/tracks";
+import { workFormLabel } from "@/lib/scaffold/forms";
 import { Field, Input, ModalShell, Select } from "./base";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
 
 type TemplateOption = { id: string; name: string; archetype: string };
 
@@ -96,9 +91,17 @@ export function NewTrackModal({
   };
 
   const consultants = members.filter((m) => m.role === "CONSULTANT");
+  // Só quem tem papel de dono do processo: ele produz o que é do dono e assina o
+  // caso de negócio. Sponsor, líder do time e consultoria não fazem nenhum dos dois.
+  const owners = members.filter((m) => m.role === "PROCESS_OWNER");
   const ownerOptions = [
-    { value: "", label: "Escolha o dono do processo" },
-    ...members.map((m) => ({ value: m.id, label: `${m.name} · ${m.role}` })),
+    {
+      value: "",
+      label: owners.length
+        ? "Escolha o dono do processo"
+        : "Ninguém com papel de dono do processo",
+    },
+    ...owners.map((m) => ({ value: m.id, label: m.name })),
   ];
   const consultantOptions = [
     { value: "", label: "Sem consultor Nebuloz" },
@@ -106,7 +109,7 @@ export function NewTrackModal({
   ];
   const templateOptions = (templates ?? []).map((t) => ({
     value: t.id,
-    label: `${t.name} · ${ARCHETYPE_LABEL[t.archetype] ?? t.archetype}`,
+    label: `${t.name} · ${workFormLabel(t.archetype)}`,
   }));
 
   return (
@@ -183,7 +186,16 @@ export function NewTrackModal({
           />
         </Field>
 
-        <Field htmlFor="nt-owner" label="Dono do processo" required>
+        <Field
+          hint={
+            owners.length === 0
+              ? "Atribua o papel de dono do processo a alguém em Papéis de adoção antes de criar a trilha."
+              : undefined
+          }
+          htmlFor="nt-owner"
+          label="Dono do processo"
+          required
+        >
           <Select
             id="nt-owner"
             onChange={setOwnerId}

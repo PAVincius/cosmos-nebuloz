@@ -35,6 +35,7 @@ export { getEffectiveRole, invalidatePermissionCache } from "./resolve";
 // Scaffold — framework de adoção em trilhas guiadas
 export type { ScaffoldPermission } from "./scaffold-matrix";
 export {
+  canAssignScaffoldRole,
   hasScaffoldPermission,
   SCAFFOLD_MATRIX,
   SCAFFOLD_PERMISSION_LABEL,

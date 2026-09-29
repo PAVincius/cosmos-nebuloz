@@ -18,6 +18,7 @@ const h = vi.hoisted(() => ({
   versionFindFirst: vi.fn(),
   sequenceUpsert: vi.fn(),
   trackCreate: vi.fn(),
+  bcCreate: vi.fn(),
   trackFindMany: vi.fn(),
   trackFindFirst: vi.fn(),
   trackUpdate: vi.fn(),
@@ -76,7 +77,10 @@ vi.mock("@repo/database", () => ({
         findFirst: h.versionFindFirst,
         findUnique: h.versionFindUnique,
       },
+      scaffoldMembership: { findFirst: async () => ({ userId: "x" }) },
       scaffoldSequence: { upsert: h.sequenceUpsert },
+      // Trilha legada, sem entregável: a regra de passos vale sozinha.
+      scaffoldDeliverableInstance: { findMany: async () => [] },
       scaffoldTrack: {
         create: h.trackCreate,
         findMany: h.trackFindMany,
@@ -91,7 +95,12 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       scaffoldTemplate: { findMany: h.templateFindMany },
-      scaffoldBusinessCase: { findFirst: h.bcFindFirst },
+      scaffoldDeliverableTemplate: { findMany: async () => [] },
+      scaffoldBusinessCase: {
+        findFirst: h.bcFindFirst,
+        create: h.bcCreate,
+        update: async () => ({}),
+      },
       scaffoldTemplateOverlay: { upsert: h.overlayUpsert },
       scaffoldOverlayConflict: { deleteMany: h.conflictDeleteMany },
       scaffoldGateResult: {
@@ -173,9 +182,11 @@ beforeEach(() => {
     id: "clx00000000000000000ver01",
     label: "v4",
     steps: [],
+    template: { archetype: "TRIAGE" },
   });
   h.sequenceUpsert.mockResolvedValue({ next: 2 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-001" });
+  h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
   h.trackFindMany.mockResolvedValue([]);
   h.trackFindFirst.mockResolvedValue({
     id: TRACK_ID,
@@ -264,6 +275,11 @@ describe("isolamento de tenant nas actions de trilha", () => {
       "tenant-A"
     );
     expect(h.trackCreate.mock.calls[0][0].data.tenantId).toBe("tenant-A");
+    // O caso de negócio nasce no mesmo tenant da sessão.
+    expect(h.bcCreate.mock.calls[0][0].data.tenantId).toBe("tenant-A");
+    expect(h.bcCreate.mock.calls[0][0].data.versions.create.tenantId).toBe(
+      "tenant-A"
+    );
   });
 
   it("ignora tenantId vindo do payload — a sessão é a única fonte", async () => {

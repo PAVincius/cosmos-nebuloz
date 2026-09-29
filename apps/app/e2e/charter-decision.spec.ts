@@ -10,7 +10,7 @@ import { charterStorageState } from "./setup/auth.setup";
  * none is just an approval (docs/design-handoff/charter-prototype/
  * HANDOFF.md §6, flow 4).
  *
- * Persona: Marina Alves (Compliance, tenant `medcore`) — has `case.decide`.
+ * Persona: Marina Alves (Compliance, tenant do e2e `cosmos-dev`) — has `case.decide`.
  * Case: UC-109, seeded as SUBMITTED (decidable, never mutated by other specs).
  */
 test.describe("Charter decision gate @auth", () => {

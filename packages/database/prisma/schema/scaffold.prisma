@@ -73,22 +73,21 @@ enum ScaffoldTrackStatus {
 /// pessoa pode ser DEV no Cosmos e PROCESS_OWNER aqui.
 ///
 /// O protótipo tem cinco personas, mas o seletor de persona NÃO é portado —
-/// ADR-0004 o mantém fora de produção. O papel vem da sessão. `sponsor` do
-/// protótipo lê como TRANSFORMATION_LEAD com direito de assinar caso de
-/// negócio; não é papel separado porque o que o distingue é o ato, não o acesso.
+/// ADR-0004 o mantém fora de produção. O papel vem da sessão.
+///
+/// SPONSOR e TEAM_LEAD (decisão provisória do Norte, 2026-09-29, seção d) são
+/// só de leitura: "sponsor e team lead só leem" (SC-PO-04). Mapear o sponsor em
+/// TRANSFORMATION_LEAD daria gate.close e businesscase.write; mapear o team lead
+/// em TEAM_MEMBER daria step.complete. O sponsor é observador, não signatário:
+/// businesscase.sign continua com PROCESS_OWNER.
 enum ScaffoldRole {
   TEAM_MEMBER
   PROCESS_OWNER
   TRANSFORMATION_LEAD
   CONSULTANT
   ADMIN
-}
-
-/// S-12 — arquétipo de processo. Define qual template seed a trilha usa.
-enum ScaffoldArchetype {
-  TRIAGE
-  DOC_REVIEW
-  REPORTING
+  SPONSOR
+  TEAM_LEAD
 }
 
 /// Como o critério é avaliado no gate. MANUAL = alguém marca. DERIVED = o
@@ -155,7 +154,7 @@ model ScaffoldTemplate {
   /// "triage" | "docreview" | "reporting"
   key       String            @unique
   name      String
-  archetype ScaffoldArchetype
+  archetype WorkForm
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -182,6 +181,7 @@ model ScaffoldTemplateVersion {
 
   template       ScaffoldTemplate          @relation(fields: [templateId], references: [id], onDelete: Cascade)
   steps          ScaffoldStepTemplate[]
+  deliverables    ScaffoldDeliverableTemplate[]
   criteria       ScaffoldGateCriterion[]
   tracks         ScaffoldTrack[]
   overlayBases   ScaffoldTemplateOverlay[] @relation("OverlayBase")
@@ -200,6 +200,9 @@ model ScaffoldStepTemplate {
   phase            ScaffoldPhase
   seq              Int
   key              String
+  /// Código do passo, "A1"…"E3" (seção b). Nulo nas versões anteriores ao
+  /// modelo de entregável. Estável e nunca reusado depois do publish.
+  code             String?
   statement        String        @db.Text
   /// Artefato esperado ao concluir. É o que separa passo de instrução: o passo
   /// entrega alguma coisa.
@@ -210,6 +213,7 @@ model ScaffoldStepTemplate {
   version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
 
   @@unique([versionId, key])
+  @@unique([versionId, code])
   @@index([versionId, phase])
 }
 
@@ -314,7 +318,7 @@ model ScaffoldTrack {
   code     String
 
   processName String
-  archetype   ScaffoldArchetype?
+  archetype   WorkForm?
 
   /// Dono do processo, do lado do cliente.
   ownerId      String
@@ -360,6 +364,7 @@ model ScaffoldTrack {
   overlay         ScaffoldTemplateOverlay? @relation(fields: [overlayId], references: [id], onDelete: Restrict)
   phases          ScaffoldPhaseInstance[]
   businessCase    ScaffoldBusinessCase?
+  deliverables    ScaffoldDeliverableInstance[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -406,6 +411,7 @@ model ScaffoldPhaseInstance {
 
   track   ScaffoldTrack        @relation(fields: [trackId], references: [id], onDelete: Cascade)
   steps   ScaffoldStepInstance[]
+  deliverables ScaffoldDeliverableInstance[]
   results ScaffoldGateResult[]
 
   @@unique([trackId, phase])

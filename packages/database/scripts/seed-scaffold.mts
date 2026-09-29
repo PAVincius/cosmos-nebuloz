@@ -6,8 +6,9 @@
 // não têm `tenantId`. São o método da Nebuloz, igual para todo cliente. O que
 // é do cliente é o overlay, que chega em US5 e é por tenant.
 //
-// Idempotente, com uma assimetria deliberada:
-//   • O template é upsert por `key`.
+// Idempotente e só insere:
+//   • O template é criado se faltar (upsert com update vazio: um template que
+//     já existe não é tocado).
 //   • A VERSÃO é create-if-missing e NUNCA update. ST-01 diz que versão
 //     publicada é imutável, e um seed que atualiza versão existente
 //     reescreveria em silêncio o método sob o qual trilhas já rodam. Rodar
@@ -34,7 +35,10 @@ export async function upsertTemplate(
   const template = await seedDb.scaffoldTemplate.upsert({
     where: { key: seed.key },
     create: { key: seed.key, name: seed.name, archetype: seed.archetype },
-    update: { name: seed.name, archetype: seed.archetype },
+    // Só insere: template que já existe fica como está. Renomear ou trocar a
+    // forma de um template em produção muda o que as trilhas dele mostram, e
+    // isso é decisão de produto, não efeito colateral de um seed.
+    update: {},
     select: { id: true },
   });
 
@@ -80,6 +84,23 @@ export async function upsertTemplate(
             required: step.required ?? true,
           })),
         });
+        if (phase.deliverables?.length) {
+          await tx.scaffoldDeliverableTemplate.createMany({
+            data: phase.deliverables.map((d, i) => ({
+              versionId: row.id,
+              phase: phase.phase,
+              stepCode: d.stepCode,
+              code: d.code,
+              seq: i + 1,
+              title: d.title,
+              description: d.description,
+              kind: d.kind,
+              producer: d.producer,
+              required: d.required ?? true,
+              requiresModule: d.requiresModule ?? null,
+            })),
+          });
+        }
         await tx.scaffoldGateCriterion.createMany({
           data: phase.criteria.map((c, i) => ({
             versionId: row.id,

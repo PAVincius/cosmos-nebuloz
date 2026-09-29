@@ -142,6 +142,7 @@ export async function createTrackFromGap(
         tenantId: ctx.tenantId,
         processName: input.processName,
         ownerId: input.ownerId,
+        authorId: ctx.userId,
         consultantId: input.consultantId,
         archetype: input.archetype,
         templateId: input.templateId,
@@ -160,7 +161,7 @@ export async function createTrackFromGap(
         entityType: "scaffold.track",
         entityId: created.id,
         target: `${created.code} · ${input.processName}`,
-        note: `Semeada da lacuna ${input.gapId}; promoção ${promotion.id} passou a apontar para a trilha.`,
+        note: `Semeada da lacuna ${input.gapId}; promoção ${promotion.id} passou a apontar para a trilha. Caso de negócio ${created.businessCaseCode} aberto em rascunho (v1).`,
       });
 
       return created;
@@ -187,6 +188,7 @@ export async function createTrack(
         tenantId: ctx.tenantId,
         processName: input.processName,
         ownerId: input.ownerId,
+        authorId: ctx.userId,
         consultantId: input.consultantId,
         archetype: input.archetype,
         templateId: input.templateId,
@@ -197,6 +199,7 @@ export async function createTrack(
         entityType: "scaffold.track",
         entityId: created.id,
         target: `${created.code} · ${input.processName}`,
+        note: `Caso de negócio ${created.businessCaseCode} aberto em rascunho (v1).`,
       });
       return created;
     });

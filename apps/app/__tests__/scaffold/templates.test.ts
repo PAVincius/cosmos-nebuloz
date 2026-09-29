@@ -67,7 +67,13 @@ vi.mock("@repo/database", () => ({
         count: h.conflictCount,
       },
       scaffoldTrack: { groupBy: h.trackGroupBy, create: h.trackCreate },
+      scaffoldMembership: { findFirst: async () => ({ userId: "x" }) },
       scaffoldSequence: { upsert: h.sequenceUpsert },
+      scaffoldDeliverableTemplate: { findMany: async () => [] },
+      scaffoldBusinessCase: {
+        create: async () => ({ id: "bc1", versions: [{ id: "bcv1" }] }),
+        update: async () => ({}),
+      },
       meridianGapPromotion: {
         findFirst: h.promotionFindFirst,
         update: h.promotionUpdate,
@@ -483,6 +489,7 @@ describe("overlay com conflito pendente não gera trilha", () => {
       id: V3,
       label: "v3",
       steps: [],
+      template: { archetype: "TRIAGE" },
     });
     h.sequenceUpsert.mockResolvedValue({ next: 2 });
     h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-001" });

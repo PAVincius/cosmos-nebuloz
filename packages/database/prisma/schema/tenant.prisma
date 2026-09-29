@@ -249,6 +249,11 @@ model Tenant {
   scaffoldSequences        ScaffoldSequence[]
   scaffoldSettings         ScaffoldSettings?
   scaffoldTracks           ScaffoldTrack[]
+  processRegistries        ProcessRegistry[]
+  scaffoldDeliverables     ScaffoldDeliverableInstance[]
+  scaffoldDeliverableEvents ScaffoldDeliverableEvent[]
+  scaffoldDeliverableComments ScaffoldDeliverableComment[]
+  scaffoldDeliverableLinks ScaffoldDeliverableLink[]
   scaffoldGateResults      ScaffoldGateResult[]
   scaffoldGateOverrides    ScaffoldGateOverride[]
   scaffoldBusinessCases    ScaffoldBusinessCase[]

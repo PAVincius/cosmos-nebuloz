@@ -127,4 +127,12 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260914000000_ai_law_watch_record",
   "20260923000000_charter_risk_scored_at",
   "20260926000000_tenant_isinternaltenant",
+  "20260929000000_work_form_enum",
+  "20260929000100_process_registry",
+  "20260929000200_scaffold_deliverable_draft",
+  "20260929000300_scaffold_deliverable_v1",
+  "20260929000400_scaffold_role_sponsor_team_lead",
+  "20260929000500_scaffold_deliverable_link",
+  "20260929000600_cosmos_origem_trilha",
+  "20260929000700_rls_catalogo_global_scaffold",
 ];

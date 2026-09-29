@@ -29,6 +29,7 @@ import {
   resolveConflict,
   type TemplateRow,
 } from "@/app/(scaffold)/actions/templates";
+import { workFormLabel } from "@/lib/scaffold/forms";
 import {
   Eyebrow,
   ScreenError,
@@ -36,12 +37,6 @@ import {
   SmartEmptyState,
   StatusDot,
 } from "../base";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
 
 function VersionTrail({ t }: { t: TemplateRow }) {
   return (
@@ -406,7 +401,7 @@ export default function TemplatesScreen() {
               }
               icon="puzzle"
               key={t.id}
-              subtitle={ARCHETYPE_LABEL[t.archetype] ?? t.archetype}
+              subtitle={workFormLabel(t.archetype)}
               title={t.name}
               tone="accent"
             >

@@ -1,0 +1,227 @@
+// Entregável do Scaffold — SC-DEV-01/02/03 (correcoes.pdf), conforme as decisões
+// provisórias do Norte de 2026-09-29 (docs/produto/decisoes-provisorias-
+// 2026-09-29.md, seções b, c.0 e d). Provisórias até o CEO confirmar; o ponto
+// menos reversível é o código: depois do primeiro publish ele é identificador
+// imutável (ST-03).
+//
+// Convenções herdadas de scaffold.prisma: tenantId em toda tabela; histórico
+// append-only; arquivo por chave opaca, nunca URL (toda leitura passa pelo log
+// de acesso, SN-06).
+
+/// Fluxo do entregável: Não iniciado → Em elaboração → Em revisão →
+/// Ajuste pedido / Aprovado → Reaberto. Pedir ajuste e reabrir exigem comentário
+/// (SC-PO-03), regra de action, não de banco.
+enum ScaffoldDeliverableStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  IN_REVIEW
+  ADJUSTMENT_REQUESTED
+  APPROVED
+  REOPENED
+}
+
+/// Tipo do entregável (c.0, regra 5).
+enum ScaffoldDeliverableKind {
+  DOCUMENT
+  SPREADSHEET
+  DATASET
+  CONFIGURATION
+  SIGNATURE
+  TRAINING
+  REPORT
+  PACKAGE
+}
+
+/// Quem PRODUZ o entregável (`who` do backlog: O, C, A, J). É função no
+/// trabalho, não papel de acesso — o acesso é `ScaffoldRole` (seção d).
+enum ScaffoldDeliverableProducer {
+  /// O — dono do processo.
+  OWNER
+  /// C — consultora.
+  CONSULTANT
+  /// A — área técnica (TI, dados).
+  TECHNICAL
+  /// J — Jurídico / DPO.
+  LEGAL
+}
+
+/// Ação registrada no histórico. Uma por transição ou edição.
+enum ScaffoldDeliverableAction {
+  START
+  ATTACH_VERSION
+  SUBMIT
+  REQUEST_ADJUSTMENT
+  APPROVE
+  REOPEN
+  EDIT
+}
+
+/// Entregável de uma trilha, gerado na criação a partir do template pinado
+/// (SC-DEV-02): 16 por trilha, todos obrigatórios (c.0, regra 3). Texto copiado
+/// do template, como no passo (ST-03). Extra (fora do template) entra com
+/// `isExtra` e escolha de `required` de quem adiciona.
+model ScaffoldDeliverableInstance {
+  id              String @id @default(cuid())
+  tenantId        String
+  trackId         String
+  phaseInstanceId String
+
+  /// Código do passo, "A1" (letra do grupo + número). A letra não é a fase:
+  /// D e E ficam ambos na EMBED (seção b).
+  stepCode    String
+  /// Código do entregável, "A1.1". Copiado do template; estável e nunca
+  /// reusado. No extra, gerado pela action (sem colidir com o do template).
+  code        String
+  /// `code` do ScaffoldDeliverableTemplate de origem. Sem FK, como
+  /// stepTemplateKey: a versão pode ser arquivada e o entregável permanece.
+  /// Nulo no extra.
+  templateKey String?
+  title       String
+  /// "O que ele diz" — para que serve, copiado do template.
+  description String  @db.Text
+  kind        ScaffoldDeliverableKind
+  producer    ScaffoldDeliverableProducer
+
+  /// Entregável fora do template (overlay). Pode ser obrigatório para o gate.
+  isExtra  Boolean @default(false)
+  /// Obrigatório para o gate "Revisar e assinar" (SG-01).
+  required Boolean @default(true)
+  /// Dispensado pelo sistema, com motivo. Hoje só C1.1 em tenant sem Charter
+  /// contratado (c.1). Dispensado não conta como pendente no gate.
+  dispensedReason String?
+
+  status     ScaffoldDeliverableStatus @default(NOT_STARTED)
+  ownerId    String?
+  approverId String?
+  summary    String?                   @db.Text
+  dueAt      DateTime?
+
+  /// Versão atual (vN). Sobe a cada `ATTACH_VERSION`.
+  version  Int     @default(0)
+  /// Chave opaca do arquivo da versão atual no bucket privado do tenant.
+  fileKey  String?
+  fileName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant        Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  track         ScaffoldTrack                @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  phaseInstance ScaffoldPhaseInstance        @relation(fields: [phaseInstanceId], references: [id], onDelete: Cascade)
+  events        ScaffoldDeliverableEvent[]
+  comments      ScaffoldDeliverableComment[]
+  links         ScaffoldDeliverableLink[]
+
+  @@unique([trackId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([trackId, stepCode])
+  @@index([phaseInstanceId])
+}
+
+/// Histórico do entregável. Append-only: nunca editado, sem updatedAt. Cada ação
+/// grava ator e data (SC-DEV-05). O banco garante: o trigger
+/// `scaffold_deliverable_event_immutable` recusa UPDATE e DELETE direto (como no
+/// AuditLog); só o DELETE em cascata do pai passa, para não travar a remoção de
+/// tenant. O banco garante: trigger
+/// `scaffold_deliverable_event_immutable` recusa UPDATE e DELETE direto (como o
+/// AuditLog); só o DELETE em cascata do pai passa, para não travar a remoção de
+/// tenant.
+model ScaffoldDeliverableEvent {
+  id            String                     @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  action        ScaffoldDeliverableAction
+  actorId       String
+  fromStatus    ScaffoldDeliverableStatus?
+  toStatus      ScaffoldDeliverableStatus?
+  /// Versão do arquivo no momento (só em ATTACH_VERSION).
+  version       Int?
+  /// Obrigatório em REQUEST_ADJUSTMENT e REOPEN (regra de action).
+  comment       String?                    @db.Text
+  createdAt     DateTime                   @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([deliverableId, createdAt])
+}
+
+/// Conversa livre no entregável, fora do fluxo de estados.
+model ScaffoldDeliverableComment {
+  id            String   @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  authorId      String
+  body          String   @db.Text
+  createdAt     DateTime @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([deliverableId, createdAt])
+}
+
+/// Entregável de um template, por versão. IMUTÁVEL como a versão (ST-01): sem
+/// `updatedAt`, publicar cria linha nova. O `code` fica travado no primeiro
+/// publish e nunca é reusado entre versões — passo removido deixa o código vago
+/// (seção b). Cada trilha copia estas linhas para ScaffoldDeliverableInstance.
+model ScaffoldDeliverableTemplate {
+  id          String                      @id @default(cuid())
+  versionId   String
+  phase       ScaffoldPhase
+  /// Código do passo, "A1". Casa com ScaffoldStepTemplate.code.
+  stepCode    String
+  /// "A1.1".
+  code        String
+  seq         Int
+  title       String
+  description String                      @db.Text
+  kind        ScaffoldDeliverableKind
+  producer    ScaffoldDeliverableProducer
+  required    Boolean                     @default(true)
+  /// Só existe se o tenant tem este módulo contratado; senão a instância nasce
+  /// dispensada com motivo. C1.1 usa CHARTER (c.1).
+  requiresModule ProductModule?
+
+  version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, code])
+  @@index([versionId, phase])
+}
+
+/// Sistema onde mora o item ligado ao entregável.
+enum ScaffoldDeliverableLinkProvider {
+  COSMOS
+  LINEAR
+  GITHUB
+  JIRA
+}
+
+/// Link manual entre entregável e item externo (Norte, seção e.2): de 0 a N por
+/// entregável, ligado por quem responde por ele. É referência e nada mais: o
+/// estado da issue NUNCA muda o do entregável (a aprovação é humana, no
+/// Scaffold), então a tabela não guarda estado externo. Tenant com Cosmos liga
+/// ao item do Cosmos, que já sincroniza com o Linear; tenant sem Cosmos guarda a
+/// URL do Linear, sem chamada de API. Não há integração própria do Scaffold com
+/// o Linear: seria segundo token e segunda fonte de verdade da mesma issue.
+model ScaffoldDeliverableLink {
+  id            String                          @id @default(cuid())
+  tenantId      String
+  deliverableId String
+  provider      ScaffoldDeliverableLinkProvider
+  /// Id do item no provedor (Cosmos: id da feature ou épico; Linear: "NEB-123").
+  externalId    String
+  url           String
+  createdById   String
+  createdAt     DateTime                        @default(now())
+
+  tenant      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliverable ScaffoldDeliverableInstance @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@unique([deliverableId, provider, externalId])
+  @@index([tenantId])
+  @@index([deliverableId])
+}

@@ -15,8 +15,22 @@ export const SCAFFOLD_ERROR = {
   OVERLAY_HAS_UNRESOLVED_CONFLICT: "OVERLAY_HAS_UNRESOLVED_CONFLICT",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
   PROMOTION_HAS_ACTIVE_TRACK: "PROMOTION_HAS_ACTIVE_TRACK",
+  // Acesso
+  MEMBER_NOT_IN_TENANT: "MEMBER_NOT_IN_TENANT",
+  OWNER_NOT_PROCESS_OWNER: "OWNER_NOT_PROCESS_OWNER",
+  CONSULTANT_NOT_CONSULTANT: "CONSULTANT_NOT_CONSULTANT",
+  ROLE_ASSIGNMENT_FORBIDDEN: "ROLE_ASSIGNMENT_FORBIDDEN",
+  SELF_ROLE_CHANGE: "SELF_ROLE_CHANGE",
   // Gate — SG-01..SG-05
   STEPS_INCOMPLETE: "STEPS_INCOMPLETE",
+  DELIVERABLES_PENDING: "DELIVERABLES_PENDING",
+  DELIVERABLE_NOT_FOUND: "DELIVERABLE_NOT_FOUND",
+  DELIVERABLE_TRANSITION_INVALID: "DELIVERABLE_TRANSITION_INVALID",
+  DELIVERABLE_COMMENT_REQUIRED: "DELIVERABLE_COMMENT_REQUIRED",
+  DELIVERABLE_SELF_REVIEW: "DELIVERABLE_SELF_REVIEW",
+  DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
+  DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
+  DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -47,6 +61,30 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Esta trilha tem caso de negócio assinado. Cancelar exige decidir explicitamente o que acontece com a apuração do Signal.",
   PROMOTION_HAS_ACTIVE_TRACK:
     "A promoção tem trilha ativa. Cancele a trilha antes de revogar a promoção — revogar aqui deixaria trabalho em curso sem origem.",
+  MEMBER_NOT_IN_TENANT:
+    "Esta pessoa não faz parte da organização. Convide-a para a organização antes de atribuir um papel de adoção.",
+  OWNER_NOT_PROCESS_OWNER:
+    "O dono do processo precisa ter o papel de dono do processo no Scaffold. Quem só lê, ou é da consultoria, não produz nem assina o que é do dono. Atribua o papel em Papéis de adoção.",
+  CONSULTANT_NOT_CONSULTANT:
+    "O consultor da trilha precisa ter o papel de consultor no Scaffold.",
+  ROLE_ASSIGNMENT_FORBIDDEN:
+    "Seu papel não pode conceder nem retirar este papel. Só o administrador gere administrador e consultor; o consultor gere os papéis abaixo dele.",
+  SELF_ROLE_CHANGE:
+    "Ninguém altera o próprio papel de adoção. Peça a outra pessoa com permissão para fazê-lo.",
+  DELIVERABLE_NOT_FOUND: "Entregável não encontrado nesta organização.",
+  DELIVERABLE_TRANSITION_INVALID:
+    "O entregável não está num estado que permita esta ação. Atualize a tela: outra pessoa pode ter movido o entregável.",
+  DELIVERABLE_COMMENT_REQUIRED:
+    "Pedir ajuste e reabrir exigem um comentário de ao menos 10 caracteres dizendo o motivo.",
+  DELIVERABLE_SELF_REVIEW:
+    "Responsável e aprovador não podem ser a mesma pessoa: ninguém aprova o que é seu.",
+  DELIVERABLE_FILE_REQUIRED:
+    "Anexe o arquivo do entregável antes de enviar para revisão.",
+  DELIVERABLE_PHASE_NOT_OPEN:
+    "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
+  DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
+  DELIVERABLES_PENDING:
+    "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:
     "Há passo requerido não concluído nesta fase. Um gate só é avaliado depois que o trabalho da fase terminou.",
   CRITERIA_UNMET:
