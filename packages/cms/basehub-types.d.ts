@@ -136,7 +136,7 @@ export interface BlockColor {
     __typename: 'BlockColor'
 }
 
-export type BlockDocument = (Authors | AuthorsItem | Blog | Categories | CategoriesItem | LegalPages | LegalPagesItem | Posts | PostsItem | _AgentStart | authorsItem_AsList | categoriesItem_AsList | legalPagesItem_AsList | postsItem_AsList) & { __isUnion?: true }
+export type BlockDocument = (Authors | AuthorsItem | Blog | Categories | CategoriesItem | Posts | PostsItem | Untitled | _AgentStart | authorsItem_AsList | categoriesItem_AsList | postsItem_AsList) & { __isUnion?: true }
 
 export interface BlockDocumentSys {
     apiNamePath: Scalars['String']
@@ -195,7 +195,7 @@ export interface BlockImage {
     __typename: 'BlockImage'
 }
 
-export type BlockList = (Authors | Categories | LegalPages | Posts | authorsItem_AsList | categoriesItem_AsList | legalPagesItem_AsList | postsItem_AsList) & { __isUnion?: true }
+export type BlockList = (Authors | Categories | Posts | authorsItem_AsList | categoriesItem_AsList | postsItem_AsList) & { __isUnion?: true }
 
 export interface BlockOgImage {
     height: Scalars['Int']
@@ -206,7 +206,7 @@ export interface BlockOgImage {
 
 
 /** Rich text block */
-export type BlockRichText = (Body | Body_1) & { __isUnion?: true }
+export type BlockRichText = (Body) & { __isUnion?: true }
 
 export interface BlockVideo {
     aspectRatio: Scalars['String']
@@ -252,21 +252,6 @@ export interface BodyRichText {
     __typename: 'BodyRichText'
 }
 
-export interface Body_1 {
-    html: Scalars['String']
-    json: Body_1RichText
-    markdown: Scalars['String']
-    plainText: Scalars['String']
-    readingTime: Scalars['Int']
-    __typename: 'Body_1'
-}
-
-export interface Body_1RichText {
-    content: Scalars['BSHBRichTextContentSchema']
-    toc: Scalars['BSHBRichTextTOCSchema']
-    __typename: 'Body_1RichText'
-}
-
 export interface Categories {
     _analyticsKey: Scalars['String']
     _dashboardUrl: Scalars['String']
@@ -307,43 +292,6 @@ export interface GetUploadSignedURL {
     uploadURL: Scalars['String']
     __typename: 'GetUploadSignedURL'
 }
-
-export interface LegalPages {
-    _analyticsKey: Scalars['String']
-    _dashboardUrl: Scalars['String']
-    _id: Scalars['String']
-    _idPath: Scalars['String']
-    _meta: ListMeta
-    /** The key used to search from the frontend. */
-    _searchKey: Scalars['String']
-    _slug: Scalars['String']
-    _slugPath: Scalars['String']
-    _sys: BlockDocumentSys
-    _title: Scalars['String']
-    /** Returns the first item in the list, or null if the list is empty. Useful when you expect only one result. */
-    item: (LegalPagesItem | null)
-    /** Returns the list of items after filtering and paginating according to the arguments sent by the client. */
-    items: LegalPagesItem[]
-    __typename: 'LegalPages'
-}
-
-export interface LegalPagesItem {
-    _analyticsKey: Scalars['String']
-    _dashboardUrl: Scalars['String']
-    /** Array of search highlight information with field names and HTML markup */
-    _highlight: (SearchHighlight[] | null)
-    _id: Scalars['String']
-    _idPath: Scalars['String']
-    _slug: Scalars['String']
-    _slugPath: Scalars['String']
-    _sys: BlockDocumentSys
-    _title: Scalars['String']
-    body: Body_1
-    description: Scalars['String']
-    __typename: 'LegalPagesItem'
-}
-
-export type LegalPagesItemOrderByEnum = '_sys_createdAt__ASC' | '_sys_createdAt__DESC' | '_sys_hash__ASC' | '_sys_hash__DESC' | '_sys_id__ASC' | '_sys_id__DESC' | '_sys_lastModifiedAt__ASC' | '_sys_lastModifiedAt__DESC' | '_sys_slug__ASC' | '_sys_slug__DESC' | '_sys_title__ASC' | '_sys_title__DESC' | 'body__ASC' | 'body__DESC' | 'description__ASC' | 'description__DESC'
 
 export interface ListMeta {
     /** Number of items after applying filters but before pagination */
@@ -444,7 +392,7 @@ export interface Query {
     _structure: Scalars['JSON']
     _sys: RepoSys
     blog: Blog
-    legalPages: LegalPages
+    untitled: Untitled
     __typename: 'Query'
 }
 
@@ -460,7 +408,7 @@ export interface RepoSys {
     __typename: 'RepoSys'
 }
 
-export type RichTextJson = (BaseRichTextJson | BodyRichText | Body_1RichText) & { __isUnion?: true }
+export type RichTextJson = (BaseRichTextJson | BodyRichText) & { __isUnion?: true }
 
 export interface SearchHighlight {
     /** The field/path that was matched (e.g., "title", "body.content") */
@@ -482,6 +430,18 @@ export interface TransactionStatus {
 }
 
 export type TransactionStatusEnum = 'Cancelled' | 'Completed' | 'Failed' | 'Running' | 'Scheduled'
+
+export interface Untitled {
+    _analyticsKey: Scalars['String']
+    _dashboardUrl: Scalars['String']
+    _id: Scalars['String']
+    _idPath: Scalars['String']
+    _slug: Scalars['String']
+    _slugPath: Scalars['String']
+    _sys: BlockDocumentSys
+    _title: Scalars['String']
+    __typename: 'Untitled'
+}
 
 export interface Variant {
     apiName: Scalars['String']
@@ -594,7 +554,6 @@ export interface _agents {
 export interface _components {
     authorsItem: authorsItem_AsList
     categoriesItem: categoriesItem_AsList
-    legalPagesItem: legalPagesItem_AsList
     postsItem: postsItem_AsList
     __typename: '_components'
 }
@@ -635,25 +594,6 @@ export interface categoriesItem_AsList {
     /** Returns the list of items after filtering and paginating according to the arguments sent by the client. */
     items: CategoriesItem[]
     __typename: 'categoriesItem_AsList'
-}
-
-export interface legalPagesItem_AsList {
-    _analyticsKey: Scalars['String']
-    _dashboardUrl: Scalars['String']
-    _id: Scalars['String']
-    _idPath: Scalars['String']
-    _meta: ListMeta
-    /** The key used to search from the frontend. */
-    _searchKey: Scalars['String']
-    _slug: Scalars['String']
-    _slugPath: Scalars['String']
-    _sys: BlockDocumentSys
-    _title: Scalars['String']
-    /** Returns the first item in the list, or null if the list is empty. Useful when you expect only one result. */
-    item: (LegalPagesItem | null)
-    /** Returns the list of items after filtering and paginating according to the arguments sent by the client. */
-    items: LegalPagesItem[]
-    __typename: 'legalPagesItem_AsList'
 }
 
 export interface postsItem_AsList {
@@ -795,14 +735,12 @@ export interface BlockDocumentGenqlSelection{
     on_Blog?: BlogGenqlSelection
     on_Categories?: CategoriesGenqlSelection
     on_CategoriesItem?: CategoriesItemGenqlSelection
-    on_LegalPages?: LegalPagesGenqlSelection
-    on_LegalPagesItem?: LegalPagesItemGenqlSelection
     on_Posts?: PostsGenqlSelection
     on_PostsItem?: PostsItemGenqlSelection
+    on_Untitled?: UntitledGenqlSelection
     on__AgentStart?: _AgentStartGenqlSelection
     on_authorsItem_AsList?: authorsItem_AsListGenqlSelection
     on_categoriesItem_AsList?: categoriesItem_AsListGenqlSelection
-    on_legalPagesItem_AsList?: legalPagesItem_AsListGenqlSelection
     on_postsItem_AsList?: postsItem_AsListGenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "BlockDocument"
@@ -888,11 +826,9 @@ export interface BlockListGenqlSelection{
     _title?: boolean | number
     on_Authors?: AuthorsGenqlSelection
     on_Categories?: CategoriesGenqlSelection
-    on_LegalPages?: LegalPagesGenqlSelection
     on_Posts?: PostsGenqlSelection
     on_authorsItem_AsList?: authorsItem_AsListGenqlSelection
     on_categoriesItem_AsList?: categoriesItem_AsListGenqlSelection
-    on_legalPagesItem_AsList?: legalPagesItem_AsListGenqlSelection
     on_postsItem_AsList?: postsItem_AsListGenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "BlockList"
@@ -921,7 +857,6 @@ export interface BlockRichTextGenqlSelection{
     /** Words per minute, defaults to average 183wpm */
     wpm?: (Scalars['Int'] | null)} } | boolean | number
     on_Body?: BodyGenqlSelection
-    on_Body_1?: Body_1GenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "BlockRichText"
 }
@@ -1016,29 +951,6 @@ export interface BodyRichTextGenqlSelection{
     __fragmentOn?: "BodyRichText"
 }
 
-export interface Body_1GenqlSelection{
-    html?: { __args: {
-    /** It automatically generates a unique id for each heading present in the HTML. Enabled by default. */
-    slugs?: (Scalars['Boolean'] | null), 
-    /** Inserts a table of contents at the beginning of the HTML. */
-    toc?: (Scalars['Boolean'] | null)} } | boolean | number
-    json?: Body_1RichTextGenqlSelection
-    markdown?: boolean | number
-    plainText?: boolean | number
-    readingTime?: { __args: {
-    /** Words per minute, defaults to average 183wpm */
-    wpm?: (Scalars['Int'] | null)} } | boolean | number
-    __typename?: boolean | number
-    __fragmentOn?: "Body_1"
-}
-
-export interface Body_1RichTextGenqlSelection{
-    content?: boolean | number
-    toc?: boolean | number
-    __typename?: boolean | number
-    __fragmentOn?: "Body_1RichText"
-}
-
 export interface CategoriesGenqlSelection{
     _analyticsKey?: { __args: {
     /**
@@ -1102,63 +1014,6 @@ export interface GetUploadSignedURLGenqlSelection{
     __typename?: boolean | number
     __fragmentOn?: "GetUploadSignedURL"
 }
-
-export interface LegalPagesGenqlSelection{
-    _analyticsKey?: { __args: {
-    /**
-     * The scope of the analytics key. Use `send` for just ingesting data. Use `query` if you need to show an analytics data in your website.
-     * 
-     * Have in mind, if you expose your `query` analytics key in the frontend, you'll be exposing all of this block's analytics data to the public. This is generally safe, but it might not be in your case.
-     */
-    scope?: (AnalyticsKeyScope | null)} } | boolean | number
-    _dashboardUrl?: boolean | number
-    _id?: boolean | number
-    _idPath?: boolean | number
-    _meta?: ListMetaGenqlSelection
-    /** The key used to search from the frontend. */
-    _searchKey?: boolean | number
-    _slug?: boolean | number
-    _slugPath?: boolean | number
-    _sys?: BlockDocumentSysGenqlSelection
-    _title?: boolean | number
-    /** Returns the first item in the list, or null if the list is empty. Useful when you expect only one result. */
-    item?: LegalPagesItemGenqlSelection
-    /** Returns the list of items after filtering and paginating according to the arguments sent by the client. */
-    items?: LegalPagesItemGenqlSelection
-    __typename?: boolean | number
-    __fragmentOn?: "LegalPages"
-}
-
-export interface LegalPagesItemGenqlSelection{
-    _analyticsKey?: { __args: {
-    /**
-     * The scope of the analytics key. Use `send` for just ingesting data. Use `query` if you need to show an analytics data in your website.
-     * 
-     * Have in mind, if you expose your `query` analytics key in the frontend, you'll be exposing all of this block's analytics data to the public. This is generally safe, but it might not be in your case.
-     */
-    scope?: (AnalyticsKeyScope | null)} } | boolean | number
-    _dashboardUrl?: boolean | number
-    /** Array of search highlight information with field names and HTML markup */
-    _highlight?: SearchHighlightGenqlSelection
-    _id?: boolean | number
-    _idPath?: boolean | number
-    _slug?: boolean | number
-    _slugPath?: boolean | number
-    _sys?: BlockDocumentSysGenqlSelection
-    _title?: boolean | number
-    body?: Body_1GenqlSelection
-    description?: boolean | number
-    __typename?: boolean | number
-    __fragmentOn?: "LegalPagesItem"
-}
-
-export interface LegalPagesItemFilterInput {AND?: (LegalPagesItemFilterInput | null),OR?: (LegalPagesItemFilterInput | null),_id?: (StringFilter | null),_slug?: (StringFilter | null),_sys_apiNamePath?: (StringFilter | null),_sys_createdAt?: (DateFilter | null),_sys_hash?: (StringFilter | null),_sys_id?: (StringFilter | null),_sys_idPath?: (StringFilter | null),_sys_lastModifiedAt?: (DateFilter | null),_sys_slug?: (StringFilter | null),_sys_slugPath?: (StringFilter | null),_sys_title?: (StringFilter | null),_title?: (StringFilter | null),description?: (StringFilter | null)}
-
-export interface LegalPagesItemSearchInput {
-/** Searchable fields for query */
-by?: (Scalars['String'][] | null),
-/** Search query */
-q?: (Scalars['String'] | null)}
 
 export interface ListFilter {isEmpty?: (Scalars['Boolean'] | null),length?: (Scalars['Int'] | null)}
 
@@ -1349,17 +1204,7 @@ export interface QueryGenqlSelection{
     withTypeOptions?: (Scalars['Boolean'] | null)} } | boolean | number
     _sys?: RepoSysGenqlSelection
     blog?: BlogGenqlSelection
-    legalPages?: (LegalPagesGenqlSelection & { __args?: {
-    /** Filter by a field. */
-    filter?: (LegalPagesItemFilterInput | null), 
-    /** Limit the number of items returned. Defaults to 500. */
-    first?: (Scalars['Int'] | null), 
-    /** Order by a field. */
-    orderBy?: (LegalPagesItemOrderByEnum | null), 
-    /** Search configuration */
-    search?: (LegalPagesItemSearchInput | null), 
-    /** Skip the first n items. */
-    skip?: (Scalars['Int'] | null)} })
+    untitled?: UntitledGenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "Query"
 }
@@ -1382,7 +1227,6 @@ export interface RichTextJsonGenqlSelection{
     toc?: boolean | number
     on_BaseRichTextJson?: BaseRichTextJsonGenqlSelection
     on_BodyRichText?: BodyRichTextGenqlSelection
-    on_Body_1RichText?: Body_1RichTextGenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "RichTextJson"
 }
@@ -1414,6 +1258,25 @@ export interface TransactionStatusGenqlSelection{
     status?: boolean | number
     __typename?: boolean | number
     __fragmentOn?: "TransactionStatus"
+}
+
+export interface UntitledGenqlSelection{
+    _analyticsKey?: { __args: {
+    /**
+     * The scope of the analytics key. Use `send` for just ingesting data. Use `query` if you need to show an analytics data in your website.
+     * 
+     * Have in mind, if you expose your `query` analytics key in the frontend, you'll be exposing all of this block's analytics data to the public. This is generally safe, but it might not be in your case.
+     */
+    scope?: (AnalyticsKeyScope | null)} } | boolean | number
+    _dashboardUrl?: boolean | number
+    _id?: boolean | number
+    _idPath?: boolean | number
+    _slug?: boolean | number
+    _slugPath?: boolean | number
+    _sys?: BlockDocumentSysGenqlSelection
+    _title?: boolean | number
+    __typename?: boolean | number
+    __fragmentOn?: "Untitled"
 }
 
 export interface VariantGenqlSelection{
@@ -1557,17 +1420,6 @@ export interface _componentsGenqlSelection{
     search?: (CategoriesItemSearchInput | null), 
     /** Skip the first n items. */
     skip?: (Scalars['Int'] | null)} })
-    legalPagesItem?: (legalPagesItem_AsListGenqlSelection & { __args?: {
-    /** Filter by a field. */
-    filter?: (LegalPagesItemFilterInput | null), 
-    /** Limit the number of items returned. Defaults to 500. */
-    first?: (Scalars['Int'] | null), 
-    /** Order by a field. */
-    orderBy?: (LegalPagesItemOrderByEnum | null), 
-    /** Search configuration */
-    search?: (LegalPagesItemSearchInput | null), 
-    /** Skip the first n items. */
-    skip?: (Scalars['Int'] | null)} })
     postsItem?: (postsItem_AsListGenqlSelection & { __args?: {
     /** Filter by a field. */
     filter?: (PostsItemFilterInput | null), 
@@ -1633,32 +1485,6 @@ export interface categoriesItem_AsListGenqlSelection{
     items?: CategoriesItemGenqlSelection
     __typename?: boolean | number
     __fragmentOn?: "categoriesItem_AsList"
-}
-
-export interface legalPagesItem_AsListGenqlSelection{
-    _analyticsKey?: { __args: {
-    /**
-     * The scope of the analytics key. Use `send` for just ingesting data. Use `query` if you need to show an analytics data in your website.
-     * 
-     * Have in mind, if you expose your `query` analytics key in the frontend, you'll be exposing all of this block's analytics data to the public. This is generally safe, but it might not be in your case.
-     */
-    scope?: (AnalyticsKeyScope | null)} } | boolean | number
-    _dashboardUrl?: boolean | number
-    _id?: boolean | number
-    _idPath?: boolean | number
-    _meta?: ListMetaGenqlSelection
-    /** The key used to search from the frontend. */
-    _searchKey?: boolean | number
-    _slug?: boolean | number
-    _slugPath?: boolean | number
-    _sys?: BlockDocumentSysGenqlSelection
-    _title?: boolean | number
-    /** Returns the first item in the list, or null if the list is empty. Useful when you expect only one result. */
-    item?: LegalPagesItemGenqlSelection
-    /** Returns the list of items after filtering and paginating according to the arguments sent by the client. */
-    items?: LegalPagesItemGenqlSelection
-    __typename?: boolean | number
-    __fragmentOn?: "legalPagesItem_AsList"
 }
 
 export interface postsItem_AsListGenqlSelection{
@@ -1756,14 +1582,6 @@ export interface FragmentsMap {
     root: BodyRichText,
     selection: BodyRichTextGenqlSelection,
 }
-  Body_1: {
-    root: Body_1,
-    selection: Body_1GenqlSelection,
-}
-  Body_1RichText: {
-    root: Body_1RichText,
-    selection: Body_1RichTextGenqlSelection,
-}
   Categories: {
     root: Categories,
     selection: CategoriesGenqlSelection,
@@ -1775,14 +1593,6 @@ export interface FragmentsMap {
   GetUploadSignedURL: {
     root: GetUploadSignedURL,
     selection: GetUploadSignedURLGenqlSelection,
-}
-  LegalPages: {
-    root: LegalPages,
-    selection: LegalPagesGenqlSelection,
-}
-  LegalPagesItem: {
-    root: LegalPagesItem,
-    selection: LegalPagesItemGenqlSelection,
 }
   ListMeta: {
     root: ListMeta,
@@ -1823,6 +1633,10 @@ export interface FragmentsMap {
   TransactionStatus: {
     root: TransactionStatus,
     selection: TransactionStatusGenqlSelection,
+}
+  Untitled: {
+    root: Untitled,
+    selection: UntitledGenqlSelection,
 }
   Variant: {
     root: Variant,
@@ -1867,10 +1681,6 @@ export interface FragmentsMap {
   categoriesItem_AsList: {
     root: categoriesItem_AsList,
     selection: categoriesItem_AsListGenqlSelection,
-}
-  legalPagesItem_AsList: {
-    root: legalPagesItem_AsList,
-    selection: legalPagesItem_AsListGenqlSelection,
 }
   postsItem_AsList: {
     root: postsItem_AsList,
