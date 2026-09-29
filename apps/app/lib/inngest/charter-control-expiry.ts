@@ -1,5 +1,6 @@
 import { database, withTenantDb } from "@repo/database";
 import { log } from "@repo/observability/log";
+import { captureException } from "@sentry/nextjs";
 import { inngest } from "./client";
 import { emitProductEvent } from "./emit-product-event";
 
@@ -48,17 +49,56 @@ export async function expireDueControls(
       toState: "EXPIRED" | "REOPENED";
       comment: string | null;
     }[] = [];
+    const audits: {
+      tenantId: string;
+      userId: null;
+      actorId: null;
+      actorType: "system";
+      action: string;
+      entityType: "charter.casecontrol";
+      entityId: string;
+      diff: [string, string, string][];
+      metadata: { target: string; origin: string };
+    }[] = [];
+    const audit = (
+      control: Expired,
+      action: string,
+      from: string,
+      to: string
+    ) =>
+      audits.push({
+        tenantId,
+        userId: null,
+        actorId: null,
+        actorType: "system",
+        action,
+        entityType: "charter.casecontrol",
+        entityId: control.id,
+        diff: [["Estado", from, to]],
+        metadata: {
+          target: `${control.code}`,
+          origin: "charter-control-expiry",
+        },
+      });
     const expired: Expired[] = [];
 
     for (const control of acceptedDue) {
+      // A condição de vencimento repete no UPDATE: entre o SELECT e o UPDATE a
+      // evidência pode ter sido renovada (expiresAt novo).
       const updated = await db.charterCaseControl.updateMany({
-        where: { id: control.id, tenantId, state: "ACCEPTED" },
+        where: {
+          id: control.id,
+          tenantId,
+          state: "ACCEPTED",
+          expiresAt: { lte: now },
+        },
         data: { state: "EXPIRED" },
       });
       if (updated.count === 0) {
         continue;
       }
       expired.push(control);
+      audit(control, "Controle vencido", "ACCEPTED", "EXPIRED");
       events.push({
         tenantId,
         caseControlId: control.id,
@@ -73,7 +113,12 @@ export async function expireDueControls(
     let reopened = 0;
     for (const control of dispensedDue) {
       const updated = await db.charterCaseControl.updateMany({
-        where: { id: control.id, tenantId, state: "DISPENSED" },
+        where: {
+          id: control.id,
+          tenantId,
+          state: "DISPENSED",
+          dispensedUntil: { lte: now },
+        },
         data: {
           state: "REOPENED",
           dispensedUntil: null,
@@ -84,6 +129,12 @@ export async function expireDueControls(
         continue;
       }
       reopened += 1;
+      audit(
+        control,
+        "Controle reaberto por prazo de dispensa",
+        "DISPENSED",
+        "REOPENED"
+      );
       events.push({
         tenantId,
         caseControlId: control.id,
@@ -97,6 +148,9 @@ export async function expireDueControls(
 
     if (events.length > 0) {
       await db.charterCaseControlEvent.createMany({ data: events });
+      // Ato do sistema também deixa a trilha de auditoria do Charter. Ator
+      // "system": não há pessoa no job.
+      await db.auditLog.createMany({ data: audits });
     }
     return { expired, reopened };
   });
@@ -150,6 +204,12 @@ export const expireCharterControls = inngest.createFunction(
           log.error("[charter-control-expiry] tenant falhou", {
             tenantId,
             error: String(error),
+          });
+          // Job noturno que falha em silêncio deixa controle vencido sem
+          // bloquear a decisão: vai ao Sentry, não só ao log.
+          captureException(error, {
+            tags: { job: "charter-control-expiry" },
+            extra: { tenantId },
           });
           return { expired: 0, reopened: 0, failed: true };
         }

@@ -219,3 +219,24 @@ export function controlProgress(controls: readonly { state: ControlState }[]): {
     total: controls.length,
   };
 }
+
+/**
+ * A chave do arquivo de evidência pertence ao tenant? Chave opaca do bucket
+ * privado, sempre `<tenantId>/<segmento>(/<segmento>)*`.
+ *
+ * `startsWith("<tenantId>/")` não basta: "t1/../t2/x.pdf" começa com "t1/" e
+ * resolve em "t2" (IDOR). Por isso a chave inteira é validada: só
+ * `[A-Za-z0-9._-]` por segmento, sem segmento vazio ("//"), sem "\" e sem "." ou
+ * ".." como segmento. O tenantId entra escapado: id com "." ou "|" não vira
+ * regex.
+ */
+export function isTenantFileKey(tenantId: string, fileKey: string): boolean {
+  const escaped = tenantId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const shape = new RegExp(`^${escaped}/[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$`);
+  if (!shape.test(fileKey)) {
+    return false;
+  }
+  return fileKey
+    .split("/")
+    .every((segment) => segment !== "." && segment !== "..");
+}

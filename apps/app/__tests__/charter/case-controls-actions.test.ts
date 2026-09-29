@@ -21,6 +21,8 @@ const h = vi.hoisted(() => ({
   ccCount: vi.fn(),
   evCreate: vi.fn(),
   evCreateMany: vi.fn(),
+  evFindMany: vi.fn(),
+  memberFindFirst: vi.fn(),
   auditCreate: vi.fn(),
 }));
 
@@ -53,7 +55,9 @@ vi.mock("@repo/database", () => ({
       charterCaseControlEvent: {
         create: h.evCreate,
         createMany: h.evCreateMany,
+        findMany: h.evFindMany,
       },
+      tenantMember: { findFirst: h.memberFindFirst },
       auditLog: { create: h.auditCreate },
     }),
 }));
@@ -118,6 +122,8 @@ beforeEach(() => {
   h.evCreateMany.mockResolvedValue({ count: 0 });
   h.auditCreate.mockResolvedValue({});
   h.mitigationFindMany.mockResolvedValue([]);
+  h.evFindMany.mockResolvedValue([]);
+  h.memberFindFirst.mockResolvedValue({ id: "tm-1" });
 });
 
 // ── Plano (CH-DEV-02) ─────────────────────────────────────────────────────────
@@ -411,6 +417,21 @@ describe("anexar e enviar", () => {
     expect(h.ccUpdateMany).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["travessia com ..", "t1/../t2/evidencias/x.pdf"],
+    ["barra dupla", "t1//x.pdf"],
+    ["barra invertida", "t1\\..\\t2\\x.pdf"],
+  ])("recusa chave de arquivo com %s (IDOR)", async (_n, fileKey) => {
+    const r = await attachControlEvidence({
+      ...REF,
+      fileKey,
+      fileName: "x.pdf",
+    });
+
+    expect(r.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
   it("enviar exige arquivo", async () => {
     h.ccFindUnique.mockResolvedValue(
       control({ state: "IN_PROGRESS", fileKey: null })
@@ -698,7 +719,9 @@ describe("editar", () => {
 
 describe("adicionar controle extra", () => {
   it("nasce SEM evidência (bloqueia a decisão), com código X-n e marcado extra", async () => {
-    h.ccCount.mockResolvedValue(1);
+    h.ccFindMany.mockResolvedValue([{ code: "X-1" }]);
+    h.ccCreateMany.mockResolvedValue({ count: 1 });
+    h.ccFindUnique.mockResolvedValue({ id: "cc9" });
 
     const r = await addExtraControl({
       code: "UC-118",
@@ -710,7 +733,7 @@ describe("adicionar controle extra", () => {
     });
 
     expect(r).toEqual({ ok: true, data: { controlCode: "X-2" } });
-    const data = h.ccCreate.mock.calls[0][0].data;
+    const data = h.ccCreateMany.mock.calls[0][0].data[0];
     expect(data).toMatchObject({
       isExtra: true,
       code: "X-2",
@@ -722,6 +745,7 @@ describe("adicionar controle extra", () => {
       action: "START",
       toState: "NO_EVIDENCE",
     });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -767,5 +791,241 @@ describe("getCaseControlPlan", () => {
     expect(r.data.controls.find((c) => c.code === "TR-1")?.blocksDecision).toBe(
       false
     );
+  });
+});
+
+// ── Separação de deveres ──────────────────────────────────────────────────────
+// Quem produziu a evidência não a aceita, não a dispensa, não pede ajuste nela
+// nem a reabre: senão uma pessoa só fecha o controle sozinha.
+
+describe("separação de deveres", () => {
+  const amanha = () => new Date(Date.now() + 86_400_000);
+  const producedBy = (actorId: string) => [{ actorId, action: "SUBMIT" }];
+
+  it("aceitar: recusa o dono do caso", async () => {
+    h.requirePerm.mockResolvedValue({ ...CTX, userId: "u-owner" });
+
+    const r = await acceptControl(REF);
+
+    expect(r.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+    expect(h.emit).not.toHaveBeenCalled();
+  });
+
+  it("aceitar: recusa o dono do controle", async () => {
+    h.ccFindUnique.mockResolvedValue(control({ ownerId: "u-comp" }));
+
+    const r = await acceptControl(REF);
+
+    expect(r.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("aceitar: recusa quem fez o último ATTACH/SUBMIT do controle", async () => {
+    h.evFindMany.mockResolvedValue(producedBy("u-comp"));
+
+    const r = await acceptControl(REF);
+
+    expect(r.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("consulta o último ATTACH/SUBMIT daquele controle", async () => {
+    await acceptControl(REF);
+
+    expect(h.evFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          caseControlId: "cc1",
+          action: { in: ["ATTACH", "SUBMIT"] },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      })
+    );
+  });
+
+  it("aceitar por um terceiro passa", async () => {
+    h.evFindMany.mockResolvedValue(producedBy("u-outra-pessoa"));
+
+    const r = await acceptControl(REF);
+
+    expect(r.ok).toBe(true);
+  });
+
+  it("dispensar: recusa dono do caso, dono do controle e o produtor", async () => {
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "NO_EVIDENCE", fileKey: null, ownerId: "u-comp" })
+    );
+    const dono = await dispenseControl({
+      ...REF,
+      comment: "c",
+      dispensedUntil: amanha(),
+    });
+    expect(dono.ok).toBe(false);
+
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "NO_EVIDENCE", fileKey: null })
+    );
+    h.evFindMany.mockResolvedValue(producedBy("u-comp"));
+    const produtor = await dispenseControl({
+      ...REF,
+      comment: "c",
+      dispensedUntil: amanha(),
+    });
+    expect(produtor.ok).toBe(false);
+
+    h.evFindMany.mockResolvedValue([]);
+    h.requirePerm.mockResolvedValue({ ...CTX, userId: "u-owner" });
+    const donoCaso = await dispenseControl({
+      ...REF,
+      comment: "c",
+      dispensedUntil: amanha(),
+    });
+    expect(donoCaso.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("pedir ajuste e reabrir: recusam o produtor e o dono do controle", async () => {
+    h.evFindMany.mockResolvedValue(producedBy("u-comp"));
+    const ajuste = await requestControlAdjustment({ ...REF, comment: "c" });
+    expect(ajuste.ok).toBe(false);
+
+    h.evFindMany.mockResolvedValue([]);
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "ACCEPTED", ownerId: "u-comp" })
+    );
+    const reabrir = await reopenControl({ ...REF, comment: "c" });
+    expect(reabrir.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("pedir ajuste e reabrir por um terceiro passam (o dono do caso só é vedado ao aceitar e dispensar)", async () => {
+    h.requirePerm.mockResolvedValue({ ...CTX, userId: "u-owner" });
+
+    const ajuste = await requestControlAdjustment({ ...REF, comment: "c" });
+
+    expect(ajuste.ok).toBe(true);
+  });
+});
+
+// ── Corridas e validações do P3 ───────────────────────────────────────────────
+
+describe("adicionar controle extra em corrida", () => {
+  const extra = {
+    code: "UC-118",
+    name: "Teste de carga",
+    category: "OPERATIONAL" as const,
+    evidence: "Relatório",
+    role: "SECURITY" as const,
+    cadence: "QUARTERLY" as const,
+  };
+
+  it("usa INSERT ... ON CONFLICT DO NOTHING e tenta o próximo número se perdeu", async () => {
+    h.ccFindMany.mockResolvedValue([{ code: "X-1" }]);
+    h.ccCreateMany
+      .mockResolvedValueOnce({ count: 0 }) // X-2 já foi tomado por outra requisição
+      .mockResolvedValueOnce({ count: 1 }); // X-3 entra
+    h.ccFindUnique.mockResolvedValue({ id: "cc9" });
+
+    const r = await addExtraControl(extra);
+
+    expect(r).toEqual({ ok: true, data: { controlCode: "X-3" } });
+    expect(h.ccCreateMany).toHaveBeenCalledTimes(2);
+    expect(h.ccCreateMany.mock.calls[0][0].skipDuplicates).toBe(true);
+    expect(h.ccCreateMany.mock.calls[0][0].data[0].code).toBe("X-2");
+    expect(h.ccCreateMany.mock.calls[1][0].data[0].code).toBe("X-3");
+  });
+
+  it("o próximo número sai do MAIOR existente, não da contagem", async () => {
+    h.ccFindMany.mockResolvedValue([{ code: "X-1" }, { code: "X-5" }]);
+    h.ccCreateMany.mockResolvedValue({ count: 1 });
+    h.ccFindUnique.mockResolvedValue({ id: "cc9" });
+
+    const r = await addExtraControl(extra);
+
+    expect(r).toEqual({ ok: true, data: { controlCode: "X-6" } });
+  });
+
+  it("desiste depois de tentativas demais em vez de girar para sempre", async () => {
+    h.ccFindMany.mockResolvedValue([]);
+    h.ccCreateMany.mockResolvedValue({ count: 0 });
+
+    const r = await addExtraControl(extra);
+
+    expect(r.ok).toBe(false);
+    expect(h.ccCreateMany.mock.calls.length).toBeLessThanOrEqual(6);
+  });
+});
+
+describe("gerar o plano em corrida", () => {
+  const VERSION = {
+    id: "pv1",
+    controls: [
+      {
+        code: "TR-1",
+        name: "n",
+        category: "OPERATIONAL",
+        evidence: "e",
+        acceptanceCriteria: "a",
+        role: "COMPLIANCE",
+        cadence: "MONTHLY",
+        minClass: "PUBLIC",
+        dispensable: true,
+      },
+    ],
+  };
+
+  it("quem perdeu a corrida (count 0) não duplica o evento START nem a auditoria", async () => {
+    h.versionFindFirst.mockResolvedValue(VERSION);
+    h.ccCreateMany.mockResolvedValue({ count: 0 });
+
+    const r = await generateCaseControlPlan({
+      code: "UC-118",
+      workForm: "TRIAGE",
+    });
+
+    expect(r).toMatchObject({ ok: true, data: { created: 0 } });
+    expect(h.evCreateMany).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("START só para controles que ainda não têm nenhum evento", async () => {
+    h.versionFindFirst.mockResolvedValue(VERSION);
+    h.ccCreateMany.mockResolvedValue({ count: 1 });
+    h.ccFindMany.mockResolvedValue([{ id: "novo" }]);
+
+    await generateCaseControlPlan({ code: "UC-118", workForm: "TRIAGE" });
+
+    expect(h.ccFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ events: { none: {} } }),
+      })
+    );
+  });
+});
+
+describe("responsável do controle", () => {
+  it("ownerId precisa ser membro do tenant", async () => {
+    h.ccFindUnique.mockResolvedValue(control({ state: "IN_PROGRESS" }));
+    h.memberFindFirst.mockResolvedValue(null);
+
+    const r = await editControl({ ...REF, ownerId: "u-de-outro-tenant" });
+
+    expect(r.ok).toBe(false);
+    expect(h.memberFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "t1", userId: "u-de-outro-tenant" },
+      })
+    );
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("membro do tenant é aceito como responsável", async () => {
+    h.ccFindUnique.mockResolvedValue(control({ state: "IN_PROGRESS" }));
+
+    const r = await editControl({ ...REF, ownerId: "u-membro" });
+
+    expect(r.ok).toBe(true);
   });
 });
