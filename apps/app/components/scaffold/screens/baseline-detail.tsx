@@ -37,6 +37,7 @@ import {
   StatusDot,
   Textarea,
 } from "../base";
+import { BusinessCaseEditor } from "../business-case-editor";
 import { MetricRow } from "../metric-row";
 import { SignalContractCard } from "../signal-contract-card";
 import { VersionTrail } from "../version-trail";
@@ -356,6 +357,15 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
             gap: "var(--gap)",
           }}
         >
+          {bc.state === "DRAFT" && (
+            <BusinessCaseEditor
+              // Recarregar o caso salvo remonta o formulário com o que o
+              // servidor guardou (números normalizados, chaves geradas).
+              bc={bc}
+              key={`${bc.currentVersionId}:${bc.metrics.length}`}
+              onSaved={load}
+            />
+          )}
           <SectionCard
             action={
               bc.state === "DRAFT" ? null : (
