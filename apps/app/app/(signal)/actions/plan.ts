@@ -169,6 +169,75 @@ function revalidate(code: string) {
   revalidatePath("/signal/models");
 }
 
+// ── Classificar a forma de trabalho (SG-DEV-02) ───────────────────────────────
+
+const WORK_FORMS = [
+  "CONVERSATIONAL",
+  "ANALYSIS",
+  "DOC_REVIEW",
+  "TRIAGE",
+  "REPORTING",
+] as const;
+
+/**
+ * Quem escreve `SignalInitiative.workForm`. Sem isso o plano não nasce: é da
+ * forma que vem o modelo de medição. Muda só ANTES de haver plano; depois dele
+ * a forma trava, porque trocar de modelo no meio reescreveria as métricas que
+ * já estão medindo.
+ */
+export async function classifyInitiative(raw: {
+  initiativeCode: string;
+  workForm: WorkForm;
+}): Promise<SignalResult<{ workForm: WorkForm }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("edit");
+    const input = z
+      .object({ initiativeCode: nnStr, workForm: z.enum(WORK_FORMS) })
+      .parse(raw);
+
+    await withTenantDb(ctx.tenantId, async (db) => {
+      const initiative = await loadInitiative(
+        db,
+        ctx.tenantId,
+        input.initiativeCode
+      );
+      requireInitiativeOwnership(ctx, initiative);
+      if (initiative.workForm === input.workForm) {
+        return;
+      }
+
+      const plan = await db.signalPlanMetric.count({
+        where: { tenantId: ctx.tenantId, initiativeId: initiative.id },
+      });
+      if (plan > 0) {
+        throw new SignalRuleError(
+          "plan.workform.locked",
+          "A forma de trabalho não muda depois que o plano existe: trocar de modelo reescreveria métricas que já estão medindo."
+        );
+      }
+
+      await db.signalInitiative.update({
+        where: { id: initiative.id },
+        // Solta a versão pinada: o modelo certo é o da forma nova, e o plano
+        // pina a versão de novo ao ser gerado.
+        data: { workForm: input.workForm, measureModelVersionId: null },
+      });
+      await logSignalAudit(db, ctx, {
+        action: "Forma de trabalho classificada",
+        entityType: "signal.initiative",
+        entityId: initiative.id,
+        target: `${initiative.code} · ${initiative.name}`,
+        diff: [
+          ["Forma de trabalho", initiative.workForm ?? "—", input.workForm],
+        ],
+      });
+    });
+
+    revalidate(input.initiativeCode);
+    return { workForm: input.workForm };
+  });
+}
+
 // ── Gerar o plano do modelo (SG-DEV-02) ───────────────────────────────────────
 
 /** Versão do modelo que o plano usa. A iniciativa pina a versão ao gerar o
@@ -482,7 +551,17 @@ async function resolveSource(
   const starts =
     metric.state === "NO_SOURCE" && mapping.connection.health === "HEALTHY";
   const next: PlanState = starts ? "MEASURING" : metric.state;
-  return { mapping, starts, next };
+
+  // O "antes" do histórico é a fonte que a métrica tinha, não um traço fixo:
+  // trocar de fonte muda de onde vem o número, e a trilha precisa dizer de qual
+  // para qual.
+  const previous = metric.sourceMappingId
+    ? await db.signalMetricMapping.findFirst({
+        where: { id: metric.sourceMappingId, tenantId },
+        select: { code: true },
+      })
+    : null;
+  return { mapping, starts, next, before: previous?.code ?? "—" };
 }
 
 export async function mapMetricSource(raw: {
@@ -490,13 +569,21 @@ export async function mapMetricSource(raw: {
   mappingId: string;
 }): Promise<SignalResult<{ state: PlanState }>> {
   return await signalAction(async () => {
+    // Mesma negação das outras ações do plano: ADMIN tem `mapping.write` na
+    // matriz, mas administrar acesso não é decidir (SG-PO-03), e mapear a fonte
+    // é o que leva a métrica a Medindo.
     const ctx = await requireSignalPermissionContext("signal.mapping.write");
+    const denial = planActionDenial(ctx.signalRole, "edit");
+    if (denial) {
+      throw new SignalRuleError("plan.role.denied", denial);
+    }
     const input = Id.extend({ mappingId: nnStr }).parse(raw);
 
     const result = await withTenantDb(ctx.tenantId, async (db) => {
       const metric = await loadMetric(db, ctx.tenantId, input.id);
+      requireInitiativeOwnership(ctx, metric.initiative);
 
-      const { mapping, starts, next } = await resolveSource(
+      const { mapping, starts, next, before } = await resolveSource(
         db,
         ctx.tenantId,
         metric,
@@ -512,7 +599,7 @@ export async function mapMetricSource(raw: {
         fromState: metric.state,
         toState: metric.state,
         version: metric.version,
-        changes: [[FIELD_LABELS.sourceMappingId, "—", mapping.code]],
+        changes: [[FIELD_LABELS.sourceMappingId, before, mapping.code]],
       });
       if (starts) {
         await recordEvent(db, ctx, metric, {
@@ -530,7 +617,7 @@ export async function mapMetricSource(raw: {
         note: starts
           ? "Conexão saudável: a métrica passou a Medindo."
           : "Conexão não saudável: a métrica espera a fonte voltar.",
-        diff: [[FIELD_LABELS.sourceMappingId, "—", mapping.code]],
+        diff: [[FIELD_LABELS.sourceMappingId, before, mapping.code]],
       });
       return { state: next, code: metric.initiative.code };
     });

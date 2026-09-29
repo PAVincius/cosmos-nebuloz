@@ -143,35 +143,52 @@ const PENDING_COPY: Record<
 function SourcePicker({
   mappings,
   busy,
+  denial,
   onMap,
 }: {
-  mappings: { id: string; label: string }[];
+  mappings: { id: string; label: string; healthy: boolean }[];
   busy: boolean;
+  /** Motivo de mapear estar desabilitado; nulo = pode. */
+  denial: string | null;
   onMap: (mappingId: string) => void;
 }) {
   const id = useId();
-  const [mappingId, setMappingId] = useState(mappings[0]?.id ?? "");
+  // Abre numa conexão saudável: mapear para uma caída não leva a métrica a
+  // Medindo, e o padrão não pode empurrar a pessoa para esse caminho.
+  const first = mappings.find((x) => x.healthy) ?? mappings[0];
+  const [mappingId, setMappingId] = useState(first?.id ?? "");
   return (
-    <div
-      style={{ display: "flex", gap: 8, alignItems: "end", flexWrap: "wrap" }}
-    >
-      <Field htmlFor={`${id}-map`} label="Fonte da métrica">
-        <Select
-          ariaLabel="Mapeamento de origem"
-          id={`${id}-map`}
-          onChange={setMappingId}
-          options={mappings.map((x) => ({ value: x.id, label: x.label }))}
-          value={mappingId}
-        />
-      </Field>
-      <Button
-        disabled={busy || !mappingId}
-        icon="plug"
-        onClick={() => onMap(mappingId)}
-        variant="ghost"
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div
+        style={{ display: "flex", gap: 8, alignItems: "end", flexWrap: "wrap" }}
       >
-        Mapear fonte
-      </Button>
+        <Field htmlFor={`${id}-map`} label="Fonte da métrica">
+          <Select
+            ariaLabel="Mapeamento de origem"
+            id={`${id}-map`}
+            onChange={setMappingId}
+            options={mappings.map((x) => ({
+              value: x.id,
+              label: x.healthy ? x.label : `${x.label} — conexão com problema`,
+            }))}
+            value={mappingId}
+          />
+        </Field>
+        <Button
+          disabled={busy || !mappingId || denial !== null}
+          icon="plug"
+          onClick={() => onMap(mappingId)}
+          title={denial ?? undefined}
+          variant="ghost"
+        >
+          Mapear fonte
+        </Button>
+      </div>
+      {denial ? (
+        <p style={{ margin: 0, fontSize: 11.5, color: "var(--ink-faint)" }}>
+          {denial}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -236,14 +253,14 @@ function CommentBox({
 function ActionsPanel({
   m,
   denial,
-  canMapSource,
+  mapDenial,
   mappings,
   done,
 }: {
   m: PlanMetricHistory["metric"];
   denial: string | null;
-  canMapSource: boolean;
-  mappings: { id: string; label: string }[];
+  mapDenial: string | null;
+  mappings: { id: string; label: string; healthy: boolean }[];
   done: () => void;
 }) {
   const [pending, setPending] = useState<Pending>(null);
@@ -339,9 +356,10 @@ function ActionsPanel({
         </p>
       ) : null}
 
-      {m.state !== "PROPOSED" && canMapSource && mappings.length > 0 ? (
+      {m.state !== "PROPOSED" && mappings.length > 0 ? (
         <SourcePicker
           busy={busy}
+          denial={mapDenial}
           mappings={mappings}
           onMap={(mappingId) =>
             run(() => mapMetricSource({ id: m.id, mappingId }))
@@ -394,7 +412,7 @@ function EditPanel({
   const [name, setName] = useState(m.name);
   const [formula, setFormula] = useState(m.formula);
   const [target, setTarget] = useState(
-    m.target === null ? "" : String(m.target)
+    m.target === null ? "" : String(m.target).replace(".", ",")
   );
   const [owner, setOwner] = useState(m.ownerId ?? "");
   const [busy, setBusy] = useState(false);
@@ -484,15 +502,15 @@ function EditPanel({
 export function MetricModal({
   metricId,
   denial,
-  canMapSource,
+  mapDenial,
   mappings,
   owners,
   onChanged,
 }: {
   metricId: string;
   denial: string | null;
-  canMapSource: boolean;
-  mappings: { id: string; label: string }[];
+  mapDenial: string | null;
+  mappings: { id: string; label: string; healthy: boolean }[];
   owners: { id: string; name: string }[];
   onChanged: () => void;
 }) {
@@ -603,10 +621,10 @@ export function MetricModal({
         </div>
 
         <ActionsPanel
-          canMapSource={canMapSource}
           denial={denial}
           done={done}
           m={m}
+          mapDenial={mapDenial}
           mappings={mappings}
         />
         <EditPanel

@@ -42,6 +42,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
 import {
   approveMetric,
   changePrimary,
+  classifyInitiative,
   editMetric,
   generatePlan,
   mapMetricSource,
@@ -651,5 +652,116 @@ describe("trocar a primária (SG-PO-02)", () => {
     db.signalPlanMetric.updateMany.mockResolvedValue({ count: 0 });
     const res = await changePrimary(INPUT);
     expect(res).toMatchObject({ ok: false, rule: "plan.concurrent" });
+  });
+});
+
+describe("mapear fonte passa pela mesma negação das outras ações (P1-a)", () => {
+  it("ADMIN não mapeia fonte nem leva a métrica a Medindo", async () => {
+    h.requireSignalPermissionContext.mockResolvedValue({
+      ...CTX,
+      signalRole: "ADMIN",
+    });
+    const res = await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    expect(res).toMatchObject({ ok: false, rule: "plan.role.denied" });
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
+    expect(db.signalPlanMetricEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("ANALYST mapeia, e passa pela posse da iniciativa", async () => {
+    h.requireSignalPermissionContext.mockResolvedValue({
+      ...CTX,
+      signalRole: "ANALYST",
+    });
+    const res = await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    expect(res.ok).toBe(true);
+    expect(h.requireInitiativeOwnership).toHaveBeenCalled();
+  });
+
+  it("o histórico guarda a fonte anterior, não um traço fixo", async () => {
+    db.signalPlanMetric.findFirst.mockResolvedValue(
+      metric({ sourceMappingId: "mp_0" })
+    );
+    db.signalMetricMapping.findFirst.mockImplementation(
+      ({ where }: { where: { id: string } }) =>
+        Promise.resolve({
+          id: where.id,
+          code: where.id === "mp_0" ? "MP-00" : "MP-01",
+          initiativeId: "ini_1",
+          connection: { health: "HEALTHY" },
+        })
+    );
+    await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    const first = db.signalPlanMetricEvent.create.mock.calls[0][0].data;
+    expect(first.changes).toEqual([["Fonte", "MP-00", "MP-01"]]);
+  });
+
+  it("sem fonte anterior o antes é traço", async () => {
+    await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    const first = db.signalPlanMetricEvent.create.mock.calls[0][0].data;
+    expect(first.changes).toEqual([["Fonte", "—", "MP-01"]]);
+  });
+});
+
+describe("classificar a forma de trabalho (P1-b)", () => {
+  it("grava a forma e solta a versão pinada do modelo", async () => {
+    db.signalInitiative.update = vi.fn().mockResolvedValue({});
+    db.signalPlanMetric.count.mockResolvedValue(0);
+    const res = await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "REPORTING",
+    });
+    expect(res).toMatchObject({ ok: true, data: { workForm: "REPORTING" } });
+    expect(db.signalInitiative.update.mock.calls[0][0].data).toEqual({
+      workForm: "REPORTING",
+      measureModelVersionId: null,
+    });
+    expect(h.logSignalAudit).toHaveBeenCalledTimes(1);
+  });
+
+  it("só antes de haver plano: com plano a forma trava", async () => {
+    db.signalInitiative.update = vi.fn();
+    db.signalPlanMetric.count.mockResolvedValue(4);
+    const res = await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "REPORTING",
+    });
+    expect(res).toMatchObject({ ok: false, rule: "plan.workform.locked" });
+    expect(db.signalInitiative.update).not.toHaveBeenCalled();
+  });
+
+  it("mesma forma já gravada não é mudança", async () => {
+    db.signalInitiative.update = vi.fn();
+    db.signalPlanMetric.count.mockResolvedValue(0);
+    const res = await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "TRIAGE",
+    });
+    expect(res).toMatchObject({ ok: true, data: { workForm: "TRIAGE" } });
+    expect(db.signalInitiative.update).not.toHaveBeenCalled();
+  });
+
+  it("OWNER classifica a própria iniciativa; ADMIN e forma inválida não", async () => {
+    db.signalInitiative.update = vi.fn().mockResolvedValue({});
+    db.signalPlanMetric.count.mockResolvedValue(0);
+    h.requireSignalPermissionContext.mockResolvedValue({
+      ...CTX,
+      signalRole: "ADMIN",
+    });
+    const admin = await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "REPORTING",
+    });
+    expect(admin).toMatchObject({ ok: false, rule: "plan.role.denied" });
+    h.requireSignalPermissionContext.mockResolvedValue(CTX);
+    const bad = await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "OUTRA" as never,
+    });
+    expect(bad.ok).toBe(false);
+    await classifyInitiative({
+      initiativeCode: "IN-014",
+      workForm: "REPORTING",
+    });
+    expect(h.requireInitiativeOwnership).toHaveBeenCalled();
   });
 });

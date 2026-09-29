@@ -95,10 +95,14 @@ export type InitiativePlan = {
   /** Motivo da negativa para os controles de decisão; nulo = pode agir. */
   decisionDenial: string | null;
   canMapSource: boolean;
+  /** Motivo de mapear fonte estar desabilitado; nulo = pode. */
+  mapDenial: string | null;
+  /** Forma de trabalho da iniciativa (de onde vem o modelo); nula = sem classificar. */
+  workForm: string | null;
   /** Quem pode ser responsável: membros do tenant com papel no Signal. */
   owners: { id: string; name: string }[];
   /** Mapeamentos que podem alimentar uma métrica desta iniciativa. */
-  mappings: { id: string; label: string }[];
+  mappings: { id: string; label: string; healthy: boolean }[];
 };
 
 export type PlanMetricHistory = {
@@ -307,6 +311,14 @@ function decisionDenial(
   );
 }
 
+/** Mapear fonte: precisa de `mapping.write` E de um papel que move o plano
+ *  (ADMIN tem a permissão, mas não decide — SG-PO-03). */
+function mapSourceDenial(role: SignalRole): string | null {
+  return hasSignalPermission(role, "signal.mapping.write")
+    ? planActionDenial(role, "edit")
+    : "Mapear a fonte é do Analista.";
+}
+
 export async function getInitiativePlan(raw: {
   code: string;
 }): Promise<SignalResult<InitiativePlan>> {
@@ -365,7 +377,12 @@ export async function getInitiativePlan(raw: {
             },
             orderBy: [{ code: "asc" }, { version: "desc" }],
             distinct: ["code"],
-            select: { id: true, code: true, metricLabel: true },
+            select: {
+              id: true,
+              code: true,
+              metricLabel: true,
+              connection: { select: { health: true, name: true } },
+            },
           }),
           db.signalMember.findMany({
             where: { tenantId: ctx.tenantId },
@@ -395,6 +412,7 @@ export async function getInitiativePlan(raw: {
           })
         : null;
       const denial = decisionDenial(ctx, initiative.ownerId);
+      const mapDenial = mapSourceDenial(ctx.signalRole);
 
       return {
         initiativeCode: initiative.code,
@@ -422,13 +440,13 @@ export async function getInitiativePlan(raw: {
             name: m.user.name ?? m.user.email ?? "—",
           }))
           .sort((a, b) => a.name.localeCompare(b.name)),
-        canMapSource: hasSignalPermission(
-          ctx.signalRole,
-          "signal.mapping.write"
-        ),
+        canMapSource: mapDenial === null,
+        mapDenial,
+        workForm: initiative.workForm ?? null,
         mappings: mappings.map((x) => ({
           id: x.id,
-          label: `${x.code} · ${x.metricLabel}`,
+          label: `${x.code} · ${x.metricLabel} · ${x.connection.name}`,
+          healthy: x.connection.health === "HEALTHY",
         })),
       };
     });

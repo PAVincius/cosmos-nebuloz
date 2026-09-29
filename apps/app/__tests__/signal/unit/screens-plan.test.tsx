@@ -16,6 +16,7 @@ const h = vi.hoisted(() => ({
   requestTargetReview: vi.fn(),
   editMetric: vi.fn(),
   generatePlan: vi.fn(),
+  classifyInitiative: vi.fn(),
   changePrimary: vi.fn(),
   open: vi.fn(),
   close: vi.fn(),
@@ -31,6 +32,7 @@ vi.mock("@/app/(signal)/actions/plan", () => ({
   changePrimary: h.changePrimary,
   editMetric: h.editMetric,
   generatePlan: h.generatePlan,
+  classifyInitiative: h.classifyInitiative,
   mapMetricSource: vi.fn(),
   pauseMetric: h.pauseMetric,
   proposeMetric: vi.fn(),
@@ -112,8 +114,10 @@ const plan = (over: Record<string, unknown> = {}) => ({
   },
   decisionDenial: null,
   canMapSource: true,
+  mapDenial: null,
+  workForm: "TRIAGE",
   owners: [{ id: "u1", name: "Paula" }],
-  mappings: [{ id: "mp_1", label: "MP-01 · Tempo" }],
+  mappings: [{ id: "mp_1", label: "MP-01 · Tempo", healthy: true }],
   ...over,
 });
 
@@ -287,7 +291,8 @@ describe("Modal da métrica", () => {
     metricId: "pm_1",
     denial: null,
     canMapSource: true,
-    mappings: [{ id: "mp_1", label: "MP-01 · Tempo" }],
+    mappings: [{ id: "mp_1", label: "MP-01 · Tempo", healthy: true }],
+    mapDenial: null as string | null,
     owners: [{ id: "u1", name: "Paula" }],
     onChanged: vi.fn(),
   };
@@ -407,5 +412,107 @@ describe("Modal da métrica", () => {
     expect(
       await screen.findByText(/pedido de revisão ao Scaffold/)
     ).toBeDefined();
+  });
+
+  it("ADMIN vê Mapear fonte desabilitado com o motivo escrito", async () => {
+    render(
+      <MetricModal
+        {...props}
+        mapDenial="Seu papel não move o plano de medição."
+      />
+    );
+    const btn = (await screen.findByRole("button", {
+      name: "Mapear fonte",
+    })) as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+    expect(
+      screen.getAllByText("Seu papel não move o plano de medição.").length
+    ).toBeGreaterThan(0);
+  });
+
+  it("o seletor de fonte não abre numa conexão caída", async () => {
+    render(
+      <MetricModal
+        {...props}
+        mappings={[
+          { id: "mp_down", label: "MP-00 · Tempo · Jira", healthy: false },
+          { id: "mp_ok", label: "MP-01 · Tempo · Data lake", healthy: true },
+        ]}
+      />
+    );
+    const select = (await screen.findByLabelText(
+      "Mapeamento de origem"
+    )) as HTMLSelectElement;
+    expect(select.value).toBe("mp_ok");
+    expect(
+      Array.from(select.options).find((o) => o.value === "mp_down")?.text
+    ).toMatch(/caída|problema/);
+  });
+
+  it("a meta aparece no formato pt-BR no campo de edição", async () => {
+    h.getPlanMetric.mockResolvedValue({
+      ok: true,
+      data: history({ target: 2.5 }),
+    });
+    render(<MetricModal {...props} />);
+    const input = (await screen.findByLabelText("Meta")) as HTMLInputElement;
+    expect(input.value).toBe("2,5");
+  });
+});
+
+describe("Plano vazio: classificar a forma de trabalho", () => {
+  const empty = (workForm: string | null) => {
+    h.getInitiativePlan.mockResolvedValue({
+      ok: true,
+      data: plan({ metrics: [], workForm }),
+    });
+  };
+
+  it("sem forma, oferece o campo e classifica antes de gerar", async () => {
+    empty(null);
+    h.classifyInitiative.mockResolvedValue({
+      ok: true,
+      data: { workForm: "TRIAGE" },
+    });
+    h.generatePlan.mockResolvedValue({ ok: true, data: { metrics: 4 } });
+    render(<PlanTab code="IN-014" />);
+    const select = (await screen.findByLabelText(
+      "Forma de trabalho"
+    )) as HTMLSelectElement;
+    expect(select.value).toBe("");
+    fireEvent.change(select, { target: { value: "TRIAGE" } });
+    fireEvent.click(
+      screen.getByRole("button", { name: /Gerar plano do modelo/ })
+    );
+    await waitFor(() =>
+      expect(h.classifyInitiative).toHaveBeenCalledWith({
+        initiativeCode: "IN-014",
+        workForm: "TRIAGE",
+      })
+    );
+    await waitFor(() => expect(h.generatePlan).toHaveBeenCalled());
+  });
+
+  it("gerar sem escolher a forma fica desabilitado, com o motivo", async () => {
+    empty(null);
+    render(<PlanTab code="IN-014" />);
+    const btn = (await screen.findByRole("button", {
+      name: /Gerar plano do modelo/,
+    })) as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+    expect(
+      screen.getAllByText(/Escolha a forma de trabalho/).length
+    ).toBeGreaterThan(0);
+  });
+
+  it("forma já gravada não chama classificar de novo", async () => {
+    empty("TRIAGE");
+    h.generatePlan.mockResolvedValue({ ok: true, data: { metrics: 4 } });
+    render(<PlanTab code="IN-014" />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /Gerar plano do modelo/ })
+    );
+    await waitFor(() => expect(h.generatePlan).toHaveBeenCalled());
+    expect(h.classifyInitiative).not.toHaveBeenCalled();
   });
 });

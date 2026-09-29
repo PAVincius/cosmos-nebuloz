@@ -210,3 +210,12 @@ export function diffMetricEdit(
   changes.push(["Versão", `v${current.version}`, `v${current.version + 1}`]);
   return { patch, changes };
 }
+
+/** Formas de trabalho (WorkForm) na ordem dos modelos, com o nome que a tela usa. */
+export const WORK_FORM_OPTIONS = [
+  { value: "CONVERSATIONAL", label: "Conversacional" },
+  { value: "ANALYSIS", label: "Análise e priorização" },
+  { value: "DOC_REVIEW", label: "Revisão de documentos" },
+  { value: "TRIAGE", label: "Triagem" },
+  { value: "REPORTING", label: "Relatórios recorrentes" },
+] as const;

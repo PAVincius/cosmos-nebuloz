@@ -13,7 +13,7 @@
 
 import { Button, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useMemo, useState } from "react";
-import { generatePlan } from "@/app/(signal)/actions/plan";
+import { classifyInitiative, generatePlan } from "@/app/(signal)/actions/plan";
 import {
   getInitiativePlan,
   type InitiativePlan,
@@ -25,12 +25,14 @@ import {
   PLAN_ROLE_META,
   PLAN_ROLE_ORDER,
   PLAN_STATE_META,
+  WORK_FORM_OPTIONS,
 } from "@/lib/signal/plan";
 import {
   type ChipOption,
   Eyebrow,
   FilterChips,
   ScreenError,
+  Select,
   SkeletonRows,
   SmartEmptyState,
   useModal,
@@ -246,21 +248,37 @@ function SideCards({ plan }: { plan: InitiativePlan }) {
 function EmptyPlan({
   code,
   denial,
+  workForm,
   onGenerated,
 }: {
   code: string;
   denial: string | null;
+  workForm: string | null;
   onGenerated: () => void;
 }) {
+  const [form, setForm] = useState(workForm ?? "");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  // Sem permissão o rótulo some e o botão junto (SmartEmptyState só desenha a
-  // ação com rótulo).
-  const idle = busy ? "Gerando…" : "Gerar plano do modelo";
-  const label = denial === null ? idle : "";
+  const reason =
+    denial ??
+    (form === "" ? "Escolha a forma de trabalho para gerar o plano." : null);
+
+  // Classifica (se mudou) e gera, na ordem: sem forma não há modelo, e a forma só
+  // muda enquanto o plano não existe.
   const generate = async () => {
     setBusy(true);
     setError(null);
+    if (form !== workForm) {
+      const classified = await classifyInitiative({
+        initiativeCode: code,
+        workForm: form as (typeof WORK_FORM_OPTIONS)[number]["value"],
+      });
+      if (!classified.ok) {
+        setBusy(false);
+        setError(classified.error);
+        return;
+      }
+    }
     const res = await generatePlan({ initiativeCode: code });
     setBusy(false);
     if (res.ok) {
@@ -269,25 +287,74 @@ function EmptyPlan({
     }
     setError(res.error);
   };
+
   return (
-    <>
+    <div
+      style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+    >
       <SmartEmptyState
         icon="ruler"
-        onPrimary={generate}
-        primaryLabel={label}
-        subtitle={
-          denial ??
-          "O plano nasce do modelo da forma de trabalho: uma primária que decide o veredito e as métricas que a guardam. Sem plano, não há como dizer qual número decide."
-        }
+        subtitle="O plano nasce do modelo da forma de trabalho: uma primária que decide o veredito e as métricas que a guardam. Sem plano, não há como dizer qual número decide."
         title="Esta iniciativa ainda não tem plano de medição"
         tone="accent"
       />
-      {error ? (
-        <p role="alert" style={{ color: "var(--red-text)", fontSize: 12.5 }}>
-          {error}
-        </p>
-      ) : null}
-    </>
+      <SectionCard
+        subtitle="É da forma que vem o modelo de medição. Ela só muda antes de o plano existir."
+        title="Forma de trabalho"
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            alignItems: "end",
+            flexWrap: "wrap",
+          }}
+        >
+          <Select
+            ariaLabel="Forma de trabalho"
+            onChange={setForm}
+            options={[
+              { value: "", label: "Escolha a forma" },
+              ...WORK_FORM_OPTIONS.map((o) => ({
+                value: o.value,
+                label: o.label,
+              })),
+            ]}
+            value={form}
+          />
+          <Button
+            disabled={busy || reason !== null}
+            icon="ruler"
+            onClick={generate}
+          >
+            {busy ? "Gerando…" : "Gerar plano do modelo"}
+          </Button>
+        </div>
+        {reason ? (
+          <p
+            style={{
+              margin: "8px 0 0",
+              fontSize: 11.5,
+              color: "var(--ink-faint)",
+            }}
+          >
+            {reason}
+          </p>
+        ) : null}
+        {error ? (
+          <p
+            role="alert"
+            style={{
+              margin: "8px 0 0",
+              color: "var(--red-text)",
+              fontSize: 12.5,
+            }}
+          >
+            {error}
+          </p>
+        ) : null}
+      </SectionCard>
+    </div>
   );
 }
 
@@ -321,6 +388,7 @@ export function PlanTab({ code }: { code: string }) {
         code={code}
         denial={data.decisionDenial}
         onGenerated={reload}
+        workForm={data.workForm}
       />
     );
   }
@@ -328,8 +396,8 @@ export function PlanTab({ code }: { code: string }) {
   const open = (id: string) =>
     modal.open(
       <MetricModal
-        canMapSource={data.canMapSource}
         denial={data.decisionDenial}
+        mapDenial={data.mapDenial}
         mappings={data.mappings}
         metricId={id}
         onChanged={reload}
