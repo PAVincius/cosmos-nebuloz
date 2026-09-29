@@ -46,6 +46,7 @@ vi.mock("@repo/provisioning", () => ({
   contractModule: vi.fn(),
   setModuleStatus: vi.fn(),
   bootstrapCharter: vi.fn(),
+  bootstrapScaffold: vi.fn(),
   provisionTenant: vi.fn(),
 }));
 
@@ -53,11 +54,17 @@ const {
   contractModuleAction,
   setModuleStatusAction,
   bootstrapCharterAction,
+  bootstrapScaffoldAction,
   provisionTenantAction,
 } = await import("../app/actions/provisioning");
 const { assertCanWrite, StaffAuthError } = await import("../lib/guard");
-const { contractModule, setModuleStatus, bootstrapCharter, provisionTenant } =
-  await import("@repo/provisioning");
+const {
+  contractModule,
+  setModuleStatus,
+  bootstrapCharter,
+  bootstrapScaffold,
+  provisionTenant,
+} = await import("@repo/provisioning");
 
 describe("assertCanWrite", () => {
   it("deixa passar quem é ADMIN no tenant interno", () => {
@@ -117,6 +124,16 @@ describe("as actions de escrita barram staff de leitura", () => {
 
     expect(result.ok).toBe(false);
     expect(bootstrapCharter).not.toHaveBeenCalled();
+  });
+
+  it("bootstrapScaffoldAction não escreve quando canWrite é false", async () => {
+    const result = await bootstrapScaffoldAction({
+      slug: "vanta-saude",
+      adminEmail: "ana@vanta.exemplo",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(bootstrapScaffold).not.toHaveBeenCalled();
   });
 
   it("provisionTenantAction não escreve quando canWrite é false", async () => {
