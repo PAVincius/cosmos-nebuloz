@@ -32,7 +32,12 @@ export type ScaffoldPermission =
   | "businesscase.write"
   | "businesscase.sign"
   | "template.publish"
-  | "portfolio.read";
+  | "portfolio.read"
+  | "deliverable.read"
+  | "deliverable.work"
+  | "deliverable.review"
+  | "deliverable.reopen"
+  | "deliverable.add";
 
 export const SCAFFOLD_PERMISSIONS: readonly ScaffoldPermission[] = [
   "track.manage",
@@ -44,6 +49,11 @@ export const SCAFFOLD_PERMISSIONS: readonly ScaffoldPermission[] = [
   "businesscase.sign",
   "template.publish",
   "portfolio.read",
+  "deliverable.read",
+  "deliverable.work",
+  "deliverable.review",
+  "deliverable.reopen",
+  "deliverable.add",
 ] as const;
 
 /** Rótulo pt-BR de cada permissão, para o motivo visível no controle
@@ -58,6 +68,12 @@ export const SCAFFOLD_PERMISSION_LABEL: Record<ScaffoldPermission, string> = {
   "businesscase.sign": "Assinar ou contestar o caso de negócio",
   "template.publish": "Publicar versão de template e resolver overlay",
   "portfolio.read": "Ler o portfólio de trilhas",
+  "deliverable.read": "Ler e baixar entregável",
+  "deliverable.work":
+    "Iniciar, anexar versão, enviar e editar resumo do entregável",
+  "deliverable.review": "Aprovar ou pedir ajuste em entregável",
+  "deliverable.reopen": "Reabrir entregável aprovado",
+  "deliverable.add": "Adicionar entregável fora do template",
 };
 
 export const SCAFFOLD_ROLE_LABEL: Record<ScaffoldRole, string> = {
@@ -66,6 +82,8 @@ export const SCAFFOLD_ROLE_LABEL: Record<ScaffoldRole, string> = {
   TRANSFORMATION_LEAD: "Líder de transformação",
   CONSULTANT: "Consultor",
   ADMIN: "Administrador",
+  SPONSOR: "Patrocinador",
+  TEAM_LEAD: "Líder do time",
 };
 
 /** Tom de cada papel na UI. Categoria, não estado — por isso nada de verde,
@@ -79,6 +97,8 @@ export const SCAFFOLD_ROLE_TONE: Record<
   TRANSFORMATION_LEAD: "purple",
   CONSULTANT: "accent",
   ADMIN: "neutral",
+  SPONSOR: "neutral",
+  TEAM_LEAD: "neutral",
 };
 
 export const SCAFFOLD_MATRIX: Record<
@@ -86,7 +106,13 @@ export const SCAFFOLD_MATRIX: Record<
   readonly ScaffoldPermission[]
 > = {
   // Executa o trabalho guiado. Não decide gate, não assina promessa.
-  TEAM_MEMBER: ["step.complete", "artefact.read", "portfolio.read"],
+  TEAM_MEMBER: [
+    "step.complete",
+    "artefact.read",
+    "portfolio.read",
+    "deliverable.read",
+    "deliverable.work",
+  ],
   // Assina o caso de negócio e fecha gate com critérios atendidos — é a
   // contraparte do cliente que o PRD chama de "decide se a mudança é segura
   // para tornar permanente". Não faz override: passar por cima do próprio
@@ -97,6 +123,11 @@ export const SCAFFOLD_MATRIX: Record<
     "gate.close",
     "businesscase.sign",
     "portfolio.read",
+    "deliverable.read",
+    "deliverable.work",
+    "deliverable.review",
+    "deliverable.reopen",
+    "deliverable.add",
   ],
   // Enxerga a organização inteira e conduz trilhas, mas a decisão de risco
   // continua com quem tem pele no processo.
@@ -107,6 +138,11 @@ export const SCAFFOLD_MATRIX: Record<
     "gate.close",
     "businesscase.write",
     "portfolio.read",
+    "deliverable.read",
+    "deliverable.work",
+    "deliverable.review",
+    "deliverable.reopen",
+    "deliverable.add",
   ],
   // Supervisiona. É o único papel com override — e o override é sempre
   // atribuído a ele, nominalmente, na trilha de auditoria.
@@ -119,6 +155,11 @@ export const SCAFFOLD_MATRIX: Record<
     "businesscase.write",
     "template.publish",
     "portfolio.read",
+    "deliverable.read",
+    "deliverable.work",
+    "deliverable.review",
+    "deliverable.reopen",
+    "deliverable.add",
   ],
   // Administra papéis e configuração. Deliberadamente SEM gate.close,
   // gate.override e businesscase.sign: administrar acesso não é decidir risco.
@@ -127,8 +168,20 @@ export const SCAFFOLD_MATRIX: Record<
     "artefact.read",
     "template.publish",
     "portfolio.read",
+    "deliverable.read",
   ],
+  // Só leem (SC-PO-04, SC-DEV-07): o backend devolve 403 em qualquer escrita.
+  // O sponsor não assina: businesscase.sign fica com o dono do processo.
+  SPONSOR: ["artefact.read", "portfolio.read", "deliverable.read"],
+  TEAM_LEAD: ["artefact.read", "portfolio.read", "deliverable.read"],
 } as const;
+
+// As permissões `deliverable.*` dizem o que o PAPEL pode fazer. Três regras de
+// instância ficam nas actions, porque dependem do entregável e não do papel
+// (seção d, "Regras de instância"):
+//   • `work` de TEAM_MEMBER e PROCESS_OWNER só vale se ele for o responsável;
+//   • `review` só vale se ele for o aprovador, e ninguém aprova o que é seu;
+//   • ADMIN não mexe em entregável: administrar acesso não é decidir risco.
 
 export function hasScaffoldPermission(
   role: ScaffoldRole,
