@@ -52,6 +52,8 @@ Três regras valem para o registro inteiro:
 | D-18 | A Nebuloz é o primeiro tenant da memória | Em andamento (agentes) | Morgana |
 | D-19 | Meridian A3: "Ver evidência" exibido também em Coleta e no gap, escopo mínimo ([escopo](meridian-escopo-dogfood-a3-a5.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua → Bussola |
 | D-20 | Meridian A5: tela de dependência/ciclo e ajuste de gap fica para depois, com gatilho ([escopo](meridian-escopo-dogfood-a3-a5.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua, Crivo |
+| D-21 | Meridian: benchmark travado por tenant; só staff Nebuloz liga, no back-office, com aditivo ([PRD §10](meridian-prd.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua (spec 012) → Bussola |
+| D-22 | Meridian: benchmark travado também esconde a leitura; contribui e lê juntos; interno habilitado lê; staff no back-office fora da regra ([PRD §10](meridian-prd.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua (emenda 012) → Bussola |
 
 ---
 
