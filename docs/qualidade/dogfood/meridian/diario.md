@@ -41,3 +41,32 @@ Após 889c91af (seletor por role, backdrop fora da faixa de ambiente, copiar o l
 M10 (`e2e/meridian-load`): **passou** — `/meridian` 525 ms com 200 assessments, `/meridian/registry` 273 ms com 2.000 gaps (orçamento SC-010: 2 s). O seed criou 200 assessments `LOAD-` no tenant `techcorp-sa` local.
 
 Schema `backup_meridian_20260929` do banco local removido (`DROP SCHEMA … CASCADE`, só `cosmos_dev` em localhost:5434).
+
+## 2026-09-29 ~01:45 BRT — Reset do Meridian em produção
+
+Decisão do CEO (28/09 ~23h): apagar só os dados do Meridian, todos os tenants. Executado pela Morgana no SQL Studio do Supabase, projeto `db-prd-nz` (`aosdvvluokrbgpyqwoor`), papel `postgres`, com `apps/app/scripts/sql/meridian-reset.sql` (sha256 `eb720cbb…`, de0e25c3). O bloco 3 (transação) conferido por hash normalizado igual ao arquivo aprovado antes de rodar.
+
+Revisões: Vigia aprovou para produção; Lacre OK com condições (`docs/compliance/2026-09-29-parecer-reset-meridian-producao.md`); C1 fechada — diagnósticos só nos tenants internos `nebula` (membro único = fundador) e `nebuloz`. Data API expõe só `public` e `graphql_public`: o schema de backup não fica exposto.
+
+| Tabela | Antes | Depois |
+|---|---|---|
+| MeridianGapPromotion | 0 | 0 |
+| MeridianPlanItem | 20 | 0 |
+| MeridianGapDependency | 3 | 0 |
+| MeridianGap | 37 | 0 |
+| MeridianEvidence | 0 | 0 |
+| MeridianResponse | 30 | 0 |
+| MeridianOverride | 0 | 0 |
+| MeridianAxisScore | 10 | 0 |
+| MeridianRespondent | 10 | 0 |
+| MeridianAssessment | 3 | 0 |
+| MeridianBenchmarkContribution | 0 | 0 |
+| MeridianBenchmarkCohort | 0 | 0 |
+| MeridianSequence | 2 | 0 |
+| MeridianTemplate (mantém) | 3 | 3 |
+| MeridianQuestion (mantém) | 45 | 45 |
+| MeridianMembership (mantém) | 3 | 3 |
+
+Bucket `meridian-evidence`: 0 objetos antes e depois (nada a esvaziar). Vínculo `ScaffoldTrack` → gap/promoção: 0.
+
+Backup `backup_meridian_20260929`: 13 tabelas com RLS ligada e forçada, sem grants; `anon` sem USAGE. Contagens conferem com o antes (Assessment 3, Gap 37, Respondent 10, Response 30). `DROP SCHEMA` previsto para 2026-10-29 (condição C2 do Lacre). Pendentes: declarar no RoPA; registrar a janela de PITR do Supabase (Pilar). Runtime da Vercel sem erro nos 30 min seguintes.
