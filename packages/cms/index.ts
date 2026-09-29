@@ -46,7 +46,7 @@ const perRequest = <F extends (...args: never[]) => Promise<unknown>>(
 /**
  * Executa uma query do CMS tolerando credencial ausente ou inválida.
  *
- * O BaseHub sustenta só `/blog` e `/legal`. Sem um `BASEHUB_TOKEN` de verdade a
+ * O BaseHub sustenta só o `/blog`. Sem um `BASEHUB_TOKEN` de verdade a
  * query estoura "Failed to resolve ref: Unauthorized" enquanto o `next build`
  * coleta os dados de página — e isso derruba o build do site inteiro, inclusive
  * a home, que não encosta no CMS. É a mesma postura de `scripts/build.mjs`: a
