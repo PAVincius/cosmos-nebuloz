@@ -149,18 +149,44 @@ prioridade da história na spec (P1 conduz · P2 entrega · P3 diferencial; "—
 
 ## 6. Critérios de sucesso
 
+Estado na `github/main` @ `ca12b6a8` (2026-09-29), conferido no código e contra o dogfood local de
+2026-09-29 (`docs/qualidade/prontidao/meridian.md` §2). "Local" quer dizer que não rodou em produção:
+o dogfood em produção parou no M2.
+
 | CRITÉRIO DA SPEC (`spec.md:228-237`) | ESTADO NA MAIN |
 |---|---|
-| SC-001 · Do zero ao relatório sem sair do produto nem usar planilha | ausente — criar assessment e atribuir respondente não têm tela |
-| SC-002 · Scoring idêntico em 100% das repetições | implementado — teste do motor |
-| SC-003 · Todo score final rastreável até respostas ou override | parcial — a resposta muda depois do fechamento, e o computado não |
-| SC-004 · Contestados na fila antes do relatório | ausente — o relatório não consulta a fila |
+| SC-001 · Do zero ao relatório sem sair do produto nem usar planilha | implementado, provado no local — criar assessment e atribuir respondente têm tela (`screens/assessments.tsx`, `screens/tab-coleta.tsx`); AS-110 do zero ao relatório pela tela. Produção não fechou |
+| SC-002 · Scoring idêntico em 100% das repetições | implementado — teste do motor (`meridian-scoring.test.ts`, 13/13) |
+| SC-003 · Todo score final rastreável até respostas ou override | parcial — override rastreável na trilha (FR-038), mas a resposta ainda muda depois do envio: o token vale até expirar, inclusive para quem está `DONE` (`lib/meridian/respondent-token.ts:46-54`) |
+| SC-004 · Contestados na fila antes do relatório | ausente — a fila global lista o contestado, mas `getReport` não consulta a fila (`actions/report.ts:57`) |
 | SC-005 · Nenhuma comparação com coorte abaixo de 5 | implementado — corte na leitura; `n` conta assessments |
-| SC-006 · Respondente conclui em menos de 10 minutos | ausente — sem medição |
-| SC-007 · Nenhum item do plano antes de um pré-requisito | implementado — checado antes de gravar, com teste |
-| SC-008 · Toda leitura de evidência na trilha | implementado no servidor; nenhuma tela baixa evidência |
+| SC-006 · Respondente conclui em menos de 10 minutos | implementado, medido no local — cerca de 10 s por sessão com evidência anexada, feito por agente e não por pessoa nova (`diario.md:84`) |
+| SC-007 · Nenhum item do plano antes de um pré-requisito | implementado — checado antes de gravar, com teste; 0 violações em 5 dependências (AS-104) |
+| SC-008 · Toda leitura de evidência na trilha | implementado no servidor e provado no E2E (`meridian-dogfood.spec.ts:523`); na tela, "Ver evidência" só no painel de divergência. Coleta e gap entram por D-19 |
 | SC-009 · Gap promovido editável só no Meridian | implementado |
-| SC-010 · Carteira e registro em menos de 2 s com 200 assessments e 2.000 gaps | ausente — sem medição; as listas não paginam |
+| SC-010 · Carteira e registro em menos de 2 s com 200 assessments e 2.000 gaps | implementado, medido em `next dev` local — `/meridian` 1.004 ms, `/meridian/registry` 351 ms (`e2e/meridian-load`); sem medição em infraestrutura real |
+| SC-011 · Respondentes concorrentes sem degradar (novo, abaixo) | parcial — dentro da meta contra `next build` local (p95 26 ms, 0 % de erro, 50 VUs); sem medição em infraestrutura real |
+
+### SC-011 · Carga do respondente (2026-09-29, CPO)
+
+**Critério.** Com **50 respondentes sem conta ao mesmo tempo** abrindo o link e gravando rascunho, a
+rota do respondente responde com **p95 < 800 ms** e **erro < 1 %**, por no mínimo 60 s no pico.
+
+**Por que 50.** O primeiro cliente é um assessment só. Hipótese, sem fonte no repo: até 4 respondentes
+por eixo, 5 eixos, ou seja, 20 pessoas. O pior caso é todas responderem juntas numa sessão de
+kickoff. 50 cobre 2,5 vezes esse assessment, ou dois assessments simultâneos com folga. Rever quando o
+primeiro contrato fixar o número de respondentes.
+
+**Como se mede.**
+- Script: `apps/app/load/k6/meridian-responder.js` (rampa de 1 a 50 VUs, 60 s em 50; GET do link e
+  `saveDraft`). Dados sintéticos, respondentes dedicados.
+- **Vale como prova de código:** `next build` + `next start`. `next dev` não conta.
+- **Vale para liberar cliente externo:** a mesma meta contra infraestrutura real (preview ou staging,
+  com banco e Storage remotos), só com go-ahead do CEO. É a condição 9 da prontidão, dona Infra/QA.
+- Fora do escopo: upload de evidência (Storage) e envio final, que acontecem uma vez por respondente e
+  não formam pico.
+
+**Espelho na spec.** Regua leva o SC-011 para `specs/001-meridian-diagnose/spec.md`.
 
 ---
 
@@ -275,6 +301,56 @@ links num único passo, sem revogar nada, em produção.
 
 **Junto (achado P2 do Vigia, `atrito.md:42`).** A reemissão define um `tokenExpiresAt` próprio
 em vez de copiar `assessment.deadline`. O Maestro decide o valor.
+
+### 2026-09-29 · Atritos do dogfood local: dono e data (CPO)
+
+Condição 10 da prontidão (`docs/qualidade/prontidao/meridian.md`): o gate pede dono e data para cada
+atrito aberto. A3 e A5 foram confirmados pelo CEO em 2026-09-29 (D-19 e D-20 em
+`registro-de-decisoes.md`).
+
+| Atrito | Decisão | Dono | Data ou gatilho |
+|---|---|---|---|
+| **A3** — "Ver evidência" só no painel de divergência | Exibir também em Coleta e no gap, escopo mínimo (D-19) | Regua (spec) → Bussola | Spec até **2026-10-01**; em `github/main` até **2026-10-08**, antes do M3 em produção |
+| **Foco inicial do `ModalShell`** — ao abrir o modal, o foco fica no `body` | Corrigir: o foco vai ao primeiro controle do modal e volta ao gatilho ao fechar | Bussola | Em `github/main` até **2026-10-06**. Critério: abrir qualquer modal do Meridian pelo teclado leva o foco para dentro do modal |
+| **A5** — ciclo de dependência e ajuste de severidade/esforço sem tela | Depois (D-20). Enquanto isso, prova pelo servidor | Crivo (teste de action) · Regua (backlog M-14) | Teste do ciclo (FR-023) pelo servidor até **2026-10-10**. Tela entra pelo evento que vier primeiro: (1) em produção, um `MeridianAssessment` de tenant com `isInternalTenant = false` chega a `status = REVIEW`, ou seja, fecha a coleta; (2) a consultora registra no `diario.md` um ajuste de gap sem caminho; (3) o teste de action acha defeito na recusa de ciclo. Data-limite para rever, mesmo sem evento: **2026-12-15** |
+
+### 2026-09-29 · Benchmark travado por tenant, só a Nebuloz liga (CPO, sobre decisão do CEO)
+
+**Contexto.** O CEO decidiu em 2026-09-29 que o benchmark fica desligado no primeiro contrato **e**
+travado no produto (`docs/compliance/2026-09-29-memo-ceo-operadora-controladora-meridian.md`, item 4 e
+§5 a). Hoje o default é `false`, mas o consultor do cliente liga a caixa ao criar o assessment
+(`screens/assessments.tsx:211`), e o scoring passa a contribuir para a coorte (`actions/scoring.ts:200`,
+`actions/benchmark.ts:55-72`). Ligado, a Nebuloz vira controladora sem linha no RoPA e sem aviso ao
+respondente. A cláusula do DPA (§2.1) sozinha não impede o clique.
+
+**Regra.**
+1. **A permissão é do tenant, não do assessment.** Cada tenant tem uma habilitação de benchmark do
+   Meridian, desligada por padrão. Enquanto estiver desligada, nenhum assessment desse tenant pode ter
+   `benchmarkOptIn = true`.
+2. **Só a Nebuloz liga, e só pelo back-office.** Quem liga é staff Nebuloz, na ficha do cliente em
+   backoffice.nebuloz.ai. É obrigatório informar a referência do aditivo contratual (DPA §2.1). A ação
+   grava auditoria com ator, data e referência. Nenhum papel do tenant do cliente liga ou desliga,
+   inclusive ADMIN e CONSULTANT.
+3. **Com a habilitação ligada, o opt-in continua por assessment.** A caixa aparece e o consultor decide
+   assessment a assessment, como hoje.
+4. **O servidor recusa, não só a tela.** `createAssessment` recusa `benchmarkOptIn = true` com a
+   habilitação desligada. `runScoring`/`contributeToBenchmark` não contribui se a habilitação estiver
+   desligada no momento do scoring, mesmo com um `benchmarkOptIn = true` antigo. Desligar a habilitação
+   trava as contribuições futuras. Retirar o que já contribuiu segue a regra atual de
+   `withdrawContribution`.
+5. **Tenant interno.** `isInternalTenant = true` segue a mesma regra. Staff liga quando quiser, sem
+   aditivo, porque a Nebuloz já é controladora do próprio dado.
+
+**Fora desta regra.** Linha no RoPA e aviso próprio ao respondente são pré-requisito para ligar a
+habilitação de um cliente externo (memo, §5 a). São da Lacre e não bloqueiam a trava.
+
+**Dono e data.** Regua (spec curta) até **2026-10-01**; Bussola, em `github/main` até **2026-10-07**.
+Critério de pronto: com a habilitação desligada, a caixa não aparece; chamar `createAssessment` direto
+com `benchmarkOptIn: true` volta erro; e um assessment antigo com opt-in não gera contribuição no
+scoring. **Bloqueia cliente externo.**
+
+Antes do primeiro contrato, Pilar confere em produção se algum assessment de tenant externo tem
+`benchmarkOptIn = true`, com o "vai" do CEO.
 
 ---
 
