@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  availableActions,
   type DeliverableStatus,
   type DeliverableTransition,
   decideEdit,
   decideTransition,
   deliverableGrants,
   gateReviewState,
+  phaseGateState,
 } from "@/lib/scaffold/deliverable-machine";
 import {
   hasScaffoldPermission,
@@ -400,6 +402,74 @@ describe("decideEdit", () => {
     ).toBe(true);
     expect(decideEdit(subject("IN_PROGRESS"), as("SPONSOR", OWNER)).ok).toBe(
       false
+    );
+  });
+});
+
+describe("availableActions", () => {
+  it("diz o que cada botão pode, com o motivo quando não pode", () => {
+    const a = availableActions(subject("NOT_STARTED"), as("CONSULTANT", "u-c"));
+    expect(a.START).toEqual({ allowed: true, reason: null });
+    expect(a.SUBMIT.allowed).toBe(false);
+    expect(a.SUBMIT.reason).toMatch(/estado/i);
+    expect(a.APPROVE.allowed).toBe(false);
+  });
+
+  it("sponsor não tem ação nenhuma, e o motivo é de papel", () => {
+    const a = availableActions(subject("IN_REVIEW"), as("SPONSOR", APPROVER));
+    for (const t of Object.values(a)) {
+      expect(t.allowed).toBe(false);
+    }
+    expect(a.APPROVE.reason).toMatch(/papel/i);
+  });
+
+  it("não cobra o comentário: ele é pedido no diálogo, não some com o botão", () => {
+    const a = availableActions(
+      subject("IN_REVIEW"),
+      as("PROCESS_OWNER", APPROVER)
+    );
+    expect(a.REQUEST_ADJUSTMENT.allowed).toBe(true);
+    const r = availableActions(subject("APPROVED"), as("CONSULTANT", "u-c"));
+    expect(r.REOPEN.allowed).toBe(true);
+  });
+
+  it("o dono vê por que não pode aprovar o próprio", () => {
+    const a = availableActions(subject("IN_REVIEW"), as("CONSULTANT", OWNER));
+    expect(a.APPROVE.allowed).toBe(false);
+    expect(a.APPROVE.reason).toMatch(/seu/i);
+  });
+});
+
+describe("phaseGateState", () => {
+  const item = (
+    code: string,
+    status: DeliverableStatus,
+    phaseInstanceId = "p1",
+    required = true
+  ) => ({ code, title: code, status, required, phaseInstanceId });
+
+  it("trilha sem nenhum entregável não é bloqueada (legada)", () => {
+    expect(phaseGateState([], "p1", false)).toEqual({
+      blocked: false,
+      reason: null,
+      pending: [],
+    });
+  });
+
+  it("considera só a fase pedida", () => {
+    const s = phaseGateState(
+      [item("A1.1", "NOT_STARTED", "p0"), item("B1.1", "APPROVED", "p1")],
+      "p1",
+      false
+    );
+    expect(s.blocked).toBe(false);
+  });
+
+  it("A3.2 vale como aprovado com o caso assinado", () => {
+    const all = [item("A3.2", "NOT_STARTED"), item("A3.1", "APPROVED")];
+    expect(phaseGateState(all, "p1", true).blocked).toBe(false);
+    expect(phaseGateState(all, "p1", false).pending.map((p) => p.code)).toEqual(
+      ["A3.2"]
     );
   });
 });

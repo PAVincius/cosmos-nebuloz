@@ -314,6 +314,23 @@ describe("listDeliverables e getDeliverable", () => {
     });
   });
 
+  it("cada item traz o que o ator pode fazer, com o motivo quando não pode", async () => {
+    h.findMany.mockResolvedValue([row("IN_REVIEW")]);
+    asUser("SPONSOR", OWNER);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const a = r.data[0]?.actions;
+      expect(a?.APPROVE.allowed).toBe(false);
+      expect(a?.APPROVE.reason).toMatch(/papel/i);
+    }
+    asUser("PROCESS_OWNER", APPROVER);
+    const ok = await listDeliverables({ trackId: TRACK });
+    if (ok.ok) {
+      expect(ok.data[0]?.actions.APPROVE.allowed).toBe(true);
+    }
+  });
+
   it("detalhe traz histórico, comentários e links do próprio tenant", async () => {
     h.findFirst.mockResolvedValue({ ...row("IN_REVIEW"), summary: "s" });
     h.eventFindMany.mockResolvedValue([]);

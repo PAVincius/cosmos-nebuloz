@@ -5,9 +5,8 @@ import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import {
-  BUSINESS_CASE_DELIVERABLE_CODE,
   type GateReviewState,
-  gateReviewState,
+  phaseGateState,
 } from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import {
@@ -162,8 +161,7 @@ async function assertCharterPolicyAcked(
  * por dado ausente as prenderia sem saída. Trilha COM entregáveis é regida por
  * eles, e fase sem nenhum obrigatório também bloqueia (ver `gateReviewState`).
  *
- * O A3.2 é o caso de negócio: o estado dele deriva da assinatura (SG-04) e
- * ninguém o aprova à mão, então conta como aprovado quando o caso está assinado.
+ * A regra vive em `phaseGateState`, compartilhada com a tela.
  */
 async function loadDeliverableGate(
   db: Db,
@@ -180,22 +178,10 @@ async function loadDeliverableGate(
       phaseInstanceId: true,
     },
   });
-  if (all.length === 0) {
-    return { blocked: false, reason: null, pending: [] };
-  }
-  const signed = Boolean(phase.track.businessCase?.signedVersionId);
-  return gateReviewState(
-    all
-      .filter((x) => x.phaseInstanceId === phase.id)
-      .map((x) => ({
-        code: x.code,
-        title: x.title,
-        required: x.required,
-        status:
-          x.code === BUSINESS_CASE_DELIVERABLE_CODE && signed
-            ? "APPROVED"
-            : x.status,
-      }))
+  return phaseGateState(
+    all,
+    phase.id,
+    Boolean(phase.track.businessCase?.signedVersionId)
   );
 }
 

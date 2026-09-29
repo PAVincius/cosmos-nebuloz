@@ -13,6 +13,7 @@ import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import {
+  availableActions,
   type DeliverableActor,
   type DeliverableSubject,
   type DeliverableTransition,
@@ -399,13 +400,20 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("deliverable.read");
     const input = TrackIdSchema.parse(raw);
-    return withTenantDb(ctx.tenantId, (db) =>
+    const rows = await withTenantDb(ctx.tenantId, (db) =>
       db.scaffoldDeliverableInstance.findMany({
         where: { tenantId: ctx.tenantId, trackId: input.trackId },
         orderBy: [{ code: "asc" }],
         select: LIST_SELECT,
       })
     );
+    // O que o ator pode fazer, calculado no servidor: a tela desabilita o
+    // controle com o motivo e nunca precisa conhecer papel nem regra.
+    const actor = actorOf(ctx);
+    return rows.map((d) => ({
+      ...d,
+      actions: availableActions(d, actor),
+    }));
   });
 }
 

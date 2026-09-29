@@ -253,3 +253,58 @@ export function gateReviewState(
     pending,
   };
 }
+
+export type ActionAvailability = { allowed: boolean; reason: string | null };
+
+/**
+ * O que cada botão pode, com o motivo quando não pode (controle desabilitado
+ * com o porquê, nunca escondido). Não cobra o comentário: ele é pedido no
+ * diálogo, e sumir com o botão por falta dele impediria de chegar lá.
+ */
+export function availableActions(
+  subject: DeliverableSubject,
+  actor: DeliverableActor
+): Record<DeliverableTransition, ActionAvailability> {
+  const out = {} as Record<DeliverableTransition, ActionAvailability>;
+  for (const t of Object.keys(TRANSITIONS) as DeliverableTransition[]) {
+    const r = decideTransition(t, subject, actor, "-");
+    out[t] = r.ok
+      ? { allowed: true, reason: null }
+      : { allowed: false, reason: r.message };
+  }
+  return out;
+}
+
+export type PhaseDeliverable = GateDeliverable & { phaseInstanceId: string };
+
+/**
+ * Estado do gate de UMA fase a partir de todos os entregáveis da trilha.
+ * Compartilhado por `closePhase` (servidor) e pela tela (motivo no botão), para
+ * que os dois nunca discordem.
+ *
+ * Trilha sem nenhum entregável (anterior ao modelo) não é bloqueada: segue só a
+ * regra de passos. O A3.2 é o caso de negócio e conta como aprovado quando o
+ * caso está assinado (SG-04): ninguém o aprova à mão.
+ */
+export function phaseGateState(
+  all: readonly PhaseDeliverable[],
+  phaseInstanceId: string,
+  businessCaseSigned: boolean
+): GateReviewState {
+  if (all.length === 0) {
+    return { blocked: false, reason: null, pending: [] };
+  }
+  return gateReviewState(
+    all
+      .filter((d) => d.phaseInstanceId === phaseInstanceId)
+      .map((d) => ({
+        code: d.code,
+        title: d.title,
+        required: d.required,
+        status:
+          d.code === BUSINESS_CASE_DELIVERABLE_CODE && businessCaseSigned
+            ? "APPROVED"
+            : d.status,
+      }))
+  );
+}
