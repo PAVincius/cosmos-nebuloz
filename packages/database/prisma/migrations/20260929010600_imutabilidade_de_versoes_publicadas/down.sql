@@ -1,0 +1,7 @@
+-- Reverte 20260929010600_imutabilidade_de_versoes_publicadas.
+DROP TRIGGER signal_measure_model_version_immutable ON "SignalMeasureModelVersion";
+DROP TRIGGER signal_measure_model_metric_immutable ON "SignalMeasureModelMetric";
+DROP TRIGGER charter_control_profile_version_immutable ON "CharterControlProfileVersion";
+DROP TRIGGER charter_control_profile_control_immutable ON "CharterControlProfileControl";
+DROP TRIGGER scaffold_deliverable_template_immutable ON "ScaffoldDeliverableTemplate";
+DROP FUNCTION prevent_published_mutation();
