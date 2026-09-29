@@ -17,6 +17,25 @@ const toastMocks = vi.hoisted(() => ({
   success: vi.fn(),
   error: vi.fn(),
 }));
+// O modal do controle importa a action de arquivo, que puxa o storage (env de
+// servidor). O detalhe do caso não a usa aqui.
+vi.mock("@/app/(charter)/actions/controls-read", () => ({
+  getCaseControls: vi.fn().mockResolvedValue({ ok: false, error: "sem plano" }),
+}));
+vi.mock("@/app/(charter)/actions/case-controls", () => ({
+  acceptControl: vi.fn(),
+  addExtraControl: vi.fn(),
+  attachControlEvidence: vi.fn(),
+  dispenseControl: vi.fn(),
+  editControl: vi.fn(),
+  reopenControl: vi.fn(),
+  requestControlAdjustment: vi.fn(),
+  submitControl: vi.fn(),
+}));
+vi.mock("@/app/(charter)/actions/control-files", () => ({
+  readControlEvidenceFile: vi.fn(),
+  requestControlEvidenceUpload: vi.fn(),
+}));
 vi.mock("sonner", () => ({ toast: toastMocks }));
 
 const pushMock = vi.hoisted(() => vi.fn());

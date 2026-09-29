@@ -6,6 +6,9 @@
 // em que o plano nasceu: publicar versão nova do perfil não reescreve o que o
 // caso já cumpre.
 
+import { Button } from "@repo/design-system/cosmos/kit";
+import { useState } from "react";
+import { readControlEvidenceFile } from "@/app/(charter)/actions/control-files";
 import type { CaseControlView } from "@/app/(charter)/actions/controls-read";
 import { CONTROL_STATE_META, expiryWarning } from "@/lib/charter/controls-view";
 import { Eyebrow, MetaCell, StatusDot } from "../base";
@@ -27,6 +30,51 @@ const ACTION_LABEL: Record<string, string> = {
 };
 
 const fmt = (d: Date | null) => (d ? d.toLocaleDateString("pt-BR") : "—");
+
+/** Baixa o arquivo pela URL assinada. A action audita ANTES de emitir; o nome
+ *  vai como `download`, então o navegador salva em vez de abrir. */
+function DownloadFile({
+  caseCode,
+  controlCode,
+  fileName,
+}: {
+  caseCode: string;
+  controlCode: string;
+  fileName: string;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const go = async () => {
+    setBusy(true);
+    setError(null);
+    const res = await readControlEvidenceFile({ code: caseCode, controlCode });
+    setBusy(false);
+    if (res.ok) {
+      window.location.assign(res.data.url);
+      return;
+    }
+    setError(res.error);
+  };
+  return (
+    <span style={{ display: "block", marginTop: 6 }}>
+      <Button disabled={busy} icon="download" onClick={go} variant="secondary">
+        Baixar {fileName}
+      </Button>
+      {error ? (
+        <span
+          role="alert"
+          style={{
+            display: "block",
+            color: "var(--red-text)",
+            fontSize: FS.nota,
+          }}
+        >
+          {error}
+        </span>
+      ) : null}
+    </span>
+  );
+}
 
 function Block({
   title,
@@ -88,12 +136,11 @@ export function ControlModal({
         <Block title="O que a evidência mostra">
           {control.summary ?? "Nada anexado ainda."}
           {control.fileName ? (
-            <span
-              className="mono"
-              style={{ display: "block", fontSize: FS.nota }}
-            >
-              Arquivo: {control.fileName}
-            </span>
+            <DownloadFile
+              caseCode={caseCode}
+              controlCode={control.code}
+              fileName={control.fileName}
+            />
           ) : null}
         </Block>
 

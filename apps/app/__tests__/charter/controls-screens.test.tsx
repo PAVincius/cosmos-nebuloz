@@ -17,6 +17,8 @@ const h = vi.hoisted(() => ({
   editControl: vi.fn(),
   addExtraControl: vi.fn(),
   listControlProfiles: vi.fn(),
+  requestUpload: vi.fn(),
+  readFile: vi.fn(),
   push: vi.fn(),
 }));
 
@@ -32,6 +34,10 @@ vi.mock("@/app/(charter)/actions/case-controls", () => ({
 }));
 vi.mock("@/app/(charter)/actions/controls-read", () => ({
   listControlProfiles: h.listControlProfiles,
+}));
+vi.mock("@/app/(charter)/actions/control-files", () => ({
+  requestControlEvidenceUpload: h.requestUpload,
+  readControlEvidenceFile: h.readFile,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
 
@@ -290,27 +296,90 @@ describe("modal do controle", () => {
     ).toBeGreaterThan(0);
   });
 
-  it("anexar sem envio de arquivo habilitado falha alto e não grava chave", async () => {
+  it("anexar: sobe o arquivo pela URL assinada e só então grava a chave no controle", async () => {
+    h.requestUpload.mockResolvedValue({
+      ok: true,
+      data: {
+        uploadUrl: "https://s/up",
+        fileKey: "t1/charter/UC-118/TR-2/v1/laudo.pdf",
+        fileName: "laudo.pdf",
+        contentType: "application/pdf",
+      },
+    });
+    h.attachControlEvidence.mockResolvedValue({
+      ok: true,
+      data: { state: "IN_PROGRESS" },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, status: 200 })
+    );
     mount();
     open("TR-2");
     fireEvent.click(
       await screen.findByRole("button", { name: "Anexar evidência" })
     );
-    const input = screen.getByLabelText(
-      /Arquivo da evidência/
-    ) as HTMLInputElement;
-    fireEvent.change(input, {
+    fireEvent.change(screen.getByLabelText(/Arquivo da evidência/), {
       target: {
         files: [new File(["x"], "laudo.pdf", { type: "application/pdf" })],
       },
     });
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
-    expect(
-      await screen.findByText(
-        /envio de arquivo de evidência ainda não está habilitado/
+    await waitFor(() =>
+      expect(h.attachControlEvidence).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: "UC-118",
+          controlCode: "TR-2",
+          fileKey: "t1/charter/UC-118/TR-2/v1/laudo.pdf",
+          fileName: "laudo.pdf",
+        })
       )
-    ).toBeDefined();
+    );
+  });
+
+  it("upload que falha mostra o erro e não grava nada no controle", async () => {
+    h.requestUpload.mockResolvedValue({
+      ok: false,
+      error: "Tipo de arquivo não aceito como evidência.",
+    });
+    mount();
+    open("TR-2");
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Anexar evidência" })
+    );
+    fireEvent.change(screen.getByLabelText(/Arquivo da evidência/), {
+      target: {
+        files: [new File(["x"], "a.exe", { type: "application/x-msdownload" })],
+      },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    expect(await screen.findByText(/Tipo de arquivo não aceito/)).toBeDefined();
     expect(h.attachControlEvidence).not.toHaveBeenCalled();
+  });
+
+  it("controle com arquivo oferece baixar, pela URL assinada com auditoria", async () => {
+    h.readFile.mockResolvedValue({
+      ok: true,
+      data: { url: "https://s/dl?t=1", fileName: "laudo.pdf" },
+    });
+    const assign = vi.fn();
+    vi.stubGlobal("location", { ...window.location, assign });
+    mount(
+      view({ controls: [ctl("TR-1", "ACCEPTED", { fileName: "laudo.pdf" })] })
+    );
+    open("TR-1");
+    fireEvent.click(
+      await screen.findByRole("button", { name: /Baixar laudo\.pdf/ })
+    );
+    await waitFor(() =>
+      expect(h.readFile).toHaveBeenCalledWith({
+        code: "UC-118",
+        controlCode: "TR-1",
+      })
+    );
+    await waitFor(() =>
+      expect(assign).toHaveBeenCalledWith("https://s/dl?t=1")
+    );
   });
 });
 

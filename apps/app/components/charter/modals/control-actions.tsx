@@ -92,7 +92,7 @@ export function ControlActions({
       if (!file) {
         return { ok: false, error: "Escolha o arquivo da evidência." };
       }
-      const up = await uploadEvidenceFile(file);
+      const up = await uploadEvidenceFile(file, ref);
       if (!up.ok) {
         return up;
       }
