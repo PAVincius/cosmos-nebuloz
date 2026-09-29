@@ -43,6 +43,11 @@ const TRANSITIONS: Record<
   REOPEN: { from: ["APPROVED"], to: "REOPENED" },
 };
 
+/** Mínimo do comentário de ajuste e de reabertura: uma frase. "ok" não diz a
+ *  quem produz o que mudar (Crivo F6). Cancelar trilha, que é mais grave, exige
+ *  20. */
+export const MIN_COMMENT_LENGTH = 10;
+
 /** Transições que exigem comentário (SC-PO-03). */
 const COMMENT_REQUIRED: readonly DeliverableTransition[] = [
   "REQUEST_ADJUSTMENT",
@@ -209,12 +214,15 @@ export function decideTransition(
     );
   }
 
-  if (COMMENT_REQUIRED.includes(transition) && !comment?.trim()) {
+  if (
+    COMMENT_REQUIRED.includes(transition) &&
+    (comment?.trim().length ?? 0) < MIN_COMMENT_LENGTH
+  ) {
     return deny(
       "COMMENT_REQUIRED",
       transition === "REOPEN"
-        ? "Reabrir exige um comentário dizendo por quê."
-        : "Pedir ajuste exige um comentário dizendo o que ajustar."
+        ? `Reabrir exige um comentário de ao menos ${MIN_COMMENT_LENGTH} caracteres dizendo por quê.`
+        : `Pedir ajuste exige um comentário de ao menos ${MIN_COMMENT_LENGTH} caracteres dizendo o que ajustar.`
     );
   }
 
@@ -354,7 +362,12 @@ export function availableActions(
 ): Record<DeliverableTransition, ActionAvailability> {
   const out = {} as Record<DeliverableTransition, ActionAvailability>;
   for (const t of Object.keys(TRANSITIONS) as DeliverableTransition[]) {
-    const r = decideTransition(t, subject, actor, "-");
+    const r = decideTransition(
+      t,
+      subject,
+      actor,
+      "x".repeat(MIN_COMMENT_LENGTH)
+    );
     out[t] = r.ok
       ? { allowed: true, reason: null }
       : { allowed: false, reason: r.message };

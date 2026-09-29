@@ -18,9 +18,10 @@ import {
   startDeliverable,
   submitDeliverable,
 } from "@/app/(scaffold)/actions/deliverables";
-import type {
-  DeliverableStatus,
-  DeliverableTransition,
+import {
+  type DeliverableStatus,
+  type DeliverableTransition,
+  MIN_COMMENT_LENGTH,
 } from "@/lib/scaffold/deliverable-machine";
 import { Field, ModalShell, Textarea } from "./base";
 
@@ -411,7 +412,7 @@ export function DeliverableList({
                 Voltar
               </Button>
               <Button
-                disabled={busy || comment.trim().length === 0}
+                disabled={busy || comment.trim().length < MIN_COMMENT_LENGTH}
                 icon={ACTION[pending.transition].icon}
                 onClick={() => run(pending.item, pending.transition, comment)}
               >
@@ -427,6 +428,7 @@ export function DeliverableList({
           width={520}
         >
           <Field
+            hint={`Ao menos ${MIN_COMMENT_LENGTH} caracteres: uma frase que diga o que mudar.`}
             htmlFor="deliverable-comment"
             label={
               pending.transition === "REOPEN"

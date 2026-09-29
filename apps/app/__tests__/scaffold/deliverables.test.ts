@@ -969,3 +969,41 @@ describe("último pedido de ajuste na lista", () => {
     expect(h.eventFindMany).not.toHaveBeenCalled();
   });
 });
+
+describe("comentário com o mínimo de uma frase (Crivo F6)", () => {
+  it.each([
+    ["pedir ajuste", "IN_REVIEW"],
+    ["reabrir", "APPROVED"],
+  ])("%s com comentário de 2 caracteres é recusado, e nada é gravado", async (what, status) => {
+    h.findFirst.mockResolvedValue(row(status));
+    asUser(
+      what === "reabrir" ? "CONSULTANT" : "PROCESS_OWNER",
+      what === "reabrir" ? h.userId : APPROVER
+    );
+    const r =
+      what === "reabrir"
+        ? await reopenDeliverable({ deliverableId: DEL, comment: "ok" })
+        : await requestDeliverableAdjustment({
+            deliverableId: DEL,
+            comment: "ok",
+          });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_COMMENT_REQUIRED",
+    });
+    expect(h.updateMany).not.toHaveBeenCalled();
+    expect(h.eventCreate).not.toHaveBeenCalled();
+    expect(h.phaseUpdate).not.toHaveBeenCalled();
+  });
+
+  it("dez caracteres passam e ficam no evento", async () => {
+    h.findFirst.mockResolvedValue(row("IN_REVIEW"));
+    asUser("PROCESS_OWNER", APPROVER);
+    const r = await requestDeliverableAdjustment({
+      deliverableId: DEL,
+      comment: "1234567890",
+    });
+    expect(r.ok).toBe(true);
+    expect(h.eventCreate.mock.calls[0]?.[0].data.comment).toBe("1234567890");
+  });
+});

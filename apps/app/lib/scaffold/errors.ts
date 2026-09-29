@@ -75,7 +75,7 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
   DELIVERABLE_TRANSITION_INVALID:
     "O entregável não está num estado que permita esta ação. Atualize a tela: outra pessoa pode ter movido o entregável.",
   DELIVERABLE_COMMENT_REQUIRED:
-    "Pedir ajuste e reabrir exigem um comentário dizendo o motivo.",
+    "Pedir ajuste e reabrir exigem um comentário de ao menos 10 caracteres dizendo o motivo.",
   DELIVERABLE_SELF_REVIEW:
     "Responsável e aprovador não podem ser a mesma pessoa: ninguém aprova o que é seu.",
   DELIVERABLE_FILE_REQUIRED:

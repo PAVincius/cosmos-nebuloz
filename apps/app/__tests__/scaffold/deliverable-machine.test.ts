@@ -8,6 +8,7 @@ import {
   decideTransition,
   deliverableGrants,
   gateReviewState,
+  MIN_COMMENT_LENGTH,
   phaseGateState,
 } from "@/lib/scaffold/deliverable-machine";
 import {
@@ -285,7 +286,7 @@ describe("reabrir (reopen)", () => {
           "REOPEN",
           subject("APPROVED"),
           as(role, "u-x"),
-          "motivo"
+          "Motivo suficiente."
         ).ok
       ).toBe(true);
     }
@@ -573,7 +574,7 @@ describe("fase que ainda não abriu é só leitura", () => {
         "REOPEN",
         subject("APPROVED", { phaseState }),
         as("CONSULTANT", "u-c"),
-        "motivo"
+        "Motivo suficiente."
       ).ok
     ).toBe(true);
   });
@@ -584,7 +585,7 @@ describe("fase que ainda não abriu é só leitura", () => {
         "REOPEN",
         subject("APPROVED", IDLE),
         as("CONSULTANT", "u-c"),
-        "motivo"
+        "Motivo suficiente."
       )
     ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
   });
@@ -654,5 +655,74 @@ describe("decideAttach", () => {
         as("CONSULTANT", "u-c")
       )
     ).toMatchObject({ ok: false, code: "PHASE_NOT_OPEN" });
+  });
+});
+
+// Crivo F6: "ok" passava como motivo de pedido de ajuste. Quem produz precisa de
+// uma frase para saber o que mudar; "Cancelar trilha" já exige 20.
+describe("comentário com o mínimo de uma frase", () => {
+  it("o mínimo é 10 caracteres", () => {
+    expect(MIN_COMMENT_LENGTH).toBe(10);
+  });
+
+  it.each([
+    "ok",
+    "  ok  ",
+    "ajustar",
+    "123456789",
+    "         x         ",
+  ])("pedir ajuste com %j é recusado", (comment) => {
+    const r = decideTransition(
+      "REQUEST_ADJUSTMENT",
+      subject("IN_REVIEW"),
+      as("PROCESS_OWNER", APPROVER),
+      comment
+    );
+    expect(r).toMatchObject({ ok: false, code: "COMMENT_REQUIRED" });
+    expect(!r.ok && r.message).toMatch(/10 caracteres/);
+  });
+
+  it.each([
+    "ok",
+    "muito curto",
+  ])("reabrir com %j: só o curto de verdade cai", (comment) => {
+    const r = decideTransition(
+      "REOPEN",
+      subject("APPROVED"),
+      as("CONSULTANT", "u-c"),
+      comment
+    );
+    expect(r.ok).toBe(comment.trim().length >= MIN_COMMENT_LENGTH);
+  });
+
+  it("dez caracteres, já sem os espaços das pontas, passa", () => {
+    expect(
+      decideTransition(
+        "REQUEST_ADJUSTMENT",
+        subject("IN_REVIEW"),
+        as("PROCESS_OWNER", APPROVER),
+        "  1234567890  "
+      ).ok
+    ).toBe(true);
+  });
+
+  it("a mensagem de 'sem comentário' também fala do mínimo", () => {
+    const r = decideTransition(
+      "REOPEN",
+      subject("APPROVED"),
+      as("CONSULTANT", "u-c"),
+      undefined
+    );
+    expect(!r.ok && r.message).toMatch(/10 caracteres/);
+  });
+
+  it("aprovar e enviar continuam sem exigir comentário", () => {
+    expect(
+      decideTransition(
+        "APPROVE",
+        subject("IN_REVIEW"),
+        as("PROCESS_OWNER", APPROVER)
+      ).ok
+    ).toBe(true);
   });
 });

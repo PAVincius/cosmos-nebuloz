@@ -959,3 +959,30 @@ describe("comentário do pedido de ajuste na lista (Crivo F1)", () => {
     expect(screen.queryByText(/Ajuste pedido por/)).toBeNull();
   });
 });
+
+describe("comentário com o mínimo na tela (Crivo F6)", () => {
+  it("o diálogo só libera o envio a partir de 10 caracteres", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_REVIEW")],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /pedir ajuste/i })
+    );
+    const send = () =>
+      screen
+        .getAllByRole("button", { name: /pedir ajuste/i })
+        .at(-1) as HTMLButtonElement;
+    const box = screen.getByLabelText(/o que precisa ser ajustado/i);
+
+    fireEvent.change(box, { target: { value: "ok" } });
+    expect(send().disabled).toBe(true);
+    expect(screen.getByText(/ao menos 10 caracteres/i)).toBeDefined();
+
+    fireEvent.change(box, { target: { value: "Falta o volume." } });
+    expect(send().disabled).toBe(false);
+  });
+});
