@@ -16,6 +16,7 @@ const h = vi.hoisted(() => ({
   requestTargetReview: vi.fn(),
   editMetric: vi.fn(),
   generatePlan: vi.fn(),
+  changePrimary: vi.fn(),
   open: vi.fn(),
   close: vi.fn(),
 }));
@@ -27,6 +28,7 @@ vi.mock("@/app/(signal)/actions/plan-read", () => ({
 }));
 vi.mock("@/app/(signal)/actions/plan", () => ({
   approveMetric: vi.fn(),
+  changePrimary: h.changePrimary,
   editMetric: h.editMetric,
   generatePlan: h.generatePlan,
   mapMetricSource: vi.fn(),
@@ -110,6 +112,7 @@ const plan = (over: Record<string, unknown> = {}) => ({
   },
   decisionDenial: null,
   canMapSource: true,
+  owners: [{ id: "u1", name: "Paula" }],
   mappings: [{ id: "mp_1", label: "MP-01 · Tempo" }],
   ...over,
 });
@@ -285,6 +288,7 @@ describe("Modal da métrica", () => {
     denial: null,
     canMapSource: true,
     mappings: [{ id: "mp_1", label: "MP-01 · Tempo" }],
+    owners: [{ id: "u1", name: "Paula" }],
     onChanged: vi.fn(),
   };
 
@@ -348,5 +352,60 @@ describe("Modal da métrica", () => {
       (screen.getByRole("button", { name: n }) as HTMLButtonElement).disabled;
     expect(dis("Pausar")).toBe(true);
     expect(dis("Salvar nova versão")).toBe(true);
+  });
+
+  it("responsável é escolhido entre os membros com papel no Signal", async () => {
+    h.editMetric.mockResolvedValue({ ok: true, data: { version: 3 } });
+    render(<MetricModal {...props} />);
+    const select = (await screen.findByLabelText(
+      "Responsável pela métrica"
+    )) as HTMLSelectElement;
+    expect(Array.from(select.options).map((o) => o.text)).toEqual([
+      "Sem responsável",
+      "Paula",
+    ]);
+    fireEvent.change(select, { target: { value: "u1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar nova versão" }));
+    await waitFor(() =>
+      expect(h.editMetric).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "pm_1", ownerId: "u1" })
+      )
+    );
+  });
+
+  it("trocar primária exige justificativa de 10+ caracteres e avisa do pedido ao Scaffold", async () => {
+    h.getPlanMetric.mockResolvedValue({
+      ok: true,
+      data: history({ role: "GUARD", roleLabel: "Guarda" }),
+    });
+    h.changePrimary.mockResolvedValue({
+      ok: true,
+      data: { outcome: "review-requested" },
+    });
+    render(<MetricModal {...props} />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Tornar primária" })
+    );
+    const confirm = screen.getByRole("button", {
+      name: "Trocar primária",
+    }) as HTMLButtonElement;
+    fireEvent.change(
+      screen.getByLabelText(/Trocar a primária por esta métrica/),
+      {
+        target: { value: "curta" },
+      }
+    );
+    expect(confirm.disabled).toBe(true);
+    fireEvent.change(
+      screen.getByLabelText(/Trocar a primária por esta métrica/),
+      {
+        target: { value: "Cobertura do copiloto mudou o alvo." },
+      }
+    );
+    await waitFor(() => expect(confirm.disabled).toBe(false));
+    fireEvent.click(confirm);
+    expect(
+      await screen.findByText(/pedido de revisão ao Scaffold/)
+    ).toBeDefined();
   });
 });

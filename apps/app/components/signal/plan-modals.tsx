@@ -12,6 +12,7 @@ import { Button } from "@repo/design-system/cosmos/kit";
 import { useCallback, useId, useState } from "react";
 import {
   approveMetric,
+  changePrimary,
   editMetric,
   mapMetricSource,
   pauseMetric,
@@ -111,7 +112,7 @@ function Fact({
 
 // ── Ações ─────────────────────────────────────────────────────────────────────
 
-type Pending = "pause" | "resume" | "review" | null;
+type Pending = "pause" | "resume" | "review" | "primary" | null;
 
 const PENDING_COPY: Record<
   Exclude<Pending, null>,
@@ -127,12 +128,110 @@ const PENDING_COPY: Record<
     hint: "O que mudou para a medição voltar (fonte reparada, janela reaberta…).",
     cta: "Retomar",
   },
+  primary: {
+    title: "Trocar a primária por esta métrica",
+    hint: "Diga por que a decisão do veredito passa para esta métrica (mínimo de 10 caracteres). A primária de hoje vira guarda e as duas ganham versão nova. Se a de hoje estiver congelada, vira pedido de revisão ao Scaffold.",
+    cta: "Trocar primária",
+  },
   review: {
     title: "Pedir revisão de meta ao Scaffold",
     hint: "A meta está congelada: baseline e caso de negócio são do Scaffold. O pedido leva este texto ao dono da trilha.",
     cta: "Enviar pedido",
   },
 };
+
+function SourcePicker({
+  mappings,
+  busy,
+  onMap,
+}: {
+  mappings: { id: string; label: string }[];
+  busy: boolean;
+  onMap: (mappingId: string) => void;
+}) {
+  const id = useId();
+  const [mappingId, setMappingId] = useState(mappings[0]?.id ?? "");
+  return (
+    <div
+      style={{ display: "flex", gap: 8, alignItems: "end", flexWrap: "wrap" }}
+    >
+      <Field htmlFor={`${id}-map`} label="Fonte da métrica">
+        <Select
+          ariaLabel="Mapeamento de origem"
+          id={`${id}-map`}
+          onChange={setMappingId}
+          options={mappings.map((x) => ({ value: x.id, label: x.label }))}
+          value={mappingId}
+        />
+      </Field>
+      <Button
+        disabled={busy || !mappingId}
+        icon="plug"
+        onClick={() => onMap(mappingId)}
+        variant="ghost"
+      >
+        Mapear fonte
+      </Button>
+    </div>
+  );
+}
+
+function CommentBox({
+  kind,
+  comment,
+  busy,
+  onChange,
+  onConfirm,
+  onCancel,
+}: {
+  kind: Exclude<Pending, null>;
+  comment: string;
+  busy: boolean;
+  onChange: (v: string) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const id = useId();
+  const min = kind === "primary" ? 10 : 3;
+  return (
+    <div
+      style={{
+        padding: 12,
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--hairline)",
+        background: "var(--surface-2)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+      }}
+    >
+      <Field
+        hint={PENDING_COPY[kind].hint}
+        htmlFor={`${id}-comment`}
+        label={PENDING_COPY[kind].title}
+        required
+      >
+        <Textarea
+          id={`${id}-comment`}
+          onChange={(e) => onChange(e.target.value)}
+          rows={3}
+          value={comment}
+        />
+      </Field>
+      <div style={{ display: "flex", gap: 8 }}>
+        <Button
+          disabled={busy || comment.trim().length < min}
+          onClick={onConfirm}
+        >
+          {PENDING_COPY[kind].cta}
+        </Button>
+        <Button onClick={onCancel} variant="ghost">
+          Cancelar
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function ActionsPanel({
   m,
@@ -147,12 +246,11 @@ function ActionsPanel({
   mappings: { id: string; label: string }[];
   done: () => void;
 }) {
-  const ids = useId();
   const [pending, setPending] = useState<Pending>(null);
   const [comment, setComment] = useState("");
-  const [mappingId, setMappingId] = useState(mappings[0]?.id ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const run = useCallback(
     async (fn: () => Promise<Outcome>) => {
@@ -178,6 +276,17 @@ function ActionsPanel({
     }
     if (pending === "resume") {
       return run(() => resumeMetric(input));
+    }
+    if (pending === "primary") {
+      return run(async () => {
+        const res = await changePrimary({ id: m.id, justification: comment });
+        if (res.ok && res.data.outcome === "review-requested") {
+          setNotice(
+            "A primária atual está congelada: em vez de trocar, enviei o pedido de revisão ao Scaffold."
+          );
+        }
+        return res;
+      });
     }
     return run(() => requestTargetReview(input));
   };
@@ -217,6 +326,9 @@ function ActionsPanel({
         {m.state === "PAUSED"
           ? decide("Retomar", () => setPending("resume"), "play")
           : null}
+        {m.state !== "PROPOSED" && m.role !== "PRIMARY"
+          ? decide("Tornar primária", () => setPending("primary"))
+          : null}
         {m.state === "FROZEN"
           ? decide("Pedir revisão de meta", () => setPending("review"))
           : null}
@@ -228,32 +340,13 @@ function ActionsPanel({
       ) : null}
 
       {m.state !== "PROPOSED" && canMapSource && mappings.length > 0 ? (
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            alignItems: "end",
-            flexWrap: "wrap",
-          }}
-        >
-          <Field htmlFor={`${ids}-map`} label="Fonte da métrica">
-            <Select
-              ariaLabel="Mapeamento de origem"
-              id={`${ids}-map`}
-              onChange={setMappingId}
-              options={mappings.map((x) => ({ value: x.id, label: x.label }))}
-              value={mappingId}
-            />
-          </Field>
-          <Button
-            disabled={busy || !mappingId}
-            icon="plug"
-            onClick={() => run(() => mapMetricSource({ id: m.id, mappingId }))}
-            variant="ghost"
-          >
-            Mapear fonte
-          </Button>
-        </div>
+        <SourcePicker
+          busy={busy}
+          mappings={mappings}
+          onMap={(mappingId) =>
+            run(() => mapMetricSource({ id: m.id, mappingId }))
+          }
+        />
       ) : null}
       {m.state === "NO_SOURCE" ? (
         <p style={{ margin: 0, fontSize: 11.5, color: "var(--ink-faint)" }}>
@@ -262,44 +355,23 @@ function ActionsPanel({
       ) : null}
 
       {pending ? (
-        <div
-          style={{
-            padding: 12,
-            borderRadius: "var(--r-md)",
-            border: "1px solid var(--hairline)",
-            background: "var(--surface-2)",
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
-          <Field
-            hint={PENDING_COPY[pending].hint}
-            htmlFor={`${ids}-comment`}
-            label={PENDING_COPY[pending].title}
-            required
-          >
-            <Textarea
-              id={`${ids}-comment`}
-              onChange={(e) => setComment(e.target.value)}
-              rows={3}
-              value={comment}
-            />
-          </Field>
-          <div style={{ display: "flex", gap: 8 }}>
-            <Button
-              disabled={busy || comment.trim().length < 3}
-              onClick={confirm}
-            >
-              {PENDING_COPY[pending].cta}
-            </Button>
-            <Button onClick={() => setPending(null)} variant="ghost">
-              Cancelar
-            </Button>
-          </div>
-        </div>
+        <CommentBox
+          busy={busy}
+          comment={comment}
+          kind={pending}
+          onCancel={() => setPending(null)}
+          onChange={setComment}
+          onConfirm={confirm}
+        />
       ) : null}
       <Note error={error} />
+      {notice ? (
+        <output
+          style={{ margin: 0, fontSize: 12.5, color: "var(--ink-muted)" }}
+        >
+          {notice}
+        </output>
+      ) : null}
     </div>
   );
 }
@@ -309,10 +381,12 @@ function ActionsPanel({
 function EditPanel({
   m,
   denial,
+  owners,
   done,
 }: {
   m: PlanMetricHistory["metric"];
   denial: string | null;
+  owners: { id: string; name: string }[];
   done: () => void;
 }) {
   const ids = useId();
@@ -322,6 +396,7 @@ function EditPanel({
   const [target, setTarget] = useState(
     m.target === null ? "" : String(m.target)
   );
+  const [owner, setOwner] = useState(m.ownerId ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -334,6 +409,7 @@ function EditPanel({
       id: m.id,
       name,
       formula,
+      ownerId: owner === "" ? null : owner,
       ...(frozen ? {} : { targetValue: parsed }),
     });
     setBusy(false);
@@ -362,6 +438,18 @@ function EditPanel({
           onChange={(e) => setFormula(e.target.value)}
           rows={2}
           value={formula}
+        />
+      </Field>
+      <Field htmlFor={`${ids}-owner`} label="Responsável">
+        <Select
+          ariaLabel="Responsável pela métrica"
+          id={`${ids}-owner`}
+          onChange={setOwner}
+          options={[
+            { value: "", label: "Sem responsável" },
+            ...owners.map((o) => ({ value: o.id, label: o.name })),
+          ]}
+          value={owner}
         />
       </Field>
       <Field
@@ -398,12 +486,14 @@ export function MetricModal({
   denial,
   canMapSource,
   mappings,
+  owners,
   onChanged,
 }: {
   metricId: string;
   denial: string | null;
   canMapSource: boolean;
   mappings: { id: string; label: string }[];
+  owners: { id: string; name: string }[];
   onChanged: () => void;
 }) {
   const { close } = useModal();
@@ -519,7 +609,13 @@ export function MetricModal({
           m={m}
           mappings={mappings}
         />
-        <EditPanel denial={denial} done={done} key={m.version} m={m} />
+        <EditPanel
+          denial={denial}
+          done={done}
+          key={m.version}
+          m={m}
+          owners={owners}
+        />
 
         <div>
           <Eyebrow>Observações da fonte</Eyebrow>

@@ -333,6 +333,7 @@ export function PlanTab({ code }: { code: string }) {
         mappings={data.mappings}
         metricId={id}
         onChanged={reload}
+        owners={data.owners}
       />
     );
   const propose = () =>

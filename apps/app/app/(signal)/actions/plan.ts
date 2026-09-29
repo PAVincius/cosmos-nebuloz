@@ -52,22 +52,20 @@ async function decisionContext(action: PlanAction): Promise<SignalContext> {
   return ctx;
 }
 
+const LOAD_INITIATIVE = {
+  id: true,
+  code: true,
+  name: true,
+  ownerId: true,
+  scaffoldTrackId: true,
+} as const;
+
 /** A métrica é procurada pelo tenant do contexto, nunca só por id: id de outro
  *  tenant vira "não encontrada", não "proibida" (não confirma que existe). */
 async function loadMetric(db: Db, tenantId: string, id: string) {
   const metric = await db.signalPlanMetric.findFirst({
     where: { id, tenantId },
-    include: {
-      initiative: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-          ownerId: true,
-          scaffoldTrackId: true,
-        },
-      },
-    },
+    include: { initiative: { select: LOAD_INITIATIVE } },
   });
   if (!metric) {
     throw new SignalRuleError(
@@ -104,6 +102,7 @@ function recordEvent(
       | "PAUSE"
       | "RESUME"
       | "REQUEST_TARGET_REVIEW"
+      | "CHANGE_PRIMARY"
       | "EDIT";
     fromState: PlanState | null;
     toState: PlanState | null;
@@ -126,6 +125,34 @@ function recordEvent(
     },
     select: { id: true },
   });
+}
+
+/**
+ * Grava só se a métrica ainda está como foi lida (estado e versão). Duas
+ * pessoas agindo ao mesmo tempo: a segunda recebe conflito e recarrega, em vez
+ * de sobrescrever a decisão da primeira sem saber (mesmo critério do Scaffold).
+ */
+async function writeGuarded(
+  db: Db,
+  ctx: SignalContext,
+  metric: { id: string; state: PlanState; version: number },
+  data: Record<string, unknown>
+): Promise<void> {
+  const moved = await db.signalPlanMetric.updateMany({
+    where: {
+      id: metric.id,
+      tenantId: ctx.tenantId,
+      state: metric.state,
+      version: metric.version,
+    },
+    data,
+  });
+  if (moved.count !== 1) {
+    throw new SignalStateConflictError(
+      "plan.concurrent",
+      "A métrica mudou enquanto você agia. Recarregue o plano e refaça a ação."
+    );
+  }
 }
 
 const stateLabel = (s: PlanState) => PLAN_STATE_META[s].label;
@@ -346,10 +373,7 @@ async function applyTransition(args: {
     invalidTransition(metric, spec.verb);
   }
 
-  await db.signalPlanMetric.update({
-    where: { id: metric.id },
-    data: { state: next },
-  });
+  await writeGuarded(db, ctx, metric, { state: next });
   await recordEvent(db, ctx, metric, {
     action: spec.event,
     fromState: metric.state,
@@ -479,9 +503,9 @@ export async function mapMetricSource(raw: {
         input.mappingId
       );
 
-      await db.signalPlanMetric.update({
-        where: { id: metric.id },
-        data: { sourceMappingId: mapping.id, state: next },
+      await writeGuarded(db, ctx, metric, {
+        sourceMappingId: mapping.id,
+        state: next,
       });
       await recordEvent(db, ctx, metric, {
         action: "MAP_SOURCE",
@@ -518,6 +542,49 @@ export async function mapMetricSource(raw: {
 
 // ── Pedir revisão de meta (métrica congelada) ─────────────────────────────────
 
+type ReviewSent = { metric: Loaded; eventId: string };
+
+async function recordReviewRequest(
+  db: Db,
+  ctx: SignalContext,
+  metric: Loaded,
+  comment: string
+): Promise<ReviewSent> {
+  // A meta não muda aqui: baseline e caso de negócio são do Scaffold. O que o
+  // Signal registra é o pedido.
+  const event = await recordEvent(db, ctx, metric, {
+    action: "REQUEST_TARGET_REVIEW",
+    fromState: metric.state,
+    toState: metric.state,
+    version: metric.version,
+    comment,
+  });
+  await logSignalAudit(db, ctx, {
+    action: "Revisão de meta pedida ao Scaffold",
+    entityType: "signal.planmetric",
+    entityId: metric.id,
+    target: `${metric.initiative.code} · ${metric.name}`,
+    note: comment,
+  });
+  return { metric, eventId: event.id };
+}
+
+/** Depois da transação: o pedido é fato consumado e o Inngest fora do ar não
+ *  pode fazer a tela dizer que falhou (mesmo critério de signBaseline). */
+async function emitReviewRequested(ctx: SignalContext, sent: ReviewSent) {
+  await emitProductEvent("signalTargetReviewRequested", {
+    tenantId: ctx.tenantId,
+    initiativeId: sent.metric.initiative.id,
+    initiativeCode: sent.metric.initiative.code,
+    scaffoldTrackId: sent.metric.initiative.scaffoldTrackId ?? null,
+    planMetricId: sent.metric.id,
+    metricName: sent.metric.name,
+    eventId: sent.eventId,
+    at: new Date().toISOString(),
+  });
+  revalidate(sent.metric.initiative.code);
+}
+
 export async function requestTargetReview(raw: {
   id: string;
   comment: string;
@@ -536,41 +603,126 @@ export async function requestTargetReview(raw: {
           "Só métrica congelada pede revisão de meta. Nas outras, a meta se edita direto."
         );
       }
-
-      // A meta não muda aqui: baseline e caso de negócio são do Scaffold. O que
-      // o Signal registra é o pedido.
-      const event = await recordEvent(db, ctx, metric, {
-        action: "REQUEST_TARGET_REVIEW",
-        fromState: metric.state,
-        toState: metric.state,
-        version: metric.version,
-        comment: input.comment,
-      });
-      await logSignalAudit(db, ctx, {
-        action: "Revisão de meta pedida ao Scaffold",
-        entityType: "signal.planmetric",
-        entityId: metric.id,
-        target: `${metric.initiative.code} · ${metric.name}`,
-        note: input.comment,
-      });
-      return { metric, eventId: event.id };
+      return recordReviewRequest(db, ctx, metric, input.comment);
     });
 
-    // Depois da transação: o pedido é fato consumado e o Inngest fora do ar não
-    // pode fazer a tela dizer que falhou (mesmo critério de signBaseline).
-    await emitProductEvent("signalTargetReviewRequested", {
-      tenantId: ctx.tenantId,
-      initiativeId: sent.metric.initiative.id,
-      initiativeCode: sent.metric.initiative.code,
-      scaffoldTrackId: sent.metric.initiative.scaffoldTrackId ?? null,
-      planMetricId: sent.metric.id,
-      metricName: sent.metric.name,
-      eventId: sent.eventId,
-      at: new Date().toISOString(),
-    });
-
-    revalidate(sent.metric.initiative.code);
+    await emitReviewRequested(ctx, sent);
     return { requested: true as const };
+  });
+}
+
+// ── Trocar a primária (SG-PO-02) ──────────────────────────────────────────────
+
+const PrimarySchema = Id.extend({
+  justification: z.string().trim().min(10).max(2000),
+});
+
+/**
+ * Exatamente uma primária vigente. A troca exige justificativa e cria versão
+ * nova das duas métricas. Com a primária atual congelada (baseline fixado no
+ * gate), a troca não é local: vira pedido de revisão ao Scaffold, dono do
+ * baseline e do caso de negócio.
+ */
+async function swapPrimary(args: {
+  db: Db;
+  ctx: SignalContext;
+  current: Loaded;
+  next: Loaded;
+  justification: string;
+}) {
+  const { db, ctx, current, next, justification } = args;
+  // Limpa a antiga ANTES de marcar a nova: o unique (initiativeId,
+  // isCurrentPrimary) não admite duas `true` nem por um instante. A antiga
+  // vira guarda: continua medindo, sem decidir o veredito.
+  await writeGuarded(db, ctx, current, {
+    isCurrentPrimary: null,
+    role: "GUARD",
+    version: current.version + 1,
+  });
+  await writeGuarded(db, ctx, next, {
+    isCurrentPrimary: true,
+    role: "PRIMARY",
+    version: next.version + 1,
+  });
+  for (const [m, from, to] of [
+    [current, "Primária", "Guarda"],
+    [next, next.role, "Primária"],
+  ] as const) {
+    await recordEvent(db, ctx, m, {
+      action: "CHANGE_PRIMARY",
+      fromState: m.state,
+      toState: m.state,
+      version: m.version + 1,
+      changes: [[FIELD_LABELS.role, from, to]],
+      comment: justification,
+    });
+  }
+  await logSignalAudit(db, ctx, {
+    action: "Primária trocada",
+    entityType: "signal.planmetric",
+    entityId: next.id,
+    target: `${next.initiative.code} · ${current.name} → ${next.name}`,
+    note: justification,
+  });
+}
+
+export async function changePrimary(
+  raw: z.input<typeof PrimarySchema>
+): Promise<SignalResult<{ outcome: "changed" | "review-requested" }>> {
+  return await signalAction(async () => {
+    const ctx = await decisionContext("edit");
+    const input = PrimarySchema.parse(raw);
+
+    const done = await withTenantDb(ctx.tenantId, async (db) => {
+      const next = await loadMetric(db, ctx.tenantId, input.id);
+      requireInitiativeOwnership(ctx, next.initiative);
+
+      if (next.state === "PROPOSED") {
+        throw new SignalRuleError(
+          "plan.primary.proposal",
+          "Proposta não pode ser a primária. Aprove a métrica antes."
+        );
+      }
+      const current = await db.signalPlanMetric.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          initiativeId: next.initiativeId,
+          isCurrentPrimary: true,
+        },
+        include: { initiative: { select: LOAD_INITIATIVE } },
+      });
+      if (!current || current.id === next.id) {
+        throw new SignalRuleError(
+          "plan.primary.same",
+          "Escolha uma métrica que não seja a primária de hoje."
+        );
+      }
+
+      if (current.state === "FROZEN") {
+        const sent = await recordReviewRequest(
+          db,
+          ctx,
+          current,
+          `Troca de primária para "${next.name}": ${input.justification}`
+        );
+        return { outcome: "review-requested" as const, sent };
+      }
+      await swapPrimary({
+        db,
+        ctx,
+        current,
+        next,
+        justification: input.justification,
+      });
+      return { outcome: "changed" as const, code: next.initiative.code };
+    });
+
+    if (done.outcome === "review-requested") {
+      await emitReviewRequested(ctx, done.sent);
+    } else {
+      revalidate(done.code);
+    }
+    return { outcome: done.outcome };
   });
 }
 
@@ -600,10 +752,7 @@ export async function editMetric(
       }
 
       const version = metric.version + 1;
-      await db.signalPlanMetric.update({
-        where: { id: metric.id },
-        data: { ...patch, version },
-      });
+      await writeGuarded(db, ctx, metric, { ...patch, version });
       await recordEvent(db, ctx, metric, {
         action: "EDIT",
         fromState: metric.state,
@@ -626,15 +775,17 @@ export async function editMetric(
   });
 }
 
+/** Responsável precisa ser da organização E ter papel no Signal: quem não tem
+ *  papel não enxerga o plano que estaria respondendo. */
 async function requireTenantMember(db: Db, tenantId: string, userId: string) {
-  const member = await db.tenantMember.findFirst({
+  const member = await db.signalMember.findFirst({
     where: { tenantId, userId },
     select: { id: true },
   });
   if (!member) {
     throw new SignalRuleError(
       "plan.owner.not-member",
-      "O responsável precisa ser membro desta organização."
+      "O responsável precisa ser membro desta organização com papel no Signal."
     );
   }
 }

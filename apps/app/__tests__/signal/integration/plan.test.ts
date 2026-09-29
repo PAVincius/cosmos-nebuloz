@@ -41,6 +41,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
 
 import {
   approveMetric,
+  changePrimary,
   editMetric,
   generatePlan,
   mapMetricSource,
@@ -106,7 +107,7 @@ beforeEach(() => {
       create: vi
         .fn()
         .mockImplementation(({ data }) => ({ id: "pm_new", ...data })),
-      update: vi.fn().mockResolvedValue({}),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       createMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
     signalPlanMetricEvent: {
@@ -243,7 +244,7 @@ describe("aprovar (Proposta → Sem fonte)", () => {
     );
     const res = await approveMetric({ id: "pm_1" });
     expect(res).toMatchObject({ ok: true, data: { state: "NO_SOURCE" } });
-    expect(db.signalPlanMetric.update.mock.calls[0][0].data.state).toBe(
+    expect(db.signalPlanMetric.updateMany.mock.calls[0][0].data.state).toBe(
       "NO_SOURCE"
     );
   });
@@ -263,7 +264,7 @@ describe("aprovar (Proposta → Sem fonte)", () => {
     );
     const res = await approveMetric({ id: "pm_1" });
     expect(res).toMatchObject({ ok: false, rule: "plan.role.denied" });
-    expect(db.signalPlanMetric.update).not.toHaveBeenCalled();
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
   });
 
   it("consulta a métrica pelo tenant do contexto, nunca por id solto", async () => {
@@ -312,9 +313,9 @@ describe("mapear fonte (SG-PM-03)", () => {
     const res = await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
     expect(res).toMatchObject({ ok: true, data: { state: "NO_SOURCE" } });
     expect(
-      db.signalPlanMetric.update.mock.calls[0][0].data.sourceMappingId
+      db.signalPlanMetric.updateMany.mock.calls[0][0].data.sourceMappingId
     ).toBe("mp_1");
-    expect(db.signalPlanMetric.update.mock.calls[0][0].data.state).toBe(
+    expect(db.signalPlanMetric.updateMany.mock.calls[0][0].data.state).toBe(
       "NO_SOURCE"
     );
   });
@@ -353,7 +354,7 @@ describe("pausar e retomar (comentário obrigatório)", () => {
     );
     const res = await pauseMetric({ id: "pm_1", comment: "  " });
     expect(res.ok).toBe(false);
-    expect(db.signalPlanMetric.update).not.toHaveBeenCalled();
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
   });
 
   it("pausa Medindo → Pausada e guarda o comentário no histórico", async () => {
@@ -412,7 +413,7 @@ describe("pedir revisão de meta (métrica congelada)", () => {
   it("não altera a meta localmente", async () => {
     db.signalPlanMetric.findFirst.mockResolvedValue(frozen());
     await requestTargetReview({ id: "pm_1", comment: "revisar" });
-    for (const call of db.signalPlanMetric.update.mock.calls) {
+    for (const call of db.signalPlanMetric.updateMany.mock.calls) {
       expect(call[0].data).not.toHaveProperty("targetValue");
     }
   });
@@ -441,7 +442,9 @@ describe("editar cria versão nova", () => {
     );
     const res = await editMetric({ id: "pm_1", formula: "nova fórmula" });
     expect(res).toMatchObject({ ok: true, data: { version: 3 } });
-    expect(db.signalPlanMetric.update.mock.calls[0][0].data.version).toBe(3);
+    expect(db.signalPlanMetric.updateMany.mock.calls[0][0].data.version).toBe(
+      3
+    );
     const ev = db.signalPlanMetricEvent.create.mock.calls[0][0].data;
     expect(ev.action).toBe("EDIT");
     expect(ev.version).toBe(3);
@@ -458,7 +461,7 @@ describe("editar cria versão nova", () => {
     );
     const res = await editMetric({ id: "pm_1", targetValue: 0.5 });
     expect(res).toMatchObject({ ok: false, rule: "plan.target.frozen" });
-    expect(db.signalPlanMetric.update).not.toHaveBeenCalled();
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
   });
 
   it("congelada edita o que não é meta", async () => {
@@ -475,14 +478,178 @@ describe("editar cria versão nova", () => {
       formula: "reencaminhados ÷ pedidos",
     });
     expect(res).toMatchObject({ ok: false, rule: "plan.edit.empty" });
-    expect(db.signalPlanMetric.update).not.toHaveBeenCalled();
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
   });
 
   it("a meta em Sem fonte é editável", async () => {
     const res = await editMetric({ id: "pm_1", targetValue: 0.1 });
     expect(res.ok).toBe(true);
-    expect(db.signalPlanMetric.update.mock.calls[0][0].data.targetValue).toBe(
-      0.1
+    expect(
+      db.signalPlanMetric.updateMany.mock.calls[0][0].data.targetValue
+    ).toBe(0.1);
+  });
+});
+
+describe("concorrência: transição só vale sobre o estado lido", () => {
+  it("grava com where {id, tenantId, state, version} do que foi lido", async () => {
+    db.signalPlanMetric.findFirst.mockResolvedValue(
+      metric({ state: "PROPOSED", version: 4 })
     );
+    await approveMetric({ id: "pm_1" });
+    expect(db.signalPlanMetric.updateMany.mock.calls[0][0].where).toEqual({
+      id: "pm_1",
+      tenantId: "tnt_1",
+      state: "PROPOSED",
+      version: 4,
+    });
+  });
+
+  it("count 0 (alguém mudou antes) vira conflito e não grava histórico", async () => {
+    db.signalPlanMetric.findFirst.mockResolvedValue(
+      metric({ state: "PROPOSED" })
+    );
+    db.signalPlanMetric.updateMany.mockResolvedValue({ count: 0 });
+    const res = await approveMetric({ id: "pm_1" });
+    expect(res).toMatchObject({
+      ok: false,
+      status: 409,
+      rule: "plan.concurrent",
+    });
+    expect(db.signalPlanMetricEvent.create).not.toHaveBeenCalled();
+    expect(h.logSignalAudit).not.toHaveBeenCalled();
+  });
+
+  it("mapear fonte e editar têm o mesmo guarda", async () => {
+    db.signalPlanMetric.updateMany.mockResolvedValue({ count: 0 });
+    const a = await mapMetricSource({ id: "pm_1", mappingId: "mp_1" });
+    const b = await editMetric({ id: "pm_1", formula: "outra fórmula" });
+    expect(a).toMatchObject({ ok: false, rule: "plan.concurrent" });
+    expect(b).toMatchObject({ ok: false, rule: "plan.concurrent" });
+  });
+});
+
+describe("responsável: só membro do tenant com papel Signal", () => {
+  it("recusa quem não tem SignalMember neste tenant", async () => {
+    db.signalMember = { findFirst: vi.fn().mockResolvedValue(null) };
+    const res = await editMetric({ id: "pm_1", ownerId: "usr_9" });
+    expect(res).toMatchObject({ ok: false, rule: "plan.owner.not-member" });
+    expect(db.signalMember.findFirst.mock.calls[0][0].where).toEqual({
+      tenantId: "tnt_1",
+      userId: "usr_9",
+    });
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("aceita membro com papel", async () => {
+    db.signalMember = { findFirst: vi.fn().mockResolvedValue({ id: "sm_1" }) };
+    const res = await editMetric({ id: "pm_1", ownerId: "usr_9" });
+    expect(res.ok).toBe(true);
+  });
+});
+
+describe("trocar a primária (SG-PO-02)", () => {
+  const current = () =>
+    metric({
+      id: "pm_cur",
+      role: "PRIMARY",
+      isCurrentPrimary: true,
+      state: "MEASURING",
+      version: 3,
+    });
+  const candidate = () => metric({ id: "pm_new", role: "GUARD", version: 2 });
+  const setup = (cur = current(), cand = candidate()) => {
+    db.signalPlanMetric.findFirst.mockImplementation(
+      ({ where }: { where: { id?: string; isCurrentPrimary?: boolean } }) =>
+        Promise.resolve(
+          where.isCurrentPrimary || where.id === cur.id ? cur : cand
+        )
+    );
+  };
+  const INPUT = {
+    id: "pm_new",
+    justification: "Cobertura do copiloto mudou o alvo da iniciativa.",
+  };
+
+  it("exige justificativa", async () => {
+    setup();
+    const res = await changePrimary({ id: "pm_new", justification: "curta" });
+    expect(res.ok).toBe(false);
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("move isCurrentPrimary: limpa a antiga (NULL, nunca false) e marca a nova", async () => {
+    setup();
+    const res = await changePrimary(INPUT);
+    expect(res).toMatchObject({ ok: true, data: { outcome: "changed" } });
+    const [first, second] = db.signalPlanMetric.updateMany.mock.calls.map(
+      (c) => c[0]
+    );
+    expect(first.where.id).toBe("pm_cur");
+    expect(first.data.isCurrentPrimary).toBeNull();
+    expect(first.data.role).toBe("GUARD");
+    expect(second.where.id).toBe("pm_new");
+    expect(second.data).toMatchObject({
+      isCurrentPrimary: true,
+      role: "PRIMARY",
+    });
+  });
+
+  it("sobe a versão das duas e registra CHANGE_PRIMARY com a justificativa", async () => {
+    setup();
+    await changePrimary(INPUT);
+    const events = db.signalPlanMetricEvent.create.mock.calls.map(
+      (c) => c[0].data
+    );
+    expect(events).toHaveLength(2);
+    expect(
+      events.every((e: { action: string }) => e.action === "CHANGE_PRIMARY")
+    ).toBe(true);
+    expect(events.map((e: { version: number }) => e.version).sort()).toEqual([
+      3, 4,
+    ]);
+    expect(events[0].comment).toBe(INPUT.justification);
+  });
+
+  it("primária congelada NÃO troca: vira pedido de revisão ao Scaffold", async () => {
+    setup(metric({ ...current(), state: "FROZEN" }));
+    const res = await changePrimary(INPUT);
+    expect(res).toMatchObject({
+      ok: true,
+      data: { outcome: "review-requested" },
+    });
+    expect(db.signalPlanMetric.updateMany).not.toHaveBeenCalled();
+    expect(h.emitProductEvent).toHaveBeenCalledWith(
+      "signalTargetReviewRequested",
+      expect.objectContaining({ planMetricId: "pm_cur" })
+    );
+  });
+
+  it("proposta não vira primária", async () => {
+    setup(current(), metric({ id: "pm_new", state: "PROPOSED" }));
+    const res = await changePrimary(INPUT);
+    expect(res).toMatchObject({ ok: false, rule: "plan.primary.proposal" });
+  });
+
+  it("a que já é primária não troca por ela mesma", async () => {
+    setup();
+    const res = await changePrimary({ ...INPUT, id: "pm_cur" });
+    expect(res.ok).toBe(false);
+  });
+
+  it("ADMIN não troca primária", async () => {
+    h.requireSignalPermissionContext.mockResolvedValue({
+      ...CTX,
+      signalRole: "ADMIN",
+    });
+    setup();
+    const res = await changePrimary(INPUT);
+    expect(res).toMatchObject({ ok: false, rule: "plan.role.denied" });
+  });
+
+  it("concorrência na troca vira conflito", async () => {
+    setup();
+    db.signalPlanMetric.updateMany.mockResolvedValue({ count: 0 });
+    const res = await changePrimary(INPUT);
+    expect(res).toMatchObject({ ok: false, rule: "plan.concurrent" });
   });
 });

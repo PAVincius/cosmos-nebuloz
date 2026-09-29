@@ -95,6 +95,8 @@ export type InitiativePlan = {
   /** Motivo da negativa para os controles de decisão; nulo = pode agir. */
   decisionDenial: string | null;
   canMapSource: boolean;
+  /** Quem pode ser responsável: membros do tenant com papel no Signal. */
+  owners: { id: string; name: string }[];
   /** Mapeamentos que podem alimentar uma métrica desta iniciativa. */
   mappings: { id: string; label: string }[];
 };
@@ -340,31 +342,36 @@ export async function getInitiativePlan(raw: {
         .map((m) => m.sourceMappingId)
         .filter((x): x is string => Boolean(x));
 
-      const [observations, baseline, owners, mappings] = await Promise.all([
-        readObservations(db, ctx.tenantId, initiative.id, mappingIds),
-        db.signalBaseline.findFirst({
-          where: {
-            tenantId: ctx.tenantId,
-            initiativeId: initiative.id,
-            signedAt: { not: null },
-          },
-          orderBy: { version: "desc" },
-          select: { version: true, signedAt: true },
-        }),
-        ownerNames(
-          db,
-          initiative.planMetrics.map((m) => m.ownerId)
-        ),
-        db.signalMetricMapping.findMany({
-          where: {
-            tenantId: ctx.tenantId,
-            OR: [{ initiativeId: null }, { initiativeId: initiative.id }],
-          },
-          orderBy: [{ code: "asc" }, { version: "desc" }],
-          distinct: ["code"],
-          select: { id: true, code: true, metricLabel: true },
-        }),
-      ]);
+      const [observations, baseline, owners, mappings, members] =
+        await Promise.all([
+          readObservations(db, ctx.tenantId, initiative.id, mappingIds),
+          db.signalBaseline.findFirst({
+            where: {
+              tenantId: ctx.tenantId,
+              initiativeId: initiative.id,
+              signedAt: { not: null },
+            },
+            orderBy: { version: "desc" },
+            select: { version: true, signedAt: true },
+          }),
+          ownerNames(
+            db,
+            initiative.planMetrics.map((m) => m.ownerId)
+          ),
+          db.signalMetricMapping.findMany({
+            where: {
+              tenantId: ctx.tenantId,
+              OR: [{ initiativeId: null }, { initiativeId: initiative.id }],
+            },
+            orderBy: [{ code: "asc" }, { version: "desc" }],
+            distinct: ["code"],
+            select: { id: true, code: true, metricLabel: true },
+          }),
+          db.signalMember.findMany({
+            where: { tenantId: ctx.tenantId },
+            select: { user: { select: { id: true, name: true, email: true } } },
+          }),
+        ]);
 
       const latest = latestByMapping(observations);
       const metrics = initiative.planMetrics
@@ -409,6 +416,12 @@ export async function getInitiativePlan(raw: {
           signedAt: baseline?.signedAt ?? null,
         },
         decisionDenial: denial,
+        owners: members
+          .map((m) => ({
+            id: m.user.id,
+            name: m.user.name ?? m.user.email ?? "—",
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name)),
         canMapSource: hasSignalPermission(
           ctx.signalRole,
           "signal.mapping.write"
