@@ -1,13 +1,36 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+// Cliente criado no primeiro uso, não no import. O `createClient` monta o
+// cliente de realtime na hora e, em Node sem WebSocket nativo (o runner de CI
+// é Node 20), lança já no import — derrubava toda suíte que só importa este
+// pacote, mesmo sem usar storage. Mesmo padrão do cliente legado em
+// @repo/rate-limit.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
-// Only create client if credentials are available (allows tests to mock without env vars)
-export const storageClient =
-  supabaseUrl && supabaseServiceKey
-    ? createClient(supabaseUrl, supabaseServiceKey)
-    : createClient("http://localhost:54321", "service_role_key_placeholder");
+let _client: SupabaseClient | null = null;
+
+function getClient(): SupabaseClient {
+  if (!_client) {
+    // Sem credenciais (testes que mockam o storage), um alvo local inerte.
+    _client =
+      supabaseUrl && supabaseServiceKey
+        ? createClient(supabaseUrl, supabaseServiceKey)
+        : createClient(
+            "http://localhost:54321",
+            "service_role_key_placeholder"
+          );
+  }
+  return _client;
+}
+
+export const storageClient = new Proxy({} as SupabaseClient, {
+  get(_alvo, prop) {
+    const alvoReal = getClient();
+    const valor = Reflect.get(alvoReal, prop, alvoReal);
+    return typeof valor === "function" ? valor.bind(alvoReal) : valor;
+  },
+});
 
 export const AI_PLAYGROUND_BUCKET = "cosmos-ai-playground";
 /** Evidência anexada a uma resposta de assessment do Meridian. Privado; o
