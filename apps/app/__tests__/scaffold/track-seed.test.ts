@@ -34,6 +34,11 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/scaffold/process-registry", () => ({
+  upsertProcessRegistry: vi
+    .fn()
+    .mockResolvedValue({ id: "reg1", created: true }),
+}));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/scaffold/guards", () => ({
   requireScaffoldPermissionContext: h.requirePerm,
@@ -77,6 +82,7 @@ import {
   createTrackFromGap,
   listTracks,
 } from "@/app/(scaffold)/actions/tracks";
+import { upsertProcessRegistry } from "@/lib/scaffold/process-registry";
 
 const CTX = {
   tenantId: "t1",
@@ -162,6 +168,30 @@ beforeEach(() => {
   h.settingsFindUnique.mockResolvedValue(null);
   h.userFindMany.mockResolvedValue([]);
   h.gateResultGroupBy.mockResolvedValue([]);
+});
+
+describe("createTrackFromGap grava o registro único de processo (X-01)", () => {
+  it("liga a lacuna e a trilha nova no mesmo tenant, na mesma transação", async () => {
+    await createTrackFromGap(INPUT);
+
+    expect(upsertProcessRegistry).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        tenantId: "t1",
+        meridianGapId: GAP,
+        scaffoldTrackId: expect.any(String),
+        name: INPUT.processName,
+      })
+    );
+  });
+
+  it("promoção recusada não escreve registro", async () => {
+    h.promotionFindFirst.mockResolvedValue(null);
+
+    await createTrackFromGap(INPUT);
+
+    expect(upsertProcessRegistry).not.toHaveBeenCalled();
+  });
 });
 
 describe("createTrackFromGap", () => {

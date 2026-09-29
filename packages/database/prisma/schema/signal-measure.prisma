@@ -1,0 +1,199 @@
+// Signal — modelos de medição e plano de métricas por iniciativa.
+//
+// SG-DEV-01/03 do handoff (correcoes.pdf §03) com as decisões provisórias do
+// Norte de 2026-09-29, parte 2 (seção f). O modelo de medição é o análogo do
+// template do Scaffold e do perfil de controle do Charter: uma forma de trabalho
+// (`WorkForm`), o método da Nebuloz, GLOBAL e versionado.
+//
+// Exceção declarada à convenção "toda tabela tem tenantId" de signal.prisma:
+// modelo e versão de modelo não têm tenantId nem RLS, porque são o método, não
+// dado do cliente (mesmo critério de ScaffoldTemplate). Tudo o que é do cliente
+// — o plano da iniciativa e seu histórico — tem tenantId e RLS.
+//
+// Fórmula continua fora da coluna (convenção do módulo): `SignalPlanMetric`
+// guarda a DEFINIÇÃO da métrica (texto da fórmula, direção, meta), nunca o valor
+// calculado. O "agora" é lido de SignalMetricObservation; o baseline só é
+// copiado para a coluna quando a métrica congela, porque nesse instante ele vira
+// contrato firmado (ver `baselineValue`).
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// Papel da métrica no veredito. PRIMARY decide; GUARD nunca pode piorar para a
+/// primária melhorar; ADOPTION diz se o resultado é da IA; VALUE é o componente
+/// em R$ do retorno.
+enum SignalMetricRole {
+  PRIMARY
+  GUARD
+  ADOPTION
+  VALUE
+}
+
+/// Direção em que a métrica melhora.
+enum SignalMetricDirection {
+  UP
+  DOWN
+}
+
+/// Proposta → Sem fonte → Medindo ↔ Pausada · Congelada. Quem transita cada
+/// estado é regra de action (SG-PO-03); o banco garante só o que é invariante:
+/// primária vigente única e meta imutável depois de FROZEN.
+enum SignalPlanMetricState {
+  PROPOSED
+  NO_SOURCE
+  MEASURING
+  PAUSED
+  FROZEN
+}
+
+/// Ação registrada no histórico da métrica.
+enum SignalPlanMetricAction {
+  PROPOSE
+  APPROVE
+  MAP_SOURCE
+  START_MEASURING
+  PAUSE
+  RESUME
+  FREEZE
+  REQUEST_TARGET_REVIEW
+  CHANGE_PRIMARY
+  EDIT
+}
+
+// ── Modelo de medição (global, versionado) ────────────────────────────────────
+
+/// Um modelo por forma de trabalho. O conteúdo vive nas versões.
+model SignalMeasureModel {
+  id        String   @id @default(cuid())
+  workForm  WorkForm @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions SignalMeasureModelVersion[]
+}
+
+/// Versão publicada. IMUTÁVEL como ScaffoldTemplateVersion: sem `updatedAt`,
+/// publicar cria linha nova. A iniciativa pina a versão ao gerar o plano.
+model SignalMeasureModelVersion {
+  id                String   @id @default(cuid())
+  modelId           String
+  /// "v1", "v2".
+  label             String
+  /// Como se separa o efeito da IA do que aconteceria de qualquer jeito, ex.:
+  /// "holdout de 15% por ordem de chegada".
+  counterfactual    String   @db.Text
+  /// Janela mínima de amostra, em semanas (a mesma do baseline-measured: 4).
+  sampleWindowWeeks Int      @default(4)
+  /// Fontes típicas do número.
+  sources           String[]
+  /// "Onde o número costuma mentir". Rascunho até um caso de cliente confirmar.
+  traps             String[]
+  note              String?  @db.Text
+  publishedAt       DateTime @default(now())
+  publishedBy       String?
+
+  model       SignalMeasureModel         @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  metrics     SignalMeasureModelMetric[]
+  initiatives SignalInitiative[]
+
+  @@unique([modelId, label])
+  @@index([modelId])
+}
+
+/// Métrica do modelo: papel, fórmula e direção. Imutável junto com a versão.
+model SignalMeasureModelMetric {
+  id        String                @id @default(cuid())
+  versionId String
+  seq       Int
+  role      SignalMetricRole
+  name      String
+  /// Texto verificável, ex.: "resolvidas sem transbordo ÷ conversas".
+  formula   String                @db.Text
+  direction SignalMetricDirection
+
+  version     SignalMeasureModelVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  planMetrics SignalPlanMetric[]
+
+  @@index([versionId])
+}
+
+// ── Plano da iniciativa (por tenant) ──────────────────────────────────────────
+
+/// Métrica do plano de uma iniciativa. Nasce do modelo (`modelMetricId`) ou é
+/// proposta fora dele (nulo, estado PROPOSED, fora do veredito e do ROI até o
+/// OWNER aprovar — SG-PO-05). Edição cria versão nova: `version` sobe e o antes
+/// e o depois ficam no histórico.
+model SignalPlanMetric {
+  id            String                @id @default(cuid())
+  tenantId      String
+  initiativeId  String
+  /// Métrica do modelo de origem. Nulo na proposta fora do modelo.
+  modelMetricId String?
+  role          SignalMetricRole
+  name          String
+  formula       String                @db.Text
+  direction     SignalMetricDirection
+  state         SignalPlanMetricState @default(PROPOSED)
+
+  /// Fonte: o mapeamento existente. Só vira MEASURING quando a conexão dele
+  /// está saudável (SG-PM-03) — regra de action.
+  sourceMappingId String?
+
+  /// Baseline copiado no instante do congelamento (evento do Scaffold, X-04).
+  /// Antes disso o baseline é lido de SignalBaseline; depois é contrato firmado,
+  /// e mudar a fonte não pode reescrever o que o gate congelou.
+  /// Dimensão do baseline assinado (`SignalBaselineDimension.key`, ex. "TIME")
+  /// de onde sai o `baselineValue` no congelamento. Texto sem FK: a dimensão
+  /// pertence a uma versão de baseline e a métrica sobrevive a versões novas.
+  /// Nulo = a métrica não tem dimensão de baseline correspondente.
+  baselineDimensionKey String?
+  baselineValue Decimal? @db.Decimal(18, 6)
+  targetValue   Decimal? @db.Decimal(18, 6)
+  ownerId       String?
+  /// Versão da definição (sobe a cada edição).
+  version       Int      @default(1)
+
+  /// `true` na única primária vigente da iniciativa; NULL em todas as demais,
+  /// nunca `false`. Com o unique abaixo (NULLs não colidem), o banco garante
+  /// EXATAMENTE UMA primária vigente por iniciativa (SG-PO-02). Trocar a
+  /// primária = mover o `true` numa action, com justificativa no histórico.
+  isCurrentPrimary Boolean?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  initiative  SignalInitiative         @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  modelMetric SignalMeasureModelMetric? @relation(fields: [modelMetricId], references: [id], onDelete: Restrict)
+  mapping     SignalMetricMapping?     @relation(fields: [sourceMappingId], references: [id], onDelete: SetNull)
+  events      SignalPlanMetricEvent[]
+
+  @@unique([initiativeId, isCurrentPrimary])
+  @@index([tenantId])
+  @@index([initiativeId, state])
+}
+
+/// Histórico da métrica do plano. Append-only no banco (trigger, como o
+/// AuditLog). `actorId` nulo = sistema (ex.: FREEZE vindo do gate do Scaffold).
+model SignalPlanMetricEvent {
+  id           String                 @id @default(cuid())
+  tenantId     String
+  planMetricId String
+  action       SignalPlanMetricAction
+  actorId      String?
+  fromState    SignalPlanMetricState?
+  toState      SignalPlanMetricState?
+  /// Versão da definição depois da ação.
+  version      Int
+  /// Array<[campo, antes, depois]>, o formato do AuditLog (ADR-0009).
+  changes      Json?
+  /// Obrigatório em pausar/retomar, trocar primária e pedir revisão de meta.
+  comment      String?                @db.Text
+  createdAt    DateTime               @default(now())
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  planMetric SignalPlanMetric @relation(fields: [planMetricId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([planMetricId, createdAt])
+}

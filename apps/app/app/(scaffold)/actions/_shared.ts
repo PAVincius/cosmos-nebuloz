@@ -25,7 +25,8 @@ export type ScaffoldEntity =
   | "scaffold.template"
   | "scaffold.overlay"
   | "scaffold.membership"
-  | "scaffold.deliverable";
+  | "scaffold.deliverable"
+  | "scaffold.processlink";
 
 /**
  * Grava entrada de auditoria do Scaffold (SN-03).

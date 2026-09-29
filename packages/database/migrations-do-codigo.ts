@@ -135,4 +135,11 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929000500_scaffold_deliverable_link",
   "20260929000600_cosmos_origem_trilha",
   "20260929000700_rls_catalogo_global_scaffold",
+  "20260929010000_signal_measure_models",
+  "20260929010100_signal_plan_metric",
+  "20260929010200_charter_control_profiles",
+  "20260929010300_charter_case_controls",
+  "20260929010400_signal_plan_metric_baseline_key",
+  "20260929010500_signal_frozen_terminal",
+  "20260929010600_imutabilidade_de_versoes_publicadas",
 ];

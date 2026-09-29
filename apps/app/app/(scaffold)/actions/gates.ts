@@ -3,6 +3,9 @@
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
+import { caseDecisionBlockers } from "@/lib/charter/case-controls";
+import { emitProductEvent } from "@/lib/inngest/emit-product-event";
+import type { ProductEventData } from "@/lib/inngest/product-events";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import {
   type GateReviewState,
@@ -194,6 +197,67 @@ function assertDeliverablesApproved(state: GateReviewState): void {
   }
 }
 
+/**
+ * G-CHARTER (Norte c.2 / CH-PM-03) — a Fase 3 só fecha se o caso de uso LIGADO à
+ * trilha no Charter não tem controle sem evidência, com ajuste pedido, vencido
+ * ou reaberto. Devolve os motivos (vazio = livre).
+ *
+ * É LEITURA, não evento: o gate olha o estado no instante do fechamento, então
+ * `charter/control.accepted` não precisa de consumidor aqui. Vale só com Charter
+ * contratado E caso ligado (degradação graciosa, como SG-05); o vínculo vem do
+ * ProcessRegistry (trilha -> caso de uso).
+ */
+async function charterControlBlockers(
+  db: Db,
+  tenantId: string,
+  phase: PhaseWithContext
+): Promise<string[]> {
+  if (phase.phase !== "SCALE") {
+    return [];
+  }
+  const charter = await db.tenantModule.findFirst({
+    where: {
+      tenantId,
+      module: "CHARTER",
+      status: { in: ["ACTIVE", "TRIAL"] },
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    },
+    select: { module: true },
+  });
+  if (!charter) {
+    return [];
+  }
+  const link = await db.processRegistry.findFirst({
+    where: {
+      tenantId,
+      scaffoldTrackId: phase.track.id,
+      charterUseCaseId: { not: null },
+    },
+    select: { charterUseCaseId: true },
+  });
+  if (!link?.charterUseCaseId) {
+    return [];
+  }
+  const controls = await db.charterCaseControl.findMany({
+    where: { tenantId, useCaseId: link.charterUseCaseId },
+    select: { code: true, name: true, state: true },
+  });
+  return caseDecisionBlockers(controls).map((b) => b.reason);
+}
+
+/** Recusa o fechamento com controle do Charter pendente. NÃO é dispensável por
+ *  override: override cobre critério de gate, e controle de risco não é critério. */
+async function assertCharterControlsClear(
+  db: Db,
+  tenantId: string,
+  phase: PhaseWithContext
+): Promise<void> {
+  const blockers = await charterControlBlockers(db, tenantId, phase);
+  if (blockers.length > 0) {
+    throw new ScaffoldRuleError("CHARTER_CONTROLS_NOT_CLEAR", blockers);
+  }
+}
+
 // ── Leitura ───────────────────────────────────────────────────────────────────
 
 export type GateEvaluation = {
@@ -236,13 +300,21 @@ export async function evaluateGate(
       );
       const pending = pendingRequiredSteps(phase.steps).map((s) => s.statement);
       const deliverables = await loadDeliverableGate(db, ctx.tenantId, phase);
+      const controlBlockers = await charterControlBlockers(
+        db,
+        ctx.tenantId,
+        phase
+      );
       return {
         phase: phase.phase,
         state: phase.state,
         criteria: evaluation.criteria,
         canClose:
-          evaluation.canClose && pending.length === 0 && !deliverables.blocked,
-        blockers: evaluation.blockers,
+          evaluation.canClose &&
+          pending.length === 0 &&
+          !deliverables.blocked &&
+          controlBlockers.length === 0,
+        blockers: [...evaluation.blockers, ...controlBlockers],
         pendingSteps: pending,
         pendingDeliverables: deliverables.pending.map((p) => p.code),
         deliverablesReason: deliverables.reason,
@@ -358,7 +430,28 @@ async function writeClose({
     });
   }
 
-  return { resultId: result.id, to };
+  return { resultId: result.id, to, at: now, openedPhase: advanced };
+}
+
+/** Dados do evento `scaffold/gate.closed` (X-04), montados dentro da transação
+ *  e emitidos só depois dela: o evento anuncia um fato já confirmado. */
+function gateClosedEvent(
+  ctx: ScaffoldContext,
+  phase: PhaseWithContext,
+  write: Awaited<ReturnType<typeof writeClose>>,
+  outcome: "PASSED" | "OVERRIDDEN"
+): ProductEventData<"scaffoldGateClosed"> {
+  return {
+    tenantId: ctx.tenantId,
+    trackId: phase.track.id,
+    trackCode: phase.track.code,
+    processName: phase.track.processName,
+    closedPhase: phase.phase,
+    openedPhase: write.openedPhase,
+    outcome,
+    gateResultId: write.resultId,
+    at: write.at.toISOString(),
+  };
 }
 
 /**
@@ -373,6 +466,8 @@ export async function closePhase(
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("gate.close");
     const input = ClosePhaseSchema.parse(raw);
+
+    const closedEvents: ProductEventData<"scaffoldGateClosed">[] = [];
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
       const phase = await loadPhase(db, ctx.tenantId, input.phaseInstanceId);
@@ -389,6 +484,7 @@ export async function closePhase(
       );
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
+      await assertCharterControlsClear(db, ctx.tenantId, phase);
 
       const criteria = await loadCriteria(
         db,
@@ -412,7 +508,7 @@ export async function closePhase(
         throw new ScaffoldRuleError("CRITERIA_UNMET", evaluation.blockers);
       }
 
-      const { resultId, to } = await writeClose({
+      const write = await writeClose({
         db,
         ctx,
         phase,
@@ -420,6 +516,8 @@ export async function closePhase(
         criteria: evaluation.criteria,
         outcome: "PASSED",
       });
+      const { resultId, to } = write;
+      closedEvents.push(gateClosedEvent(ctx, phase, write, "PASSED"));
 
       await logScaffoldAudit(db, ctx, {
         action: "scaffold.gate.close",
@@ -431,6 +529,11 @@ export async function closePhase(
 
       return { gateResultId: resultId };
     });
+
+    // Depois da transação: o Cosmos cria o épico e as features a partir disto.
+    for (const event of closedEvents) {
+      await emitProductEvent("scaffoldGateClosed", event);
+    }
 
     revalidatePath("/scaffold");
     return out;
@@ -455,6 +558,8 @@ export async function overridePhase(
     const ctx = await requireScaffoldPermissionContext("gate.override");
     const input = OverridePhaseSchema.parse(raw);
 
+    const closedEvents: ProductEventData<"scaffoldGateClosed">[] = [];
+
     const out = await withTenantDb(ctx.tenantId, async (db) => {
       const phase = await loadPhase(db, ctx.tenantId, input.phaseInstanceId);
       if (!phase) {
@@ -470,6 +575,7 @@ export async function overridePhase(
       );
       assertBaselineSigned(phase);
       await assertCharterPolicyAcked(db, ctx.tenantId, phase);
+      await assertCharterControlsClear(db, ctx.tenantId, phase);
 
       const criteria = await loadCriteria(
         db,
@@ -491,7 +597,7 @@ export async function overridePhase(
         )
       );
 
-      const { resultId, to } = await writeClose({
+      const write = await writeClose({
         db,
         ctx,
         phase,
@@ -499,6 +605,8 @@ export async function overridePhase(
         criteria: evaluation.criteria,
         outcome: "OVERRIDDEN",
       });
+      const { resultId, to } = write;
+      closedEvents.push(gateClosedEvent(ctx, phase, write, "OVERRIDDEN"));
 
       const override = await db.scaffoldGateOverride.create({
         data: {
@@ -528,6 +636,10 @@ export async function overridePhase(
       return { gateResultId: resultId, overrideId: override.id };
     });
 
+    for (const event of closedEvents) {
+      await emitProductEvent("scaffoldGateClosed", event);
+    }
+
     revalidatePath("/scaffold");
     return out;
   });
@@ -547,6 +659,8 @@ export async function reopenPhase(
     const ctx = await requireScaffoldPermissionContext("gate.close");
     const input = ReopenPhaseSchema.parse(raw);
 
+    const reopenedEvents: ProductEventData<"scaffoldGateReopened">[] = [];
+
     await withTenantDb(ctx.tenantId, async (db) => {
       const phase = await loadPhase(db, ctx.tenantId, input.phaseInstanceId);
       if (!phase) {
@@ -555,11 +669,22 @@ export async function reopenPhase(
       // Lança GateTransitionError se a fase não estiver CLOSED nem OBSERVING.
       nextState(phase.state, "REOPEN");
 
+      const reopenedAt = new Date();
+      reopenedEvents.push({
+        tenantId: ctx.tenantId,
+        trackId: phase.track.id,
+        trackCode: phase.track.code,
+        phase: phase.phase,
+        phaseInstanceId: phase.id,
+        reopenCount: phase.reopenCount + 1,
+        at: reopenedAt.toISOString(),
+      });
+
       await db.scaffoldPhaseInstance.update({
         where: { id: phase.id },
         data: {
           state: "OPEN",
-          reopenedAt: new Date(),
+          reopenedAt,
           reopenCount: { increment: 1 },
           closedAt: null,
           observationEndsAt: null,
@@ -582,6 +707,10 @@ export async function reopenPhase(
         diff: [["Estado", phase.state, "OPEN"]],
       });
     });
+
+    for (const event of reopenedEvents) {
+      await emitProductEvent("scaffoldGateReopened", event);
+    }
 
     revalidatePath("/scaffold");
   });

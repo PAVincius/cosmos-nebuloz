@@ -7,6 +7,7 @@ import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
+import { upsertProcessRegistry } from "@/lib/scaffold/process-registry";
 import {
   CancelTrackSchema,
   CreateTrackFromGapSchema,
@@ -154,6 +155,17 @@ export async function createTrackFromGap(
       await db.meridianGapPromotion.update({
         where: { id: promotion.id },
         data: { targetEntityId: created.id },
+      });
+
+      // X-01. Sem isto o registro único de processo nasce vazio: é aqui que gap e
+      // trilha se encontram. Na mesma transação — trilha sem vínculo é o estado
+      // que o registro existe para evitar.
+      await upsertProcessRegistry(db, {
+        tenantId: ctx.tenantId,
+        name: input.processName,
+        workForm: input.archetype ?? null,
+        meridianGapId: input.gapId,
+        scaffoldTrackId: created.id,
       });
 
       await logScaffoldAudit(db, ctx, {

@@ -43,6 +43,12 @@ export const SCAFFOLD_ERROR = {
   VERSION_IMMUTABLE: "VERSION_IMMUTABLE",
   NOT_SIGNED: "NOT_SIGNED",
   HANDOVER_NOT_READY: "HANDOVER_NOT_READY",
+  // Registro único de processo (X-01)
+  PROCESS_LINK_EMPTY: "PROCESS_LINK_EMPTY",
+  PROCESS_LINK_TARGET_NOT_FOUND: "PROCESS_LINK_TARGET_NOT_FOUND",
+  PROCESS_LINK_CONFLICT: "PROCESS_LINK_CONFLICT",
+  // Gate da SCALE lê os controles do Charter (CH-PM-03)
+  CHARTER_CONTROLS_NOT_CLEAR: "CHARTER_CONTROLS_NOT_CLEAR",
 } as const;
 
 export type ScaffoldErrorCode =
@@ -107,6 +113,14 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "O caso de negócio ainda não foi assinado. O Signal não apura contra promessa não assinada.",
   HANDOVER_NOT_READY:
     "O handover pack só é emitido depois que o gate da Fase 4 fecha. Antes disso, o trabalho ainda é da Nebuloz.",
+  PROCESS_LINK_EMPTY:
+    "Informe ao menos um id (lacuna, trilha, iniciativa ou caso de uso) para ligar ao processo.",
+  PROCESS_LINK_TARGET_NOT_FOUND:
+    "Algum dos itens informados não existe nesta organização. Confira o id de cada produto.",
+  PROCESS_LINK_CONFLICT:
+    "Estes itens já estão ligados a processos diferentes, ou o processo já aponta para outro item no mesmo produto. Resolva o vínculo existente antes de ligar de novo.",
+  CHARTER_CONTROLS_NOT_CLEAR:
+    "A Fase 3 não fecha com controle do Charter sem evidência, com ajuste pedido, vencido ou reaberto no caso de uso ligado a esta trilha. Aceite ou dispense os controles pendentes no Charter.",
 };
 
 /**

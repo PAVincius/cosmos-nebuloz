@@ -3,6 +3,7 @@
 import { type Prisma, withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { emitProductEvent } from "@/lib/inngest/emit-product-event";
 import { adoptionPct, fmtAdoption } from "@/lib/signal/adoption";
 import { computeConfidence } from "@/lib/signal/confidence";
 import { SignalRuleError, SignalStateConflictError } from "@/lib/signal/errors";
@@ -312,6 +313,14 @@ export async function freezeReport(raw: {
     const ctx = await requireSignalPermissionContext("signal.report.freeze");
     const input = z.object({ code: nnStr }).parse(raw);
 
+    // Array, e não `let ... | null`: o TypeScript estreita um `let` atribuído só
+    // dentro do callback para `null`.
+    const frozenReports: {
+      reportId: string;
+      at: Date;
+      lines: { code: string; verdict: SignalVerdict }[];
+    }[] = [];
+
     const result = await withTenantDb(ctx.tenantId, async (db) => {
       const report = await db.signalReportSnapshot.findUnique({
         where: { tenantId_code: { tenantId: ctx.tenantId, code: input.code } },
@@ -348,6 +357,7 @@ export async function freezeReport(raw: {
       }
 
       const pageCount = estimatePageCount(payload.initiatives);
+      const generatedAt = new Date();
       await db.signalReportSnapshot.update({
         where: { id: report.id },
         data: {
@@ -356,8 +366,16 @@ export async function freezeReport(raw: {
           pageCount,
           blockedReason: null,
           generatedById: ctx.userId,
-          generatedAt: new Date(),
+          generatedAt,
         },
+      });
+      frozenReports.push({
+        reportId: report.id,
+        at: generatedAt,
+        lines: payload.initiatives.map((i) => ({
+          code: i.code,
+          verdict: i.verdict,
+        })),
       });
 
       await logSignalAudit(db, ctx, {
@@ -371,6 +389,24 @@ export async function freezeReport(raw: {
 
       return { code: report.code, pageCount };
     });
+
+    // Veredito apresentado no relatório congelado (X-04): um evento por
+    // iniciativa, emitido só depois de o congelamento confirmar. O id do evento
+    // inclui o relatório, então recongelar outro período não colide.
+    for (const frozen of frozenReports) {
+      await Promise.all(
+        frozen.lines.map((line) =>
+          emitProductEvent("signalVerdict", {
+            tenantId: ctx.tenantId,
+            initiativeCode: line.code,
+            verdict: line.verdict,
+            reportId: frozen.reportId,
+            reportCode: result.code,
+            at: frozen.at.toISOString(),
+          })
+        )
+      );
+    }
 
     revalidatePath("/signal/reports");
     return result;

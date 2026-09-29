@@ -109,11 +109,15 @@ describe("a invariante do gate tem um único dono", () => {
     // OBSERVING quando um entregável aprovado é reaberto (SC-PO-03) e só
     // escreve OPEN, como `reopenPhase`. Outro escritor entra nesta lista de
     // propósito — e o teste acima continua garantindo que ele não fecha nada.
+    // `lib/inngest/scaffold-charter-control-expired.ts` (CH-PM-03) leva SÓ
+    // GATE_READY -> BLOCKED, pela transição CRITERIA_UNMET da máquina, quando um
+    // controle do Charter vence; nunca fecha nem reabre fase.
     const writers = scan(WRITES_PHASE_STATE, { except: GATES_ACTION });
     expect([...writers].sort()).toEqual(
       [
         join("app", "(scaffold)", "actions", "_phase-reopen.ts"),
         join("app", "(scaffold)", "actions", "steps.ts"),
+        join("lib", "inngest", "scaffold-charter-control-expired.ts"),
       ].sort()
     );
   });

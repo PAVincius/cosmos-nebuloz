@@ -52,6 +52,8 @@ vi.mock("@repo/database", () => ({
       scaffoldDeliverableInstance: { findMany: async () => [] },
       scaffoldTrack: { update: h.trackUpdate },
       tenantModule: { findFirst: h.moduleFindFirst },
+      // G-CHARTER: trilha sem caso ligado no Charter.
+      processRegistry: { findFirst: vi.fn().mockResolvedValue(null) },
       auditLog: { create: h.auditCreate },
     }),
 }));

@@ -12,11 +12,15 @@ const h = vi.hoisted(() => ({
   withTenantDb: vi.fn(),
   logSignalAudit: vi.fn(),
   revalidatePath: vi.fn(),
+  emit: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
 vi.mock("next/cache", () => ({ revalidatePath: h.revalidatePath }));
 vi.mock("@repo/database", () => ({ withTenantDb: h.withTenantDb }));
+vi.mock("@/lib/inngest/emit-product-event", () => ({
+  emitProductEvent: h.emit,
+}));
 // Só as FUNÇÕES do guard são mockadas (elas carregam `@repo/auth/server`, que
 // explode no ambiente de teste). As classes de erro vêm das reais: `signalAction`
 // as classifica por `instanceof`, e uma cópia local passaria despercebida pelo
@@ -87,6 +91,7 @@ beforeEach(() => {
   h.requireSignalPermissionContext.mockResolvedValue(CTX);
   h.requireInitiativeOwnership.mockReturnValue(undefined);
   h.logSignalAudit.mockResolvedValue(undefined);
+  h.emit.mockResolvedValue(undefined);
 
   db = {
     signalInitiative: {
@@ -198,6 +203,46 @@ describe("assinatura", () => {
         }),
       })
     );
+  });
+
+  it("anuncia o baseline congelado (X-04), só depois de assinar", async () => {
+    db.signalInitiative!.findUnique = vi.fn().mockResolvedValue({
+      id: "ini_1",
+      code: "IN-014",
+      ownerId: "usr_1",
+      scaffoldTrackId: "trk_1",
+    });
+    withDims(FULL_DIMS);
+
+    await signBaseline({ initiativeCode: "IN-014", version: 1 });
+
+    expect(h.emit).toHaveBeenCalledTimes(1);
+    const [key, data] = h.emit.mock.calls[0];
+    expect(key).toBe("signalBaselineFrozen");
+    expect(data).toMatchObject({
+      tenantId: "tnt_1",
+      initiativeId: "ini_1",
+      initiativeCode: "IN-014",
+      baselineId: "b_1",
+      version: 1,
+      scaffoldTrackId: "trk_1",
+    });
+  });
+
+  it("iniciativa sem trilha do Scaffold emite scaffoldTrackId nulo", async () => {
+    withDims(FULL_DIMS);
+
+    await signBaseline({ initiativeCode: "IN-014", version: 1 });
+
+    expect(h.emit.mock.calls[0][1].scaffoldTrackId).toBeNull();
+  });
+
+  it("baseline recusado não emite nada", async () => {
+    withDims(FULL_DIMS.filter((d) => d.key !== "QUALITY"));
+
+    await signBaseline({ initiativeCode: "IN-014", version: 1 });
+
+    expect(h.emit).not.toHaveBeenCalled();
   });
 
   it("recusa com dimensão obrigatória faltando e NOMEIA quais", async () => {

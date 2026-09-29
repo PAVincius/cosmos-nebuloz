@@ -29,6 +29,11 @@ export {
   setModuleStatus,
 } from "./modules";
 export { platformDb } from "./platform-db";
+export {
+  type BootstrapScaffoldDeps,
+  type BootstrapScaffoldInput,
+  bootstrapScaffold,
+} from "./scaffold";
 export { type SlugChecker, slugify, uniqueSlug } from "./slug";
 export {
   type ProvisionTenantInput,

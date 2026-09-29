@@ -3,6 +3,8 @@
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { emitProductEvent } from "@/lib/inngest/emit-product-event";
+import type { ProductEventData } from "@/lib/inngest/product-events";
 import { SignalRuleError } from "@/lib/signal/errors";
 import {
   requireInitiativeOwnership,
@@ -209,6 +211,8 @@ export async function signBaseline(
     const ctx = await requireSignalPermissionContext("signal.baseline.write");
     const input = SignSchema.parse(raw);
 
+    const frozenEvents: ProductEventData<"signalBaselineFrozen">[] = [];
+
     const signed = await withTenantDb(ctx.tenantId, async (db) => {
       const initiative = await loadInitiative(
         db,
@@ -275,8 +279,23 @@ export async function signBaseline(
         note: baseline.windowLabel,
         diff: [[FIELD_LABELS.signedAt, "—", at.toISOString()]],
       });
+      frozenEvents.push({
+        tenantId: ctx.tenantId,
+        initiativeId: initiative.id,
+        initiativeCode: initiative.code,
+        baselineId: baseline.id,
+        version: input.version,
+        scaffoldTrackId: initiative.scaffoldTrackId ?? null,
+        at: at.toISOString(),
+      });
       return at;
     });
+
+    // Baseline assinado é baseline congelado: quem lê o plano de métricas
+    // (X-04) fica sabendo depois que a transação confirmou.
+    for (const event of frozenEvents) {
+      await emitProductEvent("signalBaselineFrozen", event);
+    }
 
     revalidatePath(`/signal/initiative/${input.initiativeCode}`);
     return { version: input.version, signedAt: signed };
