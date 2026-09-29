@@ -97,8 +97,20 @@ CREATE TABLE backup_meridian_20260929."MeridianSequence" AS SELECT * FROM "Merid
 
 -- 3.3 O schema novo não herda RLS nem grants e guarda respondentes de todos os
 --     tenants. Fecha para qualquer papel da API; sem policy, RLS nega tudo.
-REVOKE ALL ON SCHEMA backup_meridian_20260929 FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON ALL TABLES IN SCHEMA backup_meridian_20260929 FROM PUBLIC, anon, authenticated, service_role;
+-- Os papéis anon/authenticated/service_role existem no Supabase mas não num
+-- Postgres puro (banco local); revoga só dos que existem.
+DO $$
+DECLARE papel text;
+BEGIN
+  REVOKE ALL ON SCHEMA backup_meridian_20260929 FROM PUBLIC;
+  REVOKE ALL ON ALL TABLES IN SCHEMA backup_meridian_20260929 FROM PUBLIC;
+  FOREACH papel IN ARRAY ARRAY['anon', 'authenticated', 'service_role'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = papel) THEN
+      EXECUTE format('REVOKE ALL ON SCHEMA backup_meridian_20260929 FROM %I', papel);
+      EXECUTE format('REVOKE ALL ON ALL TABLES IN SCHEMA backup_meridian_20260929 FROM %I', papel);
+    END IF;
+  END LOOP;
+END $$;
 ALTER TABLE backup_meridian_20260929."MeridianGapPromotion" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE backup_meridian_20260929."MeridianGapPromotion" FORCE ROW LEVEL SECURITY;
 ALTER TABLE backup_meridian_20260929."MeridianPlanItem" ENABLE ROW LEVEL SECURITY;
