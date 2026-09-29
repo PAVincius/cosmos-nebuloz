@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { NAV, navIdFor, TITLES } from "@/components/scaffold/nav";
+import { NAV, navIdFor, screensFor, TITLES } from "@/components/scaffold/nav";
 
 // Registry e casca — a fronteira cliente/servidor do Scaffold.
 //
@@ -102,5 +102,27 @@ describe("metadata da rota única", () => {
   it("todo título de tela é distinto — abas iguais são abas perdidas", () => {
     const titulos = Object.values(TITLES).map(([t, p]) => `${t}|${p}`);
     expect(new Set(titulos).size).toBe(titulos.length);
+  });
+});
+
+describe("screensFor — o menu só oferece o que o papel pode abrir", () => {
+  const ALL = [
+    "portfolio",
+    "track",
+    "baselines",
+    "baseline",
+    "templates",
+    "members",
+  ];
+
+  it("quem gere papel vê Papéis de adoção", () => {
+    expect(screensFor(ALL, { canManageMembers: true })).toContain("members");
+  });
+
+  it("quem não gere não vê o link morto (Crivo F2)", () => {
+    const out = screensFor(ALL, { canManageMembers: false });
+    expect(out).not.toContain("members");
+    expect(out).toContain("portfolio");
+    expect(out).toHaveLength(ALL.length - 1);
   });
 });

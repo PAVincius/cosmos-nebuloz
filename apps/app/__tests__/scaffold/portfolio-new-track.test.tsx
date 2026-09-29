@@ -12,6 +12,7 @@ const h = vi.hoisted(() => ({
   createTrackFromGap: vi.fn(),
   createTrack: vi.fn(),
   push: vi.fn(),
+  getAccess: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -19,6 +20,9 @@ vi.mock("@/app/(scaffold)/actions/tracks", () => ({
   listTracks: h.listTracks,
   createTrackFromGap: h.createTrackFromGap,
   createTrack: h.createTrack,
+}));
+vi.mock("@/app/(scaffold)/actions/access", () => ({
+  getScaffoldAccess: h.getAccess,
 }));
 vi.mock("@/app/(scaffold)/actions/templates", () => ({
   listTemplates: h.listTemplates,
@@ -50,8 +54,21 @@ const SUMMARY = {
   overrideRates: [],
 };
 
+const ACCESS = (allowed: boolean) => ({
+  ok: true,
+  data: {
+    role: allowed ? "CONSULTANT" : "SPONSOR",
+    can: {
+      "track.manage": allowed
+        ? { allowed: true, reason: null }
+        : { allowed: false, reason: "Requer papel Consultor — criar trilhas" },
+    },
+  },
+});
+
 beforeEach(() => {
   vi.clearAllMocks();
+  h.getAccess.mockResolvedValue(ACCESS(true));
   h.listTracks.mockResolvedValue({ ok: true, data: SUMMARY });
   h.listTemplates.mockResolvedValue({
     ok: true,
@@ -170,5 +187,30 @@ describe("portfólio — promoção pendente vira trilha", () => {
       .getAllByRole("button", { name: /criar trilha/i })
       .at(-1) as HTMLButtonElement;
     expect(submit.disabled).toBe(true);
+  });
+});
+
+// Crivo F2: papel só-leitura via "Nova trilha" habilitado.
+describe("portfólio — papel só-leitura", () => {
+  it("Nova trilha e Criar trilha ficam desabilitados, com o motivo", async () => {
+    h.getAccess.mockResolvedValue(ACCESS(false));
+    render(<PortfolioScreen />);
+    await screen.findByText("G-07");
+
+    for (const name of [/nova trilha/i, /criar trilha/i]) {
+      const button = screen.getByRole("button", { name });
+      await waitFor(() => expect(button).toHaveProperty("disabled", true));
+      expect(button.getAttribute("title")).toMatch(/Requer papel/);
+    }
+    fireEvent.click(screen.getByRole("button", { name: /nova trilha/i }));
+    expect(screen.queryByLabelText(/^processo/i)).toBeNull();
+  });
+
+  it("quem pode abre o modal", async () => {
+    render(<PortfolioScreen />);
+    const nova = await screen.findByRole("button", { name: /nova trilha/i });
+    await waitFor(() => expect(nova).toHaveProperty("disabled", false));
+    fireEvent.click(nova);
+    expect(await screen.findByLabelText(/^processo/i)).toBeDefined();
   });
 });

@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "../base";
 import { NewTrackModal } from "../new-track-modal";
+import { useScaffoldAccess } from "../use-access";
 
 const ARCHETYPE_LABEL: Record<string, string> = {
   TRIAGE: "Triagem de suporte",
@@ -251,6 +252,7 @@ export default function PortfolioScreen() {
   const [archetype, setArchetype] = useState("all");
   const [phase, setPhase] = useState("all");
   // `null` fechado; `{ promotion: null }` trilha sem lacuna; com promoção, S-01.
+  const manageAccess = useScaffoldAccess().can("track.manage");
   const [creating, setCreating] = useState<{
     promotion: PendingPromotion | null;
   } | null>(null);
@@ -318,9 +320,10 @@ export default function PortfolioScreen() {
           Templates
         </Button>
         <Button
-          disabled={loading}
+          disabled={loading || !manageAccess.allowed}
           icon="plus"
           onClick={() => setCreating({ promotion: null })}
+          title={manageAccess.reason ?? undefined}
         >
           Nova trilha
         </Button>
@@ -363,9 +366,11 @@ export default function PortfolioScreen() {
                   promovida {p.promotedAt.toLocaleDateString("pt-BR")}
                 </span>
                 <Button
+                  disabled={!manageAccess.allowed}
                   icon="layers"
                   onClick={() => setCreating({ promotion: p })}
                   size="sm"
+                  title={manageAccess.reason ?? undefined}
                 >
                   Criar trilha
                 </Button>

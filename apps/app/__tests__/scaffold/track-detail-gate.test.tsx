@@ -23,6 +23,8 @@ const h = vi.hoisted(() => ({
   requestAdjustment: vi.fn(),
   attachVersion: vi.fn(),
   readFile: vi.fn(),
+  getAccess: vi.fn(),
+  setStepState: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: h.push }) }));
@@ -36,8 +38,11 @@ vi.mock("@/app/(scaffold)/actions/gates", () => ({
   overridePhase: h.overridePhase,
   reopenPhase: h.reopenPhase,
 }));
+vi.mock("@/app/(scaffold)/actions/access", () => ({
+  getScaffoldAccess: h.getAccess,
+}));
 vi.mock("@/app/(scaffold)/actions/steps", () => ({
-  setStepState: vi.fn(),
+  setStepState: h.setStepState,
   attachArtefact: h.attachArtefact,
   readArtefact: h.readArtefact,
 }));
@@ -106,8 +111,46 @@ function trackWith(state: string, result: unknown = null) {
   };
 }
 
+const PERMISSIONS = [
+  "track.manage",
+  "step.complete",
+  "artefact.read",
+  "gate.close",
+  "gate.override",
+  "businesscase.write",
+  "businesscase.sign",
+  "template.publish",
+  "membership.manage",
+  "portfolio.read",
+  "deliverable.read",
+  "deliverable.work",
+  "deliverable.review",
+  "deliverable.reopen",
+  "deliverable.add",
+];
+
+/** Acesso de quem pode tudo, menos o que está em `denied`. */
+function accessWithout(denied: string[] = []) {
+  return {
+    ok: true,
+    data: {
+      role: "CONSULTANT",
+      can: Object.fromEntries(
+        PERMISSIONS.map((p) => [
+          p,
+          denied.includes(p)
+            ? { allowed: false, reason: `Requer papel Consultor — ${p}` }
+            : { allowed: true, reason: null },
+        ])
+      ),
+    },
+  };
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
+  h.getAccess.mockResolvedValue(accessWithout());
+  h.setStepState.mockResolvedValue({ ok: true, data: undefined });
   h.closePhase.mockResolvedValue({ ok: true, data: { gateResultId: "gr1" } });
   h.overridePhase.mockResolvedValue({
     ok: true,
@@ -724,5 +767,138 @@ describe("caso de negócio a partir da trilha", () => {
     expect(
       screen.queryByRole("button", { name: /caso de negócio/i })
     ).toBeNull();
+  });
+});
+
+// Crivo F2: papel só-leitura via controle habilitado e, ao clicar, a tela inteira
+// virava "Não foi possível carregar".
+describe("papel só-leitura na trilha", () => {
+  const WITH_STEP = () => {
+    const t = trackWith("OPEN");
+    t.phases[0].steps = [
+      {
+        id: "step-1",
+        seq: 1,
+        statement: "Medir o baseline",
+        expectedArtefact: "planilha.xlsx",
+        required: true,
+        state: "TODO",
+        note: null,
+        completedAt: null,
+        artefacts: [],
+      },
+    ] as never;
+    return t;
+  };
+  const READ_ONLY = ["track.manage", "step.complete", "gate.close"];
+
+  it("passo, anexo e cancelar ficam desabilitados, com o motivo escrito", async () => {
+    h.getAccess.mockResolvedValue(accessWithout(READ_ONLY));
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    render(<TrackDetailScreen param="trk1" />);
+
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    await waitFor(() => expect(toggle).toHaveProperty("disabled", true));
+    expect(
+      screen.getByRole("button", { name: /cancelar trilha/i })
+    ).toHaveProperty("disabled", true);
+    expect(screen.getByText(/somente leitura/i).textContent).toMatch(
+      /Requer papel/
+    );
+    fireEvent.click(toggle);
+    expect(h.setStepState).not.toHaveBeenCalled();
+  });
+
+  it("o gate também: sem gate.close, Revisar e assinar e Reabrir ficam desabilitados com motivo", async () => {
+    h.getAccess.mockResolvedValue(
+      accessWithout(["gate.close", "gate.override"])
+    );
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    render(<TrackDetailScreen param="trk1" />);
+    const close = await screen.findByRole("button", {
+      name: /revisar e assinar/i,
+    });
+    await waitFor(() => expect(close).toHaveProperty("disabled", true));
+    expect(
+      screen.getByText(/Requer papel Consultor — gate\.close/)
+    ).toBeDefined();
+  });
+
+  it("fase fechada: Reabrir fase desabilitado sem gate.close", async () => {
+    h.getAccess.mockResolvedValue(accessWithout(["gate.close"]));
+    h.getTrack.mockResolvedValue({
+      ok: true,
+      data: trackWith("CLOSED", {
+        outcome: "PASSED",
+        decidedAt: new Date("2026-09-10"),
+        cycle: 0,
+        criteriaSnapshot: [],
+        override: null,
+      }),
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    const reopen = await screen.findByRole("button", { name: /reabrir fase/i });
+    await waitFor(() => expect(reopen).toHaveProperty("disabled", true));
+  });
+
+  it("quem pode, continua podendo", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    render(<TrackDetailScreen param="trk1" />);
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    await waitFor(() => expect(toggle).toHaveProperty("disabled", false));
+    expect(screen.queryByText(/somente leitura/i)).toBeNull();
+  });
+
+  it("não sabe o acesso ainda: não oferece o controle enquanto carrega", async () => {
+    h.getAccess.mockReturnValue(new Promise(() => {}));
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    render(<TrackDetailScreen param="trk1" />);
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    expect(toggle).toHaveProperty("disabled", true);
+  });
+
+  it("falha ao ler o acesso não trava a tela: o servidor segue decidindo", async () => {
+    h.getAccess.mockResolvedValue({ ok: false, error: "boom" });
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    render(<TrackDetailScreen param="trk1" />);
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    await waitFor(() => expect(toggle).toHaveProperty("disabled", false));
+  });
+
+  it("recusa de ação aparece como aviso, sem derrubar a tela", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    h.setStepState.mockResolvedValue({
+      ok: false,
+      error:
+        "Requer papel Membro do time, Dono do processo ou Consultor — Concluir passo",
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    await waitFor(() => expect(toggle).toHaveProperty("disabled", false));
+    fireEvent.click(toggle);
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("Requer papel");
+    // A trilha continua na tela; nada de "Não foi possível carregar".
+    expect(screen.getByText("Gate da fase")).toBeDefined();
+    expect(screen.queryByText(/não foi possível carregar/i)).toBeNull();
+  });
+
+  it("o aviso some ao dispensar", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: WITH_STEP() });
+    h.setStepState.mockResolvedValue({ ok: false, error: "Sem permissão." });
+    render(<TrackDetailScreen param="trk1" />);
+    const toggle = await screen.findByLabelText("Concluir: Medir o baseline");
+    await waitFor(() => expect(toggle).toHaveProperty("disabled", false));
+    fireEvent.click(toggle);
+    await screen.findByRole("alert");
+    fireEvent.click(screen.getByRole("button", { name: /dispensar/i }));
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("falha ao CARREGAR a trilha continua sendo tela de erro, com tentar de novo", async () => {
+    h.getTrack.mockResolvedValue({ ok: false, error: "Trilha não encontrada" });
+    render(<TrackDetailScreen param="trk1" />);
+    expect(await screen.findByText(/Trilha não encontrada/)).toBeDefined();
   });
 });

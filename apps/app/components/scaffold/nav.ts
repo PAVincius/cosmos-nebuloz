@@ -59,3 +59,13 @@ export function navIdFor(screenId: string): string {
   }
   return screenId;
 }
+
+/** Telas que o papel pode abrir. "Papéis de adoção" só para quem atribui papel:
+ *  oferecê-la a quem vai bater na recusa é oferecer um link morto. O registry
+ *  segue com todas as telas; isto filtra só o que o menu mostra. */
+export function screensFor(
+  screenIds: string[],
+  { canManageMembers }: { canManageMembers: boolean }
+): string[] {
+  return screenIds.filter((id) => id !== "members" || canManageMembers);
+}
