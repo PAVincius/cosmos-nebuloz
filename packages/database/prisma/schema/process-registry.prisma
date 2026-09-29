@@ -1,0 +1,38 @@
+/// Registro único de processo (X-01). Um processo do cliente atravessa quatro
+/// produtos com quatro ids diferentes; esta linha é o único lugar que os junta:
+///   Meridian (gap) · Scaffold (trilha) · Signal (iniciativa) · Charter (caso
+///   de uso).
+///
+/// Os ids são `String?` e NÃO relações, de propósito (mapa-de-fronteiras.md:
+/// cada produto é dono da sua entidade). Uma FK cruzada acoplaria os schemas e
+/// faria a exclusão de um gap, trilha, iniciativa ou caso derrubar ou travar o
+/// registro. O registro só referencia; quem cria e apaga cada entidade continua
+/// sendo o produto dono. Id órfão é estado legítimo e cabe a quem lê tratar.
+///
+/// Cada id de produto aponta para no máximo um processo por tenant (índices
+/// únicos parciais por NULL: o Postgres aceita vários NULL em unique).
+model ProcessRegistry {
+  id       String @id @default(cuid())
+  tenantId String
+
+  name     String
+  /// Forma de trabalho compartilhada (X-02). Nula enquanto ninguém classificou.
+  workForm WorkForm?
+
+  meridianGapId      String?
+  scaffoldTrackId    String?
+  signalInitiativeId String?
+  charterUseCaseId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, meridianGapId])
+  @@unique([tenantId, scaffoldTrackId])
+  @@unique([tenantId, signalInitiativeId])
+  @@unique([tenantId, charterUseCaseId])
+  @@index([tenantId])
+  @@index([tenantId, workForm])
+}

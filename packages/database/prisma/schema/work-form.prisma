@@ -1,0 +1,22 @@
+/// As cinco formas de trabalho do handoff de set/2026 (correcoes.pdf, seção 01).
+/// O corte é pela forma do trabalho, não por setor: um chatbot de finanças e um
+/// assistente de agronegócio são a mesma forma e compartilham método, métricas
+/// e controles. A mesma chave organiza os três produtos:
+///   Scaffold → template de trilha · Signal → modelo de medição ·
+///   Charter → perfil de controle.
+/// Enum da plataforma (não de um produto): quem precisar da forma referencia
+/// este tipo em vez de repetir os valores. Acrescentar valor é migration nova.
+enum WorkForm {
+  /// Assistente conversacional — o público pergunta em volume, a resposta
+  /// existe em fonte oficial.
+  CONVERSATIONAL_ASSISTANT
+  /// Análise e priorização — um score ordena casos para alguém decidir.
+  ANALYSIS_PRIORITIZATION
+  /// Revisão de documentos — lê contratos, laudos e prontuários e extrai o que
+  /// importa.
+  DOCUMENT_REVIEW
+  /// Triagem de demanda — decide destino e urgência de pedidos.
+  DEMAND_TRIAGE
+  /// Relatórios recorrentes — gera conteúdo que sai da empresa ou vira registro.
+  RECURRING_REPORTS
+}
