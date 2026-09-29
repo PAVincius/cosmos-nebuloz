@@ -206,6 +206,11 @@ model Epic {
   dueDate          DateTime?
   transcription    String? // Raw meeting notes pasted by user
   strategicThemeId String?
+  // Costura Scaffold → Cosmos (Norte, 2026-09-29, e.1): trilha do Scaffold que
+  // originou o épico — um por trilha, criado no fechamento do gate da ASSESS.
+  // String? e NÃO relação, de propósito: o Scaffold é dono da trilha e pode nem
+  // estar contratado (mesmo padrão de ScaffoldTrack.sourceGapId).
+  originTrackId String?
 
   // SAFe Lifecycle state machine (separate from kanban statusId)
   lifecycleStatus String @default("FUNNEL") // FUNNEL/ANALYZING/PORTFOLIO_BACKLOG/IMPLEMENTING/DONE/REJECTED
@@ -280,6 +285,7 @@ model Epic {
   solutionEpic   SolutionEpic?   @relation(fields: [solutionEpicId], references: [id], onDelete: SetNull)
   billingEntries BillingEntry[]
 
+  @@unique([tenantId, originTrackId])
   @@index([tenantId])
   @@index([strategicThemeId])
   @@index([solutionEpicId])
@@ -347,6 +353,13 @@ model Feature {
   externalSource String? // linear | github | asana | gitlab
   externalUrl    String? // Direct URL to item in external tool
 
+  // Costura Scaffold → Cosmos (e.1): uma feature ao abrir a PILOT e outra ao
+  // abrir a SCALE, sob o épico da trilha. Texto sem FK, como em Epic. A chave
+  // (tenantId, originTrackId, originPhase) faz o evento ser reprocessável sem
+  // duplicar; `originPhase` guarda "PILOT" ou "SCALE".
+  originTrackId String?
+  originPhase   String?
+
   // Story-028 BPMN workflow runtime
   workflowState   String?
   workflowContext Json?
@@ -370,6 +383,7 @@ model Feature {
   capability           Capability?           @relation(fields: [capabilityId], references: [id], onDelete: SetNull)
   supplierDeliverables SupplierDeliverable[]
 
+  @@unique([tenantId, originTrackId, originPhase])
   @@index([tenantId])
   @@index([epicId])
   @@index([piPlanId])

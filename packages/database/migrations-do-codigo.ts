@@ -133,4 +133,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929000300_scaffold_deliverable_v1",
   "20260929000400_scaffold_role_sponsor_team_lead",
   "20260929000500_scaffold_deliverable_link",
+  "20260929000600_cosmos_origem_trilha",
 ];
