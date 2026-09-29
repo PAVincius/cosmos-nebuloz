@@ -164,29 +164,8 @@ o dogfood em produção parou no M2.
 | SC-007 · Nenhum item do plano antes de um pré-requisito | implementado — checado antes de gravar, com teste; 0 violações em 5 dependências (AS-104) |
 | SC-008 · Toda leitura de evidência na trilha | implementado no servidor e provado no E2E (`meridian-dogfood.spec.ts:523`); na tela, "Ver evidência" só no painel de divergência. Coleta e gap entram por D-19 |
 | SC-009 · Gap promovido editável só no Meridian | implementado |
-| SC-010 · Carteira e registro em menos de 2 s com 200 assessments e 2.000 gaps | implementado, medido em `next dev` local — `/meridian` 1.004 ms, `/meridian/registry` 351 ms (`e2e/meridian-load`); sem medição em infraestrutura real |
-| SC-011 · Respondentes concorrentes sem degradar (novo, abaixo) | parcial — dentro da meta contra `next build` local (p95 26 ms, 0 % de erro, 50 VUs); sem medição em infraestrutura real |
-
-### SC-011 · Carga do respondente (2026-09-29, CPO)
-
-**Critério.** Com **50 respondentes sem conta ao mesmo tempo** abrindo o link e gravando rascunho, a
-rota do respondente responde com **p95 < 800 ms** e **erro < 1 %**, por no mínimo 60 s no pico.
-
-**Por que 50.** O primeiro cliente é um assessment só. Hipótese, sem fonte no repo: até 4 respondentes
-por eixo, 5 eixos, ou seja, 20 pessoas. O pior caso é todas responderem juntas numa sessão de
-kickoff. 50 cobre 2,5 vezes esse assessment, ou dois assessments simultâneos com folga. Rever quando o
-primeiro contrato fixar o número de respondentes.
-
-**Como se mede.**
-- Script: `apps/app/load/k6/meridian-responder.js` (rampa de 1 a 50 VUs, 60 s em 50; GET do link e
-  `saveDraft`). Dados sintéticos, respondentes dedicados.
-- **Vale como prova de código:** `next build` + `next start`. `next dev` não conta.
-- **Vale para liberar cliente externo:** a mesma meta contra infraestrutura real (preview ou staging,
-  com banco e Storage remotos), só com go-ahead do CEO. É a condição 9 da prontidão, dona Infra/QA.
-- Fora do escopo: upload de evidência (Storage) e envio final, que acontecem uma vez por respondente e
-  não formam pico.
-
-**Espelho na spec.** Regua leva o SC-011 para `specs/001-meridian-diagnose/spec.md`.
+| SC-010 · Carteira e registro em menos de 2 s com 200 assessments e 2.000 gaps | ausente — sem medição; as listas não paginam |
+| SC-011 · Concorrência (distinto do SC-010, que mede volume com um usuário), em duas ondas simultâneas num único tenant: **(a) consultores** — carteira (`/meridian`) e detalhe do assessment, aba Coleta; **(b) respondentes** — a onda depois de "Reemitir e copiar", abrindo a bateria e salvando rascunho em `/meridian-responder/<token>`. A onda (b) é o pico provável do Meridian; o PI Planning é o pico do Cosmos. Critério nas duas: p95 < 2 s e erro < 1% (`specs/007-gate-maturidade-carga/spec.md`, FR-004). **HIPÓTESE, não validada:** o critério e o tamanho das ondas ("algumas centenas de usuários simultâneos por tenant", `regra-maturidade-e-carga.md:38-40`) não têm fonte até o levantamento com os 3 leads (`roteiro-concorrencia-leads.md`, T009) | primeiro relatório, **NÃO-GATE** (o Meridian não está apto no gate de maturidade): `k6/meridian-concorrencia.js`, commit `8934eaaf`, build de produção local e banco local. Corrida de 30 s com 10 VUs de consultor e 30 VUs de respondente, sobre 200 respondentes semeados: (a) p95 278,7 ms, erro 0%; (b) p95 198,4 ms, erro 0% (`.claude/completions/2026-09-27-spec-007-t006-t008.md:60-65`). É sinal, não prova: 40 VUs é bem menos que "centenas", e o banco local não tem latência de rede. Nunca contra produção |
 
 ---
 

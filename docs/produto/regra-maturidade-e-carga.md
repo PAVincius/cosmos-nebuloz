@@ -54,9 +54,10 @@ Sem o gate, k6 mede velocidade de produto que ainda quebra.
 - **Nunca rodar k6 contra produção.** Produção usa pooler Supabase (6543) e
   dado real; carga sintética contamina dado e gera custo Vercel/Supabase.
   Ambiente: local ou staging dedicado.
-- k6 não é épico prioritário: o bloqueio nº 1 do trial TOTVS continua sendo a
-  integração com bot de reunião (`memoria-empresa.md`). k6 é critério de
-  liberação de produto, não feature.
+- k6 não é épico prioritário: o que trava a primeira venda é jurídico e
+  contratual (parecer de gravação, DPA com fornecedores, CAC). A integração com
+  bot de reunião já foi entregue (`memoria-empresa.md`, corrigido em
+  2026-09-22). k6 é critério de liberação de produto, não feature.
 
 ## Risco técnico (decisão do Maestro)
 
