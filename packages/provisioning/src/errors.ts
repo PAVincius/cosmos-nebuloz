@@ -4,7 +4,8 @@ export type ProvisioningErrorCode =
   | "MODULE_NOT_CONTRACTED"
   | "SLUG_EXHAUSTED"
   | "TENANT_NOT_FOUND"
-  | "USER_NOT_FOUND";
+  | "USER_NOT_FOUND"
+  | "USER_NOT_MEMBER";
 
 /** Erro de provisionamento com causa nomeada. A UI traduz pelo `code`, nunca
  *  pela mensagem — mensagem é para humano, código é para máquina. */

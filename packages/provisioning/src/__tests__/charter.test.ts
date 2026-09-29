@@ -6,12 +6,14 @@ function makeDb(
     policyExists?: boolean;
     userExists?: boolean;
     tenantExists?: boolean;
+    isMember?: boolean;
   } = {}
 ) {
   const {
     policyExists = false,
     userExists = true,
     tenantExists = true,
+    isMember = true,
   } = options;
   return {
     user: {
@@ -25,6 +27,9 @@ function makeDb(
         .mockResolvedValue(
           tenantExists ? { id: "tenant-abc", slug: "vanta-saude" } : null
         ),
+    },
+    tenantMember: {
+      findFirst: vi.fn().mockResolvedValue(isMember ? { id: "tm-1" } : null),
     },
     charterMembership: { upsert: vi.fn().mockResolvedValue({ id: "cm-1" }) },
     charterSettings: { upsert: vi.fn().mockResolvedValue({ id: "cs-1" }) },
@@ -49,6 +54,23 @@ function depsFor(db: ReturnType<typeof makeDb>) {
     ),
   };
 }
+
+describe("bootstrapCharter — membro do tenant", () => {
+  it("recusa conta que existe mas não é membro deste tenant (USER_NOT_MEMBER)", async () => {
+    const db = makeDb({ isMember: false });
+
+    await expect(
+      bootstrapCharter(depsFor(db) as never, {
+        tenantId: "tenant-abc",
+        complianceEmail: "ana@vanta.exemplo",
+        actorUserId: "user-staff",
+      })
+    ).rejects.toMatchObject({ code: "USER_NOT_MEMBER" });
+
+    expect(db.charterMembership.upsert).not.toHaveBeenCalled();
+    expect(db.charterPolicy.create).not.toHaveBeenCalled();
+  });
+});
 
 describe("bootstrapCharter", () => {
   it("cria a política com as nove seções em DRAFT", async () => {

@@ -11,9 +11,10 @@ export type ScaffoldDb = AuditWriter & {
   user: {
     findUnique(args: unknown): Promise<{ id: string } | null>;
   };
+  tenantMember: { findFirst(args: unknown): Promise<{ id: string } | null> };
   scaffoldMembership: {
     findUnique(args: unknown): Promise<{ id: string; role: string } | null>;
-    create(args: unknown): Promise<{ id: string }>;
+    createMany(args: unknown): Promise<{ count: number }>;
   };
   scaffoldSettings: { upsert(args: unknown): Promise<{ id: string }> };
 };
@@ -45,7 +46,14 @@ export type BootstrapScaffoldInput = {
  * gestão de membros que o ADMIN passa a ter.
  *
  * Não rebaixa nem troca o papel de quem já tem membership: uma consultora que
- * já opera o tenant perderia o poder de gate. Nesse caso mantém e audita.
+ * já opera o tenant perderia o poder de gate. Nesse caso mantém, audita e
+ * DEVOLVE o papel que a pessoa já tinha (`role`), para o chamador não supor que
+ * ela virou ADMIN.
+ *
+ * Só dá o papel a quem já é membro do tenant (`TenantMember`): ter conta na
+ * plataforma não basta. A criação é INSERT ... ON CONFLICT DO NOTHING, e não
+ * find + create: dois bootstraps em corrida não podem estourar violação de
+ * unicidade, que aborta a transação do `withTenantDb`.
  *
  * Roda inteiro dentro de `withTenantDb`: a RLS do Scaffold está FORCE e recusa
  * INSERT sem `app.tenant_id`.
@@ -53,7 +61,7 @@ export type BootstrapScaffoldInput = {
 export async function bootstrapScaffold(
   deps: BootstrapScaffoldDeps,
   input: BootstrapScaffoldInput
-): Promise<{ membershipId: string; created: boolean }> {
+): Promise<{ membershipId: string; created: boolean; role: string }> {
   return await deps.withTenantDb(input.tenantId, async (db) => {
     const tenant = await db.tenant.findUnique({
       where: { id: input.tenantId },
@@ -78,40 +86,64 @@ export async function bootstrapScaffold(
       );
     }
 
+    const member = await db.tenantMember.findFirst({
+      where: { tenantId: input.tenantId, userId: user.id },
+      select: { id: true },
+    });
+    if (!member) {
+      throw new ProvisioningError(
+        "USER_NOT_MEMBER",
+        `${email} tem conta, mas não é membro desta organização. Convide a pessoa para o tenant antes de dar o papel.`
+      );
+    }
+
     await db.scaffoldSettings.upsert({
       where: { tenantId: input.tenantId },
       create: { tenantId: input.tenantId },
       update: {},
     });
 
-    const existing = await db.scaffoldMembership.findUnique({
-      where: {
-        tenantId_userId: { tenantId: input.tenantId, userId: user.id },
-      },
+    const where = {
+      tenantId_userId: { tenantId: input.tenantId, userId: user.id },
+    };
+    const inserted = await db.scaffoldMembership.createMany({
+      data: [
+        {
+          tenantId: input.tenantId,
+          userId: user.id,
+          role: "ADMIN",
+          updatedBy: input.actorUserId,
+        },
+      ],
+      skipDuplicates: true,
+    });
+    const membership = await db.scaffoldMembership.findUnique({
+      where,
       select: { id: true, role: true },
     });
+    if (!membership) {
+      throw new ProvisioningError(
+        "USER_NOT_FOUND",
+        `Papel do Scaffold de ${email} não encontrado depois do insert.`
+      );
+    }
 
-    if (existing) {
+    if (inserted.count === 0) {
       await logPlatformAudit(db, {
         tenantId: input.tenantId,
         actorUserId: input.actorUserId,
         actorName: input.actorName,
         action: "scaffold.bootstrap_skipped",
         entityType: "ScaffoldMembership",
-        entityId: existing.id,
-        target: `${tenant.slug} · ${email} já era ${existing.role}`,
+        entityId: membership.id,
+        target: `${tenant.slug} · ${email} já era ${membership.role}`,
       });
-      return { membershipId: existing.id, created: false };
+      return {
+        membershipId: membership.id,
+        created: false,
+        role: membership.role,
+      };
     }
-
-    const membership = await db.scaffoldMembership.create({
-      data: {
-        tenantId: input.tenantId,
-        userId: user.id,
-        role: "ADMIN",
-        updatedBy: input.actorUserId,
-      },
-    });
 
     await logPlatformAudit(db, {
       tenantId: input.tenantId,
@@ -123,6 +155,10 @@ export async function bootstrapScaffold(
       target: `${tenant.slug} · ${email} · ADMIN`,
     });
 
-    return { membershipId: membership.id, created: true };
+    return {
+      membershipId: membership.id,
+      created: true,
+      role: membership.role,
+    };
   });
 }

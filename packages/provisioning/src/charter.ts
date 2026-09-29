@@ -28,6 +28,7 @@ export type CharterDb = AuditWriter & {
   user: {
     findUnique(args: unknown): Promise<{ id: string } | null>;
   };
+  tenantMember: { findFirst(args: unknown): Promise<{ id: string } | null> };
   charterMembership: { upsert(args: unknown): Promise<{ id: string }> };
   charterSettings: { upsert(args: unknown): Promise<{ id: string }> };
   charterPolicy: {
@@ -89,6 +90,20 @@ export async function bootstrapCharter(
       throw new ProvisioningError(
         "USER_NOT_FOUND",
         `Nenhuma conta com o e-mail ${email}. A pessoa precisa entrar ao menos uma vez antes de receber o papel.`
+      );
+    }
+
+    // A conta existir na plataforma não basta: o papel é DESTE tenant. Sem
+    // checar a associação, quem soubesse o e-mail de qualquer conta poderia
+    // pôr essa pessoa como COMPLIANCE no tenant de um cliente.
+    const member = await db.tenantMember.findFirst({
+      where: { tenantId: input.tenantId, userId: user.id },
+      select: { id: true },
+    });
+    if (!member) {
+      throw new ProvisioningError(
+        "USER_NOT_MEMBER",
+        `${email} tem conta, mas não é membro desta organização. Convide a pessoa para o tenant antes de dar o papel.`
       );
     }
 
