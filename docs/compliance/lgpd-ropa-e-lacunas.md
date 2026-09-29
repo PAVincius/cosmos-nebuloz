@@ -106,6 +106,28 @@ Derivado do schema, não de template. Uma linha por finalidade.
 As cinco retenções não definidas são decisão pendente, não omissão deste
 documento: nenhuma delas tem prazo em código nem na policy.
 
+### 3.1 Retenção transitória — backup do reset do Meridian
+
+Incluída em 2026-09-29, conforme o parecer `2026-09-29-parecer-reset-meridian-producao.md`
+§1. A execução do reset em produção é **relato da Morgana**, não conferida por
+Compliance; a linha vale enquanto o schema existir.
+
+> **Backup transitório do reset do Meridian.** Schema `backup_meridian_20260929`, 13
+> tabelas do domínio Meridian, todos os tenants. Dado pessoal: nome, e-mail e cargo
+> de respondente; conteúdo de respostas e evidências. Finalidade: restaurar em caso
+> de apagamento indevido. Base: continuação do tratamento original; art. 6º, VII e
+> VIII; art. 7º, IX. Acesso: nenhum papel da API; só o dono do banco. Eliminação:
+> `DROP SCHEMA` até 2026-10-29, roteiro em
+> `2026-09-29-roteiro-fechamento-backup-reset-meridian.md`. Cópias da plataforma
+> (backup diário e PITR do Supabase): persistem pela janela do plano,
+> `[preencher: retenção do backup diário e janela de PITR, painel Supabase]`, e não
+> são apagáveis por nós antes disso; a data efetiva de eliminação total é
+> 2026-10-29 mais essa janela. Pedido de titular dentro da janela: apagar as
+> linhas dele no backup ou antecipar o `DROP`, e reaplicar eliminações pedidas
+> depois do reset em qualquer restauração. **Ressalva a repetir em resposta a
+> titular:** o `AuditLog` retém nome de quem agiu e um identificador do
+> diagnóstico; o dado do diagnóstico é eliminado, a trilha não.
+
 ---
 
 ## 4. Titulares que não têm por onde pedir
