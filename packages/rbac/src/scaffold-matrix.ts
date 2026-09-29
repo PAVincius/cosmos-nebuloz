@@ -33,6 +33,7 @@ export type ScaffoldPermission =
   | "businesscase.sign"
   | "template.publish"
   | "membership.manage"
+  | "product.metrics"
   | "portfolio.read"
   | "deliverable.read"
   | "deliverable.work"
@@ -50,6 +51,7 @@ export const SCAFFOLD_PERMISSIONS: readonly ScaffoldPermission[] = [
   "businesscase.sign",
   "template.publish",
   "membership.manage",
+  "product.metrics",
   "portfolio.read",
   "deliverable.read",
   "deliverable.work",
@@ -70,6 +72,7 @@ export const SCAFFOLD_PERMISSION_LABEL: Record<ScaffoldPermission, string> = {
   "businesscase.sign": "Assinar ou contestar o caso de negócio",
   "template.publish": "Publicar versão de template e resolver overlay",
   "membership.manage": "Atribuir papel de adoção às pessoas da organização",
+  "product.metrics": "Ler as métricas de produto do Scaffold",
   "portfolio.read": "Ler o portfólio de trilhas",
   "deliverable.read": "Ler e baixar entregável",
   "deliverable.work":
@@ -158,6 +161,7 @@ export const SCAFFOLD_MATRIX: Record<
     "businesscase.write",
     "template.publish",
     "membership.manage",
+    "product.metrics",
     "portfolio.read",
     "deliverable.read",
     "deliverable.work",
@@ -172,6 +176,7 @@ export const SCAFFOLD_MATRIX: Record<
     "artefact.read",
     "template.publish",
     "membership.manage",
+    "product.metrics",
     "portfolio.read",
     "deliverable.read",
   ],

@@ -231,3 +231,31 @@ describe("permissões de entregável", () => {
     expect(hasScaffoldPermission("ADMIN", "deliverable.read")).toBe(true);
   });
 });
+
+// SC-PM-04: métricas de produto do Scaffold numa tela da consultora. É leitura
+// agregada da organização: consultoria e administração, não quem conduz trilha.
+describe("product.metrics", () => {
+  it("só consultor e administrador leem as métricas de produto", () => {
+    expect(scaffoldRolesGranting("product.metrics").sort()).toEqual([
+      "ADMIN",
+      "CONSULTANT",
+    ]);
+  });
+
+  it("líder, dono, membro, sponsor e team lead não", () => {
+    for (const role of [
+      "TRANSFORMATION_LEAD",
+      "PROCESS_OWNER",
+      "TEAM_MEMBER",
+      "SPONSOR",
+      "TEAM_LEAD",
+    ] as const) {
+      expect(hasScaffoldPermission(role, "product.metrics")).toBe(false);
+    }
+  });
+
+  it("tem rótulo pt-BR e o motivo de negativa nomeia quem pode", () => {
+    expect(SCAFFOLD_PERMISSION_LABEL["product.metrics"]).toBeTruthy();
+    expect(scaffoldDenialReason("product.metrics")).toContain("Consultor");
+  });
+});
