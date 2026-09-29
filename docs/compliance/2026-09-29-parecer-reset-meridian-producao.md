@@ -97,3 +97,28 @@ Resposta em C1. Em uma frase: pelas regras do parecer de 24/09 e pelo que consta
 - 2026-09-29 — RoPA: incluir a linha do backup transitório quando o bloco 3 rodar (texto em §1). Aguarda a execução para não declarar retenção que ainda não existe.
 - 2026-09-29 — `AuditLog`: mantém, sem alterar o trigger; corrijo o enquadramento de `856ad865`: a trilha retém também `actorName` (nome de respondente/usuário) e `target`, não só id. Não é agravado pelo reset.
 - 2026-09-29 — Bucket: apagar sem backup é aceito; contagem antes e depois no relatório.
+
+## Resultado da C1 (2026-09-29, leitura em produção feita pela Morgana)
+
+Fonte: relato da Morgana, consultas rodadas no SQL Studio, projeto `aosdvvluokrbgpyqwoor`, papel `postgres`, só leitura. Não vi a saída bruta.
+
+- Tenants com diagnóstico: `nebula` (2 diagnósticos, criado 2026-08-04, 1 membro) e `nebuloz` (1 diagnóstico, criado 2026-08-02, 2 membros). Nenhum tenant de cliente.
+- Domínios de respondente: `nebuloz.ai` 5, `gmail.com` 5. Os 5 de `gmail.com` estão nesses dois tenants.
+
+**C1 PASSA. Os respondentes `gmail.com` não exigem decisão do CEO.** Motivo: o que a C1 protege é a Nebuloz operar dado de terceiro sob instrução de outro controlador. Aqui o tenant é da própria Nebuloz, então ela é controladora e a base do §1 vale. Domínio `gmail.com` não prova que a pessoa é de fora, e mesmo sendo (colega, conselheiro, amigo convidado ao dogfood) o efeito do reset sobre ela é apagar o dado, com cópia fechada por no máximo 30 dias. Não há cliente a avisar. O caso é o da ressalva do parecer de 24/09 (§3, e-mail real de colega em `2026-09-diagnostico-nebuloz.sql:124-130`), já aceito para dogfood.
+
+**Uma confirmação residual, barata:** que o tenant `nebula` é da Nebuloz e não um trial de prospect. A premissa "nenhum registro de trial" (`memoria-empresa.md`, 2026-09-22) e o nome parecido não bastam como prova. Sem listar e-mail individual:
+
+```sql
+SELECT t.slug, split_part(u.email, '@', 2) AS dominio, count(*) AS membros
+FROM "TenantMember" m
+JOIN "Tenant" t ON t.id = m."tenantId"
+JOIN "User" u ON u.id = m."userId"
+WHERE t.slug IN ('nebula', 'nebuloz')
+GROUP BY 1, 2 ORDER BY 1, 2;
+```
+
+Se o membro de `nebula` for `nebuloz.ai` (ou o fundador), fecha. Se for domínio de terceiro, aí sim pára e é do CEO. Esta confirmação é condição da C1; as demais (C2 a C5) seguem como estão.
+
+### Decisão adicional
+- 2026-09-29 — Compliance/DPO: C1 passa com base no resultado acima; respondentes `gmail.com` dos tenants internos não exigem decisão do CEO. Fica a confirmação de titularidade do tenant `nebula`.
