@@ -66,6 +66,7 @@ O que está em produção não foi conferido por mim (sem credencial). Fontes:
 | 9 | Medir carga contra infraestrutura real (preview ou staging) com dados sintéticos, só com go-ahead; hoje só existe medição em `localhost` | §3 | Infra/SRE e QA | Não | M |
 | 10 | Atritos abertos do dogfood local: A3 (caminho na tela para abrir a evidência fora do painel de divergência, decisão de produto), A5 (ciclo de dependência e ajuste de severidade/esforço não exercitados pela tela) e o foco inicial do `ModalShell`, que fica no `body` ao abrir o modal | diário de 2026-09-29; §2 | Bussola (implementa), Norte (decide A3); **data a definir** (o gate pede dono e data) | Não | P |
 | 11 | Canal para o respondente externo pedir eliminação sem depender do cliente | parecer de 2026-09-24, §4; `lgpd-ropa-e-lacunas.md` | Lacre e Bussola | Recomendado antes de cliente externo | M |
+| 12 | Benchmark travado por tenant: `benchmarkOptIn` desligado por padrão, só a equipe Nebuloz liga no back-office com a referência do aditivo e auditoria; o servidor recusa na criação do assessment e no scoring. Prazo **2026-10-07** | `docs/produto/meridian-prd.md` §10; PR #294 (Norte) | Regua → Bussola | **Sim** | a estimar (Bussola) |
 
 ## Próximas 3 ações
 
