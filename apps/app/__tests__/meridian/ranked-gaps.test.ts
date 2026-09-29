@@ -13,6 +13,21 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({ requireModule: h.requireModule }));
+// Permissão real da matriz do Scaffold: o teste de papel recusado não pode
+// depender de um mock que aprova tudo.
+vi.mock("@/lib/scaffold/guards", async () => {
+  const { hasScaffoldPermission } = await import("@repo/rbac");
+  return {
+    requireScaffoldPermission: (
+      permission: Parameters<typeof hasScaffoldPermission>[1],
+      c: { scaffoldRole: Parameters<typeof hasScaffoldPermission>[0] }
+    ) => {
+      if (!hasScaffoldPermission(c.scaffoldRole, permission)) {
+        throw new Error(`FORBIDDEN:${permission}`);
+      }
+    },
+  };
+});
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({ meridianGap: { findMany: h.gapFindMany } }),
@@ -21,7 +36,13 @@ vi.mock("@repo/database", () => ({
 import { rankGaps } from "@/lib/meridian/gap-ranking";
 import { listRankedGaps } from "@/lib/meridian/ranked-gaps";
 
-const ctx = { userId: "u1", tenantId: "t1" } as never;
+const ctx = {
+  userId: "u1",
+  tenantId: "t1",
+  scaffoldRole: "TRANSFORMATION_LEAD",
+} as never;
+const ctxComo = (scaffoldRole: string) =>
+  ({ userId: "u1", tenantId: "t1", scaffoldRole }) as never;
 
 type Row = Parameters<typeof rankGaps>[0][number];
 const row = (over: Partial<Row> & { code: string }): Row => ({
@@ -172,6 +193,59 @@ describe("listRankedGaps", () => {
     await expect(listRankedGaps(ctx)).rejects.toThrow("FORBIDDEN");
     expect(h.requireModule).toHaveBeenCalledWith("MERIDIAN", ctx);
     expect(h.gapFindMany).not.toHaveBeenCalled();
+  });
+
+  it("recusa papel sem track.manage (TEAM_MEMBER) antes de ler", async () => {
+    await expect(listRankedGaps(ctxComo("TEAM_MEMBER"))).rejects.toThrow(
+      "FORBIDDEN:track.manage"
+    );
+    expect(h.gapFindMany).not.toHaveBeenCalled();
+  });
+
+  it("aceita papel com track.manage", async () => {
+    await expect(
+      listRankedGaps(ctxComo("TRANSFORMATION_LEAD"))
+    ).resolves.toEqual([]);
+  });
+
+  it("só lê gap de assessment FINALISED", async () => {
+    await listRankedGaps(ctx);
+    const args = h.gapFindMany.mock.calls[0][0];
+    expect(args.where.assessment).toEqual({ status: "FINALISED" });
+  });
+
+  it("DRAFT, COLLECTING e REVIEW ficam fora; só FINALISED volta", async () => {
+    const base = {
+      assessmentId: "a",
+      axis: "DATA",
+      severity: "HIGH",
+      effort: "S",
+      costOfDelay: 50,
+      confidence: "MEASURED",
+      state: "OPEN",
+      promotions: [],
+    };
+    const dataset = [
+      ["G-01", "DRAFT"],
+      ["G-02", "COLLECTING"],
+      ["G-03", "REVIEW"],
+      ["G-04", "FINALISED"],
+    ].map(([code, status]) => ({
+      ...base,
+      id: code,
+      code,
+      statement: code,
+      assessment: { code: "AS-1", status },
+    }));
+    // Simula o filtro do banco: aplica o `where.assessment.status` recebido.
+    h.gapFindMany.mockImplementationOnce(
+      async (args: { where: { assessment: { status: string } } }) =>
+        dataset.filter(
+          (r) => r.assessment.status === args.where.assessment.status
+        )
+    );
+    const out = await listRankedGaps(ctx);
+    expect(out.map((g) => g.code)).toEqual(["G-04"]);
   });
 
   it("filtra por tenant e exclui gap resolvido", async () => {

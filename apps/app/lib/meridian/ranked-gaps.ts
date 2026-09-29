@@ -1,26 +1,42 @@
 import "server-only";
 
-import type { TenantContext } from "@repo/auth/server";
 import { withTenantDb } from "@repo/database";
+import {
+  requireScaffoldPermission,
+  type ScaffoldContext,
+} from "@/lib/scaffold/guards";
 import { type RankedGap, rankGaps } from "./gap-ranking";
 import { requireModule } from "./guards";
 
 /**
  * Gaps abertos do tenant, ranqueados, para consumo do Scaffold na "Nova
  * trilha". Leitura apenas: o gap continua do Meridian (mapa de fronteiras,
- * entidade 6).
+ * entidade 6), e o Scaffold lê sem `MeridianRole`.
  *
- * O chamador já autenticou a sessão (`requireTenantSession`) e passa o
- * contexto; aqui se confere só o módulo Meridian contratado, não o papel de
- * diagnóstico — o Scaffold lê com o próprio papel. Tenant vem do contexto,
- * nunca de parâmetro. Gap RESOLVIDO fica de fora: não há o que contratar.
+ * Recebe `ScaffoldContext` (tipo que exige papel do Scaffold). Quem chama
+ * obtém o contexto por `requireScaffoldPermissionContext("track.manage")`; a
+ * permissão é conferida de novo aqui, para que a leitura não dependa de o
+ * chamador lembrar. Tenant vem do contexto, nunca de parâmetro.
+ *
+ * Só entram gaps de diagnóstico FINALISED: rascunho, coleta e revisão ainda
+ * podem mudar de enunciado, custo e confiança, e ninguém contrata trabalho em
+ * cima de número provisório. Gap RESOLVIDO fica de fora: não há o que contratar.
+ *
+ * `statement` é texto do cliente: não vai para log nem para mensagem de erro.
  */
-export async function listRankedGaps(ctx: TenantContext): Promise<RankedGap[]> {
+export async function listRankedGaps(
+  ctx: ScaffoldContext
+): Promise<RankedGap[]> {
+  requireScaffoldPermission("track.manage", ctx);
   await requireModule("MERIDIAN", ctx);
 
   const rows = await withTenantDb(ctx.tenantId, (db) =>
     db.meridianGap.findMany({
-      where: { tenantId: ctx.tenantId, state: { not: "RESOLVED" } },
+      where: {
+        tenantId: ctx.tenantId,
+        state: { not: "RESOLVED" },
+        assessment: { status: "FINALISED" },
+      },
       select: {
         id: true,
         code: true,
