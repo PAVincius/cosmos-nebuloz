@@ -9,6 +9,7 @@ import type { CohortRow } from "../../app/(meridian)/actions/benchmark";
 
 const listAssessmentsMock = vi.fn();
 const listCohortsMock = vi.fn();
+const getBenchmarkEnablementMock = vi.fn();
 const listTemplatesMock = vi.fn();
 const createAssessmentMock = vi.fn();
 const routerPushMock = vi.fn();
@@ -20,8 +21,8 @@ vi.mock("@/app/(meridian)/actions/assessments", () => ({
 }));
 vi.mock("@/app/(meridian)/actions/benchmark", () => ({
   // Tenant sem habilitação de benchmark (padrão, specs/012): a caixa some.
-  getBenchmarkEnablement: () =>
-    Promise.resolve({ ok: true, data: { enabled: false } }),
+  getBenchmarkEnablement: (...args: unknown[]) =>
+    getBenchmarkEnablementMock(...args),
   listCohorts: (...args: unknown[]) => listCohortsMock(...args),
 }));
 vi.mock("next/navigation", () => ({
@@ -62,6 +63,10 @@ const ROW: AssessmentRow = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getBenchmarkEnablementMock.mockResolvedValue({
+    ok: true,
+    data: { enabled: true },
+  });
   listTemplatesMock.mockResolvedValue({
     ok: true,
     data: [{ id: "tpl1", name: "Diagnose padrão", version: "v3.2" }],
@@ -193,6 +198,29 @@ describe("BenchmarkScreen", () => {
     // "retido" aparece no texto explicativo do cabeçalho e no selo da linha —
     // o que importa é o selo, e ele traz o limiar junto.
     expect(screen.getAllByText(/retido · n <\s*5/).length).toBeGreaterThan(0);
+  });
+
+  // Benchmark travado por tenant (specs/012): sem habilitação a tela nem pede
+  // as coortes; diz que o benchmark não está habilitado.
+  it("habilitação desligada: avisa e não lê as coortes", async () => {
+    getBenchmarkEnablementMock.mockResolvedValue({
+      ok: true,
+      data: { enabled: false },
+    });
+    render(<BenchmarkScreen />);
+    expect(await screen.findByText(/Benchmark não habilitado/i)).toBeTruthy();
+    expect(listCohortsMock).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Coortes no pool/)).toBeNull();
+  });
+
+  it("falha ao ler a habilitação: erro com retry, sem coortes", async () => {
+    getBenchmarkEnablementMock.mockResolvedValue({
+      ok: false,
+      error: "falhou",
+    });
+    render(<BenchmarkScreen />);
+    expect(await screen.findByText(/falhou/)).toBeTruthy();
+    expect(listCohortsMock).not.toHaveBeenCalled();
   });
 
   it("mostra a coorte liberada como disponível", async () => {

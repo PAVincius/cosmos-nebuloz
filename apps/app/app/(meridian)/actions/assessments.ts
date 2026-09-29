@@ -8,7 +8,7 @@ import type {
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
+import { requireBenchmarkEnabled } from "@/lib/meridian/benchmark-guard";
 import { compositeOf } from "@/lib/meridian/composite";
 import {
   MeridianRuleError,
@@ -390,14 +390,8 @@ export async function createAssessment(
 
       // Travado por tenant (specs/012): opt-in só com a habilitação ligada
       // pela Nebuloz. A tela esconde a caixa; aqui é onde a regra vale.
-      if (
-        input.benchmarkOptIn &&
-        !(await isBenchmarkEnabled(db, ctx.tenantId))
-      ) {
-        throw new MeridianRuleError(
-          "benchmark.not-enabled",
-          "O benchmark não está habilitado para esta organização. A habilitação é feita pela Nebuloz, com o aditivo contratual."
-        );
+      if (input.benchmarkOptIn) {
+        await requireBenchmarkEnabled(db, ctx.tenantId);
       }
 
       const code = await nextCode({

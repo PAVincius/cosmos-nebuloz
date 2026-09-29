@@ -11,6 +11,7 @@ import {
   readCohort,
 } from "@/lib/meridian/benchmark";
 import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
+import { requireBenchmarkEnabled } from "@/lib/meridian/benchmark-guard";
 import { finalOf } from "@/lib/meridian/composite";
 import { requireMeridianContext } from "@/lib/meridian/guards";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
@@ -136,10 +137,15 @@ export async function withdrawContribution(
 }
 
 /** Lista as coortes. Cada linha passa por `readCohort`: a que está abaixo do
- *  limiar volta **sem** os percentis, não com eles escondidos na UI. */
+ *  limiar volta **sem** os percentis, não com eles escondidos na UI. Sem a
+ *  habilitação de benchmark do tenant, recusa (specs/012): quem não contribui
+ *  também não lê. */
 export async function listCohorts(): Promise<Result<CohortRow[]>> {
   return safeAction(async () => {
-    await requireMeridianContext();
+    const ctx = await requireMeridianContext();
+    await withTenantDb(ctx.tenantId, (db) =>
+      requireBenchmarkEnabled(db, ctx.tenantId)
+    );
     const rows = await database.meridianBenchmarkCohort.findMany({
       orderBy: { cohortKey: "asc" },
       select: { cohortKey: true, n: true, percentiles: true },
@@ -160,7 +166,10 @@ export async function readCohortAction(
   raw: z.input<typeof ReadSchema>
 ): Promise<Result<CohortRead>> {
   return safeAction(async () => {
-    await requireMeridianContext();
+    const ctx = await requireMeridianContext();
+    await withTenantDb(ctx.tenantId, (db) =>
+      requireBenchmarkEnabled(db, ctx.tenantId)
+    );
     const input = ReadSchema.parse(raw);
     const c = await database.meridianBenchmarkCohort.findUnique({
       where: { cohortKey: input.cohortKey },

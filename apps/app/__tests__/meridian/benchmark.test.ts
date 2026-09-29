@@ -101,6 +101,42 @@ beforeEach(() => {
   h.enablementFindUnique.mockResolvedValue({ enabled: true });
 });
 
+describe("leitura travada por tenant (specs/012)", () => {
+  it("listCohorts recusa com a habilitação desligada, sem tocar nas coortes", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: false });
+    const res = await listCohorts();
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/benchmark não está habilitado/i);
+    expect(h.cohortFindMany).not.toHaveBeenCalled();
+  });
+
+  it("readCohortAction recusa com a habilitação desligada, sem tocar na coorte", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: false });
+    const res = await readCohortAction({ cohortKey: "saude · 200–1.000" });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/benchmark não está habilitado/i);
+    expect(h.cohortFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("sem linha de habilitação recusa as duas leituras", async () => {
+    h.enablementFindUnique.mockResolvedValue(null);
+    expect((await listCohorts()).ok).toBe(false);
+    expect((await readCohortAction({ cohortKey: "x · y" })).ok).toBe(false);
+  });
+
+  it("habilitação ligada (interno ou cliente): lê normal", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: true });
+    h.cohortFindMany.mockResolvedValue([
+      { cohortKey: "saude · 200–1.000", n: 5, percentiles: BANDS },
+    ]);
+    const res = await listCohorts();
+    expect(res.ok && res.data).toHaveLength(1);
+    expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
+      tenantId: "t1",
+    });
+  });
+});
+
 describe("listCohorts", () => {
   it("retém a coorte abaixo do mínimo e não devolve percentil nenhum", async () => {
     h.cohortFindMany.mockResolvedValue([
