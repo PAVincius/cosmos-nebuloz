@@ -26,4 +26,11 @@ describe("SEEDS do globalSetup", () => {
   it("roda o seed base antes dos que dependem dele", () => {
     expect(SEEDS[0]).toBe("seed:e2e");
   });
+
+  it("o seed do Scaffold vem depois do base, que cria o tenant e os usuários", () => {
+    expect(SEEDS).toContain("seed:scaffold-e2e");
+    expect(SEEDS.indexOf("seed:scaffold-e2e")).toBeGreaterThan(
+      SEEDS.indexOf("seed:e2e")
+    );
+  });
 });

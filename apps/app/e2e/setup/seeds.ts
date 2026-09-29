@@ -13,4 +13,5 @@ export const SEEDS = [
   `seed:charter ${E2E_TENANT_SLUG}`,
   `seed:meridian ${E2E_TENANT_SLUG}`,
   "seed:catalogo-e2e",
+  "seed:scaffold-e2e",
 ] as const;
