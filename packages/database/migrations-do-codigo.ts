@@ -143,4 +143,5 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929010500_signal_frozen_terminal",
   "20260929010600_imutabilidade_de_versoes_publicadas",
   "20260929010700_unique_com_tenant",
+  "20260929020000_revoga_data_api_public",
 ];

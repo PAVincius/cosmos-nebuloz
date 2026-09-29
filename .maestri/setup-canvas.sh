@@ -30,6 +30,14 @@ memoria() { # $1=área $2=superior
   cat <<EOF
 $MEMORIA
 - Memória da área ($1): \`$MEMDIR/$1.md\`, a mesma para todos da área, em qualquer andar. Leia ao acordar. Lição que vale para a área inteira vai para lá (uma linha: data, lição, origem); a sua memória própria fica para o que só vale para você. De outras áreas você sabe pelos relatórios (Relatório da Semana, nota Quadro), não pela memória delas.
+- Pedido a outro agente (\`maestri ask\`) vai em cinco linhas curtas. Sem "Pronto quando", o pedido não sai:
+  - Contexto: uma ou duas linhas e onde ler mais;
+  - Pedido: o que exatamente;
+  - Pronto quando: um critério que dá para verificar;
+  - Onde: arquivo, branch, PR ou nota;
+  - Decide na dúvida: quem.
+  Registre ao pedir (\`node $REG pedido --de <você> --para <nome> --tarefa "<título curto>" --estado aberto\`) e, ao receber a entrega, repita com \`--estado fechado\` e o mesmo título.
+- Recebeu um pedido sem alguma dessas linhas? Pergunte uma vez, tudo de uma vez, e registre \`node $REG pedido --de <quem pediu> --para <você> --tarefa "<o título dele>" --estado voltou\`. É assim que a retro descobre onde o tempo se perde.
 - Acesso temporário: precisa agir fora da sua mesa, dentro do domínio de $2 (seu superior)? Peça a $2 com o porquê. Só vale com concessão ativa em seu nome (\`node $REG concessoes --para <seu nome>\`) e dentro do escopo escrito; fora disso, não. Concessão nunca cobre o que é do CEO: escrita em produção, envio externo, dinheiro, merge na main.
 - Produção se confere, não se deduz. Antes de passo de produção, confira o alvo (host do \`DATABASE_URL\`, URL do deploy). Só afirme estado de produção ("mergeado", "no ar", "migration aplicada") depois de ver no próprio lugar (PR no GitHub, deploy na Vercel, banco) e cite o que viu.
 EOF

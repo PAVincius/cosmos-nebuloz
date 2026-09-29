@@ -4,7 +4,14 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { conceder, concessoes, registrar, resumo } from "./registrar.mjs";
+import {
+  conceder,
+  concessoes,
+  pedido,
+  registrar,
+  resumo,
+  resumoPedidos,
+} from "./registrar.mjs";
 
 const arquivo = () =>
   join(mkdtempSync(join(tmpdir(), "aprendizado-")), "aprendizado.jsonl");
@@ -175,4 +182,96 @@ test("concessoes lista só as ativas, e filtra por quem recebeu", () => {
 
 test("resumo sem eventos na janela sai 1: a retro é pulada", () => {
   assert.deepEqual(resumo(arquivo(), 7, agora), { code: 1, out: "" });
+});
+
+const pedidos = () =>
+  join(mkdtempSync(join(tmpdir(), "pedidos-")), "pedidos.jsonl");
+const h = (horas) => new Date(agora.getTime() - horas * 36e5);
+
+test("pedido exige de, para, tarefa e um estado da lista", () => {
+  const f = pedidos();
+  assert.throws(
+    () => pedido({ de: "Norte", para: "Regua", estado: "aberto" }, f),
+    /tarefa/
+  );
+  assert.throws(
+    () =>
+      pedido({ de: "Norte", para: "Regua", tarefa: "x", estado: "talvez" }, f),
+    /estado deve ser/
+  );
+  const e = pedido(
+    { de: "Norte", para: "Regua", tarefa: "spec", estado: "aberto" },
+    f,
+    agora
+  );
+  assert.deepEqual(e, {
+    ts: "2026-09-25T12:00:00.000Z",
+    de: "Norte",
+    para: "Regua",
+    tarefa: "spec",
+    estado: "aberto",
+  });
+});
+
+test("resumo de pedidos: quantos voltaram, por quem pediu, mediana até fechar e parados", () => {
+  const f = pedidos();
+  // Norte → Regua: voltou uma vez, fechou em 4 h.
+  pedido(
+    { de: "Norte", para: "Regua", tarefa: "Spec do raio X", estado: "aberto" },
+    f,
+    h(10)
+  );
+  pedido(
+    { de: "Norte", para: "Regua", tarefa: "spec do raio x ", estado: "voltou" },
+    f,
+    h(9)
+  );
+  pedido(
+    { de: "Norte", para: "Regua", tarefa: "spec do raio X", estado: "fechado" },
+    f,
+    h(6)
+  );
+  // Ordem → Caixa: fechou em 2 h, sem volta.
+  pedido(
+    {
+      de: "Ordem",
+      para: "Caixa",
+      tarefa: "caixa 13 semanas",
+      estado: "aberto",
+    },
+    f,
+    h(5)
+  );
+  pedido(
+    {
+      de: "Ordem",
+      para: "Caixa",
+      tarefa: "caixa 13 semanas",
+      estado: "fechado",
+    },
+    f,
+    h(3)
+  );
+  // Morgana → Pilar: aberto há 30 h, parado.
+  pedido(
+    { de: "Morgana", para: "Pilar", tarefa: "subir memória", estado: "aberto" },
+    f,
+    h(30)
+  );
+  const { code, out } = resumoPedidos(f, 7, agora);
+  assert.equal(code, 0);
+  assert.match(
+    out,
+    /3 abertos em 7 dias, 2 fechados, 1 voltaram com pergunta \(33%\)/
+  );
+  assert.match(out, /mediana\): 3\.0 h/);
+  assert.match(out, /por quem pediu: Norte 1/);
+  assert.match(
+    out,
+    /Abertos há mais de 24 h:\n- Morgana → Pilar: subir memória/
+  );
+});
+
+test("resumo de pedidos sem eventos na janela sai 1", () => {
+  assert.deepEqual(resumoPedidos(pedidos(), 7, agora), { code: 1, out: "" });
 });

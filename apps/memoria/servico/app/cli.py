@@ -6,6 +6,7 @@
     python -m app.cli revogar-chave <hash-prefixo>
     python -m app.cli purgar-tenant nebuloz --confirmo
     python -m app.cli importar nebuloz --raiz /fontes
+    python -m app.cli reconstruir nebuloz
 
 A chave aparece uma vez, na criação. O banco guarda só o hash.
 """
@@ -39,6 +40,8 @@ def main(argv: list[str] | None = None) -> int:
     purga = sub.add_parser("purgar-tenant")
     purga.add_argument("tenant")
     purga.add_argument("--confirmo", action="store_true")
+    reconstruir = sub.add_parser("reconstruir", help="refaz as projeções ligadas a partir do Postgres")
+    reconstruir.add_argument("tenant")
     importar = sub.add_parser("importar", help="semeia e sincroniza lições do Maestri, ADRs e registro de decisões")
     importar.add_argument("tenant")
     importar.add_argument("--raiz", default="/fontes", help="raiz do repositório (ou das pastas montadas)")
@@ -51,6 +54,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.comando == "importar":
         return _importar(settings, args.tenant, Path(args.raiz))
+    if args.comando == "reconstruir":
+        return _reconstruir(settings, args.tenant)
 
     with db.conexao_admin(settings) as conn:
         if args.comando == "criar-tenant":
@@ -100,6 +105,22 @@ def main(argv: list[str] | None = None) -> int:
                     file=sys.stderr,
                 )
                 return 1
+    return 0
+
+
+def _reconstruir(settings, tenant: str) -> int:
+    projecoes = criar_projecoes(settings)
+    if not projecoes:
+        print("nenhuma projeção ligada; nada a refazer")
+        return 0
+    db.abrir_pool(settings)
+    try:
+        motor = Motor(embedder=criar_embedder(settings), projecoes=projecoes)
+        r = motor.reconstruir(Contexto(tenant_id=tenant, actor="reconstrutor", papel="admin"))
+    finally:
+        db.fechar_pool()
+    nomes = ", ".join(p.nome for p in projecoes)
+    print(f"{nomes}: {r['projected']} memória(s) projetada(s), {r['erased']} apagada(s) removida(s)")
     return 0
 
 

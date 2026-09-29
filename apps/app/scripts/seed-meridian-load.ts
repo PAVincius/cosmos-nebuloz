@@ -10,9 +10,8 @@
  * 2.000 gaps sem necessidade, ou o load apagar dados que o dogfood depende.
  *
  *   pnpm seed:meridian:load                → tenant "techcorp-sa" (dedicado,
- *                                             módulo MERIDIAN não usado por
- *                                             nenhum outro seed)
- *   pnpm seed:meridian:load outro-slug     → outro tenant
+ *                                             criado se não existir)
+ *   pnpm seed:meridian:load outro-slug     → outro tenant (criado se não existir)
  *
  * Idempotente: apaga e recria só os assessments/gaps com prefixo `LOAD-`
  * deste tenant a cada corrida — não toca em nada que outro seed tenha
@@ -35,6 +34,7 @@ import { PrismaClient } from "../../../packages/database/generated";
 import { assertLocalDatabaseUrl, pinPersonaToTenant } from "./seed-meridian";
 
 const TENANT_SLUG = process.argv[2] ?? "techcorp-sa";
+const TENANT_NAME = TENANT_SLUG === "techcorp-sa" ? "TechCorp SA" : TENANT_SLUG;
 const ASSESSMENT_COUNT = 200;
 const GAPS_PER_ASSESSMENT = 10; // 200 × 10 = 2.000
 const PERSONA_EMAIL = "carga.performance@nebuloz.exemplo";
@@ -56,18 +56,13 @@ async function main() {
     adapter: new PrismaPg(pool),
   }) as PrismaClientType;
 
-  const tenant = await db.tenant.findUnique({
+  // Tenant dedicado à carga: nasce aqui se não existir, em vez de depender de
+  // `seed:tenants` inteiro (que cria vários tenants que M10 não usa).
+  const tenant = await db.tenant.upsert({
     where: { slug: TENANT_SLUG },
+    create: { name: TENANT_NAME, slug: TENANT_SLUG },
+    update: {},
   });
-  if (!tenant) {
-    throw new Error(
-      `Tenant "${TENANT_SLUG}" não encontrado. Slugs disponíveis: ${(
-        await db.tenant.findMany({ select: { slug: true } })
-      )
-        .map((t) => t.slug)
-        .join(", ")}`
-    );
-  }
   const tenantId = tenant.id;
 
   console.log(
