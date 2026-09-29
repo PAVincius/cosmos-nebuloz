@@ -297,3 +297,90 @@ describe("listControlProfiles", () => {
     });
   });
 });
+
+describe("pessoas só do tenant (P2)", () => {
+  it("busca de responsável e autor filtra por membership do tenant do contexto", async () => {
+    await getCaseControls({ code: "UC-118" });
+    expect(h.db.user.findMany.mock.calls[0][0].where).toMatchObject({
+      memberships: { some: { tenantId: "t-1" } },
+    });
+  });
+
+  it("id de fora do tenant vira 'Pessoa removida', nunca o nome do outro tenant", async () => {
+    // O banco não devolve quem não é membro: o mapa vem sem o u-outro.
+    h.db.user.findMany.mockResolvedValue([]);
+    h.db.charterCaseControl.findMany.mockResolvedValue([
+      caseControl("TR-1", "ACCEPTED", {
+        ownerId: "u-outro",
+        events: [
+          {
+            id: "e1",
+            action: "ACCEPT",
+            actorId: "u-outro",
+            fromState: "IN_REVIEW",
+            toState: "ACCEPTED",
+            comment: null,
+            createdAt: new Date("2026-09-20"),
+          },
+        ],
+      }),
+    ]);
+    const res = await getCaseControls({ code: "UC-118" });
+    if (!res.ok) throw new Error(res.error);
+    expect(res.data.controls[0].ownerName).toBe("Pessoa removida");
+    expect(res.data.controls[0].events[0].actor).toBe("Pessoa removida");
+  });
+});
+
+describe("perfil pela última versão ASSINADA (P3)", () => {
+  const draft = version({
+    id: "pv-2",
+    label: "v2",
+    securitySignedAt: null,
+    controls: [profileControl("TR-1", "INTERNAL")],
+  });
+  const signed = version({ id: "pv-1", label: "v1" });
+
+  it("com v2 rascunho e v1 assinada, mostra a v1 como assinada", async () => {
+    h.db.charterControlProfile.findMany.mockResolvedValue([
+      {
+        id: "p-1",
+        name: "Triagem",
+        workForm: "TRIAGE",
+        versions: [draft, signed],
+      },
+    ]);
+    const res = await listControlProfiles();
+    if (!res.ok) throw new Error(res.error);
+    expect(res.data[0]).toMatchObject({ versionLabel: "v1", signed: true });
+    expect(res.data[0].controls).toHaveLength(3);
+  });
+
+  it("só rascunho: mostra a mais recente rotulada como rascunho", async () => {
+    h.db.charterControlProfile.findMany.mockResolvedValue([
+      { id: "p-1", name: "Triagem", workForm: "TRIAGE", versions: [draft] },
+    ]);
+    const res = await listControlProfiles();
+    if (!res.ok) throw new Error(res.error);
+    expect(res.data[0]).toMatchObject({ versionLabel: "v2", signed: false });
+  });
+
+  it("controles de outros perfis para adicionar só vêm de versão assinada", async () => {
+    h.db.charterControlProfile.findMany.mockResolvedValue([
+      {
+        id: "p-2",
+        name: "Conversacional",
+        workForm: "CONVERSATIONAL",
+        versions: [
+          version({
+            securitySignedAt: null,
+            controls: [profileControl("CV-9", "INTERNAL")],
+          }),
+        ],
+      },
+    ]);
+    const res = await getCaseControls({ code: "UC-118" });
+    if (!res.ok) throw new Error(res.error);
+    expect(res.data.addable).toEqual([]);
+  });
+});

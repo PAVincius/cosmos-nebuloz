@@ -67,6 +67,8 @@ type RawControl = {
   dispensable: boolean;
 };
 
+const REMOVED = "Pessoa removida";
+
 const categoryLabel = (c: string) =>
   RISK_CATEGORY_LABEL[c as keyof typeof RISK_CATEGORY_LABEL] ?? c;
 
@@ -94,10 +96,25 @@ function toProfileControl(c: RawControl): ProfileControlView {
 const LATEST_VERSION = {
   versions: {
     orderBy: { publishedAt: "desc" },
-    take: 1,
+    take: 10,
     include: { controls: { orderBy: { seq: "asc" } } },
   },
 } as const;
+
+type Signable = { legalSignedAt: Date | null; securitySignedAt: Date | null };
+
+const isSigned = (v: Signable) =>
+  v.legalSignedAt !== null && v.securitySignedAt !== null;
+
+/**
+ * A versão que a tela mostra: a última ASSINADA, como faz o gerador do plano
+ * (`generateCaseControlPlan` só usa perfil com as duas assinaturas). Mostrar a
+ * v2 em rascunho por cima de uma v1 assinada exibiria um perfil que nenhum caso
+ * usa. Sem nenhuma assinada, cai na mais recente, marcada como rascunho.
+ */
+function pickVersion<T extends Signable>(versions: readonly T[]): T | null {
+  return versions.find(isSigned) ?? versions[0] ?? null;
+}
 
 // ── Perfis de controle ────────────────────────────────────────────────────────
 
@@ -115,11 +132,13 @@ export async function listControlProfiles(): Promise<Result<ProfileCard[]>> {
         }),
       ]);
 
-      return profiles
-        .filter((p) => p.versions.length > 0)
-        .map((p) => {
-          const v = p.versions[0];
-          return {
+      return profiles.flatMap((p): ProfileCard[] => {
+        const v = pickVersion(p.versions);
+        if (v === null) {
+          return [];
+        }
+        return [
+          {
             workForm: p.workForm,
             name: p.name,
             versionLabel: v.label,
@@ -130,13 +149,14 @@ export async function listControlProfiles(): Promise<Result<ProfileCard[]>> {
             decisionRoleLabel:
               CONTROL_ROLE_LABEL[v.decisionRole] ?? v.decisionRole,
             note: v.note,
-            signed: v.legalSignedAt !== null && v.securitySignedAt !== null,
+            signed: isSigned(v),
             controls: v.controls.map(toProfileControl),
             casesInUse: cases
               .filter((c) => c.workForm === p.workForm)
               .map((c) => ({ code: c.code, title: c.title })),
-          };
-        });
+          },
+        ];
+      });
     });
   });
 }
@@ -191,8 +211,12 @@ export type CaseControlsView = {
   };
 };
 
+/** Nome de quem é MEMBRO do tenant. Quem não é (saiu, ou o id é de outro
+ *  tenant) não entra no mapa: a tela mostra "Pessoa removida" em vez de vazar o
+ *  nome de uma conta de outra organização. */
 async function people(
   db: Db,
+  tenantId: string,
   ids: (string | null)[]
 ): Promise<Map<string, string>> {
   const unique = [...new Set(ids.filter((x): x is string => Boolean(x)))];
@@ -200,7 +224,7 @@ async function people(
     return new Map();
   }
   const users = await db.user.findMany({
-    where: { id: { in: unique } },
+    where: { id: { in: unique }, memberships: { some: { tenantId } } },
     select: { id: true, name: true, email: true },
   });
   return new Map(users.map((u) => [u.id, u.name ?? u.email ?? "—"]));
@@ -252,10 +276,15 @@ async function addableFromOthers(
     include: LATEST_VERSION,
   });
   return profiles
-    .filter((p) => p.workForm !== ownWorkForm && p.versions.length > 0)
+    .filter((p) => p.workForm !== ownWorkForm)
+    .flatMap((p) => {
+      // Só perfil assinado: controle de rascunho não vira exigência de caso.
+      const v = p.versions.find(isSigned);
+      return v ? [{ profileName: p.name, controls: v.controls }] : [];
+    })
     .map((p) => ({
-      profileName: p.name,
-      controls: p.versions[0].controls
+      profileName: p.profileName,
+      controls: p.controls
         .filter((c) => !have.has(c.code))
         .map(toProfileControl),
     }))
@@ -297,7 +326,7 @@ export async function getCaseControls(input: {
           : null,
       ]);
 
-      const names = await people(db, [
+      const names = await people(db, ctx.tenantId, [
         ...rows.map((r) => r.ownerId),
         ...rows.flatMap((r) => r.events.map((e) => e.actorId)),
       ]);
@@ -320,7 +349,9 @@ export async function getCaseControls(input: {
           state: r.state,
           isExtra: r.isExtra,
           ownerId: r.ownerId,
-          ownerName: r.ownerId ? (names.get(r.ownerId) ?? null) : r.ownerName,
+          ownerName: r.ownerId
+            ? (names.get(r.ownerId) ?? REMOVED)
+            : r.ownerName,
           summary: r.summary,
           fileName: r.fileName,
           evidenceProducedAt: r.evidenceProducedAt,
@@ -333,7 +364,7 @@ export async function getCaseControls(input: {
           events: r.events.map((e) => ({
             id: e.id,
             action: e.action,
-            actor: e.actorId ? (names.get(e.actorId) ?? "—") : "Sistema",
+            actor: e.actorId ? (names.get(e.actorId) ?? REMOVED) : "Sistema",
             fromState: e.fromState,
             toState: e.toState,
             comment: e.comment,
