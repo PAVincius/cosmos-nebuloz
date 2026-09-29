@@ -110,6 +110,16 @@ beforeEach(() => {
   });
 });
 
+/** "Nova trilha" existe desde o primeiro render, mas fica `disabled` até o
+ *  acesso e os dados carregarem. Sob a carga do CI o clique caía no botão
+ *  ainda desabilitado, o modal não abria e o teste falhava de forma
+ *  intermitente — espera habilitar, como o usuário. */
+async function novaTrilhaHabilitada() {
+  const botao = await screen.findByRole("button", { name: /nova trilha/i });
+  await waitFor(() => expect(botao).toHaveProperty("disabled", false));
+  return botao;
+}
+
 describe("portfólio — promoção pendente vira trilha", () => {
   it("lista a promoção e cria a trilha carregando gapId e promotionId", async () => {
     render(<PortfolioScreen />);
@@ -156,9 +166,7 @@ describe("portfólio — promoção pendente vira trilha", () => {
 
   it("Nova trilha sem lacuna usa createTrack e não manda promoção", async () => {
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
 
     const name = await screen.findByLabelText(/^processo/i);
     fireEvent.change(name, { target: { value: "Fechamento contábil" } });
@@ -184,9 +192,7 @@ describe("portfólio — promoção pendente vira trilha", () => {
 
   it("sem dono, o botão fica desabilitado", async () => {
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
     await screen.findByLabelText(/^processo/i);
     const submit = screen
       .getAllByRole("button", { name: /criar trilha/i })
@@ -240,9 +246,7 @@ describe("modal — quem pode ser dono do processo (Crivo F3)", () => {
       },
     });
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
     const owner = (await screen.findByLabelText(
       /dono do processo/i
     )) as HTMLSelectElement;
@@ -255,9 +259,7 @@ describe("modal — quem pode ser dono do processo (Crivo F3)", () => {
 
   it("o consultor continua saindo só de quem é consultor", async () => {
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
     const cons = (await screen.findByLabelText(
       /consultor nebuloz/i
     )) as HTMLSelectElement;
@@ -277,9 +279,7 @@ describe("modal — quem pode ser dono do processo (Crivo F3)", () => {
       },
     });
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
     expect(await screen.findByText(/papéis de adoção/i)).toBeDefined();
   });
 });
@@ -305,9 +305,7 @@ describe("as cinco formas na tela (Crivo F4)", () => {
   it("o seletor de template mostra o rótulo, nunca o código cru", async () => {
     h.listTemplates.mockResolvedValue({ ok: true, data: TEMPLATES });
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
     const select = (await screen.findByLabelText(
       /^template/i
     )) as HTMLSelectElement;
@@ -444,9 +442,7 @@ describe("Nova trilha a partir dos gaps do Meridian", () => {
 
   const openModal = async () => {
     render(<PortfolioScreen />);
-    fireEvent.click(
-      await screen.findByRole("button", { name: /nova trilha/i })
-    );
+    fireEvent.click(await novaTrilhaHabilitada());
   };
 
   it("lista os gaps na ordem do ranking, com o vocabulário do Meridian", async () => {
