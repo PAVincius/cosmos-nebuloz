@@ -2,6 +2,7 @@ import { serve } from "inngest/next";
 import { aiLawWatchFunction } from "@/lib/inngest/ai-law-watch";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
 import { inngest } from "@/lib/inngest/client";
+import { consumeScaffoldGateClosed } from "@/lib/inngest/cosmos-scaffold-origin";
 import { runExport } from "@/lib/inngest/export-runner";
 import { fetchFathomTranscriptFn } from "@/lib/inngest/fathom-transcript";
 import { mapFirefliesInsightsFn } from "@/lib/inngest/fireflies-insights";
@@ -46,5 +47,6 @@ export const { GET, POST, PUT } = serve({
     runScheduledReport,
     releaseWorkflowWaitState,
     checkWorkflowSla,
+    consumeScaffoldGateClosed,
   ],
 });

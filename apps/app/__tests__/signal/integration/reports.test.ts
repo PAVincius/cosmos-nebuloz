@@ -13,9 +13,13 @@ const h = vi.hoisted(() => ({
   nextCode: vi.fn(),
   logSignalAudit: vi.fn(),
   revalidatePath: vi.fn(),
+  emit: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/inngest/emit-product-event", () => ({
+  emitProductEvent: h.emit,
+}));
 vi.mock("next/cache", () => ({ revalidatePath: h.revalidatePath }));
 vi.mock("@repo/database", () => ({
   withTenantDb: h.withTenantDb,
@@ -147,6 +151,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   h.requireSignalPermissionContext.mockResolvedValue(CTX);
   h.nextCode.mockResolvedValue("RP-119");
+  h.emit.mockResolvedValue(undefined);
 
   db = {
     tenant: { findUnique: vi.fn().mockResolvedValue({ name: "Vanta" }) },
@@ -173,6 +178,51 @@ beforeEach(() => {
   h.withTenantDb.mockImplementation(
     (_tenantId: string, fn: (d: Db) => unknown) => fn(db)
   );
+});
+
+describe("freezeReport — anuncia o veredito (X-04)", () => {
+  it("emite um signal/verdict por iniciativa do relatório congelado", async () => {
+    db.signalInitiative.findMany.mockResolvedValue([
+      initiative(),
+      initiative({ id: "in_2", code: "IN-021", name: "Outra", adoption: [] }),
+    ]);
+
+    const res = await freezeReport({ code: "RP-118" });
+
+    expect(res.ok).toBe(true);
+    expect(h.emit).toHaveBeenCalledTimes(2);
+    const codes = h.emit.mock.calls.map((c) => c[1].initiativeCode).sort();
+    expect(codes).toEqual(["IN-014", "IN-021"]);
+    for (const [key, data] of h.emit.mock.calls) {
+      expect(key).toBe("signalVerdict");
+      expect(data).toMatchObject({
+        tenantId: "tnt_1",
+        reportId: "rp_1",
+        reportCode: "RP-118",
+      });
+      expect(["PROVEN", "VANITY", "PROMISE", "STOP"]).toContain(data.verdict);
+    }
+  });
+
+  it("congelamento recusado (fonte fora do ar) não emite veredito", async () => {
+    db.signalConnection.findMany.mockResolvedValue([
+      connection({ health: "DOWN" }),
+    ]);
+
+    await freezeReport({ code: "RP-118" });
+
+    expect(h.emit).not.toHaveBeenCalled();
+  });
+
+  it("relatório já congelado não reemite", async () => {
+    db.signalReportSnapshot.findUnique.mockResolvedValue(
+      report({ state: "FINAL" })
+    );
+
+    await freezeReport({ code: "RP-118" });
+
+    expect(h.emit).not.toHaveBeenCalled();
+  });
 });
 
 describe("freezeReport — fonte caída trava o fechamento", () => {
