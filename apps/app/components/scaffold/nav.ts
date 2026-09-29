@@ -14,7 +14,7 @@ export const TITLES: Record<string, [string, string]> = {
   track: ["Trilha", "Portfólio"],
   baselines: ["Casos de negócio", "Método"],
   baseline: ["Caso de negócio", "Método"],
-  templates: ["Biblioteca de templates", "Método"],
+  templates: ["Versões e overlays", "Método"],
   members: ["Papéis de adoção", "Adoção"],
 };
 
@@ -42,7 +42,7 @@ export const NAV: { section: string; items: NavItem[] }[] = [
     section: "Método",
     items: [
       { id: "baselines", icon: "fileText", label: "Casos de negócio" },
-      { id: "templates", icon: "puzzle", label: "Biblioteca de templates" },
+      { id: "templates", icon: "puzzle", label: "Versões e overlays" },
     ],
   },
 ];

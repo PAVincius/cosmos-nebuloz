@@ -5,6 +5,7 @@ import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
+import { deliverableProgress } from "@/lib/scaffold/deliverable-progress";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
 import {
@@ -47,6 +48,9 @@ export type TrackSummary = {
   lastGateAt: Date | null;
   lastGateLabel: string | null;
   stalledDays: number;
+  /** Aprovados sobre obrigatórios ("3/16 entregáveis"). 0/0 = trilha anterior
+   *  ao modelo de entregáveis: a tela não mostra fração. */
+  deliverables: { approved: number; required: number };
 };
 
 /** Taxa de override por recorte — SG-08. */
@@ -321,6 +325,22 @@ export async function listTracks(
         owners.map((u) => [u.id, u.name ?? u.email ?? null])
       );
 
+      // Progresso de entregáveis de todas as trilhas listadas, numa consulta.
+      const deliverables = rows.length
+        ? await db.scaffoldDeliverableInstance.findMany({
+            where: {
+              tenantId: ctx.tenantId,
+              trackId: { in: rows.map((t) => t.id) },
+            },
+            select: {
+              trackId: true,
+              code: true,
+              status: true,
+              required: true,
+            },
+          })
+        : [];
+
       const threshold =
         settings?.stallThresholdDays ?? DEFAULT_STALL_THRESHOLD_DAYS;
 
@@ -343,6 +363,10 @@ export async function listTracks(
           lastGateAt: t.lastGateAt,
           lastGateLabel: shortDate(t.lastGateAt),
           stalledDays: stalledDays(t.lastGateAt, t.startedAt),
+          deliverables: deliverableProgress(
+            deliverables.filter((d) => d.trackId === t.id),
+            Boolean(t.businessCase?.signedVersionId)
+          ),
         };
       });
 

@@ -1,6 +1,6 @@
 "use client";
 
-// Biblioteca de templates — S-05, S-12, ST-01..ST-04.
+// Versões e overlays — S-05, S-12, ST-01..ST-04.
 // Port de `scaffold-screens-3.jsx`.
 //
 // A tela mostra três coisas que o método precisa deixar visíveis:
@@ -326,7 +326,7 @@ export default function TemplatesScreen() {
           />
         }
         subtitle="O método da Nebuloz como dado. Versão publicada é imutável; a customização do cliente é overlay, não fork — e sobrevive ao upgrade ou vira conflito explícito."
-        title="Biblioteca de templates"
+        title="Versões e overlays"
       />
 
       <div

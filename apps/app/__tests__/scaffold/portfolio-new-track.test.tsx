@@ -370,6 +370,7 @@ describe("as cinco formas na tela (Crivo F4)", () => {
             lastGateAt: null,
             lastGateLabel: null,
             stalledDays: 0,
+            deliverables: { approved: 0, required: 0 },
           },
         ],
       },
@@ -556,5 +557,61 @@ describe("Nova trilha a partir dos gaps do Meridian", () => {
     fireEvent.click(screen.getByRole("button", { name: /criar trilha/i }));
     await screen.findByLabelText(/^processo/i);
     expect(h.listScaffoldGaps).not.toHaveBeenCalled();
+  });
+});
+
+describe("portfólio — sub-linha de entregáveis e atalho (PDF p.3)", () => {
+  const ROW = (over: Record<string, unknown> = {}) => ({
+    id: "trk1",
+    code: "TR-114",
+    processName: "Glosas hospitalares",
+    archetype: "ANALYSIS",
+    currentPhase: "ASSESS",
+    phaseState: "OPEN",
+    status: "ACTIVE",
+    ownerId: "clx0000000000000000owner1",
+    ownerName: "Marina",
+    consultantId: null,
+    templateLabel: "v1",
+    sourceGapId: null,
+    startedAt: new Date("2026-09-01"),
+    lastGateAt: null,
+    lastGateLabel: null,
+    stalledDays: 0,
+    deliverables: { approved: 3, required: 16 },
+    ...over,
+  });
+  const withRows = (rows: unknown[]) =>
+    h.listTracks.mockResolvedValue({
+      ok: true,
+      data: { ...SUMMARY, orgCount: rows.length, tracks: rows },
+    });
+
+  it("mostra 'forma · X/Y entregáveis' na linha da trilha", async () => {
+    withRows([ROW()]);
+    render(<PortfolioScreen />);
+    await screen.findByText("Glosas hospitalares");
+    // A forma também é chip de filtro: a sub-linha é o que traz a fração.
+    const sub = screen.getByText(/3\/16 entregáveis/);
+    expect(sub.textContent).toMatch(
+      /Análise e priorização · v1 · 3\/16 entregáveis/
+    );
+  });
+
+  it("trilha anterior ao modelo de entregáveis não mostra fração", async () => {
+    withRows([ROW({ deliverables: { approved: 0, required: 0 } })]);
+    render(<PortfolioScreen />);
+    await screen.findByText("Glosas hospitalares");
+    expect(screen.queryByText(/entregáveis$/)).toBeNull();
+    expect(screen.queryByText(/0\/0/)).toBeNull();
+  });
+
+  it("'Trilhas disponíveis' leva ao catálogo, com o nome antigo aposentado", async () => {
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /trilhas disponíveis/i })
+    );
+    expect(h.push).toHaveBeenCalledWith("/scaffold/templates");
+    expect(screen.queryByRole("button", { name: /^templates$/i })).toBeNull();
   });
 });

@@ -22,6 +22,7 @@ const h = vi.hoisted(() => ({
   delTplFindMany: vi.fn(),
   phaseFindMany: vi.fn(),
   delCreateMany: vi.fn(),
+  delFindMany: vi.fn(),
   moduleFindFirst: vi.fn(),
   bcUpdate: vi.fn(),
   trackFindMany: vi.fn(),
@@ -57,7 +58,10 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldDeliverableTemplate: { findMany: h.delTplFindMany },
       scaffoldPhaseInstance: { findMany: h.phaseFindMany },
-      scaffoldDeliverableInstance: { createMany: h.delCreateMany },
+      scaffoldDeliverableInstance: {
+        createMany: h.delCreateMany,
+        findMany: h.delFindMany,
+      },
       tenantModule: { findFirst: h.moduleFindFirst },
       scaffoldBusinessCase: { create: h.bcCreate, update: h.bcUpdate },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
@@ -157,6 +161,7 @@ beforeEach(() => {
     { id: "ph-e", phase: "EMBED" },
   ]);
   h.delCreateMany.mockResolvedValue({ count: 0 });
+  h.delFindMany.mockResolvedValue([]);
   h.moduleFindFirst.mockResolvedValue(null);
   h.auditCreate.mockResolvedValue({});
   h.settingsFindUnique.mockResolvedValue(null);
@@ -743,5 +748,83 @@ describe("forma do trabalho da trilha", () => {
     expect(h.versionFindFirst.mock.calls[0][0].select.template).toEqual({
       select: { archetype: true },
     });
+  });
+});
+
+// PDF p.3: sub-linha "arquétipo · X/Y entregáveis" no portfólio.
+describe("listTracks — progresso de entregáveis", () => {
+  const track = (over: Record<string, unknown> = {}) => ({
+    id: "trk1",
+    code: "TR-104",
+    processName: "Triagem",
+    archetype: "TRIAGE",
+    currentPhase: "ASSESS",
+    status: "ACTIVE",
+    ownerId: OWNER,
+    consultantId: null,
+    sourceGapId: null,
+    startedAt: new Date(),
+    lastGateAt: null,
+    templateVersion: { label: "v5" },
+    phases: [{ phase: "ASSESS", state: "OPEN" }],
+    businessCase: null,
+    ...over,
+  });
+
+  it("aprovados sobre obrigatórios, por trilha", async () => {
+    h.trackFindMany.mockResolvedValue([
+      track(),
+      track({ id: "trk2", code: "TR-105" }),
+    ]);
+    h.delFindMany.mockResolvedValue([
+      { trackId: "trk1", code: "A1.1", status: "APPROVED", required: true },
+      { trackId: "trk1", code: "A2.1", status: "IN_REVIEW", required: true },
+      { trackId: "trk1", code: "X-001", status: "APPROVED", required: false },
+      { trackId: "trk2", code: "A1.1", status: "NOT_STARTED", required: true },
+    ]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks.map((t) => t.deliverables)).toEqual([
+      { approved: 1, required: 2 },
+      { approved: 0, required: 1 },
+    ]);
+  });
+
+  it("o A3.2 conta como aprovado quando o caso da trilha está assinado", async () => {
+    h.trackFindMany.mockResolvedValue([
+      track({ businessCase: { signedVersionId: "v1" } }),
+    ]);
+    h.delFindMany.mockResolvedValue([
+      { trackId: "trk1", code: "A3.2", status: "NOT_STARTED", required: true },
+    ]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks[0]?.deliverables).toEqual({
+      approved: 1,
+      required: 1,
+    });
+  });
+
+  it("trilha sem entregável (antiga): 0/0", async () => {
+    h.trackFindMany.mockResolvedValue([track()]);
+    h.delFindMany.mockResolvedValue([]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks[0]?.deliverables).toEqual({
+      approved: 0,
+      required: 0,
+    });
+  });
+
+  it("consulta só entregáveis do tenant e das trilhas listadas", async () => {
+    h.trackFindMany.mockResolvedValue([track()]);
+    await listTracks({});
+    expect(h.delFindMany.mock.calls[0]?.[0].where).toEqual({
+      tenantId: "t1",
+      trackId: { in: ["trk1"] },
+    });
+  });
+
+  it("portfólio vazio não consulta entregável", async () => {
+    h.trackFindMany.mockResolvedValue([]);
+    await listTracks({});
+    expect(h.delFindMany).not.toHaveBeenCalled();
   });
 });
