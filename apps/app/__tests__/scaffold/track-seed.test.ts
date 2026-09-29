@@ -18,6 +18,10 @@ const h = vi.hoisted(() => ({
   sequenceUpsert: vi.fn(),
   trackCreate: vi.fn(),
   bcCreate: vi.fn(),
+  delTplFindMany: vi.fn(),
+  phaseFindMany: vi.fn(),
+  delCreateMany: vi.fn(),
+  moduleFindFirst: vi.fn(),
   bcUpdate: vi.fn(),
   trackFindMany: vi.fn(),
   trackFindFirst: vi.fn(),
@@ -50,6 +54,10 @@ vi.mock("@repo/database", () => ({
         findFirst: h.trackFindFirst,
         update: h.trackUpdate,
       },
+      scaffoldDeliverableTemplate: { findMany: h.delTplFindMany },
+      scaffoldPhaseInstance: { findMany: h.phaseFindMany },
+      scaffoldDeliverableInstance: { createMany: h.delCreateMany },
+      tenantModule: { findFirst: h.moduleFindFirst },
       scaffoldBusinessCase: { create: h.bcCreate, update: h.bcUpdate },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
       scaffoldSettings: { findUnique: h.settingsFindUnique },
@@ -131,6 +139,15 @@ beforeEach(() => {
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-104" });
   h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
   h.bcUpdate.mockResolvedValue({});
+  h.delTplFindMany.mockResolvedValue([]);
+  h.phaseFindMany.mockResolvedValue([
+    { id: "ph-a", phase: "ASSESS" },
+    { id: "ph-p", phase: "PILOT" },
+    { id: "ph-s", phase: "SCALE" },
+    { id: "ph-e", phase: "EMBED" },
+  ]);
+  h.delCreateMany.mockResolvedValue({ count: 0 });
+  h.moduleFindFirst.mockResolvedValue(null);
   h.auditCreate.mockResolvedValue({});
   h.settingsFindUnique.mockResolvedValue(null);
   h.userFindMany.mockResolvedValue([]);
@@ -315,6 +332,93 @@ describe("caso de negócio nasce com a trilha (SB-01)", () => {
     expect(h.auditCreate.mock.calls[0][0].data.metadata.note).toContain(
       "BC-104"
     );
+  });
+});
+
+// SC-DEV-02 — os entregáveis nascem com a trilha, copiados do template pinado.
+describe("entregáveis nascem com a trilha (SC-DEV-02)", () => {
+  const TPLS = [
+    {
+      phase: "ASSESS",
+      stepCode: "A1",
+      code: "A1.1",
+      seq: 1,
+      title: "Mapa do processo atual e volume",
+      description: "Quem toca o processo e quanto volume passa.",
+      kind: "SPREADSHEET",
+      producer: "OWNER",
+      required: true,
+      requiresModule: null,
+    },
+    {
+      phase: "SCALE",
+      stepCode: "C1",
+      code: "C1.1",
+      seq: 1,
+      title: "Política do Charter vinculada ao fluxo",
+      description: "Aceite da política aplicável.",
+      kind: "SIGNATURE",
+      producer: "LEGAL",
+      required: true,
+      requiresModule: "CHARTER",
+    },
+  ];
+
+  it("copia texto, tipo e produtor do template na fase certa", async () => {
+    h.delTplFindMany.mockResolvedValue([TPLS[0]]);
+    await createTrackFromGap(INPUT);
+    const data = h.delCreateMany.mock.calls[0]?.[0].data;
+    expect(data).toHaveLength(1);
+    expect(data[0]).toMatchObject({
+      tenantId: "t1",
+      trackId: "trk1",
+      phaseInstanceId: "ph-a",
+      stepCode: "A1",
+      code: "A1.1",
+      templateKey: "A1.1",
+      title: "Mapa do processo atual e volume",
+      description: "Quem toca o processo e quanto volume passa.",
+      kind: "SPREADSHEET",
+      producer: "OWNER",
+      required: true,
+      isExtra: false,
+      status: "NOT_STARTED",
+      dispensedReason: null,
+    });
+    // Só do tenant e da versão pinada.
+    expect(h.delTplFindMany.mock.calls[0]?.[0].where).toEqual({
+      versionId: VER,
+    });
+  });
+
+  it("sem entregável no template, não grava nada (versões antigas)", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.delCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("entregável de módulo não contratado nasce dispensado, com o motivo", async () => {
+    h.delTplFindMany.mockResolvedValue(TPLS);
+    h.moduleFindFirst.mockResolvedValue(null);
+    await createTrackFromGap(INPUT);
+    const c11 = h.delCreateMany.mock.calls[0]?.[0].data.find(
+      (d: { code: string }) => d.code === "C1.1"
+    );
+    expect(c11).toMatchObject({ required: false });
+    expect(c11.dispensedReason).toContain("Charter");
+  });
+
+  it("com o módulo contratado, segue obrigatório", async () => {
+    h.delTplFindMany.mockResolvedValue(TPLS);
+    h.moduleFindFirst.mockResolvedValue({ module: "CHARTER" });
+    await createTrackFromGap(INPUT);
+    const c11 = h.delCreateMany.mock.calls[0]?.[0].data.find(
+      (d: { code: string }) => d.code === "C1.1"
+    );
+    expect(c11).toMatchObject({ required: true, dispensedReason: null });
+    expect(h.moduleFindFirst.mock.calls[0]?.[0].where).toMatchObject({
+      tenantId: "t1",
+      module: "CHARTER",
+    });
   });
 });
 

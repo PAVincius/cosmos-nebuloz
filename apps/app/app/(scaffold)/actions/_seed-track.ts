@@ -138,7 +138,85 @@ export async function seedTrack(db: Db, input: SeedInput) {
   });
 
   const businessCaseCode = await openBusinessCase(db, input, track.id);
+  await instantiateDeliverables(db, input.tenantId, track.id, version.id);
   return { ...track, businessCaseCode };
+}
+
+const MODULE_LABEL: Record<string, string> = { CHARTER: "Charter" };
+
+/**
+ * Entregáveis da trilha, copiados do template pinado (SC-DEV-02, ST-03).
+ *
+ * Versão de template sem entregáveis (as anteriores a este modelo) não gera
+ * nada: a trilha segue só a regra de passos. Entregável que depende de módulo
+ * não contratado (C1.1 e o Charter) nasce dispensado pelo sistema, com o motivo
+ * gravado, e por isso deixa de ser obrigatório: é a única exceção à regra de que
+ * todo entregável do template trava o gate.
+ */
+async function instantiateDeliverables(
+  db: Db,
+  tenantId: string,
+  trackId: string,
+  versionId: string
+): Promise<void> {
+  const templates = await db.scaffoldDeliverableTemplate.findMany({
+    where: { versionId },
+    orderBy: [{ phase: "asc" }, { seq: "asc" }],
+  });
+  if (templates.length === 0) {
+    return;
+  }
+
+  const phases = await db.scaffoldPhaseInstance.findMany({
+    where: { trackId, track: { tenantId } },
+    select: { id: true, phase: true },
+  });
+  const phaseId = new Map(phases.map((p) => [p.phase, p.id]));
+
+  const modules = [
+    ...new Set(
+      templates.flatMap((t) => (t.requiresModule ? [t.requiresModule] : []))
+    ),
+  ];
+  const contracted = new Set<string>();
+  for (const module of modules) {
+    const active = await db.tenantModule.findFirst({
+      where: {
+        tenantId,
+        module,
+        status: { in: ["ACTIVE", "TRIAL"] },
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      },
+      select: { module: true },
+    });
+    if (active) {
+      contracted.add(module);
+    }
+  }
+
+  await db.scaffoldDeliverableInstance.createMany({
+    data: templates.map((t) => {
+      const dispensed = t.requiresModule && !contracted.has(t.requiresModule);
+      return {
+        tenantId,
+        trackId,
+        phaseInstanceId: phaseId.get(t.phase) as string,
+        stepCode: t.stepCode,
+        code: t.code,
+        templateKey: t.code,
+        title: t.title,
+        description: t.description,
+        kind: t.kind,
+        producer: t.producer,
+        isExtra: false,
+        required: dispensed ? false : t.required,
+        dispensedReason: dispensed
+          ? `O módulo ${MODULE_LABEL[t.requiresModule as string] ?? t.requiresModule} não está contratado por esta organização; dispensado pelo sistema.`
+          : null,
+        status: "NOT_STARTED" as const,
+      };
+    }),
+  });
 }
 
 /**

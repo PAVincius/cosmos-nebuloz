@@ -68,6 +68,7 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldTrack: { groupBy: h.trackGroupBy, create: h.trackCreate },
       scaffoldSequence: { upsert: h.sequenceUpsert },
+      scaffoldDeliverableTemplate: { findMany: async () => [] },
       scaffoldBusinessCase: {
         create: async () => ({ id: "bc1", versions: [{ id: "bcv1" }] }),
         update: async () => ({}),

@@ -94,6 +94,7 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       scaffoldTemplate: { findMany: h.templateFindMany },
+      scaffoldDeliverableTemplate: { findMany: async () => [] },
       scaffoldBusinessCase: {
         findFirst: h.bcFindFirst,
         create: h.bcCreate,
