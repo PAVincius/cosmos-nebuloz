@@ -150,39 +150,52 @@ export function DeliverableList({
   const attach = async (item: DeliverableItem, file: File) => {
     setBusy(true);
     setError(null);
-    const res = await attachDeliverableVersion({
-      deliverableId: item.id,
-      filename: file.name,
-      contentType: file.type || "application/octet-stream",
-      sizeBytes: file.size,
-    });
-    if (!res.ok) {
-      setBusy(false);
-      setError(res.error);
-      return;
-    }
-    const put = await fetch(res.data.uploadUrl, {
-      method: "PUT",
-      body: file,
-      // O tipo é o que o servidor validou pela extensão, não o do navegador.
-      headers: { "Content-Type": res.data.contentType },
-    });
-    setBusy(false);
-    if (!put.ok) {
+    // try/finally: rede que cai, ou um bloqueio no meio do caminho, lança, e sem
+    // isto a lista ficava presa em "ocupado", sem mensagem. A mensagem é nossa:
+    // o erro cru da rede pode trazer a URL assinada.
+    try {
+      const res = await attachDeliverableVersion({
+        deliverableId: item.id,
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
+        sizeBytes: file.size,
+      });
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      const put = await fetch(res.data.uploadUrl, {
+        method: "PUT",
+        body: file,
+        // O tipo é o que o servidor validou pela extensão, não o do navegador.
+        headers: { "Content-Type": res.data.contentType },
+      });
+      if (!put.ok) {
+        setError(
+          `Upload falhou (${put.status}). Tente anexar de novo: enviar para revisão só vale com o arquivo no storage.`
+        );
+        return;
+      }
+      onChanged();
+    } catch {
       setError(
-        `Upload falhou (${put.status}). Tente anexar de novo: enviar para revisão só vale com o arquivo no storage.`
+        "Não foi possível enviar o arquivo. Verifique a conexão e tente de novo: enviar para revisão só vale com o arquivo no storage."
       );
-      return;
+    } finally {
+      setBusy(false);
     }
-    onChanged();
   };
 
   const download = async (item: DeliverableItem) => {
-    const res = await readDeliverableFile({ deliverableId: item.id });
-    if (res.ok) {
-      window.open(res.data.url, "_blank", "noopener,noreferrer");
-    } else {
-      setError(res.error);
+    try {
+      const res = await readDeliverableFile({ deliverableId: item.id });
+      if (res.ok) {
+        window.open(res.data.url, "_blank", "noopener,noreferrer");
+      } else {
+        setError(res.error);
+      }
+    } catch {
+      setError("Não foi possível baixar o arquivo. Tente de novo.");
     }
   };
 

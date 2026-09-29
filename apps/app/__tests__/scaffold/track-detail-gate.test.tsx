@@ -1309,3 +1309,115 @@ describe("adicionar entregável fora do template", () => {
     expect(add.getAttribute("title")).toMatch(/Requer papel/);
   });
 });
+
+// Crivo rodada 2: o fetch do PUT sem try/catch. Rede que cai (ou CSP que barra)
+// lançava, e a lista ficava presa em "ocupado", sem mensagem.
+describe("upload que falha na rede", () => {
+  const open = async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_PROGRESS")],
+    });
+    h.attachVersion.mockResolvedValue({
+      ok: true,
+      data: {
+        uploadUrl: "https://storage.test/put",
+        version: 1,
+        fileName: "a.pdf",
+        contentType: "application/pdf",
+      },
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    return (await screen.findByLabelText(
+      /anexar arquivo: B1\.2/i
+    )) as HTMLInputElement;
+  };
+  const pdf = () => new File(["a"], "a.pdf", { type: "application/pdf" });
+
+  it("fetch que lança vira mensagem clara, e a lista volta a responder", async () => {
+    const input = await open();
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(new TypeError("Failed to fetch"));
+    fireEvent.change(input, { target: { files: [pdf()] } });
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/não foi possível enviar o arquivo/i);
+    expect(alert.textContent).toMatch(/tente de novo/i);
+    // Liberou o estado: o controle de anexo e as ações voltam a funcionar.
+    await waitFor(() =>
+      expect(
+        (screen.getByLabelText(/anexar arquivo: B1\.2/i) as HTMLInputElement)
+          .disabled
+      ).toBe(false)
+    );
+    expect(
+      (
+        screen.getByRole("button", {
+          name: /enviar para revisão/i,
+        }) as HTMLButtonElement
+      ).disabled
+    ).toBe(false);
+    spy.mockRestore();
+  });
+
+  it("e dá para tentar de novo com sucesso, sem recarregar a tela", async () => {
+    const input = await open();
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    fireEvent.change(input, { target: { files: [pdf()] } });
+    await screen.findByRole("alert");
+
+    spy.mockResolvedValue({ ok: true, status: 200 } as Response);
+    fireEvent.change(screen.getByLabelText(/anexar arquivo: B1\.2/i), {
+      target: { files: [pdf()] },
+    });
+    await waitFor(() => expect(h.attachVersion).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+    spy.mockRestore();
+  });
+
+  it("a mensagem não vaza o erro cru da rede nem a URL assinada", async () => {
+    const input = await open();
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(
+        new TypeError("Failed to fetch https://storage.test/put?token=segredo")
+      );
+    fireEvent.change(input, { target: { files: [pdf()] } });
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).not.toContain("segredo");
+    expect(alert.textContent).not.toContain("storage.test");
+    spy.mockRestore();
+  });
+
+  it("falha do próprio download (URL assinada) também não trava", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [
+        deliverable("IN_REVIEW", {
+          hasFile: true,
+          fileName: "plano.pdf",
+          version: 1,
+        }),
+      ],
+    });
+    h.readFile.mockRejectedValue(new Error("rede"));
+    render(<TrackDetailScreen param="trk1" />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /baixar plano\.pdf/i })
+    );
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/não foi possível baixar/i);
+    expect(
+      (
+        screen.getByRole("button", {
+          name: /baixar plano\.pdf/i,
+        }) as HTMLButtonElement
+      ).disabled
+    ).toBe(false);
+  });
+});
