@@ -9,6 +9,24 @@ Cada linha é uma operação em produção (`app.nebuloz.ai`), com o "vai" do CE
 | 2026-09-26 14:43 | M2-bis — revogar os 10 respondentes do AS-112 e atribuir de novo, copiando cada link | CEO, 14:43 | CEO (consultor) | FALHOU — 10 revogações e 10 atribuições feitas, links copiados mas não colados em lugar nenhum; perdidos de novo | — |
 | 2026-09-26 14:56 | M2-ter — revogar e atribuir de novo, colando cada link em `~/Documents/links-as112.txt` (aberto no TextEdit antes) | CEO | CEO (consultor) | FALHOU — o arquivo e a janela do TextEdit ficaram sem nenhum link (verificado por contagem, sem ler os valores); terceira perda seguida. M2 suspenso até o "Reemitir link" (P0, `meridian-prd.md` §10) | — |
 
+> **Correção em 2026-09-26:** as quatro linhas acima **não rodaram em produção**. O CEO operou em `localhost:3012` (banco local `cosmos_dev`, recriado do zero no mesmo dia — o AS-112 não existe mais). Confirmado por consulta no db-prd-nz (`aosdvvluokrbgpyqwoor`): só existem `AS-NEBULOZ-01` (tenant `nebuloz`) e `AS-NBZ-001` (tenant `nebula`). Os achados de usabilidade continuam válidos — as três perdas de link aconteceram de verdade e geraram o Revogar (#253) e o Reemitir (#261). O dogfood em produção recomeça do M1, em `app.nebuloz.ai`.
+>
+| 2026-09-26 | Pré-M1 prod — `UPDATE "Tenant" SET "isInternalTenant" = true WHERE slug = 'nebuloz'` (db-prd-nz) | CEO | CEO (SQL Editor) | OK — `UPDATE 1` | resultado do SQL Editor |
+| 2026-09-27 | Pré-M1 prod — CEO recebe CONSULTANT no Meridian, tenant `nebuloz` (backoffice.nebuloz.ai) | CEO | CEO (back-office) | OK — conferido no db-prd-nz: `isInternalTenant = true`, `meridian_role = CONSULTANT` | consulta do CEO no SQL Editor |
+| 2026-09-27 00:12 | **M1 (produção)** — login em `app.nebuloz.ai` → catálogo → Meridian → Novo assessment (Nebuloz, template vigente, prazo +30d) | CEO | CEO (consultor) | NÃO FOI EM PRODUÇÃO — rodou de novo em `localhost:3012`. O "AS-113" visto era o do E2E do Crivo no banco local. Nenhuma requisição no `cosmos-nebuloz-app` em 2h; `AS-113` ausente no db-prd-nz | runtime logs Vercel + consulta db-prd-nz |
+| 2026-09-27 | **M1 (produção)** — refeito com o localhost desligado: criou **AS-114** em `app.nebuloz.ai` | CEO | CEO (consultor) | OK — conferido no db-prd-nz, mas no tenant **`nebula`** (sessão ativa do CEO), não no `nebuloz`. Há dois tenants da Nebuloz em produção | consulta do CEO no SQL Editor |
+| 2026-09-27 | Decisão do CEO: tenant oficial = `nebula`. `isInternalTenant` passa para `nebula` (true) e sai de `nebuloz` (false) | CEO | CEO (SQL Editor) | OK — `UPDATE 1` nos dois; conferido: `nebula` true + CONSULTANT + módulos COSMOS, CHARTER, SIGNAL, MERIDIAN (sem SCAFFOLD); `nebuloz` false | consulta do CEO no SQL Editor |
+| 2026-09-27 10:21 | **M2 (produção)** — AS-114: 10 atribuições (5 eixos × fundador + auditoria), depois "Reemitir e copiar todos os pendentes" + baixar `.txt` | CEO, 10:21 | CEO (consultor) | NÃO ACONTECEU — o AS-114 tem 0 respondentes e depois se mostrou inexistente | consulta db-prd-nz |
+
+> **Correção em 2026-09-27:** o AS-114 **nunca existiu em produção**. `WHERE a.code LIKE 'AS-1%'` em todos os tenants volta vazio. A leitura anterior ("AS-114 com slug nebula") estava errada, e com ela a decisão de mover a flag para o `nebula` e as linhas 17 a 19 acima. O CEO é ADMIN em 6 tenants (`__system__`, `dev-teste`, `medcore`, `nebula`, `nebuloz`, `nebuloz-novo-cliente`) e a sessão dele abre no **`nebuloz`** ("Nebuloz"), que tem os 5 módulos. Os nomes "Nebula"/"Nebuloz" e `AS-NBZ-001`/`AS-NEBULOZ-01` se confundem. A partir daqui, os resultados de SQL vêm colados inteiros, não resumidos.
+
+| 2026-09-27 | Decisão do CEO: tenant oficial volta a ser `nebuloz`. `isInternalTenant`: `nebuloz` true, `nebula` false (um SQL por vez) | CEO | CEO (SQL Editor) | OK — conferido: `nebuloz` true, `nebula` false | SELECT de conferência |
+| 2026-09-27 10:38 | **M1 (produção, tenant `nebuloz`)** — Novo assessment em `app.nebuloz.ai`, organização "Nebuloz" no topo | CEO | CEO (consultor) | OK — criou **AS-002**, mas no tenant **`nebula`** (sessão real do CEO; o Meridian não mostra a organização ativa) | SELECT colado inteiro: `AS-002 · 2026-09-27 13:51:38 UTC · nebula` |
+
+| 2026-09-27 10:57 | **M2 (produção, AS-002, tenant `nebula`)** — decisão do CEO: laboratório segue no `nebula`. 10 atribuições + "Reemitir e copiar todos os pendentes" + baixar `.txt` | CEO | CEO (consultor) | em execução | — |
+
+> **Lição:** antes de cada "vai", confirmar a URL na barra do navegador; depois de cada passo, confirmar no banco de produção que o registro existe.
+
 Pré-condição do M1/M2: deploy `dpl_Hs1rcL1Ys7e4nLtVEhtZNbL46WPp` READY, commit `86f8153f` (merge do #248).
 Pré-condição do M2-bis: deploy `dpl_4QSbrS8MQjs3zF85o1LWVv3KXMJk` READY, commit `d846faed` (merge do #253).
 

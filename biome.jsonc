@@ -402,6 +402,20 @@
       }
     },
     {
+      // k6 roda em Goja, não Node/browser — __ENV/__VU/__ITER são globais do
+      // runtime do k6, não algo pra declarar; ver a nota de research.md §3
+      // (specs/007-gate-maturidade-carga/) sobre manter esses scripts fora
+      // do tooling de TS/lint do monorepo.
+      "includes": ["k6/**"],
+      "linter": {
+        "rules": {
+          "correctness": { "noUndeclaredVariables": "off" },
+          "performance": { "useTopLevelRegex": "off" },
+          "nursery": { "noShadow": "off" }
+        }
+      }
+    },
+    {
       "includes": ["**/*.d.ts"],
       "linter": {
         "rules": {

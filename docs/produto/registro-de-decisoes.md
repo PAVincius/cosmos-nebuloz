@@ -50,6 +50,8 @@ Três regras valem para o registro inteiro:
 | D-16 | Décadas em três camadas, no Postgres até medir o limite | Proposta | Dev Plataforma, Pilar |
 | D-17 | Memória igual em todos os pacotes: mesmo horizonte, mesmas fontes | **Decidida** | Ponte, Caixa |
 | D-18 | A Nebuloz é o primeiro tenant da memória | Em andamento (agentes) | Morgana |
+| D-19 | Meridian A3: "Ver evidência" exibido também em Coleta e no gap, escopo mínimo ([escopo](meridian-escopo-dogfood-a3-a5.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua → Bussola |
+| D-20 | Meridian A5: tela de dependência/ciclo e ajuste de gap fica para depois, com gatilho ([escopo](meridian-escopo-dogfood-a3-a5.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua, Crivo |
 
 ---
 
@@ -681,3 +683,5 @@ Cada frente nova (copiloto, raio X, memória, modelo próprio) começa por um
    fazer o pre-mortem.
 2. **D-10:** confirmar que dado de cliente não treina modelo compartilhado. Isso
    muda o que o comercial pode prometer.
+3. ~~**D-19 e D-20:** confirmar o escopo do Meridian A3 (entra agora) e A5
+   (depois, com gatilho).~~ Confirmadas pelo CEO em 2026-09-29 (via Morgana).

@@ -66,6 +66,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Foco inicial do corpo: só o que aceita foco agora (habilitado, visível).
+const BODY_FOCUSABLE_SELECTOR =
+  'a[href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 // Focáveis para o trap de Tab — mesmo critério do foco inicial do ModalShell.
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -300,19 +304,26 @@ export function ModalShell({
   footer?: ReactNode;
 }) {
   const bodyRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Foco no primeiro controle do corpo; sem isso o teclado começa no backdrop.
+    // Foco no primeiro controle habilitado do corpo; sem controle (modal só de
+    // leitura, ou só com botões desabilitados) o foco vai para o próprio
+    // diálogo. Sem isso o teclado fica no body, atrás do backdrop.
     const first = bodyRef.current?.querySelector<HTMLElement>(
-      'input:not([type="hidden"]), select, textarea, button, [tabindex]:not([tabindex="-1"])'
+      BODY_FOCUSABLE_SELECTOR
     );
     first?.focus();
+    if (!dialogRef.current?.contains(document.activeElement)) {
+      dialogRef.current?.focus();
+    }
   }, []);
 
   return (
     <div
       aria-label={title}
       aria-modal="true"
+      ref={dialogRef}
       role="dialog"
       style={{
         width,
@@ -326,6 +337,7 @@ export function ModalShell({
         boxShadow: "0 50px 90px -24px rgba(0,0,0,.7)",
         overflow: "hidden",
       }}
+      tabIndex={-1}
     >
       <div
         style={{

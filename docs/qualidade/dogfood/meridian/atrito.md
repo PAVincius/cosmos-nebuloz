@@ -161,3 +161,11 @@ Formato: `P0..P3 | tela | passo de reprodução | dono`.
   **Dono**: Regua (spec 005) → Bussola.
 
 ---
+
+**P1** | Seleção de organização em `app.nebuloz.ai` (todas as telas) | No dogfood em produção, o CEO é ADMIN em 6 organizações, e duas têm nome quase igual: "Nebula" e "Nebuloz". Os diagnósticos delas também têm códigos parecidos (`AS-NBZ-001` e `AS-NEBULOZ-01`). Ele não sabia em qual organização estava, e uma leitura de SQL trocou uma pela outra. Resultado: a flag de tenant interno foi para o tenant errado e um diagnóstico "criado" nunca existiu. Nada perdeu dado, mas foram 2 decisões de produção tomadas em cima de identificação errada.
+
+  **Sugestão** (para o Norte decidir): (1) nome da organização ativa sempre visível no topo, inclusive no Meridian; (2) confirmação explícita ao trocar de organização; (3) no back-office, alerta ao criar organização com nome parecido com uma existente.
+
+  **Dono**: Norte → spec.
+
+---

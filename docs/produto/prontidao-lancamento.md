@@ -66,6 +66,12 @@ sem prometer o que não foi validado. A decisão é do CEO.
 
 ## Decisões
 
-- (pendente CEO) Lançamento simultâneo vs escalonado.
+- **2026-09-26 · CEO: lançamento escalonado.** A suíte é anunciada inteira e
+  liberada produto a produto, na ordem da esteira do dogfood (Meridian →
+  Scaffold → Charter → Cosmos → Signal). Só o Meridian entra como "Diagnóstico sob
+  agendamento". O primeiro cliente entra depois das condições 2–5 de compliance e
+  dos P2 de segurança. Os demais produtos vão para a lista de espera até passarem
+  no gate de maturidade (`regra-maturidade-e-carga.md`). Substitui o "lançar todos
+  ao mesmo tempo" repassado pela Ordem.
 - (pendente CEO) Preview do Meridian: aprovar escopo "1 respondente, sem evidência, sem IA".
 - (pendente CEO/jurídico) Pergunta 1 de `docs/compliance/operadora-controladora.md` §5.

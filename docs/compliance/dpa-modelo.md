@@ -62,9 +62,8 @@ não diretamente ao titular.
 > independente, e este anexo não se aplica — a Política de Privacidade do site
 > e os contratos de trabalho é que regem. O RoPA (§3, finalidades 2, 3, 9 e 10)
 > separa uma coisa da outra. **Decisão do CEO, 2026-09-29: a Nebuloz é
-> operadora no Meridian** (`operadora-controladora.md` §6). Para participante de
-> reunião a resposta não o citou; até confirmação, o texto de §1.1 sobre reunião
-> segue como recomendação. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
+> operadora no Meridian, só por ora** (`operadora-controladora.md` §6). Reunião
+> fica para decisão separada; ver §1.2. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
 > divisória, inclusive para reunião]]
 
 **1.1 Titulares sem conta.** O Cliente é o controlador também quanto aos dados
@@ -74,6 +73,15 @@ no Meridian e os participantes de reuniões gravadas por integração que o Clie
 conecte e opere. A Nebuloz trata esses dados exclusivamente como operadora, nos
 termos do art. 5º, VII, da Lei 13.709/2018, e não estabelece relação direta com
 esses titulares.
+
+**1.2 Escopo do enquadramento.** [[Decisão do CEO, 2026-09-29: a Nebuloz é
+operadora **só no Meridian, por ora**; a inteligência de reunião fica para
+decisão separada (opção C do memo). Enquanto ela não vier, tratar como **fora do
+escopo deste anexo** todo trecho sobre participante de reunião gravada — §1.1
+(parte final), a linha de reunião na tabela da §2, o primeiro item da §3, e as
+menções a reunião nas §8.1, §9 e §10.1 — e não vender inteligência de reunião a
+cliente externo. Os trechos ficam no texto para o jurídico revisar junto; a
+versão para assinatura sai sem eles.]]
 
 ## 2. Objeto e finalidades
 
@@ -105,8 +113,9 @@ desligada**: o Cliente não a ativa em nenhum diagnóstico, e a Nebuloz não
 contribui, nem consulta, dados do Cliente para o conjunto comparativo. Ativá-la
 depende de aditivo específico, com finalidade, base legal e aviso ao titular
 próprios, em que a Nebuloz figura como controladora daquele tratamento.
-[[DECISÃO CEO: confirmar que o benchmark não será oferecido no primeiro contrato.
-Além da cláusula, é preciso um controle no produto: hoje o consultor do Cliente
+[[Decisão do CEO, 2026-09-29: benchmark desligado no primeiro contrato, com
+trava no produto (Norte e Bussola). Até a trava existir, a cláusula não basta:
+hoje o consultor do Cliente
 liga a opção por uma caixa de seleção em `apps/app/components/meridian/screens/assessments.tsx:211`,
 e a proposta comercial não pode prometer "compare com o mercado" enquanto a
 função estiver desligada. Ver memo de 2026-09-29, §5]]

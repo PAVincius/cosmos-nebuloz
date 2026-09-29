@@ -48,6 +48,8 @@ O que fica mais fácil, o que fica mais difícil, e o que precisa ser revisitado
 | [0015](0015-caso-de-negocio-versionado.md) | Caso de negócio versionado vence o baseline plano do SRD | Accepted · **conflito de spec** |
 | [0016](0016-residencia-de-dado-fora-do-v1.md) | Residência de dado configurável fora do V1 do Scaffold | Accepted · **escopo reduzido** |
 | [0017](0017-scaffold-supervisao-no-backoffice.md) | Fila de supervisão do Scaffold vive no back-office | Accepted |
+| [0019](0019-corpus-de-treino-exige-proveniencia-e-licenca.md) | Nenhum treino sobre saída de modelo de API sem autorização; proveniência por item no LAB | Proposed |
+| [0020](0020-conteudo-recuperado-controle-estrutural-nao-cerca.md) | Conteúdo recuperado contido por controle estrutural; cerca de prompt é higiene | Proposed |
 
 **Conflito de spec** = dois documentos do handoff descrevem a mesma entidade de
 formas incompatíveis, e a implementação escolheu uma. A escolha está no corpo

@@ -1,8 +1,8 @@
 # Playbook — pedido de titular sem conta (uma página)
 
-**Vale para:** respondente do Meridian e participante de reunião gravada, quando escrevem para a Nebuloz. Enquadramento: Nebuloz operadora, cliente controlador (memo `2026-09-29-memo-ceo-operadora-controladora-meridian.md`, opção A; se o CEO escolher outra, este playbook muda).
+**Vale para:** respondente do Meridian que escreve para a Nebuloz. Enquadramento: Nebuloz operadora, cliente controlador (**decisão do CEO, 2026-09-29, só para o Meridian**; memo `2026-09-29-memo-ceo-operadora-controladora-meridian.md`). **Pedido de participante de reunião gravada não segue este playbook:** o enquadramento de reunião está em decisão separada; enquanto não sair, o pedido vai ao CEO no mesmo dia, sem repasse nem resposta de mérito.
 **Prazos:** repasse ao cliente em **5 dias úteis** do recebimento (DPA §9.2). Titular recebe resposta ao cliente dentro de **15 dias úteis** (prazo da policy 05). Estes prazos valem por procedimento manual (DPA §10.2).
-**Papéis (a confirmar pelo CEO, memo §5 c):** *Dono do SLA* = Ordem. *Redige* = Lacre. *Envia* = quem o CEO delegar por escrito. *Executa a eliminação técnica* = Pilar, com "vai" do CEO por operação em produção.
+**Papéis (decisão do CEO, 2026-09-29):** *Dono do SLA* = **Ordem**. *Redige* = Lacre. *Envia* = Ordem, **depois** da delegação escrita do CEO (ainda a escrever; sem ela, quem envia é o CEO). *Audita o prazo* = Lacre. *Executa a eliminação técnica* = Pilar, com "vai" do CEO por operação em produção. *Executa a eliminação técnica* = Pilar, com "vai" do CEO por operação em produção.
 
 | # | Passo | Quem | Quando |
 |---|---|---|---|
@@ -23,6 +23,16 @@
 3. **Só afirmar estado de produção depois de ver** no lugar (banco, painel). Sem credencial, pedir a quem tem.
 4. **Nada de dado pessoal do titular** em canal de chat ou e-mail interno: só identificador e data.
 5. **Estourou o prazo de 5 dias úteis?** Avisar o CEO no mesmo dia. Atraso é registrado no passo 9, não escondido.
+
+## Para o RACI do playbook de vendas (§4, coluna Meridian)
+
+`docs/comercial/playbook-de-vendas.md` não é da minha mesa (Compliance escreve em `docs/compliance/`), então **não editei o RACI**. Linha pronta para quem for o dono daquele arquivo colar, conforme a decisão do CEO de 2026-09-29:
+
+| Papel | Meridian |
+|---|---|
+| **Dono do SLA** | **Ordem** (prazo de 5 dias úteis do repasse de pedido de titular; envio por delegação escrita do CEO). Os demais itens do SLA do Meridian seguem em branco |
+
+A regra 1 do §4 (Dono do SLA ≠ quem entrega) fica preenchida enquanto Ordem não entregar o Meridian.
 
 ## O que este playbook não resolve
 
