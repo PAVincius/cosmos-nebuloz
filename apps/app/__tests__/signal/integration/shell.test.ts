@@ -50,6 +50,7 @@ const mockDb = (over: {
   finalReports?: number;
   unhealthy?: number;
   mappings?: number;
+  models?: number;
 }) => {
   const db: DbShape = {
     tenant: { findUnique: vi.fn().mockResolvedValue({ name: "Vanta Saúde" }) },
@@ -76,6 +77,9 @@ const mockDb = (over: {
     },
     signalMetricMapping: {
       count: vi.fn().mockResolvedValue(over.mappings ?? 0),
+    },
+    signalMeasureModel: {
+      count: vi.fn().mockResolvedValue(over.models ?? 0),
     },
   };
   h.withTenantDb.mockImplementation(
@@ -140,6 +144,7 @@ describe("contadores do sidebar", () => {
       finalReports: 3,
       unhealthy: 2,
       mappings: 8,
+      models: 5,
     });
     const shell = await getShellData();
     expect(shell.badges).toEqual({
@@ -149,6 +154,7 @@ describe("contadores do sidebar", () => {
       reports: 3,
       connections: 2,
       mapping: 8,
+      models: 5,
     });
   });
 

@@ -38,11 +38,13 @@ import {
   Eyebrow,
   ScreenError,
   SkeletonCard,
+  Tabs,
   useModal,
   useSignalData,
 } from "../base";
 import { AdoptionSparkline, OutcomeSparkline } from "../charts";
 import { BaselineForm, CloseInitiativeForm, ObservationForm } from "../modal";
+import { PlanTab } from "../plan-tab";
 import { ValueReading } from "../verdict-badge";
 
 type D = InitiativeDetail;
@@ -655,6 +657,7 @@ export default function InitiativeDetailScreen({ param }: { param?: string }) {
   const code = param ?? "";
   const fetcher = useCallback(() => getInitiative({ code }), [code]);
   const { data, loading, error, reload } = useSignalData<D>(fetcher);
+  const [tab, setTab] = useState("resumo");
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -681,39 +684,58 @@ export default function InitiativeDetailScreen({ param }: { param?: string }) {
         />
       </PageHeader>
 
-      <VerdictCard d={data} />
-      {data.closure ? <ClosureCard closure={data.closure} /> : null}
+      <Tabs
+        onChange={setTab}
+        tabs={[
+          { id: "resumo", label: "Resumo" },
+          { id: "plano", label: "Plano de medição" },
+        ]}
+        value={tab}
+      />
 
-      <div
-        style={{
-          display: "grid",
-          gap: "var(--gap)",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        }}
-      >
-        <AdoptionCard
-          adoption={data.adoption}
-          adoptionBar={data.bars.adoptionBar}
-        />
-        <OutcomeCard outcome={data.outcome} />
+      {/* O plano monta junto com o resumo e só fica escondido: ao abrir a aba o
+          dado já está aqui, sem tela em branco (SG-DEV-06). */}
+      <div hidden={tab !== "plano"}>
+        <PlanTab code={data.code} />
       </div>
 
-      <RoiCard code={data.code} onChanged={reload} roi={data.roi} />
-      <ConfidenceCard confidence={data.confidence} />
-      <BaselineCard
-        baseline={data.baseline}
-        code={data.code}
-        onChanged={reload}
-      />
-      {data.alerts.length > 0 ? <AlertsCard alerts={data.alerts} /> : null}
+      {tab === "resumo" ? (
+        <>
+          <VerdictCard d={data} />
+          {data.closure ? <ClosureCard closure={data.closure} /> : null}
 
-      <p
-        className="mono"
-        style={{ fontSize: 10.5, color: "var(--ink-faint)", margin: 0 }}
-      >
-        {data.evidenceCount} observação(ões) de métrica sustentam estes números
-        · status {STATUS_LABEL[data.status]}
-      </p>
+          <div
+            style={{
+              display: "grid",
+              gap: "var(--gap)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            }}
+          >
+            <AdoptionCard
+              adoption={data.adoption}
+              adoptionBar={data.bars.adoptionBar}
+            />
+            <OutcomeCard outcome={data.outcome} />
+          </div>
+
+          <RoiCard code={data.code} onChanged={reload} roi={data.roi} />
+          <ConfidenceCard confidence={data.confidence} />
+          <BaselineCard
+            baseline={data.baseline}
+            code={data.code}
+            onChanged={reload}
+          />
+          {data.alerts.length > 0 ? <AlertsCard alerts={data.alerts} /> : null}
+
+          <p
+            className="mono"
+            style={{ fontSize: 10.5, color: "var(--ink-faint)", margin: 0 }}
+          >
+            {data.evidenceCount} observação(ões) de métrica sustentam estes
+            números · status {STATUS_LABEL[data.status]}
+          </p>
+        </>
+      ) : null}
     </div>
   );
 }

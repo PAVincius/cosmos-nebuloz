@@ -29,6 +29,7 @@ export const PRODUCT_EVENTS = {
   scaffoldGateReopened: "scaffold/gate.reopened",
   signalBaselineFrozen: "signal/baseline.frozen",
   signalVerdict: "signal/verdict",
+  signalTargetReviewRequested: "signal/target-review.requested",
   charterControlAccepted: "charter/control.accepted",
   charterControlExpired: "charter/control.expired",
 } as const;
@@ -84,6 +85,20 @@ const signalVerdict = z.object({
   at: Iso,
 });
 
+/** Pedido de revisão de meta de métrica congelada. O texto do pedido fica no
+ *  histórico do Signal (`eventId`); o Scaffold, dono do baseline e do caso de
+ *  negócio, relê de lá em vez de receber a prosa por evento. */
+const signalTargetReviewRequested = z.object({
+  tenantId: z.string().min(1),
+  initiativeId: z.string().min(1),
+  initiativeCode: z.string().min(1),
+  scaffoldTrackId: z.string().min(1).nullable(),
+  planMetricId: z.string().min(1),
+  metricName: z.string().min(1),
+  eventId: z.string().min(1),
+  at: Iso,
+});
+
 const charterControlBase = z.object({
   tenantId: z.string().min(1),
   useCaseId: z.string().min(1),
@@ -105,6 +120,7 @@ export const PRODUCT_EVENT_SCHEMAS = {
   scaffoldGateReopened,
   signalBaselineFrozen,
   signalVerdict,
+  signalTargetReviewRequested,
   charterControlAccepted,
   charterControlExpired,
 } as const;
@@ -129,6 +145,7 @@ const FACT_KEY: {
   scaffoldGateReopened: (d) => `${d.phaseInstanceId}:${d.reopenCount}`,
   signalBaselineFrozen: (d) => d.baselineId,
   signalVerdict: (d) => `${d.reportId}:${d.initiativeCode}`,
+  signalTargetReviewRequested: (d) => d.eventId,
   charterControlAccepted: (d) => `${d.caseControlId}:${d.at}`,
   charterControlExpired: (d) => `${d.caseControlId}:${d.at}`,
 };

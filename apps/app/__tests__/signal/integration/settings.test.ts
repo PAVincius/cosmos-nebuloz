@@ -24,6 +24,7 @@ vi.mock("@repo/rbac", () => ({
     ANALYST: "Analista",
     ADMIN: "Administrador",
   },
+  invalidateSignalRoleCache: vi.fn(),
 }));
 vi.mock("@/lib/signal/guards", async () => {
   const errors = await vi.importActual<typeof import("@/lib/signal/errors")>(
