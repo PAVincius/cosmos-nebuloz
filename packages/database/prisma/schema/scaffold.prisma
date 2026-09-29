@@ -84,13 +84,6 @@ enum ScaffoldRole {
   ADMIN
 }
 
-/// S-12 — arquétipo de processo. Define qual template seed a trilha usa.
-enum ScaffoldArchetype {
-  TRIAGE
-  DOC_REVIEW
-  REPORTING
-}
-
 /// Como o critério é avaliado no gate. MANUAL = alguém marca. DERIVED = o
 /// sistema calcula (ex.: "baseline assinado existe").
 enum ScaffoldCriterionEvaluation {
@@ -155,7 +148,7 @@ model ScaffoldTemplate {
   /// "triage" | "docreview" | "reporting"
   key       String            @unique
   name      String
-  archetype ScaffoldArchetype
+  archetype WorkForm
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -314,7 +307,7 @@ model ScaffoldTrack {
   code     String
 
   processName String
-  archetype   ScaffoldArchetype?
+  archetype   WorkForm?
 
   /// Dono do processo, do lado do cliente.
   ownerId      String

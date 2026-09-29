@@ -13,11 +13,11 @@ const ler = (...partes: string[]) =>
   readFileSync(join(PRISMA, ...partes), "utf-8");
 
 const FORMAS = [
-  "CONVERSATIONAL_ASSISTANT",
-  "ANALYSIS_PRIORITIZATION",
-  "DOCUMENT_REVIEW",
-  "DEMAND_TRIAGE",
-  "RECURRING_REPORTS",
+  "CONVERSATIONAL",
+  "ANALYSIS",
+  "DOC_REVIEW",
+  "TRIAGE",
+  "REPORTING",
 ];
 
 function bloco(fonte: string, cabecalho: string): string {
@@ -44,10 +44,23 @@ describe("X-02 — enum WorkForm", () => {
     expect(valores).toEqual(FORMAS);
   });
 
-  it("a migration cria o tipo com os mesmos valores e tem down.sql", () => {
-    for (const forma of FORMAS) {
-      expect(migration).toContain(`'${forma}'`);
-    }
+  it("é o antigo ScaffoldArchetype renomeado: preserva os 3 valores e soma 2", () => {
+    expect(migration).toContain(
+      'ALTER TYPE "ScaffoldArchetype" RENAME TO "WorkForm"'
+    );
+    expect(migration).toContain("ADD VALUE IF NOT EXISTS 'CONVERSATIONAL'");
+    expect(migration).toContain("ADD VALUE IF NOT EXISTS 'ANALYSIS'");
+    expect(migration).not.toContain("CREATE TYPE");
+  });
+
+  it("scaffold.prisma usa WorkForm e não declara mais ScaffoldArchetype", () => {
+    const scaffold = ler("schema", "scaffold.prisma");
+    expect(scaffold).not.toContain("enum ScaffoldArchetype");
+    expect(scaffold).toMatch(/archetype\s+WorkForm\?/);
+    expect(scaffold).toMatch(/archetype\s+WorkForm\s*(\n|$)/);
+  });
+
+  it("tem down.sql", () => {
     expect(
       existsSync(
         join(PRISMA, "migrations", "20260929000000_work_form_enum", "down.sql")
