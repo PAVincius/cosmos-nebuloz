@@ -24,6 +24,10 @@ const TABELAS: [string, string][] = [
   ["20260929010100_signal_plan_metric", "SignalPlanMetricEvent"],
   ["20260929010300_charter_case_controls", "CharterCaseControl"],
   ["20260929010300_charter_case_controls", "CharterCaseControlEvent"],
+  [
+    "20260929030000_meridian_benchmark_enablement",
+    "MeridianBenchmarkEnablement",
+  ],
 ];
 
 describe.each(TABELAS)("RLS em %s → %s", (dir, tabela) => {
