@@ -137,4 +137,6 @@ export const MIGRATIONS_DO_CODIGO: readonly string[] = [
   "20260929000700_rls_catalogo_global_scaffold",
   "20260929010000_signal_measure_models",
   "20260929010100_signal_plan_metric",
+  "20260929010200_charter_control_profiles",
+  "20260929010300_charter_case_controls",
 ];

@@ -22,6 +22,8 @@ const TABELAS: [string, string][] = [
   ["20260929000500_scaffold_deliverable_link", "ScaffoldDeliverableLink"],
   ["20260929010100_signal_plan_metric", "SignalPlanMetric"],
   ["20260929010100_signal_plan_metric", "SignalPlanMetricEvent"],
+  ["20260929010300_charter_case_controls", "CharterCaseControl"],
+  ["20260929010300_charter_case_controls", "CharterCaseControlEvent"],
 ];
 
 describe.each(TABELAS)("RLS em %s → %s", (dir, tabela) => {

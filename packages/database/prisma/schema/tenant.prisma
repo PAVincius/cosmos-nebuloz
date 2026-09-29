@@ -195,6 +195,8 @@ model Tenant {
   charterPolicySections     CharterPolicySection[]
   charterPolicyVersions     CharterPolicyVersion[]
   charterUseCases           CharterUseCase[]
+  charterCaseControls       CharterCaseControl[]
+  charterCaseControlEvents  CharterCaseControlEvent[]
   charterDecisions          CharterDecision[]
   charterMitigations        CharterMitigation[]
   charterVendors            CharterVendor[]
