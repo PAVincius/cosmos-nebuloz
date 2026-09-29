@@ -23,6 +23,11 @@ export {
   type MeridianBatteryQuestion,
 } from "./meridian";
 export {
+  type MeridianBenchmarkDb,
+  type SetMeridianBenchmarkEnablementInput,
+  setMeridianBenchmarkEnablement,
+} from "./meridian-benchmark";
+export {
   type ContractModuleInput,
   contractModule,
   type ModuleDeps,

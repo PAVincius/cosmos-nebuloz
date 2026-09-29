@@ -10,6 +10,7 @@ import {
   percentiles,
   readCohort,
 } from "@/lib/meridian/benchmark";
+import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
 import { finalOf } from "@/lib/meridian/composite";
 import { requireMeridianContext } from "@/lib/meridian/guards";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
@@ -53,7 +54,8 @@ async function recalculate(cohortKey: string): Promise<void> {
  * Grava as contribuições de um assessment e recalcula a coorte.
  *
  * Chamado por `runScoring` apenas quando `benchmarkOptIn = true` — a porta é o
- * consentimento, e ele é default deny no schema.
+ * consentimento, e ele é default deny no schema. Além do opt-in, o tenant
+ * precisa estar habilitado pela Nebuloz (`isBenchmarkEnabled`).
  */
 export async function contributeInTx(
   db: Db,
@@ -65,11 +67,17 @@ export async function contributeInTx(
       id: true,
       sector: true,
       sizeBand: true,
+      tenantId: true,
       benchmarkOptIn: true,
       scores: { select: { axis: true, computed: true, final: true } },
     },
   });
   if (!(a?.benchmarkOptIn && a.scores.length)) {
+    return;
+  }
+  // Travado por tenant (specs/012): a habilitação vale no momento do scoring e
+  // mais que um opt-in antigo. Desligada, nada entra na coorte.
+  if (!(await isBenchmarkEnabled(db, a.tenantId))) {
     return;
   }
   const cohortKey = cohortKeyOf(a.sector, a.sizeBand);
@@ -166,5 +174,20 @@ export async function readCohortAction(
       n: c.n,
       bands: bandsFrom(c.percentiles),
     });
+  });
+}
+
+/** A habilitação de benchmark do tenant da sessão, para a tela de criar
+ *  assessment decidir se mostra a caixa de opt-in. Só leitura: ligar e desligar
+ *  é da Nebuloz, no back-office. */
+export async function getBenchmarkEnablement(): Promise<
+  Result<{ enabled: boolean }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianContext();
+    const enabled = await withTenantDb(ctx.tenantId, (db) =>
+      isBenchmarkEnabled(db, ctx.tenantId)
+    );
+    return { enabled };
   });
 }

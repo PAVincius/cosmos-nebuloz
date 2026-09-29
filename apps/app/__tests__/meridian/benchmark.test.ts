@@ -18,6 +18,7 @@ const h = vi.hoisted(() => ({
   assessmentFindUnique: vi.fn(),
   assessmentFindFirst: vi.fn(),
   assessmentUpdate: vi.fn(),
+  enablementFindUnique: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -48,6 +49,7 @@ vi.mock("@repo/database", () => ({
         update: h.assessmentUpdate,
         findUnique: h.assessmentFindUnique,
       },
+      meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
     }),
   database: {
     meridianBenchmarkCohort: {
@@ -66,6 +68,7 @@ vi.mock("@repo/database", () => ({
 
 import {
   contributeInTx,
+  getBenchmarkEnablement,
   listCohorts,
   readCohortAction,
   withdrawContribution,
@@ -95,6 +98,7 @@ beforeEach(() => {
   h.contributionUpsert.mockResolvedValue({});
   h.contributionFindMany.mockResolvedValue([]);
   h.contributionDeleteMany.mockResolvedValue({});
+  h.enablementFindUnique.mockResolvedValue({ enabled: true });
 });
 
 describe("listCohorts", () => {
@@ -143,11 +147,61 @@ describe("readCohortAction", () => {
 describe("contributeInTx", () => {
   const db = {
     meridianAssessment: { findUnique: h.assessmentFindUnique },
+    meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
   } as never;
+
+  // Benchmark travado por tenant (specs/012, FR-007/FR-008): a habilitação é
+  // checada NO momento do scoring, e vale mais que um opt-in antigo.
+  it("habilitação desligada não contribui, mesmo com opt-in antigo (SC-003)", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: false });
+    h.assessmentFindUnique.mockResolvedValue({
+      id: "a1",
+      tenantId: "t1",
+      sector: "Saúde",
+      sizeBand: "200–1.000",
+      benchmarkOptIn: true,
+      scores: [{ axis: "DATA", computed: 46, final: null }],
+    });
+    await contributeInTx(db, "a1");
+    expect(h.contributionUpsert).not.toHaveBeenCalled();
+    expect(h.cohortUpsert).not.toHaveBeenCalled();
+    expect(h.cohortUpdate).not.toHaveBeenCalled();
+  });
+
+  it("tenant sem linha de habilitação não contribui", async () => {
+    h.enablementFindUnique.mockResolvedValue(null);
+    h.assessmentFindUnique.mockResolvedValue({
+      id: "a1",
+      tenantId: "t1",
+      sector: "Saúde",
+      sizeBand: "200–1.000",
+      benchmarkOptIn: true,
+      scores: [{ axis: "DATA", computed: 46, final: null }],
+    });
+    await contributeInTx(db, "a1");
+    expect(h.contributionUpsert).not.toHaveBeenCalled();
+  });
+
+  it("habilitação ligada e opt-in marcado: contribui como hoje (FR-010)", async () => {
+    h.assessmentFindUnique.mockResolvedValue({
+      id: "a1",
+      tenantId: "t1",
+      sector: "Saúde",
+      sizeBand: "200–1.000",
+      benchmarkOptIn: true,
+      scores: [{ axis: "DATA", computed: 46, final: null }],
+    });
+    await contributeInTx(db, "a1");
+    expect(h.contributionUpsert).toHaveBeenCalledTimes(1);
+    expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
+      tenantId: "t1",
+    });
+  });
 
   it("não contribui sem opt-in", async () => {
     h.assessmentFindUnique.mockResolvedValue({
       id: "a1",
+      tenantId: "t1",
       sector: "Saúde",
       sizeBand: "200–1.000",
       benchmarkOptIn: false,
@@ -160,6 +214,7 @@ describe("contributeInTx", () => {
   it("não contribui antes de existir score", async () => {
     h.assessmentFindUnique.mockResolvedValue({
       id: "a1",
+      tenantId: "t1",
       sector: "Saúde",
       sizeBand: "200–1.000",
       benchmarkOptIn: true,
@@ -172,6 +227,7 @@ describe("contributeInTx", () => {
   it("contribui com o score final, não com o computado, quando há override", async () => {
     h.assessmentFindUnique.mockResolvedValue({
       id: "a1",
+      tenantId: "t1",
       sector: "Saúde",
       sizeBand: "200–1.000",
       benchmarkOptIn: true,
@@ -188,6 +244,7 @@ describe("contributeInTx", () => {
   it("não grava nada que identifique a organização", async () => {
     h.assessmentFindUnique.mockResolvedValue({
       id: "a1",
+      tenantId: "t1",
       sector: "Saúde",
       sizeBand: "200–1.000",
       benchmarkOptIn: true,
@@ -224,5 +281,22 @@ describe("withdrawContribution", () => {
     );
     expect(h.contributionDeleteMany).toHaveBeenCalledTimes(1);
     expect(h.cohortUpdate).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getBenchmarkEnablement", () => {
+  it("devolve a habilitação do tenant da sessão", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: true });
+    const res = await getBenchmarkEnablement();
+    expect(res.ok && res.data).toEqual({ enabled: true });
+    expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
+      tenantId: "t1",
+    });
+  });
+
+  it("sem linha: desligado", async () => {
+    h.enablementFindUnique.mockResolvedValue(null);
+    const res = await getBenchmarkEnablement();
+    expect(res.ok && res.data).toEqual({ enabled: false });
   });
 });

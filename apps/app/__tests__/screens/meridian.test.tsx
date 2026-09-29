@@ -19,6 +19,9 @@ vi.mock("@/app/(meridian)/actions/assessments", () => ({
   listTemplates: (...args: unknown[]) => listTemplatesMock(...args),
 }));
 vi.mock("@/app/(meridian)/actions/benchmark", () => ({
+  // Tenant sem habilitação de benchmark (padrão, specs/012): a caixa some.
+  getBenchmarkEnablement: () =>
+    Promise.resolve({ ok: true, data: { enabled: false } }),
   listCohorts: (...args: unknown[]) => listCohortsMock(...args),
 }));
 vi.mock("next/navigation", () => ({

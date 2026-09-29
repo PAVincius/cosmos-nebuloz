@@ -19,6 +19,7 @@ const h = vi.hoisted(() => ({
   templateUpdate: vi.fn(),
   sequenceUpsert: vi.fn(),
   auditCreate: vi.fn(),
+  enablementFindUnique: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -63,6 +64,7 @@ vi.mock("@repo/database", () => ({
         update: h.templateUpdate,
       },
       meridianSequence: { upsert: h.sequenceUpsert },
+      meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
       auditLog: { create: h.auditCreate },
     }),
 }));
@@ -125,6 +127,7 @@ beforeEach(() => {
   h.assessmentCreate.mockResolvedValue({ id: "a2", code: "AS-104" });
   h.templateUpdate.mockResolvedValue({});
   h.auditCreate.mockResolvedValue({});
+  h.enablementFindUnique.mockResolvedValue({ enabled: true });
   h.templateFindMany.mockResolvedValue([
     { id: TPL_ID, name: "Diagnose padrão", version: "v3.2" },
   ]);
@@ -237,6 +240,56 @@ describe("createAssessment", () => {
     });
     await createAssessment(input);
     expect(h.templateUpdate).not.toHaveBeenCalled();
+  });
+
+  describe("benchmark travado por tenant (specs/012)", () => {
+    const tpl = { id: TPL_ID, version: "v3.2", lockedAt: null };
+
+    it("habilitação desligada recusa opt-in marcado, sem criar nada (FR-005)", async () => {
+      h.templateFindFirst.mockResolvedValue(tpl);
+      h.enablementFindUnique.mockResolvedValue({ enabled: false });
+      const res = await createAssessment({ ...input, benchmarkOptIn: true });
+      expect(res.ok).toBe(false);
+      expect(!res.ok && res.error).toMatch(/benchmark/i);
+      expect(h.assessmentCreate).not.toHaveBeenCalled();
+      expect(h.auditCreate).not.toHaveBeenCalled();
+    });
+
+    it("sem linha de habilitação também recusa (default é desligado)", async () => {
+      h.templateFindFirst.mockResolvedValue(tpl);
+      h.enablementFindUnique.mockResolvedValue(null);
+      const res = await createAssessment({ ...input, benchmarkOptIn: true });
+      expect(res.ok).toBe(false);
+      expect(h.assessmentCreate).not.toHaveBeenCalled();
+    });
+
+    it("habilitação desligada aceita assessment sem opt-in", async () => {
+      h.templateFindFirst.mockResolvedValue(tpl);
+      h.enablementFindUnique.mockResolvedValue({ enabled: false });
+      const res = await createAssessment({ ...input, benchmarkOptIn: false });
+      expect(res.ok).toBe(true);
+      const data = h.assessmentCreate.mock.calls[0][0].data;
+      expect(data.benchmarkOptIn).toBe(false);
+    });
+
+    it("habilitação ligada: opt-in marcado segue como hoje (FR-010)", async () => {
+      h.templateFindFirst.mockResolvedValue(tpl);
+      h.enablementFindUnique.mockResolvedValue({ enabled: true });
+      const res = await createAssessment({ ...input, benchmarkOptIn: true });
+      expect(res.ok).toBe(true);
+      expect(h.assessmentCreate.mock.calls[0][0].data.benchmarkOptIn).toBe(
+        true
+      );
+    });
+
+    it("a habilitação é lida do tenant da sessão, não do input", async () => {
+      h.templateFindFirst.mockResolvedValue(tpl);
+      h.enablementFindUnique.mockResolvedValue({ enabled: true });
+      await createAssessment({ ...input, benchmarkOptIn: true });
+      expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
+        tenantId: "t1",
+      });
+    });
   });
 
   it("recusa template de outra organização", async () => {

@@ -1,0 +1,12 @@
+# Meridian — benchmark travado por tenant (spec 012), lado (a) com modelo mockado
+
+Spec: `specs/012-benchmark-travado-tenant/spec.md` (PR #307). Schema (`MeridianBenchmarkEnablement`, tabela nova, sem linha = desligado) é do Alicerce, branch `feat/meridian-benchmark-schema`. Esta entrega usa o model só por forma estrutural/mock; **não faz merge nem deploy antes da migration estar aplicada** — sem a tabela, `getBenchmarkEnablement`, `createAssessment` com opt-in e `contributeInTx` quebram em runtime.
+
+- **Leitor único** `lib/meridian/benchmark-enablement.ts` (`isBenchmarkEnabled`): sem linha ou `enabled=false` → desligado. `db` é `unknown` com cast local; tipar quando o client gerado tiver o model.
+- **`createAssessment`** recusa `benchmarkOptIn=true` com a habilitação off (`benchmark.not-enabled`, 422), antes de criar e auditar (FR-005/SC-002).
+- **`contributeInTx`** (chamado pelo `runScoring`) não contribui com a habilitação off, mesmo com opt-in antigo; a checagem é no momento do scoring (FR-007/008/SC-003). `withdrawContribution` não mudou.
+- **Tela**: `NewAssessmentModal` (agora exportado) só mostra a caixa com a habilitação ligada; carregando ou falha = travado; `benchmarkOptIn` só sai `true` se ligada (FR-006/010). Action de leitura `getBenchmarkEnablement`.
+- **Escritor único** `setMeridianBenchmarkEnablement` em `packages/provisioning/src/meridian-benchmark.ts` (exportado no index): aditivo (`agreementRef`) obrigatório para tenant externo (`BENCHMARK_AGREEMENT_REQUIRED`), tenant interno liga sem aditivo, desligar preserva a referência; audita `meridian.benchmark.enabled|disabled` com ator, alvo, diff e referência (FR-001..004, FR-009). O app do cliente não o importa (SC-005): a tela de staff na ficha do cliente é do **Painel** (back-office) e chama este escritor.
+- **Ainda fora**: seeds de demo com `benchmarkOptIn: true` (`seed-meridian.ts`) só contribuem com uma linha de habilitação — criar quando o schema entrar. E2E não escrito/rodado.
+
+Testes: provisioning 168/168 (7 novos do escritor); app `__tests__/meridian` + `__tests__/screens` verdes (novos: `benchmark-enablement`, `new-assessment-benchmark`, casos em `assessments`, `benchmark`); tsc app e provisioning sem erro; biome limpo.
