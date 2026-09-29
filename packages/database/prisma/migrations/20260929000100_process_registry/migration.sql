@@ -40,3 +40,15 @@ CREATE UNIQUE INDEX "ProcessRegistry_tenantId_charterUseCaseId_key" ON "ProcessR
 -- AddForeignKey
 ALTER TABLE "ProcessRegistry" ADD CONSTRAINT "ProcessRegistry_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- Um registro sem nenhum id de produto não liga nada.
+ALTER TABLE "ProcessRegistry" ADD CONSTRAINT "ProcessRegistry_ao_menos_um_id"
+  CHECK ("meridianGapId" IS NOT NULL OR "scaffoldTrackId" IS NOT NULL OR "signalInitiativeId" IS NOT NULL OR "charterUseCaseId" IS NOT NULL);
+
+-- RLS (padrão de 20260902150000/190000). ADR-0012: inerte enquanto a aplicação
+-- conectar como superuser; o filtro por tenant na query segue sendo o isolamento.
+ALTER TABLE "ProcessRegistry" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ProcessRegistry" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation" ON "ProcessRegistry";
+CREATE POLICY "tenant_isolation" ON "ProcessRegistry"
+  USING ("tenantId" = current_tenant_id())
+  WITH CHECK ("tenantId" = current_tenant_id());

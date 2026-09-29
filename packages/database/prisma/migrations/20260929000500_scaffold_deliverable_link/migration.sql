@@ -32,3 +32,12 @@ ALTER TABLE "ScaffoldDeliverableLink" ADD CONSTRAINT "ScaffoldDeliverableLink_te
 
 -- AddForeignKey
 ALTER TABLE "ScaffoldDeliverableLink" ADD CONSTRAINT "ScaffoldDeliverableLink_deliverableId_fkey" FOREIGN KEY ("deliverableId") REFERENCES "ScaffoldDeliverableInstance"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- RLS (padrão de 20260902150000/190000). ADR-0012: inerte enquanto a aplicação
+-- conectar como superuser; o filtro por tenant na query segue sendo o isolamento.
+ALTER TABLE "ScaffoldDeliverableLink" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ScaffoldDeliverableLink" FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tenant_isolation" ON "ScaffoldDeliverableLink";
+CREATE POLICY "tenant_isolation" ON "ScaffoldDeliverableLink"
+  USING ("tenantId" = current_tenant_id())
+  WITH CHECK ("tenantId" = current_tenant_id());
