@@ -41,6 +41,7 @@ import {
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
+import { RationaleHint } from "./rationale-hint";
 
 const RATIONALE_MIN = 20;
 
@@ -414,6 +415,7 @@ function OverrideModal({
             rows={3}
             value={rationale}
           />
+          <RationaleHint length={rationale.trim().length} min={RATIONALE_MIN} />
         </Field>
 
         {score.note && (
