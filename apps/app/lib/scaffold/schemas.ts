@@ -77,6 +77,22 @@ export const ListTracksSchema = z.object({
 
 export const TrackIdSchema = z.object({ trackId: cuid });
 
+// ── Acesso ────────────────────────────────────────────────────────────────────
+
+export const ScaffoldRoleEnum = z.enum([
+  "TEAM_MEMBER",
+  "PROCESS_OWNER",
+  "TRANSFORMATION_LEAD",
+  "CONSULTANT",
+  "ADMIN",
+]);
+
+/** Sem `tenantId`: o tenant é o da sessão, nunca o da entrada. */
+export const AssignScaffoldRoleSchema = z.object({
+  userId: cuid,
+  role: ScaffoldRoleEnum,
+});
+
 export const CancelTrackSchema = z.object({
   trackId: cuid,
   rationale: overrideRationale,

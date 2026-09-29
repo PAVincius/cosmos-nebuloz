@@ -15,6 +15,8 @@ export const SCAFFOLD_ERROR = {
   OVERLAY_HAS_UNRESOLVED_CONFLICT: "OVERLAY_HAS_UNRESOLVED_CONFLICT",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
   PROMOTION_HAS_ACTIVE_TRACK: "PROMOTION_HAS_ACTIVE_TRACK",
+  // Acesso
+  MEMBER_NOT_IN_TENANT: "MEMBER_NOT_IN_TENANT",
   // Gate — SG-01..SG-05
   STEPS_INCOMPLETE: "STEPS_INCOMPLETE",
   CRITERIA_UNMET: "CRITERIA_UNMET",
@@ -47,6 +49,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Esta trilha tem caso de negócio assinado. Cancelar exige decidir explicitamente o que acontece com a apuração do Signal.",
   PROMOTION_HAS_ACTIVE_TRACK:
     "A promoção tem trilha ativa. Cancele a trilha antes de revogar a promoção — revogar aqui deixaria trabalho em curso sem origem.",
+  MEMBER_NOT_IN_TENANT:
+    "Esta pessoa não faz parte da organização. Convide-a para a organização antes de atribuir um papel de adoção.",
   STEPS_INCOMPLETE:
     "Há passo requerido não concluído nesta fase. Um gate só é avaliado depois que o trabalho da fase terminou.",
   CRITERIA_UNMET:

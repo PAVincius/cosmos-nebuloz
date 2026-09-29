@@ -80,6 +80,18 @@ describe("separações que o produto depende", () => {
     expect(hasScaffoldPermission("TEAM_MEMBER", "track.manage")).toBe(false);
   });
 
+  it("só consultor e administrador atribuem papel de adoção (SA-05)", () => {
+    // Quem atribui papel decide quem pode fechar gate. Membro, dono e líder
+    // não se promovem sozinhos.
+    expect(scaffoldRolesGranting("membership.manage").sort()).toEqual([
+      "ADMIN",
+      "CONSULTANT",
+    ]);
+    expect(hasScaffoldPermission("TEAM_MEMBER", "membership.manage")).toBe(
+      false
+    );
+  });
+
   it("todo papel lê o portfólio — visibilidade não é privilégio", () => {
     for (const role of Object.keys(SCAFFOLD_MATRIX)) {
       expect(

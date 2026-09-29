@@ -23,7 +23,8 @@ export type ScaffoldEntity =
   | "scaffold.override"
   | "scaffold.businesscase"
   | "scaffold.template"
-  | "scaffold.overlay";
+  | "scaffold.overlay"
+  | "scaffold.membership";
 
 /**
  * Grava entrada de auditoria do Scaffold (SN-03).
@@ -125,4 +126,5 @@ export const FIELD_LABELS = {
   unmetCriteria: "Critérios não atendidos",
   signedVersionId: "Versão assinada",
   archetype: "Arquétipo",
+  scaffoldRole: "Papel de adoção",
 } as const;
