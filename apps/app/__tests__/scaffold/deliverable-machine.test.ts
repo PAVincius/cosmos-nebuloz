@@ -2,10 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   type DeliverableStatus,
   type DeliverableTransition,
+  decideEdit,
   decideTransition,
   deliverableGrants,
   gateReviewState,
 } from "@/lib/scaffold/deliverable-machine";
+import {
+  hasScaffoldPermission,
+  SCAFFOLD_MATRIX,
+} from "../../../../packages/rbac/src/scaffold-matrix";
 
 // Máquina de estados do entregável — SC-DEV-03/05, SC-PO-03/04.
 //
@@ -341,5 +346,60 @@ describe("gate Revisar e assinar (SG-01)", () => {
     const r = gateReviewState([]);
     expect(r.blocked).toBe(true);
     expect(r.reason).toBe("A fase não tem entregável obrigatório cadastrado.");
+  });
+});
+
+describe("coerência com a matriz do rbac", () => {
+  // A máquina carrega o ESCOPO (próprio ou qualquer) que a matriz não expressa,
+  // mas o que cada papel pode não pode divergir das permissões deliverable.*.
+  it.each(Object.keys(SCAFFOLD_MATRIX))("%s", (role) => {
+    const g = deliverableGrants(role);
+    const r = role as keyof typeof SCAFFOLD_MATRIX;
+    expect(g.work !== "none").toBe(
+      hasScaffoldPermission(r, "deliverable.work")
+    );
+    expect(g.review).toBe(hasScaffoldPermission(r, "deliverable.review"));
+    expect(g.reopen).toBe(hasScaffoldPermission(r, "deliverable.reopen"));
+  });
+});
+
+describe("decideEdit", () => {
+  it("edita nos estados abertos, no escopo do papel", () => {
+    for (const status of [
+      "NOT_STARTED",
+      "IN_PROGRESS",
+      "ADJUSTMENT_REQUESTED",
+      "REOPENED",
+    ] as const) {
+      expect(decideEdit(subject(status), as("CONSULTANT", "u-c")).ok).toBe(
+        true
+      );
+    }
+  });
+
+  it("em revisão e aprovado o conteúdo está congelado", () => {
+    for (const status of ["IN_REVIEW", "APPROVED"] as const) {
+      expect(
+        decideEdit(subject(status), as("CONSULTANT", "u-c"))
+      ).toMatchObject({
+        ok: false,
+        code: "INVALID_TRANSITION",
+      });
+    }
+  });
+
+  it("membro do time só edita o que é dele; sponsor nunca", () => {
+    expect(
+      decideEdit(subject("IN_PROGRESS"), as("TEAM_MEMBER", "u-x"))
+    ).toMatchObject({
+      ok: false,
+      code: "FORBIDDEN",
+    });
+    expect(
+      decideEdit(subject("IN_PROGRESS"), as("TEAM_MEMBER", OWNER)).ok
+    ).toBe(true);
+    expect(decideEdit(subject("IN_PROGRESS"), as("SPONSOR", OWNER)).ok).toBe(
+      false
+    );
   });
 });

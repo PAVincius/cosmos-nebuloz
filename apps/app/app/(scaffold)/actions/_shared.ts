@@ -24,7 +24,8 @@ export type ScaffoldEntity =
   | "scaffold.businesscase"
   | "scaffold.template"
   | "scaffold.overlay"
-  | "scaffold.membership";
+  | "scaffold.membership"
+  | "scaffold.deliverable";
 
 /**
  * Grava entrada de auditoria do Scaffold (SN-03).
@@ -94,7 +95,8 @@ export async function nextCode({
 }: {
   db: Db;
   tenantId: string;
-  kind: "track" | "businesscase";
+  /** "track", "businesscase" ou `deliverable:<trackId>` (extras da trilha). */
+  kind: "track" | "businesscase" | `deliverable:${string}`;
   prefix: string;
   pad?: number;
 }): Promise<string> {

@@ -22,6 +22,10 @@ export const SCAFFOLD_ERROR = {
   // Gate — SG-01..SG-05
   STEPS_INCOMPLETE: "STEPS_INCOMPLETE",
   DELIVERABLES_PENDING: "DELIVERABLES_PENDING",
+  DELIVERABLE_NOT_FOUND: "DELIVERABLE_NOT_FOUND",
+  DELIVERABLE_TRANSITION_INVALID: "DELIVERABLE_TRANSITION_INVALID",
+  DELIVERABLE_COMMENT_REQUIRED: "DELIVERABLE_COMMENT_REQUIRED",
+  DELIVERABLE_SELF_REVIEW: "DELIVERABLE_SELF_REVIEW",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -58,6 +62,13 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Seu papel não pode conceder nem retirar este papel. Só o administrador gere administrador e consultor; o consultor gere os papéis abaixo dele.",
   SELF_ROLE_CHANGE:
     "Ninguém altera o próprio papel de adoção. Peça a outra pessoa com permissão para fazê-lo.",
+  DELIVERABLE_NOT_FOUND: "Entregável não encontrado nesta organização.",
+  DELIVERABLE_TRANSITION_INVALID:
+    "O entregável não está num estado que permita esta ação. Atualize a tela: outra pessoa pode ter movido o entregável.",
+  DELIVERABLE_COMMENT_REQUIRED:
+    "Pedir ajuste e reabrir exigem um comentário dizendo o motivo.",
+  DELIVERABLE_SELF_REVIEW:
+    "Responsável e aprovador não podem ser a mesma pessoa: ninguém aprova o que é seu.",
   DELIVERABLES_PENDING:
     "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:

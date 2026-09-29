@@ -176,6 +176,41 @@ export function decideTransition(
   return { ok: true, to: rule.to };
 }
 
+/** Estados em que o resumo pode ser editado. Em revisão e aprovado o conteúdo
+ *  está congelado: quem revisa precisa ver o que foi enviado. */
+const EDITABLE: readonly DeliverableStatus[] = [
+  "NOT_STARTED",
+  "IN_PROGRESS",
+  "ADJUSTMENT_REQUESTED",
+  "REOPENED",
+];
+
+/** Edição do resumo: mesmo escopo de `work` e só nos estados editáveis. */
+export function decideEdit(
+  subject: DeliverableSubject,
+  actor: DeliverableActor
+): { ok: true } | { ok: false; code: TransitionDenial; message: string } {
+  if (!EDITABLE.includes(subject.status)) {
+    return {
+      ok: false,
+      code: "INVALID_TRANSITION",
+      message:
+        "O entregável não está num estado editável. Reabra o aprovado ou aguarde a revisão.",
+    };
+  }
+  const { work } = actor.grants;
+  const isOwner = subject.ownerId !== null && subject.ownerId === actor.userId;
+  if (work === "none" || (work === "own" && !isOwner)) {
+    return {
+      ok: false,
+      code: "FORBIDDEN",
+      message:
+        "Só o responsável, o líder de transformação ou o consultor editam este entregável.",
+    };
+  }
+  return { ok: true };
+}
+
 export type GateDeliverable = {
   code: string;
   title: string;

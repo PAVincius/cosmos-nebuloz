@@ -293,3 +293,47 @@ export const ExportBusinessCaseSchema = z.object({
 });
 
 export const ExportHandoverPackSchema = z.object({ trackId: cuid });
+
+// ── Entregável ────────────────────────────────────────────────────────────────
+
+export const DeliverableIdSchema = z.object({ deliverableId: cuid });
+
+/** `comment` é opcional na borda; a regra de obrigatoriedade (ajuste pedido e
+ *  reabrir) é da máquina de estados, que conhece a transição. */
+export const DeliverableTransitionSchema = z.object({
+  deliverableId: cuid,
+  comment: z.string().max(10_000).optional(),
+});
+
+export const EditDeliverableSummarySchema = z.object({
+  deliverableId: cuid,
+  summary: z.string().trim().min(1).max(10_000),
+});
+
+export const AssignDeliverableSchema = z.object({
+  deliverableId: cuid,
+  ownerId: optCuid,
+  approverId: optCuid,
+});
+
+export const AddDeliverableSchema = z.object({
+  trackId: cuid,
+  phase: ScaffoldPhaseEnum,
+  title: nnStr,
+  description: z.string().trim().max(10_000),
+  kind: z.enum([
+    "DOCUMENT",
+    "SPREADSHEET",
+    "DATASET",
+    "CONFIGURATION",
+    "SIGNATURE",
+    "TRAINING",
+    "REPORT",
+    "PACKAGE",
+  ]),
+  producer: z.enum(["OWNER", "CONSULTANT", "TECHNICAL", "LEGAL"]),
+  /** Escolha de quem adiciona (SC-PO-04): extra pode ou não travar o gate. */
+  required: z.boolean(),
+  ownerId: optCuid,
+  approverId: optCuid,
+});
