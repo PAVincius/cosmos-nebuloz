@@ -6,12 +6,16 @@ function makeDb(
     templateExists?: boolean;
     userExists?: boolean;
     tenantExists?: boolean;
+    isMember?: boolean;
+    raceLost?: boolean;
   } = {}
 ) {
   const {
     templateExists = false,
     userExists = true,
     tenantExists = true,
+    isMember = true,
+    raceLost = false,
   } = options;
   return {
     user: {
@@ -26,14 +30,25 @@ function makeDb(
           tenantExists ? { id: "tenant-abc", slug: "vanta-saude" } : null
         ),
     },
+    tenantMember: {
+      findFirst: vi.fn().mockResolvedValue(isMember ? { id: "tm-1" } : null),
+    },
     meridianMembership: { upsert: vi.fn().mockResolvedValue({ id: "mm-1" }) },
     meridianTemplate: {
+      // 1ª consulta (antes do insert): existe template? `raceLost` = não existia,
+      // mas outro processo insere entre esta consulta e o nosso insert.
+      // Consultas seguintes (depois do insert): devolve a linha.
       findFirst: vi
         .fn()
-        .mockResolvedValue(
+        .mockResolvedValueOnce(
           templateExists ? { id: "template-existente" } : null
+        )
+        .mockResolvedValue(
+          raceLost ? { id: "template-do-outro" } : { id: "template-novo" }
         ),
-      create: vi.fn().mockResolvedValue({ id: "template-novo" }),
+      createMany: vi
+        .fn()
+        .mockResolvedValue({ count: raceLost || templateExists ? 0 : 1 }),
     },
     meridianQuestion: {
       createMany: vi.fn().mockResolvedValue({ count: 15 }),
@@ -80,9 +95,9 @@ describe("bootstrapMeridian", () => {
       actorUserId: "user-staff",
     });
 
-    expect(db.meridianTemplate.create.mock.calls[0][0].data).not.toHaveProperty(
-      "lockedAt"
-    );
+    expect(
+      db.meridianTemplate.createMany.mock.calls[0][0].data[0]
+    ).not.toHaveProperty("lockedAt");
   });
 
   it("dá o papel CONSULTANT ao responsável", async () => {
@@ -130,10 +145,64 @@ describe("bootstrapMeridian", () => {
     });
 
     expect(result.created).toBe(false);
-    expect(db.meridianTemplate.create).not.toHaveBeenCalled();
+    expect(db.meridianTemplate.createMany).not.toHaveBeenCalled();
     expect(db.meridianQuestion.createMany).not.toHaveBeenCalled();
     // O papel continua sendo garantido — upsert, não create.
     expect(db.meridianMembership.upsert).toHaveBeenCalledTimes(1);
+  });
+
+  it("recusa conta que existe mas não é membro DESTE tenant (USER_NOT_MEMBER)", async () => {
+    const db = makeDb({ isMember: false });
+
+    await expect(
+      bootstrapMeridian(depsFor(db) as never, {
+        tenantId: "tenant-abc",
+        consultantEmail: "marina@vanta.exemplo",
+        actorUserId: "user-staff",
+      })
+    ).rejects.toMatchObject({ code: "USER_NOT_MEMBER" });
+
+    expect(db.tenantMember.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tenant-abc", userId: "user-consultor" },
+      })
+    );
+    expect(db.meridianMembership.upsert).not.toHaveBeenCalled();
+    expect(db.meridianTemplate.createMany).not.toHaveBeenCalled();
+  });
+
+  it("cria o template com INSERT ... ON CONFLICT DO NOTHING, não find + create", async () => {
+    const db = makeDb();
+
+    await bootstrapMeridian(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      consultantEmail: "marina@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    expect(db.meridianTemplate.createMany.mock.calls[0][0].skipDuplicates).toBe(
+      true
+    );
+    expect(db.meridianQuestion.createMany.mock.calls[0][0].skipDuplicates).toBe(
+      true
+    );
+  });
+
+  it("corrida: outro processo criou o template entre a consulta e o insert vira 'já existia'", async () => {
+    const db = makeDb({ raceLost: true });
+
+    const result = await bootstrapMeridian(depsFor(db) as never, {
+      tenantId: "tenant-abc",
+      consultantEmail: "marina@vanta.exemplo",
+      actorUserId: "user-staff",
+    });
+
+    expect(result).toEqual({ templateId: "template-do-outro", created: false });
+    // Quem perdeu a corrida não semeia perguntas em cima do template do outro.
+    expect(db.meridianQuestion.createMany).not.toHaveBeenCalled();
+    expect(db.auditLog.create.mock.calls[0][0].data.action).toBe(
+      "meridian.bootstrap_skipped"
+    );
   });
 
   it("falha com USER_NOT_FOUND quando o e-mail não tem conta", async () => {
@@ -165,7 +234,7 @@ describe("bootstrapMeridian", () => {
     // O tenant é a primeira verificação: nada abaixo dela roda.
     expect(db.user.findUnique).not.toHaveBeenCalled();
     expect(db.meridianMembership.upsert).not.toHaveBeenCalled();
-    expect(db.meridianTemplate.create).not.toHaveBeenCalled();
+    expect(db.meridianTemplate.createMany).not.toHaveBeenCalled();
     expect(db.auditLog.create).not.toHaveBeenCalled();
   });
 
