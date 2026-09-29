@@ -42,7 +42,7 @@ M10 (`e2e/meridian-load`): **passou** — `/meridian` 525 ms com 200 assessments
 
 Schema `backup_meridian_20260929` do banco local removido (`DROP SCHEMA … CASCADE`, só `cosmos_dev` em localhost:5434).
 
-## 2026-09-29 ~01:45 BRT — Reset do Meridian em produção
+## 2026-09-29 ~00:30 BRT (03:30 UTC) — Reset do Meridian em produção
 
 Decisão do CEO (28/09 ~23h): apagar só os dados do Meridian, todos os tenants. Executado pela Morgana no SQL Studio do Supabase, projeto `db-prd-nz` (`aosdvvluokrbgpyqwoor`), papel `postgres`, com `apps/app/scripts/sql/meridian-reset.sql` (sha256 `eb720cbb…`, de0e25c3). O bloco 3 (transação) conferido por hash normalizado igual ao arquivo aprovado antes de rodar.
 
