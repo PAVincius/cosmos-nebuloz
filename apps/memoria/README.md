@@ -25,7 +25,7 @@ pnpm memoria:up
 O script (`scripts/iniciar.sh`) pode rodar quantas vezes quiser:
 
 1. Na primeira vez, gera o `.env` com senhas aleatórias. O arquivo fica fora do git.
-2. Sobe Postgres, Qdrant, Neo4j, MinIO e o serviço.
+2. Sobe o Postgres e o serviço, cerca de 100 MB de RAM parado. Qdrant, Neo4j e MinIO só sobem se ligados (veja "Projeções opcionais").
 3. Cria o tenant `nebuloz`, uma chave de escrita por papel do Maestri e a chave geral.
    Elas ficam em `~/.nebuloz/memoria`, com permissão 600, fora do repo.
 4. Importa as lições do Maestri, as ADRs e o registro de decisões.
@@ -74,7 +74,7 @@ As ferramentas do MCP:
 | `substituir` | escrita | cria a versão nova de uma memória; a anterior fica no histórico |
 | `revogar` | escrita | marca que deixou de valer, sem apagar |
 | `historico` | leitura | todas as versões de uma memória, com o motivo de cada mudança |
-| `relacionadas` | leitura | entidades ligadas a uma entidade no grafo |
+| `relacionadas` | leitura | entidades ligadas a uma entidade no grafo; exige o perfil `grafo` |
 
 Apagar não existe no MCP, de propósito: apagamento é decisão de gente. Ele se
 faz pela API de governança, com chave admin (`POST /api/v1/governance/erasure`).
@@ -108,7 +108,25 @@ Postgres + pgvector  ← sistema de registro (fonte da verdade)
    └──► MinIO   (um JSON por versão: a camada fria)
 ```
 
-- **O Postgres é a fonte.** As três projeções se refazem dele
+### Projeções opcionais
+
+Por padrão, tudo roda no Postgres: a busca vetorial e por texto também (D-16, Postgres até medir o limite).
+Cada projeção é um perfil do compose, ligado no `apps/memoria/.env`:
+
+| Perfil | Serviço | Para quê | RAM medida, parado |
+|---|---|---|---|
+| (nenhum) | Postgres + serviço | tudo o que a memória faz, menos `relacionadas` | ~100 MB |
+| `vetor` | Qdrant | candidatos da busca vetorial, quando o volume pedir | ~30–450 MB |
+| `grafo` | Neo4j | a ferramenta `relacionadas` | ~450–700 MB |
+| `arquivo` | MinIO | um JSON por versão (a camada fria) | ~60 MB |
+
+Para ligar, ponha `COMPOSE_PROFILES=vetor,grafo,arquivo` (ou só os que quiser) no `.env` e rode `pnpm memoria:up`
+de novo. Ele sobe o que faltar e refaz as projeções a partir do Postgres (`python -m app.cli reconstruir nebuloz`).
+Para desligar, tire o perfil e rode `docker compose stop <serviço>`; os dados ficam no volume.
+
+O Mac de 24 GB já ficou sem memória com os agentes abertos (README do Vigilante). Por isso o padrão é o mínimo.
+
+- **O Postgres é a fonte.** As projeções ligadas se refazem dele
   (`POST /api/v1/maintenance/rebuild`). Toda resposta relê o Postgres, então
   projeção atrasada nunca devolve memória apagada ou substituída (D-12).
 - **Dois tempos por fato.** `valid_from` e `valid_to` dizem quando o fato valeu
@@ -166,7 +184,7 @@ Ficaram de fora, pelos motivos da tabela:
 pnpm memoria:test
 ```
 
-São 34 testes de integração contra os serviços reais. Eles usam tenants
+São 37 testes de integração contra os serviços reais. Eles usam tenants
 temporários e os purgam no fim, sem tocar no tenant `nebuloz`. Os testes cobrem:
 - **segurança:** chave, papel, isolamento de tenant, RLS e imutabilidade;
 - **memória:** bitemporal, revogação, busca, apagamento por origem e retenção;

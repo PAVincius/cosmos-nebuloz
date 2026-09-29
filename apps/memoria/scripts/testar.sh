@@ -4,6 +4,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 [ -f .env ] || { echo "Falta o .env: rode pnpm memoria:up antes." >&2; exit 1; }
+# Os testes cobrem as três projeções: liga os perfis só neste shell, sem mexer no .env.
+export COMPOSE_PROFILES=vetor,grafo,arquivo
 docker compose up -d postgres qdrant neo4j minio >/dev/null
 until docker compose ps neo4j | grep -q healthy; do sleep 3; done
 set -a && . ./.env && set +a

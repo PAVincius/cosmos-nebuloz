@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     ollama_embedding_model: str = "nomic-embed-text"
 
     # Projeções. Vazio = desligada; o Postgres continua sendo a fonte.
+    # `projecoes` recebe os perfis ativos do compose (vetor, grafo, arquivo) e liga
+    # cada projeção no endereço padrão da rede do compose, se a URL não vier explícita.
+    projecoes: str = ""
     qdrant_url: str = ""
     neo4j_url: str = ""
     neo4j_user: str = "neo4j"
@@ -37,6 +40,17 @@ class Settings(BaseSettings):
 
     # Host aceito no /mcp (proteção contra DNS rebinding). JSON no ambiente.
     mcp_allowed_hosts: list[str] = ["127.0.0.1:*", "localhost:*", "[::1]:*"]
+
+    @model_validator(mode="after")
+    def _projecoes_do_compose(self) -> "Settings":
+        ligadas = {p.strip() for p in self.projecoes.split(",") if p.strip()}
+        if "vetor" in ligadas and not self.qdrant_url:
+            self.qdrant_url = "http://qdrant:6333"
+        if "grafo" in ligadas and not self.neo4j_url:
+            self.neo4j_url = "bolt://neo4j:7687"
+        if "arquivo" in ligadas and not self.minio_endpoint:
+            self.minio_endpoint = "minio:9000"
+        return self
 
 
 @lru_cache

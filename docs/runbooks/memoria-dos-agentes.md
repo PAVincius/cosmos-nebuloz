@@ -28,7 +28,7 @@ Antes de começar (se algo falhar, pare e me diga o quê):
 1. Você está no Ground, na raiz do repo, na main atualizada: `git switch main && git pull --ff-only`.
    Tem alteração não commitada? Pare e me mostre o `git status`.
 2. O Docker está de pé: `docker info` responde. Se não responder, peça para eu abrir o Docker Desktop.
-3. As portas estão livres ou já são da memória: 5433, 6333, 7474, 7687, 9000, 9001 e 8003
+3. As portas estão livres ou já são da memória: 5433 e 8003 (mais 6333, 7474, 7687, 9000 e 9001 se houver projeção ligada no .env)
    (`lsof -nP -iTCP:<porta> -sTCP:LISTEN`). Se alguma estiver ocupada por outro processo, me diga qual e por quem.
    Não mate processo nenhum.
 
@@ -41,7 +41,8 @@ Passos:
 6. `claude mcp get memoria`. Deve mostrar http://127.0.0.1:8003/mcp com o headersHelper `sh ~/.nebuloz/memoria/cabecalho.sh`.
 
 Conferência (só conta como pronto depois disso):
-7. `curl -s http://127.0.0.1:8003/health` responde "status":"ok", com postgres, qdrant, neo4j e minio "ok".
+7. `curl -s http://127.0.0.1:8003/health` responde "status":"ok" e postgres "ok". Qdrant, neo4j e minio aparecem
+   "desligado" no padrão, ou "ok" se ligados no `.env` (COMPOSE_PROFILES).
 8. `ls ~/.nebuloz/memoria/chaves | wc -l` dá o mesmo N do passo 4.
 9. Sua sessão abriu antes do registro e não vai enxergar a memória. Peça ao Crivo, numa sessão nova, que use a
    ferramenta buscar da memória para achar o que foi decidido sobre a memória ser fonte da verdade. Ele deve citar
@@ -67,7 +68,8 @@ Resposta, em até 8 linhas:
 | "O Docker não está rodando" | Docker Desktop fechado | Abrir o Docker Desktop e rodar `pnpm memoria:up` de novo. |
 | Porta ocupada no passo 3 | Outro serviço local na mesma porta | Decisão do CEO: parar o outro serviço, ou mudar a porta da API com `MEMORIA_PORTA`. As portas dos bancos são fixas no `docker-compose.yml`. O setup do canvas registra o MCP sempre em 8003: com outra porta, o registro é à mão, com a URL que o `pnpm memoria:up` imprime no fim. |
 | "O serviço não respondeu" no passo 4 | Imagem ainda baixando, ou falha na subida | Ver `docker compose -f apps/memoria/docker-compose.yml ps` e os logs do serviço `memoria`. |
-| `/health` com "degradado" | Qdrant, Neo4j ou MinIO fora; o Postgres está bem | A memória continua respondendo, porque o Postgres é a fonte. Depois que o serviço voltar, rodar `POST /api/v1/maintenance/rebuild` com chave admin. |
+| `/health` com "degradado" | Uma projeção ligada (Qdrant, Neo4j ou MinIO) está fora; o Postgres está bem | A memória continua respondendo, porque o Postgres é a fonte. Depois que o serviço voltar, `pnpm memoria:up` refaz as projeções. |
+| `relacionadas` responde "projeção de grafo desligada" | O perfil `grafo` está desligado (padrão) | Esperado. Para usar, ligue `grafo` no `.env` (README, "Projeções opcionais"). |
 | "! MCP memoria pulado" no passo 5 | `pnpm memoria:up` não chegou ao fim | Rodar o passo 4 até "Memória no ar" e repetir o passo 5. |
 | O Crivo não acha as ferramentas | A sessão dele abriu antes do registro | Abrir uma sessão nova para o Crivo. |
 | O Crivo acha as ferramentas, mas recebe "chave ausente, inválida ou revogada" | A chave do papel falta em `~/.nebuloz/memoria/chaves` | Rodar `pnpm memoria:up` de novo; ele cria a chave que faltar. |
