@@ -2,11 +2,14 @@
 
 import type { ScaffoldRole } from "@repo/database";
 import { withTenantDb } from "@repo/database";
-import { canAssignScaffoldRole } from "@repo/rbac";
+import { canAssignScaffoldRole, invalidateScaffoldRoleCache } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
-import { ScaffoldRuleError } from "@/lib/scaffold/errors";
+import {
+  type ScaffoldErrorCode,
+  ScaffoldRuleError,
+} from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
 import { AssignScaffoldRoleSchema } from "@/lib/scaffold/schemas";
 import { FIELD_LABELS, logScaffoldAudit } from "./_shared";
@@ -72,61 +75,104 @@ export async function assignScaffoldRole(
     const ctx = await requireScaffoldPermissionContext("membership.manage");
     const input = AssignScaffoldRoleSchema.parse(raw);
 
-    // Antes de qualquer leitura: quem altera o próprio papel se promove.
-    if (input.userId === ctx.userId) {
-      throw new ScaffoldRuleError("SELF_ROLE_CHANGE");
+    // A transação devolve o desfecho em vez de lançar nas recusas: lançar
+    // desfaria a transação e levaria junto a auditoria da tentativa negada.
+    // O erro sobe depois do commit.
+    const outcome = await withTenantDb(
+      ctx.tenantId,
+      async (db): Promise<Outcome> => {
+        const deny = async (
+          code: ScaffoldErrorCode,
+          target: string
+        ): Promise<Outcome> => {
+          await logScaffoldAudit(db, ctx, {
+            action: "scaffold.membership.assign_denied",
+            entityType: "scaffold.membership",
+            entityId: input.userId,
+            target,
+            note: `${code}: tentou atribuir ${input.role}.`,
+          });
+          return { denied: code };
+        };
+
+        // Quem altera o próprio papel se promove.
+        if (input.userId === ctx.userId) {
+          return deny("SELF_ROLE_CHANGE", input.userId);
+        }
+
+        const person = await db.tenantMember.findFirst({
+          where: { tenantId: ctx.tenantId, userId: input.userId },
+          select: {
+            userId: true,
+            user: { select: { name: true, email: true } },
+          },
+        });
+        if (!person) {
+          return deny("MEMBER_NOT_IN_TENANT", input.userId);
+        }
+        const target = person.user?.name ?? person.user?.email ?? input.userId;
+
+        // Trinco por tenant e pessoa, liberado no fim da transação. Sem ele,
+        // duas atribuições concorrentes leem o mesmo papel atual e a segunda
+        // grava por cima de uma decisão que já não a permitiria (ex.: consultor
+        // "cria" TEAM_MEMBER enquanto o administrador acabou de fazer ADMIN).
+        // Advisory lock, e não FOR UPDATE, porque cobre também a pessoa que
+        // ainda não tem linha para bloquear.
+        await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${ctx.tenantId}:${input.userId}`}, 0))`;
+
+        const current = await db.scaffoldMembership.findUnique({
+          where: {
+            tenantId_userId: { tenantId: ctx.tenantId, userId: input.userId },
+          },
+          select: { role: true },
+        });
+
+        // Vale para o papel novo e para o atual: rebaixar é retirar.
+        if (
+          !canAssignScaffoldRole(
+            ctx.scaffoldRole,
+            current?.role ?? null,
+            input.role
+          )
+        ) {
+          return deny("ROLE_ASSIGNMENT_FORBIDDEN", target);
+        }
+
+        await db.scaffoldMembership.upsert({
+          where: {
+            tenantId_userId: { tenantId: ctx.tenantId, userId: input.userId },
+          },
+          create: {
+            tenantId: ctx.tenantId,
+            userId: input.userId,
+            role: input.role,
+            updatedBy: ctx.userId,
+          },
+          update: { role: input.role, updatedBy: ctx.userId },
+        });
+
+        await logScaffoldAudit(db, ctx, {
+          action: "scaffold.membership.assign",
+          entityType: "scaffold.membership",
+          entityId: input.userId,
+          target,
+          diff: [[FIELD_LABELS.scaffoldRole, current?.role ?? "—", input.role]],
+        });
+        return { denied: null };
+      }
+    );
+
+    if (outcome.denied) {
+      throw new ScaffoldRuleError(outcome.denied);
     }
 
-    await withTenantDb(ctx.tenantId, async (db) => {
-      const person = await db.tenantMember.findFirst({
-        where: { tenantId: ctx.tenantId, userId: input.userId },
-        select: { userId: true, user: { select: { name: true, email: true } } },
-      });
-      if (!person) {
-        throw new ScaffoldRuleError("MEMBER_NOT_IN_TENANT");
-      }
-
-      const current = await db.scaffoldMembership.findUnique({
-        where: {
-          tenantId_userId: { tenantId: ctx.tenantId, userId: input.userId },
-        },
-        select: { role: true },
-      });
-
-      // Vale para o papel novo e para o atual: rebaixar é retirar.
-      if (
-        !canAssignScaffoldRole(
-          ctx.scaffoldRole,
-          current?.role ?? null,
-          input.role
-        )
-      ) {
-        throw new ScaffoldRuleError("ROLE_ASSIGNMENT_FORBIDDEN");
-      }
-
-      await db.scaffoldMembership.upsert({
-        where: {
-          tenantId_userId: { tenantId: ctx.tenantId, userId: input.userId },
-        },
-        create: {
-          tenantId: ctx.tenantId,
-          userId: input.userId,
-          role: input.role,
-          updatedBy: ctx.userId,
-        },
-        update: { role: input.role, updatedBy: ctx.userId },
-      });
-
-      await logScaffoldAudit(db, ctx, {
-        action: "scaffold.membership.assign",
-        entityType: "scaffold.membership",
-        entityId: input.userId,
-        target: person.user?.name ?? person.user?.email ?? input.userId,
-        diff: [[FIELD_LABELS.scaffoldRole, current?.role ?? "—", input.role]],
-      });
-    });
+    // Depois do commit: o papel vem de cache (300 s), e quem foi rebaixado
+    // manteria a permissão antiga até ele expirar.
+    await invalidateScaffoldRoleCache(ctx.tenantId, input.userId);
 
     revalidatePath("/scaffold/members");
     return { userId: input.userId, role: input.role };
   });
 }
+
+type Outcome = { denied: ScaffoldErrorCode | null };

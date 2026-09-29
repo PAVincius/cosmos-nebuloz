@@ -15,6 +15,9 @@ const h = vi.hoisted(() => ({
   membershipFindMany: vi.fn(),
   membershipUpsert: vi.fn(),
   auditCreate: vi.fn(),
+  executeRaw: vi.fn(),
+  invalidate: vi.fn(),
+  calls: [] as string[],
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -37,12 +40,14 @@ vi.mock("@repo/rbac", async () => {
   return {
     ...matrix,
     hasModule: async () => true,
+    invalidateScaffoldRoleCache: h.invalidate,
     getScaffoldRole: async () => h.role,
   };
 });
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
+      $executeRaw: h.executeRaw,
       tenantMember: {
         findFirst: h.tenantMemberFindFirst,
         findMany: h.tenantMemberFindMany,
@@ -66,6 +71,21 @@ const ACTOR = "clx0000000000000000actor01";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  h.calls.length = 0;
+  h.executeRaw.mockImplementation(async () => {
+    h.calls.push("lock");
+  });
+  h.membershipFindUnique.mockImplementation(async () => {
+    h.calls.push("read");
+    return null;
+  });
+  h.membershipUpsert.mockImplementation(async () => {
+    h.calls.push("write");
+    return { userId: USER, role: "PROCESS_OWNER" };
+  });
+  h.invalidate.mockImplementation(async () => {
+    h.calls.push("invalidate");
+  });
   h.role = "CONSULTANT";
   h.requireTenantSession.mockResolvedValue({
     tenantId: "t1",
@@ -74,8 +94,6 @@ beforeEach(() => {
     user: { name: "Marina", email: "m@x.com" },
   });
   h.tenantMemberFindFirst.mockResolvedValue({ userId: USER });
-  h.membershipFindUnique.mockResolvedValue(null);
-  h.membershipUpsert.mockResolvedValue({ userId: USER, role: "PROCESS_OWNER" });
 });
 
 describe("assignScaffoldRole", () => {
@@ -197,7 +215,10 @@ describe("assignScaffoldRole — sem escalada de privilégio", () => {
       expect(r.code).toBe("ROLE_ASSIGNMENT_FORBIDDEN");
     }
     expect(h.membershipUpsert).not.toHaveBeenCalled();
-    expect(h.auditCreate).not.toHaveBeenCalled();
+    // Nada de "assign" na trilha: só a tentativa negada.
+    expect(h.auditCreate.mock.calls.map((c) => c[0].data.action)).toEqual([
+      "scaffold.membership.assign_denied",
+    ]);
   });
 
   it("CONSULTANT não rebaixa ADMIN", async () => {
@@ -250,6 +271,81 @@ describe("assignScaffoldRole — sem escalada de privilégio", () => {
     // Recusa antes de ler ou gravar qualquer coisa.
     expect(h.tenantMemberFindFirst).not.toHaveBeenCalled();
     expect(h.membershipUpsert).not.toHaveBeenCalled();
+  });
+});
+
+describe("assignScaffoldRole — cache e concorrência", () => {
+  it("invalida o cache do papel depois de gravar, para rebaixar valer já", async () => {
+    await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    expect(h.invalidate).toHaveBeenCalledWith("t1", USER);
+    expect(h.calls.indexOf("invalidate")).toBeGreaterThan(
+      h.calls.indexOf("write")
+    );
+  });
+
+  it("não invalida quando nada foi gravado", async () => {
+    h.role = "TEAM_MEMBER";
+    await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    h.role = "CONSULTANT";
+    await assignScaffoldRole({ userId: USER, role: "ADMIN" });
+    expect(h.invalidate).not.toHaveBeenCalled();
+  });
+
+  it("trava a linha da pessoa antes de ler o papel atual (TOCTOU)", async () => {
+    await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    expect(h.calls.slice(0, 3)).toEqual(["lock", "read", "write"]);
+    // O trinco é por tenant e pessoa: duas atribuições à mesma pessoa
+    // serializam, inclusive quando ainda não há linha para bloquear.
+    // Tagged template: [strings, ...valores].
+    expect(h.executeRaw.mock.calls[0]?.slice(1)).toContain(`t1:${USER}`);
+  });
+});
+
+describe("assignScaffoldRole — tentativas negadas viram auditoria", () => {
+  const denied = () =>
+    h.auditCreate.mock.calls
+      .map((c) => c[0].data)
+      .filter((d) => d.action === "scaffold.membership.assign_denied");
+
+  it("SELF_ROLE_CHANGE", async () => {
+    await assignScaffoldRole({ userId: ACTOR, role: "ADMIN" });
+    const [a] = denied();
+    expect(a).toMatchObject({
+      tenantId: "t1",
+      actorId: ACTOR,
+      entityType: "scaffold.membership",
+      entityId: ACTOR,
+    });
+    expect(a.metadata.note).toContain("SELF_ROLE_CHANGE");
+    expect(a.metadata.note).toContain("ADMIN");
+  });
+
+  it("ROLE_ASSIGNMENT_FORBIDDEN", async () => {
+    await assignScaffoldRole({ userId: USER, role: "ADMIN" });
+    const [a] = denied();
+    expect(a.entityId).toBe(USER);
+    expect(a.metadata.note).toContain("ROLE_ASSIGNMENT_FORBIDDEN");
+  });
+
+  it("MEMBER_NOT_IN_TENANT", async () => {
+    h.tenantMemberFindFirst.mockResolvedValue(null);
+    await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    const [a] = denied();
+    expect(a.entityId).toBe(USER);
+    expect(a.metadata.note).toContain("MEMBER_NOT_IN_TENANT");
+  });
+
+  it("a recusa continua chegando ao chamador, com o código", async () => {
+    const r = await assignScaffoldRole({ userId: USER, role: "ADMIN" });
+    expect(r).toMatchObject({ ok: false, code: "ROLE_ASSIGNMENT_FORBIDDEN" });
+    expect(h.membershipUpsert).not.toHaveBeenCalled();
+  });
+
+  it("papel sem permissão nem chega ao banco: sem auditoria de negada", async () => {
+    // O guard barra antes; não há transação para auditar.
+    h.role = "TEAM_MEMBER";
+    await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 });
 
