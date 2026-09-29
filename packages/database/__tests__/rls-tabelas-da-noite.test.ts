@@ -82,3 +82,28 @@ describe("ProcessRegistry — integridade", () => {
     expect(schema).toMatch(/mesmo tenant/);
   });
 });
+
+// Catálogo global do Scaffold (método da Nebuloz, sem tenantId): RLS ligada e
+// FORÇADA, SEM policy. Pela Data API (anon key) ninguém lê nem escreve; o app
+// conecta como postgres (BYPASSRLS, ADR-0012) e segue como antes. Quando a
+// aplicação passar a papel sem BYPASSRLS, estas tabelas precisam de uma policy
+// de SELECT — registrado aqui e na migration.
+describe("catálogo global do Scaffold: RLS sem policy", () => {
+  const migration = sql("20260929000700_rls_catalogo_global_scaffold");
+
+  it.each([
+    "ScaffoldTemplate",
+    "ScaffoldTemplateVersion",
+    "ScaffoldStepTemplate",
+    "ScaffoldGateCriterion",
+    "ScaffoldDeliverableTemplate",
+  ])("%s tem ENABLE + FORCE RLS", (tabela) => {
+    expect(migration).toContain(`'${tabela}'`);
+  });
+
+  it("aplica ENABLE e FORCE e não cria policy", () => {
+    expect(migration).toContain("ENABLE ROW LEVEL SECURITY");
+    expect(migration).toContain("FORCE ROW LEVEL SECURITY");
+    expect(migration).not.toContain("CREATE POLICY");
+  });
+});
