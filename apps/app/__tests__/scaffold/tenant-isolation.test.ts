@@ -42,6 +42,11 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/scaffold/process-registry", () => ({
+  upsertProcessRegistry: vi
+    .fn()
+    .mockResolvedValue({ id: "reg1", created: true }),
+}));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/scaffold/guards", () => ({
   requireScaffoldPermissionContext: h.requirePerm,
