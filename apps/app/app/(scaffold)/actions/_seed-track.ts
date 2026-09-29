@@ -47,6 +47,8 @@ export type SeedInput = {
   tenantId: string;
   processName: string;
   ownerId: string;
+  /** Quem abre o rascunho do caso de negócio: o ator da sessão. */
+  authorId: string;
   consultantId?: string;
   archetype?: "TRIAGE" | "DOC_REVIEW" | "REPORTING";
   templateId: string;
@@ -85,6 +87,10 @@ async function assertOverlayResolved(
  * ASSESS nasce OPEN; as outras três nascem IDLE. Criar as quatro de uma vez, em
  * vez de sob demanda, é o que permite ao portfólio mostrar a progressão inteira
  * sem inventar linhas que ainda não existem.
+ *
+ * O caso de negócio nasce junto, em rascunho (SB-01). `saveDraft`, o envio e a
+ * assinatura exigem um caso com versão em edição, e nenhuma outra action o cria:
+ * sem ele, a Fase 1 não fecha (SG-04) e não há saída pela tela.
  */
 export async function seedTrack(db: Db, input: SeedInput) {
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
@@ -96,7 +102,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
     prefix: "TR",
   });
 
-  return db.scaffoldTrack.create({
+  const track = await db.scaffoldTrack.create({
     data: {
       tenantId: input.tenantId,
       code,
@@ -130,4 +136,56 @@ export async function seedTrack(db: Db, input: SeedInput) {
     },
     select: { id: true, code: true },
   });
+
+  const businessCaseCode = await openBusinessCase(db, input, track.id);
+  return { ...track, businessCaseCode };
+}
+
+/**
+ * Caso de negócio em rascunho (v1) ligado à trilha recém-criada.
+ *
+ * O patrocinador provisório é o dono do processo: a matriz dá
+ * `businesscase.sign` a esse papel. `benefitBasis` fica vazio de propósito —
+ * é rascunho, e `saveDraft` exige o texto antes de qualquer envio. `currentVersionId` é
+ * escrito depois, porque a versão só ganha id ao ser criada; `signedVersionId`
+ * fica nulo até `signBusinessCase`.
+ */
+async function openBusinessCase(
+  db: Db,
+  input: SeedInput,
+  trackId: string
+): Promise<string> {
+  const code = await nextCode({
+    db,
+    tenantId: input.tenantId,
+    kind: "businesscase",
+    prefix: "BC",
+  });
+  const bc = await db.scaffoldBusinessCase.create({
+    data: {
+      tenantId: input.tenantId,
+      trackId,
+      code,
+      state: "DRAFT",
+      sponsorId: input.ownerId,
+      sponsorRoleLabel: "Dono do processo",
+      authorId: input.authorId,
+      benefitBasis: "",
+      versions: {
+        create: {
+          tenantId: input.tenantId,
+          label: "v1",
+          state: "DRAFT",
+          note: "Versão inicial, aberta com a trilha.",
+          authoredById: input.authorId,
+        },
+      },
+    },
+    select: { id: true, versions: { select: { id: true } } },
+  });
+  await db.scaffoldBusinessCase.update({
+    where: { id: bc.id },
+    data: { currentVersionId: bc.versions[0]?.id },
+  });
+  return code;
 }

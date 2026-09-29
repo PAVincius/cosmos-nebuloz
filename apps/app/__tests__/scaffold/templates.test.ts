@@ -68,6 +68,10 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldTrack: { groupBy: h.trackGroupBy, create: h.trackCreate },
       scaffoldSequence: { upsert: h.sequenceUpsert },
+      scaffoldBusinessCase: {
+        create: async () => ({ id: "bc1", versions: [{ id: "bcv1" }] }),
+        update: async () => ({}),
+      },
       meridianGapPromotion: {
         findFirst: h.promotionFindFirst,
         update: h.promotionUpdate,

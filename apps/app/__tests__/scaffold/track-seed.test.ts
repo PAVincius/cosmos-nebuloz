@@ -17,6 +17,8 @@ const h = vi.hoisted(() => ({
   versionFindFirst: vi.fn(),
   sequenceUpsert: vi.fn(),
   trackCreate: vi.fn(),
+  bcCreate: vi.fn(),
+  bcUpdate: vi.fn(),
   trackFindMany: vi.fn(),
   trackFindFirst: vi.fn(),
   trackUpdate: vi.fn(),
@@ -48,6 +50,7 @@ vi.mock("@repo/database", () => ({
         findFirst: h.trackFindFirst,
         update: h.trackUpdate,
       },
+      scaffoldBusinessCase: { create: h.bcCreate, update: h.bcUpdate },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
       scaffoldSettings: { findUnique: h.settingsFindUnique },
       scaffoldMembership: { findMany: vi.fn().mockResolvedValue([]) },
@@ -58,6 +61,7 @@ vi.mock("@repo/database", () => ({
 
 import {
   cancelTrack,
+  createTrack,
   createTrackFromGap,
   listTracks,
 } from "@/app/(scaffold)/actions/tracks";
@@ -125,6 +129,8 @@ beforeEach(() => {
   h.versionFindFirst.mockResolvedValue({ id: VER, label: "v4", steps: STEPS });
   h.sequenceUpsert.mockResolvedValue({ next: 105 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-104" });
+  h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
+  h.bcUpdate.mockResolvedValue({});
   h.auditCreate.mockResolvedValue({});
   h.settingsFindUnique.mockResolvedValue(null);
   h.userFindMany.mockResolvedValue([]);
@@ -230,6 +236,85 @@ describe("createTrackFromGap", () => {
     // A sequência só é tocada depois da versão resolver. Sem isso, cada
     // tentativa contra um template sem versão queimaria um número de trilha.
     expect(h.sequenceUpsert).not.toHaveBeenCalled();
+  });
+});
+
+// SB-01 — o caso de negócio nasce com a trilha, no fluxo do Scaffold.
+//
+// Antes, nenhuma action criava `ScaffoldBusinessCase`: `saveDraft`, o envio e a
+// assinatura exigem um caso com versão em rascunho, então toda trilha parava na
+// Fase 1 (SG-04) sem saída pela tela.
+describe("caso de negócio nasce com a trilha (SB-01)", () => {
+  it.each([
+    ["createTrackFromGap", () => createTrackFromGap(INPUT)],
+    [
+      "createTrack",
+      () =>
+        createTrack({
+          templateId: TPL,
+          processName: "Triagem de autorizações prévias",
+          ownerId: OWNER,
+        }),
+    ],
+  ])("%s cria o caso vinculado à trilha nova", async (_n, run) => {
+    const res = await run();
+    expect(res.ok).toBe(true);
+
+    expect(h.bcCreate).toHaveBeenCalledTimes(1);
+    const data = h.bcCreate.mock.calls[0][0].data;
+    expect(data).toMatchObject({
+      tenantId: "t1",
+      trackId: "trk1",
+      code: "BC-104",
+      state: "DRAFT",
+      // Quem assina é o dono do processo (matriz: businesscase.sign); quem abre
+      // o rascunho é quem criou a trilha.
+      sponsorId: OWNER,
+      authorId: "u1",
+    });
+    expect(data.versions.create).toMatchObject({
+      tenantId: "t1",
+      label: "v1",
+      state: "DRAFT",
+      authoredById: "u1",
+    });
+  });
+
+  it("aponta currentVersionId para a v1, e deixa signedVersionId vazio", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.bcUpdate).toHaveBeenCalledWith({
+      where: { id: "bc1" },
+      data: { currentVersionId: "bcv1" },
+    });
+    // `signedVersionId` só muda em `signBusinessCase` (SG-04).
+    expect(h.bcCreate.mock.calls[0][0].data.signedVersionId).toBeUndefined();
+    expect(h.bcUpdate.mock.calls[0][0].data.signedVersionId).toBeUndefined();
+  });
+
+  it("consome a sequência 'businesscase' do tenant, separada da de trilha", async () => {
+    await createTrackFromGap(INPUT);
+    const kinds = h.sequenceUpsert.mock.calls.map(
+      (c) => c[0].where.tenantId_kind.kind
+    );
+    expect(kinds).toEqual(["track", "businesscase"]);
+  });
+
+  it("não cria caso quando a trilha é recusada", async () => {
+    h.versionFindFirst.mockResolvedValue(null);
+    await createTrackFromGap(INPUT);
+    expect(h.bcCreate).not.toHaveBeenCalled();
+  });
+
+  it("registra o caso na auditoria da criação da trilha", async () => {
+    await createTrack({
+      templateId: TPL,
+      processName: "Triagem de autorizações prévias",
+      ownerId: OWNER,
+    });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    expect(h.auditCreate.mock.calls[0][0].data.metadata.note).toContain(
+      "BC-104"
+    );
   });
 });
 
