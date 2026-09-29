@@ -27,6 +27,7 @@ const h = vi.hoisted(() => ({
   createSignedUploadUrl: vi.fn(),
   createSignedUrl: vi.fn(),
   exists: vi.fn(),
+  userFindMany: vi.fn(),
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -81,6 +82,7 @@ vi.mock("@repo/database", () => ({
       scaffoldDeliverableComment: { findMany: h.commentFindMany },
       scaffoldDeliverableLink: { findMany: h.linkFindMany },
       tenantMember: { findFirst: h.memberFindFirst },
+      user: { findMany: h.userFindMany },
       scaffoldPhaseInstance: {
         findFirst: h.phaseFindFirst,
         update: h.phaseUpdate,
@@ -160,6 +162,8 @@ beforeEach(() => {
     error: null,
   });
   h.exists.mockResolvedValue({ data: true, error: null });
+  h.eventFindMany.mockResolvedValue([]);
+  h.userFindMany.mockResolvedValue([]);
 });
 
 describe("transições gravam status, evento append-only e auditoria", () => {
@@ -852,5 +856,116 @@ describe("readDeliverableFile (download logado)", () => {
       ok: false,
       code: "DELIVERABLE_NOT_FOUND",
     });
+  });
+});
+
+// Crivo F1: o comentário do pedido de ajuste era gravado e nunca mostrado a quem
+// produz o entregável.
+describe("último pedido de ajuste na lista", () => {
+  const REVIEWER = "clx0000000000000000review01";
+  const ev = (
+    action: string,
+    comment: string,
+    at: string,
+    actorId = REVIEWER
+  ) => ({
+    deliverableId: DEL,
+    action,
+    comment,
+    actorId,
+    createdAt: new Date(at),
+  });
+
+  it("mostra o comentário, quem pediu e quando, no entregável com ajuste pedido", async () => {
+    h.findMany.mockResolvedValue([row("ADJUSTMENT_REQUESTED")]);
+    h.eventFindMany.mockResolvedValue([
+      ev(
+        "REQUEST_ADJUSTMENT",
+        "Falta o volume por canal.",
+        "2026-09-10T12:00:00Z"
+      ),
+    ]);
+    h.userFindMany.mockResolvedValue([
+      { id: REVIEWER, name: "Paula Oliveira", email: "p@x.com" },
+    ]);
+
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.lastReview).toMatchObject({
+      action: "REQUEST_ADJUSTMENT",
+      comment: "Falta o volume por canal.",
+      byName: "Paula Oliveira",
+    });
+    expect(r.ok && r.data[0]?.lastReview?.at).toBeInstanceOf(Date);
+  });
+
+  it("vale o pedido MAIS RECENTE, não o primeiro", async () => {
+    h.findMany.mockResolvedValue([row("ADJUSTMENT_REQUESTED")]);
+    h.eventFindMany.mockResolvedValue([
+      ev(
+        "REQUEST_ADJUSTMENT",
+        "Segundo pedido, mais novo.",
+        "2026-09-12T12:00:00Z"
+      ),
+      ev("REQUEST_ADJUSTMENT", "Primeiro pedido.", "2026-09-10T12:00:00Z"),
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.lastReview?.comment).toBe(
+      "Segundo pedido, mais novo."
+    );
+  });
+
+  it("reaberto mostra o motivo da reabertura", async () => {
+    h.findMany.mockResolvedValue([row("REOPENED")]);
+    h.eventFindMany.mockResolvedValue([
+      ev("REOPEN", "O baseline mudou em setembro.", "2026-09-11T12:00:00Z"),
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.lastReview).toMatchObject({
+      action: "REOPEN",
+      comment: "O baseline mudou em setembro.",
+    });
+  });
+
+  it("só enquanto o pedido está de pé: em revisão ou aprovado não sobra comentário velho", async () => {
+    h.findMany.mockResolvedValue([
+      row("IN_REVIEW"),
+      row("APPROVED", { id: "d2" }),
+    ]);
+    h.eventFindMany.mockResolvedValue([
+      ev("REQUEST_ADJUSTMENT", "Antigo.", "2026-09-10T12:00:00Z"),
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data.map((d) => d.lastReview)).toEqual([null, null]);
+  });
+
+  it("sem evento, sem comentário; e a consulta é do tenant e só desses entregáveis", async () => {
+    h.findMany.mockResolvedValue([row("ADJUSTMENT_REQUESTED")]);
+    h.eventFindMany.mockResolvedValue([]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.lastReview).toBeNull();
+    const where = h.eventFindMany.mock.calls[0]?.[0].where;
+    expect(where).toMatchObject({
+      tenantId: "t1",
+      deliverableId: { in: [DEL] },
+      action: { in: ["REQUEST_ADJUSTMENT", "REOPEN"] },
+    });
+  });
+
+  it("sem nome cadastrado, cai no e-mail", async () => {
+    h.findMany.mockResolvedValue([row("ADJUSTMENT_REQUESTED")]);
+    h.eventFindMany.mockResolvedValue([
+      ev("REQUEST_ADJUSTMENT", "Ajuste.", "2026-09-10T12:00:00Z"),
+    ]);
+    h.userFindMany.mockResolvedValue([
+      { id: REVIEWER, name: null, email: "p@x.com" },
+    ]);
+    const r = await listDeliverables({ trackId: TRACK });
+    expect(r.ok && r.data[0]?.lastReview?.byName).toBe("p@x.com");
+  });
+
+  it("nenhum evento consultado quando não há entregável pendente de ajuste", async () => {
+    h.findMany.mockResolvedValue([row("IN_PROGRESS")]);
+    await listDeliverables({ trackId: TRACK });
+    expect(h.eventFindMany).not.toHaveBeenCalled();
   });
 });

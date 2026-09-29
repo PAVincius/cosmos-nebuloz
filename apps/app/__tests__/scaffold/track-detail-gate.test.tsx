@@ -902,3 +902,60 @@ describe("papel só-leitura na trilha", () => {
     expect(await screen.findByText(/Trilha não encontrada/)).toBeDefined();
   });
 });
+
+describe("comentário do pedido de ajuste na lista (Crivo F1)", () => {
+  it("quem produz vê o que precisa ajustar, quem pediu e quando", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [
+        deliverable("ADJUSTMENT_REQUESTED", {
+          lastReview: {
+            action: "REQUEST_ADJUSTMENT",
+            comment: "Falta o volume por canal.",
+            byName: "Paula Oliveira",
+            at: new Date("2026-09-10T12:00:00Z"),
+          },
+        }),
+      ],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+
+    const note = await screen.findByText(/Falta o volume por canal\./);
+    expect(note).toBeDefined();
+    expect(screen.getByText(/Ajuste pedido por Paula Oliveira/)).toBeDefined();
+  });
+
+  it("reaberto: mostra o motivo, com o verbo certo", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [
+        deliverable("REOPENED", {
+          lastReview: {
+            action: "REOPEN",
+            comment: "O baseline mudou em setembro.",
+            byName: "Marina",
+            at: new Date("2026-09-11T12:00:00Z"),
+          },
+        }),
+      ],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    expect(
+      await screen.findByText(/O baseline mudou em setembro\./)
+    ).toBeDefined();
+    expect(screen.getByText(/Reaberto por Marina/)).toBeDefined();
+  });
+
+  it("sem pedido pendente, não há caixa de comentário", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("OPEN") });
+    h.listDeliverables.mockResolvedValue({
+      ok: true,
+      data: [deliverable("IN_PROGRESS", { lastReview: null })],
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    await screen.findByText("Em elaboração");
+    expect(screen.queryByText(/Ajuste pedido por/)).toBeNull();
+  });
+});

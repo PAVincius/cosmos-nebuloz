@@ -255,6 +255,35 @@ export function DeliverableList({
                 <Badge tone={req.tone}>{req.label}</Badge>
                 <Badge tone={s.tone}>{s.label}</Badge>
               </div>
+              {d.lastReview?.comment ? (
+                <div
+                  style={{
+                    marginTop: 6,
+                    padding: "8px 12px",
+                    borderRadius: "var(--r-sm)",
+                    background: "var(--amber-soft)",
+                    border: "1px solid rgba(var(--amber-rgb),.28)",
+                    fontSize: 12.5,
+                    lineHeight: 1.55,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      color: "var(--ink-muted)",
+                      marginBottom: 2,
+                    }}
+                  >
+                    {d.lastReview.action === "REOPEN"
+                      ? "Reaberto por"
+                      : "Ajuste pedido por"}{" "}
+                    {d.lastReview.byName} ·{" "}
+                    {d.lastReview.at.toLocaleDateString("pt-BR")}
+                  </div>
+                  {d.lastReview.comment}
+                </div>
+              ) : null}
               {d.hasFile && d.fileName ? (
                 <div
                   style={{

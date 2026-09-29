@@ -457,18 +457,80 @@ function publicRow<
   return { ...rest, hasFile: fileKey !== null };
 }
 
+export type LastReview = {
+  action: "REQUEST_ADJUSTMENT" | "REOPEN";
+  comment: string;
+  byName: string;
+  at: Date;
+};
+
+/**
+ * O último pedido de ajuste (ou reabertura) de cada entregável que ainda o
+ * espera, para quem produz ver o que precisa mudar (Crivo F1). O comentário já
+ * era gravado no evento; faltava mostrá-lo. Só vale enquanto o pedido está de
+ * pé: em revisão ou aprovado, o comentário velho seria ruído.
+ */
+async function lastReviews(
+  db: Db,
+  tenantId: string,
+  rows: { id: string; status: string }[]
+): Promise<Map<string, LastReview>> {
+  const pending = rows.filter(
+    (d) => d.status === "ADJUSTMENT_REQUESTED" || d.status === "REOPENED"
+  );
+  const out = new Map<string, LastReview>();
+  if (pending.length === 0) {
+    return out;
+  }
+  const events = await db.scaffoldDeliverableEvent.findMany({
+    where: {
+      tenantId,
+      deliverableId: { in: pending.map((d) => d.id) },
+      action: { in: ["REQUEST_ADJUSTMENT", "REOPEN"] },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  const latest = new Map<string, (typeof events)[number]>();
+  for (const e of events) {
+    // Ordem decrescente: o primeiro de cada entregável é o mais recente.
+    if (!latest.has(e.deliverableId)) {
+      latest.set(e.deliverableId, e);
+    }
+  }
+  const people = await db.user.findMany({
+    where: {
+      id: { in: [...new Set([...latest.values()].map((e) => e.actorId))] },
+    },
+    select: { id: true, name: true, email: true },
+  });
+  const nameOf = new Map(people.map((u) => [u.id, u.name ?? u.email ?? u.id]));
+  for (const [id, e] of latest) {
+    out.set(id, {
+      action: e.action as LastReview["action"],
+      comment: e.comment ?? "",
+      byName: nameOf.get(e.actorId) ?? e.actorId,
+      at: e.createdAt,
+    });
+  }
+  return out;
+}
+
 /** Entregáveis da trilha, na ordem do método. Qualquer papel lê (SC-PO-04). */
 export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("deliverable.read");
     const input = TrackIdSchema.parse(raw);
-    const rows = await withTenantDb(ctx.tenantId, (db) =>
-      db.scaffoldDeliverableInstance.findMany({
+    const { rows, reviews } = await withTenantDb(ctx.tenantId, async (db) => {
+      const found = await db.scaffoldDeliverableInstance.findMany({
         where: { tenantId: ctx.tenantId, trackId: input.trackId },
         orderBy: [{ code: "asc" }],
         select: LIST_SELECT,
-      })
-    );
+      });
+      return {
+        rows: found,
+        reviews: await lastReviews(db, ctx.tenantId, found),
+      };
+    });
     // O que o ator pode fazer, calculado no servidor: a tela desabilita o
     // controle com o motivo e nunca precisa conhecer papel nem regra.
     const actor = actorOf(ctx);
@@ -477,6 +539,7 @@ export async function listDeliverables(raw: z.input<typeof TrackIdSchema>) {
       const attach = decideAttach(subject, actor);
       return {
         ...publicRow(d),
+        lastReview: reviews.get(d.id) ?? null,
         actions: availableActions(subject, actor),
         attach: attach.ok
           ? { allowed: true, reason: null }
