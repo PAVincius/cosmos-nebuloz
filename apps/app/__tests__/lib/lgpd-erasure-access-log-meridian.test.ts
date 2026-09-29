@@ -3,13 +3,11 @@
 // docs/compliance/lgpd-ropa-e-lacunas.md §5: processErasureRequest precisa
 // alcançar AccessLog e MeridianRespondent, as duas tabelas que sobraram depois
 // de MeetingParticipant/MeetingTranscript (lgpd-erasure-meeting.test.ts). Mesmo
-// padrão daquele arquivo: captura o handler real do inngest (mock de
-// `inngest.createFunction`), invoca com `step`/`event` fake.
+// padrão daquele arquivo: chama `runErasure` (corpo da eliminação, sem Inngest).
 
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  createFunction: vi.fn(),
   dsrUpdate: vi.fn().mockResolvedValue({}),
   userUpdate: vi.fn().mockResolvedValue({}),
   userFindUnique: vi.fn(),
@@ -25,10 +23,6 @@ const mocks = vi.hoisted(() => ({
   auditCreate: vi.fn().mockResolvedValue({}),
   transaction: vi.fn(),
   deleteObjects: vi.fn().mockResolvedValue(undefined),
-}));
-
-vi.mock("@/lib/inngest/client", () => ({
-  inngest: { createFunction: mocks.createFunction },
 }));
 
 vi.mock("@repo/observability/log", () => ({
@@ -65,24 +59,18 @@ vi.mock("@repo/database", () => ({
   Prisma: { DbNull: "__DB_NULL__" },
 }));
 
-import "@/lib/inngest/lgpd-dsr";
+import { runErasure } from "@/lib/jobs/lgpd-erasure";
 
-type StepCtx = {
-  run: (name: string, fn: () => Promise<unknown>) => Promise<unknown>;
-};
-type HandlerFn = (ctx: { event: unknown; step: StepCtx }) => Promise<unknown>;
+// Corpo da eliminação, sem a fila (a fila está em lgpd-erasure-queue.test.ts).
+const handler = ({
+  event,
+}: {
+  event: { data: Parameters<typeof runErasure>[0] };
+  step?: unknown;
+}) => runErasure(event.data);
 
-let handler: HandlerFn;
-
-beforeAll(() => {
-  const [[, fn]] = mocks.createFunction.mock.calls as [[unknown, HandlerFn]];
-  handler = fn;
-});
-
-function makeStep(): StepCtx {
-  return {
-    run: vi.fn(async (_name: string, fn: () => Promise<unknown>) => fn()),
-  };
+function makeStep() {
+  return;
 }
 
 const baseEvent = {

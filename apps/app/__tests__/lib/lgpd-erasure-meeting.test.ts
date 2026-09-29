@@ -7,10 +7,9 @@
 // does — mock `inngest.createFunction`, grab the registered handler, invoke
 // it with a fake `step`/`event`.
 
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  createFunction: vi.fn(),
   dsrUpdate: vi.fn().mockResolvedValue({}),
   userUpdate: vi.fn().mockResolvedValue({}),
   userFindUnique: vi.fn(),
@@ -27,10 +26,6 @@ const mocks = vi.hoisted(() => ({
   meridianEvidenceUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   auditCreate: vi.fn().mockResolvedValue({}),
   transaction: vi.fn(),
-}));
-
-vi.mock("@/lib/inngest/client", () => ({
-  inngest: { createFunction: mocks.createFunction },
 }));
 
 vi.mock("@repo/observability/log", () => ({
@@ -59,24 +54,18 @@ vi.mock("@repo/database", () => ({
   Prisma: { DbNull: "__DB_NULL__" },
 }));
 
-import "@/lib/inngest/lgpd-dsr";
+import { runErasure } from "@/lib/jobs/lgpd-erasure";
 
-type StepCtx = {
-  run: (name: string, fn: () => Promise<unknown>) => Promise<unknown>;
-};
-type HandlerFn = (ctx: { event: unknown; step: StepCtx }) => Promise<unknown>;
+// Corpo da eliminação, sem a fila (a fila está em lgpd-erasure-queue.test.ts).
+const handler = ({
+  event,
+}: {
+  event: { data: Parameters<typeof runErasure>[0] };
+  step?: unknown;
+}) => runErasure(event.data);
 
-let handler: HandlerFn;
-
-beforeAll(() => {
-  const [[, fn]] = mocks.createFunction.mock.calls as [[unknown, HandlerFn]];
-  handler = fn;
-});
-
-function makeStep(): StepCtx {
-  return {
-    run: vi.fn(async (_name: string, fn: () => Promise<unknown>) => fn()),
-  };
+function makeStep() {
+  return;
 }
 
 const baseEvent = {

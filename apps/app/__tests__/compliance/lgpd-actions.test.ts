@@ -73,7 +73,7 @@ beforeEach(() => {
 });
 
 describe("submitErasureRequest", () => {
-  it("creates DSR record and fires inngest event", async () => {
+  it("creates the PENDING DSR record (outbox for /api/cron/lgpd-erasure) and emits no Inngest event", async () => {
     const result = await submitErasureRequest();
 
     expect(result.ok).toBe(true);
@@ -89,16 +89,7 @@ describe("submitErasureRequest", () => {
         }),
       })
     );
-    expect(inngestMock.send).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: "lgpd/erasure.requested",
-        data: expect.objectContaining({
-          subjectId: CTX.userId,
-          tenantId: CTX.tenantId,
-          requestId: "dsr-new-1",
-        }),
-      })
-    );
+    expect(inngestMock.send).not.toHaveBeenCalled();
   });
 
   it("returns existing requestId when pending request already exists", async () => {
