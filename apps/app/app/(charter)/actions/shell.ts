@@ -7,6 +7,10 @@ import {
   type CharterContext,
   requireCharterContext,
 } from "@/lib/charter/guards";
+import { pickKnownModules } from "@/lib/shell-modules";
+
+// A casca do Charter só desenha estes módulos no seletor (MODULE_META).
+const MODULE_IDS: readonly ModuleId[] = ["COSMOS", "CHARTER", "SIGNAL"];
 
 // Dados da casca. Uma consulta por render de layout — o layout não remonta entre
 // rotas, então isto roda uma vez por navegação server-side, não por tela.
@@ -84,7 +88,7 @@ export async function getShellData(): Promise<ShellData> {
 
   return {
     ctx,
-    modules: modules as ModuleId[],
+    modules: pickKnownModules(modules, MODULE_IDS),
     organization: data.tenant?.name ?? "Organização",
     user: {
       name: ctx.user.name ?? ctx.user.email ?? "Usuário",
