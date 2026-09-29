@@ -17,6 +17,10 @@ export const MERIDIAN_EVIDENCE_BUCKET = "meridian-evidence";
  *  sempre prefixado por tenantId, e a leitura passa por server action que grava
  *  a trilha de auditoria antes de emitir a URL assinada (SN-02). */
 export const SCAFFOLD_ARTEFACT_BUCKET = "scaffold-artefacts";
+/** Evidência de controle de caso de uso do Charter. Privado; o caminho é sempre
+ *  prefixado por tenantId e a leitura passa por server action que audita antes
+ *  de emitir a URL assinada. Tipo e tamanho: `lib/charter/evidence-bucket.ts`. */
+export const CHARTER_EVIDENCE_BUCKET = "charter-evidence";
 
 /** Tipos de arquivo que um entregável do Scaffold aceita, por extensão. O
  *  cliente escolhe o arquivo, então a extensão é a lista de permissão e o tipo

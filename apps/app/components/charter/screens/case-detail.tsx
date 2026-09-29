@@ -19,6 +19,7 @@ import {
   rescoreCase,
   submitDraftCase,
 } from "@/app/(charter)/actions/cases";
+import { getCaseControls } from "@/app/(charter)/actions/controls-read";
 import {
   createMitigation,
   type MitigationRow as MitigationTableRow,
@@ -43,6 +44,7 @@ import {
   SmartEmptyState,
   Tabs,
 } from "../base";
+import { ControlsTab } from "../controls-tab";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DecisionModal } from "../modals/decision";
@@ -94,6 +96,10 @@ function CaseDetailInner({ param }: { param?: string }) {
   // Papel da sessão para o rodapé do modal de decisão: a trilha registra quem
   // decidiu e sob que papel, então a tela precisa mostrar isso antes de gravar.
   const settings = useCharterData(useCallback(() => getSettings(), []));
+  // Plano de controles: alimenta a aba e o bloqueio de aprovar (CH-DEV-06).
+  const controls = useCharterData(
+    useCallback(() => getCaseControls({ code }), [code])
+  );
   const audit = useCharterData(
     useCallback(
       () =>
@@ -152,6 +158,7 @@ function CaseDetailInner({ param }: { param?: string }) {
         approvalPath={data.approvalPath}
         caseCode={data.code}
         caseTitle={data.title}
+        controlBlockers={controls.data?.blockers.map((b) => b.reason) ?? []}
         dataClass={data.dataClass}
         deciderName={actorName}
         deciderRole={actorRole}
@@ -387,6 +394,11 @@ function CaseDetailInner({ param }: { param?: string }) {
             id: "mitigations",
             label: "Mitigações",
             count: data.mitigations.length,
+          },
+          {
+            id: "controls",
+            label: "Controles",
+            count: controls.data?.controls.length ?? 0,
           },
           { id: "trail", label: "Trilha", count: audit.data?.length ?? 0 },
         ]}
@@ -665,6 +677,11 @@ function CaseDetailInner({ param }: { param?: string }) {
           )}
         </SectionCard>
       )}
+
+      {tab === "controls" && controls.data && (
+        <ControlsTab data={controls.data} onChanged={controls.reload} />
+      )}
+      {tab === "controls" && !controls.data && <SkeletonCard />}
 
       {tab === "trail" && (
         <SectionCard

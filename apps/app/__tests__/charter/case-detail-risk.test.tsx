@@ -6,6 +6,25 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { UseCaseDetail } from "@/app/(charter)/actions/cases";
 
+// O modal do controle importa a action de arquivo, que puxa o storage (env de
+// servidor). O detalhe do caso não a usa aqui.
+vi.mock("@/app/(charter)/actions/controls-read", () => ({
+  getCaseControls: vi.fn().mockResolvedValue({ ok: false, error: "sem plano" }),
+}));
+vi.mock("@/app/(charter)/actions/case-controls", () => ({
+  acceptControl: vi.fn(),
+  addExtraControl: vi.fn(),
+  attachControlEvidence: vi.fn(),
+  dispenseControl: vi.fn(),
+  editControl: vi.fn(),
+  reopenControl: vi.fn(),
+  requestControlAdjustment: vi.fn(),
+  submitControl: vi.fn(),
+}));
+vi.mock("@/app/(charter)/actions/control-files", () => ({
+  readControlEvidenceFile: vi.fn(),
+  requestControlEvidenceUpload: vi.fn(),
+}));
 vi.mock("sonner", () => ({
   toast: { loading: vi.fn(), success: vi.fn(), error: vi.fn() },
 }));
