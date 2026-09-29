@@ -4,7 +4,7 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { useCallback } from "react";
 import { listAssessmentEvidence } from "@/app/(meridian)/actions/report";
 import { useMeridianData } from "../base";
-import { EvidenceButton } from "./evidence-button";
+import { EvidenceButton, TruncatedName } from "./evidence-button";
 
 /** Evidências do assessment em Coleta e no gap: um botão por arquivo, que abre
  *  pela mesma leitura auditada da aba Scoring. Sem lista (carregando, falha ou
@@ -51,9 +51,10 @@ export function EvidenceList({
               fontSize: 12,
               color: "var(--ink-faint)",
             }}
+            title={e.label}
           >
             <Icon name="paperclip" size={12} />
-            {e.label} · eliminada pela retenção
+            <TruncatedName>{e.label}</TruncatedName> · eliminada pela retenção
           </span>
         ) : (
           <EvidenceButton evidenceId={e.id} key={e.id} label={e.label} />

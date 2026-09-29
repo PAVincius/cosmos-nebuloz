@@ -11,3 +11,5 @@ Spec: `specs/010-evidencia-coleta-gap/spec.md` (PR #305, 40451f51). Decisão D-1
 Testes: `evidence-list.test.ts` (action, 7), `evidence-list.test.tsx` (componente, 6), `evidence-label.test.ts`; `__tests__/meridian` + `__tests__/screens` 439/439; tsc e biome sem erro.
 
 **Não feito:** E2E do M8 provando `evidence.read` a partir de Coleta e do gap (não roda neste worktree, sem banco/bucket local) — fica para o Crivo. O caso 403 tem teste de action (`requestEvidenceUrl` recusa antes de banco, trilha e bucket).
+
+**Parecer do Lacre (condição 3):** nome como texto escapado, com truncamento só visual (`TruncatedName`: ellipsis, DOM com o nome inteiro) e `title` com o nome completo, no botão e no marcador de eliminada. Testes: nome longo e nome com HTML viram texto, nunca elemento. Condições 1 e 2: sem `evidence.read` o servidor devolve só a contagem; o nome não entra em target/diff/metadata de auditoria nem em URL, log ou export.

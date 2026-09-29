@@ -8,6 +8,25 @@ import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 /** Abre a evidência que o respondente anexou. URL assinada de curta duração
  *  — `requestEvidenceUrl` grava a trilha ANTES de emitir, então cada clique
  *  é uma leitura auditada, não uma URL reaproveitável. */
+/** Nome do arquivo como texto (React escapa), com truncamento só visual: o
+ *  DOM guarda o nome inteiro e o `title` mostra o completo no hover. */
+export function TruncatedName({ children }: { children: string }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        maxWidth: 240,
+        minWidth: 0,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function EvidenceButton({
   evidenceId,
   label,
@@ -49,9 +68,10 @@ export function EvidenceButton({
       icon="paperclip"
       onClick={open}
       size="sm"
+      title={label}
       variant="ghost"
     >
-      {label}
+      <TruncatedName>{label}</TruncatedName>
     </Button>
   );
 }

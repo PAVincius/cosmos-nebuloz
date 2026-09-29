@@ -120,4 +120,50 @@ describe("EvidenceList", () => {
     expect(screen.getByText(/2 evidência\(s\) anexada\(s\)/)).toBeTruthy();
     expect(screen.queryByRole("button")).toBeNull();
   });
+
+  // Parecer do Lacre, condição 3: nome do arquivo como texto escapado, com
+  // truncamento só visual e o nome completo em title.
+  it("nome longo: trunca só visualmente e guarda o nome completo em title", async () => {
+    const longo = `${"relatorio-auditoria-".repeat(8)}final.pdf`;
+    h.listAssessmentEvidence.mockResolvedValue(
+      ok({
+        total: 2,
+        items: [
+          { id: "ev-1", label: longo, eliminated: false },
+          { id: "ev-2", label: longo, eliminated: true },
+        ],
+      })
+    );
+    const { container } = render(
+      <EvidenceList assessmentId={AS_ID} total={2} />
+    );
+    const botao = await screen.findByRole("button");
+    expect(botao.getAttribute("title")).toBe(longo);
+    expect(botao.textContent).toContain(longo);
+    const texto = botao.querySelector("span") as HTMLElement;
+    expect(texto.style.textOverflow).toBe("ellipsis");
+    expect(texto.style.overflow).toBe("hidden");
+    expect(texto.style.whiteSpace).toBe("nowrap");
+    const eliminada = container.querySelector(
+      "div > span[title]"
+    ) as HTMLElement;
+    expect(eliminada.getAttribute("title")).toBe(longo);
+    expect(eliminada.textContent).toContain(longo);
+  });
+
+  it("nome com HTML vira texto, nunca elemento", async () => {
+    const malicioso = '<img src=x onerror="alert(1)">.pdf';
+    h.listAssessmentEvidence.mockResolvedValue(
+      ok({
+        total: 1,
+        items: [{ id: "ev-1", label: malicioso, eliminated: false }],
+      })
+    );
+    const { container } = render(
+      <EvidenceList assessmentId={AS_ID} total={1} />
+    );
+    const botao = await screen.findByRole("button");
+    expect(botao.textContent).toContain(malicioso);
+    expect(container.querySelector("img")).toBeNull();
+  });
 });
