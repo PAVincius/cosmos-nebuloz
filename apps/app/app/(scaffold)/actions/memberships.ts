@@ -2,6 +2,7 @@
 
 import type { ScaffoldRole } from "@repo/database";
 import { withTenantDb } from "@repo/database";
+import { canAssignScaffoldRole } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
@@ -71,6 +72,11 @@ export async function assignScaffoldRole(
     const ctx = await requireScaffoldPermissionContext("membership.manage");
     const input = AssignScaffoldRoleSchema.parse(raw);
 
+    // Antes de qualquer leitura: quem altera o próprio papel se promove.
+    if (input.userId === ctx.userId) {
+      throw new ScaffoldRuleError("SELF_ROLE_CHANGE");
+    }
+
     await withTenantDb(ctx.tenantId, async (db) => {
       const person = await db.tenantMember.findFirst({
         where: { tenantId: ctx.tenantId, userId: input.userId },
@@ -86,6 +92,17 @@ export async function assignScaffoldRole(
         },
         select: { role: true },
       });
+
+      // Vale para o papel novo e para o atual: rebaixar é retirar.
+      if (
+        !canAssignScaffoldRole(
+          ctx.scaffoldRole,
+          current?.role ?? null,
+          input.role
+        )
+      ) {
+        throw new ScaffoldRuleError("ROLE_ASSIGNMENT_FORBIDDEN");
+      }
 
       await db.scaffoldMembership.upsert({
         where: {

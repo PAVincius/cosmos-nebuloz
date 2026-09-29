@@ -62,13 +62,14 @@ import {
 } from "@/app/(scaffold)/actions/memberships";
 
 const USER = "clx0000000000000000user001";
+const ACTOR = "clx0000000000000000actor01";
 
 beforeEach(() => {
   vi.clearAllMocks();
   h.role = "CONSULTANT";
   h.requireTenantSession.mockResolvedValue({
     tenantId: "t1",
-    userId: "u-actor",
+    userId: ACTOR,
     role: "ADMIN",
     user: { name: "Marina", email: "m@x.com" },
   });
@@ -91,11 +92,11 @@ describe("assignScaffoldRole", () => {
       tenantId: "t1",
       userId: USER,
       role: "PROCESS_OWNER",
-      updatedBy: "u-actor",
+      updatedBy: ACTOR,
     });
     expect(arg.update).toMatchObject({
       role: "PROCESS_OWNER",
-      updatedBy: "u-actor",
+      updatedBy: ACTOR,
     });
   });
 
@@ -185,6 +186,70 @@ describe("assignScaffoldRole", () => {
     await assignScaffoldRole({ userId: USER, role: "PROCESS_OWNER" });
     const audit = h.auditCreate.mock.calls[0]?.[0].data;
     expect(audit.diff).toEqual([["Papel de adoção", "—", "PROCESS_OWNER"]]);
+  });
+});
+
+describe("assignScaffoldRole — sem escalada de privilégio", () => {
+  it("CONSULTANT não concede ADMIN a outra pessoa", async () => {
+    const r = await assignScaffoldRole({ userId: USER, role: "ADMIN" });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.code).toBe("ROLE_ASSIGNMENT_FORBIDDEN");
+    }
+    expect(h.membershipUpsert).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("CONSULTANT não rebaixa ADMIN", async () => {
+    h.membershipFindUnique.mockResolvedValue({ role: "ADMIN" });
+    const r = await assignScaffoldRole({ userId: USER, role: "TEAM_MEMBER" });
+    expect(r.ok).toBe(false);
+    expect(h.membershipUpsert).not.toHaveBeenCalled();
+  });
+
+  it("CONSULTANT não cria nem rebaixa outro CONSULTANT", async () => {
+    const criar = await assignScaffoldRole({
+      userId: USER,
+      role: "CONSULTANT",
+    });
+    expect(criar.ok).toBe(false);
+    h.membershipFindUnique.mockResolvedValue({ role: "CONSULTANT" });
+    const rebaixar = await assignScaffoldRole({
+      userId: USER,
+      role: "TEAM_MEMBER",
+    });
+    expect(rebaixar.ok).toBe(false);
+    expect(h.membershipUpsert).not.toHaveBeenCalled();
+  });
+
+  it("ADMIN concede e retira ADMIN", async () => {
+    h.role = "ADMIN";
+    const dar = await assignScaffoldRole({ userId: USER, role: "ADMIN" });
+    expect(dar.ok).toBe(true);
+    h.membershipFindUnique.mockResolvedValue({ role: "ADMIN" });
+    const tirar = await assignScaffoldRole({
+      userId: USER,
+      role: "TEAM_MEMBER",
+    });
+    expect(tirar.ok).toBe(true);
+  });
+
+  it.each([
+    "CONSULTANT",
+    "ADMIN",
+  ])("%s não altera o próprio papel", async (role) => {
+    h.role = role;
+    const r = await assignScaffoldRole({
+      userId: ACTOR,
+      role: "TEAM_MEMBER",
+    });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.code).toBe("SELF_ROLE_CHANGE");
+    }
+    // Recusa antes de ler ou gravar qualquer coisa.
+    expect(h.tenantMemberFindFirst).not.toHaveBeenCalled();
+    expect(h.membershipUpsert).not.toHaveBeenCalled();
   });
 });
 

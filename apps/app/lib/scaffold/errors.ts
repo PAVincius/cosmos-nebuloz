@@ -17,6 +17,8 @@ export const SCAFFOLD_ERROR = {
   PROMOTION_HAS_ACTIVE_TRACK: "PROMOTION_HAS_ACTIVE_TRACK",
   // Acesso
   MEMBER_NOT_IN_TENANT: "MEMBER_NOT_IN_TENANT",
+  ROLE_ASSIGNMENT_FORBIDDEN: "ROLE_ASSIGNMENT_FORBIDDEN",
+  SELF_ROLE_CHANGE: "SELF_ROLE_CHANGE",
   // Gate — SG-01..SG-05
   STEPS_INCOMPLETE: "STEPS_INCOMPLETE",
   CRITERIA_UNMET: "CRITERIA_UNMET",
@@ -51,6 +53,10 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "A promoção tem trilha ativa. Cancele a trilha antes de revogar a promoção — revogar aqui deixaria trabalho em curso sem origem.",
   MEMBER_NOT_IN_TENANT:
     "Esta pessoa não faz parte da organização. Convide-a para a organização antes de atribuir um papel de adoção.",
+  ROLE_ASSIGNMENT_FORBIDDEN:
+    "Seu papel não pode conceder nem retirar este papel. Só o administrador gere administrador e consultor; o consultor gere os papéis abaixo dele.",
+  SELF_ROLE_CHANGE:
+    "Ninguém altera o próprio papel de adoção. Peça a outra pessoa com permissão para fazê-lo.",
   STEPS_INCOMPLETE:
     "Há passo requerido não concluído nesta fase. Um gate só é avaliado depois que o trabalho da fase terminou.",
   CRITERIA_UNMET:

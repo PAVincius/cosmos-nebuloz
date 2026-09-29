@@ -162,3 +162,31 @@ export function scaffoldDenialReason(permission: ScaffoldPermission): string {
   const list = labels.length ? `${labels.join(", ")} ou ${last}` : last;
   return `Requer papel ${list} — ${SCAFFOLD_PERMISSION_LABEL[permission]}`;
 }
+
+/**
+ * Quem pode conceder ou retirar qual papel de adoção (SA-05).
+ *
+ * `membership.manage` sozinha deixaria o consultor conceder ADMIN a si ou a
+ * outro e rebaixar administrador. A regra, sem hierarquia nova além da matriz:
+ *   - ADMIN é o topo: só ADMIN concede ou retira ADMIN, e gere qualquer papel;
+ *   - CONSULTANT gere só o que está abaixo dele: nem ADMIN nem outro
+ *     CONSULTANT, na concessão ou na retirada. Papéis futuros do cliente
+ *     (patrocinador, líder de time) entram abaixo sem mudar esta função;
+ *   - quem não tem `membership.manage` não atribui nada.
+ * Vale para o papel novo E para o atual da pessoa: rebaixar é retirar.
+ */
+export function canAssignScaffoldRole(
+  actor: ScaffoldRole,
+  current: ScaffoldRole | null,
+  next: ScaffoldRole
+): boolean {
+  if (!hasScaffoldPermission(actor, "membership.manage")) {
+    return false;
+  }
+  if (actor === "ADMIN") {
+    return true;
+  }
+  const belowConsultant = (r: ScaffoldRole | null) =>
+    r === null || (r !== "ADMIN" && r !== "CONSULTANT");
+  return belowConsultant(current) && belowConsultant(next);
+}
