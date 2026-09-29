@@ -14,6 +14,11 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type Assignee,
+  listDeliverableAssignees,
+  listDeliverables,
+} from "@/app/(scaffold)/actions/deliverables";
 import { exportHandoverPack } from "@/app/(scaffold)/actions/export";
 import {
   acknowledgeCharterPolicy,
@@ -31,7 +36,9 @@ import {
   getTrack,
   type TrackDetail,
 } from "@/app/(scaffold)/actions/tracks";
+import { phaseGateState } from "@/lib/scaffold/deliverable-machine";
 import { PHASE, PHASE_STATE } from "@/lib/scaffold/phases";
+import { AddDeliverableModal } from "../add-deliverable-modal";
 import {
   Eyebrow,
   Field,
@@ -44,6 +51,7 @@ import {
   StatusDot,
   Textarea,
 } from "../base";
+import { type DeliverableItem, DeliverableList } from "../deliverable-list";
 import { type CriterionFacts, type GateNotice, GatePanel } from "../gate-panel";
 import {
   CharterPolicyCard,
@@ -52,6 +60,7 @@ import {
 } from "../phase-cards";
 import { PhaseStepper } from "../phase-stepper";
 import { StepList } from "../step-list";
+import { useScaffoldAccess } from "../use-access";
 
 /** Os três atos que rescrevem o histórico de uma trilha, e por isso pedem
  *  justificativa. O texto mora aqui, e não em ternários no JSX, para que os
@@ -93,6 +102,10 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   const router = useRouter();
   const [track, setTrack] = useState<TrackDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Recusa de uma AÇÃO não derruba a tela: a trilha carregou e continua ali.
+  // `error` é só falha de CARREGAR.
+  const [notice, setNotice] = useState<string | null>(null);
+  const { can } = useScaffoldAccess();
   const [phase, setPhase] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [gateNotice, setGateNotice] = useState<GateNotice | null>(null);
@@ -104,6 +117,9 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     | { kind: "cancel" }
     | null
   >(null);
+  const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
+  const [adding, setAdding] = useState(false);
+  const [assignees, setAssignees] = useState<Assignee[] | null>(null);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   // Cancelar trilha com caso assinado obriga a dizer o que o Signal faz com a
@@ -120,10 +136,20 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       return;
     }
     setError(null);
-    const res = await getTrack({ trackId: param });
+    const [res, dels, people] = await Promise.all([
+      getTrack({ trackId: param }),
+      listDeliverables({ trackId: param }),
+      listDeliverableAssignees(),
+    ]);
     if (res.ok) {
       setTrack(res.data);
       setPhase((p) => p ?? res.data.currentPhase);
+      // Falha ao ler entregáveis não derruba a trilha: a tela cai na regra de
+      // passos e o servidor continua sendo quem decide o fechamento.
+      setDeliverables(dels.ok ? dels.data : []);
+      // Sem as pessoas, a tela ainda funciona; só a designação avisa que não
+      // conseguiu carregar quem pode ser escolhido.
+      setAssignees(people.ok ? people.data : null);
     } else {
       setError(res.error);
     }
@@ -145,7 +171,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       if (res.ok) {
         await load();
       } else {
-        setError(res.error);
+        setNotice(res.error);
       }
     },
     [load]
@@ -163,7 +189,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       // página atual para um download deixaria o usuário sem para onde voltar.
       window.open(res.data.url, "_blank", "noopener,noreferrer");
     } else {
-      setError(res.error);
+      setNotice(res.error);
     }
   }, [param]);
 
@@ -173,7 +199,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       if (res.ok) {
         await load();
       } else {
-        setError(res.error);
+        setNotice(res.error);
       }
     },
     [load]
@@ -187,7 +213,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         setGateNotice({ message: res.error, blockers: res.blockers ?? [] });
         return true;
       }
-      setError(res.error);
+      setNotice(res.error);
       return false;
     },
     []
@@ -279,7 +305,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       });
       if (!res.ok) {
         setBusy(false);
-        setError(res.error);
+        setNotice(res.error);
         return;
       }
       // A URL é assinada para PUT direto no storage: o byte não passa pelo
@@ -291,7 +317,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       });
       setBusy(false);
       if (!put.ok) {
-        setError(
+        setNotice(
           `Upload falhou (${put.status}). O registro do artefato existe; tente anexar de novo.`
         );
         return;
@@ -306,7 +332,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     if (res.ok) {
       window.open(res.data.url, "_blank", "noopener,noreferrer");
     } else {
-      setError(res.error);
+      setNotice(res.error);
     }
   }, []);
 
@@ -341,10 +367,19 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
     return <SkeletonCard />;
   }
   activePhaseId.current = activePhase.id;
+  const stepAccess = can("step.complete");
   const editable =
-    activePhase.state === "OPEN" ||
-    activePhase.state === "GATE_READY" ||
-    activePhase.state === "BLOCKED";
+    stepAccess.allowed &&
+    (activePhase.state === "OPEN" ||
+      activePhase.state === "GATE_READY" ||
+      activePhase.state === "BLOCKED");
+  const manageAccess = can("track.manage");
+  const addAccess = can("deliverable.add");
+  // Só-leitura de verdade: nem passo nem trilha. Diz por que, uma vez, no topo.
+  const readOnlyReason =
+    !(stepAccess.allowed || manageAccess.allowed) && stepAccess.reason
+      ? stepAccess.reason
+      : null;
 
   return (
     <div
@@ -382,17 +417,79 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           Portfólio
         </Button>
+        {track.businessCase ? (
+          <Button
+            icon="fileText"
+            onClick={() =>
+              router.push(`/scaffold/baseline/${track.businessCase?.id}`)
+            }
+            variant="secondary"
+          >
+            Caso de negócio {track.businessCase.code}
+          </Button>
+        ) : null}
         {track.status === "ACTIVE" || track.status === "STALLED" ? (
           <Button
-            disabled={busy}
+            disabled={busy || !manageAccess.allowed}
             icon="x"
             onClick={() => openModal({ kind: "cancel" })}
+            title={manageAccess.reason ?? undefined}
             variant="secondary"
           >
             Cancelar trilha
           </Button>
         ) : null}
       </PageHeader>
+
+      {readOnlyReason ? (
+        <div
+          style={{
+            padding: "10px 14px",
+            borderRadius: "var(--r-sm)",
+            background: "var(--surface)",
+            border: "1px solid var(--hairline)",
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+          }}
+        >
+          Somente leitura — {readOnlyReason}
+        </div>
+      ) : null}
+
+      {adding ? (
+        <AddDeliverableModal
+          onClose={() => setAdding(false)}
+          onCreated={() => {
+            setAdding(false);
+            load();
+          }}
+          phase={activePhase.phase}
+          phaseLabel={PHASE[activePhase.phase].label}
+          trackId={track.id}
+        />
+      ) : null}
+
+      {notice ? (
+        <div
+          role="alert"
+          style={{
+            display: "flex",
+            gap: 12,
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 14px",
+            borderRadius: "var(--r-sm)",
+            background: "var(--red-soft)",
+            color: "var(--red-text)",
+            fontSize: 12.5,
+          }}
+        >
+          <span>{notice}</span>
+          <Button onClick={() => setNotice(null)} size="sm" variant="secondary">
+            Dispensar
+          </Button>
+        </div>
+      ) : null}
 
       <PhaseStepper
         activePhase={activePhase.phase}
@@ -415,6 +512,32 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
             gap: "var(--gap)",
           }}
         >
+          <SectionCard
+            action={
+              <Button
+                disabled={!addAccess.allowed}
+                icon="plus"
+                onClick={() => setAdding(true)}
+                size="sm"
+                title={addAccess.reason ?? undefined}
+                variant="secondary"
+              >
+                Adicionar entregável
+              </Button>
+            }
+            icon="fileText"
+            subtitle="SG-01 · o gate só fecha com todo obrigatório aprovado"
+            title={`Entregáveis — ${PHASE[activePhase.phase].label}`}
+            tone="accent"
+          >
+            <DeliverableList
+              assignees={assignees}
+              items={deliverables.filter(
+                (d) => d.phaseInstanceId === activePhase.id
+              )}
+              onChanged={load}
+            />
+          </SectionCard>
           <SectionCard
             icon="check"
             subtitle="S-04 · cada passo produz um artefato esperado"
@@ -439,13 +562,25 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           <GatePanel
             busy={busy}
-            // Trocar de fase zera o que foi marcado: os critérios são outros.
+            canReopen={can("gate.close").allowed}
+            closeBlockedReason={
+              can("gate.close").allowed
+                ? phaseGateState(
+                    deliverables,
+                    activePhase.id,
+                    Boolean(track.businessCase?.signed)
+                  ).reason
+                : (can("gate.close").reason ??
+                  "Sem permissão para fechar o gate.")
+            }
             key={activePhase.id}
+            // Trocar de fase zera o que foi marcado: os critérios são outros.
             notice={gateNotice}
             onClose={closeGate}
             onOverride={(unmet) => openModal({ kind: "override", unmet })}
             onReopen={() => openModal({ kind: "reopen" })}
             phase={activePhase}
+            reopenReason={can("gate.close").reason}
           />
           <CharterPolicyCard
             busy={busy}

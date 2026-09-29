@@ -5,8 +5,10 @@ import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
+import { deliverableProgress } from "@/lib/scaffold/deliverable-progress";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
+import { upsertProcessRegistry } from "@/lib/scaffold/process-registry";
 import {
   CancelTrackSchema,
   CreateTrackFromGapSchema,
@@ -47,6 +49,9 @@ export type TrackSummary = {
   lastGateAt: Date | null;
   lastGateLabel: string | null;
   stalledDays: number;
+  /** Aprovados sobre obrigatórios ("3/16 entregáveis"). 0/0 = trilha anterior
+   *  ao modelo de entregáveis: a tela não mostra fração. */
+  deliverables: { approved: number; required: number };
 };
 
 /** Taxa de override por recorte — SG-08. */
@@ -142,6 +147,7 @@ export async function createTrackFromGap(
         tenantId: ctx.tenantId,
         processName: input.processName,
         ownerId: input.ownerId,
+        authorId: ctx.userId,
         consultantId: input.consultantId,
         archetype: input.archetype,
         templateId: input.templateId,
@@ -155,12 +161,23 @@ export async function createTrackFromGap(
         data: { targetEntityId: created.id },
       });
 
+      // X-01. Sem isto o registro único de processo nasce vazio: é aqui que gap e
+      // trilha se encontram. Na mesma transação — trilha sem vínculo é o estado
+      // que o registro existe para evitar.
+      await upsertProcessRegistry(db, {
+        tenantId: ctx.tenantId,
+        name: input.processName,
+        workForm: input.archetype ?? null,
+        meridianGapId: input.gapId,
+        scaffoldTrackId: created.id,
+      });
+
       await logScaffoldAudit(db, ctx, {
         action: "scaffold.track.create-from-gap",
         entityType: "scaffold.track",
         entityId: created.id,
         target: `${created.code} · ${input.processName}`,
-        note: `Semeada da lacuna ${input.gapId}; promoção ${promotion.id} passou a apontar para a trilha.`,
+        note: `Semeada da lacuna ${input.gapId}; promoção ${promotion.id} passou a apontar para a trilha. Caso de negócio ${created.businessCaseCode} aberto em rascunho (v1).`,
       });
 
       return created;
@@ -187,6 +204,7 @@ export async function createTrack(
         tenantId: ctx.tenantId,
         processName: input.processName,
         ownerId: input.ownerId,
+        authorId: ctx.userId,
         consultantId: input.consultantId,
         archetype: input.archetype,
         templateId: input.templateId,
@@ -197,6 +215,7 @@ export async function createTrack(
         entityType: "scaffold.track",
         entityId: created.id,
         target: `${created.code} · ${input.processName}`,
+        note: `Caso de negócio ${created.businessCaseCode} aberto em rascunho (v1).`,
       });
       return created;
     });
@@ -318,6 +337,22 @@ export async function listTracks(
         owners.map((u) => [u.id, u.name ?? u.email ?? null])
       );
 
+      // Progresso de entregáveis de todas as trilhas listadas, numa consulta.
+      const deliverables = rows.length
+        ? await db.scaffoldDeliverableInstance.findMany({
+            where: {
+              tenantId: ctx.tenantId,
+              trackId: { in: rows.map((t) => t.id) },
+            },
+            select: {
+              trackId: true,
+              code: true,
+              status: true,
+              required: true,
+            },
+          })
+        : [];
+
       const threshold =
         settings?.stallThresholdDays ?? DEFAULT_STALL_THRESHOLD_DAYS;
 
@@ -340,6 +375,10 @@ export async function listTracks(
           lastGateAt: t.lastGateAt,
           lastGateLabel: shortDate(t.lastGateAt),
           stalledDays: stalledDays(t.lastGateAt, t.startedAt),
+          deliverables: deliverableProgress(
+            deliverables.filter((d) => d.trackId === t.id),
+            Boolean(t.businessCase?.signedVersionId)
+          ),
         };
       });
 

@@ -42,6 +42,8 @@ vi.mock("@repo/database", () => ({
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       scaffoldGateResult: { create: h.gateResultCreate },
       scaffoldGateOverride: { create: h.overrideCreate },
+      // Trilha legada, sem entregável: a regra de passos vale sozinha.
+      scaffoldDeliverableInstance: { findMany: async () => [] },
       scaffoldTrack: { update: h.trackUpdate },
       tenantModule: { findFirst: h.moduleFindFirst },
       auditLog: { create: h.auditCreate },

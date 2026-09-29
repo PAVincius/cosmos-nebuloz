@@ -1,6 +1,6 @@
 "use client";
 
-// Biblioteca de templates — S-05, S-12, ST-01..ST-04.
+// Versões e overlays — S-05, S-12, ST-01..ST-04.
 // Port de `scaffold-screens-3.jsx`.
 //
 // A tela mostra três coisas que o método precisa deixar visíveis:
@@ -29,6 +29,7 @@ import {
   resolveConflict,
   type TemplateRow,
 } from "@/app/(scaffold)/actions/templates";
+import { workFormLabel } from "@/lib/scaffold/forms";
 import {
   Eyebrow,
   ScreenError,
@@ -36,12 +37,6 @@ import {
   SmartEmptyState,
   StatusDot,
 } from "../base";
-
-const ARCHETYPE_LABEL: Record<string, string> = {
-  TRIAGE: "Triagem de suporte",
-  DOC_REVIEW: "Revisão de documentos",
-  REPORTING: "Relatórios",
-};
 
 function VersionTrail({ t }: { t: TemplateRow }) {
   return (
@@ -331,7 +326,7 @@ export default function TemplatesScreen() {
           />
         }
         subtitle="O método da Nebuloz como dado. Versão publicada é imutável; a customização do cliente é overlay, não fork — e sobrevive ao upgrade ou vira conflito explícito."
-        title="Biblioteca de templates"
+        title="Versões e overlays"
       />
 
       <div
@@ -406,7 +401,7 @@ export default function TemplatesScreen() {
               }
               icon="puzzle"
               key={t.id}
-              subtitle={ARCHETYPE_LABEL[t.archetype] ?? t.archetype}
+              subtitle={workFormLabel(t.archetype)}
               title={t.name}
               tone="accent"
             >

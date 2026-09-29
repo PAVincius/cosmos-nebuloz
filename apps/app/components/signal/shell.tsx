@@ -76,6 +76,7 @@ export const TITLES: Record<string, [string, string]> = {
   reports: ["Relatórios", "Prova"],
   connections: ["Conexões", "Dado"],
   mapping: ["Mapeamento de métricas", "Dado"],
+  models: ["Modelos de medição", "Dado"],
   settings: ["Configurações", "Sistema"],
 };
 

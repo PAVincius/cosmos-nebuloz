@@ -12,6 +12,8 @@
 // longo num arquivo, lógica de upsert no outro. Um teste que precise conferir o
 // conteúdo do método importa daqui sem disparar conexão com o banco.
 
+import { NORTE_VERSIONS } from "./scaffold-templates-norte";
+
 export type StepSeed = {
   key: string;
   statement: string;
@@ -25,10 +27,35 @@ export type CriterionSeed = {
   evaluationType?: "MANUAL" | "DERIVED";
 };
 
+/** Entregável do template (SC-DEV-01/02). Versões anteriores ao modelo não têm
+ *  nenhum, e as trilhas criadas sobre elas seguem só os passos. */
+export type DeliverableSeed = {
+  /** Chave do passo A1…E3 a que pertence. */
+  stepCode: string;
+  /** "A1.1". Estável entre versões do template e nunca reusado (ST-03). */
+  code: string;
+  title: string;
+  description: string;
+  kind:
+    | "DOCUMENT"
+    | "SPREADSHEET"
+    | "DATASET"
+    | "CONFIGURATION"
+    | "SIGNATURE"
+    | "TRAINING"
+    | "REPORT"
+    | "PACKAGE";
+  producer: "OWNER" | "CONSULTANT" | "TECHNICAL" | "LEGAL";
+  required?: boolean;
+  /** Só existe com o módulo contratado; sem ele nasce dispensado. */
+  requiresModule?: "CHARTER";
+};
+
 export type PhaseSeed = {
   phase: "ASSESS" | "PILOT" | "SCALE" | "EMBED";
   steps: StepSeed[];
   criteria: CriterionSeed[];
+  deliverables?: DeliverableSeed[];
 };
 
 export type VersionSeed = {
@@ -41,7 +68,12 @@ export type VersionSeed = {
 export type TemplateSeed = {
   key: string;
   name: string;
-  archetype: "TRIAGE" | "DOC_REVIEW" | "REPORTING";
+  archetype:
+    | "TRIAGE"
+    | "DOC_REVIEW"
+    | "REPORTING"
+    | "CONVERSATIONAL"
+    | "ANALYSIS";
   versions: VersionSeed[];
 };
 
@@ -230,6 +262,7 @@ export const TEMPLATES: TemplateSeed[] = [
           { phase: "EMBED", steps: EMBED_STEPS, criteria: EMBED_CRITERIA },
         ],
       },
+      NORTE_VERSIONS.triage,
     ],
   },
   {
@@ -286,6 +319,7 @@ export const TEMPLATES: TemplateSeed[] = [
           { phase: "EMBED", steps: EMBED_STEPS, criteria: EMBED_CRITERIA },
         ],
       },
+      NORTE_VERSIONS.docreview,
     ],
   },
   {
@@ -337,6 +371,19 @@ export const TEMPLATES: TemplateSeed[] = [
           { phase: "EMBED", steps: EMBED_STEPS, criteria: EMBED_CRITERIA },
         ],
       },
+      NORTE_VERSIONS.reporting,
     ],
+  },
+  {
+    key: "conversational",
+    name: "Assistente conversacional",
+    archetype: "CONVERSATIONAL",
+    versions: [NORTE_VERSIONS.conversational],
+  },
+  {
+    key: "analysis",
+    name: "Análise e priorização",
+    archetype: "ANALYSIS",
+    versions: [NORTE_VERSIONS.analysis],
   },
 ];

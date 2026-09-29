@@ -72,6 +72,7 @@ const NAV: NavSection[] = [
       { id: "dashboard", icon: "gauge", label: "Visão Geral" },
       { id: "policy", icon: "fileText", label: "Políticas" },
       { id: "cases", icon: "inbox", label: "Casos de Uso" },
+      { id: "perfis", icon: "shield", label: "Perfis de controle" },
     ],
   },
   {
@@ -99,6 +100,7 @@ export const TITLES: Record<string, [string, string]> = {
   policy: ["Políticas", "Governança"],
   cases: ["Casos de Uso", "Governança"],
   case: ["Caso de Uso", "Casos de Uso"],
+  perfis: ["Perfis de controle", "Governança"],
   risk: ["Matriz de Risco", "Risco"],
   vendors: ["Fornecedores", "Risco"],
   vendor: ["Fornecedor", "Fornecedores"],

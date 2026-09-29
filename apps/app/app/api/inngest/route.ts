@@ -1,7 +1,9 @@
 import { serve } from "inngest/next";
 import { aiLawWatchFunction } from "@/lib/inngest/ai-law-watch";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
+import { expireCharterControls } from "@/lib/inngest/charter-control-expiry";
 import { inngest } from "@/lib/inngest/client";
+import { consumeScaffoldGateClosed } from "@/lib/inngest/cosmos-scaffold-origin";
 import { runExport } from "@/lib/inngest/export-runner";
 import { fetchFathomTranscriptFn } from "@/lib/inngest/fathom-transcript";
 import { mapFirefliesInsightsFn } from "@/lib/inngest/fireflies-insights";
@@ -13,10 +15,12 @@ import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
 import { linearFullPullDispatch } from "@/lib/inngest/linear-full-pull-dispatch";
 import { consumeLinearWebhook } from "@/lib/inngest/linear-webhook-consumer";
 import { eliminateExpiredMeridianEvidence } from "@/lib/inngest/meridian-evidence-retention";
+import { reactToCharterControlExpired } from "@/lib/inngest/scaffold-charter-control-expired";
 import { closeScaffoldObservation } from "@/lib/inngest/scaffold-observation";
 import { checkScaffoldStall } from "@/lib/inngest/scaffold-stall";
 import { scheduledReportDispatch } from "@/lib/inngest/scheduled-report-dispatch";
 import { runScheduledReport } from "@/lib/inngest/scheduled-report-runner";
+import { freezePlanOnBaseline } from "@/lib/inngest/signal-baseline-freeze";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
 import { deliverWebhookEvent } from "@/lib/inngest/webhook-delivery";
 import { checkWorkflowSla } from "@/lib/inngest/workflow-sla";
@@ -46,5 +50,9 @@ export const { GET, POST, PUT } = serve({
     runScheduledReport,
     releaseWorkflowWaitState,
     checkWorkflowSla,
+    consumeScaffoldGateClosed,
+    freezePlanOnBaseline,
+    expireCharterControls,
+    reactToCharterControlExpired,
   ],
 });

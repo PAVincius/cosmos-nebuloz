@@ -1,0 +1,216 @@
+// Charter — perfis de controle por forma de trabalho e plano de controles por
+// caso de uso.
+//
+// CH-DEV-01/03 do handoff (correcoes.pdf §04) com as decisões provisórias do
+// Norte de 2026-09-29, parte 2 (CH-PO-01..05). O perfil de controle é o análogo
+// do template do Scaffold e do modelo de medição do Signal: uma forma de
+// trabalho (`WorkForm`), o método da Nebuloz, GLOBAL e versionado.
+//
+// Exceção declarada à convenção de tenantId: perfil, versão de perfil e controle
+// do perfil não têm tenantId (são o método, não dado do cliente) e ficam com RLS
+// forçada e SEM policy. Tudo o que é do cliente — o controle do caso e o
+// histórico dele — tem tenantId e RLS tenant_isolation.
+//
+// O conteúdo dos 5 perfis (CV, AN, DR, TR, RP) é RASCUNHO até a assinatura de
+// Jurídico/DPO e de Segurança (CH-PO-01). A versão registra as duas assinaturas;
+// perfil sem ambas não pode ser usado por caso — regra de action
+// (`isPublishable`), não de banco, para o seed de desenvolvimento poder existir.
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// Cadência de reavaliação do controle. Enum próprio: `CharterRecertCadence` só
+/// tem ANNUAL e SEMIANNUAL e serve à recertificação de fornecedor.
+enum CharterControlCadence {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  SEMIANNUAL
+  ANNUAL
+  /// A cada ciclo do processo (relatórios recorrentes).
+  PER_CYCLE
+}
+
+/// Fluxo do controle no caso:
+///   Sem evidência → Em elaboração → Em revisão → Ajuste pedido / Aceita →
+///   Vencida; Sem evidência / Ajuste pedido → Dispensado; Aceita / Dispensado →
+///   Reaberto. Pedir ajuste, dispensar e reabrir exigem comentário; só quem
+///   decide o caso aceita, dispensa e reabre (regra de action, `case.decide`).
+enum CharterCaseControlState {
+  NO_EVIDENCE
+  IN_PROGRESS
+  IN_REVIEW
+  ADJUSTMENT_REQUESTED
+  ACCEPTED
+  EXPIRED
+  DISPENSED
+  REOPENED
+}
+
+/// Ação registrada no histórico do controle do caso.
+enum CharterCaseControlAction {
+  START
+  ATTACH
+  SUBMIT
+  ACCEPT
+  REQUEST_ADJUSTMENT
+  DISPENSE
+  REOPEN
+  /// Aceita → Vencida pelo job de cadência (CH-DEV-07); sem ator.
+  EXPIRE
+  EDIT
+}
+
+// ── Perfil de controle (global, versionado) ───────────────────────────────────
+
+/// Um perfil por forma de trabalho. O conteúdo vive nas versões.
+model CharterControlProfile {
+  id        String   @id @default(cuid())
+  workForm  WorkForm @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions CharterControlProfileVersion[]
+}
+
+/// Versão publicada. IMUTÁVEL como ScaffoldTemplateVersion: sem `updatedAt`,
+/// publicar cria linha nova. O caso pina a versão ao gerar o plano.
+model CharterControlProfileVersion {
+  id             String                @id @default(cuid())
+  profileId      String
+  /// "v1", "v2".
+  label          String
+  /// Riscos dominantes da forma de trabalho.
+  dominantRisks  CharterRiskCategory[]
+  /// Caminho de decisão: REQUESTER submete e um papel com `case.decide` decide;
+  /// o perfil só diz QUAL papel decide.
+  decisionRole   CharterRole
+  note           String?               @db.Text
+  publishedAt    DateTime              @default(now())
+  publishedBy    String?
+  /// Assinaturas exigidas por CH-PO-01. Nulas = rascunho.
+  legalSignedBy    String?
+  legalSignedAt    DateTime?
+  securitySignedBy String?
+  securitySignedAt DateTime?
+
+  profile  CharterControlProfile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  controls CharterControlProfileControl[]
+  useCases CharterUseCase[]
+
+  @@unique([profileId, label])
+  @@index([profileId])
+}
+
+/// Controle do perfil: o que se exige, que evidência conta, quem responde, com
+/// que cadência e a partir de que classe de dado. Imutável junto com a versão.
+model CharterControlProfileControl {
+  id                 String                @id @default(cuid())
+  versionId          String
+  seq                Int
+  /// "CV-4", "TR-2". Estável e nunca reusado depois do publish.
+  code               String
+  name               String
+  category           CharterRiskCategory
+  /// Evidência que conta (CH-PO-02): arquivo, data de produção, quem produziu.
+  evidence           String                @db.Text
+  /// Critério de aceite objetivo, escrito no controle.
+  acceptanceCriteria String                @db.Text
+  role               CharterRole
+  cadence            CharterControlCadence
+  /// Classe mínima de dado (CH-PO-03): o controle entra quando a classe do caso
+  /// é >= esta, na ordem PUBLIC < INTERNAL < CONFIDENTIAL < RESTRICTED.
+  minClass           CharterDataClass
+  /// CH-PO-04: false = não pode ser dispensado (ex.: RIPD, obrigação legal).
+  dispensable        Boolean               @default(true)
+
+  version CharterControlProfileVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, code])
+  @@index([versionId])
+}
+
+// ── Plano de controles do caso (por tenant) ───────────────────────────────────
+
+/// Controle de um caso de uso. Nasce do perfil filtrado pela classe do caso
+/// (texto copiado, como o passo do Scaffold: publicar versão nova não reescreve
+/// o que o caso já cumpre) ou é adicionado (`isExtra`): entra sem evidência e
+/// passa a bloquear a decisão do caso (CH-DEV-06).
+model CharterCaseControl {
+  id        String @id @default(cuid())
+  tenantId  String
+  useCaseId String
+  /// Código no caso: o do perfil ("TR-2") ou gerado para o extra.
+  code      String
+  /// `code` do controle do perfil de origem. Sem FK, como stepTemplateKey.
+  /// Nulo no extra.
+  profileControlCode String?
+
+  name               String
+  category           CharterRiskCategory
+  evidence           String              @db.Text
+  acceptanceCriteria String?             @db.Text
+  role               CharterRole
+  cadence            CharterControlCadence
+  minClass           CharterDataClass
+  dispensable        Boolean             @default(true)
+  isExtra            Boolean             @default(false)
+
+  state     CharterCaseControlState @default(NO_EVIDENCE)
+  ownerId   String?
+  /// Nome livre quando o responsável não é usuário da plataforma.
+  ownerName String?
+  summary   String?                   @db.Text
+  /// Arquivo da evidência: chave opaca no bucket privado do tenant.
+  fileKey   String?
+  fileName  String?
+  /// Data em que a evidência foi produzida (CH-PO-02).
+  evidenceProducedAt DateTime?
+  acceptedAt         DateTime?
+  /// Fim da validade da aceitação, pela cadência. O job de vencimento leva
+  /// Aceita → Vencida quando passa.
+  expiresAt          DateTime?
+
+  /// Mitigação existente ligada ao controle da mesma categoria (CH-PM-02).
+  mitigationId String?
+
+  /// Dispensa exige motivo e prazo de revisão (CH-PO-04). No vencimento do
+  /// prazo, o job leva o controle a Reaberto.
+  dispensedUntil  DateTime?
+  dispensedReason String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant     Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  useCase    CharterUseCase      @relation(fields: [useCaseId], references: [id], onDelete: Cascade)
+  mitigation CharterMitigation?  @relation(fields: [mitigationId], references: [id], onDelete: SetNull)
+  events     CharterCaseControlEvent[]
+
+  @@unique([tenantId, useCaseId, code])
+  @@index([tenantId])
+  @@index([tenantId, state])
+  @@index([useCaseId, state])
+  @@index([mitigationId])
+}
+
+/// Histórico do controle do caso. Append-only no banco (trigger, como o
+/// AuditLog). `actorId` nulo = sistema (job de vencimento).
+model CharterCaseControlEvent {
+  id            String                    @id @default(cuid())
+  tenantId      String
+  caseControlId String
+  action        CharterCaseControlAction
+  actorId       String?
+  fromState     CharterCaseControlState?
+  toState       CharterCaseControlState?
+  /// Obrigatório em pedir ajuste, dispensar e reabrir.
+  comment       String?                   @db.Text
+  createdAt     DateTime                  @default(now())
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  caseControl CharterCaseControl @relation(fields: [caseControlId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([caseControlId, createdAt])
+}

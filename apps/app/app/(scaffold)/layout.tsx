@@ -1,6 +1,8 @@
 import { AuthError } from "@repo/auth/server";
+import { hasScaffoldPermission } from "@repo/rbac";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { screensFor } from "@/components/scaffold/nav";
 import { SCREENS } from "@/components/scaffold/screens/registry";
 import { ScaffoldShell } from "@/components/scaffold/shell";
 import { getShellData } from "./actions/shell";
@@ -41,7 +43,16 @@ const ScaffoldLayout = async ({ children }: { children: ReactNode }) => {
     <ScaffoldShell
       activeTenantId={data.activeTenantId}
       badges={data.badges}
-      screenIds={Object.keys(SCREENS)}
+      screenIds={screensFor(Object.keys(SCREENS), {
+        canManageMembers: hasScaffoldPermission(
+          data.ctx.scaffoldRole,
+          "membership.manage"
+        ),
+        canSeeMetrics: hasScaffoldPermission(
+          data.ctx.scaffoldRole,
+          "product.metrics"
+        ),
+      })}
       stalledCount={data.stalledCount}
       stallThresholdDays={data.stallThresholdDays}
       tenants={data.tenants}

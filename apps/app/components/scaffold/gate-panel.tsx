@@ -31,6 +31,9 @@ export function GatePanel({
   phase,
   busy,
   notice,
+  closeBlockedReason = null,
+  canReopen = true,
+  reopenReason = null,
   onClose,
   onOverride,
   onReopen,
@@ -38,6 +41,12 @@ export function GatePanel({
   phase: TrackDetailPhase;
   busy: boolean;
   notice: GateNotice | null;
+  /** Entregável obrigatório pendente (SG-01): o motivo desabilita o botão e
+   *  fica escrito ao lado, em vez de a recusa só vir do servidor. */
+  closeBlockedReason?: string | null;
+  /** Quem não fecha gate também não reabre fase (mesmo peso). */
+  canReopen?: boolean;
+  reopenReason?: string | null;
   onClose: (facts: CriterionFacts) => void;
   onOverride: (unmet: string[]) => void;
   onReopen: () => void;
@@ -241,13 +250,27 @@ export function GatePanel({
               Registrar override
             </Button>
           ) : null}
+          {closeBlockedReason ? (
+            <span
+              id="gate-close-reason"
+              style={{
+                alignSelf: "center",
+                fontSize: 12,
+                color: "var(--ink-muted)",
+                flex: "1 1 200px",
+              }}
+            >
+              {closeBlockedReason}
+            </span>
+          ) : null}
           <Button
-            disabled={busy}
+            disabled={busy || Boolean(closeBlockedReason)}
             icon="check"
             onClick={() => onClose(facts)}
             size="sm"
+            title={closeBlockedReason ?? undefined}
           >
-            Fechar gate
+            Revisar e assinar
           </Button>
         </div>
       ) : null}
@@ -261,10 +284,11 @@ export function GatePanel({
           }}
         >
           <Button
-            disabled={busy}
+            disabled={busy || !canReopen}
             icon="refresh"
             onClick={onReopen}
             size="sm"
+            title={reopenReason ?? undefined}
             variant="secondary"
           >
             Reabrir fase

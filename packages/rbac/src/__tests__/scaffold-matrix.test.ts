@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canAssignScaffoldRole,
   hasScaffoldPermission,
   SCAFFOLD_MATRIX,
   SCAFFOLD_PERMISSION_LABEL,
@@ -80,6 +81,18 @@ describe("separações que o produto depende", () => {
     expect(hasScaffoldPermission("TEAM_MEMBER", "track.manage")).toBe(false);
   });
 
+  it("só consultor e administrador atribuem papel de adoção (SA-05)", () => {
+    // Quem atribui papel decide quem pode fechar gate. Membro, dono e líder
+    // não se promovem sozinhos.
+    expect(scaffoldRolesGranting("membership.manage").sort()).toEqual([
+      "ADMIN",
+      "CONSULTANT",
+    ]);
+    expect(hasScaffoldPermission("TEAM_MEMBER", "membership.manage")).toBe(
+      false
+    );
+  });
+
   it("todo papel lê o portfólio — visibilidade não é privilégio", () => {
     for (const role of Object.keys(SCAFFOLD_MATRIX)) {
       expect(
@@ -101,5 +114,148 @@ describe("scaffoldDenialReason", () => {
 
   it("lista múltiplos papéis com 'ou'", () => {
     expect(scaffoldDenialReason("gate.close")).toMatch(/ ou /);
+  });
+});
+
+describe("canAssignScaffoldRole (SA-05: sem escalada de privilégio)", () => {
+  it("só ADMIN concede ADMIN", () => {
+    expect(canAssignScaffoldRole("ADMIN", null, "ADMIN")).toBe(true);
+    expect(canAssignScaffoldRole("CONSULTANT", null, "ADMIN")).toBe(false);
+    expect(canAssignScaffoldRole("CONSULTANT", "TEAM_MEMBER", "ADMIN")).toBe(
+      false
+    );
+  });
+
+  it("só ADMIN retira ou rebaixa ADMIN", () => {
+    expect(canAssignScaffoldRole("ADMIN", "ADMIN", "TEAM_MEMBER")).toBe(true);
+    expect(canAssignScaffoldRole("CONSULTANT", "ADMIN", "TEAM_MEMBER")).toBe(
+      false
+    );
+  });
+
+  it("CONSULTANT gere só papéis abaixo dele, na ida e na volta", () => {
+    for (const r of [
+      "TEAM_MEMBER",
+      "PROCESS_OWNER",
+      "TRANSFORMATION_LEAD",
+      "SPONSOR",
+      "TEAM_LEAD",
+    ] as const) {
+      expect(canAssignScaffoldRole("CONSULTANT", null, r)).toBe(true);
+      expect(canAssignScaffoldRole("CONSULTANT", r, "TEAM_MEMBER")).toBe(true);
+    }
+    // Igual não é abaixo: consultor não cria nem rebaixa consultor.
+    expect(canAssignScaffoldRole("CONSULTANT", null, "CONSULTANT")).toBe(false);
+    expect(
+      canAssignScaffoldRole("CONSULTANT", "CONSULTANT", "TEAM_MEMBER")
+    ).toBe(false);
+  });
+
+  it("papel sem membership.manage não atribui nada", () => {
+    expect(canAssignScaffoldRole("TEAM_MEMBER", null, "TEAM_MEMBER")).toBe(
+      false
+    );
+    expect(canAssignScaffoldRole("PROCESS_OWNER", null, "TEAM_MEMBER")).toBe(
+      false
+    );
+  });
+});
+
+// SC-PO-04 / SC-DEV-07 — matriz do entregável (decisões do Norte, seção d).
+describe("permissões de entregável", () => {
+  const ESCRITA = [
+    "deliverable.work",
+    "deliverable.review",
+    "deliverable.reopen",
+    "deliverable.add",
+  ] as const;
+
+  it("SPONSOR e TEAM_LEAD só leem: escrita é negada (403 no backend)", () => {
+    for (const role of ["SPONSOR", "TEAM_LEAD"] as const) {
+      expect(hasScaffoldPermission(role, "deliverable.read")).toBe(true);
+      expect(hasScaffoldPermission(role, "portfolio.read")).toBe(true);
+      expect(hasScaffoldPermission(role, "artefact.read")).toBe(true);
+      for (const p of ESCRITA) {
+        expect(hasScaffoldPermission(role, p)).toBe(false);
+      }
+      expect(hasScaffoldPermission(role, "gate.close")).toBe(false);
+      expect(hasScaffoldPermission(role, "step.complete")).toBe(false);
+      expect(hasScaffoldPermission(role, "businesscase.sign")).toBe(false);
+    }
+  });
+
+  it("todo papel lê entregável", () => {
+    for (const role of Object.keys(SCAFFOLD_MATRIX)) {
+      expect(
+        hasScaffoldPermission(
+          role as keyof typeof SCAFFOLD_MATRIX,
+          "deliverable.read"
+        )
+      ).toBe(true);
+    }
+  });
+
+  it("trabalhar: membro, dono, líder e consultora; ADMIN não", () => {
+    expect(scaffoldRolesGranting("deliverable.work")).toEqual([
+      "TEAM_MEMBER",
+      "PROCESS_OWNER",
+      "TRANSFORMATION_LEAD",
+      "CONSULTANT",
+    ]);
+  });
+
+  it("aprovar, reabrir e adicionar: dono, líder e consultora", () => {
+    for (const p of [
+      "deliverable.review",
+      "deliverable.reopen",
+      "deliverable.add",
+    ] as const) {
+      expect(scaffoldRolesGranting(p)).toEqual([
+        "PROCESS_OWNER",
+        "TRANSFORMATION_LEAD",
+        "CONSULTANT",
+      ]);
+    }
+  });
+
+  it("reabrir vale o mesmo que fechar gate", () => {
+    expect(scaffoldRolesGranting("deliverable.reopen")).toEqual(
+      scaffoldRolesGranting("gate.close")
+    );
+  });
+
+  it("ADMIN não mexe em entregável", () => {
+    for (const p of ESCRITA) {
+      expect(hasScaffoldPermission("ADMIN", p)).toBe(false);
+    }
+    expect(hasScaffoldPermission("ADMIN", "deliverable.read")).toBe(true);
+  });
+});
+
+// SC-PM-04: métricas de produto do Scaffold numa tela da consultora. É leitura
+// agregada da organização: consultoria e administração, não quem conduz trilha.
+describe("product.metrics", () => {
+  it("só consultor e administrador leem as métricas de produto", () => {
+    expect(scaffoldRolesGranting("product.metrics").sort()).toEqual([
+      "ADMIN",
+      "CONSULTANT",
+    ]);
+  });
+
+  it("líder, dono, membro, sponsor e team lead não", () => {
+    for (const role of [
+      "TRANSFORMATION_LEAD",
+      "PROCESS_OWNER",
+      "TEAM_MEMBER",
+      "SPONSOR",
+      "TEAM_LEAD",
+    ] as const) {
+      expect(hasScaffoldPermission(role, "product.metrics")).toBe(false);
+    }
+  });
+
+  it("tem rótulo pt-BR e o motivo de negativa nomeia quem pode", () => {
+    expect(SCAFFOLD_PERMISSION_LABEL["product.metrics"]).toBeTruthy();
+    expect(scaffoldDenialReason("product.metrics")).toContain("Consultor");
   });
 });

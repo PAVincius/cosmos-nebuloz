@@ -32,6 +32,7 @@ const AUDIT_CATEGORY_BY_ENTITY: Record<CharterEntity, string> = {
   "charter.policylink": "policy",
   "charter.requirementset": "compliance",
   "charter.coverage": "compliance",
+  "charter.casecontrol": "compliance",
 };
 
 // Exportado mais largo que a fonte acima de propósito: os call-sites em

@@ -29,6 +29,8 @@ export type SignalBadges = {
   reports: number;
   connections: number;
   mapping: number;
+  /** Modelos de medição publicados. */
+  models: number;
 };
 
 /** Card de portfólio do rodapé do sidebar. */
@@ -91,6 +93,7 @@ export async function getShellData(): Promise<SignalShellData> {
         finalReports,
         unhealthyConnections,
         mappings,
+        models,
       ] = await Promise.all([
         db.tenant.findUnique({
           where: { id: ctx.tenantId },
@@ -126,6 +129,9 @@ export async function getShellData(): Promise<SignalShellData> {
           where: { ...where, health: { not: "HEALTHY" } },
         }),
         db.signalMetricMapping.count({ where }),
+        // Modelo e plano entram na mesma leva das contagens do menu: a casca
+        // nasce já sabendo o que há neles, sem segunda ida ao banco (SG-DEV-06).
+        db.signalMeasureModel.count(),
       ]);
 
       return {
@@ -138,6 +144,7 @@ export async function getShellData(): Promise<SignalShellData> {
         finalReports,
         unhealthyConnections,
         mappings,
+        models,
       };
     }),
     // Mesma leitura de /api/tenants (TenantMember por userId, sem
@@ -207,6 +214,7 @@ export async function getShellData(): Promise<SignalShellData> {
       reports: data.finalReports,
       connections: data.unhealthyConnections,
       mapping: data.mappings,
+      models: data.models,
     },
     alertsTone: alertsToneOf(data.openAlerts, data.weakAlerts),
     brokenConnections: data.unhealthyConnections,

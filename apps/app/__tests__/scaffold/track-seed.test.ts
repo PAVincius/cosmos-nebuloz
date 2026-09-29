@@ -17,6 +17,14 @@ const h = vi.hoisted(() => ({
   versionFindFirst: vi.fn(),
   sequenceUpsert: vi.fn(),
   trackCreate: vi.fn(),
+  bcCreate: vi.fn(),
+  membershipFindFirst: vi.fn(),
+  delTplFindMany: vi.fn(),
+  phaseFindMany: vi.fn(),
+  delCreateMany: vi.fn(),
+  delFindMany: vi.fn(),
+  moduleFindFirst: vi.fn(),
+  bcUpdate: vi.fn(),
   trackFindMany: vi.fn(),
   trackFindFirst: vi.fn(),
   trackUpdate: vi.fn(),
@@ -27,6 +35,11 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/scaffold/process-registry", () => ({
+  upsertProcessRegistry: vi
+    .fn()
+    .mockResolvedValue({ id: "reg1", created: true }),
+}));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/scaffold/guards", () => ({
   requireScaffoldPermissionContext: h.requirePerm,
@@ -48,9 +61,20 @@ vi.mock("@repo/database", () => ({
         findFirst: h.trackFindFirst,
         update: h.trackUpdate,
       },
+      scaffoldDeliverableTemplate: { findMany: h.delTplFindMany },
+      scaffoldPhaseInstance: { findMany: h.phaseFindMany },
+      scaffoldDeliverableInstance: {
+        createMany: h.delCreateMany,
+        findMany: h.delFindMany,
+      },
+      tenantModule: { findFirst: h.moduleFindFirst },
+      scaffoldBusinessCase: { create: h.bcCreate, update: h.bcUpdate },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
       scaffoldSettings: { findUnique: h.settingsFindUnique },
-      scaffoldMembership: { findMany: vi.fn().mockResolvedValue([]) },
+      scaffoldMembership: {
+        findMany: vi.fn().mockResolvedValue([]),
+        findFirst: h.membershipFindFirst,
+      },
       user: { findMany: h.userFindMany },
       auditLog: { create: h.auditCreate },
     }),
@@ -58,9 +82,11 @@ vi.mock("@repo/database", () => ({
 
 import {
   cancelTrack,
+  createTrack,
   createTrackFromGap,
   listTracks,
 } from "@/app/(scaffold)/actions/tracks";
+import { upsertProcessRegistry } from "@/lib/scaffold/process-registry";
 
 const CTX = {
   tenantId: "t1",
@@ -122,13 +148,55 @@ beforeEach(() => {
     targetProduct: "SCAFFOLD",
   });
   h.promotionUpdate.mockResolvedValue({});
-  h.versionFindFirst.mockResolvedValue({ id: VER, label: "v4", steps: STEPS });
+  h.versionFindFirst.mockResolvedValue({
+    id: VER,
+    label: "v4",
+    steps: STEPS,
+    template: { archetype: "ANALYSIS" },
+  });
   h.sequenceUpsert.mockResolvedValue({ next: 105 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-104" });
+  h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
+  h.bcUpdate.mockResolvedValue({});
+  h.membershipFindFirst.mockResolvedValue({ userId: "x" });
+  h.delTplFindMany.mockResolvedValue([]);
+  h.phaseFindMany.mockResolvedValue([
+    { id: "ph-a", phase: "ASSESS" },
+    { id: "ph-p", phase: "PILOT" },
+    { id: "ph-s", phase: "SCALE" },
+    { id: "ph-e", phase: "EMBED" },
+  ]);
+  h.delCreateMany.mockResolvedValue({ count: 0 });
+  h.delFindMany.mockResolvedValue([]);
+  h.moduleFindFirst.mockResolvedValue(null);
   h.auditCreate.mockResolvedValue({});
   h.settingsFindUnique.mockResolvedValue(null);
   h.userFindMany.mockResolvedValue([]);
   h.gateResultGroupBy.mockResolvedValue([]);
+});
+
+describe("createTrackFromGap grava o registro único de processo (X-01)", () => {
+  it("liga a lacuna e a trilha nova no mesmo tenant, na mesma transação", async () => {
+    await createTrackFromGap(INPUT);
+
+    expect(upsertProcessRegistry).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        tenantId: "t1",
+        meridianGapId: GAP,
+        scaffoldTrackId: expect.any(String),
+        name: INPUT.processName,
+      })
+    );
+  });
+
+  it("promoção recusada não escreve registro", async () => {
+    h.promotionFindFirst.mockResolvedValue(null);
+
+    await createTrackFromGap(INPUT);
+
+    expect(upsertProcessRegistry).not.toHaveBeenCalled();
+  });
 });
 
 describe("createTrackFromGap", () => {
@@ -230,6 +298,234 @@ describe("createTrackFromGap", () => {
     // A sequência só é tocada depois da versão resolver. Sem isso, cada
     // tentativa contra um template sem versão queimaria um número de trilha.
     expect(h.sequenceUpsert).not.toHaveBeenCalled();
+  });
+});
+
+// SB-01 — o caso de negócio nasce com a trilha, no fluxo do Scaffold.
+//
+// Antes, nenhuma action criava `ScaffoldBusinessCase`: `saveDraft`, o envio e a
+// assinatura exigem um caso com versão em rascunho, então toda trilha parava na
+// Fase 1 (SG-04) sem saída pela tela.
+describe("caso de negócio nasce com a trilha (SB-01)", () => {
+  it.each([
+    ["createTrackFromGap", () => createTrackFromGap(INPUT)],
+    [
+      "createTrack",
+      () =>
+        createTrack({
+          templateId: TPL,
+          processName: "Triagem de autorizações prévias",
+          ownerId: OWNER,
+        }),
+    ],
+  ])("%s cria o caso vinculado à trilha nova", async (_n, run) => {
+    const res = await run();
+    expect(res.ok).toBe(true);
+
+    expect(h.bcCreate).toHaveBeenCalledTimes(1);
+    const data = h.bcCreate.mock.calls[0][0].data;
+    expect(data).toMatchObject({
+      tenantId: "t1",
+      trackId: "trk1",
+      code: "BC-104",
+      state: "DRAFT",
+      // Quem assina é o dono do processo (matriz: businesscase.sign); quem abre
+      // o rascunho é quem criou a trilha.
+      sponsorId: OWNER,
+      authorId: "u1",
+    });
+    expect(data.versions.create).toMatchObject({
+      tenantId: "t1",
+      label: "v1",
+      state: "DRAFT",
+      authoredById: "u1",
+    });
+  });
+
+  it("aponta currentVersionId para a v1, e deixa signedVersionId vazio", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.bcUpdate).toHaveBeenCalledWith({
+      where: { id: "bc1" },
+      data: { currentVersionId: "bcv1" },
+    });
+    // `signedVersionId` só muda em `signBusinessCase` (SG-04).
+    expect(h.bcCreate.mock.calls[0][0].data.signedVersionId).toBeUndefined();
+    expect(h.bcUpdate.mock.calls[0][0].data.signedVersionId).toBeUndefined();
+  });
+
+  it("consome a sequência 'businesscase' do tenant, separada da de trilha", async () => {
+    await createTrackFromGap(INPUT);
+    const kinds = h.sequenceUpsert.mock.calls.map(
+      (c) => c[0].where.tenantId_kind.kind
+    );
+    expect(kinds).toEqual(["track", "businesscase"]);
+  });
+
+  it("não cria caso quando a trilha é recusada", async () => {
+    h.versionFindFirst.mockResolvedValue(null);
+    await createTrackFromGap(INPUT);
+    expect(h.bcCreate).not.toHaveBeenCalled();
+  });
+
+  it("registra o caso na auditoria da criação da trilha", async () => {
+    await createTrack({
+      templateId: TPL,
+      processName: "Triagem de autorizações prévias",
+      ownerId: OWNER,
+    });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    expect(h.auditCreate.mock.calls[0][0].data.metadata.note).toContain(
+      "BC-104"
+    );
+  });
+});
+
+// SC-DEV-02 — os entregáveis nascem com a trilha, copiados do template pinado.
+describe("entregáveis nascem com a trilha (SC-DEV-02)", () => {
+  const TPLS = [
+    {
+      phase: "ASSESS",
+      stepCode: "A1",
+      code: "A1.1",
+      seq: 1,
+      title: "Mapa do processo atual e volume",
+      description: "Quem toca o processo e quanto volume passa.",
+      kind: "SPREADSHEET",
+      producer: "OWNER",
+      required: true,
+      requiresModule: null,
+    },
+    {
+      phase: "SCALE",
+      stepCode: "C1",
+      code: "C1.1",
+      seq: 1,
+      title: "Política do Charter vinculada ao fluxo",
+      description: "Aceite da política aplicável.",
+      kind: "SIGNATURE",
+      producer: "LEGAL",
+      required: true,
+      requiresModule: "CHARTER",
+    },
+  ];
+
+  it("copia texto, tipo e produtor do template na fase certa", async () => {
+    h.delTplFindMany.mockResolvedValue([TPLS[0]]);
+    await createTrackFromGap(INPUT);
+    const data = h.delCreateMany.mock.calls[0]?.[0].data;
+    expect(data).toHaveLength(1);
+    expect(data[0]).toMatchObject({
+      tenantId: "t1",
+      trackId: "trk1",
+      phaseInstanceId: "ph-a",
+      stepCode: "A1",
+      code: "A1.1",
+      templateKey: "A1.1",
+      title: "Mapa do processo atual e volume",
+      description: "Quem toca o processo e quanto volume passa.",
+      kind: "SPREADSHEET",
+      producer: "OWNER",
+      required: true,
+      isExtra: false,
+      status: "NOT_STARTED",
+      dispensedReason: null,
+    });
+    // Só do tenant e da versão pinada.
+    expect(h.delTplFindMany.mock.calls[0]?.[0].where).toEqual({
+      versionId: VER,
+    });
+  });
+
+  it("sem entregável no template, não grava nada (versões antigas)", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.delCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("entregável de módulo não contratado nasce dispensado, com o motivo", async () => {
+    h.delTplFindMany.mockResolvedValue(TPLS);
+    h.moduleFindFirst.mockResolvedValue(null);
+    await createTrackFromGap(INPUT);
+    const c11 = h.delCreateMany.mock.calls[0]?.[0].data.find(
+      (d: { code: string }) => d.code === "C1.1"
+    );
+    expect(c11).toMatchObject({ required: false });
+    expect(c11.dispensedReason).toContain("Charter");
+  });
+
+  it("com o módulo contratado, segue obrigatório", async () => {
+    h.delTplFindMany.mockResolvedValue(TPLS);
+    h.moduleFindFirst.mockResolvedValue({ module: "CHARTER" });
+    await createTrackFromGap(INPUT);
+    const c11 = h.delCreateMany.mock.calls[0]?.[0].data.find(
+      (d: { code: string }) => d.code === "C1.1"
+    );
+    expect(c11).toMatchObject({ required: true, dispensedReason: null });
+    expect(h.moduleFindFirst.mock.calls[0]?.[0].where).toMatchObject({
+      tenantId: "t1",
+      module: "CHARTER",
+    });
+  });
+});
+
+// Responsável e aprovador padrão (backlog DEV-06): o dono aprova o que não é
+// dele, e a consultora aprova o que é do dono. Sem isso, entregável nasce sem
+// dono e a mesma pessoa poderia iniciar, enviar e aprovar.
+describe("responsável e aprovador padrão", () => {
+  const T = (over: Record<string, unknown>) => ({
+    phase: "ASSESS",
+    stepCode: "A1",
+    seq: 1,
+    title: "t",
+    description: "d",
+    kind: "DOCUMENT",
+    requiresModule: null,
+    required: true,
+    ...over,
+  });
+  const CONSULTANT = "clx00000000000000consul01";
+
+  const run = async (withConsultant: boolean) => {
+    h.delTplFindMany.mockResolvedValue([
+      T({ code: "A1.1", producer: "OWNER" }),
+      T({ code: "B1.1", phase: "PILOT", producer: "CONSULTANT" }),
+      T({ code: "B1.2", phase: "PILOT", producer: "TECHNICAL" }),
+      T({ code: "C1.1", phase: "SCALE", producer: "LEGAL" }),
+    ]);
+    await createTrackFromGap({
+      ...INPUT,
+      ...(withConsultant ? { consultantId: CONSULTANT } : {}),
+    });
+    const rows = h.delCreateMany.mock.calls[0]?.[0].data as {
+      code: string;
+      ownerId: string | null;
+      approverId: string | null;
+    }[];
+    return Object.fromEntries(rows.map((r) => [r.code, r]));
+  };
+
+  it("o que o dono produz: dono responsável, consultora aprova", async () => {
+    const r = await run(true);
+    expect(r["A1.1"]).toMatchObject({ ownerId: OWNER, approverId: CONSULTANT });
+  });
+
+  it("o que a consultoria produz: consultora responsável, dono aprova", async () => {
+    const r = await run(true);
+    for (const c of ["B1.1", "B1.2", "C1.1"]) {
+      expect(r[c]).toMatchObject({ ownerId: CONSULTANT, approverId: OWNER });
+    }
+  });
+
+  it("responsável e aprovador nunca são a mesma pessoa", async () => {
+    const r = await run(true);
+    for (const d of Object.values(r)) {
+      expect(d.ownerId).not.toBe(d.approverId);
+    }
+  });
+
+  it("sem consultora: o dono produz o seu; o resto fica sem responsável e o dono aprova", async () => {
+    const r = await run(false);
+    expect(r["A1.1"]).toMatchObject({ ownerId: OWNER, approverId: null });
+    expect(r["B1.1"]).toMatchObject({ ownerId: null, approverId: OWNER });
   });
 });
 
@@ -384,5 +680,181 @@ describe("cancelTrack", () => {
     });
     expect(res.ok).toBe(false);
     expect(h.trackUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// Crivo F3: o dono do processo aceitava qualquer papel (patrocinador, líder do
+// time, consultor). Trilha com dono que não escreve fica sem quem produza e
+// aprove o que é do dono, e sem quem assine o caso de negócio.
+describe("quem pode ser dono e consultor da trilha", () => {
+  it("dono precisa ter papel PROCESS_OWNER no tenant", async () => {
+    await createTrackFromGap(INPUT);
+    const where = h.membershipFindFirst.mock.calls[0]?.[0].where;
+    expect(where).toEqual({
+      tenantId: "t1",
+      userId: OWNER,
+      role: "PROCESS_OWNER",
+    });
+  });
+
+  it.each([
+    "SPONSOR",
+    "TEAM_LEAD",
+    "CONSULTANT",
+    "TEAM_MEMBER",
+  ])("dono com papel %s é recusado, e nada é criado", async () => {
+    h.membershipFindFirst.mockResolvedValue(null);
+    const res = await createTrackFromGap(INPUT);
+    expect(res).toMatchObject({ ok: false, code: "OWNER_NOT_PROCESS_OWNER" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+    expect(h.sequenceUpsert).not.toHaveBeenCalled();
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+  });
+
+  it("vale também para a trilha sem lacuna", async () => {
+    h.membershipFindFirst.mockResolvedValue(null);
+    const res = await createTrack({
+      templateId: TPL,
+      processName: "Triagem",
+      ownerId: OWNER,
+    });
+    expect(res).toMatchObject({ ok: false, code: "OWNER_NOT_PROCESS_OWNER" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+
+  it("consultor informado precisa ter papel CONSULTANT", async () => {
+    h.membershipFindFirst.mockImplementation(async ({ where }) =>
+      where.role === "CONSULTANT" ? null : { userId: "x" }
+    );
+    const res = await createTrackFromGap({
+      ...INPUT,
+      consultantId: "clx00000000000000consul01",
+    });
+    expect(res).toMatchObject({ ok: false, code: "CONSULTANT_NOT_CONSULTANT" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+
+  it("sem consultor informado, não consulta papel de consultor", async () => {
+    await createTrackFromGap(INPUT);
+    const roles = h.membershipFindFirst.mock.calls.map((c) => c[0].where.role);
+    expect(roles).toEqual(["PROCESS_OWNER"]);
+  });
+
+  it("dono e consultor válidos: cria", async () => {
+    const res = await createTrackFromGap({
+      ...INPUT,
+      consultantId: "clx00000000000000consul01",
+    });
+    expect(res.ok).toBe(true);
+    const roles = h.membershipFindFirst.mock.calls.map((c) => c[0].where.role);
+    expect(roles).toEqual(["PROCESS_OWNER", "CONSULTANT"]);
+  });
+});
+
+// Crivo F4: a trilha criada do catálogo saía "sem arquétipo": o modal não manda a
+// forma, e só gravava se viesse. A forma é do template.
+describe("forma do trabalho da trilha", () => {
+  it("vem do template pinado quando a tela não manda", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("ANALYSIS");
+  });
+
+  it("vale também para a trilha sem lacuna", async () => {
+    await createTrack({
+      templateId: TPL,
+      processName: "Triagem",
+      ownerId: OWNER,
+    });
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("ANALYSIS");
+  });
+
+  it("o que a tela manda explicitamente prevalece", async () => {
+    await createTrackFromGap({ ...INPUT, archetype: "REPORTING" });
+    expect(h.trackCreate.mock.calls[0][0].data.archetype).toBe("REPORTING");
+  });
+
+  it("pede a forma na mesma consulta da versão, sem ida extra ao banco", async () => {
+    await createTrackFromGap(INPUT);
+    expect(h.versionFindFirst.mock.calls[0][0].select.template).toEqual({
+      select: { archetype: true },
+    });
+  });
+});
+
+// PDF p.3: sub-linha "arquétipo · X/Y entregáveis" no portfólio.
+describe("listTracks — progresso de entregáveis", () => {
+  const track = (over: Record<string, unknown> = {}) => ({
+    id: "trk1",
+    code: "TR-104",
+    processName: "Triagem",
+    archetype: "TRIAGE",
+    currentPhase: "ASSESS",
+    status: "ACTIVE",
+    ownerId: OWNER,
+    consultantId: null,
+    sourceGapId: null,
+    startedAt: new Date(),
+    lastGateAt: null,
+    templateVersion: { label: "v5" },
+    phases: [{ phase: "ASSESS", state: "OPEN" }],
+    businessCase: null,
+    ...over,
+  });
+
+  it("aprovados sobre obrigatórios, por trilha", async () => {
+    h.trackFindMany.mockResolvedValue([
+      track(),
+      track({ id: "trk2", code: "TR-105" }),
+    ]);
+    h.delFindMany.mockResolvedValue([
+      { trackId: "trk1", code: "A1.1", status: "APPROVED", required: true },
+      { trackId: "trk1", code: "A2.1", status: "IN_REVIEW", required: true },
+      { trackId: "trk1", code: "X-001", status: "APPROVED", required: false },
+      { trackId: "trk2", code: "A1.1", status: "NOT_STARTED", required: true },
+    ]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks.map((t) => t.deliverables)).toEqual([
+      { approved: 1, required: 2 },
+      { approved: 0, required: 1 },
+    ]);
+  });
+
+  it("o A3.2 conta como aprovado quando o caso da trilha está assinado", async () => {
+    h.trackFindMany.mockResolvedValue([
+      track({ businessCase: { signedVersionId: "v1" } }),
+    ]);
+    h.delFindMany.mockResolvedValue([
+      { trackId: "trk1", code: "A3.2", status: "NOT_STARTED", required: true },
+    ]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks[0]?.deliverables).toEqual({
+      approved: 1,
+      required: 1,
+    });
+  });
+
+  it("trilha sem entregável (antiga): 0/0", async () => {
+    h.trackFindMany.mockResolvedValue([track()]);
+    h.delFindMany.mockResolvedValue([]);
+    const res = await listTracks({});
+    expect(res.ok && res.data.tracks[0]?.deliverables).toEqual({
+      approved: 0,
+      required: 0,
+    });
+  });
+
+  it("consulta só entregáveis do tenant e das trilhas listadas", async () => {
+    h.trackFindMany.mockResolvedValue([track()]);
+    await listTracks({});
+    expect(h.delFindMany.mock.calls[0]?.[0].where).toEqual({
+      tenantId: "t1",
+      trackId: { in: ["trk1"] },
+    });
+  });
+
+  it("portfólio vazio não consulta entregável", async () => {
+    h.trackFindMany.mockResolvedValue([]);
+    await listTracks({});
+    expect(h.delFindMany).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cuid, nnStr, optCuid, optStr } from "@/app/actions/_base";
+import { WORK_FORMS } from "./forms";
 
 // Schemas Zod do Scaffold.
 //
@@ -18,11 +19,7 @@ export const ScaffoldTrackStatusEnum = z.enum([
   "CANCELLED",
 ]);
 
-export const ScaffoldArchetypeEnum = z.enum([
-  "TRIAGE",
-  "DOC_REVIEW",
-  "REPORTING",
-]);
+export const ScaffoldArchetypeEnum = z.enum(WORK_FORMS);
 
 /**
  * Justificativa de override (SG-03).
@@ -76,6 +73,24 @@ export const ListTracksSchema = z.object({
 });
 
 export const TrackIdSchema = z.object({ trackId: cuid });
+
+// ── Acesso ────────────────────────────────────────────────────────────────────
+
+export const ScaffoldRoleEnum = z.enum([
+  "TEAM_MEMBER",
+  "PROCESS_OWNER",
+  "TRANSFORMATION_LEAD",
+  "SPONSOR",
+  "TEAM_LEAD",
+  "CONSULTANT",
+  "ADMIN",
+]);
+
+/** Sem `tenantId`: o tenant é o da sessão, nunca o da entrada. */
+export const AssignScaffoldRoleSchema = z.object({
+  userId: cuid,
+  role: ScaffoldRoleEnum,
+});
 
 export const CancelTrackSchema = z.object({
   trackId: cuid,
@@ -275,3 +290,69 @@ export const ExportBusinessCaseSchema = z.object({
 });
 
 export const ExportHandoverPackSchema = z.object({ trackId: cuid });
+
+// ── Entregável ────────────────────────────────────────────────────────────────
+
+export const DeliverableIdSchema = z.object({ deliverableId: cuid });
+
+/** `comment` é opcional na borda; a regra de obrigatoriedade (ajuste pedido e
+ *  reabrir) é da máquina de estados, que conhece a transição. */
+export const DeliverableTransitionSchema = z.object({
+  deliverableId: cuid,
+  comment: z.string().max(10_000).optional(),
+});
+
+export const EditDeliverableSummarySchema = z.object({
+  deliverableId: cuid,
+  summary: z.string().trim().min(1).max(10_000),
+});
+
+export const AssignDeliverableSchema = z.object({
+  deliverableId: cuid,
+  ownerId: optCuid,
+  approverId: optCuid,
+});
+
+export const AddDeliverableSchema = z.object({
+  trackId: cuid,
+  phase: ScaffoldPhaseEnum,
+  title: nnStr,
+  description: z.string().trim().max(10_000),
+  kind: z.enum([
+    "DOCUMENT",
+    "SPREADSHEET",
+    "DATASET",
+    "CONFIGURATION",
+    "SIGNATURE",
+    "TRAINING",
+    "REPORT",
+    "PACKAGE",
+  ]),
+  producer: z.enum(["OWNER", "CONSULTANT", "TECHNICAL", "LEGAL"]),
+  /** Escolha de quem adiciona (SC-PO-04): extra pode ou não travar o gate. */
+  required: z.boolean(),
+  ownerId: optCuid,
+  approverId: optCuid,
+});
+
+export const AttachDeliverableVersionSchema = z.object({
+  deliverableId: cuid,
+  filename: nnStr,
+  contentType: nnStr,
+  sizeBytes: z.number().int().positive(),
+});
+
+export const ReadDeliverableFileSchema = z.object({
+  deliverableId: cuid,
+  /** Ausente = a versão atual. */
+  version: z.number().int().positive().optional(),
+});
+
+export const AddDeliverableLinkSchema = z.object({
+  deliverableId: cuid,
+  provider: z.enum(["COSMOS", "LINEAR", "GITHUB", "JIRA"]),
+  externalId: nnStr,
+  url: nnStr,
+});
+
+export const RemoveDeliverableLinkSchema = z.object({ linkId: cuid });

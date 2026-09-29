@@ -1,11 +1,13 @@
 "use server";
 
 import { withTenantDb } from "@repo/database";
-import { SIGNAL_ROLE_LABEL } from "@repo/rbac";
+import { log } from "@repo/observability/log";
+import { invalidateSignalRoleCache, SIGNAL_ROLE_LABEL } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { SignalRuleError } from "@/lib/signal/errors";
 import { requireSignalPermissionContext } from "@/lib/signal/guards";
+import { canAssignSignalRole } from "@/lib/signal/members";
 import { nnStr } from "../../actions/_base";
 import {
   type AuditDiff,
@@ -249,6 +251,130 @@ export async function setMemberRole(
         ],
       });
     });
+
+    revalidatePath("/signal/settings");
+    return { role: input.role };
+  });
+}
+
+export type AddableMember = { userId: string; name: string; email: string };
+
+/** Pessoas da organização que ainda não têm papel no Signal. */
+export async function listAddableMembers(): Promise<
+  SignalResult<AddableMember[]>
+> {
+  return await signalAction(async () => {
+    const ctx = await requireSignalPermissionContext("signal.member.write");
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const [people, existing] = await Promise.all([
+        db.tenantMember.findMany({
+          where: { tenantId: ctx.tenantId },
+          select: {
+            userId: true,
+            user: { select: { name: true, email: true } },
+          },
+        }),
+        db.signalMember.findMany({
+          where: { tenantId: ctx.tenantId },
+          select: { userId: true },
+        }),
+      ]);
+      const has = new Set(existing.map((m) => m.userId));
+      return people
+        .filter((p) => !has.has(p.userId))
+        .map((p) => ({
+          userId: p.userId,
+          name: p.user.name ?? p.user.email,
+          email: p.user.email,
+        }));
+    });
+  });
+}
+
+/**
+ * Dá papel no Signal a uma pessoa da organização (P1-c da QA). `setMemberRole`
+ * só troca papel de quem já tem linha; sem este caminho, quem tinha o módulo e
+ * nenhum papel caía em signal-indisponivel sem saída. Mesmo desenho do SA-05 do
+ * Scaffold: só quem já é do MESMO tenant, sem autoalteração, teto de papel.
+ */
+export async function addSignalMember(
+  raw: z.input<typeof MemberSchema>
+): Promise<SignalResult<{ role: string }>> {
+  return await signalAction(async () => {
+    const ctx = await requireSignalPermissionContext("signal.member.write");
+    const input = MemberSchema.parse(raw);
+
+    if (input.userId === ctx.userId) {
+      throw new SignalRuleError(
+        "member.self",
+        "Ninguém altera o próprio papel. Peça a outro administrador do Signal."
+      );
+    }
+    if (!canAssignSignalRole(ctx.signalRole, input.role)) {
+      throw new SignalRuleError(
+        "member.role-ceiling",
+        "Você não atribui um papel acima do seu."
+      );
+    }
+
+    await withTenantDb(ctx.tenantId, async (db) => {
+      const person = await db.tenantMember.findFirst({
+        where: { tenantId: ctx.tenantId, userId: input.userId },
+        select: { userId: true, user: { select: { name: true, email: true } } },
+      });
+      if (!person) {
+        throw new SignalRuleError(
+          "member.not-in-tenant",
+          "Esta pessoa não faz parte da organização."
+        );
+      }
+
+      // Trinco por tenant e pessoa: duas adições ao mesmo tempo não criam a
+      // linha duas vezes nem uma passa por cima da outra.
+      await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${ctx.tenantId}:${input.userId}`}, 0))`;
+
+      const existing = await db.signalMember.findUnique({
+        where: {
+          tenantId_userId: { tenantId: ctx.tenantId, userId: input.userId },
+        },
+        select: { id: true },
+      });
+      if (existing) {
+        throw new SignalRuleError(
+          "member.exists",
+          "Esta pessoa já está no Signal. Para mudar o papel, use a lista de pessoas."
+        );
+      }
+
+      await db.signalMember.create({
+        data: {
+          tenantId: ctx.tenantId,
+          userId: input.userId,
+          role: input.role,
+          updatedBy: ctx.userId,
+        },
+      });
+      await logSignalAudit(db, ctx, {
+        action: "Pessoa adicionada ao Signal",
+        entityType: "signal.member",
+        entityId: input.userId,
+        target: person.user.name ?? person.user.email,
+        diff: [[FIELD_LABELS.role, "—", SIGNAL_ROLE_LABEL[input.role]]],
+      });
+    });
+
+    // Depois do commit: o papel vem de cache, e quem acabou de ganhar acesso
+    // continuaria vendo "indisponível" até ele expirar.
+    // Melhor-esforço: a linha já foi gravada e confirmada. Redis fora do ar não
+    // pode fazer a tela dizer que a adição falhou; o cache expira sozinho.
+    try {
+      await invalidateSignalRoleCache(ctx.tenantId, input.userId);
+    } catch (error) {
+      log.error("[addSignalMember] cache de papel não invalidado", {
+        error: String(error),
+      });
+    }
 
     revalidatePath("/signal/settings");
     return { role: input.role };

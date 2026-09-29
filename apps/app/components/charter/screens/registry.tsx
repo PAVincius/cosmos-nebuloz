@@ -6,6 +6,7 @@ import AuditScreen from "./audit";
 import CaseDetailScreen from "./case-detail";
 import CasesScreen from "./cases";
 import ComplianceScreen from "./compliance";
+import ControlProfilesScreen from "./control-profiles";
 import DashboardScreen from "./dashboard";
 import OnboardingScreen from "./onboarding";
 import PolicyScreen from "./policy";
@@ -21,6 +22,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   policy: PolicyScreen,
   cases: CasesScreen,
   case: CaseDetailScreen,
+  perfis: ControlProfilesScreen,
   risk: RiskScreen,
   vendors: VendorsScreen,
   vendor: VendorDetailScreen,

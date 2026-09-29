@@ -48,8 +48,12 @@ vi.mock("@repo/database", () => ({
         findFirst: h.gateResultFindFirst,
       },
       scaffoldGateOverride: { create: h.overrideCreate },
+      // Trilha legada, sem entregável: a regra de passos vale sozinha.
+      scaffoldDeliverableInstance: { findMany: async () => [] },
       scaffoldTrack: { update: h.trackUpdate },
       tenantModule: { findFirst: h.moduleFindFirst },
+      // G-CHARTER: trilha sem caso ligado no Charter.
+      processRegistry: { findFirst: vi.fn().mockResolvedValue(null) },
       auditLog: { create: h.auditCreate },
     }),
 }));

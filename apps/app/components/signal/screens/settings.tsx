@@ -31,6 +31,7 @@ import {
   setMemberRole,
   updateSettings,
 } from "@/app/(signal)/actions/settings";
+import { AddMemberCard } from "../add-member";
 import {
   Field,
   Input,
@@ -44,7 +45,7 @@ import { useSignalPrefs } from "../prefs";
 
 const ROLE_OPTIONS: { value: MemberRow["role"]; label: string }[] = [
   { value: "VIEWER", label: "Leitor" },
-  { value: "OWNER", label: "Dono" },
+  { value: "OWNER", label: "Dono de iniciativa" },
   { value: "ANALYST", label: "Analista" },
   { value: "ADMIN", label: "Administrador" },
 ];
@@ -419,6 +420,7 @@ export default function SettingsScreen() {
   const [settings, setSettings] = useState<SignalSettingsRow | null>(null);
   const [rules, setRules] = useState<ConfidenceRuleRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [membersKey, setMembersKey] = useState(0);
 
   const load = useCallback(async () => {
     const [s, r] = await Promise.all([getSettings(), listConfidenceRules()]);
@@ -456,7 +458,8 @@ export default function SettingsScreen() {
 
       {settings ? <BarsForm initial={settings} /> : <SkeletonCard />}
       {rules ? <FactorsForm initial={rules} /> : <SkeletonCard />}
-      <MembersCard />
+      <MembersCard key={membersKey} />
+      <AddMemberCard onAdded={() => setMembersKey((k) => k + 1)} />
       <LocalPrefsCard />
     </div>
   );

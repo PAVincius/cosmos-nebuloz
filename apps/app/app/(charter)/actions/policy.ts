@@ -444,12 +444,6 @@ export async function publishPolicyVersion(
 
 // ── Diff entre versões (FR-2.6) ───────────────────────────────────────────────
 
-// Re-export de tipo (apagado na compilação, então não viola a regra de que um
-// módulo "use server" só exporta função async): o DiffModal importa a linha do
-// diff daqui desde a PR #236, e mover o tipo para lib/ não é motivo para
-// mexer na tela.
-export type { VersionDiffRow };
-
 export type VersionDiff = {
   version: string;
   previous: string | null;

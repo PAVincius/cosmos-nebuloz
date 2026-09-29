@@ -23,7 +23,10 @@ export type ScaffoldEntity =
   | "scaffold.override"
   | "scaffold.businesscase"
   | "scaffold.template"
-  | "scaffold.overlay";
+  | "scaffold.overlay"
+  | "scaffold.membership"
+  | "scaffold.deliverable"
+  | "scaffold.processlink";
 
 /**
  * Grava entrada de auditoria do Scaffold (SN-03).
@@ -93,7 +96,8 @@ export async function nextCode({
 }: {
   db: Db;
   tenantId: string;
-  kind: "track" | "businesscase";
+  /** "track", "businesscase" ou `deliverable:<trackId>` (extras da trilha). */
+  kind: "track" | "businesscase" | `deliverable:${string}`;
   prefix: string;
   pad?: number;
 }): Promise<string> {
@@ -125,4 +129,5 @@ export const FIELD_LABELS = {
   unmetCriteria: "Critérios não atendidos",
   signedVersionId: "Versão assinada",
   archetype: "Arquétipo",
+  scaffoldRole: "Papel de adoção",
 } as const;

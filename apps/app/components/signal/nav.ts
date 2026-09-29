@@ -31,6 +31,7 @@ export const NAV: NavSection[] = [
     items: [
       { id: "connections", icon: "plug", label: "Conexões" },
       { id: "mapping", icon: "ruler", label: "Mapeamento de métricas" },
+      { id: "models", icon: "layers", label: "Modelos de medição" },
     ],
   },
   {

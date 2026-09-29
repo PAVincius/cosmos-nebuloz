@@ -1,6 +1,8 @@
 import type { ComponentType } from "react";
 import BaselineDetailScreen from "./baseline-detail";
 import BaselinesScreen from "./baselines";
+import MembersScreen from "./members";
+import MetricsScreen from "./metrics";
 import PortfolioScreen from "./portfolio";
 import TemplatesScreen from "./templates";
 import TrackDetailScreen from "./track-detail";
@@ -20,4 +22,6 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   baselines: BaselinesScreen,
   baseline: BaselineDetailScreen,
   templates: TemplatesScreen,
+  members: MembersScreen,
+  metrics: MetricsScreen,
 };

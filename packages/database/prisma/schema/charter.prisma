@@ -348,6 +348,10 @@ model CharterUseCase {
   ownerName  String?
   objective  String  @db.Text
   vendorId   String?
+  /// Forma de trabalho (WorkForm) e versão do perfil de controle pinada ao gerar
+  /// o plano de controles (CH-DEV-02). Nulos até o caso ser classificado.
+  workForm       WorkForm?
+  controlProfileVersionId String?
 
   dataClass   CharterDataClass
   exposure    CharterExposure
@@ -403,11 +407,15 @@ model CharterUseCase {
   decisions   CharterDecision[]
   mitigations CharterMitigation[]
 
+  caseControls CharterCaseControl[]
+  controlProfileVersion CharterControlProfileVersion? @relation(fields: [controlProfileVersionId], references: [id], onDelete: Restrict)
+
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([tenantId, dataClass])
   @@index([vendorId])
+  @@index([controlProfileVersionId])
 }
 
 model CharterDecision {
@@ -455,6 +463,7 @@ model CharterMitigation {
   @@index([tenantId])
   @@index([useCaseId])
   @@index([tenantId, status])
+  caseControls CharterCaseControl[]
 }
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
