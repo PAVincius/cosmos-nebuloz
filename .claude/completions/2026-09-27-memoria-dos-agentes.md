@@ -35,7 +35,7 @@ Compose, testado, rodando, e acessível aos agentes do Maestri.
 - **Stack rodando:** está no contêiner desta sessão, que é efêmero e não é alcançável do Mac. No Mac: `pnpm memoria:up`.
 
 ## 2026-09-28 — Chave por papel e o segundo pacote
-- **Chave por papel:** `iniciar.sh` lê `hire`/`recruit` de `.maestri/setup-canvas.sh` e cria 17 chaves (rótulo = agente) em
+- **Chave por papel:** `iniciar.sh` lê `hire`/`recruit` de `.maestri/setup-canvas.sh` e cria uma chave por papel (17 naquele dia, 24 em 2026-09-29; rótulo = agente) em
   `~/.nebuloz/memoria/chaves/<papel>.json`. `scripts/cabecalho.sh` (headersHelper) escolhe pela `role.json` da pasta.
   Verificado antes que o Claude Code roda o headersHelper na pasta do agente. `lembrar` perdeu o parâmetro `agente`.
   Bug achado no caminho: `docker compose exec` consumia o stdin do laço e só a primeira chave saía.
