@@ -50,6 +50,8 @@ vi.mock("@repo/database", () => ({
       scaffoldGateOverride: { create: h.overrideCreate },
       scaffoldTrack: { update: h.trackUpdate },
       tenantModule: { findFirst: h.moduleFindFirst },
+      // G-CHARTER: trilha sem caso ligado no Charter.
+      processRegistry: { findFirst: vi.fn().mockResolvedValue(null) },
       auditLog: { create: h.auditCreate },
     }),
 }));
