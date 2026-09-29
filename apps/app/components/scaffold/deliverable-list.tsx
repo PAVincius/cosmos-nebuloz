@@ -148,11 +148,10 @@ export function DeliverableList({
   const attach = async (item: DeliverableItem, file: File) => {
     setBusy(true);
     setError(null);
-    const contentType = file.type || "application/octet-stream";
     const res = await attachDeliverableVersion({
       deliverableId: item.id,
       filename: file.name,
-      contentType,
+      contentType: file.type || "application/octet-stream",
       sizeBytes: file.size,
     });
     if (!res.ok) {
@@ -163,7 +162,8 @@ export function DeliverableList({
     const put = await fetch(res.data.uploadUrl, {
       method: "PUT",
       body: file,
-      headers: { "Content-Type": contentType },
+      // O tipo é o que o servidor validou pela extensão, não o do navegador.
+      headers: { "Content-Type": res.data.contentType },
     });
     setBusy(false);
     if (!put.ok) {

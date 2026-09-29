@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { GateReopenedEvent } from "@/lib/scaffold/gate-events";
 import { nextState } from "@/lib/scaffold/gate-machine";
 import type { ScaffoldContext } from "@/lib/scaffold/guards";
 import { type Db, logScaffoldAudit } from "./_shared";
@@ -36,7 +37,7 @@ export async function reopenPhaseForDeliverable(
     trackCode: string;
     deliverableCode: string;
   }
-): Promise<void> {
+): Promise<GateReopenedEvent | null> {
   if (phase.state === "GATE_READY" || phase.state === "BLOCKED") {
     // Lança se a máquina de fase não admitir a regressão.
     nextState(phase.state, "STEPS_REGRESSED");
@@ -44,10 +45,10 @@ export async function reopenPhaseForDeliverable(
       where: { id: phase.id },
       data: { state: "OPEN" },
     });
-    return;
+    return null;
   }
   if (phase.state !== "CLOSED" && phase.state !== "OBSERVING") {
-    return;
+    return null;
   }
 
   nextState(phase.state, "REOPEN");
@@ -74,4 +75,13 @@ export async function reopenPhaseForDeliverable(
     note: `Fase reaberta porque o entregável ${deliverableCode} aprovado foi reaberto.`,
     diff: [["Estado", phase.state, "OPEN"]],
   });
+  // Só a fase que estava FECHADA é notícia para o resto do produto. Quem chama
+  // emite depois de a transação fechar.
+  return {
+    tenantId: ctx.tenantId,
+    trackId,
+    phaseInstanceId: phase.id,
+    phase: phase.phase,
+    actorId: ctx.userId,
+  };
 }

@@ -28,6 +28,8 @@ const h = vi.hoisted(() => ({
   createSignedUrl: vi.fn(),
   exists: vi.fn(),
   userFindMany: vi.fn(),
+  emitReopened: vi.fn(),
+  ensureBucket: vi.fn(),
   AuthError: class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
@@ -53,8 +55,27 @@ vi.mock("@repo/rbac", async () => {
     getScaffoldRole: async () => h.role,
   };
 });
+vi.mock("@/lib/scaffold/gate-events", () => ({
+  emitGateReopened: h.emitReopened,
+}));
 vi.mock("@repo/storage", () => ({
   SCAFFOLD_ARTEFACT_BUCKET: "scaffold-artefacts",
+  ensureBucket: h.ensureBucket,
+  scaffoldFileMimeType: (name: string) =>
+    ({
+      pdf: "application/pdf",
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      png: "image/png",
+      csv: "text/csv",
+      txt: "text/plain",
+    })[name.split(".").pop()?.toLowerCase() ?? ""] ?? null,
+  SCAFFOLD_ALLOWED_MIME_TYPES: [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "image/png",
+    "text/csv",
+    "text/plain",
+  ],
   storageClient: {
     storage: {
       from: () => ({
@@ -164,6 +185,8 @@ beforeEach(() => {
   h.exists.mockResolvedValue({ data: true, error: null });
   h.eventFindMany.mockResolvedValue([]);
   h.userFindMany.mockResolvedValue([]);
+  h.emitReopened.mockResolvedValue(undefined);
+  h.ensureBucket.mockResolvedValue(undefined);
 });
 
 describe("transições gravam status, evento append-only e auditoria", () => {
@@ -689,7 +712,7 @@ describe("attachDeliverableVersion", () => {
       data: { uploadUrl: "https://storage.test/put", version: 3 },
     });
     expect(h.updateMany).toHaveBeenCalledWith({
-      where: { id: DEL, tenantId: "t1", version: 2 },
+      where: { id: DEL, tenantId: "t1", status: "IN_PROGRESS", version: 2 },
       data: {
         version: 3,
         fileKey: `t1/${TRACK}/deliverables/${DEL}/v3/plano.pdf`,
@@ -803,6 +826,10 @@ describe("readDeliverableFile (download logado)", () => {
       "t1/trk/deliverables/del/v2/plano.pdf"
     );
     expect(h.createSignedUrl.mock.calls[0]?.[1]).toBe(300);
+    // Baixar, nunca abrir inline: o navegador não renderiza o que o cliente subiu.
+    expect(h.createSignedUrl.mock.calls[0]?.[2]).toEqual({
+      download: "plano.pdf",
+    });
   });
 
   it.each([
@@ -1005,5 +1032,249 @@ describe("comentário com o mínimo de uma frase (Crivo F6)", () => {
     });
     expect(r.ok).toBe(true);
     expect(h.eventCreate.mock.calls[0]?.[0].data.comment).toBe("1234567890");
+  });
+});
+
+// ── Vigia: concorrência e tipo de arquivo ────────────────────────────────────
+
+describe("escrita condicional à versão e ao estado que se viu", () => {
+  it("aprovar só vale para a versão do arquivo que o revisor viu", async () => {
+    asUser("PROCESS_OWNER", APPROVER);
+    h.findFirst.mockResolvedValue(row("IN_REVIEW", { version: 4 }));
+    await approveDeliverable({ deliverableId: DEL });
+    expect(h.updateMany.mock.calls[0]?.[0].where).toEqual({
+      id: DEL,
+      tenantId: "t1",
+      status: "IN_REVIEW",
+      version: 4,
+    });
+  });
+
+  it("pedir ajuste também", async () => {
+    asUser("PROCESS_OWNER", APPROVER);
+    h.findFirst.mockResolvedValue(row("IN_REVIEW", { version: 4 }));
+    await requestDeliverableAdjustment({
+      deliverableId: DEL,
+      comment: "Falta o volume por canal.",
+    });
+    expect(h.updateMany.mock.calls[0]?.[0].where).toMatchObject({ version: 4 });
+  });
+
+  it("versão nova subiu entre a leitura e a aprovação: nada é aprovado", async () => {
+    asUser("PROCESS_OWNER", APPROVER);
+    h.findFirst.mockResolvedValue(row("IN_REVIEW"));
+    h.updateMany.mockResolvedValue({ count: 0 });
+    const r = await approveDeliverable({ deliverableId: DEL });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_TRANSITION_INVALID",
+    });
+    expect(h.eventCreate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("as demais transições não amarram a versão", async () => {
+    h.findFirst.mockResolvedValue(row("NOT_STARTED"));
+    await startDeliverable({ deliverableId: DEL });
+    expect(h.updateMany.mock.calls[0]?.[0].where).not.toHaveProperty("version");
+  });
+
+  it("anexar amarra estado E versão: um envio concorrente não deixa trocar o arquivo em revisão", async () => {
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+    h.updateMany.mockResolvedValue({ count: 0 });
+    const r = await attachDeliverableVersion({
+      deliverableId: DEL,
+      filename: "plano.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 10,
+    });
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_TRANSITION_INVALID",
+    });
+    expect(h.updateMany.mock.calls[0]?.[0].where).toEqual({
+      id: DEL,
+      tenantId: "t1",
+      status: "IN_PROGRESS",
+      version: 2,
+    });
+    expect(h.eventCreate).not.toHaveBeenCalled();
+  });
+});
+
+describe("tipo de arquivo do entregável", () => {
+  const attach = (filename: string, contentType: string) =>
+    attachDeliverableVersion({
+      deliverableId: DEL,
+      filename,
+      contentType,
+      sizeBytes: 1024,
+    });
+
+  beforeEach(() => {
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+  });
+
+  it.each([
+    ["plano.pdf", "application/pdf"],
+    ["dados.csv", "text/csv"],
+    ["notas.txt", "text/plain"],
+    ["foto.png", "image/png"],
+    ["PLANO.PDF", "application/pdf"],
+  ])("aceita %s", async (name, type) => {
+    expect((await attach(name, type)).ok).toBe(true);
+  });
+
+  it.each([
+    "malware.exe",
+    "pagina.html",
+    "imagem.svg",
+    "script.js",
+    "arquivo.pdf.exe",
+    "sem-extensao",
+    ".pdf.",
+  ])("recusa %s, sem gravar nem emitir URL", async (name) => {
+    const r = await attach(name, "application/pdf");
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
+    });
+    expect(h.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(h.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("o tipo declarado não pode contradizer a extensão: .pdf com text/html é recusado", async () => {
+    const r = await attach("plano.pdf", "text/html");
+    expect(r).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
+    });
+    expect(h.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it("devolve o tipo canônico para o PUT, e não o que o navegador disse", async () => {
+    const r = await attach("dados.csv", "text/plain");
+    // text/plain está na lista, então passa por contentType; o PUT usa o da extensão.
+    expect(r.ok && r.data.contentType).toBe("text/csv");
+  });
+
+  it("a mensagem diz quais tipos valem", async () => {
+    const r = await attach("x.exe", "application/octet-stream");
+    expect(!r.ok && r.error).toMatch(/pdf/i);
+  });
+});
+
+describe("reabrir fase avisa o resto do produto (X-04, ponto de emissão)", () => {
+  const reopen = () =>
+    reopenDeliverable({
+      deliverableId: DEL,
+      comment: "Baseline mudou em setembro.",
+    });
+
+  it.each([
+    "CLOSED",
+    "OBSERVING",
+  ])("fase %s reaberta emite gate.reopened uma vez, depois da transação", async (state) => {
+    h.findFirst.mockResolvedValue(
+      row("APPROVED", { phaseInstance: { id: "ph1", phase: "PILOT", state } })
+    );
+    const order: string[] = [];
+    h.auditCreate.mockImplementation(async () => {
+      order.push("audit");
+    });
+    h.emitReopened.mockImplementation(async () => {
+      order.push("emit");
+    });
+    expect((await reopen()).ok).toBe(true);
+
+    expect(h.emitReopened).toHaveBeenCalledTimes(1);
+    expect(h.emitReopened.mock.calls[0]?.[0]).toEqual({
+      tenantId: "t1",
+      trackId: TRACK,
+      phaseInstanceId: "ph1",
+      phase: "PILOT",
+      actorId: h.userId,
+    });
+    // Nunca dentro da transação: evento de fase que ainda pode desfazer.
+    expect(order.at(-1)).toBe("emit");
+  });
+
+  it.each([
+    "OPEN",
+    "GATE_READY",
+    "BLOCKED",
+  ])("fase %s não estava fechada: nada a avisar", async (state) => {
+    h.findFirst.mockResolvedValue(
+      row("APPROVED", { phaseInstance: { id: "ph1", phase: "PILOT", state } })
+    );
+    await reopen();
+    expect(h.emitReopened).not.toHaveBeenCalled();
+  });
+
+  it("transação que falha não emite", async () => {
+    h.findFirst.mockResolvedValue(
+      row("APPROVED", {
+        phaseInstance: { id: "ph1", phase: "PILOT", state: "CLOSED" },
+      })
+    );
+    h.updateMany.mockResolvedValue({ count: 0 });
+    await reopen();
+    expect(h.emitReopened).not.toHaveBeenCalled();
+  });
+
+  it("falha do emissor não desfaz a reabertura já commitada", async () => {
+    h.findFirst.mockResolvedValue(
+      row("APPROVED", {
+        phaseInstance: { id: "ph1", phase: "PILOT", state: "CLOSED" },
+      })
+    );
+    h.emitReopened.mockRejectedValue(new Error("Inngest fora do ar"));
+    const r = await reopen();
+    expect(r.ok).toBe(true);
+  });
+});
+
+describe("o bucket do Scaffold leva as regras de tipo e tamanho", () => {
+  const INPUT = {
+    deliverableId: DEL,
+    filename: "plano.pdf",
+    contentType: "application/pdf",
+    sizeBytes: 1024,
+  };
+
+  it("garante o bucket antes de emitir a URL de upload", async () => {
+    vi.resetModules();
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+    const order: string[] = [];
+    h.ensureBucket.mockImplementation(async () => {
+      order.push("bucket");
+    });
+    h.createSignedUploadUrl.mockImplementation(async () => {
+      order.push("url");
+      return { data: { signedUrl: "https://storage.test/put" }, error: null };
+    });
+    const mod = await import("@/app/(scaffold)/actions/deliverables");
+    await mod.attachDeliverableVersion(INPUT);
+    expect(order).toEqual(["bucket", "url"]);
+    expect(h.ensureBucket).toHaveBeenCalledWith("scaffold-artefacts");
+  });
+
+  it("confere uma vez por processo, não a cada anexo", async () => {
+    vi.resetModules();
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+    const mod = await import("@/app/(scaffold)/actions/deliverables");
+    await mod.attachDeliverableVersion(INPUT);
+    await mod.attachDeliverableVersion(INPUT);
+    expect(h.ensureBucket).toHaveBeenCalledTimes(1);
+  });
+
+  it("falha ao configurar o bucket não impede o anexo, e tenta de novo na próxima", async () => {
+    vi.resetModules();
+    h.findFirst.mockResolvedValue(row("IN_PROGRESS"));
+    h.ensureBucket.mockRejectedValueOnce(new Error("supabase fora"));
+    const mod = await import("@/app/(scaffold)/actions/deliverables");
+    expect((await mod.attachDeliverableVersion(INPUT)).ok).toBe(true);
+    await mod.attachDeliverableVersion(INPUT);
+    expect(h.ensureBucket).toHaveBeenCalledTimes(2);
   });
 });

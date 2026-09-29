@@ -610,6 +610,7 @@ describe("arquivo do entregável", () => {
         uploadUrl: "https://storage.test/put",
         version: 1,
         fileName: "plano.pdf",
+        contentType: "application/pdf",
       },
     });
     const fetchSpy = vi
@@ -632,6 +633,10 @@ describe("arquivo do entregável", () => {
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
     expect(fetchSpy.mock.calls[0]?.[0]).toBe("https://storage.test/put");
     expect((fetchSpy.mock.calls[0]?.[1] as RequestInit).method).toBe("PUT");
+    // O tipo do PUT é o que o servidor validou pela extensão.
+    expect((fetchSpy.mock.calls[0]?.[1] as RequestInit).headers).toEqual({
+      "Content-Type": "application/pdf",
+    });
     fetchSpy.mockRestore();
   });
 
@@ -643,6 +648,7 @@ describe("arquivo do entregável", () => {
         uploadUrl: "https://storage.test/put",
         version: 1,
         fileName: "a.pdf",
+        contentType: "application/pdf",
       },
     });
     const fetchSpy = vi

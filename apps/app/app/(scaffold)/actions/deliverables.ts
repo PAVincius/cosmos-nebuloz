@@ -9,7 +9,14 @@ import type {
   ScaffoldPhase,
 } from "@repo/database";
 import { withTenantDb } from "@repo/database";
-import { SCAFFOLD_ARTEFACT_BUCKET, storageClient } from "@repo/storage";
+import { log } from "@repo/observability/log";
+import {
+  ensureBucket,
+  SCAFFOLD_ALLOWED_MIME_TYPES,
+  SCAFFOLD_ARTEFACT_BUCKET,
+  scaffoldFileMimeType,
+  storageClient,
+} from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
@@ -26,6 +33,7 @@ import {
 } from "@/lib/scaffold/deliverable-machine";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { safeFileName } from "@/lib/scaffold/file-name";
+import { emitGateReopened } from "@/lib/scaffold/gate-events";
 import {
   requireScaffoldPermissionContext,
   type ScaffoldContext,
@@ -139,7 +147,7 @@ async function runTransition(
     const ctx = await requireScaffoldPermissionContext(step.permission);
     const input = DeliverableTransitionSchema.parse(raw);
 
-    await withTenantDb(ctx.tenantId, async (db) => {
+    const reopened = await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
       const decision = decideTransition(
         step.transition,
@@ -162,8 +170,18 @@ async function runTransition(
         }
       }
 
+      // Aprovar e pedir ajuste valem para a versão do arquivo que o revisor viu:
+      // se outra subiu no meio, nada é aprovado sem ter sido lido.
+      const reviews =
+        step.transition === "APPROVE" ||
+        step.transition === "REQUEST_ADJUSTMENT";
       const moved = await db.scaffoldDeliverableInstance.updateMany({
-        where: { id: d.id, tenantId: ctx.tenantId, status: d.status },
+        where: {
+          id: d.id,
+          tenantId: ctx.tenantId,
+          status: d.status,
+          ...(reviews ? { version: d.version } : {}),
+        },
         data: { status: decision.to },
       });
       if (moved.count !== 1) {
@@ -195,14 +213,27 @@ async function runTransition(
       // Reabrir um aprovado tira a fase do estado em que ele a fazia estar
       // pronta ou fechada (SC-PO-03).
       if (step.transition === "REOPEN") {
-        await reopenPhaseForDeliverable(db, ctx, {
+        return reopenPhaseForDeliverable(db, ctx, {
           phase: d.phaseInstance,
           trackId: d.trackId,
           trackCode: d.track.code,
           deliverableCode: d.code,
         });
       }
+      return null;
     });
+
+    // Depois da transação: evento de fase que ainda poderia desfazer não presta.
+    // Falha do emissor não desfaz a reabertura já gravada.
+    if (reopened) {
+      try {
+        await emitGateReopened(reopened);
+      } catch (e) {
+        log.error("[scaffold] gate.reopened não emitido", {
+          error: String(e),
+        });
+      }
+    }
 
     revalidatePath("/scaffold");
   });
@@ -588,6 +619,19 @@ export async function getDeliverable(raw: z.input<typeof DeliverableIdSchema>) {
 // ── Arquivo do entregável (SC-PO-03: enviar exige arquivo) ────────────────────
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+// O bucket nasce (ou é atualizado) com o limite de tamanho e de tipo. Uma vez
+// por processo, como o do Meridian: listar buckets a cada anexo seria custo à
+// toa. Falha não impede o anexo (a action já filtra por extensão e tamanho) e
+// a próxima tentativa refaz.
+let bucketReady: Promise<void> | null = null;
+function ensureScaffoldBucket(): Promise<void> {
+  bucketReady ??= ensureBucket(SCAFFOLD_ARTEFACT_BUCKET).catch((e) => {
+    bucketReady = null;
+    log.error("[scaffold] bucket não configurado", { error: String(e) });
+  });
+  return bucketReady;
+}
 const FILE_URL_TTL_SECONDS = 300;
 
 /**
@@ -608,6 +652,15 @@ export async function attachDeliverableVersion(
     if (input.sizeBytes > MAX_FILE_BYTES) {
       throw new ScaffoldRuleError("ARTEFACT_TOO_LARGE");
     }
+    // O cliente escolhe o arquivo: a extensão é a lista de permissão e o tipo
+    // que vale é o dela. O declarado só não pode contradizê-la (um .pdf que se
+    // diz text/html), e o PUT usa o canônico.
+    const contentType = scaffoldFileMimeType(input.filename);
+    if (
+      !(contentType && SCAFFOLD_ALLOWED_MIME_TYPES.includes(input.contentType))
+    ) {
+      throw new ScaffoldRuleError("DELIVERABLE_FILE_TYPE_NOT_ALLOWED");
+    }
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
@@ -620,6 +673,7 @@ export async function attachDeliverableVersion(
       const fileName = safeFileName(input.filename);
       const fileKey = `${ctx.tenantId}/${d.trackId}/deliverables/${d.id}/v${version}/${fileName}`;
 
+      await ensureScaffoldBucket();
       const { data, error } = await storageClient.storage
         .from(SCAFFOLD_ARTEFACT_BUCKET)
         .createSignedUploadUrl(fileKey);
@@ -632,7 +686,14 @@ export async function attachDeliverableVersion(
       // Condicional à versão lida: dois envios ao mesmo tempo não se
       // sobrescrevem em silêncio, e o número de versão não pula nem repete.
       const moved = await db.scaffoldDeliverableInstance.updateMany({
-        where: { id: d.id, tenantId: ctx.tenantId, version: d.version },
+        // Estado E versão lidos: um SUBMIT concorrente não deixa o anexo trocar o
+        // arquivo de um entregável que já foi para revisão.
+        where: {
+          id: d.id,
+          tenantId: ctx.tenantId,
+          status: d.status,
+          version: d.version,
+        },
         data: { version, fileKey, fileName },
       });
       if (moved.count !== 1) {
@@ -659,7 +720,7 @@ export async function attachDeliverableVersion(
         target: `${d.code} · ${fileName}`,
         diff: [["Versão do arquivo", `v${d.version}`, `v${version}`]],
       });
-      return { uploadUrl: data.signedUrl, version, fileName };
+      return { uploadUrl: data.signedUrl, version, fileName, contentType };
     });
 
     revalidatePath("/scaffold");
@@ -717,7 +778,11 @@ export async function readDeliverableFile(
 
     const { data, error } = await storageClient.storage
       .from(SCAFFOLD_ARTEFACT_BUCKET)
-      .createSignedUrl(target.fileKey, FILE_URL_TTL_SECONDS);
+      // `download`: o navegador baixa com o nome do arquivo, em vez de abrir
+      // inline o que o cliente subiu.
+      .createSignedUrl(target.fileKey, FILE_URL_TTL_SECONDS, {
+        download: target.fileName,
+      });
     if (error || !data) {
       throw new Error(
         `Falha ao emitir URL de arquivo: ${error?.message ?? "sem resposta"}`

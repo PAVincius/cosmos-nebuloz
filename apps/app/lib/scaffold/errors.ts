@@ -31,6 +31,7 @@ export const SCAFFOLD_ERROR = {
   DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
   DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
   DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
+  DELIVERABLE_FILE_TYPE_NOT_ALLOWED: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
   CRITERIA_UNMET: "CRITERIA_UNMET",
   BASELINE_NOT_SIGNED: "BASELINE_NOT_SIGNED",
   CHARTER_POLICY_NOT_ACKED: "CHARTER_POLICY_NOT_ACKED",
@@ -83,6 +84,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
   DELIVERABLE_PHASE_NOT_OPEN:
     "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
   DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
+  DELIVERABLE_FILE_TYPE_NOT_ALLOWED:
+    "Tipo de arquivo não aceito. Anexe PDF, Word (docx), Excel (xlsx), PowerPoint (pptx), imagem (png, jpg), CSV ou texto (txt).",
   DELIVERABLES_PENDING:
     "Há entregável obrigatório fora de Aprovado nesta fase. Aprove os entregáveis antes de revisar e assinar; override não dispensa esta condição.",
   STEPS_INCOMPLETE:
