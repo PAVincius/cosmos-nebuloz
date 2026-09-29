@@ -82,6 +82,41 @@ async function assertOverlayResolved(
 }
 
 /**
+ * O dono do processo é PROCESS_OWNER e o consultor, CONSULTANT (Crivo F3).
+ *
+ * Dono com outro papel deixa a trilha sem quem produza e aprove o que é do dono
+ * e sem quem assine o caso de negócio (`businesscase.sign` é só do dono do
+ * processo). Vale no servidor: a tela filtra o seletor, mas quem manda o id é
+ * o cliente.
+ */
+async function assertTrackPeople(db: Db, input: SeedInput): Promise<void> {
+  const owner = await db.scaffoldMembership.findFirst({
+    where: {
+      tenantId: input.tenantId,
+      userId: input.ownerId,
+      role: "PROCESS_OWNER",
+    },
+    select: { userId: true },
+  });
+  if (!owner) {
+    throw new ScaffoldRuleError("OWNER_NOT_PROCESS_OWNER");
+  }
+  if (input.consultantId) {
+    const consultant = await db.scaffoldMembership.findFirst({
+      where: {
+        tenantId: input.tenantId,
+        userId: input.consultantId,
+        role: "CONSULTANT",
+      },
+      select: { userId: true },
+    });
+    if (!consultant) {
+      throw new ScaffoldRuleError("CONSULTANT_NOT_CONSULTANT");
+    }
+  }
+}
+
+/**
  * Cria a trilha e instancia as quatro fases com seus passos, numa transação.
  *
  * ASSESS nasce OPEN; as outras três nascem IDLE. Criar as quatro de uma vez, em
@@ -93,6 +128,7 @@ async function assertOverlayResolved(
  * sem ele, a Fase 1 não fecha (SG-04) e não há saída pela tela.
  */
 export async function seedTrack(db: Db, input: SeedInput) {
+  await assertTrackPeople(db, input);
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
   const version = await resolveTemplateVersion(db, input.templateId);
   const code = await nextCode({

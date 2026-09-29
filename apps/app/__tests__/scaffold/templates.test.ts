@@ -67,6 +67,7 @@ vi.mock("@repo/database", () => ({
         count: h.conflictCount,
       },
       scaffoldTrack: { groupBy: h.trackGroupBy, create: h.trackCreate },
+      scaffoldMembership: { findFirst: async () => ({ userId: "x" }) },
       scaffoldSequence: { upsert: h.sequenceUpsert },
       scaffoldDeliverableTemplate: { findMany: async () => [] },
       scaffoldBusinessCase: {

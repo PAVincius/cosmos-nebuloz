@@ -17,6 +17,8 @@ export const SCAFFOLD_ERROR = {
   PROMOTION_HAS_ACTIVE_TRACK: "PROMOTION_HAS_ACTIVE_TRACK",
   // Acesso
   MEMBER_NOT_IN_TENANT: "MEMBER_NOT_IN_TENANT",
+  OWNER_NOT_PROCESS_OWNER: "OWNER_NOT_PROCESS_OWNER",
+  CONSULTANT_NOT_CONSULTANT: "CONSULTANT_NOT_CONSULTANT",
   ROLE_ASSIGNMENT_FORBIDDEN: "ROLE_ASSIGNMENT_FORBIDDEN",
   SELF_ROLE_CHANGE: "SELF_ROLE_CHANGE",
   // Gate — SG-01..SG-05
@@ -61,6 +63,10 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "A promoção tem trilha ativa. Cancele a trilha antes de revogar a promoção — revogar aqui deixaria trabalho em curso sem origem.",
   MEMBER_NOT_IN_TENANT:
     "Esta pessoa não faz parte da organização. Convide-a para a organização antes de atribuir um papel de adoção.",
+  OWNER_NOT_PROCESS_OWNER:
+    "O dono do processo precisa ter o papel de dono do processo no Scaffold. Quem só lê, ou é da consultoria, não produz nem assina o que é do dono. Atribua o papel em Papéis de adoção.",
+  CONSULTANT_NOT_CONSULTANT:
+    "O consultor da trilha precisa ter o papel de consultor no Scaffold.",
   ROLE_ASSIGNMENT_FORBIDDEN:
     "Seu papel não pode conceder nem retirar este papel. Só o administrador gere administrador e consultor; o consultor gere os papéis abaixo dele.",
   SELF_ROLE_CHANGE:

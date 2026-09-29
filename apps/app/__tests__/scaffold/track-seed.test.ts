@@ -18,6 +18,7 @@ const h = vi.hoisted(() => ({
   sequenceUpsert: vi.fn(),
   trackCreate: vi.fn(),
   bcCreate: vi.fn(),
+  membershipFindFirst: vi.fn(),
   delTplFindMany: vi.fn(),
   phaseFindMany: vi.fn(),
   delCreateMany: vi.fn(),
@@ -61,7 +62,10 @@ vi.mock("@repo/database", () => ({
       scaffoldBusinessCase: { create: h.bcCreate, update: h.bcUpdate },
       scaffoldGateResult: { groupBy: h.gateResultGroupBy },
       scaffoldSettings: { findUnique: h.settingsFindUnique },
-      scaffoldMembership: { findMany: vi.fn().mockResolvedValue([]) },
+      scaffoldMembership: {
+        findMany: vi.fn().mockResolvedValue([]),
+        findFirst: h.membershipFindFirst,
+      },
       user: { findMany: h.userFindMany },
       auditLog: { create: h.auditCreate },
     }),
@@ -139,6 +143,7 @@ beforeEach(() => {
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-104" });
   h.bcCreate.mockResolvedValue({ id: "bc1", versions: [{ id: "bcv1" }] });
   h.bcUpdate.mockResolvedValue({});
+  h.membershipFindFirst.mockResolvedValue({ userId: "x" });
   h.delTplFindMany.mockResolvedValue([]);
   h.phaseFindMany.mockResolvedValue([
     { id: "ph-a", phase: "ASSESS" },
@@ -635,5 +640,73 @@ describe("cancelTrack", () => {
     });
     expect(res.ok).toBe(false);
     expect(h.trackUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// Crivo F3: o dono do processo aceitava qualquer papel (patrocinador, líder do
+// time, consultor). Trilha com dono que não escreve fica sem quem produza e
+// aprove o que é do dono, e sem quem assine o caso de negócio.
+describe("quem pode ser dono e consultor da trilha", () => {
+  it("dono precisa ter papel PROCESS_OWNER no tenant", async () => {
+    await createTrackFromGap(INPUT);
+    const where = h.membershipFindFirst.mock.calls[0]?.[0].where;
+    expect(where).toEqual({
+      tenantId: "t1",
+      userId: OWNER,
+      role: "PROCESS_OWNER",
+    });
+  });
+
+  it.each([
+    "SPONSOR",
+    "TEAM_LEAD",
+    "CONSULTANT",
+    "TEAM_MEMBER",
+  ])("dono com papel %s é recusado, e nada é criado", async () => {
+    h.membershipFindFirst.mockResolvedValue(null);
+    const res = await createTrackFromGap(INPUT);
+    expect(res).toMatchObject({ ok: false, code: "OWNER_NOT_PROCESS_OWNER" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+    expect(h.sequenceUpsert).not.toHaveBeenCalled();
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+  });
+
+  it("vale também para a trilha sem lacuna", async () => {
+    h.membershipFindFirst.mockResolvedValue(null);
+    const res = await createTrack({
+      templateId: TPL,
+      processName: "Triagem",
+      ownerId: OWNER,
+    });
+    expect(res).toMatchObject({ ok: false, code: "OWNER_NOT_PROCESS_OWNER" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+
+  it("consultor informado precisa ter papel CONSULTANT", async () => {
+    h.membershipFindFirst.mockImplementation(async ({ where }) =>
+      where.role === "CONSULTANT" ? null : { userId: "x" }
+    );
+    const res = await createTrackFromGap({
+      ...INPUT,
+      consultantId: "clx00000000000000consul01",
+    });
+    expect(res).toMatchObject({ ok: false, code: "CONSULTANT_NOT_CONSULTANT" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+
+  it("sem consultor informado, não consulta papel de consultor", async () => {
+    await createTrackFromGap(INPUT);
+    const roles = h.membershipFindFirst.mock.calls.map((c) => c[0].where.role);
+    expect(roles).toEqual(["PROCESS_OWNER"]);
+  });
+
+  it("dono e consultor válidos: cria", async () => {
+    const res = await createTrackFromGap({
+      ...INPUT,
+      consultantId: "clx00000000000000consul01",
+    });
+    expect(res.ok).toBe(true);
+    const roles = h.membershipFindFirst.mock.calls.map((c) => c[0].where.role);
+    expect(roles).toEqual(["PROCESS_OWNER", "CONSULTANT"]);
   });
 });

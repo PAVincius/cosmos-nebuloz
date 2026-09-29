@@ -96,9 +96,17 @@ export function NewTrackModal({
   };
 
   const consultants = members.filter((m) => m.role === "CONSULTANT");
+  // Só quem tem papel de dono do processo: ele produz o que é do dono e assina o
+  // caso de negócio. Sponsor, líder do time e consultoria não fazem nenhum dos dois.
+  const owners = members.filter((m) => m.role === "PROCESS_OWNER");
   const ownerOptions = [
-    { value: "", label: "Escolha o dono do processo" },
-    ...members.map((m) => ({ value: m.id, label: `${m.name} · ${m.role}` })),
+    {
+      value: "",
+      label: owners.length
+        ? "Escolha o dono do processo"
+        : "Ninguém com papel de dono do processo",
+    },
+    ...owners.map((m) => ({ value: m.id, label: m.name })),
   ];
   const consultantOptions = [
     { value: "", label: "Sem consultor Nebuloz" },
@@ -183,7 +191,16 @@ export function NewTrackModal({
           />
         </Field>
 
-        <Field htmlFor="nt-owner" label="Dono do processo" required>
+        <Field
+          hint={
+            owners.length === 0
+              ? "Atribua o papel de dono do processo a alguém em Papéis de adoção antes de criar a trilha."
+              : undefined
+          }
+          htmlFor="nt-owner"
+          label="Dono do processo"
+          required
+        >
           <Select
             id="nt-owner"
             onChange={setOwnerId}

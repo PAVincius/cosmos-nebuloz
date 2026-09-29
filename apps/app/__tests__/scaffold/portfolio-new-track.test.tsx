@@ -214,3 +214,67 @@ describe("portfólio — papel só-leitura", () => {
     expect(await screen.findByLabelText(/^processo/i)).toBeDefined();
   });
 });
+
+describe("modal — quem pode ser dono do processo (Crivo F3)", () => {
+  it("lista só quem tem papel de dono do processo", async () => {
+    h.listTracks.mockResolvedValue({
+      ok: true,
+      data: {
+        ...SUMMARY,
+        members: [
+          {
+            id: "clx0000000000000000owner1",
+            name: "Marina",
+            role: "PROCESS_OWNER",
+          },
+          { id: "clx000000000000000000cons1", name: "Rui", role: "CONSULTANT" },
+          { id: "clx00000000000000000spon1", name: "Sofia", role: "SPONSOR" },
+          { id: "clx0000000000000000tlead1", name: "Tiago", role: "TEAM_LEAD" },
+          { id: "clx0000000000000000tmemb1", name: "Ana", role: "TEAM_MEMBER" },
+        ],
+      },
+    });
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /nova trilha/i })
+    );
+    const owner = (await screen.findByLabelText(
+      /dono do processo/i
+    )) as HTMLSelectElement;
+    const names = [...owner.options].map((o) => o.textContent ?? "");
+    expect(names.some((n) => n.includes("Marina"))).toBe(true);
+    for (const out of ["Rui", "Sofia", "Tiago", "Ana"]) {
+      expect(names.some((n) => n.includes(out))).toBe(false);
+    }
+  });
+
+  it("o consultor continua saindo só de quem é consultor", async () => {
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /nova trilha/i })
+    );
+    const cons = (await screen.findByLabelText(
+      /consultor nebuloz/i
+    )) as HTMLSelectElement;
+    const names = [...cons.options].map((o) => o.textContent ?? "");
+    expect(names.some((n) => n.includes("Rui"))).toBe(true);
+    expect(names.some((n) => n.includes("Marina"))).toBe(false);
+  });
+
+  it("sem nenhum dono cadastrado, diz onde resolver em vez de deixar o seletor vazio", async () => {
+    h.listTracks.mockResolvedValue({
+      ok: true,
+      data: {
+        ...SUMMARY,
+        members: [
+          { id: "clx000000000000000000cons1", name: "Rui", role: "CONSULTANT" },
+        ],
+      },
+    });
+    render(<PortfolioScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", { name: /nova trilha/i })
+    );
+    expect(await screen.findByText(/papéis de adoção/i)).toBeDefined();
+  });
+});
