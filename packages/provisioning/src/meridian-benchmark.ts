@@ -5,16 +5,22 @@ import { ProvisioningError } from "./errors";
  *  `ModuleDb`). O model `MeridianBenchmarkEnablement` é criado pela migration
  *  do Alicerce; até lá o client gerado não o tem, e a forma estrutural deixa
  *  esta função testável e tipada sem ele. */
+type MeridianBenchmarkTx = {
+  meridianBenchmarkEnablement: {
+    upsert(args: unknown): Promise<unknown>;
+  };
+  auditLog: { create(args: { data: unknown }): Promise<unknown> };
+};
+
+/** O client de fora lê o tenant e abre a transação; a escrita e a trilha só
+ *  acontecem no client da transação. */
 export type MeridianBenchmarkDb = {
   tenant: {
     findUnique(
       args: unknown
     ): Promise<{ id: string; slug: string; isInternalTenant: boolean } | null>;
   };
-  meridianBenchmarkEnablement: {
-    upsert(args: unknown): Promise<unknown>;
-  };
-  auditLog: { create(args: { data: unknown }): Promise<unknown> };
+  $transaction<T>(fn: (tx: MeridianBenchmarkTx) => Promise<T>): Promise<T>;
 };
 
 export type SetMeridianBenchmarkEnablementInput = {
@@ -33,7 +39,8 @@ export type SetMeridianBenchmarkEnablementInput = {
  * chama, pelo back-office, e quem chama é quem garante o papel de staff — o
  * app do cliente não importa esta função.
  *
- * Ligar tenant externo exige a referência do aditivo. Tenant interno liga sem
+ * A escrita e a auditoria vão na mesma transação: a mudança não vale sem
+ * trilha (FR-004). Ligar tenant externo exige a referência do aditivo. Tenant interno liga sem
  * ela (a Nebuloz já é controladora do próprio dado). Desligar não exige nada e
  * mantém a última referência, para a história do contrato. Toda mudança grava
  * auditoria com ator, momento e referência.
@@ -61,38 +68,40 @@ export async function setMeridianBenchmarkEnablement(
     );
   }
 
-  await db.meridianBenchmarkEnablement.upsert({
-    where: { tenantId: tenant.id },
-    create: {
-      tenantId: tenant.id,
-      enabled: input.enabled,
-      agreementRef: input.enabled ? ref : null,
-      updatedById: input.actorUserId,
-    },
-    update: {
-      enabled: input.enabled,
-      ...(input.enabled ? { agreementRef: ref } : {}),
-      updatedById: input.actorUserId,
-    },
-  });
+  await db.$transaction(async (tx) => {
+    await tx.meridianBenchmarkEnablement.upsert({
+      where: { tenantId: tenant.id },
+      create: {
+        tenantId: tenant.id,
+        enabled: input.enabled,
+        agreementRef: input.enabled ? ref : null,
+        updatedById: input.actorUserId,
+      },
+      update: {
+        enabled: input.enabled,
+        ...(input.enabled ? { agreementRef: ref } : {}),
+        updatedById: input.actorUserId,
+      },
+    });
 
-  await logPlatformAudit(db, {
-    tenantId: tenant.id,
-    actorUserId: input.actorUserId,
-    actorName: input.actorName,
-    action: input.enabled
-      ? "meridian.benchmark.enabled"
-      : "meridian.benchmark.disabled",
-    entityType: "MeridianBenchmarkEnablement",
-    entityId: tenant.id,
-    target: `${tenant.slug} · benchmark`,
-    note: input.enabled
-      ? `Aditivo: ${ref ?? "tenant interno, sem aditivo"}.`
-      : "Contribuições futuras bloqueadas; o que já contribuiu não é apagado.",
-    diff: [
-      input.enabled
-        ? ["Benchmark", "desligado", "ligado"]
-        : ["Benchmark", "ligado", "desligado"],
-    ],
+    await logPlatformAudit(tx, {
+      tenantId: tenant.id,
+      actorUserId: input.actorUserId,
+      actorName: input.actorName,
+      action: input.enabled
+        ? "meridian.benchmark.enabled"
+        : "meridian.benchmark.disabled",
+      entityType: "MeridianBenchmarkEnablement",
+      entityId: tenant.id,
+      target: `${tenant.slug} · benchmark`,
+      note: input.enabled
+        ? `Aditivo: ${ref ?? "tenant interno, sem aditivo"}.`
+        : "Contribuições futuras bloqueadas; o que já contribuiu não é apagado.",
+      diff: [
+        input.enabled
+          ? ["Benchmark", "desligado", "ligado"]
+          : ["Benchmark", "ligado", "desligado"],
+      ],
+    });
   });
 }

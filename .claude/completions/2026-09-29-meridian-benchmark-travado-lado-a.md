@@ -10,3 +10,5 @@ Spec: `specs/012-benchmark-travado-tenant/spec.md` (PR #307). Schema (`MeridianB
 - **Ainda fora**: seeds de demo com `benchmarkOptIn: true` (`seed-meridian.ts`) só contribuem com uma linha de habilitação — criar quando o schema entrar. E2E não escrito/rodado.
 
 Testes: provisioning 168/168 (7 novos do escritor); app `__tests__/meridian` + `__tests__/screens` verdes (novos: `benchmark-enablement`, `new-assessment-benchmark`, casos em `assessments`, `benchmark`); tsc app e provisioning sem erro; biome limpo.
+
+**Ajustes do Vigia (antes do push):** (b) `setMeridianBenchmarkEnablement` agora recebe o client com `$transaction` e faz o upsert e a auditoria dentro da mesma transação — falha na trilha derruba a mudança (FR-004); regra recusada não abre transação. O tipo de `db` é estrutural; a compatibilidade com o `platformDb` real (Prisma) só se confirma depois do schema do Alicerce. (e) `apps/app/__tests__/meridian/benchmark-writer-boundary.test.ts`: nenhum arquivo de `apps/app` importa o escritor, por nome ou pelo módulo (no molde do `adr-0013-boundary`; provado com um infrator temporário).
