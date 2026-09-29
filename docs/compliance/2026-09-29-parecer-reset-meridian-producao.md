@@ -122,3 +122,14 @@ Se o membro de `nebula` for `nebuloz.ai` (ou o fundador), fecha. Se for domínio
 
 ### Decisão adicional
 - 2026-09-29 — Compliance/DPO: C1 passa com base no resultado acima; respondentes `gmail.com` dos tenants internos não exigem decisão do CEO. Fica a confirmação de titularidade do tenant `nebula`.
+
+### Fechamento da C1 (2026-09-29)
+
+Fonte: relato da Morgana, conferência por comparação booleana em produção, sem ler e-mail. Não vi a saída.
+
+- `nebula`: único membro é o fundador (ADMIN). Não é trial de prospect.
+- `nebuloz`: o fundador e mais um ADMIN de outro domínio. Segundo a Morgana, é pessoa da própria empresa; isso é declaração dela, sem verificação minha. Não muda o enquadramento: o tenant é da Nebuloz, ela é controladora, e o efeito do reset sobre essa pessoa é apagar o dado.
+
+**C1 fechada. Reset liberado do ponto de vista de compliance, sujeito a C2 a C5.** A autorização de escrita em produção continua sendo do CEO, por operação.
+
+- 2026-09-29 — Compliance/DPO: C1 fechada; titularidade de `nebula` confirmada.
