@@ -23,10 +23,17 @@ const h = vi.hoisted(() => ({
   evCreateMany: vi.fn(),
   evFindMany: vi.fn(),
   memberFindFirst: vi.fn(),
+  storageExists: vi.fn(),
   auditCreate: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("@repo/storage", () => ({
+  CHARTER_EVIDENCE_BUCKET: "charter-evidence",
+  storageClient: {
+    storage: { from: () => ({ exists: h.storageExists }) },
+  },
+}));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/inngest/emit-product-event", () => ({
   emitProductEvent: h.emit,
@@ -93,6 +100,9 @@ const UC = {
   controlProfileVersionId: null,
 };
 
+const KEY =
+  "t1/charter/UC-118/TR-2/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/rollback.pdf";
+
 const control = (over: Record<string, unknown> = {}) => ({
   id: "cc1",
   code: "TR-2",
@@ -100,7 +110,7 @@ const control = (over: Record<string, unknown> = {}) => ({
   state: "IN_REVIEW",
   cadence: "SEMIANNUAL",
   dispensable: true,
-  fileKey: "t1/evidencias/rollback.pdf",
+  fileKey: KEY,
   summary: null,
   ...over,
 });
@@ -124,6 +134,7 @@ beforeEach(() => {
   h.mitigationFindMany.mockResolvedValue([]);
   h.evFindMany.mockResolvedValue([]);
   h.memberFindFirst.mockResolvedValue({ id: "tm-1" });
+  h.storageExists.mockResolvedValue({ data: true, error: null });
 });
 
 // ── Plano (CH-DEV-02) ─────────────────────────────────────────────────────────
@@ -386,7 +397,7 @@ describe("anexar e enviar", () => {
 
     const r = await attachControlEvidence({
       ...REF,
-      fileKey: "t1/evidencias/rollback.pdf",
+      fileKey: KEY,
       fileName: "rollback.pdf",
       summary: "Rollback executado em produção",
     });
@@ -400,16 +411,86 @@ describe("anexar e enviar", () => {
     });
     expect(call.data).toMatchObject({
       state: "IN_PROGRESS",
-      fileKey: "t1/evidencias/rollback.pdf",
+      fileKey: KEY,
       acceptedAt: null,
       expiresAt: null,
     });
   });
 
+  it("o nome gravado sai do último segmento da chave, não do campo do cliente", async () => {
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "NO_EVIDENCE", fileKey: null })
+    );
+
+    await attachControlEvidence({
+      ...REF,
+      fileKey: KEY,
+      fileName: "nome-forjado-pelo-cliente.exe",
+    });
+
+    expect(h.ccUpdateMany.mock.calls[0][0].data.fileName).toBe("rollback.pdf");
+  });
+
+  it("aceita anexar sem mandar o nome", async () => {
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "NO_EVIDENCE", fileKey: null })
+    );
+
+    const r = await attachControlEvidence({ ...REF, fileKey: KEY });
+
+    expect(r.ok).toBe(true);
+  });
+
+  it.each([
+    [
+      "de OUTRO controle do mesmo caso",
+      "t1/charter/UC-118/TR-3/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/rollback.pdf",
+    ],
+    [
+      "de OUTRO caso",
+      "t1/charter/UC-119/TR-2/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/rollback.pdf",
+    ],
+    ["do formato antigo, sem uuid", "t1/charter/UC-118/TR-2/v1/rollback.pdf"],
+    ["fora do prefixo charter", "t1/evidencias/rollback.pdf"],
+    [
+      "com segmento extra",
+      "t1/charter/UC-118/TR-2/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/x/rollback.pdf",
+    ],
+  ])("recusa chave %s: só vale a que o servidor emitiu para ESTE controle", async (_n, fileKey) => {
+    const r = await attachControlEvidence({ ...REF, fileKey });
+
+    expect(r.ok).toBe(false);
+    expect(h.storageExists).not.toHaveBeenCalled();
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("confere que o objeto EXISTE no storage antes de anexar", async () => {
+    h.ccFindUnique.mockResolvedValue(
+      control({ state: "NO_EVIDENCE", fileKey: null })
+    );
+
+    await attachControlEvidence({ ...REF, fileKey: KEY });
+
+    expect(h.storageExists).toHaveBeenCalledWith(KEY);
+  });
+
+  it.each([
+    ["ausente", { data: false, error: null }],
+    ["erro do storage", { data: null, error: { message: "boom" } }],
+  ])("objeto %s no storage: recusa e não grava referência", async (_n, res) => {
+    h.storageExists.mockResolvedValue(res);
+
+    const r = await attachControlEvidence({ ...REF, fileKey: KEY });
+
+    expect(r.ok).toBe(false);
+    expect(h.ccUpdateMany).not.toHaveBeenCalled();
+    expect(h.evCreate).not.toHaveBeenCalled();
+  });
+
   it("recusa arquivo de outro tenant", async () => {
     const r = await attachControlEvidence({
       ...REF,
-      fileKey: "t2/evidencias/rollback.pdf",
+      fileKey: KEY.replace("t1/", "t2/"),
       fileName: "rollback.pdf",
     });
 

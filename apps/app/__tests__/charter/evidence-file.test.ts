@@ -3,6 +3,7 @@ import { isTenantFileKey } from "@/lib/charter/case-controls";
 import {
   evidenceFileKey,
   evidenceFileName,
+  evidenceFileNameOfKey,
   evidenceMimeType,
   isEvidenceKeyOf,
   MAX_EVIDENCE_BYTES,
@@ -38,23 +39,35 @@ describe("evidenceFileName", () => {
   });
 });
 
+const UPLOAD_ID = "3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90";
+
 describe("evidenceFileKey", () => {
   const base = {
     tenantId: "t1",
     caseCode: "UC-118",
     controlCode: "TR-2",
     version: 3,
+    uploadId: UPLOAD_ID,
     filename: "Relatório final.pdf",
   };
 
-  it("<tenant>/charter/<caso>/<controle>/v<N>/<nome saneado>", () => {
+  it("<tenant>/charter/<caso>/<controle>/v<N>-<uuid>/<nome saneado>", () => {
     expect(evidenceFileKey(base)).toBe(
-      "t1/charter/UC-118/TR-2/v3/Relat_rio_final.pdf"
+      `t1/charter/UC-118/TR-2/v3-${UPLOAD_ID}/Relat_rio_final.pdf`
     );
   });
 
   it("passa no isTenantFileKey do backend do plano", () => {
     expect(isTenantFileKey("t1", evidenceFileKey(base))).toBe(true);
+  });
+
+  it("dois envios da MESMA versão geram chaves diferentes (reenvio não trava em objeto existente)", () => {
+    const a = evidenceFileKey(base);
+    const b = evidenceFileKey({
+      ...base,
+      uploadId: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+    });
+    expect(a).not.toBe(b);
   });
 
   it("código de caso/controle hostil não escapa do prefixo", () => {
@@ -72,7 +85,35 @@ describe("evidenceFileKey", () => {
     const key = evidenceFileKey(base);
     expect(isEvidenceKeyOf(key, base)).toBe(true);
     expect(isEvidenceKeyOf(key, { ...base, controlCode: "TR-3" })).toBe(false);
+    expect(isEvidenceKeyOf(key, { ...base, caseCode: "UC-119" })).toBe(false);
     expect(isEvidenceKeyOf(key, { ...base, tenantId: "t2" })).toBe(false);
+  });
+
+  it("isEvidenceKeyOf recusa o que o servidor não monta", () => {
+    const at = "t1/charter/UC-118/TR-2";
+    const parts = { tenantId: "t1", caseCode: "UC-118", controlCode: "TR-2" };
+    for (const bad of [
+      `${at}/v3/x.pdf`, // formato antigo, sem uuid
+      `${at}/v3-nao-e-uuid/x.pdf`,
+      `${at}/v3-${UPLOAD_ID}/../x.pdf`,
+      `${at}/v3-${UPLOAD_ID}/..`,
+      `${at}/v3-${UPLOAD_ID}/.`,
+      `${at}/v3-${UPLOAD_ID}/`,
+      `${at}/v3-${UPLOAD_ID}/a/b.pdf`,
+      `${at}/v3-${UPLOAD_ID}//x.pdf`,
+      `${at}/v3-${UPLOAD_ID}/a b.pdf`,
+      `${at}/../TR-3/v3-${UPLOAD_ID}/x.pdf`,
+      `t1/charter/UC-118/TR-2x/v3-${UPLOAD_ID}/x.pdf`,
+      "t1/x.pdf",
+    ]) {
+      expect(isEvidenceKeyOf(bad, parts), bad).toBe(false);
+    }
+  });
+
+  it("evidenceFileNameOfKey devolve o último segmento", () => {
+    expect(evidenceFileNameOfKey(evidenceFileKey(base))).toBe(
+      "Relat_rio_final.pdf"
+    );
   });
 });
 

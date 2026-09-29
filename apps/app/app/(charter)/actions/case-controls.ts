@@ -7,6 +7,7 @@ import {
   type CharterRiskCategory,
   withTenantDb,
 } from "@repo/database";
+import { CHARTER_EVIDENCE_BUCKET, storageClient } from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -17,11 +18,14 @@ import {
   controlProgress,
   EDITABLE_STATES,
   expiresAtFor,
-  isTenantFileKey,
   MAX_DISPENSE_DAYS,
   nextControlState,
   partitionByClass,
 } from "@/lib/charter/case-controls";
+import {
+  evidenceFileNameOfKey,
+  isEvidenceKeyOf,
+} from "@/lib/charter/evidence-file";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
@@ -172,13 +176,41 @@ async function applyTransition(args: {
   return to;
 }
 
-function assertFileOfTenant(tenantId: string, fileKey: string): void {
-  // Chave opaca do bucket privado, `<tenantId>/<segmentos>`. Validada inteira:
-  // "t1/../t2/x.pdf" começa com "t1/" e resolve em outro tenant.
-  if (!isTenantFileKey(tenantId, fileKey)) {
+/**
+ * A chave do arquivo é EXATAMENTE uma que o servidor emite para ESTE caso e ESTE
+ * controle do tenant (`<tenant>/charter/<caso>/<controle>/v<N>-<uuid>/<nome>`).
+ * Tenant certo não basta: sem a checagem do caso e do controle, dava para anexar
+ * a um controle o arquivo enviado para outro.
+ */
+function assertEvidenceKey(
+  tenantId: string,
+  ref: { code: string; controlCode: string },
+  fileKey: string
+): void {
+  if (
+    !isEvidenceKeyOf(fileKey, {
+      tenantId,
+      caseCode: ref.code,
+      controlCode: ref.controlCode,
+    })
+  ) {
     throw new GovernanceError(
-      "control.file.tenant",
-      "Arquivo fora do armazenamento desta organização."
+      "control.file.key",
+      "Arquivo que não pertence a este controle. Envie o arquivo de novo por esta tela."
+    );
+  }
+}
+
+/** O objeto existe no storage? Anexar a chave de um PUT que não aconteceu deixaria
+ *  o "Enviar para revisão" apontando para o vazio. Fora da transação: é rede. */
+async function assertFileInStorage(fileKey: string): Promise<void> {
+  const { data: present, error } = await storageClient.storage
+    .from(CHARTER_EVIDENCE_BUCKET)
+    .exists(fileKey);
+  if (error || !present) {
+    throw new GovernanceError(
+      "control.file.missing",
+      "O arquivo não chegou ao armazenamento. Envie de novo."
     );
   }
 }
@@ -455,7 +487,9 @@ export async function getCaseControlPlan(input: { code: string }): Promise<
 
 const AttachSchema = Ref.extend({
   fileKey: z.string().trim().min(1).max(500),
-  fileName: z.string().trim().min(1).max(255),
+  // Ignorado: o nome gravado sai do último segmento da chave, não de um campo que
+  // o cliente manda ao lado dela. Aceito só para não quebrar quem ainda o envia.
+  fileName: z.string().trim().max(255).optional(),
   summary: z.string().trim().max(MAX_COMMENT).optional(),
   evidenceProducedAt: z.coerce.date().optional(),
 });
@@ -467,7 +501,8 @@ export async function attachControlEvidence(
   return await safeAction(async () => {
     const ctx = await requireCharterPermissionContext("case.submit");
     const data = AttachSchema.parse(input);
-    assertFileOfTenant(ctx.tenantId, data.fileKey);
+    assertEvidenceKey(ctx.tenantId, data, data.fileKey);
+    await assertFileInStorage(data.fileKey);
 
     const state = await withTenantDb(ctx.tenantId, async (db) => {
       const uc = await loadUseCase(db, ctx.tenantId, data.code);
@@ -481,7 +516,7 @@ export async function attachControlEvidence(
         auditAction: "ATTACH",
         patch: {
           fileKey: data.fileKey,
-          fileName: data.fileName,
+          fileName: evidenceFileNameOfKey(data.fileKey),
           summary: data.summary ?? control.summary,
           evidenceProducedAt: data.evidenceProducedAt ?? new Date(),
           // Evidência nova invalida a aceitação anterior.

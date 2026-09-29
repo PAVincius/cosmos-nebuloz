@@ -22,7 +22,8 @@ beforeEach(() => {
     ok: true,
     data: {
       uploadUrl: "https://s/up?token=1",
-      fileKey: "t1/charter/UC-118/TR-2/v1/laudo.pdf",
+      fileKey:
+        "t1/charter/UC-118/TR-2/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/laudo.pdf",
       fileName: "laudo.pdf",
       contentType: "application/pdf",
     },
@@ -52,7 +53,8 @@ describe("uploadEvidenceFile", () => {
     expect(res).toEqual({
       ok: true,
       data: {
-        fileKey: "t1/charter/UC-118/TR-2/v1/laudo.pdf",
+        fileKey:
+          "t1/charter/UC-118/TR-2/v1-3f2a9c1e-7b64-4d0a-9e35-1c8f5a2b7d90/laudo.pdf",
         fileName: "laudo.pdf",
       },
     });
@@ -60,6 +62,14 @@ describe("uploadEvidenceFile", () => {
 
   it("navegador sem tipo: usa o da extensão", async () => {
     await uploadEvidenceFile(file("dados.csv", ""), REF);
+    expect(h.request.mock.calls[0][0].contentType).toBe("text/csv");
+  });
+
+  it("tipo errado do navegador (csv como ms-excel): vale o da extensão", async () => {
+    await uploadEvidenceFile(
+      file("dados.csv", "application/vnd.ms-excel"),
+      REF
+    );
     expect(h.request.mock.calls[0][0].contentType).toBe("text/csv");
   });
 

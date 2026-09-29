@@ -1,10 +1,12 @@
 // Arquivo de evidência do controle do caso — nome, chave e tipo.
 //
 // O nome do arquivo e o tipo declarado vêm do navegador. A chave é sempre
-// montada no servidor: `<tenant>/charter/<caso>/<controle>/v<N>/<nome>`. Cada
-// segmento fica no alfabeto que o backend do plano aceita (`isTenantFileKey`:
-// [A-Za-z0-9._-], sem "." nem ".."), e a versão no caminho preserva os arquivos
-// anteriores — o histórico do controle guarda só o nome.
+// montada no servidor: `<tenant>/charter/<caso>/<controle>/v<N>-<uuid>/<nome>`.
+// Cada segmento fica no alfabeto que o backend do plano aceita
+// (`isTenantFileKey`: [A-Za-z0-9._-], sem "." nem ".."). A versão no caminho
+// preserva os arquivos anteriores, e o uuid faz cada ENVIO ter chave própria:
+// com a chave só determinística (v<N>), reenviar depois de um PUT que falhou no
+// meio esbarrava no objeto que já existia, e o controle travava.
 //
 // `safeFileName` do Scaffold tem o mesmo objetivo (não deixar o nome sair do
 // prefixo do tenant), mas aceita acento e espaço; aqui o alfabeto é mais estreito
@@ -16,7 +18,10 @@ const MAX_NAME = 120;
 const SEPARATORS = /[\\/]/;
 const OUTSIDE_ALPHABET = /[^A-Za-z0-9._-]/g;
 const ONLY_DOTS = /^\.+$/;
-const VERSIONED_NAME = /^v\d+\/[A-Za-z0-9._-]+$/;
+const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+/** Segmento do envio: v<N>-<uuid>. */
+const UPLOAD_SEGMENT = new RegExp(`^v\\d+-${UUID}$`, "i");
+const FILE_SEGMENT = /^[A-Za-z0-9._-]+$/;
 
 /** Extensão → tipo canônico. É a lista de permissão: o tipo que vale é o da
  *  extensão, e o declarado pelo navegador só não pode contradizê-lo. */
@@ -75,27 +80,43 @@ function segment(raw: string): string {
 }
 
 export function evidenceFileKey(
-  parts: KeyParts & { filename: string }
+  parts: KeyParts & { filename: string; uploadId: string }
 ): string {
   return [
     parts.tenantId,
     "charter",
     segment(parts.caseCode),
     segment(parts.controlCode),
-    `v${parts.version}`,
+    `v${parts.version}-${parts.uploadId}`,
     evidenceFileName(parts.filename),
   ].join("/");
 }
 
-/** A chave pertence a ESTE caso e a ESTE controle do tenant (qualquer versão)?
- *  Impede anexar ao controle A o arquivo enviado para o controle B. */
+/** Nome do arquivo: o último segmento da chave. O nome gravado no controle sai
+ *  daqui, nunca de um campo que o cliente manda ao lado da chave. */
+export function evidenceFileNameOfKey(fileKey: string): string {
+  return fileKey.split("/").pop() ?? "";
+}
+
+/** A chave é exatamente uma que o SERVIDOR monta para ESTE caso e ESTE controle
+ *  do tenant (qualquer versão)? Impede anexar ao controle A o arquivo enviado
+ *  para o controle B, e chave que o servidor nunca emitiria. */
 export function isEvidenceKeyOf(
   fileKey: string,
   parts: Omit<KeyParts, "version">
 ): boolean {
   const prefix = `${parts.tenantId}/charter/${segment(parts.caseCode)}/${segment(parts.controlCode)}/`;
+  if (!fileKey.startsWith(prefix)) {
+    return false;
+  }
+  const rest = fileKey.slice(prefix.length).split("/");
+  if (rest.length !== 2) {
+    return false;
+  }
+  const [upload, name] = rest;
   return (
-    fileKey.startsWith(prefix) &&
-    VERSIONED_NAME.test(fileKey.slice(prefix.length))
+    UPLOAD_SEGMENT.test(upload) &&
+    FILE_SEGMENT.test(name) &&
+    !ONLY_DOTS.test(name)
   );
 }

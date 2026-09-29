@@ -22,8 +22,10 @@ export async function uploadEvidenceFile(
   const res = await requestControlEvidenceUpload({
     ...ref,
     filename: file.name,
-    // Alguns sistemas não informam o tipo (csv, por exemplo): vale o da extensão.
-    contentType: file.type || evidenceMimeType(file.name) || "",
+    // Vale o tipo da extensão: o servidor exige que o declarado seja IGUAL a ele, e
+    // o navegador erra (csv vira application/vnd.ms-excel no Windows) ou não
+    // informa. Sem extensão aceita, segue o do navegador e o servidor recusa.
+    contentType: evidenceMimeType(file.name) ?? file.type,
     sizeBytes: file.size,
   });
   if (!res.ok) {

@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { withTenantDb } from "@repo/database";
 import { CHARTER_EVIDENCE_BUCKET, storageClient } from "@repo/storage";
 import { revalidatePath } from "next/cache";
@@ -23,8 +24,10 @@ import { type Db, GovernanceError, logCharterAudit } from "./_shared";
 // Arquivo de evidência do controle do caso — CH-DEV-05 ("enviar exige arquivo").
 //
 // Upload por URL assinada de bucket privado: o navegador diz nome, tipo e
-// tamanho; a CHAVE é montada aqui (`<tenant>/charter/<caso>/<controle>/v<N>/
-// <nome>`), então ninguém escolhe onde grava. Quem grava a referência no
+// tamanho; a CHAVE é montada aqui (`<tenant>/charter/<caso>/<controle>/
+// v<N>-<uuid>/<nome>`), então ninguém escolhe onde grava. O uuid dá a cada envio
+// chave própria: reenviar depois de um PUT que falhou não esbarra no objeto que
+// já existia. Quem grava a referência no
 // controle é `attachControlEvidence` (case-controls.ts), que valida a chave.
 // Download: a auditoria é gravada ANTES de emitir a URL, porque qualquer papel
 // lê e o log é o que diz quem baixou o quê.
@@ -84,14 +87,22 @@ export async function requestControlEvidenceUpload(
       );
     }
     // A extensão é a lista de permissão e o tipo que vale é o dela; o declarado
-    // só não pode contradizê-la (um .pdf que se diz text/html).
+    // tem de ser IGUAL a ele. "Estar na lista de tipos aceitos" não basta: um
+    // .pdf que se diz image/png passaria, e o storage o serviria como imagem.
     const mime = evidenceMimeType(input.filename);
-    if (!(mime && EVIDENCE_ALLOWED_MIME_TYPES.includes(input.contentType))) {
+    if (
+      !(mime && EVIDENCE_ALLOWED_MIME_TYPES.includes(mime)) ||
+      input.contentType !== mime
+    ) {
       throw new GovernanceError(
         "control.file.type",
         "Tipo de arquivo não aceito como evidência. Use PDF, Office, imagem, CSV ou texto."
       );
     }
+
+    // Chamada de rede FORA da transação: dentro dela prenderia a conexão do banco
+    // enquanto o Supabase Storage responde.
+    await ensureEvidenceBucket();
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
       const { uc, control } = await loadControl(db, ctx.tenantId, input);
@@ -118,10 +129,10 @@ export async function requestControlEvidenceUpload(
         caseCode: uc.code,
         controlCode: control.code,
         version: previous + 1,
+        uploadId: randomUUID(),
         filename: input.filename,
       });
 
-      await ensureEvidenceBucket();
       const { data, error } = await storageClient.storage
         .from(CHARTER_EVIDENCE_BUCKET)
         .createSignedUploadUrl(fileKey);

@@ -106,11 +106,11 @@ describe("requestControlEvidenceUpload", () => {
     expect(h.requirePermission).toHaveBeenCalledWith("case.submit");
   });
 
-  it("monta a chave no servidor: <tenant>/charter/<caso>/<controle>/v1/<nome saneado>", async () => {
+  it("monta a chave no servidor: <tenant>/charter/<caso>/<controle>/v1-<uuid>/<nome saneado>", async () => {
     const res = await requestControlEvidenceUpload(UP);
     if (!res.ok) throw new Error(res.error);
-    expect(res.data.fileKey).toBe(
-      "t1/charter/UC-118/TR-2/v1/Laudo_de_rollback.pdf"
+    expect(res.data.fileKey).toMatch(
+      /^t1\/charter\/UC-118\/TR-2\/v1-[0-9a-f-]{36}\/Laudo_de_rollback\.pdf$/
     );
     expect(res.data.uploadUrl).toBe("https://s/up?token=1");
     expect(res.data.fileName).toBe("Laudo_de_rollback.pdf");
@@ -122,7 +122,7 @@ describe("requestControlEvidenceUpload", () => {
     h.db.charterCaseControlEvent.count.mockResolvedValue(2);
     const res = await requestControlEvidenceUpload(UP);
     if (!res.ok) throw new Error(res.error);
-    expect(res.data.fileKey).toContain("/v3/");
+    expect(res.data.fileKey).toContain("/v3-");
     expect(
       h.db.charterCaseControlEvent.count.mock.calls[0][0].where
     ).toMatchObject({
