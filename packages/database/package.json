@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "seed:safe": "tsx --env-file=.env seed-safe-full.ts",
     "seed:regulacao": "tsx scripts/seed-regulacao.mts",
-    "seed:scaffold": "tsx scripts/seed-scaffold.mts"
+    "seed:scaffold": "tsx scripts/seed-scaffold.mts",
+    "seed:modelos": "tsx scripts/seed-modelos.mts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
