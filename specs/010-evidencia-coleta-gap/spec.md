@@ -8,6 +8,10 @@
 
 **Input**: User description: "spec do Meridian A3 (decisão D-19 do Norte, confirmada pelo CEO em 29/09; detalhe em docs/produto/meridian-escopo-dogfood-a3-a5.md). Escopo mínimo: o botão Ver evidência (EvidenceButton; hoje em tab-scoring.tsx e no painel de divergência) aparece também onde a tela mostra 'N anexos' em Coleta e no gap; sem prévia nem download em lote; evidência eliminada pela retenção aparece sem botão. Mesma action requestEvidenceUrl (audita antes da URL), mesma permissão meridian.evidence.read. Critério de aceite testável, incluindo M8 provando evidence.read a partir de Coleta e do gap, e o caso sem permissão (403)."
 
+## Nota de compliance — gate antes de dev
+
+`docs/produto/meridian-escopo-dogfood-a3-a5.md` (§ A3) diz: "Se a spec passar a mostrar prévia do conteúdo, ou o nome do arquivo em lugar novo como lista ou exportação, aí passa pelo Lacre antes de ir para dev." Esta spec faz exatamente isso: FR-001 e FR-002 pedem uma **lista** de evidências individuais em Coleta e no gap — duas superfícies novas onde o nome do arquivo passa a aparecer (hoje só aparece no painel de divergência de Scoring & Revisão). **Bussola não inicia a implementação antes do parecer do Lacre sobre essas duas superfícies.**
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Consultor abre evidência a partir da aba Coleta (Priority: P1)
