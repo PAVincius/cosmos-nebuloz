@@ -20,6 +20,7 @@ então só aquele agente a carrega. Atualizar = copiar de novo do commit novo e 
 | churn-prevention, onboarding | coreyhaines31/marketingskills | 5b2c000 | MIT | Sucesso do Cliente |
 | content-strategy, seo-audit, launch, competitors | coreyhaines31/marketingskills | 5b2c000 | MIT | Growth |
 | copywriting, copy-editing, social, emails | coreyhaines31/marketingskills | 5b2c000 | MIT | Conteúdo |
+| better-accessibility, better-colors, better-interface, better-layout, better-typography, better-ui, better-writing, break, explain-interface, interface-review, variant | jakubkrehel/skills (v1.6.3) | 267330e | MIT | Devs de produto (Cosmos, Charter, Scaffold, Meridian, Signal, Backoffice) |
 
 Não vieram: `mattpocock/skills` qa e to-prd (removidas do repo; `to-spec` já instalada é a sucessora),
 `prisma-postgres` (é do banco hospedado da Prisma, não do ORM). ADR do repo vence skill:
@@ -30,3 +31,8 @@ sem os `templates/*.sh` e sem as referências de proxy, profiling e WebGPU. O `n
 (`core` → `agent-browser`, `dogfood` → `agent-browser-dogfood`) para não colidir com outras skills.
 
 Camada de Receita (2026-09-27): da marketingskills vieram só os `.md`; os `evals/evals.json` ficaram de fora.
+
+Interface (2026-09-30, pedido do CEO): da jakubkrehel/skills vieram só os `.md`; os `agents/openai.yaml` e os
+arquivos de plugin ficaram de fora. Revisado sem script nem chamada de rede, exceto um `curl` de exemplo em
+`explain-interface/no-browser.md` para baixar a página que o usuário quer explicar. O `DESIGN.md` do produto vence
+skill: a lista de padrões recusados de cada `DESIGN.md` continua obrigatória, e trabalho de UI segue passando por `/impeccable`.

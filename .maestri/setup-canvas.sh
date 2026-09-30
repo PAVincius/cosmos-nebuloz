@@ -327,7 +327,7 @@ EOF
 role "Morgana" "$MORGANA"
 
 # Skills por papel (depois de criar os papéis, antes de recrutar)
-for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice"; do equip "$d" prisma-client-api agent-browser; done
+for d in "Dev Cosmos" "Dev Charter" "Dev Scaffold" "Dev Meridian" "Dev Signal" "Dev Backoffice"; do equip "$d" prisma-client-api agent-browser better-accessibility better-colors better-interface better-layout better-typography better-ui better-writing break explain-interface interface-review variant; done
 equip "Dev Plataforma" prisma-client-api supabase-postgres-best-practices prisma-cli
 equip "Infra"          supabase-postgres-best-practices prisma-cli
 equip "QA"             agent-browser agent-browser-dogfood
