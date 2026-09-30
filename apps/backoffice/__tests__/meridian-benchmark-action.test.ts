@@ -47,13 +47,6 @@ const { revalidatePath } = await import("next/cache");
 const { platformDb, ProvisioningError, setMeridianBenchmarkEnablement } =
   await import("@repo/provisioning");
 
-// O client gerado ainda não tem o model (migration do Alicerce).
-const enablement = (
-  platformDb as unknown as {
-    meridianBenchmarkEnablement: { findUnique: () => Promise<unknown> };
-  }
-).meridianBenchmarkEnablement;
-
 const staff = (canWrite: boolean) => ({
   userId: "staff-1",
   email: "s@nebuloz.ai",
@@ -167,7 +160,9 @@ describe("setMeridianBenchmarkAction", () => {
 
 describe("getMeridianBenchmark", () => {
   it("sem linha na tabela o estado é desligado, sem referência", async () => {
-    vi.mocked(enablement.findUnique).mockResolvedValue(null);
+    vi.mocked(
+      platformDb.meridianBenchmarkEnablement.findUnique
+    ).mockResolvedValue(null);
 
     const r = await getMeridianBenchmark("vanta-saude");
 
@@ -183,7 +178,9 @@ describe("getMeridianBenchmark", () => {
   });
 
   it("com linha devolve estado, referência e data em ISO", async () => {
-    vi.mocked(enablement.findUnique).mockResolvedValue({
+    vi.mocked(
+      platformDb.meridianBenchmarkEnablement.findUnique
+    ).mockResolvedValue({
       enabled: true,
       agreementRef: "ADT-2026-014",
       updatedAt: new Date("2026-09-29T12:00:00Z"),

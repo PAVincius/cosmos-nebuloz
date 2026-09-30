@@ -10,9 +10,9 @@ Spec: `specs/012-benchmark-travado-tenant` (PR #307), US1. Branch `feat/meridian
 
 ## Verificação
 - vitest backoffice: 1773 passam; `tsc --noEmit` limpo; biome sem diagnóstico nos arquivos tocados.
-- NÃO conferido no navegador: a tabela `MeridianBenchmarkEnablement` ainda não existe em nenhum banco (feat/meridian-benchmark-schema em andamento).
+- Suíte do backoffice sem SKIP_ENV_VALIDATION: 1774 passam, tsc limpo.
+- NÃO conferido no navegador.
 
 ## Pendências
-- Leitura e escrita passam por cast estrutural (`EnablementReader`, `MeridianBenchmarkDb`) porque o client Prisma gerado ainda não tem o model. Remover os casts quando o schema entrar na base.
-- Ordem de merge: schema (Alicerce) → benchmark-travado (Bussola) → esta branch.
-- Conferir em backoffice.nebuloz.ai depois do deploy.
+- Rebase sobre #323 (a683df49) feito e casts removidos: a action chama `setMeridianBenchmarkEnablement(platformDb, ...)` e lê `platformDb.meridianBenchmarkEnablement`.
+- Merge depois do #323. Conferir em backoffice.nebuloz.ai depois do deploy (não conferido no navegador).

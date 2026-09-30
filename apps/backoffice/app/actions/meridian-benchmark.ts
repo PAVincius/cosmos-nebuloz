@@ -1,7 +1,6 @@
 "use server";
 
 import {
-  type MeridianBenchmarkDb,
   ProvisioningError,
   platformDb,
   setMeridianBenchmarkEnablement,
@@ -19,19 +18,6 @@ export type MeridianBenchmarkState = {
   updatedAt: string | null;
   /** Tenant interno liga sem aditivo (spec 012, FR-003). */
   isInternalTenant: boolean;
-};
-
-/** O model `MeridianBenchmarkEnablement` chega com a migration do Alicerce; até
- *  o client gerado tê-lo, a leitura entra por esta forma estrutural (mesmo
- *  padrão de `MeridianBenchmarkDb` em @repo/provisioning). */
-type EnablementReader = {
-  meridianBenchmarkEnablement: {
-    findUnique(args: unknown): Promise<{
-      enabled: boolean;
-      agreementRef: string | null;
-      updatedAt: Date;
-    } | null>;
-  };
 };
 
 async function tenantBySlug(slug: string) {
@@ -55,9 +41,7 @@ export async function getMeridianBenchmark(
     await requirePlatformStaff();
 
     const tenant = await tenantBySlug(slug);
-    const row = await (
-      platformDb as unknown as EnablementReader
-    ).meridianBenchmarkEnablement.findUnique({
+    const row = await platformDb.meridianBenchmarkEnablement.findUnique({
       where: { tenantId: tenant.id },
       select: { enabled: true, agreementRef: true, updatedAt: true },
     });
@@ -94,17 +78,13 @@ export async function setMeridianBenchmarkAction(input: {
     const parsed = SetBenchmarkInput.parse(input);
     const tenant = await tenantBySlug(parsed.slug);
 
-    // Mesmo motivo do `EnablementReader`: o client ainda não conhece o model.
-    await setMeridianBenchmarkEnablement(
-      platformDb as unknown as MeridianBenchmarkDb,
-      {
-        tenantId: tenant.id,
-        enabled: parsed.enabled,
-        agreementRef: parsed.agreementRef ?? null,
-        actorUserId: staff.userId,
-        actorName: staff.name,
-      }
-    );
+    await setMeridianBenchmarkEnablement(platformDb, {
+      tenantId: tenant.id,
+      enabled: parsed.enabled,
+      agreementRef: parsed.agreementRef ?? null,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+    });
 
     revalidatePath(`/clientes/${parsed.slug}`);
     return null;
