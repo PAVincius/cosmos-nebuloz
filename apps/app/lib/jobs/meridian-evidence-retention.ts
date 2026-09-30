@@ -47,10 +47,13 @@ export type EvidenceRetentionResult = {
   failed: number;
 };
 
+// Devolve quantas linhas ESTA execução marcou. O `updateMany` só casa o que
+// ainda não tem o marcador: se outra execução simultânea chegou antes, a
+// contagem é 0 (delete e audit são idempotentes) e a métrica não superconta.
 async function eliminateAssessmentEvidence(
   assessmentId: string,
   rows: PendingEvidence[]
-): Promise<void> {
+): Promise<number> {
   await deleteObjects(
     MERIDIAN_EVIDENCE_BUCKET,
     rows.map((r) => r.storagePath)
@@ -59,8 +62,11 @@ async function eliminateAssessmentEvidence(
   // fileName também vira o marcador — pode conter dado pessoal (mesmo
   // motivo do DSAR anonimizar fileName); sem isso, o dado sobreviveria à
   // própria retenção que este job promete.
-  await database.meridianEvidence.updateMany({
-    where: { id: { in: rows.map((r) => r.id) } },
+  const { count } = await database.meridianEvidence.updateMany({
+    where: {
+      id: { in: rows.map((r) => r.id) },
+      storagePath: { not: EVIDENCE_RETENTION_ELIMINATED_MARKER },
+    },
     data: {
       storagePath: EVIDENCE_RETENTION_ELIMINATED_MARKER,
       fileName: EVIDENCE_RETENTION_ELIMINATED_MARKER,
@@ -87,6 +93,8 @@ async function eliminateAssessmentEvidence(
     })),
     skipDuplicates: true,
   });
+
+  return count;
 }
 
 export async function eliminateExpiredMeridianEvidence(
@@ -122,8 +130,7 @@ export async function eliminateExpiredMeridianEvidence(
   let failed = 0;
   for (const [assessmentId, rows] of byAssessment) {
     try {
-      await eliminateAssessmentEvidence(assessmentId, rows);
-      eliminated += rows.length;
+      eliminated += await eliminateAssessmentEvidence(assessmentId, rows);
     } catch (error) {
       failed += 1;
       log.error("[meridian-evidence-retention] assessment falhou", {

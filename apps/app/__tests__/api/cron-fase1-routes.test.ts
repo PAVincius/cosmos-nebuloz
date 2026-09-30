@@ -105,6 +105,29 @@ describe("status quando o job reporta falha", () => {
     expect(res.status).toBe(500);
   });
 
+  it("eliminação LGPD: 500 e ok:false se algum pedido falhou de vez (o monitor enxerga)", async () => {
+    mocks.erasure.mockResolvedValue({
+      claimed: 2,
+      completed: 1,
+      retried: 0,
+      failed: 1,
+    });
+    const res = await erasureGet(req("Bearer s3cret-value"));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toMatchObject({ ok: false, failed: 1 });
+  });
+
+  it("eliminação LGPD: pedido que só será retentado não derruba a invocação", async () => {
+    mocks.erasure.mockResolvedValue({
+      claimed: 1,
+      completed: 0,
+      retried: 1,
+      failed: 0,
+    });
+    const res = await erasureGet(req("Bearer s3cret-value"));
+    expect(res.status).toBe(200);
+  });
+
   it("job lança: 500 sem vazar a mensagem interna", async () => {
     mocks.erasure.mockRejectedValue(new Error("senha do banco: hunter2"));
     const res = await erasureGet(req("Bearer s3cret-value"));
