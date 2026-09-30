@@ -20,6 +20,9 @@ export default defineConfig({
     // `@vitest-environment jsdom` no topo — blast radius de um arquivo.
     environment: "node",
     globals: true,
+    // O hook de push roda `turbo test` em paralelo e testes de render passam de
+    // 5 s (o padrão) sob essa carga — isolados passam em poucos segundos.
+    testTimeout: 15_000,
     // `.tsx` incluído: sem isso o teste de componente não é sequer coletado, e
     // o vitest sai com "0 passed" parecendo verde.
     include: ["__tests__/**/*.test.{ts,tsx}"],
