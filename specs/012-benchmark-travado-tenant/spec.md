@@ -59,6 +59,23 @@ Um consultor de um tenant cliente cuja habilitação de benchmark já está liga
 
 ---
 
+### User Story 4 - A leitura do benchmark também respeita a habilitação (Priority: P1)
+
+Um consultor de um tenant sem habilitação de benchmark abre o relatório de um assessment, ou tenta consultar a lista de coortes. Em nenhum lugar aparece qualquer dado do pool anônimo — a trava não é só sobre contribuir, é também sobre ver o que outros contribuíram.
+
+**Why this priority**: Sem isto, a trava de contribuição (US2) protegeria a entrada do pool mas deixaria a saída aberta — um tenant sem habilitação ainda enxergaria a coorte alimentada por quem tem. É a mesma decisão do CEO, só que do outro lado da leitura.
+
+**Independent Test**: Com um tenant sem habilitação, abrir o relatório de um assessment desse tenant e confirmar que o bloco de benchmark não aparece; separadamente, chamar a listagem de coortes e a leitura de uma coorte específica diretamente, e confirmar que as duas recusam.
+
+**Acceptance Scenarios**:
+
+1. **Given** um tenant sem habilitação de benchmark, **When** o relatório de um assessment desse tenant é aberto, **Then** o relatório não mostra o bloco de comparação com benchmark — nem retido, nem com percentil — o bloco inteiro fica ausente, não apenas vazio.
+2. **Given** um tenant sem habilitação de benchmark, **When** alguém solicita a lista de coortes ou a leitura de uma coorte específica, diretamente e não pela tela, **Then** o sistema recusa, com o mesmo motivo usado para recusar contribuição.
+3. **Given** um tenant interno com a habilitação ligada, **When** o relatório é aberto ou a lista de coortes é consultada, **Then** a leitura funciona normalmente, sem diferença de comportamento em relação a hoje.
+4. **Given** staff Nebuloz operando pelo back-office, **When** consulta dado de benchmark por essa via, **Then** a trava de habilitação por tenant não se aplica — a regra é sobre a leitura feita a partir de um tenant, não sobre a operação da equipe Nebuloz.
+
+---
+
 ### Edge Cases
 
 - **Nenhum papel do tenant cliente liga ou desliga a habilitação** — nem ADMIN, nem CONSULTANT do Meridian, nem qualquer outro papel do tenant. Só staff Nebuloz, e só pelo back-office.
@@ -79,6 +96,9 @@ Um consultor de um tenant cliente cuja habilitação de benchmark já está liga
 - **FR-008**: Desligar a habilitação de um tenant MUST bloquear contribuições futuras imediatamente, sem alterar o comportamento já existente de retirada de contribuições já gravadas.
 - **FR-009**: Para o tenant interno da Nebuloz, o sistema MUST aplicar a mesma trava de habilitação, mas MUST NOT exigir referência de aditivo para ligá-la.
 - **FR-010**: Quando a habilitação de um tenant estiver ligada, a decisão de opt-in MUST continuar sendo tomada por assessment, sem nenhuma mudança no comportamento atual dessa escolha.
+- **FR-011**: O relatório de um assessment MUST NOT exibir o bloco de comparação com benchmark quando a habilitação do tenant estiver desligada — o bloco fica ausente, não apenas sem percentil.
+- **FR-012**: A listagem de coortes e a leitura de uma coorte específica MUST recusar, no servidor, quando a habilitação do tenant que faz a solicitação estiver desligada, com o mesmo motivo usado para recusar contribuição.
+- **FR-013**: A trava de leitura por habilitação (FR-011, FR-012) aplica-se à leitura feita a partir de um tenant do Meridian; MUST NOT restringir o acesso de staff Nebuloz operando pelo back-office.
 
 ### Key Entities
 
@@ -93,10 +113,12 @@ Um consultor de um tenant cliente cuja habilitação de benchmark já está liga
 - **SC-003**: Nenhuma contribuição de benchmark é gravada para um tenant sem habilitação, mesmo para um assessment com opt-in marcado antes de a habilitação ser desligada — verificável rodando o cálculo do score sobre esse caso.
 - **SC-004**: Toda mudança de habilitação (ligar ou desligar) fica registrada com autor e data, verificável por amostragem.
 - **SC-005**: Nenhum usuário de um tenant cliente, em qualquer papel, consegue ligar ou desligar a habilitação desse tenant — verificável tentando com o papel mais privilegiado disponível no tenant.
+- **SC-006**: Nenhum relatório de um tenant sem habilitação mostra o bloco de comparação com benchmark, em 100% dos casos amostrados.
+- **SC-007**: Toda solicitação de listagem ou leitura de coorte, feita por um tenant sem habilitação, é recusada pelo servidor — mesmo quando não passa pela tela.
 
 ## Assumptions
 
 - Onde a habilitação é armazenada (no cadastro do tenant, no registro de módulos, ou num modelo novo) fica a critério de quem implementar — esta spec não prescreve.
 - Linha no RoPA e aviso ao respondente são pré-requisito de negócio para ligar de verdade a habilitação de um cliente externo, mas são responsabilidade separada (compliance) e não bloqueiam a trava mecânica descrita aqui.
-- O cálculo de coorte, percentis e o limiar mínimo de leitura do benchmark não mudam nesta spec.
+- O cálculo de coorte, percentis e o limiar mínimo de leitura do benchmark (a lógica em si) não muda nesta spec — o que muda é quem tem acesso a ler o resultado desse cálculo.
 - Retirar uma contribuição já feita (fluxo já existente) não muda nesta spec.
