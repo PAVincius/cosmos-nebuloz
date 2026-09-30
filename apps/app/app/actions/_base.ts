@@ -64,30 +64,104 @@ export function buildPage<T>(
 
 // ─── Error handling ───────────────────────────────────────────────────────────
 
+const GENERIC_ERROR = "Erro inesperado";
+
+/** Erro de infraestrutura ou bug de programação: a mensagem descreve o
+ *  sistema (tabela e valores do Prisma, host e porta de rede, propriedade
+ *  indefinida), não uma recusa que o usuário possa ler. Não sai do servidor.
+ *
+ *  É uma lista de infraestrutura, não de domínio: o app lança `new Error("…")`
+ *  comum para recusas que a UI mostra (“não encontrado”, `FORBIDDEN`), então
+ *  `Error` comum segue passando a mensagem. */
+const NATIVE_PROGRAMMING_ERRORS = [
+  TypeError,
+  RangeError,
+  ReferenceError,
+  SyntaxError,
+  EvalError,
+  URIError,
+  AggregateError,
+];
+const PRISMA_ERROR_CODE = /^P\d{4}$/;
+const SYSTEM_ERROR_CODE = /^(E[A-Z0-9]+|ERR_[A-Z0-9_]+)$/;
+
+function codeOf(error: Error): string | undefined {
+  const code = (error as { code?: unknown }).code;
+  return typeof code === "string" ? code : undefined;
+}
+
+function isInfrastructureError(error: Error): boolean {
+  if (NATIVE_PROGRAMMING_ERRORS.some((type) => error instanceof type)) {
+    return true;
+  }
+  if (error.name.startsWith("PrismaClient")) {
+    return true;
+  }
+  const code = codeOf(error);
+  return (
+    code !== undefined &&
+    (PRISMA_ERROR_CODE.test(code) || SYSTEM_ERROR_CODE.test(code))
+  );
+}
+
 export function toActionError(error: unknown): string {
   if (error instanceof z.ZodError) {
     return error.issues
       .map((e) => `${e.path.join(".")}: ${e.message}`)
       .join("; ");
   }
-  if (error instanceof Error) {
+  if (error instanceof Error && !isInfrastructureError(error)) {
     return error.message;
   }
-  return "Erro inesperado";
+  return GENERIC_ERROR;
 }
 
-/** Só um identificador `dominio.motivo` (letras, dígitos, ponto, hífen e
- *  sublinhado, começando por letra, até 80) é aceito como code. Texto livre, e-mail
- *  ou id numa `rule` não sai do servidor: o code é para o cliente distinguir a
- *  recusa, nunca para carregar dado. */
-const RULE_CODE = /^[A-Za-z][\w.-]{0,79}$/;
+/** Só um identificador `dominio.motivo` (começa por letra; letras, dígitos,
+ *  sublinhado e hífen; com ao menos um ponto; até 80) é aceito como code. Texto
+ *  livre, e-mail ou id numa `rule` não sai do servidor: o code é para o cliente
+ *  distinguir a recusa, nunca para carregar dado. */
+const RULE_CODE = /^[A-Za-z][\w-]*(\.[\w-]+)+$/;
+const RULE_CODE_MAX = 80;
 
 /** Regra de domínio nomeada do erro (`MeridianRuleError.rule`, etc.), quando há.
  *  Vai no `code` do Result para o cliente distinguir a recusa pela regra, não
- *  pelo texto da mensagem. */
+ *  pelo texto da mensagem. Só lê de `Error`: um valor qualquer lançado com
+ *  `.rule` não vira code. */
 function ruleOf(error: unknown): string | undefined {
-  const rule = (error as { rule?: unknown } | null)?.rule;
-  return typeof rule === "string" && RULE_CODE.test(rule) ? rule : undefined;
+  if (!(error instanceof Error)) {
+    return;
+  }
+  const rule = (error as { rule?: unknown }).rule;
+  return typeof rule === "string" &&
+    rule.length <= RULE_CODE_MAX &&
+    RULE_CODE.test(rule)
+    ? rule
+    : undefined;
+}
+
+/** Só o que ajuda a achar o erro, nunca `String(e)`: a mensagem de erro de
+ *  infraestrutura carrega valores (o Prisma imprime os argumentos da query,
+ *  com e-mail do titular). Da pilha ficam só as linhas de frame (`    at …`):
+ *  a mensagem, que pode ter várias linhas, fica de fora. A mensagem só é logada para erro de domínio, que o cliente já
+ *  recebe. */
+const STACK_FRAME = /^\s+at /;
+
+function describeForLog(error: unknown): Record<string, unknown> {
+  if (!(error instanceof Error)) {
+    return { kind: "não-Error", type: typeof error };
+  }
+  const infra = isInfrastructureError(error);
+  return {
+    kind: infra ? "infra" : "domínio",
+    name: error.name,
+    code: codeOf(error),
+    ...(infra ? {} : { message: error.message }),
+    frames: error.stack
+      ?.split("\n")
+      .filter((line) => STACK_FRAME.test(line))
+      .slice(0, 7)
+      .join("\n"),
+  };
 }
 
 // Safe wrapper — returns Result instead of throwing
@@ -96,7 +170,7 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
     return ok(await fn());
   } catch (e) {
     if (!(e instanceof z.ZodError)) {
-      log.error("[safeAction]", { error: String(e) });
+      log.error("[safeAction]", describeForLog(e));
     }
     return err(toActionError(e), ruleOf(e));
   }

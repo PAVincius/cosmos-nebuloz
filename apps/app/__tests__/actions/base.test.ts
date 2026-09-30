@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import {
   buildPage,
@@ -9,6 +9,13 @@ import {
   safeAction,
   toActionError,
 } from "../../app/actions/_base";
+
+const logMock = vi.hoisted(() => ({ error: vi.fn() }));
+vi.mock("@repo/observability/log", () => ({ log: logMock }));
+
+beforeEach(() => {
+  logMock.error.mockClear();
+});
 
 describe("ok / err", () => {
   it("ok wraps data with ok:true", () => {
@@ -207,5 +214,137 @@ describe("safeAction", () => {
     if (!result.ok) {
       expect(result.error).toContain("string");
     }
+  });
+});
+
+// ─── Erro de infraestrutura não sai do servidor (achado do Vigia, #326) ──────
+
+const PRISMA_MESSAGE =
+  "\nInvalid `prisma.user.create()` invocation:\n\nUnique constraint failed on the fields: (`email`) for ana@empresa.com.br";
+
+function prismaError(name: string, code?: string): Error {
+  const e = new Error(PRISMA_MESSAGE);
+  e.name = name;
+  if (code) {
+    Object.assign(e, { code });
+  }
+  return e;
+}
+
+describe("toActionError — erro de infraestrutura é genérico", () => {
+  it.each([
+    [
+      "PrismaClientKnownRequestError",
+      prismaError("PrismaClientKnownRequestError", "P2002"),
+    ],
+    ["PrismaClientValidationError", prismaError("PrismaClientValidationError")],
+    [
+      "PrismaClientInitializationError",
+      prismaError("PrismaClientInitializationError"),
+    ],
+    ["código Pnnnn sem nome de classe", prismaError("Error", "P2025")],
+    [
+      "TypeError",
+      new TypeError("Cannot read properties of undefined (reading 'tenantId')"),
+    ],
+    ["RangeError", new RangeError("Invalid time value")],
+    ["ReferenceError", new ReferenceError("x is not defined")],
+    ["SyntaxError", new SyntaxError("Unexpected token < in JSON")],
+    [
+      "erro de rede (ECONNREFUSED)",
+      Object.assign(new Error("connect ECONNREFUSED 10.0.0.5:5432"), {
+        code: "ECONNREFUSED",
+      }),
+    ],
+    [
+      "timeout de rede (ETIMEDOUT)",
+      Object.assign(new Error("read ETIMEDOUT"), { code: "ETIMEDOUT" }),
+    ],
+  ])("%s → mensagem genérica, sem detalhe", (_nome, erro) => {
+    expect(toActionError(erro)).toBe("Erro inesperado");
+  });
+
+  it("Error comum e erro de domínio continuam passando a mensagem", () => {
+    expect(toActionError(new Error("Épico não encontrado"))).toBe(
+      "Épico não encontrado"
+    );
+    expect(toActionError(new Error("FORBIDDEN"))).toBe("FORBIDDEN");
+    class RuleError extends Error {
+      readonly rule = "benchmark.not-enabled";
+    }
+    expect(toActionError(new RuleError("Benchmark desligado."))).toBe(
+      "Benchmark desligado."
+    );
+  });
+});
+
+describe("safeAction — erro de infraestrutura", () => {
+  it("devolve mensagem genérica ao cliente e nenhum dado do erro no Result", async () => {
+    const result = await safeAction(() =>
+      Promise.reject(prismaError("PrismaClientKnownRequestError", "P2002"))
+    );
+    expect(result).toEqual({ ok: false, error: "Erro inesperado" });
+    expect(JSON.stringify(result)).not.toMatch(/prisma|email|ana@/i);
+  });
+
+  it("loga nome e código, sem a mensagem (que carrega valores do titular)", async () => {
+    await safeAction(() =>
+      Promise.reject(prismaError("PrismaClientKnownRequestError", "P2002"))
+    );
+    expect(logMock.error).toHaveBeenCalledTimes(1);
+    const logado = JSON.stringify(logMock.error.mock.calls[0]);
+    expect(logado).toContain("PrismaClientKnownRequestError");
+    expect(logado).toContain("P2002");
+    expect(logado).not.toContain("ana@empresa.com.br");
+    expect(logado).not.toContain("Unique constraint");
+  });
+
+  it("não usa String(e) no log de nenhum erro (mensagem de Error comum pode ter dado pessoal)", async () => {
+    await safeAction(() =>
+      Promise.reject(new Error("Falha ao gravar para ana@empresa.com.br"))
+    );
+    const logado = JSON.stringify(logMock.error.mock.calls[0]);
+    expect(logado).not.toContain("Error: Falha ao gravar");
+  });
+
+  it("ZodError segue sem log", async () => {
+    await safeAction(async () => {
+      z.string().parse(1);
+    });
+    expect(logMock.error).not.toHaveBeenCalled();
+  });
+});
+
+describe("ruleOf — só regra no formato dominio.motivo, de um Error", () => {
+  it("exige ponto no identificador", async () => {
+    for (const rule of ["semponto", "SO_MAIUSCULAS", "a-b", "x"]) {
+      class RuleError extends Error {
+        readonly rule = rule;
+      }
+      const result = await safeAction(() => Promise.reject(new RuleError("m")));
+      expect(Object.keys(result), rule).toEqual(["ok", "error"]);
+    }
+  });
+
+  it("aceita dominio.motivo mínimo e respeita o limite de 80", async () => {
+    class Curta extends Error {
+      readonly rule = "a.b";
+    }
+    const curta = await safeAction(() => Promise.reject(new Curta("m")));
+    expect(!curta.ok && curta.code).toBe("a.b");
+
+    const longa = `a.${"b".repeat(79)}`; // 81 caracteres
+    class Longa extends Error {
+      readonly rule = longa;
+    }
+    const r = await safeAction(() => Promise.reject(new Longa("m")));
+    expect(Object.keys(r)).toEqual(["ok", "error"]);
+  });
+
+  it("valor lançado que não é Error não vira code, mesmo com .rule válido", async () => {
+    const result = await safeAction(() =>
+      Promise.reject({ rule: "benchmark.not-enabled", message: "m" })
+    );
+    expect(Object.keys(result)).toEqual(["ok", "error"]);
   });
 });
