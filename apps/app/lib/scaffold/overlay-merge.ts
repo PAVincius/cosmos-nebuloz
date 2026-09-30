@@ -19,18 +19,25 @@
 
 export type TemplateItem = {
   key: string;
+  /** Enunciado do passo ou do critério; título, no entregável. */
   statement: string;
   required?: boolean;
   expectedArtefact?: string;
   evaluationType?: string;
+  /** Só no entregável: código do passo que o produz ("B1"). */
+  stepCode?: string;
+  /** Só no entregável: REMOVE dispensa em vez de apagar, e este é o motivo. */
+  dispensedReason?: string;
 };
 
 export type TemplateShape = {
   steps: TemplateItem[];
   criteria: TemplateItem[];
+  /** Chave do entregável é o código ("B1.1"). Ausente em forma antiga. */
+  deliverables?: TemplateItem[];
 };
 
-export type OverlayTarget = "step" | "criterion";
+export type OverlayTarget = "step" | "criterion" | "deliverable";
 
 export type OverlayOp = {
   op: "ADD" | "REMOVE" | "REPLACE";
@@ -38,6 +45,9 @@ export type OverlayOp = {
   key: string;
   /** Campos a definir (ADD) ou mesclar (REPLACE). Ausente em REMOVE. */
   patch?: Partial<Omit<TemplateItem, "key">>;
+  /** Por que a operação existe. Obrigatório em REMOVE de entregável: quem lê a
+   *  trilha depois precisa saber por que a entrega não existe. */
+  reason?: string;
 };
 
 export type ConflictReason =
@@ -62,8 +72,20 @@ export type OverlayConflict = {
 };
 
 function listOf(shape: TemplateShape, target: OverlayTarget): TemplateItem[] {
-  return target === "step" ? shape.steps : shape.criteria;
+  if (target === "step") {
+    return shape.steps;
+  }
+  if (target === "criterion") {
+    return shape.criteria;
+  }
+  return shape.deliverables ?? [];
 }
+
+const TARGET_LABEL: Record<OverlayTarget, string> = {
+  step: "passo",
+  criterion: "critério",
+  deliverable: "entregável",
+};
 
 /**
  * Aplica as operações sobre a base e devolve a forma resolvida.
@@ -84,6 +106,11 @@ export function applyOverlay(
     steps: base.steps.map((s) => ({ ...s })),
     criteria: base.criteria.map((c) => ({ ...c })),
   };
+  // Forma antiga (sem entregáveis) sai como entrou: só ganha a lista se a base a
+  // tem ou se uma operação mira nela.
+  if (base.deliverables || ops.some((o) => o.target === "deliverable")) {
+    out.deliverables = (base.deliverables ?? []).map((d) => ({ ...d }));
+  }
 
   for (const op of ops) {
     const list = listOf(out, op.target);
@@ -99,7 +126,17 @@ export function applyOverlay(
       continue;
     }
     if (op.op === "REMOVE") {
-      list.splice(i, 1);
+      if (op.target === "deliverable") {
+        // Não some: a trilha mostra o entregável dispensado, com o motivo. Sumir
+        // em silêncio é o gate virando formalidade (D-24 §7.7).
+        list[i] = {
+          ...(list[i] as TemplateItem),
+          required: false,
+          dispensedReason: (op.reason ?? "").trim(),
+        };
+      } else {
+        list.splice(i, 1);
+      }
       continue;
     }
     // REPLACE mescla: campo não citado no patch fica como na base. Substituir o
@@ -116,6 +153,7 @@ const FIELDS: (keyof TemplateItem)[] = [
   "required",
   "expectedArtefact",
   "evaluationType",
+  "stepCode",
 ];
 
 /** Campos que o patch toca E que mudaram entre a base e a versão nova. */
@@ -151,7 +189,7 @@ export function detectConflicts(
   for (const op of ops) {
     const inBase = listOf(base, op.target).find((x) => x.key === op.key);
     const inNext = listOf(next, op.target).find((x) => x.key === op.key);
-    const what = op.target === "step" ? "passo" : "critério";
+    const what = TARGET_LABEL[op.target];
 
     if (op.op === "ADD") {
       if (inNext) {
@@ -199,4 +237,93 @@ export function detectConflicts(
   }
 
   return conflicts;
+}
+
+export type OverlayViolationCode =
+  | "REQUIRED_DELIVERABLE_REMOVAL_NOT_CONSULTANT"
+  | "REMOVAL_WITHOUT_REASON"
+  | "STEP_ORPHANS_REQUIRED_DELIVERABLE";
+
+export type OverlayViolation = {
+  code: OverlayViolationCode;
+  key: string;
+  note: string;
+  /** Só em STEP_ORPHANS_REQUIRED_DELIVERABLE: os entregáveis que ficam sem passo. */
+  deliverables?: string[];
+};
+
+export const MIN_REMOVAL_REASON = 12;
+
+/**
+ * O que o overlay pode fazer com o gate (D-24 §7.7).
+ *
+ * O entregável obrigatório trava o gate. Remover um, ou afrouxá-lo para
+ * opcional, tira da fase uma exigência do método, e por isso só o CONSULTANT
+ * faz, com motivo. Nem ele faz sumir: `applyOverlay` dispensa, e a trilha
+ * mostra o motivo. Quem não é consultor só remove o que não era obrigatório.
+ *
+ * Remover um passo que é o único produtor de um entregável obrigatório deixaria
+ * o gate sem saída; só passa se o mesmo overlay dispensa o entregável.
+ *
+ * As checagens de papel olham a BASE: entregável que o próprio overlay
+ * acrescentou é do cliente e ele pode desfazer.
+ */
+export function validateOverlay(
+  base: TemplateShape,
+  ops: readonly OverlayOp[],
+  actor: { role: string }
+): { blocking: OverlayViolation[] } {
+  const blocking: OverlayViolation[] = [];
+  const isConsultant = actor.role === "CONSULTANT";
+  const isRequired = (key: string) =>
+    (base.deliverables ?? []).some(
+      (d) => d.key === key && d.required !== false
+    );
+
+  for (const op of ops) {
+    if (op.target !== "deliverable") {
+      continue;
+    }
+    const dropsRequired =
+      isRequired(op.key) &&
+      (op.op === "REMOVE" ||
+        (op.op === "REPLACE" && op.patch?.required === false));
+    if (dropsRequired && !isConsultant) {
+      blocking.push({
+        code: "REQUIRED_DELIVERABLE_REMOVAL_NOT_CONSULTANT",
+        key: op.key,
+        note: `O entregável "${op.key}" é obrigatório e trava o gate da fase. Só o consultor da Nebuloz o dispensa, com motivo.`,
+      });
+    }
+    if (
+      op.op === "REMOVE" &&
+      (op.reason ?? "").trim().length < MIN_REMOVAL_REASON
+    ) {
+      blocking.push({
+        code: "REMOVAL_WITHOUT_REASON",
+        key: op.key,
+        note: `Remover o entregável "${op.key}" pede um motivo de ${MIN_REMOVAL_REASON} caracteres ou mais — quem lê a trilha depois precisa saber por que ele não vale.`,
+      });
+    }
+  }
+
+  const live = (applyOverlay(base, ops).deliverables ?? []).filter(
+    (d) => d.required !== false
+  );
+  for (const op of ops) {
+    if (op.op !== "REMOVE" || op.target !== "step") {
+      continue;
+    }
+    const orphans = live.filter((d) => d.stepCode === op.key).map((d) => d.key);
+    if (orphans.length > 0) {
+      blocking.push({
+        code: "STEP_ORPHANS_REQUIRED_DELIVERABLE",
+        key: op.key,
+        deliverables: orphans,
+        note: `Remover o passo "${op.key}" deixa sem produtor o entregável obrigatório ${orphans.map((k) => `"${k}"`).join(", ")}. Dispense o entregável no mesmo overlay, ou mantenha o passo.`,
+      });
+    }
+  }
+
+  return { blocking };
 }

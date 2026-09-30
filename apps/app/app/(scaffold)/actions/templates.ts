@@ -11,6 +11,7 @@ import {
   detectConflicts,
   type OverlayOp,
   type TemplateShape,
+  validateOverlay,
 } from "@/lib/scaffold/overlay-merge";
 import {
   PublishVersionSchema,
@@ -41,6 +42,12 @@ function shapeOf(version: {
     expectedArtefact: string;
   }[];
   criteria: { key: string; statement: string; evaluationType: string }[];
+  deliverables?: {
+    code: string;
+    title: string;
+    stepCode: string;
+    required: boolean;
+  }[];
 }): TemplateShape {
   return {
     steps: version.steps.map((s) => ({
@@ -54,6 +61,12 @@ function shapeOf(version: {
       statement: c.statement,
       evaluationType: c.evaluationType,
     })),
+    deliverables: (version.deliverables ?? []).map((d) => ({
+      key: d.code,
+      statement: d.title,
+      stepCode: d.stepCode,
+      required: d.required,
+    })),
   };
 }
 
@@ -63,6 +76,7 @@ async function loadShape(db: Db, versionId: string) {
     include: {
       steps: { orderBy: { seq: "asc" } },
       criteria: { orderBy: { seq: "asc" } },
+      deliverables: { orderBy: { seq: "asc" } },
     },
   });
   return v ? { version: v, shape: shapeOf(v) } : null;
@@ -343,6 +357,18 @@ export async function saveOverlay(
       const base = await loadShape(db, input.baseVersionId);
       if (!base || base.version.templateId !== input.templateId) {
         throw new ScaffoldRuleError("TEMPLATE_HAS_NO_PUBLISHED_VERSION");
+      }
+
+      const { blocking } = validateOverlay(
+        base.shape,
+        input.ops as OverlayOp[],
+        { role: ctx.scaffoldRole }
+      );
+      if (blocking.length > 0) {
+        throw new ScaffoldRuleError(
+          "OVERLAY_VIOLATES_GATE_RULES",
+          blocking.map((v) => v.note)
+        );
       }
 
       const overlay = await db.scaffoldTemplateOverlay.upsert({

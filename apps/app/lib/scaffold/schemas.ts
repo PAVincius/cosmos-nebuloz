@@ -227,16 +227,20 @@ export const NewVersionSchema = z.object({
 
 export const OverlayOpSchema = z.object({
   op: z.enum(["ADD", "REMOVE", "REPLACE"]),
-  target: z.enum(["step", "criterion"]),
+  target: z.enum(["step", "criterion", "deliverable"]),
   key: nnStr,
   patch: z
     .object({
+      /** Enunciado do passo ou do critério; título, no entregável. */
       statement: z.string().trim().max(10_000).optional(),
       required: z.boolean().optional(),
       expectedArtefact: nnStr.optional(),
       evaluationType: z.enum(["MANUAL", "DERIVED"]).optional(),
+      stepCode: nnStr.optional(),
     })
     .optional(),
+  /** Obrigatório em REMOVE de entregável (`validateOverlay`). */
+  reason: z.string().trim().max(1000).optional(),
 });
 
 export const TemplateIdSchema = z.object({ templateId: cuid });
