@@ -11,10 +11,8 @@ import { fetchFirefliesTranscriptFn } from "@/lib/inngest/fireflies-transcript";
 import { checkGovernanceSLA } from "@/lib/inngest/governance-sla";
 import { monthlyIsolationAudit } from "@/lib/inngest/isolation-audit";
 import { drainJobFallbackQueue } from "@/lib/inngest/job-fallback-drain";
-import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
 import { linearFullPullDispatch } from "@/lib/inngest/linear-full-pull-dispatch";
 import { consumeLinearWebhook } from "@/lib/inngest/linear-webhook-consumer";
-import { eliminateExpiredMeridianEvidence } from "@/lib/inngest/meridian-evidence-retention";
 import { reactToCharterControlExpired } from "@/lib/inngest/scaffold-charter-control-expired";
 import { closeScaffoldObservation } from "@/lib/inngest/scaffold-observation";
 import { checkScaffoldStall } from "@/lib/inngest/scaffold-stall";
@@ -31,7 +29,6 @@ export const { GET, POST, PUT } = serve({
   functions: [
     billingSyncFunction,
     aiLawWatchFunction,
-    processErasureRequest,
     deliverWebhookEvent,
     checkGovernanceSLA,
     checkScaffoldStall,
@@ -44,7 +41,6 @@ export const { GET, POST, PUT } = serve({
     drainJobFallbackQueue,
     consumeLinearWebhook,
     linearFullPullDispatch,
-    eliminateExpiredMeridianEvidence,
     runExport,
     scheduledReportDispatch,
     runScheduledReport,

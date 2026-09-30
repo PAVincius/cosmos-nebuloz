@@ -3,7 +3,6 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
-import { inngest } from "@/lib/inngest/client";
 import {
   buildPortabilityExport,
   type PortabilityPayload,
@@ -31,21 +30,14 @@ export async function submitErasureRequest(): Promise<
       return { requestId: existing.id };
     }
 
+    // O pedido PENDING é o outbox: `/api/cron/lgpd-erasure` (Vercel Cron)
+    // processa os PENDING, inclusive os que ficaram sem evento antes.
     const request = await database.dataSubjectRequest.create({
       data: {
         tenantId: ctx.tenantId,
         subjectId: ctx.userId,
         type: "ERASURE",
         status: "PENDING",
-      },
-    });
-
-    await inngest.send({
-      name: "lgpd/erasure.requested",
-      data: {
-        subjectId: ctx.userId,
-        tenantId: ctx.tenantId,
-        requestId: request.id,
       },
     });
 

@@ -1,25 +1,23 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Retenção de evidência — decisão do CEO, 2026-09-28 (atrito.md:60, parecer
 // de compliance condição 3): objeto no bucket some 90 dias após o
 // fechamento do assessment (closedAt). O registro em MeridianEvidence fica
-// — só storagePath vira o marcador. Idempotente (step.run por assessment) e
-// nunca mistura tenant num mesmo lote.
+// — só storagePath vira o marcador. Idempotente (marcador + audit com id
+// estável) e nunca mistura tenant num mesmo lote. Roda pelo Vercel Cron
+// (ADR-0021, fase 1), sem Inngest.
 
 const mocks = vi.hoisted(() => ({
-  createFunction: vi.fn(),
   evidenceFindMany: vi.fn(),
   evidenceUpdateMany: vi.fn(),
   auditLogCreateMany: vi.fn(),
   deleteObjects: vi.fn(),
-}));
-
-vi.mock("@/lib/inngest/client", () => ({
-  inngest: { createFunction: mocks.createFunction },
+  logInfo: vi.fn(),
+  logError: vi.fn(),
 }));
 
 vi.mock("@repo/observability/log", () => ({
-  log: { info: vi.fn(), error: vi.fn() },
+  log: { info: mocks.logInfo, error: mocks.logError },
 }));
 
 vi.mock("@repo/storage", () => ({
@@ -37,25 +35,9 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
-import "@/lib/inngest/meridian-evidence-retention";
+import { eliminateExpiredMeridianEvidence } from "@/lib/jobs/meridian-evidence-retention";
 
-type StepCtx = {
-  run: (name: string, fn: () => Promise<unknown>) => Promise<unknown>;
-};
-type HandlerFn = (ctx: { step: StepCtx }) => Promise<unknown>;
-
-let handler: HandlerFn;
-
-beforeAll(() => {
-  const [[, fn]] = mocks.createFunction.mock.calls as [[unknown, HandlerFn]];
-  handler = fn;
-});
-
-function makeStep(): StepCtx {
-  return {
-    run: vi.fn(async (_name: string, fn: () => Promise<unknown>) => fn()),
-  };
-}
+const handler = (_ctx?: unknown) => eliminateExpiredMeridianEvidence();
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -67,7 +49,7 @@ beforeEach(() => {
 
 describe("eliminateExpiredMeridianEvidence — consulta", () => {
   it("filtra por closedAt vencido e storagePath ainda não marcado", async () => {
-    await handler({ step: makeStep() });
+    await handler();
 
     const args = mocks.evidenceFindMany.mock.calls[0]?.[0] as {
       where: {
@@ -85,7 +67,7 @@ describe("eliminateExpiredMeridianEvidence — consulta", () => {
   });
 
   it("limita a 500 por execução, ordenado por id — backlog grande fica pro dia seguinte", async () => {
-    await handler({ step: makeStep() });
+    await handler();
 
     const args = mocks.evidenceFindMany.mock.calls[0]?.[0] as {
       take: number;
@@ -96,11 +78,11 @@ describe("eliminateExpiredMeridianEvidence — consulta", () => {
   });
 
   it("sem nada pendente, não chama deleteObjects nem grava nada", async () => {
-    const result = await handler({ step: makeStep() });
+    const result = await handler();
     expect(mocks.deleteObjects).not.toHaveBeenCalled();
     expect(mocks.evidenceUpdateMany).not.toHaveBeenCalled();
     expect(mocks.auditLogCreateMany).not.toHaveBeenCalled();
-    expect(result).toEqual({ eliminated: 0, assessments: 0 });
+    expect(result).toEqual({ eliminated: 0, assessments: 0, failed: 0 });
   });
 });
 
@@ -123,14 +105,14 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
       },
     ]);
 
-    const result = await handler({ step: makeStep() });
+    const result = await handler();
 
     expect(mocks.deleteObjects).toHaveBeenCalledTimes(1);
     expect(mocks.deleteObjects).toHaveBeenCalledWith("meridian-evidence", [
       "t1/a1/uuid-1",
       "t1/a1/uuid-2",
     ]);
-    expect(result).toEqual({ eliminated: 2, assessments: 1 });
+    expect(result).toEqual({ eliminated: 2, assessments: 1, failed: 0 });
   });
 
   it("marca storagePath E fileName com o marcador, sem apagar o registro (mesma lógica do DSAR)", async () => {
@@ -144,7 +126,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
       },
     ]);
 
-    await handler({ step: makeStep() });
+    await handler();
 
     // fileName pode conter dado pessoal (achado da Morgana sobre o P2 do
     // LGPD que o DSAR já trata em fileName) — sem anonimizar aqui, o dado
@@ -169,7 +151,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
       },
     ]);
 
-    await handler({ step: makeStep() });
+    await handler();
 
     expect(mocks.auditLogCreateMany).toHaveBeenCalledWith({
       data: [
@@ -203,14 +185,14 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     ];
     mocks.evidenceFindMany.mockResolvedValue(rows);
 
-    await handler({ step: makeStep() });
+    await handler();
     const firstCall = mocks.auditLogCreateMany.mock.calls[0]?.[0] as {
       data: Array<{ id: string }>;
       skipDuplicates: boolean;
     };
 
     mocks.auditLogCreateMany.mockClear();
-    await handler({ step: makeStep() });
+    await handler();
     const secondCall = mocks.auditLogCreateMany.mock.calls[0]?.[0] as {
       data: Array<{ id: string }>;
       skipDuplicates: boolean;
@@ -238,7 +220,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
       },
     ]);
 
-    await handler({ step: makeStep() });
+    await handler();
 
     expect(mocks.deleteObjects).toHaveBeenCalledTimes(2);
     const calledPaths = mocks.deleteObjects.mock.calls.map(
@@ -248,7 +230,7 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     expect(calledPaths).toContainEqual(["t2/a2/uuid-2"]);
   });
 
-  it("cada assessment roda no próprio step.run, nomeado por assessmentId (idempotência no retry)", async () => {
+  it("falha num assessment não trava os outros: segue, conta a falha e não marca o que falhou", async () => {
     mocks.evidenceFindMany.mockResolvedValue([
       {
         id: "ev-1",
@@ -257,14 +239,46 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
         storagePath: "t1/a1/uuid-1",
         fileName: "f1.txt",
       },
+      {
+        id: "ev-2",
+        tenantId: "t2",
+        assessmentId: "a2",
+        storagePath: "t2/a2/uuid-2",
+        fileName: "f2.txt",
+      },
     ]);
-    const step = makeStep();
+    mocks.deleteObjects.mockRejectedValueOnce(new Error("storage fora"));
 
-    await handler({ step });
+    const result = await handler();
 
-    const stepNames = (step.run as ReturnType<typeof vi.fn>).mock.calls.map(
-      (c) => c[0]
+    // a1 falhou no delete: nada gravado pra ele (fica pendente pro próximo
+    // dia); a2 seguiu.
+    expect(mocks.evidenceUpdateMany).toHaveBeenCalledTimes(1);
+    expect(mocks.evidenceUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: { in: ["ev-2"] } } })
     );
-    expect(stepNames).toContain("eliminate-evidence-a1");
+    expect(result).toEqual({ eliminated: 1, assessments: 2, failed: 1 });
+    expect(mocks.logError).toHaveBeenCalled();
+  });
+
+  it("segunda execução sobre o mesmo backlog é no-op (idempotência entre dias)", async () => {
+    mocks.evidenceFindMany.mockResolvedValueOnce([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ]);
+
+    await handler();
+    mocks.deleteObjects.mockClear();
+    // O filtro por storagePath != marcador devolve vazio na volta seguinte.
+    mocks.evidenceFindMany.mockResolvedValueOnce([]);
+    const second = await handler();
+
+    expect(mocks.deleteObjects).not.toHaveBeenCalled();
+    expect(second).toEqual({ eliminated: 0, assessments: 0, failed: 0 });
   });
 });
