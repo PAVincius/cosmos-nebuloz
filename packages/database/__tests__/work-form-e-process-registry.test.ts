@@ -57,7 +57,9 @@ describe("X-02 — enum WorkForm", () => {
     const scaffold = ler("schema", "scaffold.prisma");
     expect(scaffold).not.toContain("enum ScaffoldArchetype");
     expect(scaffold).toMatch(/archetype\s+WorkForm\?/);
-    expect(scaffold).toMatch(/archetype\s+WorkForm\s*(\n|$)/);
+    // D-24 F3: o template também aceita nulo (trilha de framework, sem forma de
+    // trabalho). Antes era obrigatório.
+    expect(scaffold).not.toMatch(/archetype\s+WorkForm\s*(\n|$)/);
   });
 
   it("tem down.sql", () => {

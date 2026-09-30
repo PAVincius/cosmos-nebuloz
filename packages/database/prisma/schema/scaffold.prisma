@@ -154,7 +154,10 @@ model ScaffoldTemplate {
   /// "triage" | "docreview" | "reporting"
   key       String            @unique
   name      String
-  archetype WorkForm
+  /// Nulo = trilha de framework (governança), que cobre a organização e não
+  /// tem forma de trabalho (D-23 F3). Trilha sem forma não recebe modelo de
+  /// medição do Signal nem perfil de controle do Charter por forma.
+  archetype WorkForm?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
