@@ -172,7 +172,9 @@ leitura dos scores que o Meridian já calcula, e continua dono dele (Mapa de fro
   5. Cautela travada.
 
   Os demais que casarem entram como traço secundário, incluindo Governança de papel e Campeão isolado,
-  que dependem de pergunta. Nenhum casou: o relatório diz "sem arquétipo dominante" e não inventa um.
+  que dependem de pergunta. Entre os traços, **Campeão isolado vem antes de Governança de papel**
+  (2026-09-30, a pedido da Bussola): Pessoas trava a adoção no PILOT, e a governança é do EMBED. Os
+  traços seguem a ordem da trilha. Nenhum casou: o relatório diz "sem arquétipo dominante" e não inventa um.
   - Atlas: Piloto sem chão com traço de Campeão isolado, como no briefing.
 
 ### 7.3 SG-04 continua valendo
