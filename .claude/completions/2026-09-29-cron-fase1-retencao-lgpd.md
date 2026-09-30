@@ -28,3 +28,8 @@ App inteiro: 522 arquivos, 5662 testes verdes. Novos: validate-cron-secret, cron
 - MÉDIO: claim com `attempts > 3` grava FAILED + audit sem executar.
 - BAIXO: `recordFailure` lançando é logado e não derruba o lote.
 - Bearer nas outras 5 rotas: nenhum chamador no repositório (ci.yml, dark-matter.yml, scripts, docker-compose não chamam /api/cron; `docker-start.sh` só exige a env). A Vercel envia Bearer. Chamadores fora do repositório (n8n etc.) não verificados: se houver algum mandando o segredo cru, precisa passar a mandar `Bearer <segredo>`.
+
+## Correções pós-QA do Crivo (#310)
+- Audit `compliance.lgpd_erasure.completed` agora é aguardado; falha vai para `log.error` sem desfazer a eliminação.
+- Rota `/api/cron/lgpd-erasure` devolve 500 e `ok:false` quando algum pedido esgotou as tentativas (`failed > 0`), como a retenção; pedido só retentado segue 200.
+- Retenção sem claim (baixo): o `updateMany` passou a casar só linhas ainda sem o marcador e o job conta o `count` dele, então execuções simultâneas não superconta a métrica `eliminated`. Delete no bucket e audit continuam idempotentes; não há claim explícito.

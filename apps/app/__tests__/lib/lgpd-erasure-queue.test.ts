@@ -295,3 +295,46 @@ describe("processPendingErasureRequests — teto e robustez do lote", () => {
     expect(mocks.logError).toHaveBeenCalled();
   });
 });
+
+describe("processPendingErasureRequests — auditoria de conclusão", () => {
+  it("aguarda a gravação do audit `completed` antes de devolver (a Vercel corta promise solta)", async () => {
+    let libera: (v: unknown) => void = () => {};
+    mocks.auditCreate.mockReturnValue(
+      new Promise((resolve) => {
+        libera = resolve;
+      })
+    );
+    let terminou = false;
+    const pending = processPendingErasureRequests().then(() => {
+      terminou = true;
+    });
+
+    await vi.advanceTimersByTimeAsync(10);
+    expect(mocks.auditCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        action: "compliance.lgpd_erasure.completed",
+        tenantId: "t1",
+      }),
+    });
+    // Audit ainda pendente: o job não pode ter devolvido.
+    expect(terminou).toBe(false);
+
+    libera({});
+    await pending;
+    expect(terminou).toBe(true);
+  });
+
+  it("audit `completed` falhando: pedido segue COMPLETED (dado já eliminado) e o erro vai para log.error", async () => {
+    mocks.auditCreate.mockRejectedValue(new Error("audit fora"));
+    const res = await processPendingErasureRequests();
+    expect(res).toEqual({ claimed: 1, completed: 1, retried: 0, failed: 0 });
+    expect(mocks.dsrUpdate).toHaveBeenCalledWith({
+      where: { id: "dsr-1" },
+      data: { status: "COMPLETED", processedAt: NOW },
+    });
+    expect(mocks.logError).toHaveBeenCalledWith(
+      expect.stringContaining("audit"),
+      expect.anything()
+    );
+  });
+});
