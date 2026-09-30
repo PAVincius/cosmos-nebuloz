@@ -3,11 +3,12 @@
 - **Data:** 2026-09-30
 - **Autor:** Compliance / DPO
 - **Pedido por:** Morgana, por delegação do CEO ("fechar o Meridian apto sem ação dele").
-- **Natureza:** decisões **provisórias**, com fundamento, para destravar a publicação do canal do titular e o contrato do primeiro cliente. Cada uma leva a marca **"a confirmar pelo CEO"** e uma condição de revalidação. Não é aconselhamento jurídico; o jurídico revisa junto com o DPA.
+- **Natureza:** decisões com fundamento, para destravar a publicação do canal do titular e o contrato do primeiro cliente. Não é aconselhamento jurídico; o jurídico revisa junto com o DPA.
+- **Atualização, 2026-09-30 (mesmo dia):** o CEO **confirmou** os três fatos F1, F2 e F3 (§1.2), segundo a Morgana; não vi a confirmação original nem documento. **A dispensa do encarregado (§1) deixa de ser provisória e passa a decisão, "confirmada pelo CEO, 2026-09-30".** A **C8 (§2) segue provisória, "a confirmar pelo CEO"**.
 
 ## 1. Encarregado: a Nebuloz pode dispensar a indicação?
 
-**Resposta: sim, se três fatos sobre a empresa forem verdadeiros, e esses fatos não constam de nenhum documento do repositório.** Sem eles, não afirmo o enquadramento. Enquanto não vierem, publicar o canal sem nome de encarregado é seguro (não afirma nada), mas a dispensa não está demonstrada.
+**Resposta: sim, se três fatos sobre a empresa forem verdadeiros.** Eles não constam de nenhum documento do repositório; o CEO os **confirmou em 2026-09-30** (§1.3). A análise abaixo foi escrita antes da confirmação e está mantida como fundamento.
 
 ### 1.1 Fundamento (texto literal da Resolução)
 
@@ -35,12 +36,14 @@ Fonte: Resolução CD/ANPD nº 2, de 27 de janeiro de 2022, texto consolidado co
 
 Nenhum desses dados aparece em `memoria-empresa.md` nem em `docs/`; procurei CNPJ, regime, porte e receita.
 
-### 1.3 Decisão provisória — **a confirmar pelo CEO**
+### 1.3 Decisão — **confirmada pelo CEO em 2026-09-30**
 
-1. **A Nebuloz não indica encarregado por ora**, apoiada no art. 11 da Resolução, **condicionada a F1, F2 e F3** (e ao "não alto risco" acima).
+Os fatos F1 a F3 foram confirmados pelo CEO em 2026-09-30 (a Nebuloz é microempresa, empresa de pequeno porte ou startup; a receita bruta anual está dentro do limite; não integra grupo econômico acima do limite). **É declaração do CEO, relatada pela Morgana; nenhum documento foi anexado ao repositório.** Recomendo guardar o cartão CNPJ e a declaração do contador no arquivo societário, fora do repositório, para o caso de o enquadramento ser questionado.
+
+1. **A Nebuloz não indica encarregado**, apoiada no art. 11 da Resolução, com F1, F2 e F3 confirmados e o "não alto risco" acima.
 2. **O canal é `privacy@nebuloz.com`** (decisão do CEO, 2026-09-29), que é o que o § 1º do art. 11 exige em lugar do encarregado.
-3. **O texto público não cita nome de encarregado nem afirma ser agente de pequeno porte.** Ele só dá o canal. Assim, se F1 a F3 falharem, o texto continua verdadeiro. Ver `2026-09-29-texto-publico-canal-do-titular.md`.
-4. **Validade:** até (a) o CEO confirmar F1 a F3, ou (b) um dos gatilhos de reavaliação ocorrer (mudança de porte ou de grupo; lançamento de reunião a cliente externo; volume que caracterize larga escala; dado sensível recorrente em evidência). Se F1 a F3 não se confirmarem, **a indicação passa a ser obrigatória** (art. 41 da LGPD) e o CEO nomeia alguém antes de o primeiro contrato ser assinado. Quem pode ser encarregado, e os cuidados de conflito de interesse, é ponto que não decidi aqui; o jurídico avalia.
+3. **O texto público não cita nome de encarregado nem afirma ser agente de pequeno porte.** Ele só dá o canal. Isso mantém o texto verdadeiro mesmo se o enquadramento mudar. Ver `2026-09-29-texto-publico-canal-do-titular.md`.
+4. **Validade:** a decisão vale enquanto F1 a F3 continuarem verdadeiros e não ocorrer um gatilho de reavaliação: mudança de porte ou de grupo econômico; lançamento de reunião a cliente externo; volume que caracterize larga escala; dado sensível recorrente em evidência. Ocorrendo um deles, a Compliance reavalia e, se o art. 3º ou o art. 4º da Resolução deixarem de permitir, **a indicação passa a ser obrigatória** (art. 41 da LGPD). Quem pode ser encarregado, e os cuidados de conflito de interesse, não está decidido aqui; o jurídico avalia.
 
 ### 1.4 Ressalvas
 
@@ -69,5 +72,5 @@ Roteiro do teste sintético em `2026-09-30-roteiro-teste-sintetico-eliminacao-pr
 
 ## Decisões
 
-- 2026-09-30 — Compliance/DPO (decisão provisória, a confirmar pelo CEO): dispensa de encarregado apoiada no art. 11 da Resolução CD/ANPD nº 2/2022, condicionada a F1, F2 e F3; canal `privacy@nebuloz.com`; texto público sem nome de encarregado e sem afirmar o enquadramento.
+- 2026-09-30 — **Decisão, confirmada pelo CEO em 2026-09-30:** dispensa da indicação de encarregado, art. 11 da Resolução CD/ANPD nº 2/2022, com F1, F2 e F3 confirmados; canal `privacy@nebuloz.com`; texto público sem nome de encarregado e sem afirmar o enquadramento. Foi decisão provisória de Compliance/DPO no início do dia; a confirmação dos fatos a tornou definitiva.
 - 2026-09-30 — Compliance/DPO (decisão provisória, a confirmar pelo CEO): C8 adotada em DPA §9.3 e aditivo §4.4, com aviso duplo ao Cliente antes de executar.

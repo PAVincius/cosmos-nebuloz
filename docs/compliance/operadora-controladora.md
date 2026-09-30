@@ -285,11 +285,11 @@ Morgana, 2026-09-29; não vi a resposta original do CEO.
 - **2026-09-29 — Decisão do CEO: Dono do SLA do repasse de pedido de titular =
   Ordem**, com delegação escrita do CEO para o envio. A delegação é do CEO e
   ainda precisa ser escrita; este registro não a substitui.
-- **2026-09-30 — Decisão provisória, a confirmar pelo CEO (pergunta 5,
-  encarregado):** dispensa da indicação pelo art. 11 da Resolução CD/ANPD nº
-  2/2022, condicionada a três fatos da empresa; o canal é o da pergunta 4.
+- **2026-09-30 — Decisão, confirmada pelo CEO (pergunta 5, encarregado):**
+  dispensa da indicação pelo art. 11 da Resolução CD/ANPD nº 2/2022, com os três
+  fatos da empresa confirmados pelo CEO; o canal é o da pergunta 4.
 - **2026-09-30 — Decisão provisória, a confirmar pelo CEO (cláusula C8):**
   adotada no DPA §9.3 e no aditivo §4.4. Ambas em
   `2026-09-30-decisoes-provisorias-encarregado-e-c8.md`.
-- **Em aberto com o CEO:** confirmar as duas decisões provisórias.
+- **Em aberto com o CEO:** confirmar a cláusula C8.
 - **Em aberto com o jurídico:** perguntas 6 a 8.

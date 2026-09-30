@@ -343,7 +343,7 @@ para cumprir a §10. É regido pela lei brasileira, em particular pela Lei
 | Zero-retention dos provedores de LLM (§2) | Contratual |
 | Canal de incidente (§8) e foro (§12) | Nebuloz |
 | Endereço do canal público de titular, citado em §9.1 | Decidido pelo CEO em 2026-09-29 (`privacy@nebuloz.com`); falta confirmar que a caixa existe e é lida, e publicar |
-| Encarregado: dispensa provisória (Res. CD/ANPD 2/2022, art. 11), a confirmar F1 a F3 | CEO e contador — ver `2026-09-30-decisoes-provisorias-encarregado-e-c8.md` |
+| Encarregado: dispensa decidida (Res. CD/ANPD 2/2022, art. 11), confirmada pelo CEO em 2026-09-30 | Nada a fazer; reavaliar nos gatilhos de `2026-09-30-decisoes-provisorias-encarregado-e-c8.md` |
 | C8 (§9.3) provisória | CEO confirma; jurídico valida o prazo |
 | Validar os prazos de §5.1, §9.2 e §10 como redigidos | Jurídico |
 | Benchmark do Meridian desligado (§2.1) e controle no produto | CEO (decisão); Norte/Bussola (controle) |

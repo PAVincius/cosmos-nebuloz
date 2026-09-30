@@ -218,17 +218,17 @@ lacuna de canal da §4.
   eliminação que de fato existe (§2.4).
 - **`/legal/privacy` com o texto real.** A rota é estática e não depende mais do
   CMS — a decisão certa já foi tomada. Falta o conteúdo.
-- **Encarregado.** *Decisão provisória de 2026-09-30, a confirmar pelo CEO:* a
-  Nebuloz **não indica encarregado por ora**, com base no art. 11 da Resolução
-  CD/ANPD nº 2/2022 (agentes de tratamento de pequeno porte não são obrigados a
-  indicá-lo, desde que ofereçam canal de comunicação com o titular, aqui
-  `privacy@nebuloz.com`). Vale **só se** forem verdadeiros: F1 (microempresa,
-  empresa de pequeno porte ou startup, LC 123 e 182), F2 (receita bruta do ano
-  anterior dentro do limite) e F3 (sem grupo econômico acima do limite); nenhum
-  desses fatos consta do repositório. Reavaliar com mudança de porte ou grupo,
-  volume que caracterize larga escala, lançamento de reunião a cliente externo,
-  ou dado sensível recorrente em evidência. Se F1 a F3 falharem, a indicação
-  (art. 41 da LGPD) é obrigatória. Detalhe em
+- **Encarregado.** *Decisão de 2026-09-30, confirmada pelo CEO:* a Nebuloz
+  **não indica encarregado**, com base no art. 11 da Resolução CD/ANPD nº 2/2022
+  (agentes de tratamento de pequeno porte não são obrigados a indicá-lo, desde que
+  ofereçam canal de comunicação com o titular, aqui `privacy@nebuloz.com`). O CEO
+  confirmou em 2026-09-30 que a Nebuloz é microempresa, empresa de pequeno porte
+  ou startup, que a receita bruta anual está dentro do limite e que não integra
+  grupo econômico acima do limite (declaração do CEO, relatada pela Morgana; sem
+  documento no repositório). Reavaliar com mudança de porte ou grupo, volume que
+  caracterize larga escala, lançamento de reunião a cliente externo, ou dado
+  sensível recorrente em evidência; se a Resolução deixar de permitir, a
+  indicação (art. 41 da LGPD) é obrigatória. Detalhe em
   [`2026-09-30-decisoes-provisorias-encarregado-e-c8.md`](2026-09-30-decisoes-provisorias-encarregado-e-c8.md).
 
 ---
@@ -300,11 +300,10 @@ em [`operadora-controladora.md`](operadora-controladora.md) §6.
   Enquanto a trava não existir, a decisão vale no contrato e não no produto.
 - **2026-09-29 — Decisão do CEO: Dono do SLA do repasse = Ordem**, com delegação
   escrita do CEO para o envio (a delegação ainda precisa ser escrita).
-- **2026-09-30 — Decisão provisória (Compliance/DPO, por delegação da Morgana; a
-  confirmar pelo CEO): dispensa de encarregado**, art. 11 da Resolução CD/ANPD nº
-  2/2022, condicionada a F1 a F3 (§6). Texto público sem nome de encarregado.
+- **2026-09-30 — Decisão, confirmada pelo CEO: dispensa de encarregado**, art. 11
+  da Resolução CD/ANPD nº 2/2022, com os fatos F1 a F3 confirmados pelo CEO (§6).
+  Texto público sem nome de encarregado, com o canal `privacy@nebuloz.com`.
 - **2026-09-30 — Decisão provisória (a confirmar pelo CEO): cláusula C8** (instrução
   prévia de eliminação de respondente após 10 dias úteis) adotada no DPA §9.3 e no
   aditivo §4.4, com aviso duplo ao cliente antes de executar.
-- **Em aberto com o CEO:** confirmar as duas decisões provisórias acima e os fatos
-  F1 a F3.
+- **Em aberto com o CEO:** confirmar a cláusula C8.
