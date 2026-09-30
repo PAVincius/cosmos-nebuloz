@@ -33,6 +33,8 @@ export function ScoreRing({
       aria-label={`${label ?? "Score"}: ${value} de 100`}
       height={size}
       role="img"
+      // Em flex row o anel não pode encolher quando o texto ao lado cresce.
+      style={{ flexShrink: 0 }}
       width={size}
     >
       <circle

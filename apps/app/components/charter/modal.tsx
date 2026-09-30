@@ -41,7 +41,16 @@ const ModalCtx = createContext<ModalApi>({
 
 export const useModal = () => useContext(ModalCtx);
 
-export function ModalProvider({ children }: { children: ReactNode }) {
+/** `scopeClassName`: classe de escopo de tokens do módulo (ex.: `meridian-root`).
+ *  O modal é portado para <body>, fora da raiz do módulo, e sem a classe os
+ *  tokens do módulo (`--accent`, foco, `.btn`) não chegam ao diálogo. */
+export function ModalProvider({
+  children,
+  scopeClassName,
+}: {
+  children: ReactNode;
+  scopeClassName?: string;
+}) {
   const [content, setContent] = useState<ReactNode>(null);
   // Elemento que abriu o modal — o foco volta para ele no fechamento, senão
   // quem navega por teclado é jogado no topo do documento.
@@ -61,7 +70,11 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalCtx.Provider value={{ open, close }}>
       {children}
-      <ModalHost content={content} onClose={close} />
+      <ModalHost
+        content={content}
+        onClose={close}
+        scopeClassName={scopeClassName}
+      />
     </ModalCtx.Provider>
   );
 }
@@ -77,9 +90,11 @@ const FOCUSABLE_SELECTOR =
 function ModalHost({
   content,
   onClose,
+  scopeClassName,
 }: {
   content: ReactNode;
   onClose: () => void;
+  scopeClassName?: string;
 }) {
   const [dirty, setDirty] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -143,8 +158,12 @@ function ModalHost({
   return createPortal(
     <DirtyCtx.Provider value={{ markDirty: () => setDirty(true) }}>
       <div
+        className={scopeClassName}
         ref={wrapperRef}
         style={{
+          // A raiz do módulo traz `background: var(--canvas)`; no wrapper fixo
+          // do modal isso cobriria a tela inteira com o canvas.
+          ...(scopeClassName ? { background: "transparent" } : {}),
           position: "fixed",
           inset: 0,
           zIndex: 300,

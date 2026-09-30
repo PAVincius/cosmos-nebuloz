@@ -1013,7 +1013,7 @@ export default function ColetaTab({
               tone="accent"
               value={progress}
             />
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div
                 className="display"
                 style={{ fontSize: 18, fontWeight: 700 }}
