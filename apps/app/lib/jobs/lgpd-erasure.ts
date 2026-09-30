@@ -332,7 +332,7 @@ export async function runErasure({
         },
       });
     } catch (err) {
-      log.error("[lgpd-erasure] audit log failed", err);
+      log.error("[lgpd-erasure] audit log failed", { requestId, error: err });
     }
   });
 }
