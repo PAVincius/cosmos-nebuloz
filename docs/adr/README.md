@@ -50,7 +50,7 @@ O que fica mais fácil, o que fica mais difícil, e o que precisa ser revisitado
 | [0017](0017-scaffold-supervisao-no-backoffice.md) | Fila de supervisão do Scaffold vive no back-office | Accepted |
 | [0019](0019-corpus-de-treino-exige-proveniencia-e-licenca.md) | Nenhum treino sobre saída de modelo de API sem autorização; proveniência por item no LAB | Proposed |
 | [0020](0020-conteudo-recuperado-controle-estrutural-nao-cerca.md) | Conteúdo recuperado contido por controle estrutural; cerca de prompt é higiene | Proposed |
-| [0021](0021-inngest-sai-vercel-cron-e-fila-no-postgres.md) | Inngest sai; Vercel Cron para o agendado e fila no Postgres para o disparado por evento | Proposed |
+| [0021](0021-inngest-sai-vercel-cron-e-fila-no-postgres.md) | Inngest sai; Vercel Cron para o agendado e fila no Postgres para o disparado por evento | Accepted |
 
 **Conflito de spec** = dois documentos do handoff descrevem a mesma entidade de
 formas incompatíveis, e a implementação escolheu uma. A escolha está no corpo
