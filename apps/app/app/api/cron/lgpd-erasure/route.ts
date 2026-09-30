@@ -15,7 +15,10 @@ export async function GET(req: Request): Promise<NextResponse> {
 
   try {
     const result = await processPendingErasureRequests();
-    return NextResponse.json({ ok: true, ...result });
+    // Pedido que esgotou as tentativas (FAILED) faz a invocação aparecer como
+    // falha na Vercel, igual à retenção; o que só será retentado não.
+    const ok = result.failed === 0;
+    return NextResponse.json({ ok, ...result }, { status: ok ? 200 : 500 });
   } catch (error) {
     log.error("[cron/lgpd-erasure] falhou", { error });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

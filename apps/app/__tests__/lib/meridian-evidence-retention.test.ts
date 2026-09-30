@@ -42,7 +42,11 @@ const handler = (_ctx?: unknown) => eliminateExpiredMeridianEvidence();
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.evidenceFindMany.mockResolvedValue([]);
-  mocks.evidenceUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.evidenceUpdateMany.mockImplementation(
+    async (args: { where: { id: { in: string[] } } }) => ({
+      count: args.where.id.in.length,
+    })
+  );
   mocks.auditLogCreateMany.mockResolvedValue({ count: 0 });
   mocks.deleteObjects.mockResolvedValue(undefined);
 });
@@ -132,7 +136,10 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     // LGPD que o DSAR já trata em fileName) — sem anonimizar aqui, o dado
     // sobreviveria aos 90 dias de retenção que essa própria rotina promete.
     expect(mocks.evidenceUpdateMany).toHaveBeenCalledWith({
-      where: { id: { in: ["ev-1"] } },
+      where: {
+        id: { in: ["ev-1"] },
+        storagePath: { not: "eliminado-por-retencao" },
+      },
       data: {
         storagePath: "eliminado-por-retencao",
         fileName: "eliminado-por-retencao",
@@ -255,7 +262,9 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
     // dia); a2 seguiu.
     expect(mocks.evidenceUpdateMany).toHaveBeenCalledTimes(1);
     expect(mocks.evidenceUpdateMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: { in: ["ev-2"] } } })
+      expect.objectContaining({
+        where: expect.objectContaining({ id: { in: ["ev-2"] } }),
+      })
     );
     expect(result).toEqual({ eliminated: 1, assessments: 2, failed: 1 });
     expect(mocks.logError).toHaveBeenCalled();
@@ -280,5 +289,24 @@ describe("eliminateExpiredMeridianEvidence — elimina em lote por assessment", 
 
     expect(mocks.deleteObjects).not.toHaveBeenCalled();
     expect(second).toEqual({ eliminated: 0, assessments: 0, failed: 0 });
+  });
+
+  it("execuções concorrentes: quem chega depois do marcador não conta de novo (métrica não superconta)", async () => {
+    mocks.evidenceFindMany.mockResolvedValue([
+      {
+        id: "ev-1",
+        tenantId: "t1",
+        assessmentId: "a1",
+        storagePath: "t1/a1/uuid-1",
+        fileName: "f1.txt",
+      },
+    ]);
+    // A outra execução já marcou a linha: o updateMany condicional não casa.
+    mocks.evidenceUpdateMany.mockResolvedValue({ count: 0 });
+
+    const result = await handler();
+
+    expect(mocks.deleteObjects).toHaveBeenCalledTimes(1); // idempotente
+    expect(result).toEqual({ eliminated: 0, assessments: 1, failed: 0 });
   });
 });

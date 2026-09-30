@@ -152,7 +152,10 @@ export function RespondentForm({
       {/* Aviso ao titular — texto da Compliance, verbatim, de
           docs/compliance/operadora-controladora.md §4. Condição única do
           parecer 796dab44 pra liberar este fluxo em produção; nada aqui é
-          reescrita. */}
+          reescrita. Segundo parágrafo (90 dias) acrescentado sob
+          recomendação do Lacre,
+          docs/compliance/2026-09-28-parecer-retencao-evidencia-meridian-pr277.md
+          §2 — os parágrafos originais não mudaram. */}
       <SectionCard
         bodyStyle={{ display: "flex", flexDirection: "column", gap: 10 }}
         icon="shield"
@@ -173,6 +176,19 @@ export function RespondentForm({
           para quê e por quanto tempo foi <strong>essa organização</strong>, não
           a Nebuloz. Ela é a controladora; nós tratamos os dados em nome dela,
           como operadora, nos termos da Lei 13.709/2018.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Uma exceção: evidência que você anexa (o arquivo, não a resposta) some
+          do nosso armazenamento 90 dias depois que o diagnóstico fecha — esse
+          prazo é da Nebuloz, fixo, a organização que convidou você não escolhe
+          nem muda.
         </p>
         <p
           style={{
