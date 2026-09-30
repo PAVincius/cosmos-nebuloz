@@ -61,6 +61,7 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldTemplateOverlay: {
         findMany: h.overlayFindMany,
+        findFirst: async () => ({ ops: [] }),
         upsert: h.overlayUpsert,
         update: h.overlayUpdate,
       },

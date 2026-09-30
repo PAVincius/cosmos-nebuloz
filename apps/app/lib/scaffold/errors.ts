@@ -13,6 +13,7 @@ export const SCAFFOLD_ERROR = {
   GAP_ALREADY_PROMOTED: "GAP_ALREADY_PROMOTED",
   TEMPLATE_HAS_NO_PUBLISHED_VERSION: "TEMPLATE_HAS_NO_PUBLISHED_VERSION",
   OVERLAY_HAS_UNRESOLVED_CONFLICT: "OVERLAY_HAS_UNRESOLVED_CONFLICT",
+  OVERLAY_NOT_FOUND: "OVERLAY_NOT_FOUND",
   OVERLAY_VIOLATES_GATE_RULES: "OVERLAY_VIOLATES_GATE_RULES",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
   PROMOTION_HAS_ACTIVE_TRACK: "PROMOTION_HAS_ACTIVE_TRACK",
@@ -70,6 +71,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "O template escolhido não tem versão publicada. Publique uma versão antes de criar trilhas com ele.",
   OVERLAY_HAS_UNRESOLVED_CONFLICT:
     "O overlay escolhido tem conflito pendente contra a versão base. Resolva o conflito antes de criar a trilha — trilha criada sobre conflito não sabe quais passos são os seus.",
+  OVERLAY_NOT_FOUND:
+    "O overlay escolhido não existe nesta organização. Escolha outro, ou crie a trilha sem overlay — trilha criada sem a customização que o cliente pediu seria uma surpresa.",
   OVERLAY_VIOLATES_GATE_RULES:
     "O overlay tira do gate algo que o método exige: dispensar entregável obrigatório sem ser consultor, remover sem motivo, ou remover passo que deixa entregável obrigatório sem produtor. Ajuste as operações apontadas — gate que se desliga por overlay deixa de ser gate.",
   TRACK_HAS_SIGNED_BUSINESS_CASE:

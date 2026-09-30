@@ -261,3 +261,14 @@ com motivo.
   - `requirementRefs` recusa código inexistente;
   - template sem `archetype` instancia;
   - nenhum teste existente fica vermelho.
+
+### 7.9 Débito registrado neste PR
+
+- **Overlay de critério de gate não chega à trilha.** `seedTrack` passa a aplicar o overlay em **passos** e
+  **entregáveis** (REPLACE e REMOVE; o REMOVE de entregável dispensa a instância, com o motivo). Os
+  critérios ficam de fora: o gate lê os critérios da versão pinada, não da trilha. Um overlay que
+  acrescenta ou afrouxa critério continua salvo, com conflito detectado, e sem efeito no gate. Fechar exige
+  decidir se a trilha copia os critérios na criação, como faz com os passos (ST-03).
+- **ADD de passo ou de entregável no overlay** não cria linha na trilha: a operação não diz a fase nem o
+  passo de origem.
+

@@ -2,6 +2,7 @@ import "server-only";
 
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import type { WorkFormCode } from "@/lib/scaffold/forms";
+import { applyOverlay, type OverlayOp } from "@/lib/scaffold/overlay-merge";
 import { PHASE_ORDER } from "@/lib/scaffold/phases";
 import { type Db, nextCode } from "./_shared";
 
@@ -25,8 +26,8 @@ async function resolveTemplateVersion(db: Db, templateId: string) {
     select: {
       id: true,
       label: true,
-      // A forma do trabalho é do template: a tela não a manda, e a trilha não
-      // pode ficar "sem arquétipo" (Crivo F4).
+      // A forma do trabalho é do template: a tela não a manda. Nula só no
+      // template de trilha sem forma (D-24), nunca por omissão da tela.
       template: { select: { archetype: true } },
       steps: {
         select: {
@@ -86,6 +87,80 @@ async function assertOverlayResolved(
 }
 
 /**
+ * Operações do overlay do cliente, lidas pelo tenant.
+ *
+ * Overlay de outro tenant, ou inexistente, é recusado em vez de ignorado: a
+ * trilha sairia sem a customização que o cliente escolheu, sem aviso. Sem
+ * `overlayId` não há consulta.
+ */
+async function loadOverlayOps(
+  db: Db,
+  tenantId: string,
+  overlayId: string | undefined
+): Promise<OverlayOp[]> {
+  if (!overlayId) {
+    return [];
+  }
+  const overlay = await db.scaffoldTemplateOverlay.findFirst({
+    where: { id: overlayId, tenantId },
+    select: { ops: true },
+  });
+  if (!overlay) {
+    throw new ScaffoldRuleError("OVERLAY_NOT_FOUND");
+  }
+  return overlay.ops as unknown as OverlayOp[];
+}
+
+type VersionStep = {
+  phase: string;
+  seq: number;
+  key: string;
+  statement: string;
+  expectedArtefact: string;
+  required: boolean;
+};
+
+/**
+ * Passos da versão depois do overlay. REPLACE e REMOVE valem; ADD não cria
+ * passo aqui, porque a operação não diz a fase — o passo acrescentado ficaria
+ * sem lugar na trilha.
+ */
+function resolveSteps(
+  steps: VersionStep[],
+  ops: readonly OverlayOp[]
+): VersionStep[] {
+  if (ops.length === 0) {
+    return steps;
+  }
+  const resolved = applyOverlay(
+    {
+      steps: steps.map((s) => ({
+        key: s.key,
+        statement: s.statement,
+        required: s.required,
+        expectedArtefact: s.expectedArtefact,
+      })),
+      criteria: [],
+    },
+    ops
+  ).steps;
+  const byKey = new Map(resolved.map((r) => [r.key, r]));
+  return steps.flatMap((s) => {
+    const r = byKey.get(s.key);
+    return r
+      ? [
+          {
+            ...s,
+            statement: r.statement,
+            required: r.required ?? s.required,
+            expectedArtefact: r.expectedArtefact ?? s.expectedArtefact,
+          },
+        ]
+      : [];
+  });
+}
+
+/**
  * O dono do processo é PROCESS_OWNER e o consultor, CONSULTANT (Crivo F3).
  *
  * Dono com outro papel deixa a trilha sem quem produza e aprove o que é do dono
@@ -135,6 +210,8 @@ export async function seedTrack(db: Db, input: SeedInput) {
   await assertTrackPeople(db, input);
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
   const version = await resolveTemplateVersion(db, input.templateId);
+  const overlayOps = await loadOverlayOps(db, input.tenantId, input.overlayId);
+  const steps = resolveSteps(version.steps, overlayOps);
   const code = await nextCode({
     db,
     tenantId: input.tenantId,
@@ -160,7 +237,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
           state: phase === "ASSESS" ? ("OPEN" as const) : ("IDLE" as const),
           openedAt: phase === "ASSESS" ? new Date() : null,
           steps: {
-            create: version.steps
+            create: steps
               .filter((s) => s.phase === phase)
               .map((s) => ({
                 stepTemplateKey: s.key,
@@ -182,6 +259,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
     tenantId: input.tenantId,
     trackId: track.id,
     versionId: version.id,
+    overlayOps,
     people: {
       ownerId: input.ownerId,
       consultantId: input.consultantId ?? null,
@@ -224,11 +302,13 @@ async function instantiateDeliverables(
     tenantId,
     trackId,
     versionId,
+    overlayOps,
     people,
   }: {
     tenantId: string;
     trackId: string;
     versionId: string;
+    overlayOps: readonly OverlayOp[];
     people: TrackPeople;
   }
 ): Promise<void> {
@@ -267,9 +347,30 @@ async function instantiateDeliverables(
     }
   }
 
+  // REMOVE do overlay dispensa, não apaga (D-24 §7.7). ADD não cria entregável
+  // aqui: a operação não diz fase nem passo.
+  const resolved = new Map(
+    (
+      applyOverlay(
+        {
+          steps: [],
+          criteria: [],
+          deliverables: templates.map((t) => ({
+            key: t.code,
+            statement: t.title,
+            required: t.required,
+            stepCode: t.stepCode,
+          })),
+        },
+        overlayOps
+      ).deliverables ?? []
+    ).map((d) => [d.key, d])
+  );
+
   await db.scaffoldDeliverableInstance.createMany({
     data: templates.map((t) => {
       const dispensed = t.requiresModule && !contracted.has(t.requiresModule);
+      const o = resolved.get(t.code);
       return {
         tenantId,
         trackId,
@@ -277,15 +378,17 @@ async function instantiateDeliverables(
         stepCode: t.stepCode,
         code: t.code,
         templateKey: t.code,
-        title: t.title,
+        title: o?.statement ?? t.title,
         description: t.description,
         kind: t.kind,
         producer: t.producer,
         isExtra: false,
-        required: dispensed ? false : t.required,
+        required: dispensed ? false : (o?.required ?? t.required),
         dispensedReason: dispensed
           ? `O módulo ${MODULE_LABEL[t.requiresModule as string] ?? t.requiresModule} não está contratado por esta organização; dispensado pelo sistema.`
-          : null,
+          : o?.dispensedReason
+            ? `Dispensado pelo overlay do cliente: ${o.dispensedReason}`
+            : null,
         status: "NOT_STARTED" as const,
         ...defaultPeople(t.producer, people),
       };
