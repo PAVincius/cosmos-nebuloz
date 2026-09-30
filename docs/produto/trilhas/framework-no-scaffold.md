@@ -1,8 +1,9 @@
 # Trilha de framework no Scaffold: o que falta no schema
 
 - **Pedido por:** CEO, via Morgana · **Data:** 2026-09-30 · **Autor:** Norte (CPO)
-- **Estado:** decisão **provisória** (D-23 em `../registro-de-decisoes.md`). Trilha escolhida:
-  **AI Governance** (§6). O detalhamento por perfil e por cláusula espera a pesquisa do Radar.
+- **Estado:** decisões **provisórias** D-23 e D-24 em `../registro-de-decisoes.md`. A trilha principal
+  é a **Fundação de Prontidão de IA** (§7, D-24), escolhida pelo CEO em 2026-09-30. A AI Governance (§6)
+  passa a trilha de apoio.
 - **Base:** `github/main` @ `71fefcce`.
 
 O CEO quer uma trilha específica construída sobre os frameworks clássicos de gestão e adoção de IA
@@ -89,7 +90,12 @@ da trilha escolhida com os entregáveis referenciando o catálogo do Charter, e 
 Dono da spec: Regua. Dono da implementação: Bussola (ou quem a Morgana escalar). O PR de código só abre
 depois de escolhida a trilha (item 3 do pedido), porque o seed faz parte dele.
 
-## 6. Trilha escolhida: AI Governance (2026-09-30)
+## 6. AI Governance (2026-09-30): passou a trilha de apoio
+
+> **Superada em parte pela §7.** O CEO trouxe pesquisa própria e escolheu a Fundação de Prontidão de IA
+> como trilha principal. A AI Governance continua como trilha de apoio: é para onde o mapa
+> arquétipo→trilha manda os arquétipos "Governança de papel" e "Cautela travada". O que está abaixo vale
+> para quando ela for montada.
 
 **Escolha.** O CEO respondeu "ai-governance" à pergunta sobre a terceira trilha, e a Morgana leu a
 resposta como a trilha a atacar agora. Pode ser que o CEO só tenha nomeado a terceira trilha; se for
@@ -119,3 +125,139 @@ contra o inventário levantado na triagem. O Radar confirma.
 
 **Detalhamento.** O Radar entrega uma linha por entregável: fase, passo, entregável, quem produz,
 perfis, cláusulas e critério de aceite verificável. Com isso, eu fecho o seed do template.
+
+## 7. Trilha principal: Fundação de Prontidão de IA (D-24, 2026-09-30)
+
+**Origem.** Pesquisa do CEO, resumida no briefing da Morgana
+(`.maestri/briefings/2026-09-30-scaffold-ai-readiness-foundation.md`). A trilha é derivada do Meridian:
+as faixas e os arquétipos do diagnóstico dizem por onde começar. "O score é instrução de sequência, não
+nota." As decisões abaixo fecham a tabela de encaixe do briefing. Elas valem para o PR único do
+Andaime, junto com a spec da Regua, a migration, o código e os testes.
+
+### 7.1 Template
+
+- **Chave `ai-readiness-foundation`**, minúscula e com hífen, no padrão das chaves existentes
+  (`triage`, `docreview`, `reporting`). O briefing escreve `AI_READINESS_FOUNDATION`; a chave é string
+  livre, e a consistência vale mais que a grafia. Nome "Fundação de Prontidão de IA", versão `v1.0`, autor
+  "método Nebuloz".
+- **Sem forma de trabalho:** `archetype` nulo. É a F3 da D-23, e entra neste PR.
+- **Estimativa:** o `estimateMinutes` guarda a **mediana** da faixa, a 40 h por semana (2.400 min por
+  semana). A faixa original fica no texto do passo ("2–4 semanas"). É a regra da §5 do `MAPEAMENTO.md`.
+
+### 7.2 Faixas e arquétipos no Meridian
+
+Função pura em `apps/app/lib/meridian/`, exibida no relatório do assessment e coberta por teste. É
+leitura dos scores que o Meridian já calcula, e continua dono dele (Mapa de fronteiras).
+
+- **Faixas por eixo:** Inicial 0–39, Em formação 40–59, Estruturado 60–79, Maduro 80–100.
+- **Confiança < 0,6** não substitui a faixa: acrescenta a marca "não confiável" ao eixo. O score continua
+  entrando no arquétipo, e o eixo vai para o workshop A2.
+- **Limiar do Piloto sem chão: 40, não 50.** Pessoas e Processo ≥ 40; Dados e Infra < 40. São dois
+  motivos:
+  - 40 é a fronteira de faixa ("Em formação"). Com 50, um cliente com Pessoas 45 e Processo 45 não cairia
+    em arquétipo nenhum.
+  - O próprio exemplo do CEO exige 40: no Atlas, Pessoas tem 47 e Processo 58. Com 50, o Atlas deixaria de
+    ser Piloto sem chão.
+- **Perguntas por arquétipo:** os dois arquétipos de pergunta usam os códigos do template vigente do
+  Meridian (`packages/provisioning/src/meridian.ts`). "Alta" é ≥ 60 e "baixa" é < 40 no score normalizado
+  da pergunta, as mesmas fronteiras das faixas.
+  - **Governança de papel:** Q-G01 (política) alta; Q-G02 (comitê) e Q-G03 (controle de acesso) baixas.
+  - **Campeão isolado:** Q-E03 (distribuição) baixa, ou Pessoas com confiança < 0,6.
+  - Se o template do Meridian mudar esses códigos, a regra muda junto, com teste.
+- **Dominante e traço:** o dominante é o primeiro que casar, nesta ordem:
+  1. Pronto para escalar;
+  2. Uniformemente baixo;
+  3. Piloto sem chão;
+  4. Dado sem uso;
+  5. Cautela travada.
+
+  Os demais que casarem entram como traço secundário, incluindo Governança de papel e Campeão isolado,
+  que dependem de pergunta. Nenhum casou: o relatório diz "sem arquétipo dominante" e não inventa um.
+  - Atlas: Piloto sem chão com traço de Campeão isolado, como no briefing.
+
+### 7.3 SG-04 continua valendo
+
+O briefing põe o baseline no gate do Piloto. Só que o SG-04 bloqueia o **fechamento da ASSESS** sem caso
+de negócio assinado (`actions/gates.ts:107-126`), e isso não se relaxa para uma trilha.
+
+- **ASSESS:** o baseline assinado são os scores por eixo do assessment de origem, com a meta de faixa
+  do EMBED (Estruturado em Dados, Governança e Infra).
+- **PILOT:** o gate acrescenta os baselines operacionais (qualidade de dado, tempo e custo do processo
+  piloto, custo de inferência, participação em capacitação) como **nova versão** do caso de negócio. A
+  versão assinada é imutável; alterar exige versão nova (Mapa de fronteiras, costura 3.1).
+
+### 7.4 Gates: v1 manual, derivado depois
+
+- **v1:** todo critério é `MANUAL`. Os critérios que olham o Meridian citam no texto a evidência que
+  conta: o código do reassessment (AS-xxx) com a faixa exigida. São dois:
+  - SCALE: Dados e Infra pelo menos Em formação;
+  - EMBED: pelo menos Estruturado em Dados, Governança e Infra.
+- **`DERIVED` depois**, quando existir o contrato Meridian → Scaffold de leitura do score do
+  reassessment ligado à trilha. É costura nova no Mapa de fronteiras. Revejo quando três trilhas deste
+  template chegarem à SCALE, ou em **2026-12-15**, o que vier primeiro.
+
+### 7.5 D-23 neste PR
+
+| Parte | Entra agora? | Motivo |
+|---|---|---|
+| F1 `requirementRefs` | **Sim, só com códigos que já existem** no catálogo do Charter | Os entregáveis do EMBED (carta, política, matriz, SoA) citam ISO/IEC 42001 (ISO-CL04..10), NIST AI RMF (GOVERN/MAP/MEASURE/MANAGE 1-2), EU AI Act (AIA-09..15) e LGPD (LGPD-ART*). **Sem ampliar o catálogo neste PR.** PL 2338, AI Act arts. 4/5/26/50 e ISO Anexo A ficam para a AI Governance, e o PR não depende da transcrição do Lacre |
+| F2 perfil de organização | **Não** | Aqui o que varia é o arquétipo do Meridian, não o perfil. A variação por cliente entra por overlay (exemplo Atlas). Pacote setorial vai com a AI Governance |
+| F3 `archetype` opcional | **Sim** | Obrigatório para esta trilha |
+| F4 oferta no `Service` | Sem mudança | Continua no back-office |
+
+### 7.6 Entregáveis: tipo, quem produz, módulo
+
+Nenhum entregável exige módulo (`requiresModule` nulo). Ninguém compra esta trilha sem Meridian, e a
+origem é o assessment. Os entregáveis de governança são documento mesmo quando o cliente tem o Charter;
+ligar ao Charter fica para a AI Governance. Todos são obrigatórios, salvo onde está marcado.
+
+| Fase | Passo | Entregável | Tipo | Quem produz |
+|---|---|---|---|---|
+| ASSESS | A1 | Relatório de prontidão por eixo (faixas, arquétipos, confiança) | REPORT | CONSULTANT |
+| ASSESS | A2 | Ata do workshop liderança–operação. Obrigatório só se algum eixo tiver confiança < 0,6; senão, nasce dispensado com motivo | DOCUMENT | CONSULTANT |
+| ASSESS | A3 | Mapa arquétipo → trilha | DOCUMENT | CONSULTANT |
+| PILOT | P1 | Catálogo inicial de dados para IA (3 a 5 fontes, dono, sensibilidade) | SPREADSHEET | TECHNICAL |
+| PILOT | P1 | Ambiente segregado com MLOps básico (logging, versionamento, custo de inferência) | CONFIGURATION | TECHNICAL |
+| PILOT | P2 | Trilhas de capacitação por persona | TRAINING | CONSULTANT |
+| PILOT | P2 | Papéis formais de IA e dados em 1 ou 2 áreas | DOCUMENT | OWNER |
+| SCALE | S1 | Portfólio de casos de uso priorizado com critério econômico | SPREADSHEET | OWNER |
+| SCALE | S2 | Evidências de comitê ativo (atas) | DOCUMENT | OWNER |
+| SCALE | S2 | Painel simples de métricas de IA confiável | REPORT | TECHNICAL |
+| EMBED | E1 | Carta de governança, política e matriz de risco (com `requirementRefs`) | DOCUMENT | LEGAL |
+| EMBED | E2 | Inventário único de sistemas de IA com classificação de risco | SPREADSHEET | TECHNICAL |
+| EMBED | E2 | Declaração de aplicabilidade (ISO/IEC 42001; citação e texto próprio) | DOCUMENT | LEGAL |
+
+A2 condicional segue o mesmo mecanismo do entregável dispensado com motivo. A condição (algum eixo com
+confiança < 0,6) é lida do relatório A1 na criação da trilha. Se isso exigir leitura do Meridian que
+ainda não existe, o A2 nasce obrigatório e o consultor dispensa com motivo.
+
+### 7.7 Overlay de entregável
+
+Entra o alvo `deliverable` em `overlay-merge.ts`. `ops` é Json, então não há migration.
+
+| Operação | Regra |
+|---|---|
+| REPLACE de passo ou de título de entregável | Livre, como hoje |
+| REMOVE de entregável **não obrigatório** | Livre, com motivo |
+| REMOVE de entregável **obrigatório** | **Só o papel CONSULTANT, com motivo.** O entregável não some: a instância nasce dispensada, com o motivo visível na trilha e na fila de supervisão. Remover obrigatório de gate em silêncio é o gate virando formalidade, o risco nº 1 da spec 002 |
+| REMOVE de passo que é o único produtor de um entregável obrigatório | Recusado, a não ser que o mesmo overlay dispense esse entregável pela regra acima |
+
+No exemplo do Atlas ("papéis de dado já existem"), a consultora dispensa "Papéis formais de IA e dados"
+com motivo.
+
+### 7.8 Seed e testes (no mesmo PR)
+
+- Template `ai-readiness-foundation` v1.0 com os passos, os entregáveis e os critérios acima.
+- **Cliente fictício Atlas:** Dados 32 (0,72), Processo 58 (0,65), Pessoas 47 (0,55), Governança 41 (0,61),
+  Infra 36 (0,80). Resultado esperado: Piloto sem chão + traço Campeão isolado, Pessoas marcada como não
+  confiável, e A2 obrigatório. Overlay: REPLACE de passo, REPLACE de título e a dispensa dos papéis de
+  dado.
+- **Testes:**
+  - faixas nas fronteiras (39/40, 59/60, 79/80);
+  - cada arquétipo, a ordem de dominância e o caso "sem arquétipo";
+  - Atlas de ponta a ponta;
+  - SG-04 fechando a ASSESS com o baseline de scores;
+  - overlay recusa REMOVE de obrigatório por quem não é consultor;
+  - `requirementRefs` recusa código inexistente;
+  - template sem `archetype` instancia;
+  - nenhum teste existente fica vermelho.
