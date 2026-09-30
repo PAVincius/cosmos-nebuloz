@@ -317,8 +317,12 @@ export async function runErasure({
       data: { status: "COMPLETED", processedAt: new Date() },
     });
 
-    database.auditLog
-      .create({
+    // Aguardado: na Vercel a função pode ser encerrada assim que a resposta
+    // sai, e uma promise solta perderia a linha `completed` da trilha de
+    // compliance. Falhar aqui não desfaz a eliminação (o dado já foi
+    // eliminado e o pedido já está COMPLETED): o erro vai para o log.
+    try {
+      await database.auditLog.create({
         data: {
           tenantId,
           action: "compliance.lgpd_erasure.completed",
@@ -326,10 +330,10 @@ export async function runErasure({
           actorType: "system",
           metadata: { requestId, subjectId: hash },
         },
-      })
-      .catch((err) => {
-        log.error("[lgpd-erasure] audit log failed", err);
       });
+    } catch (err) {
+      log.error("[lgpd-erasure] audit log failed", err);
+    }
   });
 }
 
