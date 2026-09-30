@@ -8,9 +8,9 @@
 
 **Input**: User description: "spec do Meridian A3 (decisão D-19 do Norte, confirmada pelo CEO em 29/09; detalhe em docs/produto/meridian-escopo-dogfood-a3-a5.md). Escopo mínimo: o botão Ver evidência (EvidenceButton; hoje em tab-scoring.tsx e no painel de divergência) aparece também onde a tela mostra 'N anexos' em Coleta e no gap; sem prévia nem download em lote; evidência eliminada pela retenção aparece sem botão. Mesma action requestEvidenceUrl (audita antes da URL), mesma permissão meridian.evidence.read. Critério de aceite testável, incluindo M8 provando evidence.read a partir de Coleta e do gap, e o caso sem permissão (403)."
 
-## Nota de compliance — gate antes de dev
+## Nota de compliance — parecer do Lacre incorporado
 
-`docs/produto/meridian-escopo-dogfood-a3-a5.md` (§ A3) diz: "Se a spec passar a mostrar prévia do conteúdo, ou o nome do arquivo em lugar novo como lista ou exportação, aí passa pelo Lacre antes de ir para dev." Esta spec faz exatamente isso: FR-001 e FR-002 pedem uma **lista** de evidências individuais em Coleta e no gap — duas superfícies novas onde o nome do arquivo passa a aparecer (hoje só aparece no painel de divergência de Scoring & Revisão). **Bussola não inicia a implementação antes do parecer do Lacre sobre essas duas superfícies.**
+`docs/produto/meridian-escopo-dogfood-a3-a5.md` (§ A3) previu que, se a spec passasse a mostrar o nome do arquivo em lugar novo como lista, isso passaria pelo Lacre antes de dev. FR-001 e FR-002 pedem exatamente essa lista em Coleta e no gap. O Lacre deu parecer; FR-006, FR-010 e o novo FR-011 abaixo incorporam as condições dele. Gate cumprido — segue para implementação.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -62,11 +62,12 @@ Um consultor está olhando um gap no registro e quer conferir a evidência do as
 - **FR-003**: Cada evidência listada em Coleta e no gap MUST ter um controle que, ao ser ativado, solicita a mesma leitura auditada já usada na aba Scoring & Revisão (URL assinada de curta duração) e abre o arquivo.
 - **FR-004**: O sistema MUST continuar registrando a trilha de auditoria de leitura de evidência antes de emitir a URL, sem alterar esse comportamento já existente.
 - **FR-005**: O sistema MUST recusar a emissão de URL para evidência eliminada pela política de retenção, como já faz hoje, e a tela MUST refletir esse estado (evidência eliminada, sem controle ativo) tanto em Coleta quanto no gap.
-- **FR-006**: O sistema MUST ocultar o controle de abrir evidência, em Coleta e no gap, para qualquer usuário sem a permissão de leitura de evidência.
+- **FR-006**: O sistema MUST ocultar o controle de abrir evidência, em Coleta e no gap, para qualquer usuário sem a permissão de leitura de evidência; para esse usuário, a lista MUST mostrar apenas a contagem de evidências, sem exibir nome de arquivo algum (parecer do Lacre).
 - **FR-007**: O servidor MUST continuar recusando qualquer solicitação de leitura de evidência de um usuário sem a permissão correspondente, independentemente do que a tela exibir.
 - **FR-008**: O sistema MUST NOT oferecer prévia do conteúdo da evidência em nenhuma tela — a leitura sempre abre o arquivo original, nunca renderiza o conteúdo inline.
 - **FR-009**: O sistema MUST NOT oferecer download em lote de mais de uma evidência por vez.
-- **FR-010**: O sistema MUST NOT introduzir nenhum registro (auditoria, exportação ou outra superfície) que grave o nome do arquivo da evidência além do que já é gravado hoje.
+- **FR-010**: O sistema MUST NOT introduzir nenhum registro (auditoria, exportação ou outra superfície) que grave o nome do arquivo da evidência além do que já é gravado hoje. O nome exibido na lista MUST NOT ser usado como alvo, diff ou metadado do evento de leitura de evidência — que continua identificando a evidência pelo id — nem aparecer em parâmetro de URL, log ou exportação (parecer do Lacre).
+- **FR-011**: O nome do arquivo exibido em Coleta e no gap MUST ser renderizado como texto escapado (nunca interpretado como HTML/markup) e com truncamento visual quando exceder o espaço disponível na tela (parecer do Lacre).
 
 ### Key Entities
 
