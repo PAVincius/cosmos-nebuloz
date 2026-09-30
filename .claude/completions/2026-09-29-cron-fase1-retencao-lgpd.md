@@ -28,3 +28,7 @@ App inteiro: 522 arquivos, 5662 testes verdes. Novos: validate-cron-secret, cron
 - MÉDIO: claim com `attempts > 3` grava FAILED + audit sem executar.
 - BAIXO: `recordFailure` lançando é logado e não derruba o lote.
 - Bearer nas outras 5 rotas: nenhum chamador no repositório (ci.yml, dark-matter.yml, scripts, docker-compose não chamam /api/cron; `docker-start.sh` só exige a env). A Vercel envia Bearer. Chamadores fora do repositório (n8n etc.) não verificados: se houver algum mandando o segredo cru, precisa passar a mandar `Bearer <segredo>`.
+
+## Ajuste de 30/09 (economia, decisão do CEO)
+`/api/cron/lgpd-erasure` passou de `*/15 * * * *` para `0 * * * *` em `apps/app/vercel.json`; retenção segue diária. Efeito: o pedido do titular espera até ~1 h e as 3 tentativas de um pedido com falha se espaçam em 1 h; o lote é de 5 por volta (até 120 pedidos/dia), folgado para o volume atual. Runbook `migracao-inngest-para-vercel-cron.md` e `vercel-crons.test.ts` ajustados.
+

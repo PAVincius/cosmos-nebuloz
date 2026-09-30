@@ -8,7 +8,7 @@
     },
     {
       "path": "/api/cron/lgpd-erasure",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }

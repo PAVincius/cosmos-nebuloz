@@ -9,14 +9,14 @@ const root = path.resolve(__dirname, "../..");
 const config = JSON.parse(readFileSync(path.join(root, "vercel.json"), "utf8"));
 
 describe("apps/app/vercel.json crons", () => {
-  it("agenda a retenção do Meridian (diária, 03:00) e a eliminação LGPD (15 min)", () => {
+  it("agenda a retenção do Meridian (diária, 03:00) e a eliminação LGPD (de hora em hora, por economia — decisão do CEO em 30/09)", () => {
     expect(config.crons).toEqual(
       expect.arrayContaining([
         {
           path: "/api/cron/meridian-evidence-retention",
           schedule: "0 3 * * *",
         },
-        { path: "/api/cron/lgpd-erasure", schedule: "*/15 * * * *" },
+        { path: "/api/cron/lgpd-erasure", schedule: "0 * * * *" },
       ])
     );
   });

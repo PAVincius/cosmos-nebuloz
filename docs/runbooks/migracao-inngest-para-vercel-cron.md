@@ -50,7 +50,7 @@ o substitui.
 | # | Função | Tipo / gatilho | Freq. | Perde | Compensa |
 |---|---|---|---|---|---|
 | 1 | `eliminateExpiredMeridianEvidence` | cron | `0 3 * * *` (retenção 90d) | `concurrency:1`, retry 2, um `step.run` por assessment (não repete o que já eliminou) | Cron dedicado com trava (`pg_try_advisory_lock`); a eliminação já é idempotente por assessment (`deleteObjects` + marca no banco); erro de um assessment não aborta os demais; Sentry Monitor. |
-| 2 | `processErasureRequest` | evento `lgpd/erasure.requested` | fila, prioridade máxima | retry 3, ~9 `step.run` sequenciais (anonimizar perfil, standup, copilot, access log, transcrições) que retomam do passo seguinte | `enqueueJob` **na mesma transação** que grava o `DataSubjectRequest` (fecha o bug do pedido PENDING sem evento); cada etapa de anonimização é `UPDATE` idempotente; etapa concluída gravada no pedido (campo novo a criar, ex. `erasureStep`) para retomar; `dedupeKey = requestId`; reprocessar pedido PENDING antigo na 1ª volta. Prazo legal (LGPD art. 18) monitorado: alerta se PENDING > 24 h. |
+| 2 | `processErasureRequest` | evento `lgpd/erasure.requested` | fila, prioridade máxima | retry 3, ~9 `step.run` sequenciais (anonimizar perfil, standup, copilot, access log, transcrições) que retomam do passo seguinte | `enqueueJob` **na mesma transação** que grava o `DataSubjectRequest` (fecha o bug do pedido PENDING sem evento); cada etapa de anonimização é `UPDATE` idempotente; etapa concluída gravada no pedido (campo novo a criar, ex. `erasureStep`) para retomar; `dedupeKey = requestId`; reprocessar pedido PENDING antigo na 1ª volta. Prazo legal (LGPD art. 18) monitorado: alerta se PENDING > 24 h.**Fase 1 (feita, #310):** sem fila; o cron `/api/cron/lgpd-erasure` processa direto os `DataSubjectRequest` PENDING (o pedido é o outbox), com lock por `updateMany`, 3 tentativas em `metadata` e FAILED registrado. Agenda **`0 * * * *` (de hora em hora)** por economia, decisão do CEO em 30/09 (antes `*/15`): a eliminação leva até ~1 h após o pedido, folgada frente ao prazo da LGPD. |
 | — | Base comum (Fase 0) | — | — | — | `enqueueJob`, drenador `/api/cron/queue`, migration aditiva da fila, `validateCronSecret` corrigido, `CRON_SECRET`, monitores Sentry, `vercel.json` do projeto do app. |
 
 ### 2.2 Fase 2 — Charter
@@ -193,8 +193,7 @@ que o último deploy de Production já não referencia `inngest` (busca no build
   esperado e margem; alerta em falha ou ausência de check-in.
 - **Fila**: o drenador registra, a cada volta, profundidade por `status`, idade
   do `PENDING` mais antigo e contagem de `FAILED`/`PROCESSING` vencido.
-  Alertas: `FAILED` > 0; `PENDING` mais antigo > 15 min (DSAR e retenção: > 1 h
-  de prioridade máxima); `PROCESSING` além do visibility timeout.
+  Alertas: `FAILED` > 0; `PENDING` mais antigo > 15 min (DSAR, cujo cron é horário: > 2 h; retenção é diária e não usa a fila); `PROCESSING` além do visibility timeout.
 - `api/platform/health`: troca o bloco `inngest` por batimento dos crons e
   profundidade da fila (a consulta já existe).
 - Conferir depois de cada deploy que mexe em job: **endpoint do provedor e log**
