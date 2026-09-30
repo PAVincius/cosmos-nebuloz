@@ -93,3 +93,19 @@ describe(`migration ${DIR}`, () => {
     expect(comandos).toMatch(/CREATE POLICY "tenant_isolation"/);
   });
 });
+
+describe(`down.sql de ${DIR}`, () => {
+  const down = readFileSync(
+    join(PRISMA, "migrations", DIR, "down.sql"),
+    "utf-8"
+  );
+
+  it("remove a tabela (policy, índices e FK caem junto)", () => {
+    expect(down).toMatch(/DROP TABLE "MeridianBenchmarkEnablement";/);
+  });
+
+  it("não toca em nenhuma outra tabela", () => {
+    const drops = down.match(/DROP TABLE [^;]*;/g) ?? [];
+    expect(drops).toHaveLength(1);
+  });
+});
