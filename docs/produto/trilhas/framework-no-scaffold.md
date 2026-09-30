@@ -287,3 +287,36 @@ com motivo.
   overlay aplicado, ou a trilha copiar os critérios na criação, como faz com os passos (ST-03).
 - **ADD de passo ou de entregável no overlay** não cria linha na trilha: a operação não diz a fase nem o
   passo de origem.
+
+## 8. Catálogo do Scaffold: no máximo 9 moldes (D-25, CEO, 2026-09-30)
+
+**Decisão do CEO**, registrada pela Morgana. Os moldes se **somam**, não se multiplicam:
+
+| Grupo | Moldes | Estado no repo (`github/main`) | Quando |
+|---|---|---|---|
+| **Prontidão**, derivados do Meridian (2) | Fundação de Prontidão de IA (`ai-readiness-foundation`); AI Governance | a Fundação entra no PR único do Andaime; a AI Governance existe só em markdown (`ai-governance.md`) | Fundação agora; AI Governance em seguida |
+| **Forma de trabalho** (5) | conversacional, análise e priorização, revisão de documentos, triagem, relatórios recorrentes | os cinco no seed (`scaffold-templates.ts`: `triage`, `docreview`, `reporting`, `conversational`, `analysis`) | já existem |
+| **Contexto** (2) | AI Compliance; AI Security | markdown (`ai-compliance.md`, `ai-security.md`) | só com cliente regulado ou exposto. O Meridian não detecta esse contexto; quem decide é a consultora na venda |
+
+**Por cliente:** 1 ou 2 trilhas de prontidão, mais 1 por caso de uso (forma de trabalho), mais 0 a 2 de
+contexto.
+
+**Variação por arquétipo não vira molde.** AI Adopt, Arranque executivo e Portfólio/valor entram como
+overlay ou passo da Fundação. No schema isso se lê assim:
+- **O que é do método** entra como **passo ou entregável condicional ao arquétipo** dentro da própria
+  Fundação. Exemplos: capacitação por persona (AI Adopt), para Campeão isolado; arranque executivo, para
+  Uniformemente baixo. Quando o arquétipo não casa, o entregável nasce dispensado com motivo, o mesmo
+  mecanismo do A2 (§7.6). Fica versionado com o template, e a Nebuloz é dona.
+- **O que é do cliente** entra por **overlay**. `ScaffoldTemplateOverlay` é por tenant (tem `tenantId`):
+  é a customização daquele cliente, como no Atlas, e não o lugar de uma variante do método. Um "overlay
+  de arquétipo" reutilizável entre clientes não existe no schema, e esta decisão não o cria.
+- **Portfólio/valor** já é o passo S1 da Fundação (portfólio com critério econômico). A costura com o
+  Signal é leitura: o Signal apura o valor e o Scaffold não mede. Se precisar de contrato, é costura nova
+  no Mapa de fronteiras.
+
+**Consequência para o PR único:** a Fundação v1.0 sai com os passos da §7 (P2 já é AI Adopt). Os
+passos condicionais por arquétipo que não estão na §7, como o arranque executivo, entram em versão
+seguinte do template, não neste PR.
+
+**Teto:** um décimo molde passa pelo CEO. Pedido de trilha nova primeiro responde se é variação da
+Fundação (passo), customização de cliente (overlay) ou caso de uso (forma de trabalho).
