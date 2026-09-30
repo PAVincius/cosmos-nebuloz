@@ -54,6 +54,7 @@ Três regras valem para o registro inteiro:
 | D-20 | Meridian A5: tela de dependência/ciclo e ajuste de gap fica para depois, com gatilho ([escopo](meridian-escopo-dogfood-a3-a5.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua, Crivo |
 | D-21 | Meridian: benchmark travado por tenant; só staff Nebuloz liga, no back-office, com aditivo ([PRD §10](meridian-prd.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua (spec 012) → Bussola |
 | D-22 | Meridian: benchmark travado também esconde a leitura; contribui e lê juntos; interno habilitado lê; staff no back-office fora da regra ([PRD §10](meridian-prd.md)) | **Decidida** (CEO, 2026-09-29) | Norte → Regua (emenda 012) → Bussola |
+| D-23 | Scaffold: trilha de framework com o mínimo de schema. Entregável referencia a cláusula no catálogo do Charter (sem FK); perfil de organização dispensa entregável com motivo; `archetype` do template opcional; oferta fica no `Service` do back-office. Trilha escolhida: **AI Governance** (CEO, via Morgana, 2026-09-30), com perfis P1 usa IA de terceiros, P2 desenvolve e P3 financeiro; o catálogo do Charter é completado no mesmo PR ([mapeamento](trilhas/framework-no-scaffold.md)) | Proposta (provisória, 2026-09-30) | Norte → Radar (detalhe) → Regua → Bussola |
 
 ---
 
