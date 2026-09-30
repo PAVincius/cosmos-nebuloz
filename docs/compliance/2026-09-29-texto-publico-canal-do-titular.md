@@ -3,7 +3,7 @@
 - **Data:** 2026-09-29
 - **Onde vai:** `/legal/privacy` (rota estática em `apps/web/app/[locale]/legal/privacy/page.tsx`; o texto vem do dicionário `web.legal.privacy` em `packages/internationalization/dictionaries/`). Quem publica é quem mexe no site (Norte decide, Bussola ou o dono do site implementa); código não é da minha mesa.
 - **Origem:** `operadora-controladora.md` §4, com duas correções desta versão: (1) o prazo e o repasse passam a citar o que o DPA v1.2 promete, e (2) não prometo eliminação automática.
-- **Falta só:** `{{NOME DO ENCARREGADO}}`, em aberto com o CEO. O e-mail está decidido: **`privacy@nebuloz.com`, decisão do CEO de 2026-09-29** (`operadora-controladora.md` §6). A decisão fixa o endereço; não conferi que a caixa existe e é lida, e **não publique antes de alguém confirmar que ela recebe e que há dono para lê-la.** Enquanto o encarregado não for nomeado, pode-se publicar sem a linha do encarregado, ao custo de manter a pendência do RoPA §6.
+- **Pronto para publicar, sem campo em aberto** (atualização de 2026-09-30). O e-mail está decidido: **`privacy@nebuloz.com`, decisão do CEO de 2026-09-29** (`operadora-controladora.md` §6). O texto **não cita nome de encarregado nem afirma ser agente de pequeno porte**: por decisão **confirmada pelo CEO em 2026-09-30**, a Nebuloz dispensa a indicação com base no art. 11 da Resolução CD/ANPD nº 2/2022 (`2026-09-30-decisoes-provisorias-encarregado-e-c8.md`). O canal é o que a Resolução exige no lugar do encarregado. A decisão fixa o endereço; não conferi que a caixa existe e é lida, e **não publique antes de alguém confirmar que ela recebe e que há dono para lê-la.** Se um gatilho de reavaliação tirar o direito à dispensa, a linha do encarregado volta.
 - **Enquadramento:** decisão do CEO de 2026-09-29: a Nebuloz é **operadora no Meridian**. O texto vale para o respondente do Meridian e **já não menciona reunião gravada**: o enquadramento de reunião fica para decisão separada do CEO (opção C), e o texto ganha a menção só depois dela.
 
 ---
@@ -22,7 +22,7 @@ Você pode ter respondido a um diagnóstico do Meridian por um link que recebeu 
 
 **Quando a Nebuloz é a controladora.** Há tratamentos em que nós decidimos a finalidade: a operação do nosso site, os registros de segurança da plataforma e o nosso contato comercial. Para esses, o pedido vem direto para nós e nós respondemos, pelo mesmo endereço.
 
-**Encarregado pelo tratamento de dados pessoais:** {{NOME DO ENCARREGADO}}, privacy@nebuloz.com.
+**Canal de comunicação com titulares de dados:** privacy@nebuloz.com.
 
 Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).
 
