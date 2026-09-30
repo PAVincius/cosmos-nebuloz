@@ -17,6 +17,7 @@ import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
 import { DetalheDoTenant } from "./detalhe";
+import { MeridianBenchmark } from "./meridian-benchmark";
 import { MeridianBootstrap } from "./meridian-bootstrap";
 import { ModuleForm } from "./module-form";
 import { faltaPreparar, ProntidaoDoModulo } from "./prontidao";
@@ -219,6 +220,9 @@ export default async function ClientDetailPage({
                   slug={client.slug}
                 />
               ) : null
+            }
+            extra={
+              <MeridianBenchmark canWrite={staff.canWrite} slug={client.slug} />
             }
             icone="target"
             selos={[

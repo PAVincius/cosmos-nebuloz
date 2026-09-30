@@ -15,6 +15,7 @@ export function ProntidaoDoModulo({
   icone,
   selos,
   acao,
+  extra,
 }: {
   titulo: string;
   subtitulo: string;
@@ -22,6 +23,9 @@ export function ProntidaoDoModulo({
   selos: { rotulo: string; ok: boolean }[];
   /** Só aparece quando falta algo — a página decide. */
   acao: ReactNode;
+  /** Cartão que vale sempre, com ou sem bootstrap pendente — ex.: o benchmark
+   *  do Meridian. */
+  extra?: ReactNode;
 }) {
   return (
     <SecaoSimples icone={icone} subtitulo={subtitulo} titulo={titulo}>
@@ -33,6 +37,7 @@ export function ProntidaoDoModulo({
         ))}
       </div>
       {acao ? <div style={{ marginTop: 12 }}>{acao}</div> : null}
+      {extra ? <div style={{ marginTop: 12 }}>{extra}</div> : null}
     </SecaoSimples>
   );
 }
