@@ -31,7 +31,8 @@
 - Os hashes de 29/09 foram reescritos pelo merge; conferidos pelo assunto no `github/main`: retenção `c2f3ee14` (era `7b035212`) e anonimização de `fileName` `5588b076` (era `979240a4`), `06703fd0`, rate limit `1646b50e`, `011c75f7`, `3db7c7b5`, atritos `436f6d20`, cron fase 1 `1cbac7dc` e `f063409e` (#310), A3 `44dd24a2` (#312), `6c595902`: **todos ancestrais do sha do deploy**.
 - Reemissão e revogação de link (spec 006): código e testes presentes no `github/main`.
 - **FALHA:** `23bc6815` (aviso ao respondente com os 90 dias) **não está no `github/main` nem no deploy**; existe só no `main` local. Sem ele o respondente não é avisado da retenção. Precisa entrar por PR e por deploy antes da Op 3.
-- Não conferido pelo QA: valor de `CRON_SECRET`, migration aplicada em produção, plano da Vercel (P2, Infra).
+- **P2 confirmada pela Morgana em 30/09/2026** (informada; o QA não leu variável nem banco): `CRON_SECRET` existe no alvo Production (criado como sensível); os dois crons estão registrados e `lgpd-erasure` responde 200 a cada 15 minutos desde o deploy, o que também prova o segredo e o plano Pro (o Hobby recusaria `*/15`); o build de `dpl_A16BtzuFoxFriXrz9C7TKyrgxxaA` rodou `migrate:deploy` com sucesso, então a migration do #318 está aplicada.
+- Ainda aberto: o `23bc6815` (aviso dos 90 dias) em PR e deploy.
 
 ### A.1 Regras da rodada
 
