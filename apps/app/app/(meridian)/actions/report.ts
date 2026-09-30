@@ -21,6 +21,10 @@ import {
   requireMeridianContext,
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
+import {
+  assessReadiness,
+  type ReadinessProfile,
+} from "@/lib/meridian/readiness-bands";
 import { cuid, type Result, safeAction } from "../../actions/_base";
 import { logMeridianAudit } from "./_shared";
 
@@ -45,6 +49,9 @@ export type Report = {
   templateVersion: string;
   composite: number | null;
   axes: ReportAxis[];
+  /** Faixa por eixo, confiança e arquétipo (dominante + traço secundário),
+   *  calculados dos scores finais. Com menos de cinco eixos, sem arquétipo. */
+  readiness: ReadinessProfile;
   /** `null` quando o tenant não tem a habilitação de benchmark (specs/012):
    *  o bloco some do relatório, sem coorte nem bandas. */
   cohort: CohortRead | null;
@@ -151,6 +158,13 @@ export async function getReport(
       templateVersion: a.template.version,
       composite: a.scores.length ? compositeOf(a.scores) : null,
       axes,
+      readiness: assessReadiness(
+        axes.map((x) => ({
+          axis: x.axis,
+          score: x.score,
+          confidence: x.confidence,
+        }))
+      ),
       cohort,
       topGaps: a.gaps.map((g) => ({
         code: g.code,

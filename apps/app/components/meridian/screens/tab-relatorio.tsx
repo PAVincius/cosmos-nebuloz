@@ -25,6 +25,11 @@ import {
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
 import { BENCH_THRESHOLD } from "@/lib/meridian/benchmark";
 import { confTone, scoreTone } from "@/lib/meridian/composite";
+import {
+  ARCHETYPE_HINT,
+  ARCHETYPE_LABEL,
+  type ReadinessProfile,
+} from "@/lib/meridian/readiness-bands";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Eyebrow,
@@ -237,6 +242,78 @@ function DiffModal({
   );
 }
 
+/** Faixa do eixo por extenso. Eixo de confiança baixa mostra "Não confiável"
+ *  (fato, em âmbar); as faixas usam o tom de categoria do produto, não a
+ *  régua de verde/âmbar/vermelho do score. */
+function BandBadge({
+  band,
+}: {
+  band: ReadinessProfile["axes"][number] | undefined;
+}) {
+  if (!band) {
+    return <span style={{ width: 104 }} />;
+  }
+  return (
+    <span style={{ width: 104, display: "flex", justifyContent: "flex-end" }}>
+      <Badge tone={band.reliable ? "blue" : "amber"}>{band.display}</Badge>
+    </span>
+  );
+}
+
+/** Padrão entre os eixos: arquétipo dominante e traço secundário. O score é
+ *  instrução de sequência, não nota. */
+function ArchetypeCard({ profile }: { profile: ReadinessProfile }) {
+  const complete = profile.axes.length === AXIS_IDS.length;
+  const { dominant, secondary, unreliableAxes } = profile;
+  return (
+    <SectionCard
+      bodyStyle={{ display: "flex", flexDirection: "column", gap: 10 }}
+      icon="crosshair"
+      subtitle="O score é instrução de sequência, não nota: a faixa diz por onde começar, o arquétipo diz que trilha o padrão pede"
+      title="Arquétipo de prontidão"
+    >
+      {dominant ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Badge tone="accent">{ARCHETYPE_LABEL[dominant]}</Badge>
+          </span>
+          <p style={ARCHETYPE_TEXT}>{ARCHETYPE_HINT[dominant]}</p>
+        </div>
+      ) : (
+        <p style={ARCHETYPE_TEXT}>
+          {complete
+            ? "Sem padrão dominante entre os eixos — a leitura é eixo a eixo."
+            : "O arquétipo só aparece com os cinco eixos com score."}
+        </p>
+      )}
+      {secondary && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={ARCHETYPE_TEXT}>Traço secundário</span>
+            <Badge tone="purple">{ARCHETYPE_LABEL[secondary]}</Badge>
+          </span>
+          <p style={ARCHETYPE_TEXT}>{ARCHETYPE_HINT[secondary]}</p>
+        </div>
+      )}
+      {unreliableAxes.length > 0 && (
+        <p style={{ ...ARCHETYPE_TEXT, color: "var(--amber-text)" }}>
+          Não confiável em {unreliableAxes.map((a) => AXES[a].label).join(", ")}
+          : liderança e operação discordam. Revalide a faixa no workshop antes
+          de usá-la.
+        </p>
+      )}
+    </SectionCard>
+  );
+}
+
+const ARCHETYPE_TEXT = {
+  margin: 0,
+  fontSize: 12,
+  color: "var(--ink-muted)",
+  fontWeight: 500,
+  lineHeight: 1.55,
+} as const;
+
 export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
   const modal = useModal();
   const fetcher = useCallback(() => getReport({ assessmentId: a.id }), [a.id]);
@@ -411,6 +488,9 @@ export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
               >
                 conf {Math.round(x.confidence * 100)}%
               </span>
+              <BandBadge
+                band={r.readiness.axes.find((b) => b.axis === x.axis)}
+              />
               {x.overridden ? (
                 <Badge tone="purple">override</Badge>
               ) : (
@@ -427,6 +507,8 @@ export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
             ]}
           />
         </SectionCard>
+
+        <ArchetypeCard profile={r.readiness} />
 
         {cohort && (
           <SectionCard

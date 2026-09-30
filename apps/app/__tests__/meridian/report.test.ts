@@ -192,6 +192,57 @@ describe("getReport", () => {
     });
   });
 
+  // Faixas e arquétipo (briefing do Andaime): o relatório carrega o perfil de
+  // prontidão calculado a partir dos scores finais e da confiança.
+  it("traz o perfil de prontidão: faixas por eixo e arquétipo (caso Atlas)", async () => {
+    const atlas = [
+      ["DATA", 32, 0.72],
+      ["PROCESS", 58, 0.65],
+      ["PEOPLE", 47, 0.55],
+      ["GOVERNANCE", 41, 0.61],
+      ["INFRASTRUCTURE", 36, 0.8],
+    ] as const;
+    h.assessmentFindFirst.mockResolvedValue({
+      ...base,
+      overrides: [],
+      scores: atlas.map(([axis, final, confidence]) => ({
+        axis,
+        computed: final,
+        final: null,
+        confidence,
+        status: "CONFIRMED",
+      })),
+    });
+    const res = await getReport({ assessmentId: AS_ID });
+    const r = res.ok ? res.data.readiness : null;
+    expect(r?.dominant).toBe("PILOT_NO_GROUND");
+    expect(r?.secondary).toBe("ISOLATED_CHAMPION");
+    expect(r?.unreliableAxes).toEqual(["PEOPLE"]);
+    expect(r?.axes.map((a) => a.display)).toEqual([
+      "Inicial",
+      "Em formação",
+      "Não confiável",
+      "Em formação",
+      "Inicial",
+    ]);
+  });
+
+  it("usa o score final (com override), não o computado, na faixa", async () => {
+    const res = await getReport({ assessmentId: AS_ID });
+    // base: GOVERNANCE computado 74, final 66 → Estruturado em ambos; a
+    // conferência é que o valor usado é o final.
+    const gov = res.ok
+      ? res.data.readiness.axes.find((a) => a.axis === "GOVERNANCE")
+      : null;
+    expect(gov?.score).toBe(66);
+  });
+
+  it("com menos de cinco eixos pontuados: faixas dos que existem, sem arquétipo", async () => {
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.readiness.axes).toHaveLength(1);
+    expect(res.ok && res.data.readiness.dominant).toBeNull();
+  });
+
   it("exige permissão de leitura de relatório", async () => {
     h.requirePerm.mockRejectedValue(new Error("Requer papel Leitor"));
     const res = await getReport({ assessmentId: AS_ID });

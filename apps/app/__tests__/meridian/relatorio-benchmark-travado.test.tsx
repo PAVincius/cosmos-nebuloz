@@ -19,6 +19,7 @@ vi.mock("@/components/cosmos/use-action-toast", () => ({
 }));
 
 import RelatorioTab from "@/components/meridian/screens/tab-relatorio";
+import { assessReadiness } from "@/lib/meridian/readiness-bands";
 
 const A = { id: "as-1" } as never;
 const REPORT = {
@@ -38,6 +39,7 @@ const REPORT = {
       rationale: null,
     },
   ],
+  readiness: assessReadiness([{ axis: "DATA", score: 61, confidence: 0.8 }]),
   topGaps: [],
   trail: [],
   isReassessment: false,
