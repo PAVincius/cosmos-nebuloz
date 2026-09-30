@@ -72,6 +72,7 @@ Um consultor de um tenant sem habilitação de benchmark abre o relatório de um
 1. **Given** um tenant sem habilitação de benchmark, **When** o relatório de um assessment desse tenant é aberto, **Then** o relatório não mostra o bloco de comparação com benchmark — nem retido, nem com percentil — o bloco inteiro fica ausente, não apenas vazio.
 2. **Given** um tenant sem habilitação de benchmark, **When** alguém solicita a lista de coortes ou a leitura de uma coorte específica, diretamente e não pela tela, **Then** o sistema recusa, com o mesmo motivo usado para recusar contribuição.
 3. **Given** um tenant interno com a habilitação ligada, **When** o relatório é aberto ou a lista de coortes é consultada, **Then** a leitura funciona normalmente, sem diferença de comportamento em relação a hoje.
+4. **Given** staff Nebuloz operando pelo back-office, **When** consulta dado de benchmark por essa via, **Then** a trava de habilitação por tenant não se aplica — a regra é sobre a leitura feita a partir de um tenant, não sobre a operação da equipe Nebuloz.
 
 ---
 
@@ -97,6 +98,7 @@ Um consultor de um tenant sem habilitação de benchmark abre o relatório de um
 - **FR-010**: Quando a habilitação de um tenant estiver ligada, a decisão de opt-in MUST continuar sendo tomada por assessment, sem nenhuma mudança no comportamento atual dessa escolha.
 - **FR-011**: O relatório de um assessment MUST NOT exibir o bloco de comparação com benchmark quando a habilitação do tenant estiver desligada — o bloco fica ausente, não apenas sem percentil.
 - **FR-012**: A listagem de coortes e a leitura de uma coorte específica MUST recusar, no servidor, quando a habilitação do tenant que faz a solicitação estiver desligada, com o mesmo motivo usado para recusar contribuição.
+- **FR-013**: A trava de leitura por habilitação (FR-011, FR-012) aplica-se à leitura feita a partir de um tenant do Meridian; MUST NOT restringir o acesso de staff Nebuloz operando pelo back-office.
 
 ### Key Entities
 
