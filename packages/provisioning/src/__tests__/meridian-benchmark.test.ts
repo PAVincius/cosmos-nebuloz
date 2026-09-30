@@ -1,6 +1,10 @@
+import type { PrismaClient } from "@repo/database";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ProvisioningError } from "../errors";
-import { setMeridianBenchmarkEnablement } from "../meridian-benchmark";
+import {
+  type MeridianBenchmarkDb,
+  setMeridianBenchmarkEnablement,
+} from "../meridian-benchmark";
 
 // Benchmark travado por tenant (specs/012): só staff liga, com a referência do
 // aditivo (DPA §2.1) obrigatória para tenant externo, e toda mudança é auditada.
@@ -38,7 +42,18 @@ function makeDb(
 
 const base = { tenantId: "t1", actorUserId: "staff-1", actorName: "Staff" };
 
+// O tipo do escritor é estrutural, mas o client REAL do Prisma (o `platformDb`
+// que o back-office passa) precisa caber nele, com o model da migration do
+// Alicerce. Checado em compilação: se o schema ou o tipo mudarem e deixarem de
+// combinar, `tsc` falha aqui, não em produção.
+type ClientCabeNoTipo = PrismaClient extends MeridianBenchmarkDb ? true : false;
+const clientCabeNoTipo: ClientCabeNoTipo = true;
+
 describe("setMeridianBenchmarkEnablement", () => {
+  it("o client real do Prisma cabe no tipo do escritor (checagem de compilação)", () => {
+    expect(clientCabeNoTipo).toBe(true);
+  });
+
   let db: ReturnType<typeof makeDb>;
   beforeEach(() => {
     db = makeDb();

@@ -399,6 +399,22 @@ async function main() {
   });
   console.log("  ✓ módulo MERIDIAN contratado");
 
+  // Benchmark travado por tenant (specs/012): sem a habilitação ligada, o
+  // tenant nem contribui nem lê o pool. Os assessments de demo com
+  // `benchmarkOptIn: true` e a coorte do M11 só valem com ela ligada. Seed
+  // local (assertLocalDatabaseUrl): em produção quem liga é a Nebuloz, no
+  // back-office, com o aditivo real.
+  await db.meridianBenchmarkEnablement.upsert({
+    where: { tenantId },
+    create: {
+      tenantId,
+      enabled: true,
+      agreementRef: "SEED-DEMO — sem aditivo real",
+    },
+    update: { enabled: true, agreementRef: "SEED-DEMO — sem aditivo real" },
+  });
+  console.log("  ✓ benchmark habilitado (demo)");
+
   const auth = betterAuth({
     database: prismaAdapter(db, { provider: "postgresql" }),
     emailAndPassword: { enabled: true },

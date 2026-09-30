@@ -1,11 +1,11 @@
-import { isBenchmarkEnabled } from "./benchmark-enablement";
+import { type EnablementDb, isBenchmarkEnabled } from "./benchmark-enablement";
 import { MeridianRuleError } from "./guards";
 
 /** Recusa no servidor quando o tenant não tem a habilitação de benchmark
  *  ligada (specs/012). Vale para criar com opt-in e para ler coortes: a Nebuloz
  *  é quem liga, e sem isso o tenant nem contribui nem lê. */
 export async function requireBenchmarkEnabled(
-  db: unknown,
+  db: EnablementDb,
   tenantId: string
 ): Promise<void> {
   if (!(await isBenchmarkEnabled(db, tenantId))) {

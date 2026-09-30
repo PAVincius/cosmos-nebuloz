@@ -4,7 +4,10 @@ import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
 // Sem linha = desligado: tenant novo nasce travado (FR-001).
 const dbWith = (row: { enabled: boolean } | null) => {
   const findUnique = vi.fn().mockResolvedValue(row);
-  return { db: { meridianBenchmarkEnablement: { findUnique } }, findUnique };
+  return {
+    db: { meridianBenchmarkEnablement: { findUnique } } as never,
+    findUnique,
+  };
 };
 
 describe("isBenchmarkEnabled", () => {
