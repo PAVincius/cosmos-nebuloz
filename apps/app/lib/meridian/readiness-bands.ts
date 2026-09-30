@@ -118,6 +118,16 @@ export type AxisReading = {
   confidence: number;
 };
 
+/** Códigos da bateria v3.2 que alimentam os sinais (decisão do Norte). Um
+ *  template sem esses códigos não produz sinal: o traço não dispara e nada
+ *  quebra. */
+export const SIGNAL_CODES = {
+  peopleDistribution: "Q-E03",
+  governancePolicy: "Q-G01",
+  governanceCommittee: "Q-G02",
+  governanceAccessControl: "Q-G03",
+} as const;
+
 /** Sinais de pergunta (0–100), opcionais: sem eles, os traços que dependem de
  *  pergunta específica não disparam. */
 export type ReadinessSignals = {
@@ -152,6 +162,28 @@ export type ReadinessProfile = {
   /** Padrões de score que casaram (no máximo um, por construção). */
   scorePatternMatches: ArchetypeId[];
 };
+
+/** Sinais a partir das respostas: para cada código de `SIGNAL_CODES`, a média do
+ *  score normalizado (0–1, já com `inverted` aplicado) entre os respondentes,
+ *  em 0–100. Código sem resposta não entra no resultado — ausência não é zero. */
+export function signalsFromAnswers(
+  answers: readonly { questionCode: string; normalized: number }[]
+): ReadinessSignals {
+  const signals: ReadinessSignals = {};
+  for (const [key, code] of Object.entries(SIGNAL_CODES) as [
+    keyof ReadinessSignals,
+    string,
+  ][]) {
+    const values = answers
+      .filter((a) => a.questionCode === code)
+      .map((a) => a.normalized);
+    if (values.length > 0) {
+      signals[key] =
+        (values.reduce((sum, v) => sum + v, 0) / values.length) * 100;
+    }
+  }
+  return signals;
+}
 
 // ── Detecção ──────────────────────────────────────────────────────────────────
 

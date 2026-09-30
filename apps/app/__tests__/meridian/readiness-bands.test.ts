@@ -7,6 +7,8 @@ import {
   bandOf,
   PILOT_FLOOR_MIN,
   RELIABILITY_MIN,
+  SIGNAL_CODES,
+  signalsFromAnswers,
 } from "@/lib/meridian/readiness-bands";
 
 // Faixas por eixo e arquétipos (briefing do Andaime, itens 1 e 2). O score é
@@ -259,5 +261,124 @@ describe("entradas incompletas", () => {
     const copia = JSON.stringify(entrada);
     assessReadiness(entrada);
     expect(JSON.stringify(entrada)).toBe(copia);
+  });
+});
+
+// Decisões do Norte (briefing do Andaime): os sinais saem das respostas,
+// presos aos códigos da bateria v3.2, no score normalizado da pergunta.
+describe("signalsFromAnswers — sinais de pergunta a partir das respostas", () => {
+  it("os códigos são os da bateria v3.2", () => {
+    expect(SIGNAL_CODES).toEqual({
+      peopleDistribution: "Q-E03",
+      governancePolicy: "Q-G01",
+      governanceCommittee: "Q-G02",
+      governanceAccessControl: "Q-G03",
+    });
+  });
+
+  it("vira 0–100 a partir do normalizado 0–1, pela média dos respondentes", () => {
+    const s = signalsFromAnswers([
+      { questionCode: "Q-E03", normalized: 0.25 },
+      { questionCode: "Q-E03", normalized: 0.75 },
+      { questionCode: "Q-G01", normalized: 1 },
+    ]);
+    expect(s.peopleDistribution).toBe(50);
+    expect(s.governancePolicy).toBe(100);
+  });
+
+  it("pergunta sem resposta fica sem sinal (não vira zero)", () => {
+    const s = signalsFromAnswers([{ questionCode: "Q-E03", normalized: 0.1 }]);
+    expect(s.peopleDistribution).toBe(10);
+    expect("governancePolicy" in s).toBe(false);
+    expect("governanceCommittee" in s).toBe(false);
+  });
+
+  it("ignora respostas de outros códigos", () => {
+    const s = signalsFromAnswers([
+      { questionCode: "Q-D01", normalized: 0 },
+      { questionCode: "Q-E01", normalized: 0 },
+    ]);
+    expect(s).toEqual({});
+  });
+
+  it("template sem os códigos (lista vazia): sem sinais, nada dispara nem quebra", () => {
+    const signals = signalsFromAnswers([]);
+    expect(signals).toEqual({});
+    const p = assessReadiness(read([50, 50, 50, 50, 50]), signals);
+    expect(p.dominant).toBeNull();
+    expect(p.secondary).toBeNull();
+  });
+
+  it("Campeão isolado dispara com Q-E03 baixa (< 40) e não com 40", () => {
+    const baixa = assessReadiness(
+      read([50, 50, 50, 50, 50]),
+      signalsFromAnswers([{ questionCode: "Q-E03", normalized: 0.39 }])
+    );
+    expect(baixa.dominant).toBe("ISOLATED_CHAMPION");
+    const limite = assessReadiness(
+      read([50, 50, 50, 50, 50]),
+      signalsFromAnswers([{ questionCode: "Q-E03", normalized: 0.4 }])
+    );
+    expect(limite.dominant).toBeNull();
+  });
+
+  it("Governança de papel: Q-G01 alta (≥ 60), Q-G02 e Q-G03 baixas (< 40)", () => {
+    const answers = (g1: number, g2: number, g3: number) => [
+      { questionCode: "Q-G01", normalized: g1 },
+      { questionCode: "Q-G02", normalized: g2 },
+      { questionCode: "Q-G03", normalized: g3 },
+    ];
+    const dispara = assessReadiness(
+      read([50, 50, 50, 50, 50]),
+      signalsFromAnswers(answers(0.6, 0.39, 0.0))
+    );
+    expect(dispara.dominant).toBe("PAPER_GOVERNANCE");
+    // Política em 59: não é alta.
+    expect(
+      assessReadiness(
+        read([50, 50, 50, 50, 50]),
+        signalsFromAnswers(answers(0.59, 0, 0))
+      ).dominant
+    ).toBeNull();
+    // Comitê em 40: não é baixo.
+    expect(
+      assessReadiness(
+        read([50, 50, 50, 50, 50]),
+        signalsFromAnswers(answers(0.9, 0.4, 0))
+      ).dominant
+    ).toBeNull();
+  });
+
+  it("com só parte dos códigos de Governança, Governança de papel não dispara nem quebra", () => {
+    const p = assessReadiness(
+      read([50, 50, 50, 50, 50]),
+      signalsFromAnswers([
+        { questionCode: "Q-G01", normalized: 1 },
+        { questionCode: "Q-G02", normalized: 0 },
+      ])
+    );
+    expect(p.dominant).toBeNull();
+  });
+
+  it("Q-E03 alta não anula o Campeão isolado por confiança de Pessoas < 0,6", () => {
+    const p = assessReadiness(
+      read([50, 50, 50, 50, 50], { PEOPLE: 0.5 }),
+      signalsFromAnswers([{ questionCode: "Q-E03", normalized: 0.9 }])
+    );
+    expect(p.dominant).toBe("ISOLATED_CHAMPION");
+  });
+
+  it("Campeão isolado vem antes de Governança de papel (prioridade do Norte)", () => {
+    const p = assessReadiness(
+      read([50, 50, 50, 50, 50]),
+      signalsFromAnswers([
+        { questionCode: "Q-E03", normalized: 0 },
+        { questionCode: "Q-G01", normalized: 1 },
+        { questionCode: "Q-G02", normalized: 0 },
+        { questionCode: "Q-G03", normalized: 0 },
+      ])
+    );
+    expect(p.dominant).toBe("ISOLATED_CHAMPION");
+    expect(p.secondary).toBe("PAPER_GOVERNANCE");
   });
 });
