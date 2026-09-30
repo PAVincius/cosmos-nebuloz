@@ -21,6 +21,12 @@ describe("ok / err", () => {
     expect(err("bad input")).toEqual({ ok: false, error: "bad input" });
   });
 
+  // `code: undefined` vira "$undefined" na serialização das server actions e
+  // chega ao cliente como lixo: sem code, a chave não existe.
+  it("err sem code não carrega a chave code", () => {
+    expect(Object.keys(err("bad input"))).toEqual(["ok", "error"]);
+  });
+
   it("err includes optional code", () => {
     expect(err("not found", "NOT_FOUND")).toEqual({
       ok: false,
@@ -131,6 +137,66 @@ describe("safeAction", () => {
       Promise.reject(new Error("db failure"))
     );
     expect(result).toEqual({ ok: false, error: "db failure" });
+  });
+
+  it("passa a regra nomeada do erro de domínio como code", async () => {
+    class RuleError extends Error {
+      readonly rule = "benchmark.not-enabled";
+    }
+    const result = await safeAction(() =>
+      Promise.reject(new RuleError("O benchmark não está habilitado."))
+    );
+    expect(result).toEqual({
+      ok: false,
+      error: "O benchmark não está habilitado.",
+      code: "benchmark.not-enabled",
+    });
+  });
+
+  // Defesa em profundidade (Vigia): só um identificador `dominio.motivo` vira
+  // code. Texto livre, e-mail, id ou valor longo numa `rule` não sai do servidor.
+  it("rule que não é identificador não vira code", async () => {
+    for (const rule of [
+      "texto livre com espaço",
+      "ana@empresa.com.br",
+      "a".repeat(81),
+      "",
+      "1inicia-com-digito",
+    ]) {
+      class RuleError extends Error {
+        readonly rule = rule;
+      }
+      const result = await safeAction(() =>
+        Promise.reject(new RuleError("mensagem"))
+      );
+      expect(Object.keys(result), rule).toEqual(["ok", "error"]);
+    }
+  });
+
+  it("rule que não é string não vira code", async () => {
+    const result = await safeAction(() =>
+      Promise.reject(Object.assign(new Error("m"), { rule: { x: 1 } }))
+    );
+    expect(Object.keys(result)).toEqual(["ok", "error"]);
+  });
+
+  it("aceita os formatos reais de regra (ponto, hífen, camelCase)", async () => {
+    for (const rule of [
+      "benchmark.not-enabled",
+      "ack.justificationRequired",
+      "control.file.too-large",
+    ]) {
+      class RuleError extends Error {
+        readonly rule = rule;
+      }
+      const result = await safeAction(() => Promise.reject(new RuleError("m")));
+      expect(!result.ok && result.code).toBe(rule);
+    }
+  });
+
+  it("erro sem regra nomeada não ganha chave code", async () => {
+    const result = await safeAction(() => Promise.reject(new Error("boom")));
+    expect(Object.keys(result)).toEqual(["ok", "error"]);
   });
 
   it("returns err result on thrown ZodError", async () => {

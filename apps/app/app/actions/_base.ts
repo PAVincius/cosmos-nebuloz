@@ -15,7 +15,9 @@ export function ok<T>(data: T): Ok<T> {
   return { ok: true, data };
 }
 export function err(error: string, code?: string): Err {
-  return { ok: false, error, code };
+  // Sem `code`, a chave não existe: `code: undefined` vira "$undefined" na
+  // serialização das server actions e chega ao cliente como lixo.
+  return code === undefined ? { ok: false, error } : { ok: false, error, code };
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
@@ -74,6 +76,20 @@ export function toActionError(error: unknown): string {
   return "Erro inesperado";
 }
 
+/** Só um identificador `dominio.motivo` (letras, dígitos, ponto, hífen e
+ *  sublinhado, começando por letra, até 80) é aceito como code. Texto livre, e-mail
+ *  ou id numa `rule` não sai do servidor: o code é para o cliente distinguir a
+ *  recusa, nunca para carregar dado. */
+const RULE_CODE = /^[A-Za-z][\w.-]{0,79}$/;
+
+/** Regra de domínio nomeada do erro (`MeridianRuleError.rule`, etc.), quando há.
+ *  Vai no `code` do Result para o cliente distinguir a recusa pela regra, não
+ *  pelo texto da mensagem. */
+function ruleOf(error: unknown): string | undefined {
+  const rule = (error as { rule?: unknown } | null)?.rule;
+  return typeof rule === "string" && RULE_CODE.test(rule) ? rule : undefined;
+}
+
 // Safe wrapper — returns Result instead of throwing
 export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
   try {
@@ -82,7 +98,7 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
     if (!(e instanceof z.ZodError)) {
       log.error("[safeAction]", { error: String(e) });
     }
-    return err(toActionError(e));
+    return err(toActionError(e), ruleOf(e));
   }
 }
 
