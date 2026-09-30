@@ -45,7 +45,7 @@
 
 4.3. **Como os prazos são cumpridos.** Os prazos desta cláusula e da cláusula 5 são cumpridos por **procedimento manual, com responsável nomeado**, e valem desde a assinatura. Mecanismos automáticos que a plataforma possua (eliminação programada da evidência 90 dias após o fechamento do diagnóstico; execução automática de pedido de eliminação de titular) **não são compromisso da Nebuloz** até que ela comunique ao Cliente, por escrito, que foram verificados em produção; até lá, a Nebuloz entrega o mesmo resultado por procedimento manual, nos mesmos prazos.
 
-4.4. [[DECISÃO CEO: só com "sim" à cláusula C8 do memo de 2026-09-29; sem ele, apagar.]] O Cliente instrui a Nebuloz a executar o pedido de eliminação de titular sem conta que lhe tenha sido encaminhado, se o Cliente não se manifestar em 10 (dez) dias úteis do encaminhamento, salvo dado que o Cliente informe, no mesmo prazo, ter de reter por obrigação legal ou exercício regular de direitos.
+4.4. [[Adotada como provisória em 2026-09-30, **a confirmar pelo CEO**; sem a confirmação, apagar. A Nebuloz avisa o Cliente no encaminhamento e de novo no 8º dia útil, antes de executar.]] O Cliente instrui a Nebuloz a executar o pedido de eliminação de titular sem conta que lhe tenha sido encaminhado, se o Cliente não se manifestar em 10 (dez) dias úteis do encaminhamento, salvo dado que o Cliente informe, no mesmo prazo, ter de reter por obrigação legal ou exercício regular de direitos.
 
 ## 5. Encerramento
 

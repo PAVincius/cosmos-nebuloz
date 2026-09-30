@@ -272,8 +272,11 @@ sessão. Para eles, o caminho é o Cliente, como controlador, receber o pedido e
 instruir a Nebuloz; o canal de §9.1 existe para levá-los até ele. É exatamente
 por isso que o enquadramento da §1 importa.
 
-**9.3 Instrução prévia para eliminação de respondente.** [[DECISÃO CEO: só entra
-com "sim" à cláusula C8 do memo de 2026-09-29; sem ele, apagar esta cláusula.]]
+**9.3 Instrução prévia para eliminação de respondente.** [[Adotada como
+provisória em 2026-09-30, **a confirmar pelo CEO** (cláusula C8 do memo de
+2026-09-29; `2026-09-30-decisoes-provisorias-encarregado-e-c8.md` §2). Sem a
+confirmação, apagar esta cláusula. A Nebuloz avisa o Cliente no encaminhamento e
+de novo no 8º dia útil, antes de executar.]]
 O Cliente instrui a Nebuloz, desde já e por escrito, a executar o pedido de
 eliminação de dados de titular sem conta que a Nebuloz lhe tenha encaminhado nos
 termos da cláusula 9.1, caso o Cliente não se manifeste em **10 (dez) dias
@@ -340,7 +343,8 @@ para cumprir a §10. É regido pela lei brasileira, em particular pela Lei
 | Zero-retention dos provedores de LLM (§2) | Contratual |
 | Canal de incidente (§8) e foro (§12) | Nebuloz |
 | Endereço do canal público de titular, citado em §9.1 | Decidido pelo CEO em 2026-09-29 (`privacy@nebuloz.com`); falta confirmar que a caixa existe e é lida, e publicar |
-| Encarregado, nomeado junto ao canal | CEO — em aberto |
+| Encarregado: dispensa provisória (Res. CD/ANPD 2/2022, art. 11), a confirmar F1 a F3 | CEO e contador — ver `2026-09-30-decisoes-provisorias-encarregado-e-c8.md` |
+| C8 (§9.3) provisória | CEO confirma; jurídico valida o prazo |
 | Validar os prazos de §5.1, §9.2 e §10 como redigidos | Jurídico |
 | Benchmark do Meridian desligado (§2.1) e controle no produto | CEO (decisão); Norte/Bussola (controle) |
 | Instrução prévia de eliminação de respondente (§9.3) | CEO (decisão) e jurídico |
