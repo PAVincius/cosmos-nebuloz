@@ -23,7 +23,6 @@ import type {
   AxisScoreView,
 } from "@/app/(meridian)/actions/assessments";
 import { registerOverride } from "@/app/(meridian)/actions/overrides";
-import { requestEvidenceUrl } from "@/app/(meridian)/actions/report";
 import {
   type DivergenceRow,
   getDivergence,
@@ -41,6 +40,7 @@ import {
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
+import { EvidenceButton } from "./evidence-button";
 import { RationaleHint } from "./rationale-hint";
 
 const RATIONALE_MIN = 20;
@@ -50,57 +50,6 @@ const STATUS_META: Record<string, [Tone, string]> = {
   CONTESTED: ["amber", "Contestado"],
   OVERRIDDEN: ["purple", "Override"],
 };
-
-/** Abre a evidência que o respondente anexou. URL assinada de curta duração
- *  — `requestEvidenceUrl` grava a trilha ANTES de emitir, então cada clique
- *  é uma leitura auditada, não uma URL reaproveitável. */
-function EvidenceButton({
-  evidenceId,
-  fileName,
-}: {
-  evidenceId: string;
-  fileName: string;
-}) {
-  const [busy, setBusy] = useState(false);
-
-  const open = async () => {
-    // A aba abre NO clique, em branco — depois do await, o browser não conta
-    // mais como gesto do usuário e Chrome/Safari bloqueiam o popup. A URL
-    // assinada só existe depois da volta do servidor; a aba só navega então.
-    //
-    // Sem "noopener" nos features: pela spec, window.open com "noopener"
-    // devolve null em todo browser — não dá pra ter a referência da aba
-    // (pra navegar depois) e já cortar o opener ao mesmo tempo. Corta o
-    // opener na mão, que é o que "noopener" faz por baixo.
-    const tab = window.open("", "_blank");
-    if (tab) {
-      tab.opener = null;
-    }
-    setBusy(true);
-    const res = await runWithToast(() => requestEvidenceUrl({ evidenceId }), {
-      loading: "Abrindo evidência…",
-      success: "Evidência aberta — acesso registrado na trilha.",
-    });
-    setBusy(false);
-    if (res.ok && tab) {
-      tab.location.href = res.data.url;
-    } else {
-      tab?.close();
-    }
-  };
-
-  return (
-    <Button
-      disabled={busy}
-      icon="paperclip"
-      onClick={open}
-      size="sm"
-      variant="ghost"
-    >
-      {fileName}
-    </Button>
-  );
-}
 
 /** Divergência lado a lado. Carrega sob demanda: só o eixo contestado precisa
  *  dela, e cada leitura é acesso a conteúdo de evidência. */
@@ -273,8 +222,8 @@ export function DivergencePanel({
                     {ans.evidence.map((e) => (
                       <EvidenceButton
                         evidenceId={e.id}
-                        fileName={e.fileName}
                         key={e.id}
+                        label={e.fileName}
                       />
                     ))}
                   </div>

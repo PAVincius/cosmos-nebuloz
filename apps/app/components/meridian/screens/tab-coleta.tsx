@@ -33,6 +33,7 @@ import {
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
+import { EvidenceList } from "./evidence-list";
 
 /**
  * Guarda de fechamento: enquanto `guarded`, marca o `ModalHost` como sujo
@@ -1035,7 +1036,7 @@ export default function ColetaTab({
                   fontWeight: 500,
                 }}
               >
-                {a.evidence} evidência(s) anexada(s)
+                <EvidenceList assessmentId={a.id} total={a.evidence} />
               </div>
             </div>
           </div>

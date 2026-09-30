@@ -2,6 +2,7 @@
 
 import type { MeridianAxis } from "@repo/database";
 import { database, withTenantDb } from "@repo/database";
+import { hasMeridianPermission } from "@repo/rbac";
 import { MERIDIAN_EVIDENCE_BUCKET, storageClient } from "@repo/storage";
 import { z } from "zod";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
@@ -12,9 +13,11 @@ import {
   readCohort,
 } from "@/lib/meridian/benchmark";
 import { compositeOf, finalOf } from "@/lib/meridian/composite";
+import { evidenceLabel } from "@/lib/meridian/evidence-label";
 import { isEvidenceRetentionEliminated } from "@/lib/meridian/evidence-retention";
 import {
   MeridianRuleError,
+  requireMeridianContext,
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
 import { cuid, type Result, safeAction } from "../../actions/_base";
@@ -255,6 +258,61 @@ export async function getReassessmentDiff(
 }
 
 const EvidenceSchema = z.object({ evidenceId: cuid });
+
+export type EvidenceItem = {
+  id: string;
+  label: string;
+  /** Objeto já eliminado pela retenção: a tela não oferece abrir. */
+  eliminated: boolean;
+};
+
+const EvidenceListSchema = z.object({ assessmentId: cuid });
+
+/**
+ * Evidências do assessment inteiro, para Coleta e para o gap (mesmo escopo do
+ * "N anexos" que já existia). Quem não tem `evidence.read` recebe só o total:
+ * sem id nem nome de arquivo, a tela não tem o que mostrar. Listar não grava
+ * trilha; a leitura do arquivo (`requestEvidenceUrl`) grava.
+ */
+export async function listAssessmentEvidence(
+  raw: z.input<typeof EvidenceListSchema>
+): Promise<Result<{ total: number; items: EvidenceItem[] }>> {
+  return safeAction(async () => {
+    const ctx = await requireMeridianContext();
+    const input = EvidenceListSchema.parse(raw);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const a = await db.meridianAssessment.findFirst({
+        where: { id: input.assessmentId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!a) {
+        throw new MeridianRuleError(
+          "assessment.not-found",
+          "Assessment não encontrado nesta organização."
+        );
+      }
+      const rows = await db.meridianEvidence.findMany({
+        where: { tenantId: ctx.tenantId, assessmentId: a.id },
+        orderBy: { createdAt: "asc" },
+        select: { id: true, fileName: true, storagePath: true },
+      });
+      const canRead = hasMeridianPermission(ctx.meridianRole, "evidence.read");
+      return {
+        total: rows.length,
+        items: canRead
+          ? rows.map(
+              (e): EvidenceItem => ({
+                id: e.id,
+                label: evidenceLabel(e),
+                eliminated: isEvidenceRetentionEliminated(e.storagePath),
+              })
+            )
+          : [],
+      };
+    });
+  });
+}
 
 /**
  * URL assinada de curta duração para baixar uma evidência.

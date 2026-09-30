@@ -16,6 +16,13 @@ import type { GapRow } from "../../app/(meridian)/actions/gaps";
 
 const listGapRegisterMock = vi.fn();
 
+// A lista de evidências (A3) chama a action de leitura; sem o mock o teste
+// carregaria o banco no jsdom.
+vi.mock("@/app/(meridian)/actions/report", () => ({
+  listAssessmentEvidence: () =>
+    Promise.resolve({ ok: true, data: { total: 0, items: [] } }),
+  requestEvidenceUrl: vi.fn(),
+}));
 vi.mock("@/app/(meridian)/actions/gaps", () => ({
   listGapRegister: (...args: unknown[]) => listGapRegisterMock(...args),
 }));
@@ -29,6 +36,7 @@ const gap = (
 ): GapRow => ({
   id: `id-${code}`,
   code,
+  assessmentId: "clx0000000000000000000as4",
   assessmentCode: "AS-104",
   orgName: "Vanta Saúde",
   axis: "DATA",
