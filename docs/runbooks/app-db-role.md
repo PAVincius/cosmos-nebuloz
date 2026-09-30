@@ -74,6 +74,18 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT USAGE, SELECT ON SEQUENCES TO cosmos_app;
 ```
 
+**Exceção: `MeridianBenchmarkEnablement` é só leitura para `cosmos_app`.** A migration
+`20260929030000_meridian_benchmark_enablement` retira a escrita dela do papel do app
+(quem liga o benchmark é a plataforma). O `GRANT ... ON ALL TABLES` acima a devolve; logo
+depois dele, rode:
+
+```sql
+REVOKE INSERT, UPDATE, DELETE ON "MeridianBenchmarkEnablement" FROM cosmos_app;
+```
+
+Quando o papel de plataforma (o de `platformDb`, ADR-0013) for criado, ele recebe
+`SELECT, INSERT, UPDATE` nessa tabela e `BYPASSRLS` para escrever por tenant.
+
 Não conceda `TRUNCATE`, `REFERENCES`, `TRIGGER`, `DROP`, `CREATE`, ou qualquer DDL — a
 aplicação em runtime nunca precisa disso, e cada permissão a mais é superfície de ataque
 em caso de SQL injection ou de um bug que execute SQL não confiável.

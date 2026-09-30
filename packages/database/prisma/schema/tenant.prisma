@@ -224,6 +224,7 @@ model Tenant {
   meridianGapDependencies   MeridianGapDependency[]
   meridianPlanItems         MeridianPlanItem[]
   meridianGapPromotions     MeridianGapPromotion[]
+  meridianBenchmark         MeridianBenchmarkEnablement?
   // Signal — medição de adoção e valor de iniciativas de IA
   signalMembers             SignalMember[]
   signalSettings            SignalSettings?

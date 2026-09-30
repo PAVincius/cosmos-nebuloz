@@ -12,7 +12,8 @@
 //     entityType = "meridian.<entidade>", diff = Array<[campo, antes, depois]>.
 //   • Toda tabela tem `tenantId` — exceto as duas de benchmark, que são globais
 //     e anônimas por contrato. É por isso que nenhuma coluna delas identifica
-//     organização.
+//     organização. `MeridianBenchmarkEnablement` tem `tenantId` (é do tenant,
+//     não do pool) e por isso tem RLS.
 
 // ── Enums ─────────────────────────────────────────────────────────────────────
 
@@ -125,6 +126,21 @@ model MeridianMembership {
   @@unique([tenantId, userId])
   @@index([tenantId])
   @@index([userId])
+}
+
+/// Habilitação do benchmark por tenant (D-29 do CEO). Sem linha = desligado:
+/// tabela nova, sem backfill. `agreementRef` referencia o aditivo ao DPA §2.1
+/// que autoriza a contribuição ao pool; nulo só para tenant interno (regra na
+/// aplicação, não no banco). Quem ligou/desligou e quando vive no `AuditLog`
+/// (entityType "meridian.benchmark-enablement"), não em coluna.
+model MeridianBenchmarkEnablement {
+  tenantId     String   @id
+  enabled      Boolean  @default(false)
+  agreementRef String?
+  updatedById  String?
+  updatedAt    DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 /// Contador por tenant para códigos legíveis (AS-104, G-01). Sequência global
