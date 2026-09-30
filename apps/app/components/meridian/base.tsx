@@ -23,6 +23,9 @@
 // definidos sob a raiz de cada módulo — por isso `meridian.css` existe e por
 // isso a casca do Meridian marca `.meridian-root`.
 
+import type { ReactNode } from "react";
+import { ModalProvider as CharterModalProvider } from "@/components/charter/modal";
+
 // biome-ignore lint/performance/noBarrelFile: ponto único e deliberado de acoplamento com o Charter — ver comentário acima
 export { BackLink } from "@/components/charter/back-link";
 export {
@@ -57,11 +60,7 @@ export {
 // Meridian. Marca o `ModalHost` como sujo pra Esc/clique-fora perguntarem
 // antes de fechar, em vez de fechar direto (mesmo mecanismo do Charter).
 export { useDirty } from "@/components/charter/form-kit";
-export {
-  ModalProvider,
-  ModalShell,
-  useModal,
-} from "@/components/charter/modal";
+export { ModalShell, useModal } from "@/components/charter/modal";
 // Busca de tela com os três estados obrigatórios (loading / vazio / erro) e o
 // host de modal. Mesma razão do reexport acima — o Charter chegou primeiro, o
 // comportamento é idêntico, e uma segunda cópia seria um segundo lugar para
@@ -70,3 +69,14 @@ export {
   type ScreenState,
   useCharterData as useMeridianData,
 } from "@/components/charter/use-charter-data";
+
+/** O modal sai da árvore (portal em <body>) e perde o `.meridian-root`, onde
+ *  vivem `--accent`, os anéis de foco e as classes `.btn`. Sem o escopo, o
+ *  Badge de tom accent caía na cor herdada (contraste 1,1:1). */
+export function ModalProvider({ children }: { children: ReactNode }) {
+  return (
+    <CharterModalProvider scopeClassName="meridian-root">
+      {children}
+    </CharterModalProvider>
+  );
+}
