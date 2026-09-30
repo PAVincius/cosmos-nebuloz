@@ -23,6 +23,7 @@ import {
   listTemplates,
   type TemplateOption,
 } from "@/app/(meridian)/actions/assessments";
+import { getBenchmarkEnablement } from "@/app/(meridian)/actions/benchmark";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
 import { finalOf, scoreTone } from "@/lib/meridian/composite";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
@@ -62,7 +63,7 @@ const dateBR = (iso: string) =>
     year: "numeric",
   });
 
-function NewAssessmentModal({
+export function NewAssessmentModal({
   onClose,
   onCreated,
 }: {
@@ -79,7 +80,16 @@ function NewAssessmentModal({
   const [templateId, setTemplateId] = useState("");
   const [deadline, setDeadline] = useState("");
   const [benchmarkOptIn, setBenchmarkOptIn] = useState(false);
+  // Travado por tenant (specs/012): a caixa só existe com a habilitação ligada
+  // pela Nebuloz. Carregando ou falha de leitura = travado.
+  const [benchmarkEnabled, setBenchmarkEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    getBenchmarkEnablement()
+      .then((res) => setBenchmarkEnabled(res.ok && res.data.enabled))
+      .catch(() => setBenchmarkEnabled(false));
+  }, []);
 
   useEffect(() => {
     listTemplates().then((res) => {
@@ -111,7 +121,7 @@ function NewAssessmentModal({
           sizeBand,
           templateId,
           deadline,
-          benchmarkOptIn,
+          benchmarkOptIn: benchmarkEnabled && benchmarkOptIn,
         }),
       {
         loading: "Criando assessment…",
@@ -197,23 +207,25 @@ function NewAssessmentModal({
             value={deadline}
           />
         </Field>
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 12.5,
-            fontWeight: 600,
-            color: "var(--ink-muted)",
-          }}
-        >
-          <input
-            checked={benchmarkOptIn}
-            onChange={(e) => setBenchmarkOptIn(e.target.checked)}
-            type="checkbox"
-          />
-          Contribuir para o pool de benchmark (anônimo, reversível)
-        </label>
+        {benchmarkEnabled && (
+          <label
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: "var(--ink-muted)",
+            }}
+          >
+            <input
+              checked={benchmarkOptIn}
+              onChange={(e) => setBenchmarkOptIn(e.target.checked)}
+              type="checkbox"
+            />
+            Contribuir para o pool de benchmark (anônimo, reversível)
+          </label>
+        )}
       </div>
     </ModalShell>
   );

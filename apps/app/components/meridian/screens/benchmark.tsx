@@ -15,6 +15,7 @@ import {
 import { useCallback } from "react";
 import {
   type CohortRow,
+  getBenchmarkEnablement,
   listCohorts,
 } from "@/app/(meridian)/actions/benchmark";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
@@ -30,16 +31,54 @@ import {
 
 const COLS = "1.4fr 80px 1.8fr 160px";
 
+type BenchmarkView = { enabled: boolean; rows: CohortRow[] };
+
 export default function BenchmarkScreen() {
-  const fetcher = useCallback(() => listCohorts(), []);
+  // Sem a habilitação de benchmark do tenant (specs/012) a tela nem pede as
+  // coortes: o servidor recusaria, e o motivo é este aviso.
+  const fetcher = useCallback(async () => {
+    const enablement = await getBenchmarkEnablement();
+    if (!enablement.ok) {
+      return enablement;
+    }
+    if (!enablement.data.enabled) {
+      return { ok: true as const, data: { enabled: false, rows: [] } };
+    }
+    const cohorts = await listCohorts();
+    return cohorts.ok
+      ? { ok: true as const, data: { enabled: true, rows: cohorts.data } }
+      : cohorts;
+  }, []);
   const { data, loading, error, reload } =
-    useMeridianData<CohortRow[]>(fetcher);
+    useMeridianData<BenchmarkView>(fetcher);
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
   }
 
-  const rows = data ?? [];
+  if (!loading && data && !data.enabled) {
+    return (
+      <div
+        className="fade-in"
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <PageHeader
+          eyebrow="Diagnose · dado agregado"
+          subtitle="O pool de benchmark é habilitado pela Nebuloz, organização a organização, com o aditivo contratual."
+          title="Benchmark pool"
+          tone="accent"
+        />
+        <SmartEmptyState
+          icon="ban"
+          subtitle="Esta organização não tem o benchmark habilitado, então não contribui nem lê o pool. Para habilitar, fale com a Nebuloz."
+          title="Benchmark não habilitado"
+          tone="amber"
+        />
+      </div>
+    );
+  }
+
+  const rows = data?.rows ?? [];
   const available = rows.filter((c) => !c.withheld).length;
   const withheld = rows.length - available;
 

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { meridianStorageState } from "./setup/auth.setup";
+import { setBenchmarkEnabled } from "./setup/meridian-benchmark";
 
 /**
  * E2E — Meridian V1 (Diagnose).
@@ -202,5 +203,51 @@ test.describe("Meridian · link do respondente", () => {
     await expect(page.locator("body")).not.toContainText(
       /expirado em|revogado/
     );
+  });
+});
+
+// Benchmark travado por tenant (specs/012). O seed deixa o tenant HABILITADO
+// (é o que o M11 acima precisa); aqui a habilitação é desligada de propósito
+// para provar que a caixa some, que o pool avisa em vez de listar coortes e
+// que o relatório perde o bloco. Serial e com restauração no fim: o tenant é
+// compartilhado com as outras suítes.
+test.describe("Meridian · benchmark travado por tenant @meridian", () => {
+  test.use({ storageState: meridianStorageState("consultant") });
+  test.describe.configure({ mode: "serial" });
+
+  test.afterAll(async () => {
+    await setBenchmarkEnabled(true);
+  });
+
+  test("com a habilitação desligada: pool avisa e a caixa de opt-in some", async ({
+    page,
+  }) => {
+    await setBenchmarkEnabled(false);
+
+    await page.goto("/meridian/benchmark");
+    await expect(page.getByText("Benchmark não habilitado")).toBeVisible();
+    await expect(page.getByText("Coortes no pool")).toHaveCount(0);
+
+    await page.goto("/meridian");
+    await page.getByRole("button", { name: /Novo assessment/ }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(
+      page.getByText(/Contribuir para o pool de benchmark/)
+    ).toHaveCount(0);
+  });
+
+  test("com a habilitação ligada: a caixa aparece e o pool lista as coortes", async ({
+    page,
+  }) => {
+    await setBenchmarkEnabled(true);
+
+    await page.goto("/meridian/benchmark");
+    await expect(page.getByText("Coortes no pool")).toBeVisible();
+
+    await page.goto("/meridian");
+    await page.getByRole("button", { name: /Novo assessment/ }).click();
+    await expect(
+      page.getByLabel(/Contribuir para o pool de benchmark/)
+    ).toBeVisible();
   });
 });

@@ -8,6 +8,7 @@ import type {
 import { withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { requireBenchmarkEnabled } from "@/lib/meridian/benchmark-guard";
 import { compositeOf } from "@/lib/meridian/composite";
 import {
   MeridianRuleError,
@@ -385,6 +386,12 @@ export async function createAssessment(
           "template.not-found",
           "Versão de template não encontrada nesta organização."
         );
+      }
+
+      // Travado por tenant (specs/012): opt-in só com a habilitação ligada
+      // pela Nebuloz. A tela esconde a caixa; aqui é onde a regra vale.
+      if (input.benchmarkOptIn) {
+        await requireBenchmarkEnabled(db, ctx.tenantId);
       }
 
       const code = await nextCode({

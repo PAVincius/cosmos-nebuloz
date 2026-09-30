@@ -14,6 +14,7 @@ const h = vi.hoisted(() => ({
   cohortFindUnique: vi.fn(),
   evidenceFindFirst: vi.fn(),
   createSignedUrl: vi.fn(),
+  enablementFindUnique: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -48,6 +49,7 @@ vi.mock("@repo/database", () => ({
       meridianAssessment: { findFirst: h.assessmentFindFirst },
       meridianEvidence: { findFirst: h.evidenceFindFirst },
       auditLog: { findMany: h.auditFindMany, create: h.auditCreate },
+      meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
     }),
   database: {
     meridianBenchmarkCohort: { findUnique: h.cohortFindUnique },
@@ -118,6 +120,7 @@ beforeEach(() => {
   h.auditFindMany.mockResolvedValue([]);
   h.auditCreate.mockResolvedValue({});
   h.cohortFindUnique.mockResolvedValue(null);
+  h.enablementFindUnique.mockResolvedValue({ enabled: true });
   h.createSignedUrl.mockResolvedValue({
     data: { signedUrl: "https://x/y" },
     error: null,
@@ -137,7 +140,7 @@ describe("getReport", () => {
 
   it("retém a coorte inexistente sem inventar comparação", async () => {
     const res = await getReport({ assessmentId: AS_ID });
-    expect(res.ok && res.data.cohort.withheld).toBe(true);
+    expect(res.ok && res.data.cohort?.withheld).toBe(true);
     expect(JSON.stringify(res)).not.toContain("p50");
   });
 
@@ -148,7 +151,45 @@ describe("getReport", () => {
       percentiles: BANDS,
     });
     const res = await getReport({ assessmentId: AS_ID });
-    expect(res.ok && res.data.cohort.withheld).toBe(false);
+    expect(res.ok && res.data.cohort?.withheld).toBe(false);
+  });
+
+  // Benchmark travado por tenant, lado da leitura (specs/012, decisão do CEO de
+  // 29/09): sem habilitação o tenant também não lê — o bloco some do relatório.
+  it("habilitação desligada: o relatório vem sem o bloco de benchmark", async () => {
+    h.enablementFindUnique.mockResolvedValue({ enabled: false });
+    h.cohortFindUnique.mockResolvedValue({
+      cohortKey: "saude · 200–1.000",
+      n: 11,
+      percentiles: BANDS,
+    });
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.cohort).toBeNull();
+    expect(h.cohortFindUnique).not.toHaveBeenCalled();
+    expect(JSON.stringify(res)).not.toMatch(/p50|saude · 200/);
+    expect(res.ok && res.data.axes).toHaveLength(1);
+  });
+
+  it("tenant sem linha de habilitação: também sem o bloco", async () => {
+    h.enablementFindUnique.mockResolvedValue(null);
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.cohort).toBeNull();
+    expect(h.cohortFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("tenant interno com a habilitação ligada lê normal", async () => {
+    h.requirePerm.mockResolvedValue({ ...CTX, tenantId: "nebuloz-interno" });
+    h.enablementFindUnique.mockResolvedValue({ enabled: true });
+    h.cohortFindUnique.mockResolvedValue({
+      cohortKey: "saude · 200–1.000",
+      n: 11,
+      percentiles: BANDS,
+    });
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.cohort?.withheld).toBe(false);
+    expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
+      tenantId: "nebuloz-interno",
+    });
   });
 
   it("exige permissão de leitura de relatório", async () => {

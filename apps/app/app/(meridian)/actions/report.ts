@@ -12,6 +12,7 @@ import {
   cohortKeyOf,
   readCohort,
 } from "@/lib/meridian/benchmark";
+import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
 import { compositeOf, finalOf } from "@/lib/meridian/composite";
 import { evidenceLabel } from "@/lib/meridian/evidence-label";
 import { isEvidenceRetentionEliminated } from "@/lib/meridian/evidence-retention";
@@ -44,7 +45,9 @@ export type Report = {
   templateVersion: string;
   composite: number | null;
   axes: ReportAxis[];
-  cohort: CohortRead;
+  /** `null` quando o tenant não tem a habilitação de benchmark (specs/012):
+   *  o bloco some do relatório, sem coorte nem bandas. */
+  cohort: CohortRead | null;
   topGaps: {
     code: string;
     statement: string;
@@ -93,10 +96,11 @@ export async function getReport(
         take: 8,
         select: { createdAt: true, action: true, metadata: true },
       });
-      return { a, trail };
+      const benchmarkEnabled = await isBenchmarkEnabled(db, ctx.tenantId);
+      return { a, trail, benchmarkEnabled };
     });
 
-    const { a, trail } = base;
+    const { a, trail, benchmarkEnabled } = base;
     const latestOverride = new Map<MeridianAxis, string>();
     for (const o of a.overrides) {
       if (!latestOverride.has(o.axis)) {
@@ -122,18 +126,23 @@ export async function getReport(
       }
     );
 
-    const cohortKey = cohortKeyOf(a.sector, a.sizeBand);
-    const cohortRow = await database.meridianBenchmarkCohort.findUnique({
-      where: { cohortKey },
-      select: { cohortKey: true, n: true, percentiles: true },
-    });
-    const cohort = cohortRow
-      ? readCohort({
-          cohortKey: cohortRow.cohortKey,
-          n: cohortRow.n,
-          bands: bandsFrom(cohortRow.percentiles),
-        })
-      : { cohortKey, n: 0, withheld: true as const };
+    // Sem a habilitação de benchmark o tenant também não lê (specs/012): o
+    // bloco some, e a coorte nem é consultada.
+    let cohort: CohortRead | null = null;
+    if (benchmarkEnabled) {
+      const cohortKey = cohortKeyOf(a.sector, a.sizeBand);
+      const cohortRow = await database.meridianBenchmarkCohort.findUnique({
+        where: { cohortKey },
+        select: { cohortKey: true, n: true, percentiles: true },
+      });
+      cohort = cohortRow
+        ? readCohort({
+            cohortKey: cohortRow.cohortKey,
+            n: cohortRow.n,
+            bands: bandsFrom(cohortRow.percentiles),
+          })
+        : { cohortKey, n: 0, withheld: true as const };
+    }
 
     return {
       assessmentCode: a.code,

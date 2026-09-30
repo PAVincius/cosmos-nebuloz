@@ -273,7 +273,8 @@ export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
   }
 
   const r = data;
-  const bands = r.cohort.withheld ? null : r.cohort.bands;
+  const cohort = r.cohort;
+  const bands = cohort && !cohort.withheld ? cohort.bands : null;
 
   return (
     <div
@@ -427,78 +428,80 @@ export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
           />
         </SectionCard>
 
-        <SectionCard
-          bodyStyle={{ display: "flex", flexDirection: "column", gap: 13 }}
-          icon="activity"
-          subtitle={
-            r.cohort.withheld
-              ? undefined
-              : `n = ${r.cohort.n} organizações · banda p25–p75, traço = mediana`
-          }
-          title={`Benchmark — ${r.cohort.cohortKey}`}
-          tone={r.cohort.withheld ? "amber" : "accent"}
-        >
-          {r.cohort.withheld ? (
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                alignItems: "flex-start",
-                padding: "14px 16px",
-                borderRadius: "var(--r-md)",
-                background: "var(--amber-soft)",
-                border: "1px solid rgba(var(--amber-rgb),.35)",
-              }}
-            >
-              <Icon
-                name="ban"
-                size={17}
+        {cohort && (
+          <SectionCard
+            bodyStyle={{ display: "flex", flexDirection: "column", gap: 13 }}
+            icon="activity"
+            subtitle={
+              cohort.withheld
+                ? undefined
+                : `n = ${cohort.n} organizações · banda p25–p75, traço = mediana`
+            }
+            title={`Benchmark — ${cohort.cohortKey}`}
+            tone={cohort.withheld ? "amber" : "accent"}
+          >
+            {cohort.withheld ? (
+              <div
                 style={{
-                  color: "var(--amber-text)",
-                  flexShrink: 0,
-                  marginTop: 1,
+                  display: "flex",
+                  gap: 12,
+                  alignItems: "flex-start",
+                  padding: "14px 16px",
+                  borderRadius: "var(--r-md)",
+                  background: "var(--amber-soft)",
+                  border: "1px solid rgba(var(--amber-rgb),.35)",
                 }}
-              />
-              <div>
-                <p
+              >
+                <Icon
+                  name="ban"
+                  size={17}
                   style={{
-                    margin: "0 0 4px",
-                    fontSize: 13,
-                    fontWeight: 800,
                     color: "var(--amber-text)",
+                    flexShrink: 0,
+                    marginTop: 1,
                   }}
-                >
-                  Comparação retida
-                </p>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 12,
-                    color: "var(--ink-muted)",
-                    fontWeight: 500,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  A coorte "{r.cohort.cohortKey}" tem n = {r.cohort.n}, abaixo
-                  do mínimo de {BENCH_THRESHOLD}. Mostrar comparação com amostra
-                  pequena seria estatística de mentira — o relatório declara a
-                  retenção em vez de desenhar o gráfico.
-                </p>
-              </div>
-            </div>
-          ) : (
-            AXIS_IDS.filter((x) => r.axes.some((s) => s.axis === x)).map(
-              (x) => (
-                <BenchBand
-                  axis={x}
-                  band={(bands as NonNullable<typeof bands>)[x]}
-                  key={x}
-                  mine={r.axes.find((s) => s.axis === x)?.score ?? 0}
                 />
+                <div>
+                  <p
+                    style={{
+                      margin: "0 0 4px",
+                      fontSize: 13,
+                      fontWeight: 800,
+                      color: "var(--amber-text)",
+                    }}
+                  >
+                    Comparação retida
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: "var(--ink-muted)",
+                      fontWeight: 500,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    A coorte "{cohort.cohortKey}" tem n = {cohort.n}, abaixo do
+                    mínimo de {BENCH_THRESHOLD}. Mostrar comparação com amostra
+                    pequena seria estatística de mentira — o relatório declara a
+                    retenção em vez de desenhar o gráfico.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              AXIS_IDS.filter((x) => r.axes.some((s) => s.axis === x)).map(
+                (x) => (
+                  <BenchBand
+                    axis={x}
+                    band={(bands as NonNullable<typeof bands>)[x]}
+                    key={x}
+                    mine={r.axes.find((s) => s.axis === x)?.score ?? 0}
+                  />
+                )
               )
-            )
-          )}
-        </SectionCard>
+            )}
+          </SectionCard>
+        )}
       </div>
 
       <div
