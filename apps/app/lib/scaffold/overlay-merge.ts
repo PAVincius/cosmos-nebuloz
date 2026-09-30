@@ -242,7 +242,8 @@ export function detectConflicts(
 export type OverlayViolationCode =
   | "REQUIRED_DELIVERABLE_REMOVAL_NOT_CONSULTANT"
   | "REMOVAL_WITHOUT_REASON"
-  | "STEP_ORPHANS_REQUIRED_DELIVERABLE";
+  | "STEP_ORPHANS_REQUIRED_DELIVERABLE"
+  | "CRITERION_OVERLAY_NOT_EFFECTIVE";
 
 export type OverlayViolation = {
   code: OverlayViolationCode;
@@ -253,6 +254,11 @@ export type OverlayViolation = {
 };
 
 export const MIN_REMOVAL_REASON = 12;
+
+/** Quantas operações do overlay miram critério de gate. */
+export function countCriterionOps(ops: readonly OverlayOp[]): number {
+  return ops.filter((o) => o.target === "criterion").length;
+}
 
 /**
  * O que o overlay pode fazer com o gate (D-24 §7.7).
@@ -281,6 +287,17 @@ export function validateOverlay(
     );
 
   for (const op of ops) {
+    if (op.target === "criterion") {
+      // Débito até 2026-10-31 (D-24 §7.7): a trilha copia passos e entregáveis
+      // na criação, mas o gate lê os critérios da versão pinada. Aceitar a
+      // operação calado faria o cliente achar que ajustou o gate.
+      blocking.push({
+        code: "CRITERION_OVERLAY_NOT_EFFECTIVE",
+        key: op.key,
+        note: `O overlay ainda não muda critério de gate: o gate lê os critérios da versão do método, não do overlay. Para ajustar o critério "${op.key}", peça uma versão nova do template.`,
+      });
+      continue;
+    }
     if (op.target !== "deliverable") {
       continue;
     }

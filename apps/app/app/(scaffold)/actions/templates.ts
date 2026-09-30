@@ -8,6 +8,7 @@ import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
 import {
+  countCriterionOps,
   detectConflicts,
   type OverlayOp,
   type TemplateShape,
@@ -102,6 +103,9 @@ export type OverlayRow = {
   name: string;
   baseVersionLabel: string;
   opCount: number;
+  /** Operações de critério: valem no overlay e não no gate, que lê a versão do
+   *  método. A tela marca "sem efeito no gate". */
+  criterionOpCount: number;
   /** Ids dos conflitos abertos. A tela precisa deles para resolver: resolução é
    *  por conflito, não por overlay — dois conflitos no mesmo overlay podem
    *  merecer decisões opostas. */
@@ -185,6 +189,9 @@ export async function listTemplates(): Promise<ScaffoldResult<TemplateRow[]>> {
             name: o.name,
             baseVersionLabel: o.baseVersion.label,
             opCount: Array.isArray(o.ops) ? o.ops.length : 0,
+            criterionOpCount: Array.isArray(o.ops)
+              ? countCriterionOps(o.ops as unknown as OverlayOp[])
+              : 0,
             openConflictIds: o.conflicts.map((c) => c.id),
           })),
         };

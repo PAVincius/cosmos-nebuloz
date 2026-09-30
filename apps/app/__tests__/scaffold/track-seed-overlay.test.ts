@@ -38,7 +38,6 @@ const db = {
   scaffoldPhaseInstance: { findMany: h.phaseFindMany },
   scaffoldDeliverableInstance: { createMany: h.delCreateMany },
   tenantModule: { findFirst: h.moduleFindFirst },
-  // biome-ignore lint/suspicious/noExplicitAny: mock do cliente do Prisma
 } as any;
 
 const OVERLAY = "clx0000000000000000ovl001";

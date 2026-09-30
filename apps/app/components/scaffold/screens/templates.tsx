@@ -206,6 +206,9 @@ function OverlayList({
               base {o.baseVersionLabel} · {o.opCount} operação
               {o.opCount === 1 ? "" : "ões"}
             </span>
+            {o.criterionOpCount > 0 && (
+              <Badge tone="amber">Critério sem efeito no gate</Badge>
+            )}
             {o.openConflictIds.length > 0 && (
               <Badge tone="red">
                 {o.openConflictIds.length} conflito

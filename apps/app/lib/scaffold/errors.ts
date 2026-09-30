@@ -74,7 +74,7 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
   OVERLAY_NOT_FOUND:
     "O overlay escolhido não existe nesta organização. Escolha outro, ou crie a trilha sem overlay — trilha criada sem a customização que o cliente pediu seria uma surpresa.",
   OVERLAY_VIOLATES_GATE_RULES:
-    "O overlay tira do gate algo que o método exige: dispensar entregável obrigatório sem ser consultor, remover sem motivo, ou remover passo que deixa entregável obrigatório sem produtor. Ajuste as operações apontadas — gate que se desliga por overlay deixa de ser gate.",
+    "O overlay tira do gate algo que o método exige: dispensar entregável obrigatório sem ser consultor, remover sem motivo, remover passo que deixa entregável obrigatório sem produtor, ou alterar critério de gate (o gate lê a versão do método, não o overlay). Ajuste as operações apontadas — gate que se desliga por overlay deixa de ser gate.",
   TRACK_HAS_SIGNED_BUSINESS_CASE:
     "Esta trilha tem caso de negócio assinado. Cancelar exige decidir explicitamente o que acontece com a apuração do Signal.",
   PROMOTION_HAS_ACTIVE_TRACK:

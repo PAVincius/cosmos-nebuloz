@@ -281,11 +281,9 @@ com motivo.
 
 ### 7.9 Débito registrado neste PR
 
-- **Overlay de critério de gate não chega à trilha.** `seedTrack` passa a aplicar o overlay em **passos** e
-  **entregáveis** (REPLACE e REMOVE; o REMOVE de entregável dispensa a instância, com o motivo). Os
-  critérios ficam de fora: o gate lê os critérios da versão pinada, não da trilha. Um overlay que
-  acrescenta ou afrouxa critério continua salvo, com conflito detectado, e sem efeito no gate. Fechar exige
-  decidir se a trilha copia os critérios na criação, como faz com os passos (ST-03).
+- **Overlay de critério de gate** (prazo 2026-10-31, regras na §7.7): `saveOverlay` recusa a operação
+  (`OVERLAY_VIOLATES_GATE_RULES`, código `CRITERION_OVERLAY_NOT_EFFECTIVE`), e o overlay antigo com operação
+  de critério aparece marcado "Critério sem efeito no gate". Pagar exige o gate ler os critérios com o
+  overlay aplicado, ou a trilha copiar os critérios na criação, como faz com os passos (ST-03).
 - **ADD de passo ou de entregável no overlay** não cria linha na trilha: a operação não diz a fase nem o
   passo de origem.
-

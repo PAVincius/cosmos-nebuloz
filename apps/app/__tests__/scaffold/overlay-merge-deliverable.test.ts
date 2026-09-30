@@ -214,6 +214,20 @@ describe("validateOverlay", () => {
     ]);
   });
 
+  it("recusa operação de critério, de qualquer papel: o gate lê a versão, não o overlay", () => {
+    const op: OverlayOp = {
+      op: "REPLACE",
+      target: "criterion",
+      key: "beats-baseline",
+      patch: { statement: "Afrouxado" },
+    };
+    for (const actor of [consultant, owner]) {
+      const r = validateOverlay(BASE, [op], actor);
+      expect(codes(r)).toEqual(["CRITERION_OVERLAY_NOT_EFFECTIVE"]);
+      expect(r.blocking[0]?.note).toContain("versão nova do template");
+    }
+  });
+
   it("remover passo sem entregável obrigatório é livre", () => {
     const shape: TemplateShape = {
       ...BASE,
