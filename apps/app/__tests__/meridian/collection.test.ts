@@ -81,6 +81,8 @@ const CTX = {
 };
 const AS_ID = "clx0000000000000000000as1";
 const R_ID = "clx00000000000000000000r1";
+// Relativo a "agora": data fixa vira bomba-relógio quando o prazo passa.
+const SOON_DEADLINE = new Date(Date.now() + 3 * 86_400_000);
 
 const ALL_AXES = [
   "DATA",
@@ -238,7 +240,7 @@ describe("assignRespondent", () => {
     h.assessmentFindFirst.mockResolvedValue({
       id: AS_ID,
       code: "AS-104",
-      deadline: new Date("2026-09-30"),
+      deadline: SOON_DEADLINE,
       status: "DRAFT",
     });
     await assignRespondent({
@@ -252,7 +254,7 @@ describe("assignRespondent", () => {
       data: { tokenExpiresAt: Date };
     };
     expect(created.data.tokenExpiresAt.toISOString()).toBe(
-      new Date("2026-09-30").toISOString()
+      SOON_DEADLINE.toISOString()
     );
   });
 });
@@ -319,15 +321,15 @@ describe("reissueRespondentLink", () => {
       name: "Jonas",
       status: "INVITED",
       axis: "DATA",
-      assessment: { deadline: new Date("2026-09-30") },
+      assessment: { deadline: SOON_DEADLINE },
     });
     await reissueRespondentLink({ respondentId: R_ID });
     const update = h.respondentUpdate.mock.calls[0]?.[0] as {
       data: { tokenExpiresAt: Date };
     };
-    // Deadline (30/09) chega antes de agora+14d — vence o deadline.
+    // Deadline (agora + 3d) chega antes de agora+14d — vence o deadline.
     expect(update.data.tokenExpiresAt.toISOString()).toBe(
-      new Date("2026-09-30").toISOString()
+      SOON_DEADLINE.toISOString()
     );
   });
 
