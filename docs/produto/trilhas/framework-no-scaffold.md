@@ -247,6 +247,21 @@ Entra o alvo `deliverable` em `overlay-merge.ts`. `ops` é Json, então não há
 No exemplo do Atlas ("papéis de dado já existem"), a consultora dispensa "Papéis formais de IA e dados"
 com motivo.
 
+**Registro da implementação (2026-09-30, via Morgana):**
+- **F1:** coluna `requirementRefs Json?` em `ScaffoldDeliverableTemplate`, com itens `{set, versao, codigo}`,
+  sem FK. Nulo significa sem referência.
+- **Dispensa:** usa o que já existia (`dispensedReason` + `required = false`), sem enum novo.
+- **Overlay na criação da trilha:** achado do Andaime. O `seedTrack` guardava o `overlayId`, mas não
+  aplicava o overlay. Neste PR passa a aplicar em passos e entregáveis.
+- **Overlay de critério de gate continua sem efeito**, porque o gate lê os critérios da versão. É
+  débito, com duas regras até ele ser pago:
+  1. **Neste PR:** criar ou editar overlay com operação de critério é **recusado**, com mensagem que diz
+     por quê. Overlay que já tenha operação de critério aparece marcado "sem efeito no gate". Aceitar a
+     operação calado faria o cliente achar que ajustou o gate enquanto o gate continua o da versão.
+  2. **Pagar até 2026-10-31:** o gate passa a ler os critérios com o overlay aplicado, e a recusa sai.
+     Dono: Andaime/Bussola, com a Regua para a spec. Se antes disso um cliente precisar ajustar
+     critério, a saída é versão nova do template, não overlay.
+
 ### 7.8 Seed e testes (no mesmo PR)
 
 - Template `ai-readiness-foundation` v1.0 com os passos, os entregáveis e os critérios acima.
