@@ -331,6 +331,32 @@ scoring. **Bloqueia cliente externo.**
 Antes do primeiro contrato, Pilar confere em produção se algum assessment de tenant externo tem
 `benchmarkOptIn = true`, com o "vai" do CEO.
 
+### 2026-09-29 · Benchmark travado também esconde a leitura (CEO)
+
+**Decisão.** Confirmada pelo CEO em 2026-09-29, via Morgana, sobre a proposta do CPO. Achado do Vigia
+na spec 012, que deixava a leitura fora de escopo (`specs/012-benchmark-travado-tenant/spec.md:101`).
+- Uma chave só: o tenant contribui para a coorte e lê a coorte juntos. Com a habilitação desligada, o
+  tenant não vê percentil nem coorte. O bloco de benchmark some do relatório (`actions/report.ts:123`).
+  `listCohorts` e `readCohortAction` (`actions/benchmark.ts:132,151`) recusam no servidor, com o mesmo
+  motivo da trava.
+- Tenant interno (`isInternalTenant = true`) com a habilitação ligada lê normalmente.
+- Staff Nebuloz no back-office fica fora da regra.
+
+**Por quê.**
+1. O memo de 29/09 (§5 a) proíbe prometer comparação com o mercado com a função desligada. Um
+   percentil no relatório seria essa promessa, feita pela tela.
+2. Com o benchmark desligado no primeiro contrato, a coorte em produção só tem dado interno ou de
+   seed. Percentil sobre isso, mostrado a cliente, é número sem lastro.
+3. O `n` conta assessments, não organizações (M-24). Um leitor de fora do pool aumenta o risco de
+   reidentificação de quem contribuiu.
+4. Quem contribui o faz por aditivo (DPA §2.1), para um pool de participantes. Leitor de fora amplia
+   essa finalidade.
+5. Com leitura livre, ninguém tem motivo para contribuir.
+
+**Dono e data.** Regua emenda a spec 012: tira a leitura do fora de escopo e acrescenta o critério de
+aceite "com a habilitação desligada, o relatório sai sem benchmark e as duas actions recusam". Bussola
+implementa no mesmo PR da trava, até **2026-10-07**.
+
 ---
 
 *Draft para revisão interna. Documento companheiro: Meridian SRD v1.0.*
