@@ -86,6 +86,46 @@ primeiro escopo novo nasce com a mesma falha.
 2. **Guia em texto**, escopo Scaffold do copiloto (D-07), depois do pré-requisito de permissão.
 3. **Voz**, no tenant interno, depois do parecer do Lacre e da escolha de provedor pelo CEO.
 
+## 7. Proposta Macall AI: o que entra (2026-09-30)
+
+O CEO mandou a proposta do Macall AI, uma arquitetura de agente de voz de atendimento adaptada para
+conduzir trilha. Ela casa com esta decisão. O "item central novo" dela, a máquina de estado da trilha, já
+existe: é o Scaffold (fases, gates, entregáveis). As três perguntas da proposta ficam assim:
+
+1. **O que é a trilha (confirmado):** molde versionado + seleção pelo arquétipo do Meridian + overlay do
+   cliente + grafo de triagem estático e auditável.
+   - A seleção pelo arquétipo segue a D-25: a Fundação é a trilha de prontidão, e a variação por
+     arquétipo são passos condicionais dela. As trilhas de caso de uso são por forma de trabalho.
+   - O grafo é escrito e versionado pela Nebuloz. **Não é gerado por IA**, nem em tempo de conversa.
+2. **Avanço só por confirmação explícita (confirmado, com um ajuste):** a fala propõe, o usuário confirma
+   a resposta e a consultora confirma a ativação (§3).
+   - **Ajuste:** no modo voz, a confirmação que grava é um **clique na tela**, com a opção escrita à
+     vista. Não é um "sim" falado. Como o áudio não é guardado (§5), um "sim" de voz não deixa evidência
+     auditável, e o clique deixa.
+3. **Desvio de assunto (confirmado):** pergunta sobre a trilha ou o produto recebe resposta curta, com
+   origem citada, e a conversa volta ao passo. Fora disso, o guia redireciona. Em nenhum caso executa
+   ação: o que a pessoa diz não muda as ferramentas nem as permissões do guia, e o desvio não é gravado
+   como resposta.
+
+**Observabilidade (Langfuse).** Traços do guia no Langfuse, com as chaves que já estão na Vercel:
+latência, ferramenta chamada, tokens e custo por conversa. **Sem conteúdo** (prompt e resposta) com dado
+de cliente: `LANGFUSE_CAPTURE_CONTENT` fica desligado enquanto o DPA do Langfuse não estiver assinado
+(`registro-de-decisoes.md`, D-15, e `docs/compliance/dpa-fornecedores.md`). Captura de conteúdo só no
+tenant interno.
+
+**Teste A/B de voz em PT-BR, antes de o CEO escolher o provedor.**
+- **Candidatos:** Cartesia, Inworld e ElevenLabs.
+- **Roteiro:** as três perguntas da triagem de Dados e duas respostas longas de guia, com texto
+  sintético e sem dado pessoal.
+- **Critérios, na ordem:**
+  1. naturalidade em PT-BR (termos técnicos como "data lake" e "PostgreSQL");
+  2. latência até o primeiro áudio;
+  3. custo por minuto, contra a cota da D-04;
+  4. streaming;
+  5. retenção de dado e DPA do provedor, que o Lacre confere.
+- **Quem ouve:** o CEO e duas pessoas do tenant interno, sem saber qual provedor é qual.
+- O teste roda fora do produto e não usa dado de cliente. O resultado vai ao CEO, que decide.
+
 Cada fase é um PR próprio, com os testes junto. Critério de sucesso do piloto (fase 1): a consultora
 conduz a triagem de Dados do Atlas (Dados 32) em menos de 10 minutos, e cada entregável ativado mostra a
 resposta que o originou.
