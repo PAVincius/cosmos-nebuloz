@@ -34,6 +34,7 @@ export const SCAFFOLD_ERROR = {
   DELIVERABLE_SELF_REVIEW: "DELIVERABLE_SELF_REVIEW",
   DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
   DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
+  DELIVERABLE_DISPENSED: "DELIVERABLE_DISPENSED",
   DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
   DELIVERABLE_FILE_TYPE_NOT_ALLOWED: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
   DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
@@ -106,6 +107,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Anexe o arquivo do entregável antes de enviar para revisão.",
   DELIVERABLE_PHASE_NOT_OPEN:
     "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
+  DELIVERABLE_DISPENSED:
+    "Este entregável está dispensado e não tem ação: o motivo da dispensa está na linha dele.",
   DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
   DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE:
     "Esta pessoa não pode ser designada. O responsável precisa de papel no Scaffold que trabalhe no entregável, e o aprovador, de um que revise; quem só lê não produz nem aprova.",

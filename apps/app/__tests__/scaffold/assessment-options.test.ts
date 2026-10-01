@@ -58,9 +58,33 @@ describe("assessmentOptionLabel", () => {
     );
   });
 
-  it("a data não depende do fuso de quem renderiza", () => {
-    expect(
-      assessmentOptionLabel({ ...base, date: new Date("2026-01-05T23:30:00Z") })
-    ).toContain("05/01/2026");
+  // O relatório do assessment mostra a data em America/Sao_Paulo; o seletor tem
+  // de dizer o mesmo dia, não o dia em UTC (01/10 onde o relatório diz 30/09).
+  it("a data é a de America/Sao_Paulo, a mesma do relatório, e não a UTC", () => {
+    const dia = (iso: string) =>
+      assessmentOptionLabel({ ...base, date: new Date(iso) }).split(" · ")[2];
+    // 02:00 UTC de 01/10 ainda é 23:00 de 30/09 em Brasília.
+    expect(dia("2026-10-01T02:00:00Z")).toBe("30/09/2026");
+    // 03:30 UTC de 01/10 já é 00:30 de 01/10 em Brasília.
+    expect(dia("2026-10-01T03:30:00Z")).toBe("01/10/2026");
+    expect(dia("2026-09-30T12:00:00Z")).toBe("30/09/2026");
+    expect(dia("2026-01-05T23:30:00Z")).toBe("05/01/2026");
+  });
+
+  it("não muda com o fuso de quem renderiza", () => {
+    const original = process.env.TZ;
+    try {
+      for (const tz of ["UTC", "Asia/Tokyo", "America/Los_Angeles"]) {
+        process.env.TZ = tz;
+        expect(
+          assessmentOptionLabel({
+            ...base,
+            date: new Date("2026-10-01T02:00:00Z"),
+          })
+        ).toContain("30/09/2026");
+      }
+    } finally {
+      process.env.TZ = original;
+    }
   });
 });
