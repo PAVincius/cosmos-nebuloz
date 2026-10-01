@@ -404,7 +404,7 @@ export default function TemplatesScreen() {
               }
               icon="puzzle"
               key={t.id}
-              subtitle={workFormLabel(t.archetype)}
+              subtitle={workFormLabel(t.archetype) || "Sem forma de trabalho"}
               title={t.name}
               tone="accent"
             >

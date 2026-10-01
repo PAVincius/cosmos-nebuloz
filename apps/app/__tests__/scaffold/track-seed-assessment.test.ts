@@ -130,3 +130,101 @@ describe("trilha por forma de trabalho", () => {
     ).rejects.toMatchObject({ code: "ASSESSMENT_NOT_FOUND" });
   });
 });
+
+// ── A2 condicional (D-24 §7.6, confirmado no §7.7) ────────────────────────────
+//
+// A ata do workshop só existe se algum eixo do diagnóstico tem confiança abaixo
+// de 0,6. Com a leitura do assessment de origem, a trilha já nasce certa: sem eixo
+// de confiança baixa, o A2.1 nasce DISPENSADO, com motivo que cita o AS-xxx. Na
+// dúvida (sem leitura), nasce obrigatório — nunca dispensado por omissão. A
+// dispensa manual por instância fica para o PR seguinte.
+
+const tpl = (code: string) => ({
+  phase: "ASSESS",
+  stepCode: code.split(".")[0],
+  code,
+  seq: 1,
+  title: `Título ${code}`,
+  description: "d",
+  kind: "DOCUMENT",
+  producer: "CONSULTANT",
+  required: true,
+  requiresModule: null,
+});
+
+const scores = (...confidences: number[]) =>
+  confidences.map((c) => ({ confidence: c }));
+const TODOS_CONFIAVEIS = scores(0.72, 0.65, 0.6, 0.61, 0.8);
+const ATLAS = scores(0.72, 0.65, 0.55, 0.61, 0.8);
+
+const instancias = () =>
+  h.delCreateMany.mock.calls[0]?.[0].data as {
+    code: string;
+    required: boolean;
+    dispensedReason: string | null;
+  }[];
+
+describe("A2.1 conforme a confiança do assessment de origem", () => {
+  beforeEach(() => {
+    h.delTplFindMany.mockResolvedValue([tpl("A1.1"), tpl("A2.1")]);
+    h.phaseFindMany.mockResolvedValue([{ id: "ph-a", phase: "ASSESS" }]);
+  });
+
+  it("nenhum eixo abaixo de 0,6 (0,60 inclusive): nasce dispensado, citando o AS-xxx", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: ASSESSMENT,
+      code: "AS-104",
+      scores: TODOS_CONFIAVEIS,
+    });
+    await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
+
+    const a2 = instancias().find((d) => d.code === "A2.1");
+    expect(a2?.required).toBe(false);
+    expect(a2?.dispensedReason).toContain("AS-104");
+    expect(a2?.dispensedReason).toMatch(/confiança abaixo de 0,6/);
+    // Só o A2.1: o resto do molde nasce como sempre.
+    const a1 = instancias().find((d) => d.code === "A1.1");
+    expect(a1?.required).toBe(true);
+    expect(a1?.dispensedReason).toBeNull();
+  });
+
+  it("algum eixo abaixo de 0,6 (o Atlas, Pessoas 0,55): nasce obrigatório", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: ASSESSMENT,
+      code: "AS-120",
+      scores: ATLAS,
+    });
+    await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
+    const a2 = instancias().find((d) => d.code === "A2.1");
+    expect(a2?.required).toBe(true);
+    expect(a2?.dispensedReason).toBeNull();
+  });
+
+  it("sem leitura de confiança (assessment sem scores ou incompleto): obrigatório, nunca dispensado por omissão", async () => {
+    for (const lidos of [[], scores(0.9, 0.9, 0.9, 0.9)]) {
+      h.delCreateMany.mockClear();
+      h.assessmentFindFirst.mockResolvedValue({
+        id: ASSESSMENT,
+        code: "AS-001",
+        scores: lidos,
+      });
+      await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
+      const a2 = instancias().find((d) => d.code === "A2.1");
+      expect(a2?.required).toBe(true);
+      expect(a2?.dispensedReason).toBeNull();
+    }
+  });
+
+  it("a regra é só da trilha de prontidão: o A2.1 de uma forma de trabalho (mapa da fonte) não é tocado", async () => {
+    h.versionFindFirst.mockResolvedValue(versao("TRIAGE"));
+    h.assessmentFindFirst.mockResolvedValue({
+      id: ASSESSMENT,
+      code: "AS-104",
+      scores: TODOS_CONFIAVEIS,
+    });
+    await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
+    const a2 = instancias().find((d) => d.code === "A2.1");
+    expect(a2?.required).toBe(true);
+    expect(a2?.dispensedReason).toBeNull();
+  });
+});

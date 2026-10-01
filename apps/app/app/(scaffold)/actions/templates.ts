@@ -116,7 +116,8 @@ export type TemplateRow = {
   id: string;
   key: string;
   name: string;
-  archetype: string;
+  /** Nulo em trilha de prontidão, que não tem forma de trabalho. */
+  archetype: string | null;
   currentLabel: string | null;
   publishedAt: Date | null;
   versions: TemplateVersionRow[];

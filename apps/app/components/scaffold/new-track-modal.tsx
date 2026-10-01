@@ -24,7 +24,7 @@ import { workFormLabel } from "@/lib/scaffold/forms";
 import { gapEligibility, gapLabels } from "@/lib/scaffold/gap-labels";
 import { Field, Input, ModalShell, Select } from "./base";
 
-type TemplateOption = { id: string; name: string; archetype: string };
+type TemplateOption = { id: string; name: string; archetype: string | null };
 
 /** De onde a trilha nasce: a promoção que o Meridian já registrou. */
 type GapSource = {
@@ -178,7 +178,7 @@ export function NewTrackModal({
   ];
   const templateOptions = (templates ?? []).map((t) => ({
     value: t.id,
-    label: `${t.name} · ${workFormLabel(t.archetype)}`,
+    label: `${t.name} · ${workFormLabel(t.archetype) || "sem forma de trabalho"}`,
   }));
 
   return (

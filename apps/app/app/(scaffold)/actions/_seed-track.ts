@@ -4,6 +4,11 @@ import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import type { WorkFormCode } from "@/lib/scaffold/forms";
 import { applyOverlay, type OverlayOp } from "@/lib/scaffold/overlay-merge";
 import { PHASE_ORDER } from "@/lib/scaffold/phases";
+import {
+  LOW_CONFIDENCE_WORKSHOP_CODE,
+  type SourceAssessmentReading,
+  workshopDispensation,
+} from "@/lib/scaffold/readiness-rules";
 import { type Db, nextCode } from "./_shared";
 
 // Semeadura de trilha — o que `createTrack` e `createTrackFromGap` têm em
@@ -105,20 +110,28 @@ async function assertSourceAssessment(
   tenantId: string,
   isReadinessTrack: boolean,
   sourceAssessmentId: string | undefined
-): Promise<void> {
+): Promise<SourceAssessmentReading | null> {
   if (!sourceAssessmentId) {
     if (isReadinessTrack) {
       throw new ScaffoldRuleError("ASSESSMENT_REQUIRED");
     }
-    return;
+    return null;
   }
   const assessment = await db.meridianAssessment.findFirst({
     where: { id: sourceAssessmentId, tenantId },
-    select: { id: true },
+    select: {
+      id: true,
+      code: true,
+      scores: { select: { confidence: true } },
+    },
   });
   if (!assessment) {
     throw new ScaffoldRuleError("ASSESSMENT_NOT_FOUND");
   }
+  return {
+    code: assessment.code,
+    confidences: (assessment.scores ?? []).map((x) => Number(x.confidence)),
+  };
 }
 
 /**
@@ -245,10 +258,11 @@ export async function seedTrack(db: Db, input: SeedInput) {
   await assertTrackPeople(db, input);
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
   const version = await resolveTemplateVersion(db, input.templateId);
-  await assertSourceAssessment(
+  const isReadinessTrack = version.template.archetype === null;
+  const assessment = await assertSourceAssessment(
     db,
     input.tenantId,
-    version.template.archetype === null,
+    isReadinessTrack,
     input.sourceAssessmentId
   );
   const overlayOps = await loadOverlayOps(db, input.tenantId, input.overlayId);
@@ -302,6 +316,13 @@ export async function seedTrack(db: Db, input: SeedInput) {
     trackId: track.id,
     versionId: version.id,
     overlayOps,
+    // A2.1 condicional: só na trilha de prontidão (o A2.1 das formas de trabalho
+    // é outro entregável, o mapa da fonte).
+    autoDispense: isReadinessTrack
+      ? new Map([
+          [LOW_CONFIDENCE_WORKSHOP_CODE, workshopDispensation(assessment)],
+        ])
+      : new Map(),
     people: {
       ownerId: input.ownerId,
       consultantId: input.consultantId ?? null,
@@ -345,12 +366,16 @@ async function instantiateDeliverables(
     trackId,
     versionId,
     overlayOps,
+    autoDispense,
     people,
   }: {
     tenantId: string;
     trackId: string;
     versionId: string;
     overlayOps: readonly OverlayOp[];
+    /** Entregáveis que nascem dispensados pelo sistema por regra do molde,
+     *  com o motivo. Motivo nulo = nasce como o molde manda. */
+    autoDispense: ReadonlyMap<string, string | null>;
     people: TrackPeople;
   }
 ): Promise<void> {
@@ -413,6 +438,7 @@ async function instantiateDeliverables(
     data: templates.map((t) => {
       const dispensed = t.requiresModule && !contracted.has(t.requiresModule);
       const o = resolved.get(t.code);
+      const motivoAuto = autoDispense.get(t.code) ?? null;
       return {
         tenantId,
         trackId,
@@ -425,12 +451,14 @@ async function instantiateDeliverables(
         kind: t.kind,
         producer: t.producer,
         isExtra: false,
-        required: dispensed ? false : (o?.required ?? t.required),
+        required: dispensed || motivoAuto ? false : (o?.required ?? t.required),
         dispensedReason: dispensed
           ? `O módulo ${MODULE_LABEL[t.requiresModule as string] ?? t.requiresModule} não está contratado por esta organização; dispensado pelo sistema.`
-          : o?.dispensedReason
-            ? `Dispensado pelo overlay do cliente: ${o.dispensedReason}`
-            : null,
+          : motivoAuto
+            ? motivoAuto
+            : o?.dispensedReason
+              ? `Dispensado pelo overlay do cliente: ${o.dispensedReason}`
+              : null,
         status: "NOT_STARTED" as const,
         ...defaultPeople(t.producer, people),
       };
