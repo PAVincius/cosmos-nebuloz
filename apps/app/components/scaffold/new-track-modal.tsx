@@ -10,7 +10,8 @@
 // promessa e o trabalho.
 
 import { Button } from "@repo/design-system/cosmos/kit";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { listScaffoldAssessments } from "@/app/(scaffold)/actions/assessments";
 import { listScaffoldGaps } from "@/app/(scaffold)/actions/gaps";
 import { listTemplates } from "@/app/(scaffold)/actions/templates";
 import {
@@ -20,6 +21,10 @@ import {
   type ScaffoldMember,
 } from "@/app/(scaffold)/actions/tracks";
 import type { RankedGap } from "@/lib/meridian/gap-ranking";
+import {
+  type AssessmentOption,
+  assessmentOptionLabel,
+} from "@/lib/scaffold/assessment-options";
 import { workFormLabel } from "@/lib/scaffold/forms";
 import { gapEligibility, gapLabels } from "@/lib/scaffold/gap-labels";
 import { Field, Input, ModalShell, Select } from "./base";
@@ -38,6 +43,12 @@ type GapList =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "ok"; data: RankedGap[] };
+
+type AssessmentList =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ok"; data: AssessmentOption[] };
 
 /** Nome do processo sugerido pelo enunciado: até os dois-pontos. */
 const processNameOf = (statement: string) =>
@@ -74,6 +85,12 @@ export function NewTrackModal({
   // A lista de gaps só existe na "Nova trilha" avulsa: a promoção pendente do
   // portfólio já traz o gap escolhido.
   const [gaps, setGaps] = useState<GapList>({ status: "loading" });
+  // Diagnóstico do Meridian de que a trilha de prontidão nasce (D-27). Só é lido
+  // quando o template escolhido não tem forma de trabalho.
+  const [assessments, setAssessments] = useState<AssessmentList>({
+    status: "idle",
+  });
+  const [assessmentId, setAssessmentId] = useState("");
   const [ownerId, setOwnerId] = useState("");
   const [consultantId, setConsultantId] = useState("");
   const [busy, setBusy] = useState(false);
@@ -129,8 +146,40 @@ export function NewTrackModal({
     });
   }, []);
 
+  // Trilha de prontidão: template publicado SEM forma de trabalho. Enquanto os
+  // templates não carregam, não há como saber, e o campo não aparece.
+  const isReadiness =
+    templates?.find((t) => t.id === templateId)?.archetype === null;
+
+  // Lê uma vez só, na primeira vez que um template de prontidão é escolhido. O
+  // `ref` (e não o estado de carregamento nas dependências) é o que impede o
+  // efeito de cancelar a si mesmo ao marcar "loading".
+  const assessmentsRequested = useRef(false);
+  useEffect(() => {
+    if (!isReadiness) {
+      // Trocou para uma forma de trabalho: o assessment escolhido não vale mais.
+      setAssessmentId("");
+      return;
+    }
+    if (assessmentsRequested.current) {
+      return;
+    }
+    assessmentsRequested.current = true;
+    setAssessments({ status: "loading" });
+    listScaffoldAssessments().then((res) => {
+      setAssessments(
+        res.ok
+          ? { status: "ok", data: res.data }
+          : { status: "error", message: res.error }
+      );
+    });
+  }, [isReadiness]);
+
   const canSubmit =
-    Boolean(templateId) && processName.trim().length > 0 && Boolean(ownerId);
+    Boolean(templateId) &&
+    processName.trim().length > 0 &&
+    Boolean(ownerId) &&
+    (!isReadiness || Boolean(assessmentId));
 
   const submit = async () => {
     if (!canSubmit) {
@@ -143,6 +192,8 @@ export function NewTrackModal({
       processName: processName.trim(),
       ownerId,
       consultantId: consultantId || undefined,
+      // Só trilha de prontidão leva o vínculo; as outras nem mandam o campo.
+      ...(isReadiness ? { sourceAssessmentId: assessmentId } : {}),
     };
     const res = source
       ? await createTrackFromGap({
@@ -263,6 +314,14 @@ export function NewTrackModal({
             value={templateId}
           />
         </Field>
+
+        {isReadiness ? (
+          <AssessmentField
+            assessmentId={assessmentId}
+            assessments={assessments}
+            onChange={setAssessmentId}
+          />
+        ) : null}
 
         <Field
           hint={
@@ -442,5 +501,89 @@ function GapPicker({
       </div>
       {body}
     </section>
+  );
+}
+
+/** Diagnóstico de origem da trilha de prontidão (D-27). Sem assessment pontuado,
+ *  explica de onde a trilha nasce e o que fazer, em vez de oferecer um campo
+ *  vazio: o botão de criar fica desabilitado e o motivo está escrito aqui. */
+function AssessmentField({
+  assessments,
+  assessmentId,
+  onChange,
+}: {
+  assessments: AssessmentList;
+  assessmentId: string;
+  onChange: (id: string) => void;
+}) {
+  const note = (children: React.ReactNode, role?: "alert" | "status") => (
+    <p
+      role={role}
+      style={{
+        margin: 0,
+        fontSize: 12.5,
+        lineHeight: 1.6,
+        color: role === "alert" ? "var(--red-text)" : "var(--ink-muted)",
+      }}
+    >
+      {children}
+    </p>
+  );
+
+  if (assessments.status === "idle" || assessments.status === "loading") {
+    return note("Carregando os assessments do Meridian…", "status");
+  }
+  if (assessments.status === "error") {
+    return note(
+      `Assessments do Meridian indisponíveis: ${assessments.message} A trilha de prontidão precisa de um diagnóstico e não pode ser criada agora.`,
+      "alert"
+    );
+  }
+  if (assessments.data.length === 0) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          padding: "10px 12px",
+          borderRadius: "var(--r-md)",
+          background: "var(--surface-2)",
+          border: "1px solid var(--hairline)",
+        }}
+      >
+        <strong style={{ fontSize: 13, color: "var(--ink)" }}>
+          Esta trilha nasce de um diagnóstico do Meridian.
+        </strong>
+        {note(
+          "Nenhum assessment com pontuação nesta organização. Faça o diagnóstico no Meridian, ou peça à consultora da Nebuloz — ela opera o Meridian para você. Criar a trilha fica disponível quando houver um assessment pontuado."
+        )}
+      </div>
+    );
+  }
+  return (
+    <Field
+      hint={
+        assessmentId
+          ? undefined
+          : "Escolha o assessment do Meridian para criar esta trilha."
+      }
+      htmlFor="nt-assessment"
+      label="Diagnóstico do Meridian"
+      required
+    >
+      <Select
+        id="nt-assessment"
+        onChange={onChange}
+        options={[
+          { value: "", label: "Escolha o assessment" },
+          ...assessments.data.map((a) => ({
+            value: a.id,
+            label: assessmentOptionLabel(a),
+          })),
+        ]}
+        value={assessmentId}
+      />
+    </Field>
   );
 }
