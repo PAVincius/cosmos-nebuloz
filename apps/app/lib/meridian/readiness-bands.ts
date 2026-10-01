@@ -148,8 +148,12 @@ export type AxisReadiness = {
   /** Faixa calculada pelo score, mesmo quando não é confiável. */
   band: ReadinessBand;
   reliable: boolean;
-  /** O que mostrar: o nome da faixa, ou "Não confiável". */
+  /** O nome da faixa (sempre presente). */
   display: string;
+  /** A marca "Não confiável" quando a confiança < 0,6; nula quando confia.
+   *  Ela ACRESCENTA à faixa, não a substitui (spec framework-no-scaffold, US1
+   *  cenário 2). */
+  unreliableMark: string | null;
 };
 
 export type ReadinessProfile = {
@@ -265,7 +269,8 @@ export function assessReadiness(
         confidence: r.confidence,
         band,
         reliable,
-        display: reliable ? BAND_LABEL[band] : UNRELIABLE_LABEL,
+        display: BAND_LABEL[band],
+        unreliableMark: reliable ? null : UNRELIABLE_LABEL,
       };
     }
   );
