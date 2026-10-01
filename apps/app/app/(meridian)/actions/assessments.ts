@@ -6,6 +6,7 @@ import type {
   MeridianScoreStatus,
 } from "@repo/database";
 import { withTenantDb } from "@repo/database";
+import { hasMeridianPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireBenchmarkEnabled } from "@/lib/meridian/benchmark-guard";
@@ -29,6 +30,9 @@ export type AxisScoreView = {
   spread: number;
   status: MeridianScoreStatus;
   note: string | null;
+  /** O revisor confirmou o computado deste eixo (linha kind = CONFIRMATION, sem
+   *  override depois). Só o detalhe calcula; a carteira não carrega as linhas. */
+  confirmed?: boolean;
 };
 
 export type AssessmentRow = {
@@ -64,6 +68,8 @@ export type RespondentView = {
 export type OverrideView = {
   id: string;
   code: string;
+  /** OVERRIDE muda o score; CONFIRMATION mantém o computado (D-29). */
+  kind: "OVERRIDE" | "CONFIRMATION";
   axis: MeridianAxis;
   fromScore: number;
   toScore: number;
@@ -90,6 +96,13 @@ export type AssessmentDetail = AssessmentRow & {
   planItems: PlanItemView[];
   contestedSpread: number;
   gapThreshold: number;
+  /** O que o papel da sessão pode fazer neste assessment. Decidido no servidor;
+   *  a tela só esconde o controle sem a permissão (o servidor segue recusando).
+   *  `manage` = finalizar e reabrir; `override` = confirmar o computado. */
+  permissions: { manage: boolean; override: boolean };
+  /** Quando foi reaberto pela última vez (FINALISED → REVIEW), da trilha de
+   *  auditoria; nulo se nunca foi (FR-029e). */
+  reopenedAt: string | null;
 };
 
 const iso = (d: Date | null): string | null => d?.toISOString() ?? null;
@@ -258,7 +271,22 @@ export async function getAssessment(
           respondent: { assessmentId: a.id },
         },
       });
+      const lastReopen = await db.auditLog.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          entityType: "meridian.assessment",
+          entityId: a.id,
+          action: "meridian.assessment.reopen",
+        },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      });
 
+      // Eixo confirmado pelo revisor: tem linha CONFIRMATION e não foi
+      // sobrescrito depois (override vale mais que a confirmação anterior).
+      const confirmedAxes = new Set(
+        a.overrides.filter((o) => o.kind === "CONFIRMATION").map((o) => o.axis)
+      );
       const scores = a.scores.length
         ? a.scores.map(
             (s): AxisScoreView => ({
@@ -270,6 +298,7 @@ export async function getAssessment(
               spread: s.spread,
               status: s.status,
               note: s.note,
+              confirmed: confirmedAxes.has(s.axis) && s.status !== "OVERRIDDEN",
             })
           )
         : null;
@@ -297,6 +326,11 @@ export async function getAssessment(
         composite: scores ? compositeOf(scores) : null,
         contestedSpread: a.template.contestedSpread,
         gapThreshold: a.template.gapThreshold,
+        permissions: {
+          manage: hasMeridianPermission(ctx.meridianRole, "assessment.manage"),
+          override: hasMeridianPermission(ctx.meridianRole, "override.write"),
+        },
+        reopenedAt: lastReopen?.createdAt.toISOString() ?? null,
         respondents: a.respondents.map(
           (r): RespondentView => ({
             id: r.id,
@@ -323,6 +357,7 @@ export async function getAssessment(
           (o): OverrideView => ({
             id: o.id,
             code: o.code,
+            kind: o.kind,
             axis: o.axis,
             fromScore: o.fromScore,
             toScore: o.toScore,

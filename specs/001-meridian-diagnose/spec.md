@@ -61,6 +61,7 @@ Fechada a coleta, o sistema computa um score 0–100 por eixo com uma confiança
 4. **Given** um override com novo score igual ao computado, **When** a consultora tenta registrar, **Then** o sistema recusa — override sem mudança não é decisão.
 5. **Given** um eixo já com override, **When** um novo override é registrado, **Then** ambos aparecem no histórico em ordem, nenhum é sobrescrito.
 6. **Given** um eixo com confiança abaixo de 50%, **When** a consultora abre a revisão, **Then** o eixo aparece sinalizado com o motivo e uma ação de cobrar respostas.
+7. **Given** um eixo contestado cujo computado a consultora julga correto, **When** ela "confirma o computado" (justificativa de 20+ caracteres), **Then** o eixo sai da fila sem o score mudar, o registro append-only mostra antes e depois iguais, e o relatório passa a mostrar esse eixo como "confirmado pelo revisor" — nunca como "computado" nem como "override".
 
 ---
 
@@ -132,6 +133,27 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 
 ---
 
+### User Story 8 - Consultora finaliza o assessment, com travas por estado, e reabre quando precisa (Priority: P1)
+
+A consultora termina a revisão: todo eixo tem score computado, e todo eixo que ficou contestado foi resolvido — por override ou por confirmação do computado. Ela finaliza o assessment. A partir daí, o relatório final e os gaps daquele diagnóstico ficam liberados para o ranking, e o assessment entra num estado protegido: não se decide score de novo, não se mexe em gap nem em plano. Se um erro aparecer depois, ela reabre, corrige, e finaliza de novo.
+
+**Why this priority**: Sem a transição para finalizado, o ranking de gaps nunca tem o que mostrar em produção — nenhum assessment real chega lá hoje. E sem as travas por estado, "finalizado" não impede nada: a mesma lacuna que deixa resposta mudar depois do fechamento da coleta (SC-003) continua aberta.
+
+**Independent Test**: Com um assessment em REVIEW, scoring completo e fila de contestados vazia (por override ou confirmação), finalizar e conferir que override, confirmação, escrita de gap e de plano passam a ser recusados; tentar escrever uma resposta pelo link do respondente depois do fechamento da coleta e conferir que é recusado mesmo com token válido; reabrir com motivo e conferir que volta a REVIEW, não a COLLECTING.
+
+**Acceptance Scenarios**:
+
+1. **Given** um assessment em REVIEW com todos os eixos com score computado e nenhum contestado pendente (resolvido por override ou por confirmação), **When** um consultor finaliza, **Then** o status muda para finalizado e a ação é auditada.
+2. **Given** um assessment com algum eixo ainda contestado sem decisão, **When** alguém tenta finalizar, **Then** o sistema recusa, nomeando o eixo pendente — só override ou confirmação tiram um eixo da fila.
+3. **Given** a coleta de um assessment acabou de fechar (status REVIEW), **When** o respondente tenta gravar uma resposta ou anexar evidência pelo link, mesmo com o token ainda válido, **Then** o sistema recusa a escrita — o link vira só leitura a partir do fechamento da coleta, não só a partir da finalização.
+4. **Given** um assessment finalizado, **When** alguém tenta registrar override, confirmar um eixo, criar, ajustar, remover ou ligar um gap, ou gerar/editar o plano, **Then** o sistema recusa todos.
+5. **Given** o mesmo assessment finalizado, **When** alguém lê o relatório, exporta, promove um gap, revoga uma promoção, ou inicia uma reavaliação (que cria um assessment novo), **Then** todas essas ações continuam permitidas normalmente.
+6. **Given** um assessment finalizado em que um erro foi percebido, **When** um consultor reabre com motivo de 20 ou mais caracteres, **Then** o assessment volta a REVIEW (nunca a COLLECTING), a reabertura é auditada, e as respostas continuam travadas — corrigir uma resposta exige reavaliação, não a reabertura.
+7. **Given** um usuário sem o papel de consultor, **When** tenta reabrir um assessment finalizado, **Then** o sistema recusa.
+8. **Given** um assessment reaberto, **When** alguém tenta finalizá-lo de novo sem resolver os eixos que voltaram a ficar contestados, **Then** o sistema recusa pela mesma regra do item 2 — a fila precisa esvaziar de novo.
+
+---
+
 ### Edge Cases
 
 - Assessment com zero respondentes atribuídos: coleta não abre e o detalhe orienta a atribuir.
@@ -142,6 +164,8 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - Gap promovido cujo trabalho de destino é excluído no outro produto: gap volta ao estado anterior à promoção e o custo de atraso volta a correr.
 - Reavaliação em que o template mudou de versão: diff é gerado por eixo e gap, e declara a mudança de versão.
 - Coorte que cai abaixo do mínimo por remoção de opt-in: leitura volta a ser retida na próxima leitura.
+- Assessment reaberto que já originou uma trilha noutro produto (Scaffold): o baseline assinado dessa trilha não muda — é versão assinada e imutável; se o número corrigido importar, quem é dono do processo assina uma versão nova do caso de negócio, não espera o Meridian mudar nada por trás.
+- Override sem mudança de score continua recusado mesmo depois de existir a confirmação — são dois atos distintos, e nenhum dos dois substitui o outro: confirmar não muda score, override muda; quem não muda o score usa confirmar, não override.
 - Plano gerado com grafo desconexo: cada componente é sequenciado independentemente, sem trimestres vazios artificiais.
 
 ## Requirements *(mandatory)*
@@ -189,6 +213,14 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - **FR-028**: O sistema MUST manter a posse do gap no Meridian após a promoção — nenhum outro produto pode editar enunciado, severidade ou custo de atraso.
 - **FR-029**: Cada gap MUST estar em exatamente um estado entre aberto, no plano, promovido e resolvido, e o sistema MUST registrar cada transição.
 
+**Finalização e travas por estado**
+
+- **FR-029a**: Consultores MUST poder "confirmar o computado" de um eixo contestado — ação distinta do override, que tira o eixo da fila sem alterar o score, com as mesmas exigências do override (papel, justificativa de 20+ caracteres), registrada de forma append-only (antes e depois iguais) e auditada; o eixo confirmado MUST aparecer, no relatório e no shape, como "confirmado pelo revisor" — nunca como "computado" nem como "override". Um override sem mudança de score continua recusado (FR-017); confirmar nunca substitui essa regra.
+- **FR-029b**: O sistema MUST permitir finalizar um assessment em revisão apenas quando todo eixo tiver score computado e nenhum eixo estiver contestado sem decisão (override ou confirmação), e apenas para o papel de consultor; a finalização MUST ser auditada.
+- **FR-029c**: A partir do fechamento da coleta (assessment em revisão), o sistema MUST recusar escrita de resposta e de anexo de evidência pelo link do respondente, mesmo com token ainda válido — a coleta fechada não aceita mais escrita, antes mesmo da finalização.
+- **FR-029d**: Num assessment finalizado, o sistema MUST recusar: override, confirmação de eixo, criação, ajuste, remoção ou vínculo de gap, e geração ou edição do plano. O sistema MUST continuar permitindo, no mesmo assessment: leitura, relatório, exportação, promoção de gap, revogação de promoção e abertura de reavaliação (que cria um assessment novo).
+- **FR-029e**: O sistema MUST permitir reabrir um assessment finalizado de volta para revisão — nunca para coleta —, exclusivamente para o papel de consultor, com motivo de 20 ou mais caracteres, e MUST auditar a reabertura. Finalizar de novo MUST exigir a fila de contestados vazia outra vez (FR-029b).
+
 **Relatório e benchmark**
 
 - **FR-030**: O sistema MUST apresentar o shape de prontidão com os cinco eixos, score final, confiança e marcação explícita de override.
@@ -214,6 +246,7 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - **Evidência**: arquivo anexado a uma resposta, guardado fora do banco relacional, com trilha de todo acesso.
 - **Score de eixo**: score computado, confiança, número de respondentes, dispersão, status (computado, contestado, sobrescrito) e score final quando há override.
 - **Override**: decisão do consultor sobre um eixo — score de origem, score de destino, rationale, autor e horário. Append-only.
+- **Confirmação**: decisão do consultor sobre um eixo contestado que mantém o computado — rationale, autor e horário. Append-only, distinta do override porque não muda o score.
 - **Gap**: lacuna de capacidade com enunciado, eixo, severidade, esforço, dono sugerido, custo de atraso, selo de confiança, estado e assessment de origem.
 - **Dependência de gap**: aresta dirigida entre dois gaps, sem ciclos.
 - **Item de plano**: gap posicionado num trimestre com uma ordem de execução.
@@ -236,6 +269,10 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - **SC-009**: Um gap promovido continua editável apenas no Meridian — nenhuma superfície de outro produto oferece edição do enunciado.
 - **SC-010**: A carteira de assessments e o registro de gaps respondem em menos de 2 segundos com 200 assessments e 2.000 gaps.
 - **SC-011**: Com 50 respondentes sem conta abrindo o link e gravando rascunho ao mesmo tempo, a rota do respondente responde com p95 abaixo de 800 ms e taxa de erro abaixo de 1%, sustentado por pelo menos 60 segundos no pico de carga. Medido contra um build de produção, não contra o servidor de desenvolvimento. A mesma meta, medida em infraestrutura real (não local), é condição para liberar o primeiro cliente externo, com aprovação do CEO. Fora do critério: upload de evidência e envio final da bateria, que não formam pico.
+- **SC-012**: Um assessment com eixo contestado só finaliza depois que todo eixo contestado foi resolvido por override ou por confirmação do computado — verificável em 100% dos casos testados.
+- **SC-013**: Depois de finalizado, todo pedido de override, confirmação, ou edição de gap (criar, ajustar, remover, ligar) é recusado pelo servidor — verificável em 100% das tentativas, independentemente da tela de origem.
+- **SC-014**: Nenhuma resposta ou evidência é gravada pelo link do respondente depois de a coleta fechar, mesmo com token ainda dentro da validade — fecha a divergência anterior em que a resposta mudava depois do fechamento e o computado, não.
+- **SC-015**: Um consultor reabre um assessment finalizado informando motivo, e qualquer outro papel que tente é recusado — verificável em 100% das tentativas testadas; a reabertura sempre volta a revisão, nunca a coleta.
 
 ## Assumptions
 
@@ -249,3 +286,4 @@ Meridian é dono da escala de confiança de achados (medido, estimado, declarado
 - Armazenamento de evidência usa o mesmo repositório de objetos já configurado no projeto, com segregação por organização.
 - Idioma da interface é português do Brasil, seguindo os demais módulos.
 - A paleta e as primitivas visuais do Meridian são as mesmas já usadas pelo Charter — mesma identidade de suíte, escopo próprio.
+- Quando um assessment reaberto já originou uma trilha noutro produto (Scaffold), o Meridian expõe que foi reaberto e quando; a tela da trilha do Scaffold mostrar esse aviso é consequência a implementar do lado do Scaffold, fora desta entrega (FR-029e cobre só o lado do Meridian).

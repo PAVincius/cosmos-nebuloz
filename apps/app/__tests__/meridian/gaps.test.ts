@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   requirePerm: vi.fn(),
+  assessmentFindFirst: vi.fn(),
   gapFindMany: vi.fn(),
   gapFindFirst: vi.fn(),
   gapCreate: vi.fn(),
@@ -51,6 +52,7 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
+      meridianAssessment: { findFirst: h.assessmentFindFirst },
       meridianGap: {
         findMany: h.gapFindMany,
         findFirst: h.gapFindFirst,
@@ -96,6 +98,8 @@ const P1 = "clx000000000000000000p001";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Assessment aberto para decisões (D-29): a trava de FINALISED não dispara.
+  h.assessmentFindFirst.mockResolvedValue({ status: "REVIEW" });
   h.requirePerm.mockResolvedValue(CTX);
   h.gapFindMany.mockResolvedValue([
     { id: G1, code: "G-01" },

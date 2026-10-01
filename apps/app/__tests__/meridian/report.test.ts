@@ -301,6 +301,68 @@ describe("getReport", () => {
     expect(res.ok && res.data.readiness.dominant).toBeNull();
   });
 
+  // Confirmar o computado (D-29, FR-029a): o relatório mostra o eixo como
+  // "confirmado pelo revisor" — nunca como "computado" nem como "override".
+  describe("eixo confirmado pelo revisor", () => {
+    const score = (axis: string, status: string) => ({
+      axis,
+      computed: 61,
+      final: status === "OVERRIDDEN" ? 70 : null,
+      confidence: 0.8,
+      status,
+    });
+    const ov = (axis: string, kind: string, rationale: string, id: string) => ({
+      id,
+      axis,
+      kind,
+      rationale,
+    });
+
+    it("linha CONFIRMATION e eixo não sobrescrito: confirmed, não overridden, com a justificativa dela", async () => {
+      h.assessmentFindFirst.mockResolvedValue({
+        ...base,
+        scores: [score("DATA", "COMPUTED"), score("PEOPLE", "COMPUTED")],
+        overrides: [ov("DATA", "CONFIRMATION", "Computado correto.", "ov1")],
+      });
+      const res = await getReport({ assessmentId: AS_ID });
+      const data = res.ok ? res.data.axes.find((a) => a.axis === "DATA") : null;
+      const people = res.ok
+        ? res.data.axes.find((a) => a.axis === "PEOPLE")
+        : null;
+      expect(data?.confirmed).toBe(true);
+      expect(data?.overridden).toBe(false);
+      expect(data?.rationale).toBe("Computado correto.");
+      expect(people?.confirmed).toBe(false);
+    });
+
+    it("confirmado e depois sobrescrito: vale o override, e a confirmação não vira justificativa", async () => {
+      h.assessmentFindFirst.mockResolvedValue({
+        ...base,
+        scores: [score("DATA", "OVERRIDDEN")],
+        overrides: [
+          // ordenado do mais novo ao mais antigo, como a query
+          ov("DATA", "OVERRIDE", "Mudei por outra evidência.", "ov2"),
+          ov("DATA", "CONFIRMATION", "Computado correto.", "ov1"),
+        ],
+      });
+      const res = await getReport({ assessmentId: AS_ID });
+      const data = res.ok ? res.data.axes[0] : null;
+      expect(data?.overridden).toBe(true);
+      expect(data?.confirmed).toBe(false);
+      expect(data?.rationale).toBe("Mudei por outra evidência.");
+    });
+
+    it("uma linha OVERRIDE sozinha nunca faz o eixo ser confirmado", async () => {
+      h.assessmentFindFirst.mockResolvedValue({
+        ...base,
+        scores: [score("DATA", "OVERRIDDEN")],
+        overrides: [ov("DATA", "OVERRIDE", "Mudei.", "ov1")],
+      });
+      const res = await getReport({ assessmentId: AS_ID });
+      expect(res.ok && res.data.axes[0]?.confirmed).toBe(false);
+    });
+  });
+
   it("usa o score final (com override), não o computado, na faixa", async () => {
     const res = await getReport({ assessmentId: AS_ID });
     // base: GOVERNANCE computado 74, final 66 → Estruturado em ambos; a

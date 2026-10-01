@@ -20,6 +20,7 @@ const h = vi.hoisted(() => ({
   sequenceUpsert: vi.fn(),
   auditCreate: vi.fn(),
   contributeInTx: vi.fn(),
+  overrideFindFirst: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -58,6 +59,7 @@ vi.mock("@repo/database", () => ({
         findMany: h.scoreFindMany,
       },
       meridianGap: { findFirst: h.gapFindFirst, create: h.gapCreate },
+      meridianOverride: { findFirst: h.overrideFindFirst },
       meridianSequence: { upsert: h.sequenceUpsert },
       auditLog: { create: h.auditCreate },
     }),
@@ -121,6 +123,7 @@ beforeEach(() => {
   h.gapCreate.mockResolvedValue({ id: "g1" });
   h.sequenceUpsert.mockResolvedValue({ next: 2 });
   h.auditCreate.mockResolvedValue({});
+  h.overrideFindFirst.mockResolvedValue(null);
 });
 
 describe("runScoring", () => {
@@ -158,6 +161,67 @@ describe("runScoring", () => {
       const data = (call[0] as { data: { status: string } }).data;
       expect(data.status).toBe("OVERRIDDEN");
     }
+  });
+
+  // D-29 (FR-029a): confirmar o computado tira o eixo da fila; rodar o scoring
+  // de novo não pode devolvê-lo a CONTESTED só porque a dispersão é a mesma.
+  describe("eixo com confirmação do computado", () => {
+    const dadosDivergentes = () => {
+      h.assessmentFindFirst.mockResolvedValue(
+        assessment({
+          respondents: [
+            { id: "r1", axis: "DATA" },
+            { id: "r2", axis: "DATA" },
+          ],
+        })
+      );
+      h.responseFindMany.mockResolvedValue([
+        { respondentId: "r1", questionId: "q0", rawValue: 0 },
+        { respondentId: "r2", questionId: "q0", rawValue: 4 },
+      ]);
+      h.scoreFindUnique.mockResolvedValue({
+        id: "sc1",
+        computed: 50,
+        final: null,
+        status: "COMPUTED",
+      });
+    };
+
+    it("sem confirmação, a dispersão acima do limiar devolve CONTESTED", async () => {
+      dadosDivergentes();
+      await runScoring({ assessmentId: AS_ID });
+      const data = (
+        h.scoreUpdate.mock.calls[0][0] as { data: { status: string } }
+      ).data;
+      expect(data.status).toBe("CONTESTED");
+    });
+
+    it("com linha kind=CONFIRMATION, o eixo continua fora da fila (COMPUTED)", async () => {
+      dadosDivergentes();
+      h.overrideFindFirst.mockResolvedValue({ id: "ov1" });
+      await runScoring({ assessmentId: AS_ID });
+      const data = (
+        h.scoreUpdate.mock.calls[0][0] as { data: { status: string } }
+      ).data;
+      expect(data.status).toBe("COMPUTED");
+      expect(h.overrideFindFirst.mock.calls[0][0].where).toEqual({
+        tenantId: "t1",
+        assessmentId: AS_ID,
+        axis: "DATA",
+        kind: "CONFIRMATION",
+      });
+    });
+
+    it("a confirmação se olha pelo kind, não por antes == depois", async () => {
+      dadosDivergentes();
+      await runScoring({ assessmentId: AS_ID });
+      for (const call of h.overrideFindFirst.mock.calls) {
+        const where = (call[0] as { where: Record<string, unknown> }).where;
+        expect(where.kind).toBe("CONFIRMATION");
+        expect(where).not.toHaveProperty("fromScore");
+        expect(where).not.toHaveProperty("toScore");
+      }
+    });
   });
 
   it("não duplica gap derivado numa segunda execução", async () => {

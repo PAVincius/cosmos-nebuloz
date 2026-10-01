@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { respondentErrorCopy } from "@/lib/meridian/respondent-error-copy";
 import {
+  COLLECTION_CLOSED_MESSAGE,
   TOKEN_INVALID_MESSAGE,
   TOKEN_RATE_LIMITED_MESSAGE,
 } from "@/lib/meridian/respondent-token";
@@ -28,5 +29,12 @@ describe("respondentErrorCopy", () => {
       "PrismaClientKnownRequestError: connection terminated unexpectedly at pool.js:412"
     );
     expect(copy.title).toBe("Link inválido ou expirado");
+  });
+
+  it("COLLECTION_CLOSED_MESSAGE tem copy própria: coleta encerrada, a quem pedir", () => {
+    const copy = respondentErrorCopy(COLLECTION_CLOSED_MESSAGE);
+    expect(copy.title).toBe("Coleta encerrada");
+    expect(copy.title).not.toBe("Link inválido ou expirado");
+    expect(copy.body.toLowerCase()).toContain("não aceita mais respostas");
   });
 });

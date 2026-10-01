@@ -18,6 +18,11 @@ vi.mock("@/app/(meridian)/actions/report", () => ({
 // tab-scoring.tsx também importa registerOverride — sem mock, o módulo real
 // de overrides.ts puxa o encadeamento de env server-only e derruba o import
 // em jsdom, mesmo sem essa função ser usada neste teste.
+// "Confirmar o computado" (D-29) entra no modal do eixo: a action não pode
+// carregar o banco no jsdom.
+vi.mock("@/app/(meridian)/actions/confirm", () => ({
+  confirmComputed: vi.fn(),
+}));
 vi.mock("@/app/(meridian)/actions/overrides", () => ({
   registerOverride: vi.fn(),
 }));

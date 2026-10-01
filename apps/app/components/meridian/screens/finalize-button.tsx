@@ -98,7 +98,15 @@ export function FinalizeAssessmentButton({
   if (a.status === "FINALISED") {
     return null;
   }
-  const reason = blockedReason(a);
+  // Sem `assessment.manage` (REVIEWER, VIEWER) o botão fica `disabled` de
+  // verdade, com o motivo do papel escrito: a tela não promete o que o
+  // servidor não entrega (achado do Crivo no #334) e não esconde o controle
+  // (DESIGN.md do Meridian). O servidor segue recusando por conta própria. O
+  // motivo do papel vem antes do de estado: quem não pode finalizar não precisa
+  // saber o que falta.
+  const reason = a.permissions.manage
+    ? blockedReason(a)
+    : "Só a consultora finaliza o assessment.";
 
   return (
     <div

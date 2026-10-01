@@ -24,11 +24,16 @@ import { ModalProvider } from "@/components/meridian/base";
 import { FinalizeAssessmentButton } from "@/components/meridian/screens/finalize-button";
 
 const AXES5 = ["DATA", "PROCESS", "PEOPLE", "GOVERNANCE", "INFRASTRUCTURE"];
-const detail = (status: string, statuses: Record<string, string> = {}) =>
+const detail = (
+  status: string,
+  statuses: Record<string, string> = {},
+  permissions = { manage: true, override: true }
+) =>
   ({
     id: "as-1",
     code: "AS-104",
     status,
+    permissions,
     scores: AXES5.map((axis) => ({
       axis,
       status: statuses[axis] ?? "COMPUTED",
@@ -149,10 +154,51 @@ describe("FinalizeAssessmentButton", () => {
       id: "as-1",
       code: "AS-104",
       status: "REVIEW",
+      permissions: { manage: true, override: true },
       scores: [{ axis: "DATA", status: "COMPUTED" }],
     } as never);
     const botao = screen.getByRole("button", { name: /Finalizar assessment/ });
     expect((botao as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByText(/eixo sem score/i)).toBeTruthy();
+  });
+
+  // Decisão do Crivo no #334 + DESIGN.md do Meridian: sem assessment.manage
+  // (REVIEWER, VIEWER) o botão aparece DESABILITADO, com o motivo escrito — a
+  // tela não promete o que o servidor não entrega, e não esconde o controle.
+  it.each([
+    "DRAFT",
+    "COLLECTING",
+    "REVIEW",
+  ])("sem assessment.manage o botão fica desabilitado, com o motivo do papel (%s)", (status) => {
+    montar(detail(status, {}, { manage: false, override: true }));
+    const botao = screen.getByRole("button", { name: /Finalizar assessment/ });
+    expect((botao as HTMLButtonElement).disabled).toBe(true);
+    expect(
+      screen.getByText(/Só a consultora finaliza o assessment/)
+    ).toBeTruthy();
+  });
+
+  it("sem assessment.manage, clicar não abre confirmação nem chama a action", () => {
+    montar(detail("REVIEW", {}, { manage: false, override: true }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /Finalizar assessment/ })
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(h.finalizeAssessment).not.toHaveBeenCalled();
+  });
+
+  it("sem assessment.manage o motivo do papel vem primeiro: não fala de eixo contestado", () => {
+    montar(
+      detail("REVIEW", { DATA: "CONTESTED" }, { manage: false, override: true })
+    );
+    expect(screen.getByText(/Só a consultora finaliza/)).toBeTruthy();
+    expect(screen.queryByText(/contestado/i)).toBeNull();
+  });
+
+  it("já finalizado: nada, com ou sem permissão (o Reabrir é outro botão)", () => {
+    montar(detail("FINALISED", {}, { manage: false, override: true }));
+    expect(
+      screen.queryByRole("button", { name: /Finalizar assessment/ })
+    ).toBeNull();
   });
 });

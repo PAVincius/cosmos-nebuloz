@@ -23,6 +23,7 @@ import {
 } from "../base";
 import { FinalizeAssessmentButton } from "./finalize-button";
 import type { ScreenProps } from "./registry";
+import { ReopenAssessmentButton } from "./reopen-button";
 import ColetaTab from "./tab-coleta";
 import GapsTab from "./tab-gaps";
 import PlanoTab from "./tab-plano";
@@ -102,6 +103,11 @@ export default function AssessmentDetailScreen({ param }: ScreenProps) {
                     composite {a.composite}
                   </Badge>
                 )}
+                {a.reopenedAt && (
+                  <Badge tone="neutral">
+                    reaberto em {dateBR(a.reopenedAt)}
+                  </Badge>
+                )}
                 {a.benchmarkOptIn && (
                   <Badge tone="neutral">benchmark opt-in</Badge>
                 )}
@@ -112,6 +118,7 @@ export default function AssessmentDetailScreen({ param }: ScreenProps) {
             tone={statusTone}
           >
             <FinalizeAssessmentButton a={a} onChanged={reload} />
+            <ReopenAssessmentButton a={a} onChanged={reload} />
           </PageHeader>
         </div>
 

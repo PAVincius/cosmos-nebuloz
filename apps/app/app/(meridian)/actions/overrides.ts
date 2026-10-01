@@ -9,7 +9,7 @@ import {
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
 import { cuid, type Result, safeAction } from "../../actions/_base";
-import { logMeridianAudit, nextCode } from "./_shared";
+import { logMeridianAudit, nextCode, requireDecisionsOpen } from "./_shared";
 
 // Override de score — US3.
 //
@@ -42,6 +42,7 @@ export async function registerOverride(
     }
 
     const created = await withTenantDb(ctx.tenantId, async (db) => {
+      await requireDecisionsOpen(db, ctx.tenantId, input.assessmentId);
       const score = await db.meridianAxisScore.findFirst({
         where: {
           tenantId: ctx.tenantId,
@@ -80,6 +81,7 @@ export async function registerOverride(
           assessmentId: input.assessmentId,
           axis: input.axis,
           code,
+          kind: "OVERRIDE",
           fromScore: from,
           toScore: input.toScore,
           rationale: input.rationale,
@@ -118,6 +120,8 @@ export async function registerOverride(
 export type OverrideRow = {
   id: string;
   code: string;
+  /** OVERRIDE muda o score; CONFIRMATION mantém o computado (D-29). */
+  kind: "OVERRIDE" | "CONFIRMATION";
   axis: string;
   fromScore: number;
   toScore: number;
@@ -145,6 +149,7 @@ export async function listOverrides(
         (o): OverrideRow => ({
           id: o.id,
           code: o.code,
+          kind: o.kind,
           axis: o.axis,
           fromScore: o.fromScore,
           toScore: o.toScore,

@@ -1,4 +1,5 @@
 import {
+  COLLECTION_CLOSED_MESSAGE,
   TOKEN_INVALID_MESSAGE,
   TOKEN_RATE_LIMITED_MESSAGE,
 } from "./respondent-token";
@@ -12,6 +13,10 @@ const GENERIC_INVALID_COPY: RespondentErrorCopy = {
 
 const KNOWN_COPY: Record<string, RespondentErrorCopy> = {
   [TOKEN_INVALID_MESSAGE]: GENERIC_INVALID_COPY,
+  [COLLECTION_CLOSED_MESSAGE]: {
+    title: "Coleta encerrada",
+    body: "Este diagnóstico não aceita mais respostas. Fale com a pessoa que conduz o diagnóstico na sua organização.",
+  },
   [TOKEN_RATE_LIMITED_MESSAGE]: {
     title: "Muitas tentativas",
     body: "Aguarde um minuto e tente abrir o link de novo.",

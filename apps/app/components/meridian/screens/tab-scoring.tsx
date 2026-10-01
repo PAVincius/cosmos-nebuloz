@@ -15,7 +15,6 @@ import {
   Button,
   Progress,
   SectionCard,
-  type Tone,
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useEffect, useState } from "react";
 import type {
@@ -40,16 +39,9 @@ import {
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
+import { AxisDecisionButtons, axisStatusMeta } from "./confirm-computed";
 import { EvidenceButton } from "./evidence-button";
-import { RationaleHint } from "./rationale-hint";
-
-const RATIONALE_MIN = 20;
-
-const STATUS_META: Record<string, [Tone, string]> = {
-  COMPUTED: ["accent", "Computado"],
-  CONTESTED: ["amber", "Contestado"],
-  OVERRIDDEN: ["purple", "Override"],
-};
+import { RATIONALE_MIN, RationaleHint } from "./rationale-hint";
 
 /** Divergência lado a lado. Carrega sob demanda: só o eixo contestado precisa
  *  dela, e cada leitura é acesso a conteúdo de evidência. */
@@ -283,9 +275,15 @@ function OverrideModal({
           <Button onClick={onClose} variant="ghost">
             Cancelar
           </Button>
-          <Button disabled={!valid || busy} icon="check" onClick={submit}>
-            Registrar override
-          </Button>
+          <AxisDecisionButtons
+            a={a}
+            onClose={onClose}
+            onDone={onDone}
+            onRegister={submit}
+            rationale={rationale}
+            registerDisabled={!valid || busy}
+            score={score}
+          />
         </>
       }
       icon="gavel"
@@ -445,7 +443,7 @@ export default function ScoringTab({
         {AXIS_IDS.filter((x) => byAxis.has(x)).map((x) => {
           const s = byAxis.get(x) as AxisScoreView;
           const v = finalOf(s);
-          const [tone, label] = STATUS_META[s.status] ?? ["accent", s.status];
+          const [tone, label] = axisStatusMeta(s);
           return (
             <div
               className="lift"

@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   requirePerm: vi.fn(),
+  assessmentFindFirst: vi.fn(),
   scoreFindFirst: vi.fn(),
   scoreUpdate: vi.fn(),
   overrideCreate: vi.fn(),
@@ -46,6 +47,7 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
+      meridianAssessment: { findFirst: h.assessmentFindFirst },
       meridianAxisScore: {
         findFirst: h.scoreFindFirst,
         update: h.scoreUpdate,
@@ -85,6 +87,8 @@ const VALID_RATIONALE =
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Assessment aberto para decisões (D-29): a trava de FINALISED não dispara.
+  h.assessmentFindFirst.mockResolvedValue({ status: "REVIEW" });
   h.requirePerm.mockResolvedValue(CTX);
   h.scoreFindFirst.mockResolvedValue(SCORE);
   h.sequenceUpsert.mockResolvedValue({ next: 12 });
@@ -210,6 +214,30 @@ describe("registerOverride", () => {
   });
 });
 
+describe("registerOverride — kind", () => {
+  it("grava a linha como OVERRIDE (a confirmação é outra ação, kind CONFIRMATION)", async () => {
+    await registerOverride({
+      assessmentId: "clx0000000000000000000as1",
+      axis: "GOVERNANCE",
+      toScore: 66,
+      rationale: VALID_RATIONALE,
+    });
+    expect(h.overrideCreate.mock.calls[0][0].data.kind).toBe("OVERRIDE");
+  });
+
+  it("score igual ao atual continua recusado, mesmo existindo a confirmação", async () => {
+    const res = await registerOverride({
+      assessmentId: "clx0000000000000000000as1",
+      axis: "GOVERNANCE",
+      toScore: 74,
+      rationale: VALID_RATIONALE,
+    });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("override.no-change");
+    expect(h.overrideCreate).not.toHaveBeenCalled();
+  });
+});
+
 describe("listOverrides", () => {
   it("devolve em ordem cronológica crescente — a trilha se lê de cima para baixo", async () => {
     h.overrideFindMany.mockResolvedValue([]);
@@ -220,5 +248,33 @@ describe("listOverrides", () => {
     };
     expect(args.orderBy).toEqual({ createdAt: "asc" });
     expect(args.where.tenantId).toBe("t1");
+  });
+
+  // D-29: a confirmação do computado vive na mesma tabela; o histórico entrega
+  // o kind para quem lista poder filtrar ou rotular (nada de contar confirmação
+  // como override).
+  it("cada linha traz o kind (OVERRIDE ou CONFIRMATION)", async () => {
+    const row = (kind: string, id: string) => ({
+      id,
+      code: "OV-1",
+      kind,
+      axis: "DATA",
+      fromScore: 61,
+      toScore: kind === "CONFIRMATION" ? 61 : 70,
+      rationale: "Justificativa com mais de vinte caracteres.",
+      reviewerId: "u1",
+      createdAt: new Date("2026-09-30T10:00:00.000Z"),
+    });
+    h.overrideFindMany.mockResolvedValue([
+      row("CONFIRMATION", "a"),
+      row("OVERRIDE", "b"),
+    ]);
+    const res = await listOverrides({
+      assessmentId: "clx0000000000000000000as1",
+    });
+    expect(res.ok && res.data.map((r) => r.kind)).toEqual([
+      "CONFIRMATION",
+      "OVERRIDE",
+    ]);
   });
 });

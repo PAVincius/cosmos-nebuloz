@@ -108,6 +108,7 @@ const respondent = (over: Record<string, unknown> = {}) => ({
     code: "AS-104",
     orgName: "Vanta Saúde",
     templateId: "tpl1",
+    status: "COLLECTING",
   },
   ...over,
 });
@@ -425,5 +426,84 @@ describe("attachEvidence — target do audit (achado da Morgana sobre report.ts,
     };
     expect(audit.data.metadata.target).not.toContain("ev.txt");
     expect(audit.data.metadata.target).toBe("AS-104 · e1");
+  });
+});
+
+// D-29 (FR-029c, SC-014): a coleta fechada não aceita mais escrita pelo link,
+// mesmo com o token ainda válido — antes mesmo da finalização. Só COLLECTING
+// grava; ler a bateria continua permitido.
+describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
+  const file = {
+    size: 3,
+    type: "text/plain",
+    name: "ev.txt",
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+  } as unknown as File;
+
+  const fechado = (status: string) =>
+    respondent({
+      assessment: {
+        id: "a1",
+        code: "AS-104",
+        orgName: "Vanta Saúde",
+        templateId: "tpl1",
+        status,
+      },
+    });
+
+  it.each([
+    "REVIEW",
+    "FINALISED",
+    "DRAFT",
+  ])("saveDraft recusa com o assessment em %s, sem gravar nada", async (status) => {
+    h.respondentFindUnique.mockResolvedValue(fechado(status));
+    const res = await saveDraft({
+      token: TOKEN,
+      answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
+    });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.responseUpsert).not.toHaveBeenCalled();
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "REVIEW",
+    "FINALISED",
+    "DRAFT",
+  ])("submitBattery recusa com o assessment em %s, sem concluir nem auditar", async (status) => {
+    h.respondentFindUnique.mockResolvedValue(fechado(status));
+    const res = await submitBattery(TOKEN);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "REVIEW",
+    "FINALISED",
+    "DRAFT",
+  ])("attachEvidence recusa com o assessment em %s, sem tocar no bucket nem no banco", async (status) => {
+    h.respondentFindUnique.mockResolvedValue(fechado(status));
+    const res = await attachEvidence(TOKEN, "q1", file);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.ensureBucket).not.toHaveBeenCalled();
+    expect(h.evidenceCreate).not.toHaveBeenCalled();
+  });
+
+  it("em COLLECTING a escrita segue normal", async () => {
+    const res = await saveDraft({
+      token: TOKEN,
+      answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
+    });
+    expect(res.ok).toBe(true);
+  });
+
+  it("ler a bateria continua permitido depois do fechamento (só leitura)", async () => {
+    h.respondentFindUnique.mockResolvedValue(fechado("REVIEW"));
+    const res = await getBattery(TOKEN);
+    expect(res.ok).toBe(true);
   });
 });

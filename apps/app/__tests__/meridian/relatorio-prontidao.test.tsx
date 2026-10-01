@@ -35,7 +35,7 @@ const ATLAS: readonly Row[] = [
   ["INFRASTRUCTURE", "Infrastructure", 36, 0.8],
 ];
 
-function reportFor(rows: readonly Row[]) {
+function reportFor(rows: readonly Row[], confirmed: readonly string[] = []) {
   return {
     assessmentCode: "AS-900",
     orgName: "Atlas",
@@ -49,6 +49,7 @@ function reportFor(rows: readonly Row[]) {
       computed: score,
       confidence,
       overridden: false,
+      confirmed: confirmed.includes(axis),
       rationale: null,
     })),
     cohort: null,
@@ -138,5 +139,26 @@ describe("RelatorioTab — faixas e arquétipo", () => {
     });
     render(<RelatorioTab a={A} />);
     expect(await screen.findByText(/cinco eixos com score/i)).toBeTruthy();
+  });
+
+  it("eixo confirmado pelo revisor aparece assim — nunca como override", async () => {
+    h.getReport.mockResolvedValue({
+      ok: true,
+      data: reportFor(ATLAS, ["DATA"]),
+    });
+    render(<RelatorioTab a={A} />);
+    await screen.findByText(/Arquétipo de prontidão/);
+    const linha = (rotulo: string) =>
+      screen
+        .getByText(rotulo, { selector: "span" })
+        .closest("div") as HTMLElement;
+    expect(
+      within(linha("Data")).getByText("Confirmado pelo revisor")
+    ).toBeTruthy();
+    expect(within(linha("Data")).queryByText("override")).toBeNull();
+    // Os outros eixos não levam a marca.
+    expect(
+      within(linha("Process")).queryByText("Confirmado pelo revisor")
+    ).toBeNull();
   });
 });

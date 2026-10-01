@@ -1,7 +1,10 @@
 import "server-only";
 
 import type { Prisma, PrismaClient } from "@repo/database";
-import type { MeridianContext } from "@/lib/meridian/guards";
+import {
+  type MeridianContext,
+  StateConflictError,
+} from "@/lib/meridian/guards";
 
 // Primitivas compartilhadas pelas actions do Meridian.
 
@@ -10,6 +13,32 @@ export type Db = Omit<
   PrismaClient,
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
+
+/**
+ * Trava de decisões do assessment finalizado (D-29, FR-029d): override,
+ * confirmação, gap, plano e novo scoring são recusados quando o assessment
+ * está FINALISED — para reabrir, o consultor reabre (FR-029e). Leitura,
+ * relatório, exportação, promoção de gap e reavaliação seguem livres.
+ *
+ * Sem assessment (id de outro tenant ou inexistente) a trava não decide: quem
+ * chama já recusa com "não encontrado" pela própria leitura.
+ */
+export async function requireDecisionsOpen(
+  db: Db,
+  tenantId: string,
+  assessmentId: string
+): Promise<void> {
+  const a = await db.meridianAssessment.findFirst({
+    where: { id: assessmentId, tenantId },
+    select: { status: true },
+  });
+  if (a?.status === "FINALISED") {
+    throw new StateConflictError(
+      "assessment.finalised",
+      "Assessment finalizado: override, confirmação, gaps, plano e scoring ficam travados. Reabra o assessment para decidir."
+    );
+  }
+}
 
 /** Diff campo-a-campo, no formato normativo da trilha: [campo, antes, depois]. */
 export type AuditDiff = [string, string, string][];

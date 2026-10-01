@@ -41,6 +41,9 @@ export type ReportAxis = {
   computed: number;
   confidence: number;
   overridden: boolean;
+  /** O revisor confirmou o computado (linha CONFIRMATION, sem override depois):
+   *  aparece como "confirmado pelo revisor", nunca como "override" (D-29). */
+  confirmed: boolean;
   rationale: string | null;
 };
 
@@ -120,10 +123,15 @@ export async function getReport(
     });
 
     const { a, trail, benchmarkEnabled, signalAnswers } = base;
+    // `overrides` vem do mais novo ao mais antigo. A confirmação do computado
+    // (kind = CONFIRMATION) é ato distinto: não vira justificativa de override.
     const latestOverride = new Map<MeridianAxis, string>();
+    const latestConfirmation = new Map<MeridianAxis, string>();
     for (const o of a.overrides) {
-      if (!latestOverride.has(o.axis)) {
-        latestOverride.set(o.axis, o.rationale);
+      const map =
+        o.kind === "CONFIRMATION" ? latestConfirmation : latestOverride;
+      if (!map.has(o.axis)) {
+        map.set(o.axis, o.rationale);
       }
     }
 
@@ -140,7 +148,12 @@ export async function getReport(
           // Override aparece marcado, não escondido: o relatório apresenta a
           // decisão do consultor como decisão, com a justificativa junto.
           overridden: s.status === "OVERRIDDEN",
-          rationale: latestOverride.get(x) ?? null,
+          // Confirmado: tem a linha e o eixo não foi sobrescrito depois.
+          confirmed: s.status !== "OVERRIDDEN" && latestConfirmation.has(x),
+          rationale:
+            s.status === "OVERRIDDEN" || !latestConfirmation.has(x)
+              ? (latestOverride.get(x) ?? null)
+              : (latestConfirmation.get(x) ?? null),
         };
       }
     );
