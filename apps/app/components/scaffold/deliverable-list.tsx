@@ -241,10 +241,16 @@ export function DeliverableList({
         {items.map((d, i) => {
           const s = STATUS[d.status as DeliverableStatus];
           const req = requirement(d);
-          const actions = RELEVANT[d.status as DeliverableStatus].map((t) => ({
-            t,
-            av: d.actions[t],
-          }));
+          // Dispensado não tem ação: o motivo está na linha, e o que mexeria nele
+          // (iniciar, designar, vincular, anexar) nem aparece. A máquina também
+          // recusa no servidor.
+          const dispensed = Boolean(d.dispensedReason);
+          const actions = dispensed
+            ? []
+            : RELEVANT[d.status as DeliverableStatus].map((t) => ({
+                t,
+                av: d.actions[t],
+              }));
           const blocked = actions.find((a) => !a.av.allowed);
           return (
             <li
@@ -296,18 +302,22 @@ export function DeliverableList({
                   Responsável: {nameOf(d.ownerId, "sem responsável")} ·
                   Aprovador: {nameOf(d.approverId, "qualquer revisor")}
                 </span>
-                <Button
-                  disabled={busy || !d.assignAccess.allowed}
-                  icon="users"
-                  onClick={() => setAssignOf(d.id)}
-                  size="sm"
-                  title={d.assignAccess.reason ?? undefined}
-                  variant="secondary"
-                >
-                  Designar
-                </Button>
-                {d.assignAccess.allowed ? null : (
-                  <span>{d.assignAccess.reason}</span>
+                {dispensed ? null : (
+                  <>
+                    <Button
+                      disabled={busy || !d.assignAccess.allowed}
+                      icon="users"
+                      onClick={() => setAssignOf(d.id)}
+                      size="sm"
+                      title={d.assignAccess.reason ?? undefined}
+                      variant="secondary"
+                    >
+                      Designar
+                    </Button>
+                    {d.assignAccess.allowed ? null : (
+                      <span>{d.assignAccess.reason}</span>
+                    )}
+                  </>
                 )}
               </div>
               {d.lastReview?.comment ? (
@@ -376,85 +386,91 @@ export function DeliverableList({
                   {d.dispensedReason}
                 </div>
               ) : null}
-              <div
-                style={{
-                  display: "flex",
-                  gap: 8,
-                  marginTop: 8,
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                }}
-              >
-                {actions.map(({ t, av }) => (
-                  <Button
-                    disabled={busy || !av.allowed}
-                    icon={ACTION[t].icon}
-                    key={t}
-                    onClick={() =>
-                      ACTION[t].needsComment
-                        ? setPending({ item: d, transition: t })
-                        : run(d, t)
-                    }
-                    size="sm"
-                    variant={ACTION[t].variant}
-                  >
-                    {ACTION[t].label}
-                  </Button>
-                ))}
-                <Button
-                  disabled={busy}
-                  icon="link2"
-                  onClick={() => setLinksOf(d.id)}
-                  size="sm"
-                  variant="secondary"
+              {dispensed ? null : (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    marginTop: 8,
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                  }}
                 >
-                  Vínculos ({d.links.length})
-                </Button>
-                {ATTACHABLE.includes(d.status as DeliverableStatus) ? (
-                  <>
-                    <label
-                      style={{
-                        cursor:
-                          busy || !d.attach.allowed ? "not-allowed" : "pointer",
-                        opacity: busy || !d.attach.allowed ? 0.5 : 1,
-                        fontSize: 13,
-                        fontWeight: 600,
-                        padding: "7px 12px",
-                        borderRadius: "var(--r-md)",
-                        border: "1px solid var(--hairline-strong)",
-                        background: "var(--surface)",
-                      }}
+                  {actions.map(({ t, av }) => (
+                    <Button
+                      disabled={busy || !av.allowed}
+                      icon={ACTION[t].icon}
+                      key={t}
+                      onClick={() =>
+                        ACTION[t].needsComment
+                          ? setPending({ item: d, transition: t })
+                          : run(d, t)
+                      }
+                      size="sm"
+                      variant={ACTION[t].variant}
                     >
-                      <input
-                        aria-label={`Anexar arquivo: ${d.code}`}
-                        disabled={busy || !d.attach.allowed}
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) {
-                            attach(d, f);
-                          }
-                          e.target.value = "";
+                      {ACTION[t].label}
+                    </Button>
+                  ))}
+                  <Button
+                    disabled={busy}
+                    icon="link2"
+                    onClick={() => setLinksOf(d.id)}
+                    size="sm"
+                    variant="secondary"
+                  >
+                    Vínculos ({d.links.length})
+                  </Button>
+                  {ATTACHABLE.includes(d.status as DeliverableStatus) ? (
+                    <>
+                      <label
+                        style={{
+                          cursor:
+                            busy || !d.attach.allowed
+                              ? "not-allowed"
+                              : "pointer",
+                          opacity: busy || !d.attach.allowed ? 0.5 : 1,
+                          fontSize: 13,
+                          fontWeight: 600,
+                          padding: "7px 12px",
+                          borderRadius: "var(--r-md)",
+                          border: "1px solid var(--hairline-strong)",
+                          background: "var(--surface)",
                         }}
-                        style={{ display: "none" }}
-                        type="file"
-                      />
-                      {d.hasFile ? "Nova versão do arquivo" : "Anexar arquivo"}
-                    </label>
-                    {d.attach.allowed ? null : (
-                      <span
-                        style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
                       >
-                        {d.attach.reason}
-                      </span>
-                    )}
-                  </>
-                ) : null}
-                {blocked?.av.reason ? (
-                  <span style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
-                    {blocked.av.reason}
-                  </span>
-                ) : null}
-              </div>
+                        <input
+                          aria-label={`Anexar arquivo: ${d.code}`}
+                          disabled={busy || !d.attach.allowed}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) {
+                              attach(d, f);
+                            }
+                            e.target.value = "";
+                          }}
+                          style={{ display: "none" }}
+                          type="file"
+                        />
+                        {d.hasFile
+                          ? "Nova versão do arquivo"
+                          : "Anexar arquivo"}
+                      </label>
+                      {d.attach.allowed ? null : (
+                        <span
+                          style={{ fontSize: 11.5, color: "var(--ink-muted)" }}
+                        >
+                          {d.attach.reason}
+                        </span>
+                      )}
+                    </>
+                  ) : null}
+                  {blocked?.av.reason ? (
+                    <span style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
+                      {blocked.av.reason}
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </li>
           );
         })}

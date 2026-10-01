@@ -1821,3 +1821,36 @@ describe("candidatos a responsável e aprovador", () => {
     expect(h.update).not.toHaveBeenCalled();
   });
 });
+
+describe("entregável dispensado não tem ação no servidor", () => {
+  const dispensado = (status: string) =>
+    row(status, { dispensedReason: "Os papéis de dado já existem no Atlas" });
+
+  it("iniciar é recusado com o código próprio e nada é gravado", async () => {
+    h.findFirst.mockResolvedValue(dispensado("NOT_STARTED"));
+    const r = await startDeliverable({ deliverableId: DEL });
+    expect(r).toMatchObject({ ok: false, code: "DELIVERABLE_DISPENSED" });
+    expect(h.updateMany).not.toHaveBeenCalled();
+    expect(h.eventCreate).not.toHaveBeenCalled();
+  });
+
+  it("vincular também é recusado", async () => {
+    h.findFirst.mockResolvedValue(dispensado("NOT_STARTED"));
+    expect(
+      await addDeliverableLink({
+        deliverableId: DEL,
+        provider: "LINEAR",
+        externalId: "NEB-1",
+        url: "https://linear.app/x/issue/NEB-1",
+      })
+    ).toMatchObject({ ok: false, code: "DELIVERABLE_DISPENSED" });
+  });
+
+  it("a consulta que alimenta a máquina lê o motivo da dispensa", async () => {
+    h.findFirst.mockResolvedValue(row("NOT_STARTED"));
+    await startDeliverable({ deliverableId: DEL });
+    expect(h.findFirst.mock.calls[0]?.[0].select).toMatchObject({
+      dispensedReason: true,
+    });
+  });
+});

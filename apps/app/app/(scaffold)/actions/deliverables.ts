@@ -85,6 +85,7 @@ function refuse(code: TransitionDenial, message: string): never {
     FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
     PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
     INVALID_TRANSITION: "DELIVERABLE_TRANSITION_INVALID",
+    DISPENSED: "DELIVERABLE_DISPENSED",
   } as const;
   throw new ScaffoldRuleError(domain[code]);
 }
@@ -103,6 +104,8 @@ async function loadSubject(db: Db, tenantId: string, deliverableId: string) {
       version: true,
       fileKey: true,
       fileName: true,
+      // A máquina recusa toda ação em entregável dispensado.
+      dispensedReason: true,
       track: { select: { code: true } },
       phaseInstance: { select: { id: true, phase: true, state: true } },
     },
@@ -119,6 +122,7 @@ function toSubject(d: {
   ownerId: string | null;
   approverId: string | null;
   fileKey: string | null;
+  dispensedReason?: string | null;
   phaseInstance: { state: string };
 }): DeliverableSubject {
   return {
@@ -127,6 +131,7 @@ function toSubject(d: {
     approverId: d.approverId,
     phaseState: d.phaseInstance.state as DeliverableSubject["phaseState"],
     hasFile: d.fileKey !== null,
+    dispensed: Boolean(d.dispensedReason),
   };
 }
 
