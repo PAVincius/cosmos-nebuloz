@@ -71,16 +71,19 @@ describe("confiança — abaixo de 0,6 a faixa é 'não confiável'", () => {
     expect(RELIABILITY_MIN).toBe(0.6);
   });
 
-  it("confiança 0,59 marca o eixo como não confiável; 0,6 já confia", () => {
+  it("confiança 0,59 ACRESCENTA a marca; a faixa continua; 0,6 já confia", () => {
     const p = assessReadiness(
       read([70, 70, 70, 70, 70], { DATA: 0.59, PROCESS: 0.6 })
     );
     const data = p.axes.find((a) => a.axis === "DATA");
     const process = p.axes.find((a) => a.axis === "PROCESS");
     expect(data?.reliable).toBe(false);
-    expect(data?.display).toBe("Não confiável");
+    // A marca não substitui a faixa (spec framework-no-scaffold, US1 cenário 2).
+    expect(data?.display).toBe("Estruturado");
+    expect(data?.unreliableMark).toBe("Não confiável");
     expect(process?.reliable).toBe(true);
     expect(process?.display).toBe("Estruturado");
+    expect(process?.unreliableMark).toBeNull();
   });
 
   it("o eixo não confiável guarda a faixa calculada e aparece em unreliableAxes", () => {
@@ -223,15 +226,26 @@ describe("caso Atlas (briefing §6)", () => {
     );
   });
 
-  it("faixas por eixo e Pessoas não confiável", () => {
+  it("faixas por eixo, com Pessoas marcada como não confiável", () => {
     const p = assessReadiness(atlas);
     const byAxis = Object.fromEntries(p.axes.map((a) => [a.axis, a.display]));
     expect(byAxis).toEqual({
       DATA: "Inicial",
       PROCESS: "Em formação",
-      PEOPLE: "Não confiável",
+      PEOPLE: "Em formação",
       GOVERNANCE: "Em formação",
       INFRASTRUCTURE: "Inicial",
+    });
+    // Só Pessoas leva a marca; a faixa dela segue sendo Em formação.
+    const marks = Object.fromEntries(
+      p.axes.map((a) => [a.axis, a.unreliableMark])
+    );
+    expect(marks).toEqual({
+      DATA: null,
+      PROCESS: null,
+      PEOPLE: "Não confiável",
+      GOVERNANCE: null,
+      INFRASTRUCTURE: null,
     });
     expect(p.unreliableAxes).toEqual(["PEOPLE"]);
   });

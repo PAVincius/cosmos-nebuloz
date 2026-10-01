@@ -224,9 +224,16 @@ describe("getReport", () => {
     expect(r?.axes.map((a) => a.display)).toEqual([
       "Inicial",
       "Em formação",
-      "Não confiável",
+      "Em formação",
       "Em formação",
       "Inicial",
+    ]);
+    expect(r?.axes.map((a) => a.unreliableMark)).toEqual([
+      null,
+      null,
+      "Não confiável",
+      null,
+      null,
     ]);
   });
 
