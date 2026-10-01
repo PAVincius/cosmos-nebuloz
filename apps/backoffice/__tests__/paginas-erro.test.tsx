@@ -156,6 +156,12 @@ vi.mock("@/app/actions/provisioning", () => ({
   bootstrapMeridianAction: vi.fn(),
   contractModuleAction: vi.fn(),
 }));
+vi.mock("@/app/actions/scaffold-dispensas", () => ({
+  listDispensedDeliverables: vi.fn(async () => ({
+    ok: true,
+    data: { items: [], truncated: false },
+  })),
+}));
 vi.mock("@/app/actions/scaffold-supervision", () => ({
   listGateQueue: mocks.listGateQueue,
 }));

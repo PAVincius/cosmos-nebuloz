@@ -53,6 +53,12 @@ vi.mock("@/app/actions/approvals", () => ({
   decidePlatformApprovalAction: vi.fn(),
   listPlatformApprovals: mocks.listPlatformApprovals,
 }));
+vi.mock("@/app/actions/scaffold-dispensas", () => ({
+  listDispensedDeliverables: vi.fn(async () => ({
+    ok: true,
+    data: { items: [], truncated: false },
+  })),
+}));
 vi.mock("@/app/actions/scaffold-supervision", () => ({
   enterTenantContext: vi.fn(),
   listGateQueue: mocks.listGateQueue,

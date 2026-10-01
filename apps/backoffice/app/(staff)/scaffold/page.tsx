@@ -1,8 +1,10 @@
 import { PageHeader } from "@repo/design-system/cosmos/kit";
+import { listDispensedDeliverables } from "@/app/actions/scaffold-dispensas";
 import { listGateQueue } from "@/app/actions/scaffold-supervision";
 import { FalhaAoCarregar } from "@/components/falha-ao-carregar";
 import { secaoDaRota, tituloDaAba } from "@/components/nav";
 import { requirePlatformStaff } from "@/lib/guard";
+import { DispensasDaCarteira } from "./dispensas";
 import { FilaDeGates } from "./fila-de-gates";
 
 // Fila de supervisão do Scaffold — S-08, SN-06.
@@ -17,9 +19,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: tituloDaAba("/scaffold") };
 
 export default async function ScaffoldSupervisionPage() {
-  const [, fila] = await Promise.all([
+  const [, fila, dispensas] = await Promise.all([
     requirePlatformStaff(),
     listGateQueue({}),
+    listDispensedDeliverables(),
   ]);
 
   return (
@@ -35,6 +38,14 @@ export default async function ScaffoldSupervisionPage() {
         <FalhaAoCarregar
           motivo={fila.error}
           titulo="Não foi possível carregar a fila"
+        />
+      )}
+      {dispensas.ok ? (
+        <DispensasDaCarteira dados={dispensas.data} />
+      ) : (
+        <FalhaAoCarregar
+          motivo={dispensas.error}
+          titulo="Não foi possível carregar os entregáveis dispensados"
         />
       )}
     </div>
