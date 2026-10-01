@@ -177,7 +177,7 @@ const FUNDACAO_V1: VersionSeed = {
         {
           key: "P2",
           statement:
-            "Subir o ambiente segregado com logging, versionamento de modelo e custo de inferência por caso (4 a 8 semanas, em paralelo com o catálogo)",
+            "Subir o ambiente segregado com logging, versionamento de modelo e custo de inferência por caso (4 a 8 semanas, em paralelo com o catálogo). Dado só entra no ambiente depois que a fonte tem linha no catálogo (P1), com dono e sensibilidade",
           expectedArtefact: "Ambiente segregado com MLOps básico",
           estimateMinutes: semanas(4, 8),
         },
@@ -232,6 +232,11 @@ const FUNDACAO_V1: VersionSeed = {
           key: "catalog-operating",
           statement:
             "O catálogo de dados para IA está em uso, com dono e sensibilidade em cada fonte",
+        },
+        {
+          key: "data-only-from-catalog",
+          statement:
+            "Todo dado que entrou no ambiente vem de fonte com linha no catálogo (P1), com dono e sensibilidade",
         },
         {
           key: "environment-operating",

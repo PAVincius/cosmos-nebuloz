@@ -210,6 +210,19 @@ describe("critérios de gate", () => {
     expect(chaves("ASSESS")).not.toContain("baseline-measured");
   });
 
+  it("dado só entra no ambiente depois que a fonte tem linha no catálogo: está no enunciado do P2 e no gate do PILOT", () => {
+    const p2 = fase("PILOT").steps.find((s) => s.key === "P2");
+    expect(p2?.statement).toMatch(/dado só entra no ambiente/i);
+    expect(p2?.statement).toMatch(/catálogo \(P1\)/);
+    expect(p2?.statement).toMatch(/dono e sensibilidade/);
+    const criterio = fase("PILOT").criteria.find(
+      (c) => c.key === "data-only-from-catalog"
+    );
+    expect(criterio?.statement).toMatch(/catálogo \(P1\)/);
+    expect(criterio?.statement).toMatch(/dono e sensibilidade/);
+    expect(criterio?.evaluationType ?? "MANUAL").toBe("MANUAL");
+  });
+
   it("o gate do PILOT confere o baseline operacional como nova versão do caso", () => {
     expect(chaves("PILOT")).toContain("operational-baseline-recorded");
   });
