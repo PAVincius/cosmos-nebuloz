@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved
 ---
 
 # Intent: Dispensa visível (D-28, PR 3)

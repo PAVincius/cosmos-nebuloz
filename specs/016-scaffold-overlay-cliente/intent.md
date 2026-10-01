@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved
 ---
 
 # Intent: Overlay do cliente pela tela (D-28, PR 2)
