@@ -28,7 +28,14 @@ import { seedTrack } from "@/app/(scaffold)/actions/_seed-track";
 
 const db = {
   scaffoldTemplateVersion: { findFirst: h.versionFindFirst },
-  meridianAssessment: { findFirst: async () => ({ id: "as1" }) },
+  meridianAssessment: {
+    findFirst: async () => ({
+      id: "as1",
+      code: "AS-001",
+      status: "FINALISED",
+      scores: [],
+    }),
+  },
   scaffoldTemplateOverlay: { findFirst: h.overlayFindFirst },
   scaffoldOverlayConflict: { count: h.conflictCount },
   scaffoldSequence: { upsert: h.sequenceUpsert },
@@ -217,5 +224,83 @@ describe("seedTrack aplica o overlay", () => {
   it("template sem forma de trabalho cria trilha com archetype nulo", async () => {
     await seedTrack(db, { ...INPUT, overlayId: undefined });
     expect(h.trackCreate.mock.calls[0][0].data.archetype).toBeNull();
+  });
+});
+
+// Vigia (#331): só o saveOverlay validava. Um overlay que ficou inválido depois
+// (uma versão nova tornou obrigatório o entregável que ele remove) entrava na
+// trilha sem passar pela regra. Criar trilha revalida com a mesma validação.
+
+describe("o overlay é revalidado ao criar a trilha", () => {
+  const remover = (
+    key: string,
+    reason = "O cliente já tem este entregável"
+  ) => ({
+    op: "REMOVE",
+    target: "deliverable",
+    key,
+    reason,
+  });
+  const comOps = (...ops: unknown[]) =>
+    h.overlayFindFirst.mockResolvedValue({ ops });
+
+  it("REMOVE de entregável obrigatório por quem não é consultor é recusado, e nada é criado", async () => {
+    comOps(remover("P2.1"));
+    await expect(
+      seedTrack(db, { ...INPUT, actorRole: "TRANSFORMATION_LEAD" })
+    ).rejects.toMatchObject({ code: "OVERLAY_VIOLATES_GATE_RULES" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+    expect(h.sequenceUpsert).not.toHaveBeenCalled();
+  });
+
+  it("sem papel informado, vale o mais restrito: não é consultor", async () => {
+    comOps(remover("P2.1"));
+    await expect(seedTrack(db, INPUT)).rejects.toMatchObject({
+      code: "OVERLAY_VIOLATES_GATE_RULES",
+    });
+  });
+
+  it("o consultor cria a trilha, e a instância nasce dispensada com o motivo", async () => {
+    comOps(remover("P2.1", "O cliente já tem trilhas de capacitação"));
+    await seedTrack(db, { ...INPUT, actorRole: "CONSULTANT" });
+    const p21 = created().find((r) => r.code === "P2.1");
+    expect(p21?.required).toBe(false);
+    expect(p21?.dispensedReason).toContain("trilhas de capacitação");
+  });
+
+  it("REMOVE sem motivo é recusado até para o consultor", async () => {
+    comOps({ op: "REMOVE", target: "deliverable", key: "P2.2" });
+    await expect(
+      seedTrack(db, { ...INPUT, actorRole: "CONSULTANT" })
+    ).rejects.toMatchObject({ code: "OVERLAY_VIOLATES_GATE_RULES" });
+  });
+
+  it("remover o passo que é o único produtor de um obrigatório é recusado", async () => {
+    comOps({ op: "REMOVE", target: "step", key: "P1" });
+    await expect(
+      seedTrack(db, { ...INPUT, actorRole: "CONSULTANT" })
+    ).rejects.toMatchObject({ code: "OVERLAY_VIOLATES_GATE_RULES" });
+  });
+
+  it("overlay antigo com operação de critério não impede a trilha: segue valendo, sem efeito no gate", async () => {
+    comOps({
+      op: "REPLACE",
+      target: "criterion",
+      key: "beats-baseline",
+      patch: { statement: "Afrouxado" },
+    });
+    await seedTrack(db, { ...INPUT, actorRole: "CONSULTANT" });
+    expect(h.trackCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it("overlay válido, de quem for, cria a trilha", async () => {
+    comOps({
+      op: "REPLACE",
+      target: "deliverable",
+      key: "P1.1",
+      patch: { statement: "Catálogo no DataHub" },
+    });
+    await seedTrack(db, { ...INPUT, actorRole: "TRANSFORMATION_LEAD" });
+    expect(h.trackCreate).toHaveBeenCalledTimes(1);
   });
 });

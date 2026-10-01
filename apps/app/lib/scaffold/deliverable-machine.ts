@@ -319,6 +319,15 @@ export function decideAttach(
   );
 }
 
+/** Designar responsável ou aprovador. Dispensado não recebe ninguém: precisa ser
+ *  reativado antes (Vigia, #331). Quem pode designar é regra de papel, na action. */
+export function decideAssign(subject: DeliverableSubject): WorkDecision {
+  if (subject.dispensed) {
+    return { ok: false, code: "DISPENSED", message: DISPENSED_MESSAGE };
+  }
+  return { ok: true };
+}
+
 /** Vínculo com item externo (S6): referência, vale em qualquer estado do
  *  entregável, com o mesmo escopo de `work` e a fase aberta. */
 export function decideLink(

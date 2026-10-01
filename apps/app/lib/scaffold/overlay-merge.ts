@@ -277,7 +277,13 @@ export function countCriterionOps(ops: readonly OverlayOp[]): number {
 export function validateOverlay(
   base: TemplateShape,
   ops: readonly OverlayOp[],
-  actor: { role: string }
+  actor: { role: string },
+  options: {
+    /** Overlay que já existe pode trazer operação de critério (de antes da
+     *  recusa). Criar trilha e resolver conflito não o quebram: a operação segue
+     *  valendo, sem efeito no gate. Só salvar recusa. */
+    ignoreCriterionOps?: boolean;
+  } = {}
 ): { blocking: OverlayViolation[] } {
   const blocking: OverlayViolation[] = [];
   const isConsultant = actor.role === "CONSULTANT";
@@ -288,6 +294,9 @@ export function validateOverlay(
 
   for (const op of ops) {
     if (op.target === "criterion") {
+      if (options.ignoreCriterionOps) {
+        continue;
+      }
       // Débito até 2026-10-31 (D-24 §7.7): a trilha copia passos e entregáveis
       // na criação, mas o gate lê os critérios da versão pinada. Aceitar a
       // operação calado faria o cliente achar que ajustou o gate.

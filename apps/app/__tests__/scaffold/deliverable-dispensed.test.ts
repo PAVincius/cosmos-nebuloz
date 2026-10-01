@@ -3,6 +3,7 @@ import {
   availableActions,
   type DeliverableActor,
   type DeliverableSubject,
+  decideAssign,
   decideAttach,
   decideEdit,
   decideLink,
@@ -77,6 +78,15 @@ describe("entregável dispensado", () => {
     ]) {
       expect(d).toMatchObject({ ok: false, code: "DISPENSED" });
     }
+  });
+
+  it("não recebe responsável nem aprovador: precisa ser reativado antes", () => {
+    expect(decideAssign(dispensado)).toMatchObject({
+      ok: false,
+      code: "DISPENSED",
+    });
+    expect(decideAssign(base)).toEqual({ ok: true });
+    expect(decideAssign({ ...base, dispensed: false })).toEqual({ ok: true });
   });
 
   it("availableActions nega todas as ações, com o motivo", () => {

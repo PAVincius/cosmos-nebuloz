@@ -24,7 +24,13 @@ export async function listScaffoldAssessments(): Promise<
     const ctx = await requireScaffoldPermissionContext("track.manage");
     return withTenantDb(ctx.tenantId, async (db) => {
       const rows = await db.meridianAssessment.findMany({
-        where: { tenantId: ctx.tenantId },
+        // Coleta fechada e score calculado: REVIEW ou FINALISED. Não só FINALISED:
+        // nenhum caminho do produto grava FINALISED hoje (só o seed), e exigir
+        // isso travaria toda trilha real.
+        where: {
+          tenantId: ctx.tenantId,
+          status: { in: ["REVIEW", "FINALISED"] },
+        },
         orderBy: { openedAt: "desc" },
         take: LIMIT,
         select: {

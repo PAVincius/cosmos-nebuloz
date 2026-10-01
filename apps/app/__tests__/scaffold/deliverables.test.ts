@@ -1834,6 +1834,14 @@ describe("entregável dispensado não tem ação no servidor", () => {
     expect(h.eventCreate).not.toHaveBeenCalled();
   });
 
+  it("designar responsável ou aprovador é recusado e nada é gravado (Vigia, #331)", async () => {
+    h.findFirst.mockResolvedValue(dispensado("NOT_STARTED"));
+    expect(
+      await assignDeliverable({ deliverableId: DEL, ownerId: OWNER })
+    ).toMatchObject({ ok: false, code: "DELIVERABLE_DISPENSED" });
+    expect(h.update).not.toHaveBeenCalled();
+  });
+
   it("vincular também é recusado", async () => {
     h.findFirst.mockResolvedValue(dispensado("NOT_STARTED"));
     expect(

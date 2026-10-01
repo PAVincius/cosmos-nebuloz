@@ -26,6 +26,7 @@ import {
   type DeliverableActor,
   type DeliverableSubject,
   type DeliverableTransition,
+  decideAssign,
   decideAttach,
   decideEdit,
   decideLink,
@@ -377,6 +378,10 @@ export async function assignDeliverable(
 
     await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
+      const assignable = decideAssign(toSubject(d));
+      if (!assignable.ok) {
+        refuse(assignable.code, assignable.message);
+      }
       const ownerId = input.ownerId ?? d.ownerId;
       const approverId = input.approverId ?? d.approverId;
       if (ownerId && approverId && ownerId === approverId) {
