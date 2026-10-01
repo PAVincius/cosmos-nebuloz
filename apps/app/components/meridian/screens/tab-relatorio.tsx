@@ -242,9 +242,9 @@ function DiffModal({
   );
 }
 
-/** Faixa do eixo por extenso. Eixo de confiança baixa mostra "Não confiável"
- *  (fato, em âmbar); as faixas usam o tom de categoria do produto, não a
- *  régua de verde/âmbar/vermelho do score. */
+/** Faixa do eixo por extenso, no tom de categoria do produto (não a régua de
+ *  verde/âmbar/vermelho do score). Confiança baixa ACRESCENTA a marca "Não
+ *  confiável" (fato, em âmbar) num segundo selo: a faixa continua visível. */
 function BandBadge({
   band,
 }: {
@@ -254,8 +254,17 @@ function BandBadge({
     return <span style={{ width: 104 }} />;
   }
   return (
-    <span style={{ width: 104, display: "flex", justifyContent: "flex-end" }}>
-      <Badge tone={band.reliable ? "blue" : "amber"}>{band.display}</Badge>
+    <span
+      style={{
+        width: 104,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        gap: 3,
+      }}
+    >
+      <Badge tone="blue">{band.display}</Badge>
+      {band.unreliableMark && <Badge tone="amber">{band.unreliableMark}</Badge>}
     </span>
   );
 }
