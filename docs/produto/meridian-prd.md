@@ -357,6 +357,53 @@ na spec 012, que deixava a leitura fora de escopo (`specs/012-benchmark-travado-
 aceite "com a habilitação desligada, o relatório sai sem benchmark e as duas actions recusam". Bussola
 implementa no mesmo PR da trava, até **2026-10-07**.
 
+### 2026-09-30 · Confirmar o computado, o que trava ao finalizar e quem reabre (D-29, CPO)
+
+**Contexto.** No PR #334 (finalizar assessment), a Bussola achou duas lacunas. As duas entram **no
+próprio #334**. Sem a primeira, a fila de contestados não esvazia e nenhum assessment finaliza. Sem a
+segunda, "finalizado" não significa nada.
+
+**1. Confirmar o computado.** Hoje um eixo CONTESTED só sai da fila por override com score diferente,
+porque a spec 001 (US2, cenário 4) recusa override sem mudança. O revisor que concorda com o computado
+não tem caminho, e o contorno de override de 1 ponto distorce o dado e o benchmark.
+- **Ação nova, separada do override:** "confirmar o computado". Tira o eixo da fila sem mudar o score: o
+  final é o computado.
+- **Mesmas exigências do override:** só quem pode fazer override, justificativa de 20 caracteres ou
+  mais, registro append-only com antes e depois (iguais) e entrada na trilha de auditoria.
+- **Fica distinguível:** no relatório e no shape, o eixo aparece como "confirmado pelo revisor", não
+  como "computado" nem como "override".
+- **O cenário 4 da US2 continua:** override sem mudança segue recusado. Confirmar é outro ato, com outro
+  nome, e o dado mostra qual dos dois aconteceu.
+
+**2. O que trava, e quando.**
+
+| Momento | Trava | Continua permitido |
+|---|---|---|
+| **Fechamento da coleta (REVIEW)** | Respostas e evidências pelo link do respondente. O token deixa de aceitar escrita, ainda que não tenha expirado | Override, confirmação, edição de gap e de plano, e a fila de contestados |
+| **Finalização (FINALISED)** | Override, confirmação, criar, ajustar, remover e ligar gap, gerar ou editar o plano | Leitura, relatório e exportação; promover gap e revogar promoção (é por aí que nasce a trilha do Scaffold, costura 3.7); reavaliação, que cria assessment novo |
+
+Travar as respostas no fechamento da coleta, e não só na finalização, fecha a divergência do SC-003
+registrada no §5: hoje a resposta muda depois do fechamento, e o computado não. O scoring roda sobre a
+coleta fechada, então a coleta fechada tem de ficar parada.
+
+**3. Reabrir FINALISED → REVIEW.**
+- **Quem:** só o papel CONSULTANT, com motivo de 20 caracteres ou mais, registrado na trilha de
+  auditoria. O caminho é para corrigir erro. Medição nova é **reavaliação**, que cria assessment novo, e
+  não reabertura.
+- **Volta a REVIEW, não a COLLECTING.** As respostas continuam travadas. Se o erro estiver numa resposta,
+  a correção é reavaliar.
+- **Finalizar de novo** exige a fila de contestados vazia outra vez.
+- **Se já existe trilha do Scaffold com este assessment de origem**, a reabertura é permitida, mas a
+  trilha passa a mostrar "assessment de origem reaberto em {data}". O baseline assinado da ASSESS não
+  muda, porque é versão assinada e imutável (costura 3.1). Se o número corrigido importar, o dono do
+  processo assina versão nova do caso de negócio.
+
+**Dono e data.** Regua emenda a spec 001: a ação de confirmar, a tabela de travas e a reabertura, com
+critério de aceite. Bussola implementa no #334. Critério de pronto: um assessment com eixo contestado
+finaliza só com "confirmar o computado"; depois de finalizado, override e edição de gap são recusados
+pelo servidor; o link do respondente recusa escrita depois do fechamento da coleta; a consultora reabre
+com motivo, e quem não é consultora é recusado.
+
 ---
 
 *Draft para revisão interna. Documento companheiro: Meridian SRD v1.0.*
