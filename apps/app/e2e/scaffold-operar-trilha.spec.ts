@@ -440,13 +440,9 @@ test.describe("Scaffold · operar a trilha (SC-001) @scaffold", () => {
   });
 
   test("PILOT: critério não atendido é recusado e a opção de override aparece (US2 #4 e #6)", async () => {
-    // DEFEITO CONHECIDO (QA, 01/10): `closePhase` grava a fase como BLOCKED e
-    // em seguida lança CRITERIA_UNMET dentro da mesma transação; o lançamento
-    // desfaz o BLOCKED, a fase continua GATE_READY e o override (que só age
-    // sobre BLOCKED) nunca aparece. Enquanto isso valer, este teste é esperado
-    // como falha; quando o servidor persistir o BLOCKED ele passa e o Playwright
-    // avisa para remover esta linha.
-    test.fail(true, "closePhase desfaz o BLOCKED ao lançar CRITERIA_UNMET");
+    // Antes do fix do #286, `closePhase` gravava BLOCKED e lançava CRITERIA_UNMET
+    // na mesma transação: o throw desfazia o BLOCKED e o override nunca aparecia
+    // (este teste era `test.fail`). Agora o BLOCKED persiste antes da recusa.
     await approveByDb("PILOT");
     const page = admin.page;
     await reloadTrack(page);
