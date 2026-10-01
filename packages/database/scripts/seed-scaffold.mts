@@ -82,6 +82,7 @@ export async function upsertTemplate(
             statement: step.statement,
             expectedArtefact: step.expectedArtefact,
             required: step.required ?? true,
+            estimateMinutes: step.estimateMinutes,
           })),
         });
         if (phase.deliverables?.length) {

@@ -89,6 +89,55 @@ describe("passos", () => {
   });
 });
 
+describe("prazos (estimateMinutes)", () => {
+  const passosTodos = FASES.flatMap((p) => fase(p).steps);
+  const minutos = (key: string) =>
+    passosTodos.find((s) => s.key === key)?.estimateMinutes;
+
+  it("todo passo tem estimativa, em minutos inteiros", () => {
+    for (const s of passosTodos) {
+      expect(Number.isInteger(s.estimateMinutes), s.key).toBe(true);
+      expect(s.estimateMinutes ?? 0, s.key).toBeGreaterThan(0);
+    }
+  });
+
+  it("os prazos da proposta do CEO viram a mediana da faixa, a 40 h por semana (2.400 min)", () => {
+    expect(minutos("A1")).toBe(3600); // 1 a 2 semanas → 1,5
+    expect(minutos("A2")).toBe(2400); // 1 semana
+    expect(minutos("A3")).toBe(1920); // 3 a 5 dias → 4 dias de 8 h
+    expect(minutos("P3")).toBe(10_800); // AI Adopt, 3 a 6 semanas → 4,5
+    expect(minutos("S1")).toBe(14_400); // 4 a 8 semanas → 6
+    expect(minutos("S2")).toBe(7200); // 2 a 4 semanas → 3
+    expect(minutos("E1")).toBe(14_400); // 4 a 8 semanas → 6
+    expect(minutos("E2")).toBe(10_800); // 3 a 6 semanas → 4,5
+  });
+
+  it("catálogo e ambiente dividem a faixa de 4 a 8 semanas da fundação mínima: cada um leva a mediana, em paralelo", () => {
+    expect(minutos("P1")).toBe(14_400);
+    expect(minutos("P2")).toBe(14_400);
+  });
+
+  it("A4, S3 e E3 são estimativa do CPO (A4 1 semana, S3 e E3 2 semanas) e o texto do passo diz que é a calibrar", () => {
+    expect(minutos("A4")).toBe(2400);
+    expect(minutos("S3")).toBe(4800);
+    expect(minutos("E3")).toBe(4800);
+    for (const key of ["A4", "S3", "E3"]) {
+      const s = passosTodos.find((x) => x.key === key);
+      expect(s?.statement, key).toMatch(/estimativa a calibrar/);
+    }
+  });
+
+  it("a faixa original fica no texto do passo, onde a mediana a esconderia", () => {
+    const texto = (k: string) =>
+      passosTodos.find((s) => s.key === k)?.statement;
+    expect(texto("A1")).toMatch(/1 a 2 semanas/);
+    expect(texto("A3")).toMatch(/3 a 5 dias/);
+    expect(texto("P3")).toMatch(/3 a 6 semanas/);
+    expect(texto("S1")).toMatch(/4 a 8 semanas/);
+    expect(texto("E2")).toMatch(/3 a 6 semanas/);
+  });
+});
+
 describe("entregáveis", () => {
   it("são 16, 4 por fase, com código único no formato X1.1", () => {
     expect(entregaveis).toHaveLength(16);
@@ -207,6 +256,28 @@ describe("requirementRefs (D-23 F1)", () => {
       .filter((d) => (d.requirementRefs?.length ?? 0) > 0)
       .map((d) => d.code);
     expect(comRef).toEqual(["E1.1", "E2.1", "E2.2"]);
+  });
+
+  it("referências finais do Norte (§7.7): AIA-09 e ISO-CL08 ficaram de fora", () => {
+    const codigos = (code: string) =>
+      entregaveis
+        .find((d) => d.code === code)
+        ?.requirementRefs?.map((r) => r.codigo);
+    expect(codigos("E1.1")).toEqual([
+      "ISO-CL05",
+      "ISO-CL06",
+      "NIST-GOVERN-1",
+      "NIST-MANAGE-1",
+    ]);
+    expect(codigos("E2.1")).toEqual([
+      "ISO-CL04",
+      "NIST-MAP-1",
+      "NIST-MAP-2",
+      "LGPD-ART37",
+    ]);
+    expect(codigos("E2.2")).toEqual(["ISO-CL06"]);
+    // O art. 9 do AI Act é obrigação do fornecedor de alto risco: só com perfil.
+    expect(refs.map((r) => r.codigo)).not.toContain("AIA-09");
   });
 
   it("toda referência existe no catálogo do Charter (conjunto, versão e código)", () => {

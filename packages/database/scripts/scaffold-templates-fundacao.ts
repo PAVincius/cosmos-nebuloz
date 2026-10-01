@@ -19,10 +19,14 @@
 // assinado (`BUSINESS_CASE_DELIVERABLE_CODE`): o SG-04 vale para esta trilha
 // pelo gate, e o baseline da ASSESS são os scores do assessment (§7.3).
 //
-// O que NÃO está aqui, de propósito: `estimateMinutes` (o D-24 não dá prazo por
-// passo, e inventar mediana seria número sem fonte), `requiresModule` (nenhum
-// entregável exige módulo, §7.6) e passos condicionais por arquétipo, que entram
-// em versão seguinte (D-25).
+// Prazos: `estimateMinutes` guarda a MEDIANA da faixa, a 40 h por semana (2.400
+// min por semana, 480 por dia; MAPEAMENTO §5), e a faixa original fica no texto do
+// passo. Os da proposta do CEO vêm dela. A4, S3 e E3 não estão na proposta: são
+// estimativa do CPO (§7.7), sem medição, e o texto do passo diz que é a calibrar.
+//
+// O que NÃO está aqui, de propósito: `requiresModule` (nenhum entregável exige
+// módulo, §7.6) e passos condicionais por arquétipo, que entram em versão
+// seguinte (D-25).
 
 import type { TemplateSeed, VersionSeed } from "./scaffold-templates";
 
@@ -33,12 +37,21 @@ export type FundacaoSeed = Omit<TemplateSeed, "archetype"> & {
   archetype?: undefined;
 };
 
+const MIN_POR_SEMANA = 2400;
+const MIN_POR_DIA = 480;
+
+/** Mediana de uma faixa em semanas, em minutos. */
+const semanas = (de: number, ate: number = de) =>
+  Math.round(((de + ate) / 2) * MIN_POR_SEMANA);
+/** Mediana de uma faixa em dias de 8 h, em minutos. */
+const dias = (de: number, ate: number = de) =>
+  Math.round(((de + ate) / 2) * MIN_POR_DIA);
+
 /** Nomes e versões dos conjuntos do catálogo do Charter, como estão em
  *  `regulacao-corpora.ts`. A referência usa o que é estável entre ambientes
  *  (nome, versão, código) e nunca o `id` (D-23 F1). */
 const ISO = { set: "ISO/IEC 42001 — objetivos de controle", versao: "2023" };
 const NIST = { set: "NIST AI RMF 1.0", versao: "1.0" };
-const AIA = { set: "EU AI Act — sistemas de alto risco", versao: "2024/1689" };
 const LGPD = {
   set: "LGPD — tratamento e decisão automatizada",
   versao: "13.709/2018",
@@ -55,27 +68,32 @@ const FUNDACAO_V1: VersionSeed = {
         {
           key: "A1",
           statement:
-            "Consolidar o relatório de prontidão do Meridian: faixa, arquétipo e confiança por eixo",
+            "Consolidar o relatório de prontidão do Meridian: faixa, arquétipo e confiança por eixo (1 a 2 semanas)",
           expectedArtefact: "Relatório de prontidão por eixo",
+          estimateMinutes: semanas(1, 2),
         },
         {
           key: "A2",
           statement:
-            "Fazer o workshop liderança–operação nos eixos com confiança abaixo de 0,6",
+            "Fazer o workshop liderança–operação nos eixos com confiança abaixo de 0,6 (1 semana)",
           expectedArtefact: "Ata do workshop",
+          estimateMinutes: semanas(1),
           // Condicional: sem eixo de confiança baixa não há o que revalidar.
           required: false,
         },
         {
           key: "A3",
-          statement: "Mapear o arquétipo dominante para a trilha seguinte",
+          statement:
+            "Mapear o arquétipo dominante para a trilha seguinte (3 a 5 dias)",
           expectedArtefact: "Mapa arquétipo → trilha",
+          estimateMinutes: dias(3, 5),
         },
         {
           key: "A4",
           statement:
-            "Escrever a política mínima de uso de IA para o piloto e obter a aprovação do dono do processo",
+            "Escrever a política mínima de uso de IA para o piloto e obter a aprovação do dono do processo (1 semana; estimativa a calibrar)",
           expectedArtefact: "Política mínima de uso de IA aprovada",
+          estimateMinutes: semanas(1),
         },
       ],
       deliverables: [
@@ -157,20 +175,23 @@ const FUNDACAO_V1: VersionSeed = {
         {
           key: "P1",
           statement:
-            "Montar o catálogo inicial de dados para IA: de 3 a 5 fontes críticas, com dono e sensibilidade",
+            "Montar o catálogo inicial de dados para IA: de 3 a 5 fontes críticas, com dono e sensibilidade (4 a 8 semanas, em paralelo com o ambiente)",
           expectedArtefact: "Catálogo inicial de dados para IA",
+          estimateMinutes: semanas(4, 8),
         },
         {
           key: "P2",
           statement:
-            "Subir o ambiente segregado com logging, versionamento de modelo e custo de inferência por caso",
+            "Subir o ambiente segregado com logging, versionamento de modelo e custo de inferência por caso (4 a 8 semanas, em paralelo com o catálogo)",
           expectedArtefact: "Ambiente segregado com MLOps básico",
+          estimateMinutes: semanas(4, 8),
         },
         {
           key: "P3",
           statement:
-            "Rodar o AI Adopt: personas, trilha de capacitação por persona e papéis formais de IA e dados em 1 ou 2 áreas",
+            "Rodar o AI Adopt: personas, trilha de capacitação por persona e papéis formais de IA e dados em 1 ou 2 áreas (3 a 6 semanas)",
           expectedArtefact: "Trilhas de capacitação e papéis formais",
+          estimateMinutes: semanas(3, 6),
         },
       ],
       deliverables: [
@@ -240,20 +261,23 @@ const FUNDACAO_V1: VersionSeed = {
         {
           key: "S1",
           statement:
-            "Priorizar o portfólio de casos de uso com um critério econômico comum",
+            "Priorizar o portfólio de casos de uso com um critério econômico comum (4 a 8 semanas)",
           expectedArtefact: "Portfólio de casos de uso priorizado",
+          estimateMinutes: semanas(4, 8),
         },
         {
           key: "S2",
           statement:
-            "Ativar o comitê de IA com atas e publicar o painel simples de métricas de IA confiável",
+            "Ativar o comitê de IA com atas e publicar o painel simples de métricas de IA confiável (2 a 4 semanas)",
           expectedArtefact: "Atas do comitê e painel de métricas",
+          estimateMinutes: semanas(2, 4),
         },
         {
           key: "S3",
           statement:
-            "Reavaliar no Meridian os eixos Dados e Infra, ligando a reavaliação ao assessment de origem",
+            "Reavaliar no Meridian os eixos Dados e Infra, ligando a reavaliação ao assessment de origem (2 semanas; estimativa a calibrar)",
           expectedArtefact: "Reavaliação do Meridian (AS-xxx)",
+          estimateMinutes: semanas(2),
         },
       ],
       deliverables: [
@@ -324,20 +348,24 @@ const FUNDACAO_V1: VersionSeed = {
         {
           key: "E1",
           statement:
-            "Redigir a carta de governança, a política e a matriz de risco, alinhadas às normas do Charter",
+            "Redigir a carta de governança, a política e a matriz de risco, alinhadas às normas do Charter (4 a 8 semanas)",
           expectedArtefact: "Carta de governança, política e matriz de risco",
+          estimateMinutes: semanas(4, 8),
         },
         {
           key: "E2",
           statement:
-            "Montar o inventário único de sistemas de IA com classificação de risco e a declaração de aplicabilidade",
+            "Montar o inventário único de sistemas de IA com classificação de risco e a declaração de aplicabilidade (3 a 6 semanas)",
           expectedArtefact:
             "Inventário de sistemas de IA e declaração de aplicabilidade",
+          estimateMinutes: semanas(3, 6),
         },
         {
           key: "E3",
-          statement: "Reavaliar no Meridian os eixos Dados, Governança e Infra",
+          statement:
+            "Reavaliar no Meridian os eixos Dados, Governança e Infra (2 semanas; estimativa a calibrar)",
           expectedArtefact: "Reavaliação do Meridian (AS-xxx)",
+          estimateMinutes: semanas(2),
         },
       ],
       deliverables: [
@@ -354,7 +382,6 @@ const FUNDACAO_V1: VersionSeed = {
             { ...ISO, codigo: "ISO-CL06" },
             { ...NIST, codigo: "NIST-GOVERN-1" },
             { ...NIST, codigo: "NIST-MANAGE-1" },
-            { ...AIA, codigo: "AIA-09" },
           ],
         },
         {
@@ -381,10 +408,7 @@ const FUNDACAO_V1: VersionSeed = {
             "Quais controles da ISO/IEC 42001 se aplicam e por quê. Cita a cláusula e formula com texto próprio, sem copiar a norma.",
           kind: "DOCUMENT",
           producer: "LEGAL",
-          requirementRefs: [
-            { ...ISO, codigo: "ISO-CL06" },
-            { ...ISO, codigo: "ISO-CL08" },
-          ],
+          requirementRefs: [{ ...ISO, codigo: "ISO-CL06" }],
         },
         {
           stepCode: "E3",

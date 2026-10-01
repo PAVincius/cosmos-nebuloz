@@ -19,6 +19,9 @@ export type StepSeed = {
   statement: string;
   expectedArtefact: string;
   required?: boolean;
+  /** Estimativa em minutos. Em prazo de faixa, a mediana (MAPEAMENTO §5); a faixa
+   *  original fica no texto do passo. */
+  estimateMinutes?: number;
 };
 
 export type CriterionSeed = {
