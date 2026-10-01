@@ -21,6 +21,7 @@ import {
   SkeletonCard,
   useMeridianData,
 } from "../base";
+import { FinalizeAssessmentButton } from "./finalize-button";
 import type { ScreenProps } from "./registry";
 import ColetaTab from "./tab-coleta";
 import GapsTab from "./tab-gaps";
@@ -109,7 +110,9 @@ export default function AssessmentDetailScreen({ param }: ScreenProps) {
             subtitle={`Aberto ${dateBR(a.openedAt)} · prazo ${dateBR(a.deadline)}${a.reassessmentOfCode ? ` · reavaliação de ${a.reassessmentOfCode}` : ""}`}
             title={a.orgName}
             tone={statusTone}
-          />
+          >
+            <FinalizeAssessmentButton a={a} onChanged={reload} />
+          </PageHeader>
         </div>
 
         <Tabs
