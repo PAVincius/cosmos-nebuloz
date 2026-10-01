@@ -143,6 +143,63 @@ function stageFor(trackIndex: number, j: number, code: string): Stage {
   return STAGES[Math.max(0, Math.min(3, level))] as Stage;
 }
 
+/**
+ * Assessment FICTÍCIO do Atlas no tenant de demonstração (D-27): a trilha da
+ * Fundação nasce ligada a um diagnóstico, e este carrega os cinco scores e
+ * confianças do briefing. Idempotente pelo código. Nada aqui é medição real.
+ */
+export async function ensureAtlasAssessment(
+  db: Db,
+  ctx: Ctx,
+  code: string
+): Promise<string> {
+  const existing = await db.meridianAssessment.findFirst({
+    where: { tenantId: ctx.tenantId, code },
+    select: { id: true },
+  });
+  if (existing) {
+    return existing.id;
+  }
+  const template = await db.meridianTemplate.findFirst({
+    where: { tenantId: ctx.tenantId },
+    orderBy: { createdAt: "desc" },
+    select: { id: true },
+  });
+  if (!template) {
+    throw new Error(
+      "O tenant de demonstração não tem template do Meridian. Rode seed:meridian antes."
+    );
+  }
+  const now = new Date();
+  const assessment = await db.meridianAssessment.create({
+    data: {
+      tenantId: ctx.tenantId,
+      code,
+      orgName: ATLAS_DEMO.name,
+      sector: "demonstração",
+      sizeBand: "demonstração",
+      templateId: template.id,
+      status: "FINALISED",
+      consultantId: ctx.authorId,
+      deadline: now,
+      closedAt: now,
+    },
+    select: { id: true },
+  });
+  await db.meridianAxisScore.createMany({
+    data: ATLAS_DEMO.readings.map((r) => ({
+      tenantId: ctx.tenantId,
+      assessmentId: assessment.id,
+      axis: r.axis as never,
+      computed: r.score,
+      confidence: r.confidence,
+      respondentCount: 0,
+      spread: 0,
+    })),
+  });
+  return assessment.id;
+}
+
 export async function seedDemoTrack(
   db: Db,
   ctx: Ctx,
@@ -189,7 +246,14 @@ export async function seedDemoTrack(
     spec.atlas ? ATLAS_DEMO.overlay.ops : []
   );
   let overlayId: string | null = null;
+  let sourceAssessmentId: string | null = null;
   if (spec.atlas) {
+    // O código do assessment acompanha o da trilha: AS-120 para a TR-120.
+    sourceAssessmentId = await ensureAtlasAssessment(
+      db,
+      ctx,
+      spec.code.replace("TR-", "AS-")
+    );
     const overlay = await db.scaffoldTemplateOverlay.upsert({
       where: {
         tenantId_templateId_name: {
@@ -243,6 +307,7 @@ export async function seedDemoTrack(
       ownerId: ctx.ownerId,
       templateVersionId: version.id,
       overlayId,
+      sourceAssessmentId,
       phases: {
         create: PHASES.map((phase) => ({
           phase,

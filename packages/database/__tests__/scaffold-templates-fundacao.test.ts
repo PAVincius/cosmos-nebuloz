@@ -468,3 +468,147 @@ describe("a Fundação no catálogo e no upsert do seed", () => {
     expect(calls.versionCreate).not.toHaveBeenCalled();
   });
 });
+
+import { DEMO_TRACKS, seedDemoTrack } from "../scripts/seed-scaffold-demo.mts";
+
+describe("seed de demonstração: o Atlas nasce ligado ao assessment dele (D-27)", () => {
+  const v1 = FUNDACAO.versions[0];
+  const passosDb = (v1?.phases ?? []).flatMap((f) =>
+    f.steps.map((s, i) => ({
+      phase: f.phase,
+      seq: i + 1,
+      key: s.key,
+      statement: s.statement,
+      expectedArtefact: s.expectedArtefact,
+      required: s.required ?? true,
+    }))
+  );
+  const entregasDb = (v1?.phases ?? []).flatMap((f) =>
+    (f.deliverables ?? []).map((d, i) => ({
+      phase: f.phase,
+      seq: i + 1,
+      requiresModule: null,
+      required: true,
+      ...d,
+    }))
+  );
+
+  const setup = (assessmentExistente = false) => {
+    const rec: {
+      track?: Record<string, unknown>;
+      assessment?: Record<string, unknown>;
+      scores?: Record<string, unknown>[];
+      instancias: Record<string, unknown>[];
+    } = { instancias: [] };
+    const db = {
+      scaffoldTrack: {
+        findFirst: async () => null,
+        create: async ({ data }: { data: Record<string, unknown> }) => {
+          rec.track = data;
+          return { id: "trk" };
+        },
+      },
+      scaffoldTemplate: {
+        findUnique: async () => ({
+          id: "tpl",
+          archetype: null,
+          versions: [{ id: "ver", steps: passosDb, deliverables: entregasDb }],
+        }),
+      },
+      scaffoldTemplateOverlay: { upsert: async () => ({ id: "ovl" }) },
+      meridianAssessment: {
+        findFirst: async () => (assessmentExistente ? { id: "as-old" } : null),
+        create: async ({ data }: { data: Record<string, unknown> }) => {
+          rec.assessment = data;
+          return { id: "as-novo" };
+        },
+      },
+      meridianTemplate: { findFirst: async () => ({ id: "mt1" }) },
+      meridianAxisScore: {
+        createMany: async ({ data }: { data: Record<string, unknown>[] }) => {
+          rec.scores = data;
+        },
+      },
+      scaffoldPhaseInstance: {
+        findMany: async () =>
+          ["ASSESS", "PILOT", "SCALE", "EMBED"].map((phase) => ({
+            id: `ph-${phase}`,
+            phase,
+          })),
+      },
+      scaffoldBusinessCase: {
+        create: async () => ({ id: "bc", versions: [{ id: "bcv" }] }),
+        update: async () => ({}),
+      },
+      scaffoldDeliverableInstance: {
+        create: async ({ data }: { data: Record<string, unknown> }) => {
+          rec.instancias.push(data);
+          return { id: `d-${data.code}` };
+        },
+      },
+      scaffoldDeliverableEvent: { createMany: async () => ({}) },
+      tenantModule: { findFirst: async () => null },
+      scaffoldSequence: {
+        findUnique: async () => ({ next: 2 }),
+        upsert: async () => ({}),
+      },
+    };
+    return { db, rec };
+  };
+
+  const ctx = { tenantId: "t1", ownerId: "u1", authorId: "u1" };
+  const atlas = DEMO_TRACKS.find((t) => t.atlas)!;
+
+  it("cria o assessment fictício com os cinco scores e confianças do briefing", async () => {
+    const { db, rec } = setup();
+    await seedDemoTrack(db as never, ctx, atlas);
+    expect(rec.assessment).toMatchObject({
+      tenantId: "t1",
+      code: "AS-120",
+      orgName: "Atlas (demonstração)",
+      status: "FINALISED",
+    });
+    expect(
+      Object.fromEntries(
+        (rec.scores ?? []).map((s) => [s.axis, [s.computed, s.confidence]])
+      )
+    ).toEqual({
+      DATA: [32, 0.72],
+      PROCESS: [58, 0.65],
+      PEOPLE: [47, 0.55],
+      GOVERNANCE: [41, 0.61],
+      INFRASTRUCTURE: [36, 0.8],
+    });
+  });
+
+  it("a trilha nasce sem forma de trabalho, ligada ao assessment, com o overlay", async () => {
+    const { db, rec } = setup();
+    await seedDemoTrack(db as never, ctx, atlas);
+    expect(rec.track).toMatchObject({
+      archetype: null,
+      sourceAssessmentId: "as-novo",
+      overlayId: "ovl",
+    });
+  });
+
+  it("reaproveita o assessment que já existe (idempotente)", async () => {
+    const { db, rec } = setup(true);
+    await seedDemoTrack(db as never, ctx, atlas);
+    expect(rec.assessment).toBeUndefined();
+    expect(rec.track).toMatchObject({ sourceAssessmentId: "as-old" });
+  });
+
+  it("A2.1 nasce obrigatório (Pessoas 0,55), P3.2 dispensado pelo overlay e 16 entregáveis", async () => {
+    const { db, rec } = setup();
+    await seedDemoTrack(db as never, ctx, atlas);
+    expect(rec.instancias).toHaveLength(16);
+    const por = (c: string) => rec.instancias.find((i) => i.code === c);
+    expect(por("A2.1")).toMatchObject({
+      required: true,
+      dispensedReason: null,
+    });
+    expect(por("P3.2")).toMatchObject({ required: false });
+    expect(por("P3.2")?.dispensedReason).toMatch(/já existem no Atlas/);
+    expect(por("P1.1")?.title).toMatch(/DataHub do Atlas/);
+  });
+});
