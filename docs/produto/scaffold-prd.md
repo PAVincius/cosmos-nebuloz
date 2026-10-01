@@ -263,3 +263,15 @@ o (1), que trava tudo, até o prazo do overlay.
 
 **Donos.** Regua escreve as três specs, na ordem. Andaime ou Bussola implementam, conforme a Morgana
 escalar. Crivo faz o QA de cada um. Regra do CEO: cada PR com os testes junto, sem depender de PR aberto.
+
+**Registro da implementação do PR 1 (2026-10-01, via Morgana):**
+- **O `seedTrack` valida o overlay com o papel de quem cria a trilha.** Um TRANSFORMATION_LEAD não cria
+  trilha a partir de overlay que remove entregável obrigatório; só a consultora cria. Aceito para o PR 1,
+  porque é o lado seguro e não afrouxa o gate. **Atrito conhecido:** no fluxo normal, a consultora
+  escreve o overlay e o líder cria a trilha, e esta regra trava o líder mesmo quando a consultora já
+  aprovou aquela remoção. **Fica para o PR 2:** a tela de overlay registra quem aprovou cada REMOVE de
+  obrigatório e contra qual versão base. A partir daí, qualquer papel com `track.create` cria trilha de
+  overlay aprovado pela consultora para a versão pinada, e a regra mais dura vale só quando a aprovação
+  não existe ou foi feita para outra versão, que é o caso do Vigia.
+- **No gate, override e reabrir aparecem desabilitados com motivo, não escondidos.** A regra é do
+  `DESIGN.md`, que vale mais que a spec, e combina com "botão desabilitado com motivo" deste PR.
