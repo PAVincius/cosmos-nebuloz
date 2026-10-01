@@ -340,3 +340,23 @@ seguinte do template, não neste PR.
 
 **Teto:** um décimo molde passa pelo CEO. Pedido de trilha nova primeiro responde se é variação da
 Fundação (passo), customização de cliente (overlay) ou caso de uso (forma de trabalho).
+
+## 9. O Scaffold depende do Meridian (D-27, CEO, 2026-09-30)
+
+**Decisão do CEO.** O Scaffold não é independente do Meridian. Toda trilha de prontidão nasce de um
+diagnóstico do Meridian. Se o cliente não contrata o Meridian, o preço do Scaffold inclui as horas de um
+profissional da Nebuloz operando o Meridian para ele: diagnóstico e recomendação de trilhas. A costura
+está no Mapa de fronteiras (3.7), e o Meridian continua dono do diagnóstico.
+
+**Como fica no produto (CPO):**
+
+| Item | Decisão | Onde e quando |
+|---|---|---|
+| (a) Meridian assistido | O Meridian é habilitado **no tenant do próprio cliente** como parte do contrato do Scaffold e operado por um **CONSULTANT da Nebuloz**. Os usuários do cliente respondem a bateria e leem o relatório; quem conduz e faz override é a consultora. Valem as regras do Meridian: benchmark travado (D-21, D-22), retenção de evidência e aviso ao respondente. **Não roda no tenant da Nebuloz:** dado do cliente fora do tenant dele faria a Nebuloz deixar de ser só operadora (memo de 2026-09-29) | Sem schema novo: habilitar o módulo e dar o papel. Entra com o (c) |
+| (b) Vínculo obrigatório | A trilha ganha `sourceAssessmentId String?`, sem FK, como o `sourceGapId`. Ele é **obrigatório na criação para trilha de prontidão** (template sem `archetype`) e opcional para trilha por forma de trabalho. A Fundação nasce do assessment inteiro, não de uma lacuna, e por isso o `sourceGapId` não serve | **Entra no PR único.** São uma coluna, uma regra de criação e um teste. O A1, o baseline do SG-04 e o reassessment do S3 e do E3 dependem desse vínculo. Sem ele, a primeira trilha da Fundação já nasce órfã e vira migração depois. O Atlas do seed nasce ligado ao assessment dele |
+| (c) Back-office | O contrato do Scaffold, quando o cliente não tem o Meridian, liga o Meridian assistido no tenant e acrescenta à proposta um item de `Service`: "operação assistida do Meridian (horas)". `Service` é do Big Bang (Mapa, F4 da D-23) | PR próprio do back-office, depois do PR único |
+| (d) Preço e horas | **Não fixo valor nem quantidade de horas.** É decisão do CEO, com Ponte e Caixa e o pre-mortem do Sócio, como toda entrada de preço do registro | Fora desta decisão |
+
+**Testes do (b) no PR único:** criar a Fundação sem `sourceAssessmentId` é recusado; com um assessment
+de outro tenant também é recusado; uma trilha por forma de trabalho sem assessment continua sendo
+criada.
