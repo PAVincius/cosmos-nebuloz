@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved
 ---
 
 # Intent: Operar a trilha pela tela (D-28, PR 1)
