@@ -7,6 +7,11 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    // O hook de push roda `turbo test` em paralelo e testes de render (modais
+    // do Charter, ex. rescore-modal e policy-unsaved-guard) passam de 5 s (o
+    // padrão) sob essa carga; isolados passam em ~3,9 s. Teste com timeout
+    // próprio (3º argumento de `it`) segue valendo.
+    testTimeout: 15_000,
     include: ["__tests__/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["e2e/**", "node_modules/**"],
     coverage: {

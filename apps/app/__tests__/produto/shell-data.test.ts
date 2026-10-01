@@ -200,5 +200,5 @@ describe("Cosmos — resolveIdentity devolve tenants[] + activeTenantId", () => 
     const identity = await resolveIdentity();
     expect(identity?.activeTenantId).toBe("tenant-1");
     expect(identity?.tenants).toEqual(EXPECTED_TENANTS);
-  }, 20_000);
+  }, 60_000);
 });
