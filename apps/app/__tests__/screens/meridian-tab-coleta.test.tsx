@@ -68,6 +68,8 @@ const ASSESSMENT: AssessmentDetail = {
   planItems: [],
   contestedSpread: 25,
   gapThreshold: 60,
+  permissions: { manage: true, override: true },
+  reopenedAt: null,
 };
 
 /** Mesma forma de `assessment-detail.tsx`: `loading` desmonta o

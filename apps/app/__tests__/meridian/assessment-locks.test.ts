@@ -214,11 +214,11 @@ describe("promover gap continua permitido em FINALISED", () => {
       targetProduct: "COSMOS",
       targetLabel: "Iniciativa",
     });
-    expect(res.code).not.toBe("assessment.finalised");
+    expect((res as { code?: string }).code).not.toBe("assessment.finalised");
   });
 
   it("revokePromotion não é barrado pela trava", async () => {
     const res = await revokePromotion({ gapId: GAP_ID } as never);
-    expect(res.code).not.toBe("assessment.finalised");
+    expect((res as { code?: string }).code).not.toBe("assessment.finalised");
   });
 });

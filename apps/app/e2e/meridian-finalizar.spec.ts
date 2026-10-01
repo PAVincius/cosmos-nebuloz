@@ -272,7 +272,9 @@ test.describe("Meridian · finalizar assessment @meridian", () => {
     }
   });
 
-  test("REVIEWER e VIEWER não veem o botão Finalizar", async ({ browser }) => {
+  test("REVIEWER e VIEWER veem o botão Finalizar desabilitado, com o motivo escrito", async ({
+    browser,
+  }) => {
     await resetAs104();
     await decideData();
     for (const role of ["REVIEWER", "VIEWER"] as const) {
@@ -284,10 +286,18 @@ test.describe("Meridian · finalizar assessment @meridian", () => {
         const page = await context.newPage();
         await loginAs(page, REVIEWER_EMAIL, PASSWORD);
         await openAs104(page);
+        // DESIGN.md do Meridian: o controle que o papel não permite não some;
+        // fica desabilitado, com o motivo na tela. O defeito do QA era o botão
+        // HABILITADO prometendo o que o servidor recusa.
+        const botao = page.getByRole("button", {
+          name: "Finalizar assessment",
+        });
+        await expect(botao, `${role} deveria ver o botão`).toBeVisible();
+        await expect(botao, `${role} não pode finalizar`).toBeDisabled();
         await expect(
-          page.getByRole("button", { name: "Finalizar assessment" }),
-          `${role} não deveria ver o botão`
-        ).toHaveCount(0);
+          page.getByText("Só a consultora finaliza o assessment."),
+          `${role} deveria ver o motivo`
+        ).toBeVisible();
       } finally {
         await context.close();
         await setReviewerRole("REVIEWER");
