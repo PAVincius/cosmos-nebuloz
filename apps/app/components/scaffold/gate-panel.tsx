@@ -18,7 +18,7 @@ import { Badge, Button, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import type { TrackDetailPhase } from "@/app/(scaffold)/actions/tracks";
 import { PHASE } from "@/lib/scaffold/phases";
-import { Eyebrow, Input } from "./base";
+import { Eyebrow, GatedButton, Input } from "./base";
 
 /** Veredito por critério: atendido ou não, e a nota de evidência de quem avaliou
  *  (o par que `closePhase` já aceita e grava no snapshot do gate). */
@@ -299,16 +299,15 @@ export function GatePanel({
                   {overrideReason}
                 </span>
               )}
-              <Button
-                disabled={busy || !canOverride}
+              <GatedButton
+                allowed={canOverride && !busy}
                 icon="shield"
                 onClick={() => onOverride(notice.blockers)}
-                size="sm"
-                title={canOverride ? undefined : (overrideReason ?? undefined)}
+                reason={canOverride ? "" : (overrideReason ?? "Sem permissão.")}
                 variant="secondary"
               >
                 Registrar override
-              </Button>
+              </GatedButton>
             </>
           ) : null}
           {closeBlockedReason ? (
@@ -359,16 +358,15 @@ export function GatePanel({
               {reopenReason}
             </span>
           )}
-          <Button
-            disabled={busy || !canReopen}
+          <GatedButton
+            allowed={canReopen && !busy}
             icon="refresh"
             onClick={onReopen}
-            size="sm"
-            title={canReopen ? undefined : (reopenReason ?? undefined)}
+            reason={canReopen ? "" : (reopenReason ?? "Sem permissão.")}
             variant="secondary"
           >
             Reabrir fase
-          </Button>
+          </GatedButton>
         </div>
       ) : null}
 
