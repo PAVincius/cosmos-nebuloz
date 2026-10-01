@@ -192,8 +192,10 @@ de negócio assinado (`actions/gates.ts:107-126`), e isso não se relaxa para um
 
 - **v1:** todo critério é `MANUAL`. Os critérios que olham o Meridian citam no texto a evidência que
   conta: o código do reassessment (AS-xxx) com a faixa exigida. São dois:
-  - SCALE: Dados e Infra pelo menos Em formação;
-  - EMBED: pelo menos Estruturado em Dados, Governança e Infra.
+  - SCALE: Dados e Infra pelo menos Em formação, pela reavaliação do passo S3;
+  - EMBED: pelo menos Estruturado em Dados, Governança e Infra, pela reavaliação do passo E3.
+- **Critério novo na ASSESS:** política mínima de uso de IA para o piloto aprovada pelo dono do
+  processo (A4). Sem ela, a ASSESS não fecha e o PILOT não abre.
 - **`DERIVED` depois**, quando existir o contrato Meridian → Scaffold de leitura do score do
   reassessment ligado à trilha. É costura nova no Mapa de fronteiras. Revejo quando três trilhas deste
   template chegarem à SCALE, ou em **2026-12-15**, o que vier primeiro.
@@ -218,16 +220,34 @@ ligar ao Charter fica para a AI Governance. Todos são obrigatórios, salvo onde
 | ASSESS | A1 | Relatório de prontidão por eixo (faixas, arquétipos, confiança) | REPORT | CONSULTANT |
 | ASSESS | A2 | Ata do workshop liderança–operação. Obrigatório só se algum eixo tiver confiança < 0,6; senão, nasce dispensado com motivo | DOCUMENT | CONSULTANT |
 | ASSESS | A3 | Mapa arquétipo → trilha | DOCUMENT | CONSULTANT |
-| PILOT | P1 | Catálogo inicial de dados para IA (3 a 5 fontes, dono, sensibilidade) | SPREADSHEET | TECHNICAL |
-| PILOT | P1 | Ambiente segregado com MLOps básico (logging, versionamento, custo de inferência) | CONFIGURATION | TECHNICAL |
-| PILOT | P2 | Trilhas de capacitação por persona | TRAINING | CONSULTANT |
-| PILOT | P2 | Papéis formais de IA e dados em 1 ou 2 áreas | DOCUMENT | OWNER |
+| ASSESS | A4 | Política mínima de uso de IA para o piloto: que classe de dado pode entrar no ambiente, quem acessa, que ferramentas estão aprovadas. Uma página, aprovada pelo dono do processo | DOCUMENT | OWNER |
+| PILOT | P1 | Catálogo inicial de dados para IA (3 a 5 fontes, dono, sensibilidade) | SPREADSHEET | OWNER |
+| PILOT | P2 | Ambiente segregado com MLOps básico (logging, versionamento, custo de inferência) | CONFIGURATION | TECHNICAL |
+| PILOT | P3 | Trilhas de capacitação por persona | TRAINING | CONSULTANT |
+| PILOT | P3 | Papéis formais de IA e dados em 1 ou 2 áreas | DOCUMENT | OWNER |
 | SCALE | S1 | Portfólio de casos de uso priorizado com critério econômico | SPREADSHEET | OWNER |
 | SCALE | S2 | Evidências de comitê ativo (atas) | DOCUMENT | OWNER |
 | SCALE | S2 | Painel simples de métricas de IA confiável | REPORT | TECHNICAL |
+| SCALE | S3 | Reavaliação do Meridian nos eixos Dados e Infra (código AS-xxx ligado ao assessment de origem) | REPORT | CONSULTANT |
 | EMBED | E1 | Carta de governança, política e matriz de risco (com `requirementRefs`) | DOCUMENT | LEGAL |
 | EMBED | E2 | Inventário único de sistemas de IA com classificação de risco | SPREADSHEET | TECHNICAL |
 | EMBED | E2 | Declaração de aplicabilidade (ISO/IEC 42001; citação e texto próprio) | DOCUMENT | LEGAL |
+| EMBED | E3 | Reavaliação do Meridian nos eixos Dados, Governança e Infra | REPORT | CONSULTANT |
+
+**Ajustes de 2026-09-30, a partir da revisão da Morgana sobre a proposta do Atlas:**
+1. **Reavaliação do Meridian (S3, E3).** Os gates do SCALE e do EMBED dependem do score ter subido, e sem
+   um passo que rode o Meridian de novo eles não teriam como ser verificados. O passo fica **dentro da
+   fase cujo gate lê o score**, e não no fim do PILOT, porque o gate do PILOT não olha score. A
+   reavaliação usa o `reassessmentOfId` que o Meridian já tem. O critério cita o código AS-xxx dela
+   (§7.4).
+2. **A2 condicional:** já estava decidido acima (dispensado com motivo quando nenhum eixo tem confiança
+   < 0,6).
+3. **Política mínima antes do dado (A4).** O PILOT sobe um ambiente com dado. Se a política fosse
+   critério do gate do PILOT, ela seria conferida só no fim da fase, depois de o dado já ter entrado. Por
+   isso ela fica na **ASSESS**: o gate da ASSESS bloqueia, e o PILOT só abre com a política aprovada. Não
+   substitui o E1, que é a governança completa. O A4 é o mínimo para o piloto não começar sem regra.
+4. **Catálogo e ambiente separados (P1, P2).** Quem trava o gate fica explícito. O catálogo é do dono
+   do dado do lado do cliente (`OWNER`); o ambiente é técnico (`TECHNICAL`). AI Adopt passa a P3.
 
 A2 condicional segue o mesmo mecanismo do entregável dispensado com motivo. A condição (algum eixo com
 confiança < 0,6) é lida do relatório A1 na criação da trilha. Se isso exigir leitura do Meridian que
@@ -314,7 +334,7 @@ overlay ou passo da Fundação. No schema isso se lê assim:
   Signal é leitura: o Signal apura o valor e o Scaffold não mede. Se precisar de contrato, é costura nova
   no Mapa de fronteiras.
 
-**Consequência para o PR único:** a Fundação v1.0 sai com os passos da §7 (P2 já é AI Adopt). Os
+**Consequência para o PR único:** a Fundação v1.0 sai com os passos da §7 (P3 já é AI Adopt). Os
 passos condicionais por arquétipo que não estão na §7, como o arranque executivo, entram em versão
 seguinte do template, não neste PR.
 
