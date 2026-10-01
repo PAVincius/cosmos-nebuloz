@@ -45,11 +45,29 @@ Uma consultora ajusta, pela tela, um critério de gate de uma fase para um clien
 
 ---
 
+### User Story 3 - Quem pode criar a trilha a partir de um overlay que remove obrigatório (Priority: P1)
+
+No PR 1, criar uma trilha a partir de um overlay que remove um entregável obrigatório ficou restrito à consultora — o lado seguro, mas com atrito: no fluxo normal é a consultora quem escreve e aprova o overlay, e é o líder de transformação quem cria a trilha, e essa regra trava o líder mesmo quando a consultora já aprovou aquela remoção. Esta spec registra a aprovação e relaxa a regra quando ela vale para a versão certa.
+
+**Why this priority**: É correção de um atrito já identificado na implementação do PR 1 (achado da Morgana/Vigia), decisão do Norte — fecha o PR 2 sem deixar o PR 1 com uma régua mais dura do que o necessário.
+
+**Independent Test**: Com um overlay cujo REMOVE de obrigatório foi aprovado pela consultora para a versão pinada, criar a trilha com um usuário TRANSFORMATION_LEAD e conferir que é aceito; repetir sem aprovação, e repetir com aprovação para outra versão — nos dois últimos casos, só a consultora consegue.
+
+**Acceptance Scenarios**:
+
+1. **Given** um overlay com REMOVE de entregável obrigatório, aprovado pela consultora especificamente para a versão que será pinada na trilha, **When** qualquer usuário com a permissão de gerenciar trilha (`track.manage` — inclui TRANSFORMATION_LEAD, CONSULTANT e ADMIN) cria a trilha, **Then** a criação é aceita.
+2. **Given** um overlay com REMOVE de entregável obrigatório sem nenhuma aprovação registrada, **When** um usuário que não é consultora tenta criar a trilha, **Then** a criação é recusada — só a consultora cria.
+3. **Given** um overlay com REMOVE de entregável obrigatório aprovado, mas para uma versão diferente da que será pinada na trilha, **When** um usuário que não é consultora tenta criar a trilha, **Then** a criação é recusada pela mesma razão do item 2 — aprovação de outra versão não vale para esta.
+4. **Given** qualquer um dos casos acima, **When** a consultora cria a trilha, **Then** sempre é aceito — a trava mais dura nunca se aplica a quem já tem a permissão mais alta.
+
+---
+
 ### Edge Cases
 
 - **Overlay existente de antes desta entrega, com operação de critério já salva** (aceita na época, mas sem efeito): passa a ter efeito assim que este PR entra — nenhuma migração de dado é necessária, porque a operação já estava salva, só não era lida.
 - **Conflito entre overlay de critério e uma versão nova do template**: segue o mesmo fluxo de conflito que já existe para passo e entregável — aparece para resolução, não falha silenciosamente.
 - **Mais de uma operação sobre o mesmo entregável ou critério no mesmo overlay**: a tela reflete o resultado final já mesclado, não cada operação isolada.
+- **Overlay rebaseado para uma versão nova (resolução `take_upstream`)**: a aprovação de uma remoção anterior não migra automaticamente para a nova versão — conta como "aprovação de outra versão" (US3, cenário 3) até a consultora aprovar de novo contra a base nova.
 
 ## Requirements *(mandatory)*
 
@@ -62,10 +80,14 @@ Uma consultora ajusta, pela tela, um critério de gate de uma fase para um clien
 - **FR-005**: O fechamento de uma fase MUST ler os critérios de gate da versão com o overlay da trilha aplicado, quando houver overlay associado — substituindo a leitura direta da versão crua que existe hoje.
 - **FR-006**: Criar ou editar uma operação de overlay com alvo "critério de gate" MUST deixar de ser recusado — a restrição provisória (spec 013, FR-021b) é removida por esta entrega.
 - **FR-007**: Uma trilha sem overlay associado MUST continuar avaliando o gate exatamente como hoje — a mudança é aditiva, não altera o caminho sem overlay.
+- **FR-008**: O sistema MUST registrar, para cada operação de overlay que remove um entregável obrigatório, quem aprovou a remoção e contra qual versão base do molde a aprovação vale.
+- **FR-009**: Criar uma trilha a partir de um overlay cuja remoção de entregável obrigatório está aprovada para a versão exata que será pinada MUST ser permitido a qualquer usuário com a permissão de gerenciar trilha, não só à consultora.
+- **FR-010**: Criar uma trilha a partir de um overlay cuja remoção de entregável obrigatório não tem aprovação registrada, ou tem aprovação para uma versão diferente da que será pinada, MUST continuar restrito à consultora.
+- **FR-011**: Rebasear um overlay para uma versão nova (resolução de conflito `take_upstream`) MUST NOT carregar automaticamente a aprovação anterior para a versão nova — conta como sem aprovação até ser aprovada de novo.
 
 ### Key Entities
 
-Nenhuma entidade nova. A tela opera sobre `ScaffoldTemplateOverlay` (já existente) e o motor `validateOverlay`/`applyOverlay` (já existente, já com os três alvos). O único código novo além da tela é o fechamento de fase passar a aplicar o overlay antes de avaliar os critérios.
+Nenhuma entidade nova além do registro de aprovação por remoção (FR-008), que pode viver na própria operação do overlay ou em registro associado — decisão de implementação, não desta spec. A tela opera sobre `ScaffoldTemplateOverlay` (já existente) e o motor `validateOverlay`/`applyOverlay` (já existente, já com os três alvos). O único código novo além da tela é o fechamento de fase passar a aplicar o overlay antes de avaliar os critérios, e a criação de trilha passar a checar a aprovação antes de exigir o papel de consultora.
 
 ## Success Criteria *(mandatory)*
 
@@ -75,6 +97,7 @@ Nenhuma entidade nova. A tela opera sobre `ScaffoldTemplateOverlay` (já existen
 - **SC-002**: Um overlay de critério de gate muda, de fato, o que o gate exige para fechar — verificável comparando o resultado da avaliação com e sem o overlay.
 - **SC-003**: Toda tentativa de remover um entregável obrigatório por quem não é consultor é recusada ou indisponível na tela, em 100% dos casos testados.
 - **SC-004**: Nenhum teste pré-existente do Scaffold fica vermelho depois desta entrega.
+- **SC-005**: Criar trilha a partir de overlay com remoção de obrigatório aprovada para a versão certa é aceito para qualquer papel com permissão de gerenciar trilha; sem aprovação, ou com aprovação de outra versão, só a consultora cria — verificável nos três casos.
 
 ## Assumptions
 
