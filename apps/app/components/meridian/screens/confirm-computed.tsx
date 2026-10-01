@@ -89,3 +89,52 @@ export function ConfirmComputedButton({
     </>
   );
 }
+
+/** Os dois atos sobre o eixo no rodapé do modal: confirmar o computado (só para
+ *  eixo contestado) e registrar override. Sem `override.write`, os dois ficam
+ *  `disabled` com o motivo escrito (DESIGN.md do Meridian); o servidor segue
+ *  recusando por conta própria. */
+export function AxisDecisionButtons({
+  a,
+  score,
+  rationale,
+  registerDisabled,
+  onRegister,
+  onClose,
+  onDone,
+}: {
+  a: Pick<AssessmentDetail, "id" | "permissions">;
+  score: Pick<AxisScoreView, "axis" | "status">;
+  rationale: string;
+  registerDisabled: boolean;
+  onRegister: () => void;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const allowed = a.permissions.override;
+  return (
+    <>
+      <ConfirmComputedButton
+        a={a}
+        onClose={onClose}
+        onDone={onDone}
+        rationale={rationale}
+        score={score}
+      />
+      {!allowed && (
+        <span
+          style={{ fontSize: 12, color: "var(--ink-muted)", fontWeight: 500 }}
+        >
+          Só a consultora ou a revisora registram override.
+        </span>
+      )}
+      <Button
+        disabled={!allowed || registerDisabled}
+        icon="check"
+        onClick={onRegister}
+      >
+        Registrar override
+      </Button>
+    </>
+  );
+}

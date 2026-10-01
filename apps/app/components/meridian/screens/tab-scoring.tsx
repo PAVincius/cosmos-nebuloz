@@ -39,7 +39,7 @@ import {
   useModal,
 } from "../base";
 import { ScoreRing } from "../charts";
-import { axisStatusMeta, ConfirmComputedButton } from "./confirm-computed";
+import { AxisDecisionButtons, axisStatusMeta } from "./confirm-computed";
 import { EvidenceButton } from "./evidence-button";
 import { RATIONALE_MIN, RationaleHint } from "./rationale-hint";
 
@@ -275,16 +275,15 @@ function OverrideModal({
           <Button onClick={onClose} variant="ghost">
             Cancelar
           </Button>
-          <ConfirmComputedButton
+          <AxisDecisionButtons
             a={a}
             onClose={onClose}
             onDone={onDone}
+            onRegister={submit}
             rationale={rationale}
+            registerDisabled={!valid || busy}
             score={score}
           />
-          <Button disabled={!valid || busy} icon="check" onClick={submit}>
-            Registrar override
-          </Button>
         </>
       }
       icon="gavel"
