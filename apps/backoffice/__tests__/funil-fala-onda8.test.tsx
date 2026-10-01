@@ -99,15 +99,21 @@ function montar(d: DadosFunil = DADOS) {
   return render(<Funil inicial={d} podeEscrever />);
 }
 
+// O padrão do waitFor/findBy é 1 s. Sob o turbo test do hook, em paralelo, o
+// render passa disso e a espera estourava antes de a frase chegar.
+const ESPERA = { timeout: 5000 };
+
 /** O status visível para quem está no diálogo aberto. */
 async function statusNoDialogo(texto: string) {
   const dialogo = screen.getByRole("dialog");
-  await waitFor(() =>
-    expect(
-      within(dialogo)
-        .queryAllByRole("status")
-        .map((s) => s.textContent)
-    ).toContain(texto)
+  await waitFor(
+    () =>
+      expect(
+        within(dialogo)
+          .queryAllByRole("status")
+          .map((s) => s.textContent)
+      ).toContain(texto),
+    ESPERA
   );
 }
 
@@ -158,10 +164,12 @@ describe("Funil — toda escrita fala", () => {
     fireEvent.click(screen.getByRole("button", { name: "Criar lead" }));
 
     // A busca tem o próprio status ("1 de 1"); a frase é a de outro.
-    await waitFor(() =>
-      expect(screen.getAllByRole("status").map((s) => s.textContent)).toContain(
-        "Lead Atlas SA criado em Lead."
-      )
+    await waitFor(
+      () =>
+        expect(
+          screen.getAllByRole("status").map((s) => s.textContent)
+        ).toContain("Lead Atlas SA criado em Lead."),
+      ESPERA
     );
   });
 
@@ -252,7 +260,7 @@ describe("Funil — toda escrita fala", () => {
     const dialogo = screen.getByRole("dialog");
     registrarPerda(dialogo);
 
-    await within(dialogo).findByText("Lead já convertido.");
+    await within(dialogo).findByText("Lead já convertido.", undefined, ESPERA);
     expect(within(dialogo).queryAllByRole("status")).toEqual([]);
   });
 });
