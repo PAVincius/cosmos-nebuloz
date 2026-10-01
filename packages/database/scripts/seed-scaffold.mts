@@ -19,6 +19,8 @@ import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../generated/client";
+import { CORPORA } from "./regulacao-corpora";
+import { findInvalidRequirementRefs } from "./scaffold-requirement-refs";
 import { TEMPLATES, type TemplateSeed } from "./scaffold-templates";
 
 export { TEMPLATES };
@@ -32,9 +34,32 @@ export async function upsertTemplate(
   seedDb: SeedDb,
   seed: TemplateSeed
 ): Promise<{ created: number; skipped: number }> {
+  // Referência a exigência que o catálogo do Charter não tem é recusada antes de
+  // qualquer escrita: entregável que "cobre" cláusula inexistente é cobertura de
+  // papel (D-23 F1).
+  const invalidas = seed.versions.flatMap((v) =>
+    v.phases.flatMap((f) =>
+      (f.deliverables ?? []).flatMap((d) =>
+        findInvalidRequirementRefs(d.requirementRefs ?? [], CORPORA).map(
+          (i) => `${d.code}: ${i.motivo}`
+        )
+      )
+    )
+  );
+  if (invalidas.length > 0) {
+    throw new Error(
+      `${seed.key}: referência inválida ao catálogo do Charter. ${invalidas.join(" ")}`
+    );
+  }
+
   const template = await seedDb.scaffoldTemplate.upsert({
     where: { key: seed.key },
-    create: { key: seed.key, name: seed.name, archetype: seed.archetype },
+    // Nulo, e não ausente: trilha de prontidão não tem forma de trabalho.
+    create: {
+      key: seed.key,
+      name: seed.name,
+      archetype: seed.archetype ?? null,
+    },
     // Só insere: template que já existe fica como está. Renomear ou trocar a
     // forma de um template em produção muda o que as trilhas dele mostram, e
     // isso é decisão de produto, não efeito colateral de um seed.
@@ -99,6 +124,7 @@ export async function upsertTemplate(
               producer: d.producer,
               required: d.required ?? true,
               requiresModule: d.requiresModule ?? null,
+              requirementRefs: d.requirementRefs ?? undefined,
             })),
           });
         }

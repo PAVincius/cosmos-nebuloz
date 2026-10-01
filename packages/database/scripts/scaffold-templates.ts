@@ -12,6 +12,7 @@
 // longo num arquivo, lógica de upsert no outro. Um teste que precise conferir o
 // conteúdo do método importa daqui sem disparar conexão com o banco.
 
+import { FUNDACAO } from "./scaffold-templates-fundacao";
 import { NORTE_VERSIONS } from "./scaffold-templates-norte";
 
 export type StepSeed = {
@@ -83,7 +84,9 @@ export type VersionSeed = {
 export type TemplateSeed = {
   key: string;
   name: string;
-  archetype:
+  /** Forma de trabalho. Ausente em trilha de prontidão, que cobre a organização
+   *  e não uma forma (D-24 F3). */
+  archetype?:
     | "TRIAGE"
     | "DOC_REVIEW"
     | "REPORTING"
@@ -401,4 +404,6 @@ export const TEMPLATES: TemplateSeed[] = [
     archetype: "ANALYSIS",
     versions: [NORTE_VERSIONS.analysis],
   },
+  // Trilha de prontidão: sem forma de trabalho (D-24 F3).
+  FUNDACAO,
 ];

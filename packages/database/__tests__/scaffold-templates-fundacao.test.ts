@@ -366,3 +366,105 @@ describe("Atlas (demonstração)", () => {
     });
   });
 });
+
+import { vi } from "vitest";
+import { TEMPLATES } from "../scripts/scaffold-templates";
+
+describe("a Fundação no catálogo e no upsert do seed", () => {
+  it("entra em TEMPLATES depois das cinco formas, sem forma de trabalho", () => {
+    expect(TEMPLATES).toHaveLength(6);
+    expect(TEMPLATES.map((t) => t.key)).toEqual([
+      "triage",
+      "docreview",
+      "reporting",
+      "conversational",
+      "analysis",
+      "ai-readiness-foundation",
+    ]);
+    expect(TEMPLATES.at(-1)?.archetype).toBeUndefined();
+    for (const t of TEMPLATES.slice(0, 5)) {
+      expect(t.archetype).toBeDefined();
+    }
+  });
+
+  const fakeDb = () => {
+    const calls = {
+      templateUpsert: vi.fn().mockResolvedValue({ id: "tpl1" }),
+      versionCreate: vi.fn().mockResolvedValue({ id: "ver1" }),
+      stepCreateMany: vi.fn(),
+      criterionCreateMany: vi.fn(),
+      deliverableCreateMany: vi.fn(),
+    };
+    const db = {
+      scaffoldTemplate: { upsert: calls.templateUpsert },
+      scaffoldTemplateVersion: { findUnique: async () => null },
+      $transaction: async (fn: (tx: unknown) => Promise<void>) =>
+        fn({
+          scaffoldTemplateVersion: { create: calls.versionCreate },
+          scaffoldStepTemplate: { createMany: calls.stepCreateMany },
+          scaffoldGateCriterion: { createMany: calls.criterionCreateMany },
+          scaffoldDeliverableTemplate: {
+            createMany: calls.deliverableCreateMany,
+          },
+        }),
+    };
+    return { db, calls };
+  };
+
+  it("grava o template com archetype nulo, não ausente", async () => {
+    const { upsertTemplate } = await import("../scripts/seed-scaffold.mts");
+    const { db, calls } = fakeDb();
+    await upsertTemplate(db as never, FUNDACAO);
+    expect(calls.templateUpsert.mock.calls[0]?.[0].create).toEqual({
+      key: "ai-readiness-foundation",
+      name: "Fundação de Prontidão de IA",
+      archetype: null,
+    });
+  });
+
+  it("grava os prazos dos passos e as referências finais dos entregáveis", async () => {
+    const { upsertTemplate } = await import("../scripts/seed-scaffold.mts");
+    const { db, calls } = fakeDb();
+    const r = await upsertTemplate(db as never, FUNDACAO);
+    expect(r).toEqual({ created: 1, skipped: 0 });
+
+    const passos = calls.stepCreateMany.mock.calls.flatMap(
+      (c) => c[0].data as { key: string; estimateMinutes: number }[]
+    );
+    expect(passos).toHaveLength(13);
+    expect(passos.find((p) => p.key === "S3")?.estimateMinutes).toBe(4800);
+
+    const entregas = calls.deliverableCreateMany.mock.calls.flatMap(
+      (c) =>
+        c[0].data as {
+          code: string;
+          requirementRefs?: { codigo: string }[];
+        }[]
+    );
+    expect(entregas).toHaveLength(16);
+    expect(entregas.find((d) => d.code === "E2.2")?.requirementRefs).toEqual([
+      expect.objectContaining({ codigo: "ISO-CL06" }),
+    ]);
+    expect(
+      entregas.find((d) => d.code === "A1.1")?.requirementRefs
+    ).toBeUndefined();
+  });
+
+  it("recusa publicar entregável que cita exigência que o catálogo do Charter não tem", async () => {
+    const { upsertTemplate } = await import("../scripts/seed-scaffold.mts");
+    const { db, calls } = fakeDb();
+    const ruim = structuredClone(FUNDACAO);
+    const e1 = ruim.versions[0]?.phases
+      .flatMap((f) => f.deliverables ?? [])
+      .find((d) => d.code === "E1.1");
+    e1?.requirementRefs?.push({
+      set: "NIST AI RMF 1.0",
+      versao: "1.0",
+      codigo: "NIST-INEXISTENTE",
+    });
+    await expect(upsertTemplate(db as never, ruim)).rejects.toThrow(
+      /NIST-INEXISTENTE/
+    );
+    expect(calls.versionCreate).not.toHaveBeenCalled();
+  });
+});

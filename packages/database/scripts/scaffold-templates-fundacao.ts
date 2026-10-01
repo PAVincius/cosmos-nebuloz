@@ -32,11 +32,6 @@ import type { TemplateSeed, VersionSeed } from "./scaffold-templates";
 
 export const FUNDACAO_KEY = "ai-readiness-foundation";
 
-/** Template sem forma de trabalho. Ver o cabeçalho. */
-export type FundacaoSeed = Omit<TemplateSeed, "archetype"> & {
-  archetype?: undefined;
-};
-
 const MIN_POR_SEMANA = 2400;
 const MIN_POR_DIA = 480;
 
@@ -446,7 +441,7 @@ const FUNDACAO_V1: VersionSeed = {
   ],
 };
 
-export const FUNDACAO: FundacaoSeed = {
+export const FUNDACAO: TemplateSeed = {
   key: FUNDACAO_KEY,
   name: "Fundação de Prontidão de IA",
   versions: [FUNDACAO_V1],
