@@ -43,9 +43,9 @@ Uma consultora avalia os critérios manuais de uma fase, registra uma nota de ev
 2. **Given** todos os critérios atendidos e nenhum entregável obrigatório pendente, **When** a consultora fecha o gate, **Then** o fechamento é registrado com os fatos e a nota de evidência de cada critério, e a trilha de auditoria recebe a entrada.
 3. **Given** um entregável obrigatório ainda pendente, **When** a tela é aberta, **Then** o botão de fechar aparece desabilitado com o motivo escrito ao lado — não só a recusa do servidor depois do clique.
 4. **Given** um critério manual marcado como não atendido, **When** a consultora tenta fechar, **Then** o servidor recusa (SG-02), a fase vai a bloqueada, e só a partir daí a opção de override aparece.
-5. **Given** a fase bloqueada, **When** um usuário sem a permissão de override abre a tela, **Then** a opção de override não aparece — não é só o clique que falha depois.
+5. **Given** a fase bloqueada, **When** um usuário sem a permissão de override abre a tela, **Then** o controle de override aparece desabilitado, com o motivo escrito ("Requer papel X — ação") — não escondido, e não é só o clique que falha depois.
 6. **Given** a mesma fase bloqueada, **When** um usuário com a permissão registra o override com os critérios dispensados e a justificativa, **Then** o override é aceito e auditado.
-7. **Given** uma fase já fechada, **When** reaberta, **Then** exige justificativa como qualquer decisão que reescreve o histórico, e quem não tem a permissão de reabrir não vê a opção.
+7. **Given** uma fase já fechada, **When** alguém sem a permissão de reabrir tenta, **Then** o controle de reabrir aparece desabilitado com o motivo, nunca escondido; **When** quem tem a permissão reabre, **Then** exige justificativa como qualquer decisão que reescreve o histórico.
 
 ---
 
@@ -86,8 +86,8 @@ Alguém abre o modal de criar trilha usando só o teclado: o foco começa no pri
 - **FR-006**: A tela de avaliar uma fase MUST permitir registrar, para cada critério manual, se foi atendido e uma nota de evidência — o mesmo par que o servidor já aceita (`met`, `note`).
 - **FR-007**: O botão de fechar gate MUST aparecer desabilitado, com o motivo de bloqueio escrito na tela, quando houver entregável obrigatório pendente — antes de qualquer tentativa de clique.
 - **FR-008**: Fechar o gate, registrar override, e reabrir uma fase MUST continuar sendo auditado (comportamento já existente no servidor; a tela aciona essas mesmas ações, nunca as contorna).
-- **FR-009**: A opção de registrar override MUST aparecer na tela somente para quem tem a permissão correspondente — hoje a tela mostra a opção para qualquer pessoa e deixa a recusa só para o servidor.
-- **FR-010**: A opção de reabrir uma fase fechada MUST aparecer na tela somente para quem tem a permissão correspondente, pela mesma razão do FR-009.
+- **FR-009**: O controle de registrar override MUST aparecer na tela para quem não tem a permissão correspondente, mas desabilitado, com o motivo escrito ("Requer papel X — ação") — padrão `GatedButton` do DESIGN.md do Scaffold. MUST NOT ser escondido: hoje a tela mostra o controle habilitado para qualquer pessoa e deixa a recusa só para o servidor, o que também viola o DESIGN.md.
+- **FR-010**: O controle de reabrir uma fase fechada MUST seguir a mesma regra do FR-009 — desabilitado com motivo para quem não tem a permissão, nunca escondido.
 
 ### Functional Requirements — Modal "Nova trilha"
 
@@ -105,7 +105,7 @@ Nenhuma entidade nova. Reaproveita os modelos e os mecanismos já existentes (`S
 
 - **SC-001**: Um E2E leva a trilha do Atlas da ASSESS ao EMBED só pela interface, incluindo pelo menos um gate bloqueado mostrando o motivo e um override registrado.
 - **SC-002**: Nenhum dos quatro achados do Vigia continua reproduzível — verificável um a um, com teste dedicado por achado.
-- **SC-003**: Em nenhuma fase a opção de override ou de reabrir aparece para um usuário sem a permissão correspondente, verificável testando com um papel sem essa permissão.
+- **SC-003**: Em nenhuma fase o controle de override ou de reabrir fica escondido para um usuário sem a permissão correspondente — aparece desabilitado com o motivo, verificável testando com um papel sem essa permissão (padrão `GatedButton`).
 - **SC-004**: No modal "Nova trilha", Tab não sai do modal e Esc fecha, verificável por teste de teclado (sem mouse).
 - **SC-005**: Nenhum teste pré-existente do Scaffold fica vermelho depois desta entrega.
 
