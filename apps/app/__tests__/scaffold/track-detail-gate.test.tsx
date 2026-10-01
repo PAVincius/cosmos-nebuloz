@@ -291,7 +291,7 @@ describe("GatePanel — evidência por critério (FR-006)", () => {
   });
 });
 
-describe("GatePanel — override só para quem tem a permissão (FR-009)", () => {
+describe("GatePanel — override sem a permissão fica desabilitado, com o motivo (FR-009 + DESIGN.md)", () => {
   const recusar = () =>
     h.closePhase.mockResolvedValueOnce({
       ok: false,
@@ -300,7 +300,7 @@ describe("GatePanel — override só para quem tem a permissão (FR-009)", () =>
       blockers: ["no-new-risk"],
     });
 
-  it("sem gate.override, depois da recusa a tela mostra o motivo e NÃO oferece override", async () => {
+  it("sem gate.override, depois da recusa o botão aparece DESABILITADO com o motivo escrito", async () => {
     h.getAccess.mockResolvedValue(accessWithout(["gate.override"]));
     h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
     recusar();
@@ -315,12 +315,22 @@ describe("GatePanel — override só para quem tem a permissão (FR-009)", () =>
 
     const alerta = await screen.findByRole("alert");
     expect(alerta.textContent).toContain("Nenhum risco novo");
+    const override = await screen.findByRole("button", {
+      name: /registrar override/i,
+    });
+    expect(override).toHaveProperty("disabled", true);
     expect(
-      screen.queryByRole("button", { name: /registrar override/i })
+      screen.getByText(/Requer papel Consultor — gate\.override/)
+    ).toBeDefined();
+    // Desabilitado de verdade: o clique não abre o diálogo de override.
+    fireEvent.click(override);
+    expect(
+      screen.queryByRole("button", { name: /registrar override e fechar/i })
     ).toBeNull();
+    expect(h.overridePhase).not.toHaveBeenCalled();
   });
 
-  it("com gate.override, a opção aparece depois da recusa", async () => {
+  it("com gate.override, o botão fica habilitado depois da recusa", async () => {
     h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
     recusar();
     render(<TrackDetailScreen param="trk1" />);
@@ -329,9 +339,10 @@ describe("GatePanel — override só para quem tem a permissão (FR-009)", () =>
     fireEvent.click(
       await screen.findByRole("button", { name: /revisar e assinar/i })
     );
-    expect(
-      await screen.findByRole("button", { name: /registrar override/i })
-    ).toBeDefined();
+    const override = await screen.findByRole("button", {
+      name: /registrar override/i,
+    });
+    expect(override).toHaveProperty("disabled", false);
   });
 });
 
@@ -979,7 +990,7 @@ describe("papel só-leitura na trilha", () => {
     ).toBeDefined();
   });
 
-  it("fase fechada: sem gate.close a opção de reabrir nem aparece (FR-010)", async () => {
+  it("fase fechada: sem gate.close, Reabrir fase fica DESABILITADO com o motivo escrito (DESIGN.md)", async () => {
     h.getAccess.mockResolvedValue(accessWithout(["gate.close"]));
     h.getTrack.mockResolvedValue({
       ok: true,
@@ -992,13 +1003,18 @@ describe("papel só-leitura na trilha", () => {
       }),
     });
     render(<TrackDetailScreen param="trk1" />);
-    await screen.findByText("Gate da fase");
-    // Esperar o acesso chegar: enquanto carrega, nada de escrita é oferecido.
-    await waitFor(() => expect(h.getAccess).toHaveBeenCalled());
-    expect(screen.queryByRole("button", { name: /reabrir fase/i })).toBeNull();
+    const reopen = await screen.findByRole("button", { name: /reabrir fase/i });
+    await waitFor(() => expect(reopen).toHaveProperty("disabled", true));
+    // O motivo está na tela, não só no title: quem não pode precisa saber a
+    // quem pedir.
+    expect(
+      screen.getByText(/Requer papel Consultor — gate\.close/)
+    ).toBeDefined();
+    fireEvent.click(reopen);
+    expect(h.reopenPhase).not.toHaveBeenCalled();
   });
 
-  it("fase fechada: com gate.close a opção de reabrir aparece", async () => {
+  it("fase fechada: com gate.close, Reabrir fase fica habilitado", async () => {
     h.getTrack.mockResolvedValue({
       ok: true,
       data: trackWith("CLOSED", {

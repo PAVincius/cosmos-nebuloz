@@ -35,7 +35,9 @@ export function GatePanel({
   notice,
   closeBlockedReason = null,
   canOverride = false,
+  overrideReason = null,
   canReopen = true,
+  reopenReason = null,
   onClose,
   onOverride,
   onReopen,
@@ -46,13 +48,16 @@ export function GatePanel({
   /** Entregável obrigatório pendente (SG-01): o motivo desabilita o botão e
    *  fica escrito ao lado, em vez de a recusa só vir do servidor. */
   closeBlockedReason?: string | null;
-  /** Override só existe para quem tem `gate.override`: a opção nem aparece para
-   *  os outros, em vez de aparecer e deixar a recusa para o servidor (FR-009).
-   *  Padrão fechado: quem esquecer de passar não ganha poder. */
+  /** Override é de quem tem `gate.override`. Quem não tem vê o botão
+   *  DESABILITADO com o motivo escrito (DESIGN.md: o controle que o papel não
+   *  permite não some, diz o que falta) e o clique não faz nada (FR-009). Padrão
+   *  fechado: quem esquecer de passar não ganha poder. */
   canOverride?: boolean;
-  /** Quem não fecha gate também não reabre fase (mesmo peso), e a opção de
-   *  reabrir nem aparece para ele (FR-010). */
+  overrideReason?: string | null;
+  /** Quem não fecha gate também não reabre fase (mesmo peso): o botão fica
+   *  desabilitado com o motivo (FR-010). */
   canReopen?: boolean;
+  reopenReason?: string | null;
   onClose: (facts: CriterionFacts) => void;
   onOverride: (unmet: string[]) => void;
   onReopen: () => void;
@@ -279,19 +284,32 @@ export function GatePanel({
             flexWrap: "wrap",
           }}
         >
-          {canOverride &&
-          phase.state === "BLOCKED" &&
-          notice &&
-          notice.blockers.length > 0 ? (
-            <Button
-              disabled={busy}
-              icon="shield"
-              onClick={() => onOverride(notice.blockers)}
-              size="sm"
-              variant="secondary"
-            >
-              Registrar override
-            </Button>
+          {phase.state === "BLOCKED" && notice && notice.blockers.length > 0 ? (
+            <>
+              {canOverride || !overrideReason ? null : (
+                <span
+                  id="gate-override-reason"
+                  style={{
+                    alignSelf: "center",
+                    fontSize: 12,
+                    color: "var(--ink-muted)",
+                    flex: "1 1 200px",
+                  }}
+                >
+                  {overrideReason}
+                </span>
+              )}
+              <Button
+                disabled={busy || !canOverride}
+                icon="shield"
+                onClick={() => onOverride(notice.blockers)}
+                size="sm"
+                title={canOverride ? undefined : (overrideReason ?? undefined)}
+                variant="secondary"
+              >
+                Registrar override
+              </Button>
+            </>
           ) : null}
           {closeBlockedReason ? (
             <span
@@ -318,19 +336,35 @@ export function GatePanel({
         </div>
       ) : null}
 
-      {closed && canReopen ? (
+      {closed ? (
         <div
           style={{
             display: "flex",
+            gap: 10,
             marginTop: 12,
             justifyContent: "flex-end",
+            alignItems: "center",
+            flexWrap: "wrap",
           }}
         >
+          {canReopen || !reopenReason ? null : (
+            <span
+              id="gate-reopen-reason"
+              style={{
+                fontSize: 12,
+                color: "var(--ink-muted)",
+                flex: "1 1 200px",
+              }}
+            >
+              {reopenReason}
+            </span>
+          )}
           <Button
-            disabled={busy}
+            disabled={busy || !canReopen}
             icon="refresh"
             onClick={onReopen}
             size="sm"
+            title={canReopen ? undefined : (reopenReason ?? undefined)}
             variant="secondary"
           >
             Reabrir fase
