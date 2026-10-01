@@ -13,6 +13,8 @@ export const SCAFFOLD_ERROR = {
   GAP_ALREADY_PROMOTED: "GAP_ALREADY_PROMOTED",
   TEMPLATE_HAS_NO_PUBLISHED_VERSION: "TEMPLATE_HAS_NO_PUBLISHED_VERSION",
   OVERLAY_HAS_UNRESOLVED_CONFLICT: "OVERLAY_HAS_UNRESOLVED_CONFLICT",
+  ASSESSMENT_REQUIRED: "ASSESSMENT_REQUIRED",
+  ASSESSMENT_NOT_FOUND: "ASSESSMENT_NOT_FOUND",
   OVERLAY_NOT_FOUND: "OVERLAY_NOT_FOUND",
   OVERLAY_VIOLATES_GATE_RULES: "OVERLAY_VIOLATES_GATE_RULES",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
@@ -71,6 +73,10 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "O template escolhido não tem versão publicada. Publique uma versão antes de criar trilhas com ele.",
   OVERLAY_HAS_UNRESOLVED_CONFLICT:
     "O overlay escolhido tem conflito pendente contra a versão base. Resolva o conflito antes de criar a trilha — trilha criada sobre conflito não sabe quais passos são os seus.",
+  ASSESSMENT_REQUIRED:
+    "Trilha de prontidão nasce de um diagnóstico do Meridian. Escolha o assessment de origem — sem ele, a trilha não tem o relatório, o baseline nem a reavaliação que o gate lê.",
+  ASSESSMENT_NOT_FOUND:
+    "O assessment escolhido não existe nesta organização. Escolha um assessment do Meridian desta organização para ligar à trilha.",
   OVERLAY_NOT_FOUND:
     "O overlay escolhido não existe nesta organização. Escolha outro, ou crie a trilha sem overlay — trilha criada sem a customização que o cliente pediu seria uma surpresa.",
   OVERLAY_VIOLATES_GATE_RULES:

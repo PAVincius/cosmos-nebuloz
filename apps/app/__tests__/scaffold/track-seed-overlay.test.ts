@@ -28,6 +28,7 @@ import { seedTrack } from "@/app/(scaffold)/actions/_seed-track";
 
 const db = {
   scaffoldTemplateVersion: { findFirst: h.versionFindFirst },
+  meridianAssessment: { findFirst: async () => ({ id: "as1" }) },
   scaffoldTemplateOverlay: { findFirst: h.overlayFindFirst },
   scaffoldOverlayConflict: { count: h.conflictCount },
   scaffoldSequence: { upsert: h.sequenceUpsert },
@@ -48,6 +49,8 @@ const INPUT = {
   templateId: "clx00000000000000000tpl01",
   ownerId: "clx000000000000000000o001",
   overlayId: OVERLAY,
+  // Template sem forma de trabalho: trilha de prontidão pede o diagnóstico (D-27).
+  sourceAssessmentId: "clx00000000000000assess01",
 };
 
 const STEPS = [

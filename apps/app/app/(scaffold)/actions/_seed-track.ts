@@ -60,6 +60,9 @@ export type SeedInput = {
   overlayId?: string;
   sourceGapId?: string;
   sourcePromotionId?: string;
+  /** Diagnóstico do Meridian de que a trilha nasce (D-27). Obrigatório em trilha
+   *  de prontidão; opcional em trilha por forma de trabalho. */
+  sourceAssessmentId?: string;
 };
 
 /**
@@ -83,6 +86,38 @@ async function assertOverlayResolved(
   });
   if (pending > 0) {
     throw new ScaffoldRuleError("OVERLAY_HAS_UNRESOLVED_CONFLICT");
+  }
+}
+
+/**
+ * O vínculo com o diagnóstico do Meridian (D-27).
+ *
+ * Trilha de prontidão — template sem forma de trabalho — nasce de um assessment
+ * inteiro: o A1, o baseline do SG-04 e a reavaliação do S3 e do E3 dependem dele,
+ * e sem o vínculo a primeira trilha já nasce órfã. Trilha por forma de trabalho
+ * pode nascer sem. Quando há assessment, ele tem de ser do tenant da sessão.
+ *
+ * `sourceAssessmentId` não tem FK (como `sourceGapId`), então esta é a única
+ * barreira: a busca vai pelo tenant e um id de outro tenant é "não existe".
+ */
+async function assertSourceAssessment(
+  db: Db,
+  tenantId: string,
+  isReadinessTrack: boolean,
+  sourceAssessmentId: string | undefined
+): Promise<void> {
+  if (!sourceAssessmentId) {
+    if (isReadinessTrack) {
+      throw new ScaffoldRuleError("ASSESSMENT_REQUIRED");
+    }
+    return;
+  }
+  const assessment = await db.meridianAssessment.findFirst({
+    where: { id: sourceAssessmentId, tenantId },
+    select: { id: true },
+  });
+  if (!assessment) {
+    throw new ScaffoldRuleError("ASSESSMENT_NOT_FOUND");
   }
 }
 
@@ -210,6 +245,12 @@ export async function seedTrack(db: Db, input: SeedInput) {
   await assertTrackPeople(db, input);
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
   const version = await resolveTemplateVersion(db, input.templateId);
+  await assertSourceAssessment(
+    db,
+    input.tenantId,
+    version.template.archetype === null,
+    input.sourceAssessmentId
+  );
   const overlayOps = await loadOverlayOps(db, input.tenantId, input.overlayId);
   const steps = resolveSteps(version.steps, overlayOps);
   const code = await nextCode({
@@ -229,6 +270,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
       consultantId: input.consultantId ?? null,
       templateVersionId: version.id,
       overlayId: input.overlayId ?? null,
+      sourceAssessmentId: input.sourceAssessmentId ?? null,
       sourceGapId: input.sourceGapId ?? null,
       sourcePromotionId: input.sourcePromotionId ?? null,
       phases: {

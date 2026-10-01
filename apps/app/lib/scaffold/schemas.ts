@@ -50,6 +50,8 @@ export const CreateTrackFromGapSchema = z.object({
   /** Customização do cliente. Overlay com conflito pendente recusa a criação —
    *  ver `assertOverlayResolved`. */
   overlayId: optCuid,
+  /** Diagnóstico de origem (D-27); obrigatório em trilha de prontidão. */
+  sourceAssessmentId: optCuid,
   processName: nnStr,
   ownerId: cuid,
   consultantId: optCuid,
@@ -59,6 +61,8 @@ export const CreateTrackFromGapSchema = z.object({
 export const CreateTrackSchema = z.object({
   templateId: cuid,
   overlayId: optCuid,
+  /** Diagnóstico de origem (D-27); obrigatório em trilha de prontidão. */
+  sourceAssessmentId: optCuid,
   processName: nnStr,
   ownerId: cuid,
   consultantId: optCuid,
