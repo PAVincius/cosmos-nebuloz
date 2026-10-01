@@ -114,3 +114,85 @@ describe("getAssessment — reaberto (FR-029e)", () => {
     expect(res.ok && res.data.reopenedAt).toBeNull();
   });
 });
+
+// Confirmar o computado (D-29): o detalhe diz quais eixos foram confirmados
+// pelo revisor — a linha tem kind = CONFIRMATION e o eixo não foi sobrescrito
+// depois — e entrega o kind de cada linha do histórico.
+describe("getAssessment — eixo confirmado pelo revisor", () => {
+  const score = (axis: string, status: string) => ({
+    axis,
+    computed: 61,
+    final: null,
+    confidence: 0.8,
+    respondentCount: 2,
+    spread: 30,
+    status,
+    note: null,
+  });
+  const row = (
+    axis: string,
+    kind: string,
+    over: Record<string, unknown> = {}
+  ) => ({
+    id: `ov-${axis}-${kind}`,
+    code: "OV-1",
+    axis,
+    kind,
+    fromScore: 61,
+    toScore: kind === "CONFIRMATION" ? 61 : 70,
+    rationale: "Justificativa com mais de vinte caracteres.",
+    reviewerId: "u2",
+    createdAt: new Date("2026-09-30T10:00:00.000Z"),
+    ...over,
+  });
+
+  beforeEach(() => h.requireCtx.mockResolvedValue(ctxOf("CONSULTANT")));
+
+  it("eixo com linha CONFIRMATION e sem override depois: confirmed = true", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...ROW,
+      scores: [score("DATA", "COMPUTED"), score("PEOPLE", "COMPUTED")],
+      overrides: [row("DATA", "CONFIRMATION")],
+    });
+    const res = await getAssessment({ id: AS_ID });
+    const byAxis = res.ok
+      ? Object.fromEntries(
+          (res.data.scores ?? []).map((s) => [s.axis, s.confirmed])
+        )
+      : {};
+    expect(byAxis).toEqual({ DATA: true, PEOPLE: false });
+  });
+
+  it("eixo confirmado e depois sobrescrito: vale o override (confirmed = false)", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...ROW,
+      scores: [score("DATA", "OVERRIDDEN")],
+      overrides: [row("DATA", "CONFIRMATION"), row("DATA", "OVERRIDE")],
+    });
+    const res = await getAssessment({ id: AS_ID });
+    expect(res.ok && res.data.scores?.[0]?.confirmed).toBe(false);
+  });
+
+  it("uma linha OVERRIDE nunca conta como confirmação", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...ROW,
+      scores: [score("DATA", "OVERRIDDEN")],
+      overrides: [row("DATA", "OVERRIDE")],
+    });
+    const res = await getAssessment({ id: AS_ID });
+    expect(res.ok && res.data.scores?.[0]?.confirmed).toBe(false);
+  });
+
+  it("o histórico traz o kind de cada linha", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...ROW,
+      scores: [score("DATA", "OVERRIDDEN")],
+      overrides: [row("DATA", "CONFIRMATION"), row("DATA", "OVERRIDE")],
+    });
+    const res = await getAssessment({ id: AS_ID });
+    expect(res.ok && res.data.overrides.map((o) => o.kind)).toEqual([
+      "CONFIRMATION",
+      "OVERRIDE",
+    ]);
+  });
+});

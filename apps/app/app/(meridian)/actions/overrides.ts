@@ -81,6 +81,7 @@ export async function registerOverride(
           assessmentId: input.assessmentId,
           axis: input.axis,
           code,
+          kind: "OVERRIDE",
           fromScore: from,
           toScore: input.toScore,
           rationale: input.rationale,
@@ -119,6 +120,8 @@ export async function registerOverride(
 export type OverrideRow = {
   id: string;
   code: string;
+  /** OVERRIDE muda o score; CONFIRMATION mantém o computado (D-29). */
+  kind: "OVERRIDE" | "CONFIRMATION";
   axis: string;
   fromScore: number;
   toScore: number;
@@ -146,6 +149,7 @@ export async function listOverrides(
         (o): OverrideRow => ({
           id: o.id,
           code: o.code,
+          kind: o.kind,
           axis: o.axis,
           fromScore: o.fromScore,
           toScore: o.toScore,

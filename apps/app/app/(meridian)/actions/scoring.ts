@@ -143,6 +143,21 @@ export async function runScoringInTx(
       select: { id: true, computed: true, final: true, status: true },
     });
     if (existing) {
+      // Um eixo cujo computado o revisor confirmou (kind = CONFIRMATION) também
+      // não volta à fila: a dispersão é a mesma e a decisão já foi tomada
+      // (D-29, FR-029a). Olha-se o `kind`, não "antes == depois".
+      const confirmed =
+        existing.status !== "OVERRIDDEN" &&
+        result.status === "CONTESTED" &&
+        (await db.meridianOverride.findFirst({
+          where: {
+            tenantId: ctx.tenantId,
+            assessmentId: a.id,
+            axis,
+            kind: "CONFIRMATION",
+          },
+          select: { id: true },
+        })) !== null;
       await db.meridianAxisScore.update({
         where: { id: existing.id },
         data: {
@@ -152,8 +167,12 @@ export async function runScoringInTx(
           note: result.note,
           // Um eixo já sobrescrito não volta a CONTESTED: a decisão humana
           // vale mais do que a dispersão que a motivou.
-          status:
-            existing.status === "OVERRIDDEN" ? "OVERRIDDEN" : result.status,
+          status: (() => {
+            if (existing.status === "OVERRIDDEN") {
+              return "OVERRIDDEN";
+            }
+            return confirmed ? "COMPUTED" : result.status;
+          })(),
         },
       });
     } else {

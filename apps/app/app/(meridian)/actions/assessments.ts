@@ -30,6 +30,9 @@ export type AxisScoreView = {
   spread: number;
   status: MeridianScoreStatus;
   note: string | null;
+  /** O revisor confirmou o computado deste eixo (linha kind = CONFIRMATION, sem
+   *  override depois). Só o detalhe calcula; a carteira não carrega as linhas. */
+  confirmed?: boolean;
 };
 
 export type AssessmentRow = {
@@ -65,6 +68,8 @@ export type RespondentView = {
 export type OverrideView = {
   id: string;
   code: string;
+  /** OVERRIDE muda o score; CONFIRMATION mantém o computado (D-29). */
+  kind: "OVERRIDE" | "CONFIRMATION";
   axis: MeridianAxis;
   fromScore: number;
   toScore: number;
@@ -277,6 +282,11 @@ export async function getAssessment(
         select: { createdAt: true },
       });
 
+      // Eixo confirmado pelo revisor: tem linha CONFIRMATION e não foi
+      // sobrescrito depois (override vale mais que a confirmação anterior).
+      const confirmedAxes = new Set(
+        a.overrides.filter((o) => o.kind === "CONFIRMATION").map((o) => o.axis)
+      );
       const scores = a.scores.length
         ? a.scores.map(
             (s): AxisScoreView => ({
@@ -288,6 +298,7 @@ export async function getAssessment(
               spread: s.spread,
               status: s.status,
               note: s.note,
+              confirmed: confirmedAxes.has(s.axis) && s.status !== "OVERRIDDEN",
             })
           )
         : null;
@@ -346,6 +357,7 @@ export async function getAssessment(
           (o): OverrideView => ({
             id: o.id,
             code: o.code,
+            kind: o.kind,
             axis: o.axis,
             fromScore: o.fromScore,
             toScore: o.toScore,

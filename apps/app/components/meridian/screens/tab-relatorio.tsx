@@ -491,11 +491,11 @@ export default function RelatorioTab({ a }: { a: AssessmentDetail }) {
               <BandBadge
                 band={r.readiness.axes.find((b) => b.axis === x.axis)}
               />
-              {x.overridden ? (
-                <Badge tone="purple">override</Badge>
-              ) : (
-                <span style={{ width: 58 }} />
+              {x.overridden && <Badge tone="purple">override</Badge>}
+              {!x.overridden && x.confirmed && (
+                <Badge tone="accent">Confirmado pelo revisor</Badge>
               )}
+              {!(x.overridden || x.confirmed) && <span style={{ width: 58 }} />}
             </div>
           ))}
 

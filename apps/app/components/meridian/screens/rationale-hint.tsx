@@ -1,5 +1,9 @@
 // Dica viva da justificativa do override: diz o mínimo e quantos faltam,
 // em vez de só deixar o botão desabilitado.
+/** Mínimo de caracteres da justificativa de uma decisão sobre o eixo (override
+ *  e confirmação do computado). */
+export const RATIONALE_MIN = 20;
+
 export function RationaleHint({
   length,
   min,
