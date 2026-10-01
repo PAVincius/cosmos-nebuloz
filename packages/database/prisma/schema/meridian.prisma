@@ -375,11 +375,19 @@ model MeridianAxisScore {
   @@index([tenantId, status])
 }
 
+/// O que a revisão do consultor fez com a nota calculada de um eixo (D-29).
+enum MeridianOverrideKind {
+  /// Mudou a nota: `fromScore` ≠ `toScore`, com justificativa.
+  OVERRIDE
+  /// Confirmou a nota calculada: `fromScore` = `toScore`.
+  CONFIRMATION
+}
+
 /// Append-only por construção: sem `updatedAt`, sem delete no código, e o
 /// histórico é a lista inteira. É esta tabela que responde "por que o número
 /// mudou?" quando o patrocinador pergunta.
 model MeridianOverride {
-  id           String       @id @default(cuid())
+  id           String               @id @default(cuid())
   tenantId     String
   assessmentId String
   axis         MeridianAxis
@@ -389,9 +397,12 @@ model MeridianOverride {
   toScore      Int
   /// Mínimo de 20 caracteres, validado na action. Rationale vazio é override
   /// sem justificativa, que é o mesmo que número inventado.
-  rationale    String       @db.Text
+  rationale    String               @db.Text
   reviewerId   String
-  createdAt    DateTime     @default(now())
+  /// Ajuste ou confirmação da nota calculada (D-29). Linhas anteriores à
+  /// coluna são todas ajustes.
+  kind         MeridianOverrideKind @default(OVERRIDE)
+  createdAt    DateTime             @default(now())
 
   tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
