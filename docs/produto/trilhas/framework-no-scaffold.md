@@ -282,6 +282,27 @@ com motivo.
      Dono: Andaime/Bussola, com a Regua para a spec. Se antes disso um cliente precisar ajustar
      critério, a saída é versão nova do template, não overlay.
 
+**Respostas ao Andaime sobre o seed (2026-09-30, commit 2355f6ea):**
+- **Prazos de A4, S3 e E3.** A proposta do CEO não cobre esses passos, e os valores abaixo são
+  **estimativa do CPO** (hipótese, sem medição), a calibrar com o primeiro uso real. O texto do passo diz
+  isso.
+  - A4, política mínima de uma página: 1 semana (2.400 min).
+  - S3 e E3, reavaliação de 2 a 3 eixos, com coleta e scoring: 2 semanas (4.800 min).
+- **A2 condicional.** Dispensa **automática** na criação da trilha quando nenhum eixo do assessment de
+  origem (`sourceAssessmentId`) tem confiança < 0,6, com motivo que cita o AS-xxx. É leitura pela costura
+  3.7. A dispensa manual por instância, feita pela consultora, fica para o PR seguinte.
+- **`requirementRefs`.** Duas referências saem, porque afirmam obrigação que a trilha não sustenta:
+  - `AIA-09` sai do E1.1. O art. 9 do AI Act é o sistema de gestão de risco do **fornecedor** de IA de
+    alto risco. A Fundação não distingue perfil (F2 ficou fora), e a maioria dos clientes só usa IA.
+    Citar o art. 9 para todos afirma obrigação onde talvez não haja, que é o que o catálogo do Charter
+    evita com `normaStatus`. Volta na AI Governance, com perfil.
+  - `ISO-CL08` sai do E2.2. A declaração de aplicabilidade é exigida pela cláusula 6 (tratamento de
+    risco), já citada. A cláusula 8 é controle operacional.
+  - Ficam:
+    - E1.1: CL05, CL06, NIST-GOVERN-1 e NIST-MANAGE-1;
+    - E2.1: CL04, NIST-MAP-1, NIST-MAP-2 e LGPD-ART37;
+    - E2.2: CL06.
+
 ### 7.8 Seed e testes (no mesmo PR)
 
 - Template `ai-readiness-foundation` v1.0 com os passos, os entregáveis e os critérios acima.
