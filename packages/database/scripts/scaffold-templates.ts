@@ -12,6 +12,7 @@
 // longo num arquivo, lógica de upsert no outro. Um teste que precise conferir o
 // conteúdo do método importa daqui sem disparar conexão com o banco.
 
+import { FUNDACAO } from "./scaffold-templates-fundacao";
 import { NORTE_VERSIONS } from "./scaffold-templates-norte";
 
 export type StepSeed = {
@@ -19,12 +20,24 @@ export type StepSeed = {
   statement: string;
   expectedArtefact: string;
   required?: boolean;
+  /** Estimativa em minutos. Em prazo de faixa, a mediana (MAPEAMENTO §5); a faixa
+   *  original fica no texto do passo. */
+  estimateMinutes?: number;
 };
 
 export type CriterionSeed = {
   key: string;
   statement: string;
   evaluationType?: "MANUAL" | "DERIVED";
+};
+
+/** Referência de um entregável a uma exigência do catálogo do Charter (D-23 F1).
+ *  Pelo que é estável entre ambientes — nome do conjunto, versão e código —,
+ *  nunca pelo `id`, e sem FK: o Scaffold não depende do Charter contratado. */
+export type RequirementRefSeed = {
+  set: string;
+  versao: string;
+  codigo: string;
 };
 
 /** Entregável do template (SC-DEV-01/02). Versões anteriores ao modelo não têm
@@ -49,6 +62,9 @@ export type DeliverableSeed = {
   required?: boolean;
   /** Só existe com o módulo contratado; sem ele nasce dispensado. */
   requiresModule?: "CHARTER";
+  /** Exigências do catálogo do Charter que o entregável atende. Ausente = sem
+   *  referência. Só vale com código que já existe no catálogo. */
+  requirementRefs?: RequirementRefSeed[];
 };
 
 export type PhaseSeed = {
@@ -68,7 +84,9 @@ export type VersionSeed = {
 export type TemplateSeed = {
   key: string;
   name: string;
-  archetype:
+  /** Forma de trabalho. Ausente em trilha de prontidão, que cobre a organização
+   *  e não uma forma (D-24 F3). */
+  archetype?:
     | "TRIAGE"
     | "DOC_REVIEW"
     | "REPORTING"
@@ -386,4 +404,6 @@ export const TEMPLATES: TemplateSeed[] = [
     archetype: "ANALYSIS",
     versions: [NORTE_VERSIONS.analysis],
   },
+  // Trilha de prontidão: sem forma de trabalho (D-24 F3).
+  FUNDACAO,
 ];

@@ -31,6 +31,13 @@ vi.mock("@/app/(scaffold)/actions/gaps", () => ({
 vi.mock("@/app/(scaffold)/actions/templates", () => ({
   listTemplates: h.listTemplates,
 }));
+// O modal importa a leitura de assessments (trilha de prontidão, D-27). Sem este
+// mock o import puxa o código de servidor e o env, e a suíte quebra fora do
+// SKIP_ENV_VALIDATION. Nenhum template deste arquivo é de prontidão, então a
+// leitura nem é chamada.
+vi.mock("@/app/(scaffold)/actions/assessments", () => ({
+  listScaffoldAssessments: vi.fn(),
+}));
 
 import PortfolioScreen from "@/components/scaffold/screens/portfolio";
 

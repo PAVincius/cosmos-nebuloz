@@ -66,7 +66,7 @@ Caminhos a partir da raiz do repositório. `schema/` abrevia
 
 | Entidade | Dono | Lê | Anexa | Regra de fronteira | Estado na main |
 |---|---|---|---|---|---|
-| **4. Avaliação de prontidão** (score, dimensões, override) | Meridian | Scaffold, Signal | — | Scaffold usa o score para escolher template. Signal cita a avaliação de origem, sem recalcular. | `gap` — no Meridian, o score é gravado uma vez e o override é append-only (`schema/meridian.prisma:338-340`, `:362-365`). O Big Bang mantém avaliação própria, que o schema chama de "o diagnóstico que a Nebuloz vende no degrau 01 da Escada (Meridian)" (`schema/platform-ops.prisma:667-715`). As leituras não existem: o template da trilha é escolhido à mão (`apps/app/app/(scaffold)/actions/tracks.ts:140-151`) e o Signal não cita o Meridian. Muda: Big Bang; Scaffold e Signal passam a ler. |
+| **4. Avaliação de prontidão** (score, dimensões, override) | Meridian | Scaffold, Signal | — | Scaffold usa o score para escolher template. Toda trilha de prontidão nasce de um assessment e guarda o vínculo com ele (costura 3.7, D-27). Signal cita a avaliação de origem, sem recalcular. | `gap` — no Meridian, o score é gravado uma vez e o override é append-only (`schema/meridian.prisma:338-340`, `:362-365`). O Big Bang mantém avaliação própria, que o schema chama de "o diagnóstico que a Nebuloz vende no degrau 01 da Escada (Meridian)" (`schema/platform-ops.prisma:667-715`). As leituras não existem: o template da trilha é escolhido à mão (`apps/app/app/(scaffold)/actions/tracks.ts:140-151`) e o Signal não cita o Meridian. Muda: Big Bang; Scaffold e Signal passam a ler. |
 | **5. Escala de confiança** (medido / estimado / declarado) | Meridian | Signal, Scaffold | — | Vocabulário único em toda a suíte. Signal reusa a mesma escala na atribuição de ganho — não cria outra nomenclatura. | `gap` — o Meridian declara a escala (`schema/meridian.prisma:82-89`; `apps/app/components/meridian/seams.tsx:15-50`). O Signal usa score 0–100 com faixas Alta, Média e Baixa (`apps/app/lib/signal/confidence.ts:11-54`). O Scaffold repete os três valores em enum próprio (`schema/scaffold.prisma:704-711`). O WSJF do Cosmos usa LOW, MEDIUM, HIGH (`schema/art-core.prisma:331`). Muda: Signal; em menor grau, Scaffold e Cosmos. |
 | **6. Gap register** (lacunas de capacidade priorizadas) | Meridian | Scaffold, Cosmos | — | Gap virar iniciativa é ação do Cosmos, com `origin_gap_id`. O gap permanece do Meridian. | `gap` — a posse fica no Meridian (`schema/meridian.prisma:390-393`; `apps/app/app/(meridian)/actions/gaps.ts:382-449`). Mas Scaffold e Big Bang gravam `targetEntityId` na promoção, que é linha do Meridian (`apps/app/app/(scaffold)/actions/tracks.ts:153-156`; `apps/backoffice/app/actions/scaffold.ts:165-190`). Para o Cosmos, a promoção só registra intenção; `origin_gap_id` existe só em texto de tela (`apps/app/components/meridian/screens/gap-register.tsx:645-648`). Muda: Cosmos cria a iniciativa; Scaffold e Big Bang param de escrever no Meridian. |
 | **7. Baseline e caso de negócio** (linha de base, meta, janela, assinatura) | Scaffold | Signal, Cosmos | — | Costura crítica. Emitido como artefato de gate assinado, imutável e versionado. Signal apura contra ele e nunca o edita. | `gap` — o Scaffold tem caso versionado e assinado e o export para o Signal (`schema/scaffold.prisma:522-657`; `apps/app/lib/scaffold/signal-export.ts:74-160`). Mas nenhuma ação cria o caso; `saveDraft` só altera um existente (`apps/app/app/(scaffold)/actions/business-case.ts:95`). O Signal cria e assina baseline próprio (`schema/signal.prisma:167-226`; `apps/app/app/(signal)/actions/baseline.ts:110`, `:205`). O Cosmos mantém Lean Business Case no épico (`schema/art-core.prisma:236-247`). Muda: Signal consome; Cosmos lê; Scaffold ganha caminho de criação. |
@@ -94,8 +94,8 @@ Caminhos a partir da raiz do repositório. `schema/` abrevia
 
 ## 3. Costuras contratadas
 
-Seis costuras. Cada uma diz o que passa, o que é imutável (ou o efeito) e o que
-fica proibido.
+Sete costuras. A 3.7 entrou em 2026-09-30 (D-27). Cada uma diz o que passa, o que
+é imutável (ou o efeito) e o que fica proibido.
 
 ### 3.1 Scaffold → Signal · baseline assinado
 
@@ -164,6 +164,26 @@ fica proibido.
   só o Cosmos grava fora do formato (entidade 16). Ninguém mantém trilha privada
   de alteração; o `AccessLog` do Big Bang registra acesso ao painel e é separado
   de propósito (`schema/platform-ops.prisma:635-640`).
+
+### 3.7 Meridian → Scaffold · diagnóstico de origem
+
+Decisão do CEO de 2026-09-30 (D-27): o Scaffold **não é independente do Meridian**. Toda trilha de
+prontidão nasce de um diagnóstico do Meridian.
+
+- **Passa:** o assessment de origem (código AS-xxx), com o score e a confiança por eixo, as faixas, o
+  arquétipo dominante e os traços. Mais tarde passa também o reassessment ligado a ele.
+- **Efeito:** a trilha de prontidão guarda o vínculo com o assessment. O A1 consolida o relatório, o
+  baseline da ASSESS são esses scores (SG-04), e os critérios do SCALE e do EMBED citam o reassessment
+  (`docs/produto/trilhas/framework-no-scaffold.md` §7).
+- **Proibido:** o Scaffold recalcular score, faixa ou arquétipo, ou editar o assessment. O Meridian
+  continua dono do diagnóstico (entidade 4). Sem assessment, a trilha de prontidão não é criada; ela não
+  nasce "a zero".
+- **Sem Meridian contratado:** o Meridian é habilitado no tenant do próprio cliente como parte do
+  contrato do Scaffold ("Meridian assistido") e operado por um CONSULTANT da Nebuloz. Não roda no tenant
+  da Nebuloz: dado do cliente fora do tenant dele muda o papel de operadora (memo de 2026-09-29).
+- **Estado na main:** `sem implementação`. A trilha guarda `sourceGapId` e `sourcePromotionId`,
+  opcionais e sem FK (`schema/scaffold.prisma:343-344`), mas não o assessment de origem. O vínculo
+  entra com a Fundação de Prontidão de IA.
 
 ---
 

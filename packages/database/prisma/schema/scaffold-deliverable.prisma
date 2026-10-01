@@ -185,6 +185,13 @@ model ScaffoldDeliverableTemplate {
   /// Só existe se o tenant tem este módulo contratado; senão a instância nasce
   /// dispensada com motivo. C1.1 usa CHARTER (c.1).
   requiresModule ProductModule?
+  /// Exigências do catálogo do Charter que este entregável cobre (D-23 F1), cada
+  /// uma `{ set, versao, codigo }`, ex. `{ "set": "ISO/IEC 42001", "versao":
+  /// "2023", "codigo": "6.1.2" }`. Pelo que é estável entre ambientes, não pelo
+  /// `id` (o cuid muda de ambiente). SEM FK: o Scaffold não depende do Charter
+  /// estar contratado; quem valida que o código existe é o publish da versão.
+  /// Nulo = o entregável não cita norma.
+  requirementRefs Json?
 
   version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
 

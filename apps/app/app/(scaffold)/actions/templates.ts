@@ -8,9 +8,11 @@ import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
 import {
+  countCriterionOps,
   detectConflicts,
   type OverlayOp,
   type TemplateShape,
+  validateOverlay,
 } from "@/lib/scaffold/overlay-merge";
 import {
   PublishVersionSchema,
@@ -41,6 +43,12 @@ function shapeOf(version: {
     expectedArtefact: string;
   }[];
   criteria: { key: string; statement: string; evaluationType: string }[];
+  deliverables?: {
+    code: string;
+    title: string;
+    stepCode: string;
+    required: boolean;
+  }[];
 }): TemplateShape {
   return {
     steps: version.steps.map((s) => ({
@@ -54,6 +62,12 @@ function shapeOf(version: {
       statement: c.statement,
       evaluationType: c.evaluationType,
     })),
+    deliverables: (version.deliverables ?? []).map((d) => ({
+      key: d.code,
+      statement: d.title,
+      stepCode: d.stepCode,
+      required: d.required,
+    })),
   };
 }
 
@@ -63,6 +77,7 @@ async function loadShape(db: Db, versionId: string) {
     include: {
       steps: { orderBy: { seq: "asc" } },
       criteria: { orderBy: { seq: "asc" } },
+      deliverables: { orderBy: { seq: "asc" } },
     },
   });
   return v ? { version: v, shape: shapeOf(v) } : null;
@@ -88,6 +103,9 @@ export type OverlayRow = {
   name: string;
   baseVersionLabel: string;
   opCount: number;
+  /** Operações de critério: valem no overlay e não no gate, que lê a versão do
+   *  método. A tela marca "sem efeito no gate". */
+  criterionOpCount: number;
   /** Ids dos conflitos abertos. A tela precisa deles para resolver: resolução é
    *  por conflito, não por overlay — dois conflitos no mesmo overlay podem
    *  merecer decisões opostas. */
@@ -98,7 +116,8 @@ export type TemplateRow = {
   id: string;
   key: string;
   name: string;
-  archetype: string;
+  /** Nulo em trilha de prontidão, que não tem forma de trabalho. */
+  archetype: string | null;
   currentLabel: string | null;
   publishedAt: Date | null;
   versions: TemplateVersionRow[];
@@ -171,6 +190,9 @@ export async function listTemplates(): Promise<ScaffoldResult<TemplateRow[]>> {
             name: o.name,
             baseVersionLabel: o.baseVersion.label,
             opCount: Array.isArray(o.ops) ? o.ops.length : 0,
+            criterionOpCount: Array.isArray(o.ops)
+              ? countCriterionOps(o.ops as unknown as OverlayOp[])
+              : 0,
             openConflictIds: o.conflicts.map((c) => c.id),
           })),
         };
@@ -343,6 +365,18 @@ export async function saveOverlay(
       const base = await loadShape(db, input.baseVersionId);
       if (!base || base.version.templateId !== input.templateId) {
         throw new ScaffoldRuleError("TEMPLATE_HAS_NO_PUBLISHED_VERSION");
+      }
+
+      const { blocking } = validateOverlay(
+        base.shape,
+        input.ops as OverlayOp[],
+        { role: ctx.scaffoldRole }
+      );
+      if (blocking.length > 0) {
+        throw new ScaffoldRuleError(
+          "OVERLAY_VIOLATES_GATE_RULES",
+          blocking.map((v) => v.note)
+        );
       }
 
       const overlay = await db.scaffoldTemplateOverlay.upsert({

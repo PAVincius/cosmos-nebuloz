@@ -61,6 +61,7 @@ vi.mock("@repo/database", () => ({
       },
       scaffoldTemplateOverlay: {
         findMany: h.overlayFindMany,
+        findFirst: async () => ({ ops: [] }),
         upsert: h.overlayUpsert,
         update: h.overlayUpdate,
       },
@@ -88,6 +89,7 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
+  listTemplates,
   publishVersion,
   resolveConflict,
   saveOverlay,
@@ -126,7 +128,11 @@ function shape(withRollback: boolean) {
     steps: [
       {
         key: "run-pilot",
-        statement: "Rodar o piloto em 20% do volume",
+        // A v4 também reescreve o passo: é o que dá conflito a uma operação de
+        // passo salva sobre a v3.
+        statement: withRollback
+          ? "Rodar o piloto em 20% do volume por 4 semanas"
+          : "Rodar o piloto em 20% do volume",
         required: true,
         expectedArtefact: "Log do piloto",
         seq: 1,
@@ -159,6 +165,17 @@ const VANTA_OPS = [
     target: "criterion" as const,
     key: "rollback-tested-prod",
     patch: { statement: "Rollback validado em staging com volume espelhado" },
+  },
+];
+
+/** Operação de passo sobre a v3. Operação de critério é recusada ao salvar
+ *  (débito D-24 §7.7), então o fluxo de salvar usa passo. */
+const STEP_OPS = [
+  {
+    op: "REPLACE" as const,
+    target: "step" as const,
+    key: "run-pilot",
+    patch: { statement: "Rodar o piloto em 10% do volume" },
   },
 ];
 
@@ -389,7 +406,7 @@ describe("saveOverlay", () => {
       templateId: TPL,
       baseVersionId: V3,
       name: "Overlay Vanta",
-      ops: VANTA_OPS,
+      ops: STEP_OPS,
     });
     expect(h.conflictDeleteMany).toHaveBeenCalledTimes(1);
   });
@@ -403,7 +420,7 @@ describe("saveOverlay", () => {
       templateId: TPL,
       baseVersionId: V3,
       name: "Overlay Vanta",
-      ops: VANTA_OPS,
+      ops: STEP_OPS,
     });
     expect(res.ok).toBe(true);
     if (res.ok) {
@@ -417,12 +434,57 @@ describe("saveOverlay", () => {
       templateId: TPL,
       baseVersionId: V3,
       name: "Overlay Vanta",
-      ops: VANTA_OPS,
+      ops: STEP_OPS,
     });
     if (res.ok) {
       expect(res.data.conflicts).toEqual([]);
     }
     expect(h.conflictCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa operação de critério: o gate lê a versão, não o overlay", async () => {
+    const res = await saveOverlay({
+      templateId: TPL,
+      baseVersionId: V3,
+      name: "Overlay Vanta",
+      ops: VANTA_OPS,
+    });
+    expect(res).toMatchObject({
+      ok: false,
+      code: "OVERLAY_VIOLATES_GATE_RULES",
+    });
+    expect(h.overlayUpsert).not.toHaveBeenCalled();
+  });
+});
+
+describe("listTemplates — overlay com operação de critério", () => {
+  it("conta as operações de critério, para a tela marcar 'sem efeito no gate'", async () => {
+    h.templateFindMany.mockResolvedValue([
+      {
+        id: TPL,
+        key: "triage",
+        name: "Triagem de suporte",
+        archetype: "TRIAGE",
+        versions: [],
+        overlays: [
+          {
+            id: OVL,
+            name: "Overlay Vanta",
+            ops: [...VANTA_OPS, ...STEP_OPS],
+            baseVersion: { label: "v3" },
+            conflicts: [],
+          },
+        ],
+      },
+    ]);
+    const res = await listTemplates();
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data[0]?.overlays[0]).toMatchObject({
+        opCount: 2,
+        criterionOpCount: 1,
+      });
+    }
   });
 });
 

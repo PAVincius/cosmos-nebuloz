@@ -49,7 +49,7 @@ describe("assertLocalDatabaseUrl", () => {
 });
 
 describe("DEMO_TRACKS", () => {
-  it("são as 9 trilhas do backlog, com os códigos e sem repetir", () => {
+  it("são as 9 trilhas do backlog mais o Atlas, com os códigos e sem repetir", () => {
     expect(DEMO_TRACKS.map((t) => t.code)).toEqual([
       "TR-110",
       "TR-112",
@@ -60,10 +60,11 @@ describe("DEMO_TRACKS", () => {
       "TR-088",
       "TR-096",
       "TR-071",
+      "TR-120",
     ]);
   });
 
-  it("cada uma usa um dos 5 templates do catálogo", () => {
+  it("cada uma usa um dos 5 templates de forma ou a Fundação de Prontidão", () => {
     for (const t of DEMO_TRACKS) {
       expect([
         "conversational",
@@ -71,8 +72,19 @@ describe("DEMO_TRACKS", () => {
         "docreview",
         "triage",
         "reporting",
+        "ai-readiness-foundation",
       ]).toContain(t.templateKey);
     }
+  });
+
+  it("só o Atlas usa a Fundação e só ele leva overlay", () => {
+    const fundacao = DEMO_TRACKS.filter(
+      (t) => t.templateKey === "ai-readiness-foundation"
+    );
+    expect(fundacao.map((t) => t.code)).toEqual(["TR-120"]);
+    expect(DEMO_TRACKS.filter((t) => t.atlas).map((t) => t.code)).toEqual([
+      "TR-120",
+    ]);
   });
 
   it("nenhum número inventado: nomes só do que o PDF nomeia", () => {

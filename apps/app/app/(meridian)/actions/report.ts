@@ -21,6 +21,12 @@ import {
   requireMeridianContext,
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
+import {
+  assessReadiness,
+  type ReadinessProfile,
+  SIGNAL_CODES,
+  signalsFromAnswers,
+} from "@/lib/meridian/readiness-bands";
 import { cuid, type Result, safeAction } from "../../actions/_base";
 import { logMeridianAudit } from "./_shared";
 
@@ -45,6 +51,9 @@ export type Report = {
   templateVersion: string;
   composite: number | null;
   axes: ReportAxis[];
+  /** Faixa por eixo, confiança e arquétipo (dominante + traço secundário),
+   *  calculados dos scores finais. Com menos de cinco eixos, sem arquétipo. */
+  readiness: ReadinessProfile;
   /** `null` quando o tenant não tem a habilitação de benchmark (specs/012):
    *  o bloco some do relatório, sem coorte nem bandas. */
   cohort: CohortRead | null;
@@ -97,10 +106,20 @@ export async function getReport(
         select: { createdAt: true, action: true, metadata: true },
       });
       const benchmarkEnabled = await isBenchmarkEnabled(db, ctx.tenantId);
-      return { a, trail, benchmarkEnabled };
+      // Respostas das perguntas que alimentam os traços do arquétipo (Q-E03,
+      // Q-G01..03). Template sem esses códigos devolve lista vazia.
+      const signalAnswers = await db.meridianResponse.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          respondent: { assessmentId: a.id },
+          question: { code: { in: Object.values(SIGNAL_CODES) } },
+        },
+        select: { normalized: true, question: { select: { code: true } } },
+      });
+      return { a, trail, benchmarkEnabled, signalAnswers };
     });
 
-    const { a, trail, benchmarkEnabled } = base;
+    const { a, trail, benchmarkEnabled, signalAnswers } = base;
     const latestOverride = new Map<MeridianAxis, string>();
     for (const o of a.overrides) {
       if (!latestOverride.has(o.axis)) {
@@ -151,6 +170,19 @@ export async function getReport(
       templateVersion: a.template.version,
       composite: a.scores.length ? compositeOf(a.scores) : null,
       axes,
+      readiness: assessReadiness(
+        axes.map((x) => ({
+          axis: x.axis,
+          score: x.score,
+          confidence: x.confidence,
+        })),
+        signalsFromAnswers(
+          signalAnswers.map((r) => ({
+            questionCode: r.question.code,
+            normalized: Number(r.normalized),
+          }))
+        )
+      ),
       cohort,
       topGaps: a.gaps.map((g) => ({
         code: g.code,

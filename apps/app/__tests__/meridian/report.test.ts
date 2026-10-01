@@ -15,6 +15,7 @@ const h = vi.hoisted(() => ({
   evidenceFindFirst: vi.fn(),
   createSignedUrl: vi.fn(),
   enablementFindUnique: vi.fn(),
+  responseFindMany: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -50,6 +51,7 @@ vi.mock("@repo/database", () => ({
       meridianEvidence: { findFirst: h.evidenceFindFirst },
       auditLog: { findMany: h.auditFindMany, create: h.auditCreate },
       meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
+      meridianResponse: { findMany: h.responseFindMany },
     }),
   database: {
     meridianBenchmarkCohort: { findUnique: h.cohortFindUnique },
@@ -121,6 +123,7 @@ beforeEach(() => {
   h.auditCreate.mockResolvedValue({});
   h.cohortFindUnique.mockResolvedValue(null);
   h.enablementFindUnique.mockResolvedValue({ enabled: true });
+  h.responseFindMany.mockResolvedValue([]);
   h.createSignedUrl.mockResolvedValue({
     data: { signedUrl: "https://x/y" },
     error: null,
@@ -190,6 +193,128 @@ describe("getReport", () => {
     expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
       tenantId: "nebuloz-interno",
     });
+  });
+
+  // Faixas e arquétipo (briefing do Andaime): o relatório carrega o perfil de
+  // prontidão calculado a partir dos scores finais e da confiança.
+  it("traz o perfil de prontidão: faixas por eixo e arquétipo (caso Atlas)", async () => {
+    const atlas = [
+      ["DATA", 32, 0.72],
+      ["PROCESS", 58, 0.65],
+      ["PEOPLE", 47, 0.55],
+      ["GOVERNANCE", 41, 0.61],
+      ["INFRASTRUCTURE", 36, 0.8],
+    ] as const;
+    h.assessmentFindFirst.mockResolvedValue({
+      ...base,
+      overrides: [],
+      scores: atlas.map(([axis, final, confidence]) => ({
+        axis,
+        computed: final,
+        final: null,
+        confidence,
+        status: "CONFIRMED",
+      })),
+    });
+    const res = await getReport({ assessmentId: AS_ID });
+    const r = res.ok ? res.data.readiness : null;
+    expect(r?.dominant).toBe("PILOT_NO_GROUND");
+    expect(r?.secondary).toBe("ISOLATED_CHAMPION");
+    expect(r?.unreliableAxes).toEqual(["PEOPLE"]);
+    expect(r?.axes.map((a) => a.display)).toEqual([
+      "Inicial",
+      "Em formação",
+      "Não confiável",
+      "Em formação",
+      "Inicial",
+    ]);
+  });
+
+  // Sinais de pergunta (decisões do Norte): o relatório alimenta Campeão
+  // isolado (Q-E03) e Governança de papel (Q-G01/G02/G03) com o normalizado
+  // das respostas do assessment.
+  const scoresMistos = [
+    "DATA",
+    "PROCESS",
+    "PEOPLE",
+    "GOVERNANCE",
+    "INFRASTRUCTURE",
+  ].map((axis) => ({
+    axis,
+    computed: 50,
+    final: null,
+    confidence: 0.9,
+    status: "CONFIRMED",
+  }));
+
+  it("Q-E03 baixa nas respostas faz o relatório apontar Campeão isolado", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...base,
+      overrides: [],
+      scores: scoresMistos,
+    });
+    h.responseFindMany.mockResolvedValue([
+      { normalized: "0.250", question: { code: "Q-E03" } },
+      { normalized: "0.250", question: { code: "Q-E03" } },
+    ]);
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.readiness.dominant).toBe("ISOLATED_CHAMPION");
+  });
+
+  it("Q-G01 alta, Q-G02 e Q-G03 baixas: Governança de papel", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...base,
+      overrides: [],
+      scores: scoresMistos,
+    });
+    h.responseFindMany.mockResolvedValue([
+      { normalized: "1.000", question: { code: "Q-G01" } },
+      { normalized: "0.000", question: { code: "Q-G02" } },
+      { normalized: "0.250", question: { code: "Q-G03" } },
+    ]);
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.readiness.dominant).toBe("PAPER_GOVERNANCE");
+  });
+
+  it("busca só as respostas do assessment, do tenant da sessão e dos códigos dos sinais", async () => {
+    await getReport({ assessmentId: AS_ID });
+    const where = h.responseFindMany.mock.calls[0][0].where;
+    expect(where.tenantId).toBe("t1");
+    expect(where.respondent).toEqual({ assessmentId: AS_ID });
+    expect(where.question.code.in.sort()).toEqual([
+      "Q-E03",
+      "Q-G01",
+      "Q-G02",
+      "Q-G03",
+    ]);
+  });
+
+  it("template sem esses códigos (nenhuma resposta): o relatório sai normal, sem arquétipo de pergunta", async () => {
+    h.assessmentFindFirst.mockResolvedValue({
+      ...base,
+      overrides: [],
+      scores: scoresMistos,
+    });
+    h.responseFindMany.mockResolvedValue([]);
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.readiness.dominant).toBeNull();
+  });
+
+  it("usa o score final (com override), não o computado, na faixa", async () => {
+    const res = await getReport({ assessmentId: AS_ID });
+    // base: GOVERNANCE computado 74, final 66 → Estruturado em ambos; a
+    // conferência é que o valor usado é o final.
+    const gov = res.ok
+      ? res.data.readiness.axes.find((a) => a.axis === "GOVERNANCE")
+      : null;
+    expect(gov?.score).toBe(66);
+  });
+
+  it("com menos de cinco eixos pontuados: faixas dos que existem, sem arquétipo", async () => {
+    const res = await getReport({ assessmentId: AS_ID });
+    expect(res.ok && res.data.readiness.axes).toHaveLength(1);
+    expect(res.ok && res.data.readiness.dominant).toBeNull();
   });
 
   it("exige permissão de leitura de relatório", async () => {

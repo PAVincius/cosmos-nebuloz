@@ -206,6 +206,9 @@ function OverlayList({
               base {o.baseVersionLabel} · {o.opCount} operação
               {o.opCount === 1 ? "" : "ões"}
             </span>
+            {o.criterionOpCount > 0 && (
+              <Badge tone="amber">Critério sem efeito no gate</Badge>
+            )}
             {o.openConflictIds.length > 0 && (
               <Badge tone="red">
                 {o.openConflictIds.length} conflito
@@ -401,7 +404,7 @@ export default function TemplatesScreen() {
               }
               icon="puzzle"
               key={t.id}
-              subtitle={workFormLabel(t.archetype)}
+              subtitle={workFormLabel(t.archetype) || "Sem forma de trabalho"}
               title={t.name}
               tone="accent"
             >
