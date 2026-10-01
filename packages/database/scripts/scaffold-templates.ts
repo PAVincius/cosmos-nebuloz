@@ -27,6 +27,15 @@ export type CriterionSeed = {
   evaluationType?: "MANUAL" | "DERIVED";
 };
 
+/** Referência de um entregável a uma exigência do catálogo do Charter (D-23 F1).
+ *  Pelo que é estável entre ambientes — nome do conjunto, versão e código —,
+ *  nunca pelo `id`, e sem FK: o Scaffold não depende do Charter contratado. */
+export type RequirementRefSeed = {
+  set: string;
+  versao: string;
+  codigo: string;
+};
+
 /** Entregável do template (SC-DEV-01/02). Versões anteriores ao modelo não têm
  *  nenhum, e as trilhas criadas sobre elas seguem só os passos. */
 export type DeliverableSeed = {
@@ -49,6 +58,9 @@ export type DeliverableSeed = {
   required?: boolean;
   /** Só existe com o módulo contratado; sem ele nasce dispensado. */
   requiresModule?: "CHARTER";
+  /** Exigências do catálogo do Charter que o entregável atende. Ausente = sem
+   *  referência. Só vale com código que já existe no catálogo. */
+  requirementRefs?: RequirementRefSeed[];
 };
 
 export type PhaseSeed = {
