@@ -18,9 +18,11 @@ import { Badge, Button, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import type { TrackDetailPhase } from "@/app/(scaffold)/actions/tracks";
 import { PHASE } from "@/lib/scaffold/phases";
-import { Eyebrow } from "./base";
+import { Eyebrow, Input } from "./base";
 
-export type CriterionFacts = Record<string, { met: boolean }>;
+/** Veredito por critério: atendido ou não, e a nota de evidência de quem avaliou
+ *  (o par que `closePhase` já aceita e grava no snapshot do gate). */
+export type CriterionFacts = Record<string, { met: boolean; note?: string }>;
 
 /** Recusa do gate vinda do servidor. Fica dentro do painel: derrubar a tela
  *  inteira por "falta um critério" esconderia a trilha que a pessoa precisa
@@ -32,8 +34,8 @@ export function GatePanel({
   busy,
   notice,
   closeBlockedReason = null,
+  canOverride = false,
   canReopen = true,
-  reopenReason = null,
   onClose,
   onOverride,
   onReopen,
@@ -44,9 +46,13 @@ export function GatePanel({
   /** Entregável obrigatório pendente (SG-01): o motivo desabilita o botão e
    *  fica escrito ao lado, em vez de a recusa só vir do servidor. */
   closeBlockedReason?: string | null;
-  /** Quem não fecha gate também não reabre fase (mesmo peso). */
+  /** Override só existe para quem tem `gate.override`: a opção nem aparece para
+   *  os outros, em vez de aparecer e deixar a recusa para o servidor (FR-009).
+   *  Padrão fechado: quem esquecer de passar não ganha poder. */
+  canOverride?: boolean;
+  /** Quem não fecha gate também não reabre fase (mesmo peso), e a opção de
+   *  reabrir nem aparece para ele (FR-010). */
   canReopen?: boolean;
-  reopenReason?: string | null;
   onClose: (facts: CriterionFacts) => void;
   onOverride: (unmet: string[]) => void;
   onReopen: () => void;
@@ -73,8 +79,27 @@ export function GatePanel({
   const statementOf = (key: string) =>
     phase.criteria.find((c) => c.key === key)?.statement ?? key;
 
+  // Marcar e desmarcar não apaga a evidência já escrita, e escrever evidência
+  // não marca o critério: são dois campos do mesmo veredito.
   const toggle = (key: string) =>
-    setFacts((f) => ({ ...f, [key]: { met: !(f[key]?.met ?? false) } }));
+    setFacts((f) => ({
+      ...f,
+      [key]: { ...f[key], met: !(f[key]?.met ?? false) },
+    }));
+  const setNote = (key: string, note: string) =>
+    setFacts((f) => ({
+      ...f,
+      [key]: { met: f[key]?.met ?? false, note },
+    }));
+
+  /** O que vai ao servidor: nota vazia não é nota. */
+  const factsToSend = (): CriterionFacts =>
+    Object.fromEntries(
+      Object.entries(facts).map(([key, f]) => {
+        const note = f.note?.trim();
+        return [key, note ? { met: f.met, note } : { met: f.met }];
+      })
+    );
 
   return (
     <SectionCard
@@ -107,57 +132,72 @@ export function GatePanel({
           {criteria.map((c) => (
             <div
               key={c.key}
-              style={{ display: "flex", gap: 10, alignItems: "baseline" }}
+              style={{ display: "flex", flexDirection: "column", gap: 5 }}
             >
-              {decidable ? (
-                <input
-                  aria-label={c.statement}
-                  checked={c.met}
-                  disabled={busy}
-                  onChange={() => toggle(c.key)}
-                  style={{
-                    flexShrink: 0,
-                    margin: 0,
-                    transform: "translateY(2px)",
-                    accentColor: "var(--green)",
-                    cursor: busy ? "default" : "pointer",
-                  }}
-                  type="checkbox"
-                />
-              ) : (
-                <Icon
-                  name={c.met ? "check" : "x"}
-                  size={13}
-                  strokeWidth={2.6}
-                  style={{
-                    color: c.met ? "var(--green-text)" : "var(--red-text)",
-                    flexShrink: 0,
-                    transform: "translateY(2px)",
-                  }}
-                />
-              )}
-              <span
-                style={{
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  color: "var(--ink)",
-                  flex: 1,
-                }}
-              >
-                {c.statement}
-              </span>
-              {c.note && (
+              <div style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                {decidable ? (
+                  <input
+                    aria-label={c.statement}
+                    checked={c.met}
+                    disabled={busy}
+                    onChange={() => toggle(c.key)}
+                    style={{
+                      flexShrink: 0,
+                      margin: 0,
+                      transform: "translateY(2px)",
+                      accentColor: "var(--green)",
+                      cursor: busy ? "default" : "pointer",
+                    }}
+                    type="checkbox"
+                  />
+                ) : (
+                  <Icon
+                    name={c.met ? "check" : "x"}
+                    size={13}
+                    strokeWidth={2.6}
+                    style={{
+                      color: c.met ? "var(--green-text)" : "var(--red-text)",
+                      flexShrink: 0,
+                      transform: "translateY(2px)",
+                    }}
+                  />
+                )}
                 <span
-                  className="mono"
                   style={{
-                    fontSize: 10.5,
-                    color: "var(--ink-faint)",
-                    flexShrink: 0,
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                    flex: 1,
+                  }}
+                >
+                  {c.statement}
+                </span>
+              </div>
+              {decidable ? (
+                <div style={{ paddingLeft: 23 }}>
+                  <Input
+                    aria-label={`Evidência: ${c.statement}`}
+                    autoComplete="off"
+                    disabled={busy}
+                    maxLength={500}
+                    onChange={(e) => setNote(c.key, e.target.value)}
+                    placeholder="Evidência: onde se vê que foi atendido (opcional)"
+                    style={{ fontSize: 12, padding: "6px 9px" }}
+                    value={facts[c.key]?.note ?? ""}
+                  />
+                </div>
+              ) : c.note ? (
+                <div
+                  style={{
+                    paddingLeft: 23,
+                    fontSize: 12,
+                    lineHeight: 1.5,
+                    color: "var(--ink-muted)",
                   }}
                 >
                   {c.note}
-                </span>
-              )}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
@@ -239,7 +279,10 @@ export function GatePanel({
             flexWrap: "wrap",
           }}
         >
-          {phase.state === "BLOCKED" && notice && notice.blockers.length > 0 ? (
+          {canOverride &&
+          phase.state === "BLOCKED" &&
+          notice &&
+          notice.blockers.length > 0 ? (
             <Button
               disabled={busy}
               icon="shield"
@@ -266,7 +309,7 @@ export function GatePanel({
           <Button
             disabled={busy || Boolean(closeBlockedReason)}
             icon="check"
-            onClick={() => onClose(facts)}
+            onClick={() => onClose(factsToSend())}
             size="sm"
             title={closeBlockedReason ?? undefined}
           >
@@ -275,7 +318,7 @@ export function GatePanel({
         </div>
       ) : null}
 
-      {closed ? (
+      {closed && canReopen ? (
         <div
           style={{
             display: "flex",
@@ -284,11 +327,10 @@ export function GatePanel({
           }}
         >
           <Button
-            disabled={busy || !canReopen}
+            disabled={busy}
             icon="refresh"
             onClick={onReopen}
             size="sm"
-            title={reopenReason ?? undefined}
             variant="secondary"
           >
             Reabrir fase

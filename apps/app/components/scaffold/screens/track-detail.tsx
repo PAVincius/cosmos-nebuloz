@@ -562,6 +562,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           <GatePanel
             busy={busy}
+            canOverride={can("gate.override").allowed}
             canReopen={can("gate.close").allowed}
             closeBlockedReason={
               can("gate.close").allowed
@@ -580,7 +581,6 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
             onOverride={(unmet) => openModal({ kind: "override", unmet })}
             onReopen={() => openModal({ kind: "reopen" })}
             phase={activePhase}
-            reopenReason={can("gate.close").reason}
           />
           <CharterPolicyCard
             busy={busy}
