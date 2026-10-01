@@ -1,23 +1,30 @@
 # Risk Register — Cosmos Nebuloz
 
 - **Criado em:** 2026-06-03
-- **Próxima revisão:** 2026-07-01
+- **Próxima revisão:** 2026-11-01
+- **Última revisão de privacidade (Compliance/DPO):** 2026-10-01 — cobre R-001, R-004, R-008, R-009, R-013 e os novos R-014 a R-019. As demais linhas (R-002, R-003, R-005 a R-007, R-010 a R-012) são de segurança e infraestrutura e **não foram revisadas nesta rodada**: as datas de revisão de julho estão vencidas e os donos precisam atualizá-las. Relatório em [`2026-10-01-revisao-mensal.md`](2026-10-01-revisao-mensal.md).
 - **Fonte:** Enterprise Validation Report (NEB-140)
 
 ## Riscos Identificados
 
 | ID | Risco | Probabilidade | Impacto | Owner | Mitigação | Linear | Revisão |
 |----|-------|---------------|---------|-------|-----------|--------|---------|
-| R-001 | Cross-tenant data leak — RLS inexistente | Alta | Crítico | Backend Lead | Implementar RLS Postgres | NEB-112 | 2026-07-01 |
+| R-001 | Cross-tenant data leak — RLS declarada mas não é a barreira ativa (ADR-0012: a conexão de aplicação anula a política); o isolamento hoje é só da camada de aplicação, em toda consulta | Média | Crítico | Backend Lead | Isolamento por aplicação em toda consulta (chaves únicas compostas com `tenantId`, teste de fronteira); RLS efetiva segue pendente. Declarado ao cliente no DPA §7 | NEB-112 | 2026-11-01 |
 | R-002 | Exposição de secrets — sem vault/rotação | Alta | Crítico | DevOps | Vault migration + rotação imediata | NEB-113 | 2026-07-01 |
 | R-003 | Vulnerabilidades SCA (5 críticas, 115 high) | Alta | Alto | Eng Lead | pnpm audit fix + CI gate | NEB-114 | 2026-07-01 |
-| R-004 | Audit trail adulterável — sem trigger append-only | Média | Crítico | Backend Lead | Trigger Postgres + Prisma extension | NEB-115 | 2026-07-01 |
+| R-004 | Audit trail adulterável — sem trigger append-only | Baixa | Crítico | Backend Lead | **Mitigado:** trigger que barra UPDATE e DELETE em `AuditLog` (ADR-0009). Efeito colateral aceito: a trilha retém nome de quem agiu e é imutável (parecer de 2026-09-29, §3). Manter em observação | NEB-115 | 2026-11-01 |
 | R-005 | Gap SOC2 — eventos de segurança não gravados | Alta | Alto | Backend Lead | Instrumentar packages/audit | NEB-116 | 2026-07-01 |
 | R-006 | Migrations sem histórico (prisma db push) | Média | Alto | DevOps | Migrar para prisma migrate deploy | NEB-117 | 2026-07-01 |
 | R-007 | Import sem transação — orfãos em falha parcial | Média | Alto | Backend Lead | Wrap em $transaction | NEB-118 | 2026-07-01 |
-| R-008 | LGPD — sem DSAR (erasure/export) | Alta | Crítico | CTO + Jurídico | Implementar endpoints DSAR | NEB-119 | 2026-07-15 |
-| R-009 | LGPD — sem DPA, ROPA, DPIA | Alta | Crítico | CTO + Jurídico | Contratar DPO, assinar DPAs | NEB-120 | 2026-07-15 |
+| R-008 | LGPD — DSAR (erasure/export): existe para quem tem conta; falta o titular sem conta e a verificação da execução em produção | Média | Crítico | CTO + Jurídico | **Em parte mitigado:** `processErasureRequest` e `buildPortabilityExport`; eliminação por cron a cada 15 min desde 30/09 (#310, relato). Falta: canal do respondente externo (condição 11, R-019) e prova em produção (R-014) | NEB-119 | 2026-10-15 |
+| R-009 | LGPD — RoPA e DPA: RoPA existe (`lgpd-ropa-e-lacunas.md`); DPA modelo v1.2 pendente de revisão jurídica; DPAs de fornecedores: 8 embutidos, 6 a assinar, 4 sem documento público; sem RIPD | Média | Crítico | CTO + Jurídico | Encarregado: dispensa confirmada pelo CEO em 2026-09-30 (Res. CD/ANPD 2/2022, art. 11), não é mais ação. Falta: revisão jurídica do DPA, assinar os 6 DPAs, decidir sobre RIPD (art. 38) | NEB-120 | 2026-10-31 |
 | R-010 | Backup sem restore testado | Alta | Alto | DevOps | DR drill em staging | NEB-121 | 2026-07-01 |
 | R-011 | Sem circuit breaker em integrações externas | Média | Médio | Backend Lead | cockatiel + async queue | NEB-123 | 2026-08-01 |
 | R-012 | Sem rate limiting em auth/copilot | Alta | Médio | Backend Lead | @upstash/ratelimit | NEB-133 | 2026-07-15 |
 | R-013 | Triagem Jev (`.maestri/jev.mjs`) envia diff de commits a LLM de terceiro (TypeSafe AI / `typesafe-ai/jev`, via Vercel AI Gateway). Operador identificado (V-19), DPA real, ZDR por requisição documentado e fail-closed (`no_providers_available` se indisponível) — risco residual: plano Vercel do time (Pro/Enterprise) não confirmado, sem o qual o ZDR por requisição não vale | Baixa | Médio | Responsável pela conta Vercel | `packages/database/scripts/` já excluído do diff (mitiga PII); confirmar plano Vercel Pro/Enterprise do time | — | 2026-10-23 |
+| R-014 | Retenção de 90 dias da evidência do Meridian e eliminação de titular rodam por cron, mas ainda **não verificadas em produção**; a retenção só se prova com dado sintético (a 1ª execução vem com `eliminated: 0`) | Média | Alto | Infra/SRE + Compliance/DPO | Roteiro do teste sintético (`2026-09-30-roteiro-teste-sintetico-eliminacao-producao.md`) antes de cliente externo; DPA §10.2 só promete o automático depois da verificação | — | 2026-10-15 |
+| R-015 | Mecanismo de transferência internacional **não demonstrado** para os fornecedores nos EUA (LLM, observabilidade, hospedagem): o aceite do DPA do fornecedor traz as cláusulas dele, e a Res. CD/ANPD 19/2024 (arts. 9 e 16) exige o Anexo II adotado integralmente, ou outra via do art. 33 | Alta | Alto | CTO + Jurídico | Jurídico confirma se o aceite basta ou se exige aditivo com o Anexo II, por fornecedor; DPA modelo §6 | — | 2026-10-31 |
+| R-016 | Supabase guarda o banco de produção, o bucket de evidência e os backups, mas **não tem DPA registrado**: `dpa-fornecedores.md` V-05 lista Neon | Média | Alto | Compliance/DPO | Registrar o Supabase como V-xx, ler o DPA, anotar região e retenção de backup; corrigir a V-05 | — | 2026-10-15 |
+| R-017 | `benchmarkOptIn` ligado por engano faz da Nebuloz controladora do conjunto comparativo, sem linha de RoPA nem aviso ao respondente | Baixa | Alto | Norte + Compliance/DPO | Desligado por cláusula (DPA §2.1) e travado no produto por tenant (#318, #323, #327); falta parecer sobre a implementação e a linha de RoPA antes de qualquer habilitação | — | 2026-10-15 |
+| R-018 | Buckets `scaffold-artefacts` e `charter-evidence` guardam arquivos do cliente **sem rotina de retenção** que eu tenha visto (só o `meridian-evidence` tem) | Média | Médio | Backend Lead + Compliance/DPO | Decidir prazo por bucket, como o CEO fez para o Meridian (opção A, 90 dias após o fechamento); definir antes do primeiro cliente | — | 2026-10-31 |
+| R-019 | Respondente externo do Meridian sem canal no produto para pedir eliminação; só e-mail e playbook, e a execução é manual | Média | Alto | Bussola + Compliance/DPO | Requisito da condição 11 (`2026-09-29-requisito-canal-eliminacao-respondente-externo.md`); até lá, playbook do titular | — | antes do 1º cliente externo |
