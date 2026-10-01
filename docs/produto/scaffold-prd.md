@@ -218,3 +218,48 @@ Esse último ponto é o que faz a tarefa merecer ADR próprio.
 - **Duração e papéis dos três pacotes** são premissa sem histórico. A primeira
   entrega vale mais que qualquer estimativa — instrumentar para medir desde ela.
 - **ADR da travessia cross-tenant** da promoção (§7).
+
+## 10. Decisões
+
+### 2026-09-30 · Scaffold operável de ponta a ponta: ordem dos próximos PRs (D-28, CPO)
+
+**Contexto.** O #331 (Fundação de Prontidão de IA) foi mergeado com aprovação do CEO. O QA do Crivo e os
+débitos do #331 mostram que a trilha ainda não roda inteira pela interface. O critério de ordem é um só:
+**o que impede uma consultora de levar uma trilha real da ASSESS ao EMBED em produção** vem primeiro.
+
+| Ordem | PR | Itens | Por que nesta posição | Prazo |
+|---|---|---|---|---|
+| 1 | **Operar a trilha** | **(0) primeiro, os achados do Vigia sobre o #331** (detalhe abaixo); (1) decisão do gate na tela: `closePhase` ligado à UI, com critérios, evidência, motivo de bloqueio no botão desabilitado e override só para quem tem o papel; (3) Nova trilha: ordem do DOM com os campos antes de Cancelar/Criar, Tab preso no modal e Esc fechando | Sem (1), nenhuma trilha passa de fase pela interface, e todo o resto fica sem uso. O (3) é pequeno e está no caminho de toda trilha nova, que é o primeiro passo da demo e do cliente | `github/main` até **2026-10-07** |
+| 2 | **Overlay do cliente** | (2) tela da consultora para criar e editar overlay (passo, entregável, critério), aplicando as regras da D-24 §7.7 (REMOVE de obrigatório só pela consultora, com motivo); débito: **overlay de critério com efeito no gate**, e a recusa provisória sai | É o que adapta o método ao stack do cliente, como no Atlas. Juntar com o débito evita fazer a tela recusando critério e refazer em seguida. O prazo do débito, 31/10, vale para o PR inteiro | `github/main` até **2026-10-31** |
+| 3 | **Dispensa visível** | (4) dispensa manual do A2 por instância, pela consultora, com motivo; (5) motivo da dispensa na fila de supervisão do back-office (FR-020, Painel) | A dispensa só existe por regra automática e por overlay, que entra no PR 2. A D-24 exige que entregável dispensado "não some" e apareça na supervisão. É o que impede o gate de virar formalidade em silêncio | `github/main` até **2026-11-07** |
+
+**(0) Achados do Vigia no #331**, aprovado com ressalvas, sem crítico nem alto. Entram no PR 1 **antes
+dos itens de tela**, porque a tela de gate passa a exercitar esses caminhos.
+
+| Severidade | Achado | Decisão de produto |
+|---|---|---|
+| Médio | `resolveConflict` (`templates.ts:495`, `keep_overlay`/`take_upstream`) e o `seedTrack` (`_seed-track.ts:~400`) não revalidam o overlay com `validateOverlay`; só o `saveOverlay` valida. Quem tem `template.publish` e não é CONSULTANT pode manter um REMOVE de entregável que virou obrigatório numa versão nova | Os três caminhos aplicam a mesma validação. Resolver conflito com `keep_overlay` que mantém REMOVE de obrigatório exige o papel CONSULTANT, com motivo, como na D-24 §7.7. Criar trilha com overlay que não passa na validação é recusado, com a mensagem do motivo |
+| Baixo | `assignDeliverable` (`deliverables.ts:371`) fica fora da máquina de estados e atribui responsável a entregável dispensado | Recusar. Entregável dispensado não recebe responsável; precisa ser reativado antes |
+| Baixo | `assessments.ts:23` só exige `track.manage` e devolve assessment em DRAFT para ser origem da trilha | A origem só aceita assessment com coleta fechada e score calculado: `status` REVIEW ou FINALISED. **Não** exigir só FINALISED, porque nenhum caminho do produto grava FINALISED hoje (só o seed). Exigir isso travaria toda trilha real |
+| Baixo | `sourceAssessmentId` pode divergir do assessment do gap de origem | Quando a trilha nasce de um gap (`sourceGapId`), o `sourceAssessmentId` tem de ser o assessment desse gap. Divergência é recusada |
+
+**Por que três PRs, e não um nem cinco.** Cada PR fecha uma capacidade que se testa sozinha:
+- o PR 1 com uma trilha que vai da ASSESS ao EMBED pela tela;
+- o PR 2 com o Atlas recriado com overlay feito pela tela;
+- o PR 3 com uma dispensa aparecendo na fila do back-office.
+
+Cinco PRs pequenos espalhariam o (3) e o (1), que são testados pelo mesmo caminho. Um PR só atrasaria
+o (1), que trava tudo, até o prazo do overlay.
+
+**Critério de pronto de cada PR:**
+- **PR 1:** um E2E leva a trilha do Atlas da ASSESS ao EMBED só pela interface, com um gate bloqueado
+  mostrando o motivo e um override registrado. No modal Nova trilha, Tab não sai do modal e Esc fecha,
+  pelo teclado.
+- **PR 2:** a consultora recria pela tela o overlay do Atlas (REPLACE de passo, REPLACE de título,
+  dispensa dos papéis de dado). Um overlay de critério muda de fato o que o gate exige. Quem não é
+  consultora não consegue remover entregável obrigatório.
+- **PR 3:** a consultora dispensa o A2 de uma trilha com motivo. A dispensa aparece com o motivo na fila
+  de supervisão do back-office. O motivo é obrigatório.
+
+**Donos.** Regua escreve as três specs, na ordem. Andaime ou Bussola implementam, conforme a Morgana
+escalar. Crivo faz o QA de cada um. Regra do CEO: cada PR com os testes junto, sem depender de PR aberto.
