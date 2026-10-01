@@ -1,6 +1,7 @@
 // D-24 (docs/produto/trilhas/framework-no-scaffold.md §3), o mínimo de schema
 // da trilha de framework: F3 archetype opcional no template e F1
-// requirementRefs no entregável do template, sem FK para o Charter. A dispensa
+// requirementRefs no entregável do template, sem FK para o Charter; D-27
+// acrescenta sourceAssessmentId na trilha, sem FK. A dispensa
 // já existe (dispensedReason + required=false) e não muda; F2 (perfil) fica fora.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -70,11 +71,45 @@ describe("F1 — requirementRefs no entregável do template", () => {
   });
 });
 
+describe("D-27 — ScaffoldTrack.sourceAssessmentId", () => {
+  const modelo = bloco(schema("scaffold.prisma"), "model ScaffoldTrack {");
+  const semComentario = modelo
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("//"))
+    .join("\n");
+
+  it("é String? e não é relação (sem FK, como sourceGapId)", () => {
+    expect(semComentario).toMatch(/sourceAssessmentId\s+String\?/);
+    expect(semComentario).not.toMatch(/Meridian/);
+    expect(semComentario).not.toMatch(/@relation\([^)]*sourceAssessmentId/);
+  });
+
+  it("tem índice (tenantId, sourceAssessmentId): a busca é sempre por tenant", () => {
+    expect(semComentario).toMatch(
+      /@@index\(\[tenantId, sourceAssessmentId\]\)/
+    );
+  });
+
+  it("migration: coluna TEXT nula, sem FK", () => {
+    const m = semComentarios(sql());
+    expect(m).toMatch(
+      /ALTER TABLE "ScaffoldTrack" ADD COLUMN "sourceAssessmentId" TEXT;/
+    );
+    expect(m).not.toMatch(/sourceAssessmentId[^;]*REFERENCES/);
+    expect(m).toMatch(
+      /CREATE INDEX "ScaffoldTrack_tenantId_sourceAssessmentId_idx" ON "ScaffoldTrack"\("tenantId", "sourceAssessmentId"\);/
+    );
+  });
+});
+
 describe("o que NÃO entra", () => {
   it("dispensa não ganha estado nem coluna; instância intocada; sem perfil (F2)", () => {
     const m = semComentarios(sql());
     expect(m).not.toMatch(/WAIVED|ScaffoldDeliverableStatus/);
     expect(m).not.toMatch(/ScaffoldDeliverableInstance/);
+    expect(m).not.toMatch(
+      /ScaffoldTrack"\s+ADD COLUMN "(?!sourceAssessmentId)/
+    );
     expect(m).not.toMatch(/orgProfile|profiles/);
   });
 
@@ -92,5 +127,9 @@ describe("down.sql", () => {
     const d = semComentarios(sql("down.sql"));
     expect(d).toMatch(/ALTER COLUMN "archetype" SET NOT NULL/);
     expect(d).toMatch(/DROP COLUMN "requirementRefs"/);
+    expect(d).toMatch(/DROP COLUMN "sourceAssessmentId"/);
+    expect(d).toMatch(
+      /DROP INDEX "ScaffoldTrack_tenantId_sourceAssessmentId_idx"/
+    );
   });
 });

@@ -345,6 +345,11 @@ model ScaffoldTrack {
 
   sourceGapId       String?
   sourcePromotionId String?
+  /// Diagnóstico do Meridian (assessment) que originou a trilha (D-27). Mesma
+  /// razão de `sourceGapId`: `String?` e NÃO relação FK, para o Scaffold não
+  /// depender do Meridian contratado nem ter trilha em curso derrubada pela
+  /// exclusão de um diagnóstico.
+  sourceAssessmentId String?
 
   status       ScaffoldTrackStatus @default(ACTIVE)
   /// Materializado, embora derivável das fases: o portfólio ordena e filtra por
@@ -374,6 +379,7 @@ model ScaffoldTrack {
   @@index([tenantId, status])
   @@index([tenantId, lastGateAt])
   @@index([sourceGapId])
+  @@index([tenantId, sourceAssessmentId])
 }
 
 /// Uma das quatro fases de uma trilha. As quatro nascem juntas no seed da
