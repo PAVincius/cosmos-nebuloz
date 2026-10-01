@@ -19,7 +19,7 @@ import {
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
-import { logMeridianAudit, nextCode } from "./_shared";
+import { logMeridianAudit, nextCode, requireDecisionsOpen } from "./_shared";
 
 // Gap register canônico — US4.
 //
@@ -169,6 +169,7 @@ export async function upsertGap(
             "Gap não encontrado nesta organização."
           );
         }
+        await requireDecisionsOpen(db, ctx.tenantId, before.assessmentId);
         const after = await db.meridianGap.update({
           where: { id: before.id },
           data: {
@@ -202,6 +203,7 @@ export async function upsertGap(
         return after;
       }
 
+      await requireDecisionsOpen(db, ctx.tenantId, input.assessmentId);
       const code = await nextCode({
         db,
         tenantId: ctx.tenantId,
@@ -261,6 +263,7 @@ export async function deleteGap(
           "Gap não encontrado nesta organização."
         );
       }
+      await requireDecisionsOpen(db, ctx.tenantId, gap.assessmentId);
       // Apagar um gap promovido deixaria trabalho em outro produto apontando
       // para nada — e é o gap que diz o que aquele trabalho existe para fechar.
       if (gap.promotions.length > 0) {
@@ -304,7 +307,7 @@ export async function linkGapDependency(
     await withTenantDb(ctx.tenantId, async (db) => {
       const gaps = await db.meridianGap.findMany({
         where: { tenantId: ctx.tenantId },
-        select: { id: true, code: true },
+        select: { id: true, code: true, assessmentId: true },
       });
       const byId = new Map(gaps.map((g) => [g.id, g.code]));
       const from = byId.get(input.gapId);
@@ -314,6 +317,10 @@ export async function linkGapDependency(
           "gap.not-found",
           "Gap não encontrado nesta organização."
         );
+      }
+      const fromGap = gaps.find((g) => g.id === input.gapId);
+      if (fromGap) {
+        await requireDecisionsOpen(db, ctx.tenantId, fromGap.assessmentId);
       }
 
       const existing = await db.meridianGapDependency.findMany({
@@ -362,6 +369,13 @@ export async function unlinkGapDependency(
     const ctx = await requireMeridianPermissionContext("gap.write");
     const input = LinkSchema.parse(raw);
     await withTenantDb(ctx.tenantId, async (db) => {
+      const gap = await db.meridianGap.findFirst({
+        where: { id: input.gapId, tenantId: ctx.tenantId },
+        select: { assessmentId: true },
+      });
+      if (gap) {
+        await requireDecisionsOpen(db, ctx.tenantId, gap.assessmentId);
+      }
       await db.meridianGapDependency.deleteMany({
         where: {
           tenantId: ctx.tenantId,

@@ -13,6 +13,7 @@ import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
 import { MeridianRuleError } from "@/lib/meridian/guards";
 import {
+  COLLECTION_CLOSED_MESSAGE,
   hashToken,
   isTokenUsable,
   TOKEN_INVALID_MESSAGE,
@@ -143,7 +144,13 @@ async function findRespondentByTokenOrThrow(token: string) {
     where: { tokenHash: hashToken(token) },
     include: {
       assessment: {
-        select: { id: true, code: true, orgName: true, templateId: true },
+        select: {
+          id: true,
+          code: true,
+          orgName: true,
+          templateId: true,
+          status: true,
+        },
       },
     },
   });
@@ -198,6 +205,18 @@ export type Battery = {
 
 async function loadRespondent(token: string) {
   return findRespondentByTokenOrThrow(token);
+}
+
+/** Para as três escritas do respondente. Só COLLECTING aceita: a partir do
+ *  fechamento da coleta (REVIEW) o link é só leitura, mesmo com token válido
+ *  (D-29, FR-029c) — antes a resposta mudava depois do fechamento e o
+ *  computado, não. */
+async function loadRespondentForWrite(token: string) {
+  const r = await findRespondentByTokenOrThrow(token);
+  if (r.assessment.status !== "COLLECTING") {
+    throw new MeridianRuleError("collection.closed", COLLECTION_CLOSED_MESSAGE);
+  }
+  return r;
 }
 
 /** Só as perguntas do eixo daquele respondente, daquele assessment. Ele nunca
@@ -272,7 +291,7 @@ export async function saveDraft(
 ): Promise<Result<void>> {
   return safeAction(async () => {
     const input = DraftSchema.parse(raw);
-    const r = await loadRespondent(input.token);
+    const r = await loadRespondentForWrite(input.token);
 
     const questions = await database.meridianQuestion.findMany({
       where: {
@@ -334,7 +353,7 @@ export async function submitBattery(
   token: string
 ): Promise<Result<{ missing: number }>> {
   return safeAction(async () => {
-    const r = await loadRespondent(token);
+    const r = await loadRespondentForWrite(token);
 
     const [total, answered] = await Promise.all([
       database.meridianQuestion.count({
@@ -395,7 +414,7 @@ export async function attachEvidence(
   file: File
 ): Promise<Result<{ id: string; fileName: string }>> {
   return safeAction(async () => {
-    const r = await loadRespondent(token);
+    const r = await loadRespondentForWrite(token);
 
     if (file.size > MAX_EVIDENCE_BYTES) {
       throw new MeridianRuleError(

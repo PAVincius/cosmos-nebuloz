@@ -11,7 +11,7 @@ import {
 } from "@/lib/meridian/guards";
 import { buildPlan } from "@/lib/meridian/plan";
 import { cuid, optStr, type Result, safeAction } from "../../actions/_base";
-import { logMeridianAudit } from "./_shared";
+import { logMeridianAudit, requireDecisionsOpen } from "./_shared";
 
 // Plano de 12 meses e export legível por máquina — US4.
 
@@ -53,6 +53,7 @@ export async function generatePlan(
           "Assessment não encontrado nesta organização."
         );
       }
+      await requireDecisionsOpen(db, ctx.tenantId, assessment.id);
 
       const gaps = await db.meridianGap.findMany({
         where: { tenantId: ctx.tenantId, assessmentId: assessment.id },

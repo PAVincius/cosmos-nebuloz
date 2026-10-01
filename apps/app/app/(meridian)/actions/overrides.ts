@@ -9,7 +9,7 @@ import {
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
 import { cuid, type Result, safeAction } from "../../actions/_base";
-import { logMeridianAudit, nextCode } from "./_shared";
+import { logMeridianAudit, nextCode, requireDecisionsOpen } from "./_shared";
 
 // Override de score — US3.
 //
@@ -42,6 +42,7 @@ export async function registerOverride(
     }
 
     const created = await withTenantDb(ctx.tenantId, async (db) => {
+      await requireDecisionsOpen(db, ctx.tenantId, input.assessmentId);
       const score = await db.meridianAxisScore.findFirst({
         where: {
           tenantId: ctx.tenantId,

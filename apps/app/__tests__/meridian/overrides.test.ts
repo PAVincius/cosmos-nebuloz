@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   requirePerm: vi.fn(),
+  assessmentFindFirst: vi.fn(),
   scoreFindFirst: vi.fn(),
   scoreUpdate: vi.fn(),
   overrideCreate: vi.fn(),
@@ -46,6 +47,7 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
+      meridianAssessment: { findFirst: h.assessmentFindFirst },
       meridianAxisScore: {
         findFirst: h.scoreFindFirst,
         update: h.scoreUpdate,
@@ -85,6 +87,8 @@ const VALID_RATIONALE =
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Assessment aberto para decisões (D-29): a trava de FINALISED não dispara.
+  h.assessmentFindFirst.mockResolvedValue({ status: "REVIEW" });
   h.requirePerm.mockResolvedValue(CTX);
   h.scoreFindFirst.mockResolvedValue(SCORE);
   h.sequenceUpsert.mockResolvedValue({ next: 12 });
