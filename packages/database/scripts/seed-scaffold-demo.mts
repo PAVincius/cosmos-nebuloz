@@ -22,6 +22,7 @@ import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../generated/client";
+import { ATLAS_DEMO, applyDemoOverlay } from "./scaffold-templates-fundacao";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
@@ -49,12 +50,17 @@ type DemoTrack = {
     | "analysis"
     | "docreview"
     | "triage"
-    | "reporting";
+    | "reporting"
+    | "ai-readiness-foundation";
+  /** Cliente fictício com overlay (só o Atlas): o overlay é gravado no tenant e
+   *  aplicado à trilha, como o `seedTrack` faz na criação pela tela. */
+  atlas?: boolean;
   /** Sem nome no PDF: o rótulo é do template, e não um caso inventado. */
   placeholder?: boolean;
 };
 
-/** As nove do backlog (DEV-35), na ordem dele. */
+/** As nove do backlog (DEV-35), na ordem dele, mais o Atlas (Fundação de
+ *  Prontidão de IA, D-24): a única trilha sem forma de trabalho. */
 export const DEMO_TRACKS: DemoTrack[] = [
   { code: "TR-110", name: "Orbi", templateKey: "conversational" },
   { code: "TR-112", name: "Agrônomo virtual", templateKey: "conversational" },
@@ -94,6 +100,13 @@ export const DEMO_TRACKS: DemoTrack[] = [
     templateKey: "docreview",
     placeholder: true,
   },
+  {
+    code: "TR-120",
+    name: "Fundação de prontidão — Atlas (demonstração)",
+    templateKey: "ai-readiness-foundation",
+    atlas: true,
+    placeholder: true,
+  },
 ];
 
 const STAGES = ["NOT_STARTED", "IN_PROGRESS", "IN_REVIEW", "APPROVED"] as const;
@@ -128,6 +141,63 @@ function stageFor(trackIndex: number, j: number, code: string): Stage {
   }
   const level = (trackIndex % 4) + 1 - j;
   return STAGES[Math.max(0, Math.min(3, level))] as Stage;
+}
+
+/**
+ * Assessment FICTÍCIO do Atlas no tenant de demonstração (D-27): a trilha da
+ * Fundação nasce ligada a um diagnóstico, e este carrega os cinco scores e
+ * confianças do briefing. Idempotente pelo código. Nada aqui é medição real.
+ */
+export async function ensureAtlasAssessment(
+  db: Db,
+  ctx: Ctx,
+  code: string
+): Promise<string> {
+  const existing = await db.meridianAssessment.findFirst({
+    where: { tenantId: ctx.tenantId, code },
+    select: { id: true },
+  });
+  if (existing) {
+    return existing.id;
+  }
+  const template = await db.meridianTemplate.findFirst({
+    where: { tenantId: ctx.tenantId },
+    orderBy: { createdAt: "desc" },
+    select: { id: true },
+  });
+  if (!template) {
+    throw new Error(
+      "O tenant de demonstração não tem template do Meridian. Rode seed:meridian antes."
+    );
+  }
+  const now = new Date();
+  const assessment = await db.meridianAssessment.create({
+    data: {
+      tenantId: ctx.tenantId,
+      code,
+      orgName: ATLAS_DEMO.name,
+      sector: "demonstração",
+      sizeBand: "demonstração",
+      templateId: template.id,
+      status: "FINALISED",
+      consultantId: ctx.authorId,
+      deadline: now,
+      closedAt: now,
+    },
+    select: { id: true },
+  });
+  await db.meridianAxisScore.createMany({
+    data: ATLAS_DEMO.readings.map((r) => ({
+      tenantId: ctx.tenantId,
+      assessmentId: assessment.id,
+      axis: r.axis as never,
+      computed: r.score,
+      confidence: r.confidence,
+      respondentCount: 0,
+      spread: 0,
+    })),
+  });
+  return assessment.id;
 }
 
 export async function seedDemoTrack(
@@ -168,12 +238,49 @@ export async function seedDemoTrack(
     );
   }
 
+  // O Atlas é o único com overlay. Para os demais a função devolve o mesmo
+  // conteúdo, com `dispensedReason` nulo.
+  const aplicado = applyDemoOverlay(
+    version.steps,
+    version.deliverables,
+    spec.atlas ? ATLAS_DEMO.overlay.ops : []
+  );
+  let overlayId: string | null = null;
+  let sourceAssessmentId: string | null = null;
+  if (spec.atlas) {
+    // O código do assessment acompanha o da trilha: AS-120 para a TR-120.
+    sourceAssessmentId = await ensureAtlasAssessment(
+      db,
+      ctx,
+      spec.code.replace("TR-", "AS-")
+    );
+    const overlay = await db.scaffoldTemplateOverlay.upsert({
+      where: {
+        tenantId_templateId_name: {
+          tenantId: ctx.tenantId,
+          templateId: template.id,
+          name: ATLAS_DEMO.overlay.name,
+        },
+      },
+      create: {
+        tenantId: ctx.tenantId,
+        templateId: template.id,
+        baseVersionId: version.id,
+        name: ATLAS_DEMO.overlay.name,
+        ops: JSON.parse(JSON.stringify(ATLAS_DEMO.overlay.ops)),
+      },
+      update: {},
+      select: { id: true },
+    });
+    overlayId = overlay.id;
+  }
+
   const trackIndex = DEMO_TRACKS.findIndex((t) => t.code === spec.code);
   const n = numberOf(spec.code);
 
   // Estado por entregável, decidido antes para que o passo saiba se fechou.
-  const planned = version.deliverables.map((d, i) => {
-    const j = version.deliverables
+  const planned = aplicado.deliverables.map((d, i) => {
+    const j = aplicado.deliverables
       .filter((x) => x.phase === d.phase)
       .findIndex((x) => x.code === d.code);
     return {
@@ -199,13 +306,15 @@ export async function seedDemoTrack(
       archetype: template.archetype,
       ownerId: ctx.ownerId,
       templateVersionId: version.id,
+      overlayId,
+      sourceAssessmentId,
       phases: {
         create: PHASES.map((phase) => ({
           phase,
           state: phase === "ASSESS" ? ("OPEN" as const) : ("IDLE" as const),
           openedAt: phase === "ASSESS" ? new Date() : null,
           steps: {
-            create: version.steps
+            create: aplicado.steps
               .filter((s) => s.phase === phase)
               .map((s) => ({
                 stepTemplateKey: s.key,
@@ -288,7 +397,9 @@ export async function seedDemoTrack(
         required: dispensed ? false : d.required,
         dispensedReason: dispensed
           ? "O módulo Charter não está contratado por esta organização; dispensado pelo sistema."
-          : null,
+          : d.dispensedReason
+            ? `Dispensado pelo overlay do cliente: ${d.dispensedReason}`
+            : null,
         status: stage,
         ownerId: ctx.ownerId,
       },

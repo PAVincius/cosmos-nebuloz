@@ -2,7 +2,13 @@ import "server-only";
 
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import type { WorkFormCode } from "@/lib/scaffold/forms";
+import { applyOverlay, type OverlayOp } from "@/lib/scaffold/overlay-merge";
 import { PHASE_ORDER } from "@/lib/scaffold/phases";
+import {
+  LOW_CONFIDENCE_WORKSHOP_CODE,
+  type SourceAssessmentReading,
+  workshopDispensation,
+} from "@/lib/scaffold/readiness-rules";
 import { type Db, nextCode } from "./_shared";
 
 // Semeadura de trilha — o que `createTrack` e `createTrackFromGap` têm em
@@ -25,8 +31,8 @@ async function resolveTemplateVersion(db: Db, templateId: string) {
     select: {
       id: true,
       label: true,
-      // A forma do trabalho é do template: a tela não a manda, e a trilha não
-      // pode ficar "sem arquétipo" (Crivo F4).
+      // A forma do trabalho é do template: a tela não a manda. Nula só no
+      // template de trilha sem forma (D-24), nunca por omissão da tela.
       template: { select: { archetype: true } },
       steps: {
         select: {
@@ -59,6 +65,9 @@ export type SeedInput = {
   overlayId?: string;
   sourceGapId?: string;
   sourcePromotionId?: string;
+  /** Diagnóstico do Meridian de que a trilha nasce (D-27). Obrigatório em trilha
+   *  de prontidão; opcional em trilha por forma de trabalho. */
+  sourceAssessmentId?: string;
 };
 
 /**
@@ -83,6 +92,120 @@ async function assertOverlayResolved(
   if (pending > 0) {
     throw new ScaffoldRuleError("OVERLAY_HAS_UNRESOLVED_CONFLICT");
   }
+}
+
+/**
+ * O vínculo com o diagnóstico do Meridian (D-27).
+ *
+ * Trilha de prontidão — template sem forma de trabalho — nasce de um assessment
+ * inteiro: o A1, o baseline do SG-04 e a reavaliação do S3 e do E3 dependem dele,
+ * e sem o vínculo a primeira trilha já nasce órfã. Trilha por forma de trabalho
+ * pode nascer sem. Quando há assessment, ele tem de ser do tenant da sessão.
+ *
+ * `sourceAssessmentId` não tem FK (como `sourceGapId`), então esta é a única
+ * barreira: a busca vai pelo tenant e um id de outro tenant é "não existe".
+ */
+async function assertSourceAssessment(
+  db: Db,
+  tenantId: string,
+  isReadinessTrack: boolean,
+  sourceAssessmentId: string | undefined
+): Promise<SourceAssessmentReading | null> {
+  if (!sourceAssessmentId) {
+    if (isReadinessTrack) {
+      throw new ScaffoldRuleError("ASSESSMENT_REQUIRED");
+    }
+    return null;
+  }
+  const assessment = await db.meridianAssessment.findFirst({
+    where: { id: sourceAssessmentId, tenantId },
+    select: {
+      id: true,
+      code: true,
+      scores: { select: { confidence: true } },
+    },
+  });
+  if (!assessment) {
+    throw new ScaffoldRuleError("ASSESSMENT_NOT_FOUND");
+  }
+  return {
+    code: assessment.code,
+    confidences: (assessment.scores ?? []).map((x) => Number(x.confidence)),
+  };
+}
+
+/**
+ * Operações do overlay do cliente, lidas pelo tenant.
+ *
+ * Overlay de outro tenant, ou inexistente, é recusado em vez de ignorado: a
+ * trilha sairia sem a customização que o cliente escolheu, sem aviso. Sem
+ * `overlayId` não há consulta.
+ */
+async function loadOverlayOps(
+  db: Db,
+  tenantId: string,
+  overlayId: string | undefined
+): Promise<OverlayOp[]> {
+  if (!overlayId) {
+    return [];
+  }
+  const overlay = await db.scaffoldTemplateOverlay.findFirst({
+    where: { id: overlayId, tenantId },
+    select: { ops: true },
+  });
+  if (!overlay) {
+    throw new ScaffoldRuleError("OVERLAY_NOT_FOUND");
+  }
+  return overlay.ops as unknown as OverlayOp[];
+}
+
+type VersionStep = {
+  phase: string;
+  seq: number;
+  key: string;
+  statement: string;
+  expectedArtefact: string;
+  required: boolean;
+};
+
+/**
+ * Passos da versão depois do overlay. REPLACE e REMOVE valem; ADD não cria
+ * passo aqui, porque a operação não diz a fase — o passo acrescentado ficaria
+ * sem lugar na trilha.
+ */
+function resolveSteps(
+  steps: VersionStep[],
+  ops: readonly OverlayOp[]
+): VersionStep[] {
+  if (ops.length === 0) {
+    return steps;
+  }
+  const resolved = applyOverlay(
+    {
+      steps: steps.map((s) => ({
+        key: s.key,
+        statement: s.statement,
+        required: s.required,
+        expectedArtefact: s.expectedArtefact,
+      })),
+      criteria: [],
+    },
+    ops
+  ).steps;
+  const byKey = new Map(resolved.map((r) => [r.key, r]));
+  return steps.flatMap((s) => {
+    const r = byKey.get(s.key);
+    return r
+      ? [
+          {
+            ...s,
+            statement: r.statement,
+            required: r.required ?? s.required,
+            expectedArtefact: r.expectedArtefact ?? s.expectedArtefact,
+          },
+        ]
+      : [];
+  });
 }
 
 /**
@@ -135,6 +258,15 @@ export async function seedTrack(db: Db, input: SeedInput) {
   await assertTrackPeople(db, input);
   await assertOverlayResolved(db, input.tenantId, input.overlayId);
   const version = await resolveTemplateVersion(db, input.templateId);
+  const isReadinessTrack = version.template.archetype === null;
+  const assessment = await assertSourceAssessment(
+    db,
+    input.tenantId,
+    isReadinessTrack,
+    input.sourceAssessmentId
+  );
+  const overlayOps = await loadOverlayOps(db, input.tenantId, input.overlayId);
+  const steps = resolveSteps(version.steps, overlayOps);
   const code = await nextCode({
     db,
     tenantId: input.tenantId,
@@ -152,6 +284,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
       consultantId: input.consultantId ?? null,
       templateVersionId: version.id,
       overlayId: input.overlayId ?? null,
+      sourceAssessmentId: input.sourceAssessmentId ?? null,
       sourceGapId: input.sourceGapId ?? null,
       sourcePromotionId: input.sourcePromotionId ?? null,
       phases: {
@@ -160,7 +293,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
           state: phase === "ASSESS" ? ("OPEN" as const) : ("IDLE" as const),
           openedAt: phase === "ASSESS" ? new Date() : null,
           steps: {
-            create: version.steps
+            create: steps
               .filter((s) => s.phase === phase)
               .map((s) => ({
                 stepTemplateKey: s.key,
@@ -182,6 +315,14 @@ export async function seedTrack(db: Db, input: SeedInput) {
     tenantId: input.tenantId,
     trackId: track.id,
     versionId: version.id,
+    overlayOps,
+    // A2.1 condicional: só na trilha de prontidão (o A2.1 das formas de trabalho
+    // é outro entregável, o mapa da fonte).
+    autoDispense: isReadinessTrack
+      ? new Map([
+          [LOW_CONFIDENCE_WORKSHOP_CODE, workshopDispensation(assessment)],
+        ])
+      : new Map(),
     people: {
       ownerId: input.ownerId,
       consultantId: input.consultantId ?? null,
@@ -224,11 +365,17 @@ async function instantiateDeliverables(
     tenantId,
     trackId,
     versionId,
+    overlayOps,
+    autoDispense,
     people,
   }: {
     tenantId: string;
     trackId: string;
     versionId: string;
+    overlayOps: readonly OverlayOp[];
+    /** Entregáveis que nascem dispensados pelo sistema por regra do molde,
+     *  com o motivo. Motivo nulo = nasce como o molde manda. */
+    autoDispense: ReadonlyMap<string, string | null>;
     people: TrackPeople;
   }
 ): Promise<void> {
@@ -267,9 +414,31 @@ async function instantiateDeliverables(
     }
   }
 
+  // REMOVE do overlay dispensa, não apaga (D-24 §7.7). ADD não cria entregável
+  // aqui: a operação não diz fase nem passo.
+  const resolved = new Map(
+    (
+      applyOverlay(
+        {
+          steps: [],
+          criteria: [],
+          deliverables: templates.map((t) => ({
+            key: t.code,
+            statement: t.title,
+            required: t.required,
+            stepCode: t.stepCode,
+          })),
+        },
+        overlayOps
+      ).deliverables ?? []
+    ).map((d) => [d.key, d])
+  );
+
   await db.scaffoldDeliverableInstance.createMany({
     data: templates.map((t) => {
       const dispensed = t.requiresModule && !contracted.has(t.requiresModule);
+      const o = resolved.get(t.code);
+      const motivoAuto = autoDispense.get(t.code) ?? null;
       return {
         tenantId,
         trackId,
@@ -277,15 +446,19 @@ async function instantiateDeliverables(
         stepCode: t.stepCode,
         code: t.code,
         templateKey: t.code,
-        title: t.title,
+        title: o?.statement ?? t.title,
         description: t.description,
         kind: t.kind,
         producer: t.producer,
         isExtra: false,
-        required: dispensed ? false : t.required,
+        required: dispensed || motivoAuto ? false : (o?.required ?? t.required),
         dispensedReason: dispensed
           ? `O módulo ${MODULE_LABEL[t.requiresModule as string] ?? t.requiresModule} não está contratado por esta organização; dispensado pelo sistema.`
-          : null,
+          : motivoAuto
+            ? motivoAuto
+            : o?.dispensedReason
+              ? `Dispensado pelo overlay do cliente: ${o.dispensedReason}`
+              : null,
         status: "NOT_STARTED" as const,
         ...defaultPeople(t.producer, people),
       };

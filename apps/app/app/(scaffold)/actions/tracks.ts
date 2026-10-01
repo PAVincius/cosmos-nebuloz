@@ -152,6 +152,7 @@ export async function createTrackFromGap(
         archetype: input.archetype,
         templateId: input.templateId,
         overlayId: input.overlayId,
+        sourceAssessmentId: input.sourceAssessmentId,
         sourceGapId: input.gapId,
         sourcePromotionId: promotion.id,
       });
@@ -209,6 +210,7 @@ export async function createTrack(
         archetype: input.archetype,
         templateId: input.templateId,
         overlayId: input.overlayId,
+        sourceAssessmentId: input.sourceAssessmentId,
       });
       await logScaffoldAudit(db, ctx, {
         action: "scaffold.track.create",
