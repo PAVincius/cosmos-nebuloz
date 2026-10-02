@@ -523,6 +523,17 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
 // A leitura do token acontece antes; entre ela e a escrita o consultor pode
 // fechar a coleta. A conferência final lê o estado na mesma transação da
 // escrita (com trava de linha), então quem perde a corrida não grava.
+describe("submitBattery de bateria já concluída", () => {
+  it("é idempotente: devolve concluído sem gravar nem auditar de novo", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "DONE" }));
+    const res = await submitBattery(TOKEN);
+    expect(res.ok && res.data.missing).toBe(0);
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+    expect(h.questionCount).not.toHaveBeenCalled();
+  });
+});
+
 describe("coleta fechada entre o token e a escrita", () => {
   const file = {
     size: 3,

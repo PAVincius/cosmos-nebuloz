@@ -17,7 +17,17 @@ export async function useActionToast<T>(
   opts: ActionToastOptions<T>
 ): Promise<Result<T>> {
   const id = toast.loading(opts.loading);
-  const res = await action();
+  let res: Result<T>;
+  try {
+    res = await action();
+  } catch {
+    // Server action que lança (rede, deploy trocado) não devolve Result. Sem
+    // este desvio o loading ficava na tela para sempre e a chamada rejeitava
+    // sem ninguém tratar.
+    const error = "Sem conexão com o servidor. Tente de novo.";
+    toast.error(typeof opts.error === "string" ? opts.error : error, { id });
+    return { ok: false, error };
+  }
 
   if (res.ok) {
     const message =
