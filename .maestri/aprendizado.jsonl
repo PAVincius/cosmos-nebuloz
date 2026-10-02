@@ -305,3 +305,8 @@
 {"ts":"2026-10-01T13:40:16.467Z","agente":"Vigia","tarefa":"PR 338 meridian D-29 finalizar regras","veredito":"achado","causa":"trava de estado lida fora do where da escrita, corrida entre checar e gravar","produto":"meridian"}
 {"ts":"2026-10-01T13:51:28.123Z","agente":"Crivo","tarefa":"PR #338 Meridian D-29: confirmar o computado, reabrir, travas (e02e86e1)","veredito":"aprovado","causa":"confirmar sem mudar score, reabrir só consultora, travas ok","produto":"meridian"}
 {"ts":"2026-10-01T13:51:45.131Z","agente":"Crivo","tarefa":"PR 338 QA D-29","veredito":"aprovado","causa":"E2E confirmar e reabrir verde; rescoring so por vitest","produto":"meridian"}
+{"ts":"2026-10-02T19:01:23.431Z","agente":"Morgana","tarefa":"7 branches prontas sem push nem PR 01/10","veredito":"achado","causa":"entrega parada em hash local sem push nem PR","produto":"plataforma"}
+{"ts":"2026-10-02T19:01:23.464Z","agente":"Morgana","tarefa":"producao sem deploy do 336 ao 348","veredito":"achado","causa":"merge com Type Check vermelho e deploy nao conferido","produto":"plataforma"}
+{"ts":"2026-10-02T19:01:23.500Z","agente":"Morgana","tarefa":"canvas PR A worktree wt-scaffold-canvas 02/10","veredito":"achado","causa":"worktree removido com force sobre trabalho de outro agente","produto":"scaffold"}
+{"ts":"2026-10-02T19:01:23.534Z","agente":"Morgana","tarefa":"EMAXCONNSESSION backoffice 02/10","veredito":"achado","causa":"pooler em modo sessao em serverless esgota conexoes","produto":"plataforma"}
+{"ts":"2026-10-02T19:01:23.568Z","agente":"Morgana","tarefa":"afirmei 14 branches em main 01/10","veredito":"achado","causa":"afirmação sem fonte","produto":"plataforma"}
