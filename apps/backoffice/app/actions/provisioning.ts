@@ -92,7 +92,7 @@ export async function setModuleStatusAction(input: {
 export async function bootstrapCharterAction(input: {
   slug: string;
   complianceEmail: string;
-}): Promise<Result<{ created: boolean }>> {
+}): Promise<Result<{ created: boolean; clausesCreated: number }>> {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
@@ -113,7 +113,7 @@ export async function bootstrapCharterAction(input: {
     );
 
     revalidatePath(`/clientes/${input.slug}`);
-    return { created: result.created };
+    return { created: result.created, clausesCreated: result.clausesCreated };
   });
 }
 

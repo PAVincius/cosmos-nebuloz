@@ -6,6 +6,16 @@ import { Erro, INPUT } from "@/components/campo";
 import { Confirmacao } from "@/components/confirmacao";
 import { WriteButton } from "@/components/write-button";
 
+function bootstrapMessage(data: { created: boolean; clausesCreated: number }) {
+  const clausesNote =
+    data.clausesCreated > 0
+      ? `${data.clausesCreated} cláusula${data.clausesCreated === 1 ? "" : "s"} criada${data.clausesCreated === 1 ? "" : "s"} na biblioteca.`
+      : "Biblioteca de cláusulas já estava completa.";
+  return data.created
+    ? `Política criada com as nove seções em rascunho. ${clausesNote}`
+    : `Política já existia — papel garantido. ${clausesNote}`;
+}
+
 export function CharterBootstrap({
   slug,
   canWrite,
@@ -30,11 +40,7 @@ export function CharterBootstrap({
       });
 
       if (result.ok) {
-        setMessage(
-          result.data.created
-            ? "Política criada com as nove seções em rascunho."
-            : "Política já existia — apenas o papel foi garantido."
-        );
+        setMessage(bootstrapMessage(result.data));
         return;
       }
       setError(result.error);

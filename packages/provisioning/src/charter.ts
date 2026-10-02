@@ -61,12 +61,14 @@ export type BootstrapCharterInput = {
 /** Cria as cláusulas do catálogo que ainda faltam para o tenant, sem duplicar
  *  nem sobrescrever cláusula existente (`skipDuplicates` sobre a chave natural
  *  `(tenantId, code)`, já garantida pelo schema). Chamada tanto quando a
- *  política nasce quanto quando ela já existia (US2): re-provisionar é seguro. */
+ *  política nasce quanto quando ela já existia (US2): re-provisionar é seguro.
+ *  Devolve quantas cláusulas foram criadas agora, pro chamador (UI do
+ *  back-office, seed) mostrar o que de fato aconteceu — não é sempre 8. */
 async function ensureCharterClauses(
   db: CharterDb,
   tenant: { id: string; slug: string },
   input: BootstrapCharterInput
-): Promise<void> {
+): Promise<number> {
   const { count } = await db.charterClause.createMany({
     data: CHARTER_CLAUSES.map((clause) => ({
       tenantId: input.tenantId,
@@ -79,7 +81,7 @@ async function ensureCharterClauses(
   // então não há evento pra auditar (mesmo raciocínio de `bootstrap_skipped`
   // pra política, mas por contagem em vez de por existência).
   if (count === 0) {
-    return;
+    return 0;
   }
 
   await logPlatformAudit(db, {
@@ -88,9 +90,14 @@ async function ensureCharterClauses(
     actorName: input.actorName,
     action: "charter.clauses_bootstrapped",
     entityType: "CharterClause",
+    // Sem id natural: createMany não devolve ids das linhas criadas, e não há
+    // uma linha única pra apontar (o evento é sobre um lote de até 8). Usa o
+    // tenantId — ainda filtrável na trilha do tenant, como o resto do log.
     entityId: input.tenantId,
-    target: `${tenant.slug} · ${count} cláusulas`,
+    target: `${tenant.slug} · ${count} cláusulas criadas`,
   });
+
+  return count;
 }
 
 /**
@@ -107,7 +114,7 @@ async function ensureCharterClauses(
 export async function bootstrapCharter(
   deps: BootstrapCharterDeps,
   input: BootstrapCharterInput
-): Promise<{ policyId: string; created: boolean }> {
+): Promise<{ policyId: string; created: boolean; clausesCreated: number }> {
   return await deps.withTenantDb(input.tenantId, async (db) => {
     const tenant = await db.tenant.findUnique({
       where: { id: input.tenantId },
@@ -171,7 +178,7 @@ export async function bootstrapCharter(
     });
 
     if (existing) {
-      await ensureCharterClauses(db, tenant, input);
+      const clausesCreated = await ensureCharterClauses(db, tenant, input);
 
       await logPlatformAudit(db, {
         tenantId: input.tenantId,
@@ -182,7 +189,7 @@ export async function bootstrapCharter(
         entityId: existing.id,
         target: `${tenant.slug} · política já existia`,
       });
-      return { policyId: existing.id, created: false };
+      return { policyId: existing.id, created: false, clausesCreated };
     }
 
     const policy = await db.charterPolicy.create({
@@ -200,7 +207,7 @@ export async function bootstrapCharter(
       })),
     });
 
-    await ensureCharterClauses(db, tenant, input);
+    const clausesCreated = await ensureCharterClauses(db, tenant, input);
 
     await logPlatformAudit(db, {
       tenantId: input.tenantId,
@@ -212,6 +219,6 @@ export async function bootstrapCharter(
       target: `${tenant.slug} · ${POLICY_SECTIONS.length} seções`,
     });
 
-    return { policyId: policy.id, created: true };
+    return { policyId: policy.id, created: true, clausesCreated };
   });
 }

@@ -151,7 +151,7 @@ async function main() {
     }
   );
   console.log(
-    `  ✓ política ${bootstrap.created ? "criada" : "já existia"} (${bootstrap.policyId})`
+    `  ✓ política ${bootstrap.created ? "criada" : "já existia"} (${bootstrap.policyId}) · ${bootstrap.clausesCreated} cláusulas criadas`
   );
 
   // ── Fornecedores ──────────────────────────────────────────────────────────
