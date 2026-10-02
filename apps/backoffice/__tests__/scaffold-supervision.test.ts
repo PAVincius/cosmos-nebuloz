@@ -60,7 +60,7 @@ import { TETO_DA_LISTA } from "@/lib/paginacao";
 const STAFF = {
   userId: "u1",
   name: "Marina Duarte",
-  email: "marina@nebuloz.com",
+  email: "marina@nebuloz.ai",
   canWrite: true,
 };
 
@@ -269,7 +269,7 @@ describe("enterTenantContext — travessia explícita e logada", () => {
       rationale: "Revisar o artefato do piloto antes de decidir o gate.",
     });
     const data = h.accessLogCreate.mock.calls[0][0].data;
-    expect(data.email).toBe("marina@nebuloz.com");
+    expect(data.email).toBe("marina@nebuloz.ai");
     expect(data.tenantId).toBe("tenant-vanta");
     expect(data.motivo).toMatch(/artefato do piloto/);
   });

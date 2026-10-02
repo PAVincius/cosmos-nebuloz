@@ -134,9 +134,9 @@ describe("fireflies-transcript consent gate", () => {
     // is the "sabemos que não há externo" case from §4/§7.
     mocks.fetchFirefliesTranscript.mockResolvedValue({
       id: "m1",
-      participants: ["rte@nebuloz.com"],
-      workspace_users: ["rte@nebuloz.com"],
-      organizer_email: "rte@nebuloz.com",
+      participants: ["rte@nebuloz.ai"],
+      workspace_users: ["rte@nebuloz.ai"],
+      organizer_email: "rte@nebuloz.ai",
     });
     mocks.transcriptUpsert.mockResolvedValue({
       id: "tx1",
@@ -175,8 +175,8 @@ describe("fireflies-transcript consent gate", () => {
     });
     mocks.fetchFirefliesTranscript.mockResolvedValue({
       id: "m1",
-      participants: ["rte@nebuloz.com", "guest@totvs.com"],
-      workspace_users: ["rte@nebuloz.com"],
+      participants: ["rte@nebuloz.ai", "guest@totvs.com"],
+      workspace_users: ["rte@nebuloz.ai"],
     });
     mocks.transcriptUpsert.mockResolvedValue({
       id: "tx1",
@@ -249,12 +249,12 @@ describe("fireflies-transcript consent gate", () => {
     });
     mocks.fetchFirefliesTranscript.mockResolvedValue({
       id: "m1",
-      participants: ["rte@nebuloz.com", "guest@totvs.com"],
-      workspace_users: ["rte@nebuloz.com"],
+      participants: ["rte@nebuloz.ai", "guest@totvs.com"],
+      workspace_users: ["rte@nebuloz.ai"],
       meeting_attendees: [
         { email: "guest@totvs.com", displayName: "Guest Person" },
       ],
-      organizer_email: "rte@nebuloz.com",
+      organizer_email: "rte@nebuloz.ai",
     });
     mocks.transcriptUpsert.mockResolvedValue({
       id: "tx1",
@@ -268,7 +268,7 @@ describe("fireflies-transcript consent gate", () => {
         {
           tenantId: "t1",
           transcriptId: "tx1",
-          email: "rte@nebuloz.com",
+          email: "rte@nebuloz.ai",
           name: null,
           isOrganizer: true,
           isExternal: false,

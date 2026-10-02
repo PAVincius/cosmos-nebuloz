@@ -63,7 +63,7 @@ beforeEach(() => {
   }
   mocks.requirePlatformStaff.mockResolvedValue({
     canWrite: true,
-    email: "v@nebuloz.com",
+    email: "v@nebuloz.ai",
     name: "V",
     userId: "u-1",
   });

@@ -24,7 +24,7 @@
  * Uso:
  *   cd apps/app
  *   DATABASE_URL="postgresql://..." \
- *   ADMIN_EMAIL="voce@nebuloz.com" \
+ *   ADMIN_EMAIL="voce@nebuloz.ai" \
  *   INVITE_EMAIL="convidado@exemplo.com" \
  *   APP_URL="https://app.nebuloz.com" \
  *   npx tsx scripts/seed-nebuloz.ts

@@ -276,7 +276,7 @@ const ENG: EngagementRow = {
 const PESSOA: PessoaCapacidade = {
   alocacoes: [],
   ativo: true,
-  email: "ana@nebuloz.com",
+  email: "ana@nebuloz.ai",
   entraEm: null,
   habilidades: [],
   horasSemana: 40,
@@ -289,7 +289,7 @@ const PESSOA: PessoaCapacidade = {
 
 const PESSOA_B: PessoaCapacidade = {
   ...PESSOA,
-  email: "bia@nebuloz.com",
+  email: "bia@nebuloz.ai",
   id: "p2",
   nome: "Bia",
 };

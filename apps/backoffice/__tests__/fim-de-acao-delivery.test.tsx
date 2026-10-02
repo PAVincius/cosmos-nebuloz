@@ -70,7 +70,7 @@ const ENG_ENCERRADO: EngagementRow = {
 const PESSOA: PessoaCapacidade = {
   alocacoes: [],
   ativo: true,
-  email: "ana@nebuloz.com",
+  email: "ana@nebuloz.ai",
   entraEm: null,
   habilidades: ["dados"],
   horasSemana: 40,
@@ -84,7 +84,7 @@ const PESSOA: PessoaCapacidade = {
 const PESSOA_INATIVA: PessoaCapacidade = {
   ...PESSOA,
   ativo: false,
-  email: "bia@nebuloz.com",
+  email: "bia@nebuloz.ai",
   id: "p2",
   nome: "Bia",
 };
@@ -194,7 +194,7 @@ describe("Capacidade — cadastrar pessoa", () => {
       target: { value: "Carla" },
     });
     fireEvent.change(screen.getByLabelText("E-mail"), {
-      target: { value: "carla@nebuloz.com" },
+      target: { value: "carla@nebuloz.ai" },
     });
     return form;
   }

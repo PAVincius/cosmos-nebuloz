@@ -137,7 +137,7 @@ describe("MeetingsClient", () => {
               participantsKnown: true,
               participants: [
                 {
-                  email: "rte@nebuloz.com",
+                  email: "rte@nebuloz.ai",
                   name: "Helena Souza",
                   isExternal: false,
                   isOrganizer: true,
@@ -175,7 +175,7 @@ describe("MeetingsClient", () => {
               participantsKnown: true,
               participants: [
                 {
-                  email: "rte@nebuloz.com",
+                  email: "rte@nebuloz.ai",
                   name: "Helena Souza",
                   isExternal: false,
                   isOrganizer: true,

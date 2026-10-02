@@ -44,7 +44,7 @@ All requests are authenticated and authorized regardless of network origin.
 
 ## 5. Internal Security Communication
 
-- Security incidents → immediately to **security@nebuloz.com** and CTO via direct message
+- Security incidents → immediately to **security@nebuloz.ai** and CTO via direct message
 - Policy changes → announced via team channel with 30-day notice before effective date
 - Security advisories → reviewed weekly in engineering standup
 - Penetration test results → shared with Engineering within 5 days of receipt

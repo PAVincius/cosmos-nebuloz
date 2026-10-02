@@ -64,7 +64,7 @@ import {
 const admin = {
   userId: "u-staff",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 const tenant = { id: "t-1", slug: "vanta-saude", name: "Vanta Saúde" };

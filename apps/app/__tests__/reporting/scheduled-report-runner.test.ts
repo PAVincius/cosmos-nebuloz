@@ -21,7 +21,7 @@ vi.mock("@repo/email", () => ({
 }));
 
 vi.mock("@repo/email/keys", () => ({
-  keys: () => ({ RESEND_FROM: "relatorios@nebuloz.com" }),
+  keys: () => ({ RESEND_FROM: "relatorios@nebuloz.ai" }),
 }));
 
 import {
@@ -46,7 +46,7 @@ describe("entregarRelatorio", () => {
     await entregarRelatorio(RELATORIO, "<h1>ok</h1>");
 
     expect(sendEmailMock).toHaveBeenCalledWith(
-      expect.objectContaining({ from: "relatorios@nebuloz.com" })
+      expect.objectContaining({ from: "relatorios@nebuloz.ai" })
     );
   });
 

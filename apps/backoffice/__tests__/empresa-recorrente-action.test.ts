@@ -75,7 +75,7 @@ import { CONTAS_DE_SERVICO } from "../lib/empresa/recorrente";
 const staff = {
   userId: "u-1",
   name: "V",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 

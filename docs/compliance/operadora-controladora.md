@@ -293,3 +293,15 @@ Morgana, 2026-09-29; não vi a resposta original do CEO.
   `2026-09-30-decisoes-provisorias-encarregado-e-c8.md`.
 - **Em aberto com o CEO:** confirmar a cláusula C8.
 - **Em aberto com o jurídico:** perguntas 6 a 8.
+- **2026-10-01 — Decisões do CEO (§5 do LGPD), relato da Morgana; não vi a
+  resposta original.** (a) Canal público: `privacy@nebuloz.ai`, no lugar de
+  `privacy@nebuloz.com` (o domínio migrou). (b) Encarregado: o CEO, em caráter
+  provisório; **supera a dispensa do art. 11 da Resolução CD/ANPD nº 2/2022
+  registrada em 2026-09-30**. (c) A Nebuloz é operadora **nos dois fluxos**
+  (respondente do Meridian e participante de reunião); **supera a restrição "só
+  Meridian" de 2026-09-29**. O §4 foi publicado em `/legal/privacy` com esses
+  três pontos. Falta o nome do CEO na página (marcador visível) e conferir que a
+  caixa existe e é lida. Os documentos datados e as linhas acima ficam como foram
+  escritos; `dpa-modelo.md` (linha do encarregado e do enquadramento) e
+  `lgpd-ropa-e-lacunas.md` §6 seguem dizendo "dispensa" e "só Meridian" e são da
+  Compliance para atualizar.

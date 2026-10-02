@@ -85,7 +85,7 @@ import {
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 

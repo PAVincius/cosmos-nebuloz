@@ -140,7 +140,7 @@ export async function inviteMember(email: string, role: MemberRole) {
 
   const workspaceName = tenant?.name ?? "seu workspace";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3012";
-  const fromAddress = process.env.RESEND_FROM ?? "noreply@nebuloz.com";
+  const fromAddress = process.env.RESEND_FROM ?? "noreply@nebuloz.ai";
 
   try {
     const html = await renderInviteEmail({

@@ -59,7 +59,7 @@ import {
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 
@@ -250,7 +250,7 @@ describe("updateServiceAction", () => {
     vi.clearAllMocks();
     // `clearAllMocks` zera chamadas, não implementações: sem esta linha o
     // `throw` do caso de MEMBER vaza para todos os casos seguintes.
-    mocks.assertCanWrite.mockImplementation(() => undefined);
+    mocks.assertCanWrite.mockImplementation(() => {});
     mocks.requirePlatformStaff.mockResolvedValue({
       userId: "u-1",
       name: "Marina",
@@ -286,11 +286,7 @@ describe("updateServiceAction", () => {
     await updateServiceAction(edicao);
 
     const { diff } = mocks.logPlatformAudit.mock.calls[0][1];
-    expect(diff).toContainEqual([
-      "precoBaseCentavos",
-      "16500000",
-      "17000000",
-    ]);
+    expect(diff).toContainEqual(["precoBaseCentavos", "16500000", "17000000"]);
   });
 
   it("não anota no diff o campo que não mudou", async () => {

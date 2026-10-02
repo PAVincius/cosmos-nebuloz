@@ -4,7 +4,7 @@
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Report vulnerabilities by email: **security@nebuloz.com**
+Report vulnerabilities by email: **security@nebuloz.ai**
 
 Include:
 - Description of the vulnerability

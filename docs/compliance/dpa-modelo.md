@@ -247,7 +247,7 @@ escrita.
 ## 9. Direitos dos titulares
 
 **9.1 Canal do titular sem conta.** A Nebuloz mantém canal público para
-recebimento de pedidos de titulares, em **privacy@nebuloz.com** (decisão do CEO,
+recebimento de pedidos de titulares, em **privacy@nebuloz.ai** (decisão do CEO,
 2026-09-29), divulgado em sua Política de Privacidade.
 Pedido recebido por esse canal que diga respeito a dados tratados em nome do
 Cliente não é decidido no mérito pela Nebuloz: é encaminhado ao Cliente, e o

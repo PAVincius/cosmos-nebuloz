@@ -58,7 +58,7 @@ beforeEach(() => {
   h.requireStaff.mockResolvedValue({
     userId: "u1",
     name: "Marina",
-    email: "m@nebuloz.com",
+    email: "m@nebuloz.ai",
     canWrite: false,
   });
   h.instanceFindMany.mockResolvedValue([instancia()]);

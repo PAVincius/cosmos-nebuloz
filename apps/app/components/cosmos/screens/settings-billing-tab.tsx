@@ -70,10 +70,10 @@ export default function SettingsBillingTab() {
           Para mudar de plano, contratar assentos ou pedir uma proposta, fale
           com o time comercial em{" "}
           <a
-            href="mailto:suporte@nebuloz.com"
+            href="mailto:suporte@nebuloz.ai"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            suporte@nebuloz.com
+            suporte@nebuloz.ai
           </a>
           .
         </p>

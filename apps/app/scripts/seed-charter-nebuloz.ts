@@ -11,7 +11,7 @@
  * O que faz, nesta ordem:
  *   1. Resolve o tenant pelo slug — falha se não existir. NUNCA cria tenant.
  *   2. Garante TenantModule CHARTER via `contractModule` (packages/provisioning).
- *   3. Resolve o ator: `admin@nebuloz.com` se existir, senão o primeiro
+ *   3. Resolve o ator: `admin@nebuloz.ai` se existir, senão o primeiro
  *      TenantMember com role ADMIN do tenant.
  *   4. Chama `bootstrapCharter` (papel COMPLIANCE, CharterSettings, política
  *      com as 9 seções em DRAFT) com o e-mail do ator — o runbook §3 não
@@ -52,7 +52,7 @@ import { PrismaClient } from "../../../packages/database/generated";
 type Tx = Prisma.TransactionClient;
 
 const TENANT_SLUG = process.argv[2] ?? "nebuloz";
-const COMPLIANCE_EMAIL = "admin@nebuloz.com";
+const COMPLIANCE_EMAIL = "admin@nebuloz.ai";
 
 /** Mesma lógica de `@repo/rbac`'s `invalidateModuleCache`, reimplementada sem
  *  o import direto: aquele módulo também tem `import "server-only"` no topo.
@@ -100,7 +100,7 @@ async function resolveActor(
   });
   if (!member) {
     throw new Error(
-      `Nenhum usuário admin@nebuloz.com nem membro ADMIN encontrado para o tenant "${TENANT_SLUG}". Não há ator para o bootstrap.`
+      `Nenhum usuário admin@nebuloz.ai nem membro ADMIN encontrado para o tenant "${TENANT_SLUG}". Não há ator para o bootstrap.`
     );
   }
   return {

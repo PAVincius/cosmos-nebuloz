@@ -32,7 +32,7 @@ vi.mock("better-auth/plugins", () => ({
   },
 }));
 vi.mock("@repo/email", () => ({
-  keys: () => ({ RESEND_FROM: "noreply@nebuloz.com" }),
+  keys: () => ({ RESEND_FROM: "noreply@nebuloz.ai" }),
   resend: { emails: { send: vi.fn() } },
   renderResetPasswordEmail: vi.fn().mockResolvedValue("<html />"),
 }));
