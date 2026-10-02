@@ -248,7 +248,7 @@ describe("capacidade", () => {
     const pessoa: PessoaCapacidade = {
       alocacoes: [],
       ativo: true,
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       entraEm: null,
       habilidades: [],
       horasSemana: 40,

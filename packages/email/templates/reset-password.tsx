@@ -119,7 +119,7 @@ export const ResetPasswordTemplate = ({
             <Text className="m-0 text-[#8a8f98] text-[12px]">
               Não reconhece este pedido?{" "}
               <Link
-                href="mailto:suporte@nebuloz.com"
+                href="mailto:suporte@nebuloz.ai"
                 style={{ color: "#5e6ad2", textDecoration: "none" }}
               >
                 Entre em contato

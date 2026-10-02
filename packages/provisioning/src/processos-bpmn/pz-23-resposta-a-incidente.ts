@@ -17,7 +17,7 @@ export const PZ_23: ProcessoBpmnEntrada = {
     "O plano não dá ordem entre notificação (§6, §7) e erradicação/recuperação (fases 4–5); o prazo de 72 h conta da descoberta, então o desenho põe a notificação logo após a contenção. Na prática correm em paralelo — o esquema só tem gateway exclusivo.",
     "P2/P3 manda 'monitorar escalada' sem gatilho de reclassificação; não há volta desenhada.",
     "Papéis por cargo (CTO, Engineering Lead, CEO, jurídico externo), sem nomes; o RACI do playbook §4 está em branco.",
-    "O canal '#incident-AAAA-MM-DD-descricao' não diz em que ferramenta; o contato é security@nebuloz.com, e a produção é nebuloz.ai — confirmar o domínio.",
+    "O canal '#incident-AAAA-MM-DD-descricao' não diz em que ferramenta; o contato é security@nebuloz.ai, e a produção é nebuloz.ai — confirmar o domínio.",
     "BetterStack aparece como fonte de alerta, mas não consta do inventário de dpa-fornecedores.md (que tem Sentry).",
     "Os runbooks do §8 (conta comprometida, exfiltração, CVE) não estão desenhados; conta comprometida de staff segue PZ-22.",
     "O plano está em inglês, escrito para 'Cosmos', versão 1.0 de 2026-05-19.",

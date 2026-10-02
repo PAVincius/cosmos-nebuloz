@@ -51,7 +51,16 @@
             "heading": "Quem é responsável pelos seus dados",
             "body": [
               "O controlador dos dados pessoais descritos aqui é [[DADO NECESSÁRIO: razão social completa]], inscrita no CNPJ [[DADO NECESSÁRIO: CNPJ]], com sede em [[DADO NECESSÁRIO: endereço completo]].",
-              "Pelo artigo 41 da LGPD, o controlador deve indicar um encarregado pelo tratamento de dados pessoais. O nosso é [[DADO NECESSÁRIO: nome do encarregado]], que pode ser contatado em [[DADO NECESSÁRIO: e-mail do encarregado]]."
+              "Pelo artigo 41 da LGPD, o controlador deve indicar um encarregado pelo tratamento de dados pessoais. O nosso é o CEO da Nebuloz, [[DADO NECESSÁRIO: nome completo do CEO, a publicar como encarregado]], designado em caráter provisório, que pode ser contatado em privacy@nebuloz.ai."
+            ]
+          },
+          {
+            "heading": "Se seus dados chegaram até nós por uma organização",
+            "body": [
+              "Você pode ter respondido a um diagnóstico por um link que recebeu, ou participado de uma reunião gravada e transcrita numa organização que usa nossos produtos. Nesses casos, quem decidiu coletar esses dados, para quê e por quanto tempo foi essa organização, não a Nebuloz. Ela é a controladora; nós tratamos os dados em nome dela, como operadora, nos termos da Lei 13.709/2018.",
+              "Na prática: para pedir confirmação, acesso, correção, eliminação ou portabilidade dos seus dados, procure a organização que convidou você ou conduziu a reunião. É ela que decide o pedido.",
+              "Se preferir escrever para nós, escreva para privacy@nebuloz.ai. Em até 5 dias úteis encaminhamos seu pedido à organização responsável e avisamos você de que encaminhamos e para quem. Não decidimos o mérito, porque não é nossa decisão tomar.",
+              "Há tratamentos em que a Nebuloz é a controladora — a operação do nosso site, os registros de segurança da plataforma e nosso contato comercial. Para esses, o pedido vem direto para nós, e nós respondemos."
             ]
           },
           {
@@ -103,7 +112,7 @@
             "body": [
               "O artigo 18 da LGPD lhe dá o direito de confirmar que tratamos os seus dados, de acessá-los, de corrigi-los, de anonimizar, bloquear ou eliminar dados desnecessários ou excessivos, de portá-los, de eliminar dados tratados com base em consentimento, de saber com quem os compartilhamos, de ser informado sobre as consequências de negar consentimento, e de revogar o consentimento.",
               "Sob o GDPR você também tem o direito de restringir o tratamento, de se opor a ele, e de apresentar reclamação à sua autoridade supervisora.",
-              "Para exercer qualquer um deles, escreva para [[DADO NECESSÁRIO: e-mail do encarregado]]. Respondemos dentro do prazo que a lei estabelece. No Brasil, você também pode reclamar à ANPD."
+              "Para exercer qualquer um deles, escreva para privacy@nebuloz.ai. Respondemos dentro do prazo que a lei estabelece. No Brasil, você também pode reclamar à ANPD."
             ]
           },
           {

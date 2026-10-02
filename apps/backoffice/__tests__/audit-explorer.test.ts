@@ -42,7 +42,7 @@ import { listAuditEvents, listAuditTenants } from "../app/actions/audit";
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: false,
 };
 

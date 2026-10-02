@@ -136,7 +136,7 @@ describe("plural real, não '(s)'", () => {
     return {
       action: "created",
       alvo: null,
-      ator: "ana@nebuloz.com",
+      ator: "ana@nebuloz.ai",
       diff: null,
       entityId: null,
       entityType: "tenant",
@@ -218,7 +218,7 @@ describe("plural real, não '(s)'", () => {
       "@/app/(staff)/observabilidade/page"
     );
     const acesso: AcessoRow = {
-      email: "x@nebuloz.com",
+      email: "x@nebuloz.ai",
       evento: "RECUSADO",
       id: "a1",
       ip: null,

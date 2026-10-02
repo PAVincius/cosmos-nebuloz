@@ -68,7 +68,7 @@ import { LIMITE_DESCONTO_SEM_APROVACAO } from "../lib/comercial";
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 

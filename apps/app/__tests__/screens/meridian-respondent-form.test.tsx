@@ -71,10 +71,10 @@ describe("RespondentForm — aviso ao titular", () => {
     ).toBe(false);
   });
 
-  it("mantém o endereço de contato da política interna atual (privacy@nebuloz.com)", () => {
+  it("mantém o endereço de contato da política interna atual (privacy@nebuloz.ai)", () => {
     render(<RespondentForm battery={BATTERY} token="tok-abc" />);
-    const link = screen.getByText("privacy@nebuloz.com");
-    expect(link.getAttribute("href")).toBe("mailto:privacy@nebuloz.com");
+    const link = screen.getByText("privacy@nebuloz.ai");
+    expect(link.getAttribute("href")).toBe("mailto:privacy@nebuloz.ai");
   });
 
   it("avisa que evidência anexada some em 90 dias, prazo fixo da Nebuloz — não da organização cliente (parecer 2026-09-28)", () => {

@@ -67,7 +67,7 @@ import {
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 
@@ -81,7 +81,7 @@ function resetar() {
   mocks.personFindFirst.mockResolvedValue({
     id: "p-1",
     nome: "Ana",
-    email: "ana@nebuloz.com",
+    email: "ana@nebuloz.ai",
     horasSemana: 40,
   });
   mocks.engagementFindFirst.mockResolvedValue({
@@ -109,7 +109,7 @@ describe("createPersonAction", () => {
 
     const res = await createPersonAction({
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
     });
 
     expect(res.ok).toBe(false);
@@ -122,7 +122,7 @@ describe("createPersonAction", () => {
 
     await createPersonAction({
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       habilidades: ["frontend", "backend"],
     });
 
@@ -138,7 +138,7 @@ describe("createPersonAction", () => {
 
     const res = await createPersonAction({
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
     });
 
     expect(res.ok).toBe(false);
@@ -151,7 +151,7 @@ describe("createPersonAction", () => {
   it("recusa saída sem data de entrada", async () => {
     const res = await createPersonAction({
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       saiEm: "2026-12-01",
     });
 
@@ -165,7 +165,7 @@ describe("createPersonAction", () => {
 
     await createPersonAction({
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       entraEm: "2026-09-01",
       saiEm: "2026-12-01",
       observacao: "Terceiro via consultoria X",
@@ -282,7 +282,7 @@ describe("allocatePersonAction — a soma no período", () => {
     mocks.personFindFirst.mockResolvedValue({
       id: "p-1",
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       horasSemana: 40,
       entraEm: new Date("2026-09-01"),
       saiEm: new Date("2026-12-01"),
@@ -301,7 +301,7 @@ describe("allocatePersonAction — a soma no período", () => {
     mocks.personFindFirst.mockResolvedValue({
       id: "p-1",
       nome: "Ana",
-      email: "ana@nebuloz.com",
+      email: "ana@nebuloz.ai",
       horasSemana: 40,
       entraEm: new Date("2026-09-01"),
       saiEm: new Date("2026-12-01"),
@@ -333,7 +333,7 @@ describe("listCapacity", () => {
       {
         id: "p-1",
         nome: "Ana",
-        email: "ana@nebuloz.com",
+        email: "ana@nebuloz.ai",
         habilidades: ["frontend"],
         horasSemana: 40,
         ativo: true,

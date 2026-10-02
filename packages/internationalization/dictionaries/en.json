@@ -690,7 +690,16 @@
             "heading": "Who is responsible for your data",
             "body": [
               "The controller of the personal data described here is [[DADO NECESSÁRIO: razão social completa]], registered under CNPJ [[DADO NECESSÁRIO: CNPJ]], at [[DADO NECESSÁRIO: endereço completo]].",
-              "Under Article 41 of the LGPD the controller must name a data protection officer. Ours is [[DADO NECESSÁRIO: nome do encarregado]], reachable at [[DADO NECESSÁRIO: e-mail do encarregado]]."
+              "Under Article 41 of the LGPD the controller must name a data protection officer. Ours is Nebuloz's CEO, [[DADO NECESSÁRIO: nome completo do CEO, a publicar como encarregado]], appointed on a provisional basis and reachable at privacy@nebuloz.ai."
+            ]
+          },
+          {
+            "heading": "If your data reached us through an organization",
+            "body": [
+              "You may have answered an assessment through a link you received, or taken part in a recorded and transcribed meeting at an organization that uses our products. In those cases it was that organization, not Nebuloz, that decided to collect your data, for what purpose and for how long. It is the controller; we process the data on its behalf, as processor, under Law 13.709/2018 (LGPD).",
+              "In practice: to ask for confirmation, access, correction, deletion or portability of your data, contact the organization that invited you or ran the meeting. It decides the request.",
+              "If you prefer to write to us, write to privacy@nebuloz.ai. Within 5 business days we forward your request to the responsible organization and tell you that we forwarded it, and to whom. We do not decide the merits, because that decision is not ours to make.",
+              "There are processing activities where Nebuloz is the controller — the operation of our website, the platform's security records and our sales contact. For those, the request comes straight to us, and we answer."
             ]
           },
           {
@@ -742,7 +751,7 @@
             "body": [
               "Article 18 of the LGPD gives you the right to confirm that we process your data, to access it, to correct it, to anonymise, block or delete unnecessary or excessive data, to port it, to delete data processed under consent, to know who we share it with, to be told the consequences of refusing consent, and to withdraw consent.",
               "Under the GDPR you also have the right to restrict processing, to object, and to lodge a complaint with your supervisory authority.",
-              "To exercise any of these, write to [[DADO NECESSÁRIO: e-mail do encarregado]]. We answer within the period the law sets. In Brazil you may also complain to the ANPD."
+              "To exercise any of these, write to privacy@nebuloz.ai. We answer within the period the law sets. In Brazil you may also complain to the ANPD."
             ]
           },
           {

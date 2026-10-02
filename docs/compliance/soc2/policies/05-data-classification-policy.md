@@ -115,18 +115,18 @@ Upon verified request:
 - Remove from backups at next backup cycle
 - Confirm deletion in writing
 - Exceptions: legal hold, legitimate interest basis documented — concretely, `AuditLog` (immutable, ADR-0009) and the event/timestamp columns of `AccessLog`
-- **Known gap:** the in-app request requires an authenticated session. Data subjects who never had an account — Meridian respondents invited by link, meeting participants — can only request via `privacy@nebuloz.com`, and resolution depends on the processor/controller determination pending in the DPA.
+- **Known gap:** the in-app request requires an authenticated session. Data subjects who never had an account — Meridian respondents invited by link, meeting participants — can only request via `privacy@nebuloz.ai`, and resolution depends on the processor/controller determination pending in the DPA.
 
 ## 6. Data Subject Rights (LGPD/GDPR)
 
 | Right | How to Request | Response Time |
 |-------|---------------|--------------|
-| Access (what data do you hold) | Email privacy@nebuloz.com | 15 business days |
+| Access (what data do you hold) | Email privacy@nebuloz.ai | 15 business days |
 | Rectification (correct data) | In-app settings or email | 15 business days |
-| Erasure (right to be forgotten) | Email privacy@nebuloz.com | 15 business days |
+| Erasure (right to be forgotten) | Email privacy@nebuloz.ai | 15 business days |
 | Portability (export data) | In-app export or email | 15 business days |
-| Restriction of processing | Email privacy@nebuloz.com | 15 business days |
-| Objection to processing | Email privacy@nebuloz.com | 15 business days |
+| Restriction of processing | Email privacy@nebuloz.ai | 15 business days |
+| Objection to processing | Email privacy@nebuloz.ai | 15 business days |
 
 ## 7. Sub-Processors
 

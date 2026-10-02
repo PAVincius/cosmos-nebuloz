@@ -168,7 +168,7 @@ describe("tenant → cliente", () => {
 describe("enum cru → rótulo", () => {
   it("observabilidade: LOGIN/LOGOUT/RECUSADO viram Entrou/Saiu/Recusado", async () => {
     const acesso = (id: string, evento: string): AcessoRow => ({
-      email: "x@nebuloz.com",
+      email: "x@nebuloz.ai",
       evento,
       id,
       ip: null,
@@ -220,7 +220,7 @@ describe("enum cru → rótulo", () => {
     const evento: AuditEventoRow = {
       action: "approved",
       alvo: null,
-      ator: "ana@nebuloz.com",
+      ator: "ana@nebuloz.ai",
       diff: null,
       entityId: null,
       entityType: "tenant",

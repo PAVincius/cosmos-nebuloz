@@ -42,7 +42,7 @@ import { RateLimitError } from "../lib/rate-limit";
 import { registrarDesfechoDoLogin } from "../lib/registro-de-acesso";
 
 const RAIZ = "https://backoffice.nebuloz.ai/api/auth";
-const ANA = { id: "u-ana", email: "Ana@Nebuloz.com", name: "Ana" };
+const ANA = { id: "u-ana", email: "Ana@Nebuloz.ai", name: "Ana" };
 /** O desafio que a lib emite quando a senha passou e falta o segundo fator. */
 const DESAFIO_2FA = "__Secure-better-auth.two_factor=desafio.assinado";
 const SESSAO_ABERTA = "__Secure-better-auth.session_token=tok.assinado";
@@ -115,14 +115,14 @@ describe("registrarDesfechoDoLogin", () => {
 
   it("login sem 2FA vira LOGIN com a identidade que a lib devolveu, com teto por pessoa", async () => {
     await registrarDesfechoDoLogin(
-      pedido("/sign-in/email", { email: "ana@nebuloz.com", password: "p" }),
+      pedido("/sign-in/email", { email: "ana@nebuloz.ai", password: "p" }),
       resposta(200, { redirect: false, token: "t", user: ANA })
     );
 
     expect(linhas()).toEqual([
       expect.objectContaining({
         userId: "u-ana",
-        email: "ana@nebuloz.com",
+        email: "ana@nebuloz.ai",
         evento: "LOGIN",
         motivo: null,
       }),
@@ -132,7 +132,7 @@ describe("registrarDesfechoDoLogin", () => {
 
   it("senha certa com 2FA pendente não grava — ainda não entrou", async () => {
     await registrarDesfechoDoLogin(
-      pedido("/sign-in/email", { email: "ana@nebuloz.com", password: "p" }),
+      pedido("/sign-in/email", { email: "ana@nebuloz.ai", password: "p" }),
       resposta(200, { twoFactorRedirect: true, twoFactorMethods: ["totp"] })
     );
 
@@ -145,7 +145,7 @@ describe("registrarDesfechoDoLogin", () => {
   // de gravar LOGIN sem ninguém saber.
   it("login respondido num formato que a trilha não reconhece avisa no log", async () => {
     await registrarDesfechoDoLogin(
-      pedido("/sign-in/email", { email: "ana@nebuloz.com", password: "p" }),
+      pedido("/sign-in/email", { email: "ana@nebuloz.ai", password: "p" }),
       resposta(200, { token: "t", conta: ANA })
     );
 
@@ -213,7 +213,7 @@ describe("registrarDesfechoDoLogin", () => {
 
     await expect(
       registrarDesfechoDoLogin(
-        pedido("/sign-in/email", { email: "ana@nebuloz.com", password: "p" }),
+        pedido("/sign-in/email", { email: "ana@nebuloz.ai", password: "p" }),
         resposta(200, { token: "t", user: ANA })
       )
     ).resolves.toBeUndefined();

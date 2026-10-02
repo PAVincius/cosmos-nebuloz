@@ -211,7 +211,7 @@ export function RespondentForm({
           }}
         >
           Se preferir escrever para nós, escreva — para{" "}
-          <a href="mailto:privacy@nebuloz.com">privacy@nebuloz.com</a>. Em até 5
+          <a href="mailto:privacy@nebuloz.ai">privacy@nebuloz.ai</a>. Em até 5
           dias úteis encaminhamos seu pedido à organização responsável e
           avisamos você de que encaminhamos e para quem. Não decidimos o mérito,
           porque não é nossa decisão tomar.

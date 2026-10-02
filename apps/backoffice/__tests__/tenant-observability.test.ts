@@ -49,7 +49,7 @@ const tenant = { id: "t-1", slug: "vanta-saude", name: "Vanta Saúde" };
 const staff = {
   userId: "u-1",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: false,
 };
 

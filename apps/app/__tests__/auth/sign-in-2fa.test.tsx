@@ -39,7 +39,7 @@ import { SignIn } from "../../../../packages/auth/components/sign-in";
 
 async function preencherESubmeter() {
   fireEvent.change(screen.getByLabelText(/e-mail/i), {
-    target: { value: "vinicius@nebuloz.com" },
+    target: { value: "vinicius@nebuloz.ai" },
   });
   fireEvent.change(screen.getByLabelText(/senha/i), {
     target: { value: "senha-super-segura" },

@@ -232,7 +232,7 @@ describe("Catálogo — criar serviço nomeia e relê", () => {
 const PESSOA: PessoaCapacidade = {
   alocacoes: [],
   ativo: true,
-  email: "ana@nebuloz.com",
+  email: "ana@nebuloz.ai",
   entraEm: null,
   habilidades: [],
   horasSemana: 40,
@@ -251,7 +251,7 @@ describe("Capacidade — criar pessoa nomeia e relê", () => {
     });
     const bia: PessoaCapacidade = {
       ...PESSOA,
-      email: "bia@nebuloz.com",
+      email: "bia@nebuloz.ai",
       id: "p2",
       nome: "Bia",
     };
@@ -263,7 +263,7 @@ describe("Capacidade — criar pessoa nomeia e relê", () => {
       target: { value: "Bia" },
     });
     fireEvent.change(screen.getByLabelText("E-mail"), {
-      target: { value: "bia@nebuloz.com" },
+      target: { value: "bia@nebuloz.ai" },
     });
     fireEvent.submit(screen.getByRole("form", { name: "Nova pessoa" }));
 

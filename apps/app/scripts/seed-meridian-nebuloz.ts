@@ -60,7 +60,7 @@ import { PrismaClient } from "../../../packages/database/generated";
 import { AXIS_IDS } from "../lib/meridian/axes";
 
 const TENANT_SLUG = process.argv[2] ?? "nebuloz";
-const CONSULTANT_EMAIL = process.argv[3] ?? "admin@nebuloz.com";
+const CONSULTANT_EMAIL = process.argv[3] ?? "admin@nebuloz.ai";
 
 const d = (iso: string) => new Date(`${iso}T12:00:00Z`);
 
@@ -79,7 +79,7 @@ async function main() {
   const tenantId = tenant.id;
 
   // Igual ao seed do Charter: o e-mail é preferência, não exigência. Em produção
-  // o admin da Nebuloz não é admin@nebuloz.com, e o script não pode abortar por
+  // o admin da Nebuloz não é admin@nebuloz.ai, e o script não pode abortar por
   // isso — cai no primeiro membro ADMIN do tenant.
   const consultant =
     (await db.user.findUnique({ where: { email: CONSULTANT_EMAIL } })) ??

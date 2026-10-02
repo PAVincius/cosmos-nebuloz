@@ -444,7 +444,7 @@ describe("SettingsScreen", () => {
     // formulário de cobrança que não existe (AC-006). O endereço é o mesmo já
     // usado pelo template de convite do repo — nenhum contato é inventado.
     expect(
-      screen.getByRole("link", { name: "suporte@nebuloz.com" })
+      screen.getByRole("link", { name: "suporte@nebuloz.ai" })
     ).toBeTruthy();
   });
 });

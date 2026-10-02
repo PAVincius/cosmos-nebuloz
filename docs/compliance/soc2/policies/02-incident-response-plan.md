@@ -34,7 +34,7 @@ Define how Cosmos detects, responds to, and recovers from security incidents, mi
 ### Phase 1 — Detection
 **Triggers:**
 - Automated alert (BetterStack, Arcjet, audit log anomaly)
-- User report → security@nebuloz.com
+- User report → security@nebuloz.ai
 - Third-party report (responsible disclosure)
 
 **Actions:**
@@ -101,7 +101,7 @@ Evidence retained for minimum **3 years** for potential legal/regulatory proceed
 - What data was affected (be specific)
 - What we have done
 - What customers should do
-- Contact for questions: security@nebuloz.com
+- Contact for questions: security@nebuloz.ai
 
 **Do not:**
 - Speculate on attribution

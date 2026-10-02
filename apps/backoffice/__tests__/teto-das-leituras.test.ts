@@ -146,7 +146,7 @@ beforeEach(() => {
   mocks.requirePlatformStaff.mockResolvedValue({
     userId: "u-1",
     name: "V",
-    email: "v@nebuloz.com",
+    email: "v@nebuloz.ai",
     canWrite: true,
   });
   for (const m of [

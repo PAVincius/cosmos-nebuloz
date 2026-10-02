@@ -211,7 +211,7 @@ export async function sendMemberInvite(
 
   const tenantName = tenant?.name ?? "seu workspace";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3012";
-  const fromAddress = process.env.RESEND_FROM ?? "noreply@nebuloz.com";
+  const fromAddress = process.env.RESEND_FROM ?? "noreply@nebuloz.ai";
 
   // Send invitation email — failure must not block invitation creation
   try {

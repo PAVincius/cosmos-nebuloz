@@ -26,7 +26,7 @@ vi.mock("next/headers", () => ({ headers: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 
 vi.mock("@repo/email", () => ({
-  keys: () => ({ RESEND_FROM: "noreply@nebuloz.com" }),
+  keys: () => ({ RESEND_FROM: "noreply@nebuloz.ai" }),
   resend: { emails: { send: mocks.sendEmail } },
   renderResetPasswordEmail: mocks.renderResetPasswordEmail,
 }));
@@ -67,7 +67,7 @@ describe("sendResetPassword (US4, FR-009)", () => {
 
     expect(mocks.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        from: expect.stringContaining("noreply@nebuloz.com"),
+        from: expect.stringContaining("noreply@nebuloz.ai"),
         to: USER.email,
         html: "<html>reset</html>",
       })

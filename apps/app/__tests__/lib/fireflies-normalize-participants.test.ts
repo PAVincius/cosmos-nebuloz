@@ -18,7 +18,7 @@ describe("normalizeFirefliesParticipants", () => {
   it("known=false when workspace_users is missing (partial response)", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      participants: ["a@nebuloz.com"],
+      participants: ["a@nebuloz.ai"],
     });
     expect(result.known).toBe(false);
     expect(result.participants).toEqual([]);
@@ -27,7 +27,7 @@ describe("normalizeFirefliesParticipants", () => {
   it("known=false when participants is missing but workspace_users present", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      workspace_users: ["a@nebuloz.com"],
+      workspace_users: ["a@nebuloz.ai"],
     });
     expect(result.known).toBe(false);
   });
@@ -35,13 +35,13 @@ describe("normalizeFirefliesParticipants", () => {
   it("known=true, isExternal=false for a participant that is also a workspace user", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      participants: ["a@nebuloz.com"],
-      workspace_users: ["a@nebuloz.com"],
+      participants: ["a@nebuloz.ai"],
+      workspace_users: ["a@nebuloz.ai"],
     });
     expect(result.known).toBe(true);
     expect(result.participants).toEqual([
       {
-        email: "a@nebuloz.com",
+        email: "a@nebuloz.ai",
         name: null,
         isOrganizer: false,
         isExternal: false,
@@ -52,27 +52,27 @@ describe("normalizeFirefliesParticipants", () => {
   it("isExternal=true for a participant not in workspace_users", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      participants: ["a@nebuloz.com", "guest@totvs.com"],
-      workspace_users: ["a@nebuloz.com"],
+      participants: ["a@nebuloz.ai", "guest@totvs.com"],
+      workspace_users: ["a@nebuloz.ai"],
     });
     expect(result.known).toBe(true);
     expect(
       result.participants.find((p) => p.email === "guest@totvs.com")
     ).toMatchObject({ isExternal: true });
     expect(
-      result.participants.find((p) => p.email === "a@nebuloz.com")
+      result.participants.find((p) => p.email === "a@nebuloz.ai")
     ).toMatchObject({ isExternal: false });
   });
 
   it("marks the organizer via organizer_email (case-insensitive)", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      participants: ["RTE@nebuloz.com"],
-      workspace_users: ["rte@nebuloz.com"],
-      organizer_email: "rte@nebuloz.com",
+      participants: ["RTE@nebuloz.ai"],
+      workspace_users: ["rte@nebuloz.ai"],
+      organizer_email: "rte@nebuloz.ai",
     });
     expect(result.participants[0]).toMatchObject({
-      email: "RTE@nebuloz.com",
+      email: "RTE@nebuloz.ai",
       isOrganizer: true,
     });
   });
@@ -95,8 +95,8 @@ describe("normalizeFirefliesParticipants", () => {
   it("de-duplicates repeated emails in participants (case-insensitive)", () => {
     const result = normalizeFirefliesParticipants({
       id: "m1",
-      participants: ["a@nebuloz.com", "A@nebuloz.com"],
-      workspace_users: ["a@nebuloz.com"],
+      participants: ["a@nebuloz.ai", "A@nebuloz.ai"],
+      workspace_users: ["a@nebuloz.ai"],
     });
     expect(result.participants).toHaveLength(1);
   });

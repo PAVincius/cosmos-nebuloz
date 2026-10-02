@@ -25,7 +25,7 @@ Levantado antes de escrever, e muda a prioridade:
   `__tests__/compliance/`.
 - **Classificação de dados** em quatro níveis, com o Nível 4 já definido como
   dado pessoal sob LGPD/GDPR.
-- **Prazos e canal** — 15 dias úteis, `privacy@nebuloz.com`, seis direitos
+- **Prazos e canal** — 15 dias úteis, `privacy@nebuloz.ai`, seis direitos
   tabelados.
 - **Trilha de auditoria** imutável (`AuditLog`, sem UPDATE/DELETE — ADR-0009).
 
@@ -139,7 +139,7 @@ banco sem nunca terem tido conta:
 de pessoas convidadas a responder a bateria por link com token. São terceiros em
 relação à Nebuloz e, na maior parte dos casos, funcionários do cliente. Não têm
 login, não aparecem em `/settings`, e o canal que resta é
-`privacy@nebuloz.com` — que funciona, mas não está dito em lugar nenhum que eles
+`privacy@nebuloz.ai` — que funciona, mas não está dito em lugar nenhum que eles
 leiam.
 
 O enquadramento correto depende de uma decisão que ainda não foi tomada: **a

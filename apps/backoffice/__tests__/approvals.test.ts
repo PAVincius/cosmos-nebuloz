@@ -61,7 +61,7 @@ import {
 const admin = {
   userId: "u-admin",
   name: "Vinícius",
-  email: "v@nebuloz.com",
+  email: "v@nebuloz.ai",
   canWrite: true,
 };
 const member = { ...admin, userId: "u-member", canWrite: false };

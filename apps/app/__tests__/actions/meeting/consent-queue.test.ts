@@ -189,7 +189,7 @@ describe("listConsentQueue", () => {
         participantsKnown: true,
         participants: [
           {
-            email: "rte@nebuloz.com",
+            email: "rte@nebuloz.ai",
             name: "Helena Souza",
             isExternal: false,
             isOrganizer: true,
@@ -211,7 +211,7 @@ describe("listConsentQueue", () => {
     expect(res.data.rows[0].participantsKnown).toBe(true);
     expect(res.data.rows[0].participants).toEqual([
       {
-        email: "rte@nebuloz.com",
+        email: "rte@nebuloz.ai",
         name: "Helena Souza",
         isExternal: false,
         isOrganizer: true,

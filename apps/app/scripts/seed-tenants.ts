@@ -4,7 +4,7 @@
  * Popula o banco com 4 tenants em planos distintos para testar feature flags.
  *
  * Tenants criados:
- *   UNIVERSE  → Nebuloz          (admin@nebuloz.com)
+ *   UNIVERSE  → Nebuloz          (admin@nebuloz.ai)
  *   NEBULA    → TechCorp SA      (admin@techcorp.com)
  *   GALAXY    → Startup XP       (admin@startupxp.com)
  *   ORBIT     → AgileFirst       (admin@agilefirst.com)
@@ -80,7 +80,7 @@ const TENANTS: TenantDef[] = [
     name: "Nebuloz",
     slug: "nebuloz",
     plan: "UNIVERSE",
-    adminEmail: "admin@nebuloz.com",
+    adminEmail: "admin@nebuloz.ai",
     adminName: "Vinicius Prates",
     password: "Nebuloz@2026!",
     arts: [
