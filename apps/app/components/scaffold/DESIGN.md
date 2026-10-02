@@ -530,6 +530,14 @@ Assinatura do Scaffold (`phase-stepper.tsx`): "a leitura do produto num relance:
 - **Gate:** entre dois nós, segmento de trilho, losango e segmento. Fechado em verde (check), pronto em âmbar (escudo, pulsando), bloqueado em vermelho (x), futuro neutro e tracejado — sempre com `role="img"` e `aria-label`.
 - **Cards de fase:** grade de quatro `.btn.lift` de 12×13px e cantos de 10px, com título `.display` 14px, `StatusDot` do estado, a descrição em 11px e o critério do gate sob um fio tracejado. O ativo ganha `surface-2`, borda do tom a 45%, barra de 3px e sombra do tom.
 
+### Canvas da trilha
+Segunda leitura da trilha, só leitura (`track-canvas*.tsx`), aberta pelo botão "Abrir no canvas" do `PageHeader` do detalhe, em diálogo de tela cheia (`role="dialog"`, `aria-modal`, Esc, Tab preso, foco devolvido ao botão).
+- **Desenho:** fases em colunas de 248px, passos em blocos, entregáveis como nós de 56px, arestas. O gate é o losango no trilho, na altura dos cabeçalhos, entre uma fase e a seguinte — nunca no meio da coluna. Posição não é gravada: sai da ordem do método (`lib/scaffold/canvas-layout.ts`).
+- **Estado:** palavra ao lado da cor em nó, fase e gate; legenda só dos estados que existem; fase sem entregável diz "sem entregáveis", não 0/0. Só o gate pronto pulsa.
+- **Vista:** arrastar, roda (zoom em torno do cursor), setas, `+`, `-`, `0`; zoom de 30% a 200% animado em 320ms, instantâneo sob `prefers-reduced-motion`.
+- **Painel:** o que o nó selecionado diz (motivo do ajuste, dispensa, critérios) na tela, nunca em `title`. Gate decidido mostra o snapshot congelado (SG-07).
+- **Fora do escopo:** edição, copiloto de texto e voz (D-26, LGPD item 3 de 01/10, parecer de voz).
+
 ### GatePanel
 - **Style:** `SectionCard` com tom — âmbar enquanto decidível, vermelho bloqueado, verde decidido —, critérios com checkbox nativo em `accent-color` verde e a contagem "n/m atendidos" em mono.
 - **State:** a recusa do servidor fica dentro do painel (`red-soft`, `role="alert"`, a lista de bloqueadores); o override só aparece depois de tentar fechar, e o override registrado fica em `amber-soft` com o eyebrow "Override registrado · imutável (SG-07)". Decidido, o painel mostra o snapshot congelado dos critérios, nunca o template de hoje.

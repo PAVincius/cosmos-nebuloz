@@ -60,6 +60,7 @@ import {
 } from "../phase-cards";
 import { PhaseStepper } from "../phase-stepper";
 import { StepList } from "../step-list";
+import { TrackCanvas } from "../track-canvas";
 import { useScaffoldAccess } from "../use-access";
 
 /** Os três atos que rescrevem o histórico de uma trilha, e por isso pedem
@@ -119,6 +120,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
   >(null);
   const [deliverables, setDeliverables] = useState<DeliverableItem[]>([]);
   const [adding, setAdding] = useState(false);
+  const [canvasOpen, setCanvasOpen] = useState(false);
   const [assignees, setAssignees] = useState<Assignee[] | null>(null);
   const [rationale, setRationale] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
@@ -417,6 +419,9 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           Portfólio
         </Button>
+        <Button icon="flow" onClick={() => setCanvasOpen(true)}>
+          Abrir no canvas
+        </Button>
         {track.businessCase ? (
           <Button
             icon="fileText"
@@ -440,6 +445,18 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
           </Button>
         ) : null}
       </PageHeader>
+
+      {canvasOpen ? (
+        <TrackCanvas
+          deliverables={deliverables}
+          onClose={() => setCanvasOpen(false)}
+          onOpenPhase={(p) => {
+            selectPhase(p);
+            setCanvasOpen(false);
+          }}
+          track={track}
+        />
+      ) : null}
 
       {readOnlyReason ? (
         <div

@@ -439,6 +439,8 @@ export async function listTracks(
 export type TrackDetailStep = {
   id: string;
   seq: number;
+  /** Código do passo no método ("A1"…); nulo se a versão não o tem. */
+  code: string | null;
   statement: string;
   expectedArtefact: string;
   required: boolean;
@@ -528,6 +530,9 @@ export async function getTrack(
               id: true,
               label: true,
               template: { select: { name: true } },
+              // Código do passo ("A1"…): é o que liga o passo aos entregáveis
+              // (`stepCode`) no canvas. Nulo em versões anteriores ao modelo.
+              steps: { select: { key: true, code: true } },
               criteria: {
                 orderBy: { seq: "asc" },
                 select: {
@@ -663,6 +668,10 @@ export async function getTrack(
             steps: p.steps.map((st) => ({
               id: st.id,
               seq: st.seq,
+              code:
+                track.templateVersion.steps.find(
+                  (t) => t.key === st.stepTemplateKey
+                )?.code ?? null,
               statement: st.statement,
               expectedArtefact: st.expectedArtefact,
               required: st.required,

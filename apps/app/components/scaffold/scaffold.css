@@ -291,6 +291,15 @@
   animation: scaffoldPulseRing 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Canvas da trilha (somente leitura). O scaffold.css não declara
+   :focus-visible; no canvas, tudo é botão e precisa de anel visível. Contorno
+   (outline), porque a seleção já usa box-shadow e as duas não se apagam. */
+.scaffold-root .sc-cv-hit:focus-visible,
+.scaffold-root [role="group"][tabindex="0"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scaffold-root .pulse-dot,
   .scaffold-root .skeleton,

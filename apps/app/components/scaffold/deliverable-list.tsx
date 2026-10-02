@@ -19,6 +19,7 @@ import {
   startDeliverable,
   submitDeliverable,
 } from "@/app/(scaffold)/actions/deliverables";
+import { STATUS } from "@/lib/scaffold/deliverable-labels";
 import {
   type DeliverableStatus,
   type DeliverableTransition,
@@ -32,18 +33,6 @@ export type DeliverableItem = Extract<
   Awaited<ReturnType<typeof listDeliverables>>,
   { ok: true }
 >["data"][number];
-
-const STATUS: Record<
-  DeliverableStatus,
-  { label: string; tone: "neutral" | "accent" | "amber" | "red" | "green" }
-> = {
-  NOT_STARTED: { label: "Não iniciado", tone: "neutral" },
-  IN_PROGRESS: { label: "Em elaboração", tone: "accent" },
-  IN_REVIEW: { label: "Em revisão", tone: "amber" },
-  ADJUSTMENT_REQUESTED: { label: "Ajuste pedido", tone: "red" },
-  APPROVED: { label: "Aprovado", tone: "green" },
-  REOPENED: { label: "Reaberto", tone: "amber" },
-};
 
 /** Ações que fazem sentido em cada estado, na ordem em que aparecem. */
 const RELEVANT: Record<DeliverableStatus, DeliverableTransition[]> = {
