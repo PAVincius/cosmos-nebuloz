@@ -61,6 +61,7 @@ Três regras valem para o registro inteiro:
 | D-27 | Scaffold depende do Meridian: toda trilha de prontidão nasce de um assessment. Sem Meridian contratado, o contrato do Scaffold inclui o "Meridian assistido", habilitado no tenant do cliente e operado por CONSULTANT da Nebuloz. A trilha de prontidão exige `sourceAssessmentId` (no PR único); o item de horas fica no `Service` do back-office (PR próprio); preço e horas com o CEO, Ponte, Caixa e pre-mortem do Sócio. Costura 3.7 no Mapa ([§9](trilhas/framework-no-scaffold.md)) | **Decidida** (CEO, 2026-09-30); detalhe de produto provisório | Norte → Regua → Andaime; Big Bang (c); Ponte/Caixa (d) |
 | D-28 | Scaffold operável de ponta a ponta: três PRs em ordem. PR 1: gate na tela + modal Nova trilha, até 07/10. PR 2: overlay do cliente pela tela + overlay de critério com efeito no gate, até 31/10. PR 3: dispensa manual do A2 + motivo na fila do back-office, até 07/11 ([PRD §10](scaffold-prd.md)) | Proposta (CPO, 2026-09-30) | Norte → Regua → Andaime/Bussola; Crivo (QA) |
 | D-29 | Meridian: ação "confirmar o computado" para eixo contestado, com justificativa e auditoria, separada do override. Respostas travam no fechamento da coleta (REVIEW); override, gap e plano travam na finalização (FINALISED), e promover gap continua permitido. Só a consultora reabre FINALISED → REVIEW, com motivo; medição nova é reavaliação. Tudo no #334 ([PRD §10](meridian-prd.md)) | Proposta (CPO, 2026-09-30) | Norte → Regua (spec 001) → Bussola |
+| D-30 | Meridian: cada item do plano de 12 meses mostra, só leitura, o molde ou a trilha do Scaffold que fecha aquele gap, com os passos principais; com o Scaffold contratado, abre a trilha. O gap continua sem campo de ação no Meridian: o "como" é do Scaffold ([mapa de fronteiras](mapa-de-fronteiras.md), entidade 6; D-27). Origem: dogfood do CEO em produção, 02/10 — o plano mostra lacuna e esforço por trimestre, sem as ações que o comprador espera de um plano sequenciado ([PRD, persona Comprador](meridian-prd.md)) | Proposta (Morgana, 2026-10-02) | CEO decide → Andaime estima → Norte (spec) |
 
 ---
 
@@ -694,3 +695,5 @@ Cada frente nova (copiloto, raio X, memória, modelo próprio) começa por um
    muda o que o comercial pode prometer.
 3. ~~**D-19 e D-20:** confirmar o escopo do Meridian A3 (entra agora) e A5
    (depois, com gatilho).~~ Confirmadas pelo CEO em 2026-09-29 (via Morgana).
+4. **D-30:** decidir se o plano de 12 meses do Meridian mostra o molde do
+   Scaffold que fecha cada gap, depois da estimativa do Andaime.
