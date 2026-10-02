@@ -245,7 +245,7 @@ test.describe("Meridian · D-29 confirmar, reabrir e travas @meridian", () => {
     }) => {
       const antes = await dataScore();
       expect(antes?.status).toBe("CONTESTED");
-      const scoreAntes = antes?.finalScore;
+      const scoreAntes = antes?.final;
 
       await openScoring(page);
       await page.getByRole("button", { name: "Revisar e decidir" }).click();
@@ -276,7 +276,7 @@ test.describe("Meridian · D-29 confirmar, reabrir e travas @meridian", () => {
         .poll(async () => (await dataScore())?.status, { timeout: 30_000 })
         .not.toBe("CONTESTED");
       const depois = await dataScore();
-      expect(depois?.finalScore).toBe(scoreAntes);
+      expect(depois?.final).toBe(scoreAntes);
       expect(await countConfirmations()).toBe(1);
       await expect(
         page.getByText("Confirmado pelo revisor").first()
