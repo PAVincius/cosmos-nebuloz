@@ -14,11 +14,24 @@ export type Db = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
+/** Erro da trava de FINALISED, o mesmo para a leitura e para o where da escrita. */
+export function finalisedError(): StateConflictError {
+  return new StateConflictError(
+    "assessment.finalised",
+    "Assessment finalizado: override, confirmação, gaps, plano e scoring ficam travados. Reabra o assessment para decidir."
+  );
+}
+
 /**
  * Trava de decisões do assessment finalizado (D-29, FR-029d): override,
  * confirmação, gap, plano e novo scoring são recusados quando o assessment
  * está FINALISED — para reabrir, o consultor reabre (FR-029e). Leitura,
  * relatório, exportação, promoção de gap e reavaliação seguem livres.
+ *
+ * É uma leitura na mesma transação da escrita, não uma trava: serve de recusa
+ * rápida e com mensagem clara. Onde a corrida decide dado de verdade
+ * (override e confirmação, que mudam o status do eixo) a mesma condição vai
+ * também no where da escrita — ver `registerOverride` e `confirmComputed`.
  *
  * Sem assessment (id de outro tenant ou inexistente) a trava não decide: quem
  * chama já recusa com "não encontrado" pela própria leitura.
@@ -33,10 +46,7 @@ export async function requireDecisionsOpen(
     select: { status: true },
   });
   if (a?.status === "FINALISED") {
-    throw new StateConflictError(
-      "assessment.finalised",
-      "Assessment finalizado: override, confirmação, gaps, plano e scoring ficam travados. Reabra o assessment para decidir."
-    );
+    throw finalisedError();
   }
 }
 

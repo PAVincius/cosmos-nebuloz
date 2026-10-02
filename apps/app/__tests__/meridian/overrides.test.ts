@@ -11,7 +11,7 @@ const h = vi.hoisted(() => ({
   requirePerm: vi.fn(),
   assessmentFindFirst: vi.fn(),
   scoreFindFirst: vi.fn(),
-  scoreUpdate: vi.fn(),
+  scoreUpdateMany: vi.fn(),
   overrideCreate: vi.fn(),
   overrideFindMany: vi.fn(),
   auditCreate: vi.fn(),
@@ -50,7 +50,7 @@ vi.mock("@repo/database", () => ({
       meridianAssessment: { findFirst: h.assessmentFindFirst },
       meridianAxisScore: {
         findFirst: h.scoreFindFirst,
-        update: h.scoreUpdate,
+        updateMany: h.scoreUpdateMany,
       },
       meridianOverride: {
         create: h.overrideCreate,
@@ -93,7 +93,7 @@ beforeEach(() => {
   h.scoreFindFirst.mockResolvedValue(SCORE);
   h.sequenceUpsert.mockResolvedValue({ next: 12 });
   h.overrideCreate.mockResolvedValue({ id: "ov1", code: "OV-11" });
-  h.scoreUpdate.mockResolvedValue({});
+  h.scoreUpdateMany.mockResolvedValue({ count: 1 });
   h.auditCreate.mockResolvedValue({});
 });
 
@@ -140,11 +140,39 @@ describe("registerOverride", () => {
       toScore: 66,
       rationale: VALID_RATIONALE,
     });
-    const update = h.scoreUpdate.mock.calls[0]?.[0] as {
+    const update = h.scoreUpdateMany.mock.calls[0]?.[0] as {
       data: Record<string, unknown>;
     };
     expect(update.data).toEqual({ final: 66, status: "OVERRIDDEN" });
     expect(update.data).not.toHaveProperty("computed");
+  });
+
+  it("a trava de FINALISED vai no where da escrita, não só numa leitura antes", async () => {
+    await registerOverride({
+      assessmentId: "clx0000000000000000000as1",
+      axis: "GOVERNANCE",
+      toScore: 66,
+      rationale: VALID_RATIONALE,
+    });
+    const where = h.scoreUpdateMany.mock.calls[0]?.[0].where;
+    expect(where).toMatchObject({
+      tenantId: "t1",
+      assessment: { status: { not: "FINALISED" } },
+    });
+  });
+
+  it("assessment finalizado entre a leitura e a escrita: count 0 recusa com assessment.finalised e não deixa linha nem trilha", async () => {
+    h.scoreUpdateMany.mockResolvedValue({ count: 0 });
+    const res = await registerOverride({
+      assessmentId: "clx0000000000000000000as1",
+      axis: "GOVERNANCE",
+      toScore: 66,
+      rationale: VALID_RATIONALE,
+    });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("assessment.finalised");
+    expect(h.overrideCreate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 
   it("parte do final vigente quando já existe override — encadeia decisões", async () => {

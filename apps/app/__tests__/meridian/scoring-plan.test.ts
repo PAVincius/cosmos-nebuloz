@@ -198,18 +198,32 @@ describe("runScoring", () => {
 
     it("com linha kind=CONFIRMATION, o eixo continua fora da fila (COMPUTED)", async () => {
       dadosDivergentes();
-      h.overrideFindFirst.mockResolvedValue({ id: "ov1" });
+      h.overrideFindFirst.mockResolvedValue({ toScore: 50 });
       await runScoring({ assessmentId: AS_ID });
       const data = (
         h.scoreUpdate.mock.calls[0][0] as { data: { status: string } }
       ).data;
       expect(data.status).toBe("COMPUTED");
-      expect(h.overrideFindFirst.mock.calls[0][0].where).toEqual({
+      const query = h.overrideFindFirst.mock.calls[0][0];
+      expect(query.where).toEqual({
         tenantId: "t1",
         assessmentId: AS_ID,
         axis: "DATA",
         kind: "CONFIRMATION",
       });
+      expect(query.orderBy).toEqual({ createdAt: "desc" });
+    });
+
+    // A confirmação vale para o número que o revisor viu. Se as respostas
+    // mudaram e o computado novo é outro, a decisão não cobre mais o eixo.
+    it("computado novo diferente do toScore da última confirmação devolve o eixo a CONTESTED", async () => {
+      dadosDivergentes();
+      h.overrideFindFirst.mockResolvedValue({ toScore: 61 });
+      await runScoring({ assessmentId: AS_ID });
+      const data = (
+        h.scoreUpdate.mock.calls[0][0] as { data: { status: string } }
+      ).data;
+      expect(data.status).toBe("CONTESTED");
     });
 
     it("a confirmação se olha pelo kind, não por antes == depois", async () => {

@@ -219,6 +219,25 @@ async function loadRespondentForWrite(token: string) {
   return r;
 }
 
+type RespondentTx = Parameters<Parameters<typeof database.$transaction>[0]>[0];
+
+/** Confere COLLECTING na transação da escrita. `loadRespondentForWrite` leu o
+ *  estado antes e isso não segura nada: o consultor pode fechar a coleta entre
+ *  a leitura e o gravar, e a resposta entraria depois de o computado existir.
+ *  `FOR SHARE` trava a linha do assessment até o fim da transação — fechar a
+ *  coleta espera quem está gravando, e quem chega depois lê o estado novo. */
+async function requireCollectingInTx(
+  tx: RespondentTx,
+  assessmentId: string
+): Promise<void> {
+  const rows = await tx.$queryRaw<{ status: string }[]>`
+    SELECT "status"::text AS "status" FROM "MeridianAssessment"
+    WHERE "id" = ${assessmentId} FOR SHARE`;
+  if (rows[0]?.status !== "COLLECTING") {
+    throw new MeridianRuleError("collection.closed", COLLECTION_CLOSED_MESSAGE);
+  }
+}
+
 /** Só as perguntas do eixo daquele respondente, daquele assessment. Ele nunca
  *  vê a bateria dos outros eixos nem as respostas de ninguém. */
 export async function getBattery(token: string): Promise<Result<Battery>> {
@@ -293,56 +312,60 @@ export async function saveDraft(
     const input = DraftSchema.parse(raw);
     const r = await loadRespondentForWrite(input.token);
 
-    const questions = await database.meridianQuestion.findMany({
-      where: {
-        templateId: r.assessment.templateId,
-        axis: r.axis,
-        id: { in: input.answers.map((a) => a.questionId) },
-      },
-      select: {
-        id: true,
-        code: true,
-        ordinal: true,
-        type: true,
-        weight: true,
-        inverted: true,
-        scaleLabels: true,
-      },
-    });
-    const byId = new Map(questions.map((q) => [q.id, q]));
+    await database.$transaction(async (tx) => {
+      await requireCollectingInTx(tx, r.assessment.id);
 
-    for (const a of input.answers) {
-      const q = byId.get(a.questionId);
-      // Pergunta de outro eixo é descartada em silêncio: um cliente adulterado
-      // não pode escrever fora da fatia daquele respondente.
-      if (!q) {
-        continue;
-      }
-      const normalized = normalizeAnswer(q, a.rawValue);
-      await database.meridianResponse.upsert({
+      const questions = await tx.meridianQuestion.findMany({
         where: {
-          respondentId_questionId: {
+          templateId: r.assessment.templateId,
+          axis: r.axis,
+          id: { in: input.answers.map((a) => a.questionId) },
+        },
+        select: {
+          id: true,
+          code: true,
+          ordinal: true,
+          type: true,
+          weight: true,
+          inverted: true,
+          scaleLabels: true,
+        },
+      });
+      const byId = new Map(questions.map((q) => [q.id, q]));
+
+      for (const a of input.answers) {
+        const q = byId.get(a.questionId);
+        // Pergunta de outro eixo é descartada em silêncio: um cliente adulterado
+        // não pode escrever fora da fatia daquele respondente.
+        if (!q) {
+          continue;
+        }
+        const normalized = normalizeAnswer(q, a.rawValue);
+        await tx.meridianResponse.upsert({
+          where: {
+            respondentId_questionId: {
+              respondentId: r.id,
+              questionId: q.id,
+            },
+          },
+          create: {
+            tenantId: r.tenantId,
             respondentId: r.id,
             questionId: q.id,
+            rawValue: a.rawValue,
+            normalized,
           },
-        },
-        create: {
-          tenantId: r.tenantId,
-          respondentId: r.id,
-          questionId: q.id,
-          rawValue: a.rawValue,
-          normalized,
-        },
-        update: { rawValue: a.rawValue, normalized },
-      });
-    }
+          update: { rawValue: a.rawValue, normalized },
+        });
+      }
 
-    if (r.status === "INVITED") {
-      await database.meridianRespondent.update({
-        where: { id: r.id },
-        data: { status: "PENDING" },
-      });
-    }
+      if (r.status === "INVITED") {
+        await tx.meridianRespondent.update({
+          where: { id: r.id },
+          data: { status: "PENDING" },
+        });
+      }
+    });
   });
 }
 
@@ -355,32 +378,36 @@ export async function submitBattery(
   return safeAction(async () => {
     const r = await loadRespondentForWrite(token);
 
-    const [total, answered] = await Promise.all([
-      database.meridianQuestion.count({
-        where: { templateId: r.assessment.templateId, axis: r.axis },
-      }),
-      database.meridianResponse.count({ where: { respondentId: r.id } }),
-    ]);
-    const missing = Math.max(0, total - answered);
-    if (missing > 0) {
-      return { missing };
-    }
+    return database.$transaction(async (tx) => {
+      await requireCollectingInTx(tx, r.assessment.id);
 
-    await database.meridianRespondent.update({
-      where: { id: r.id },
-      data: { status: "DONE", completedAt: new Date() },
+      const [total, answered] = await Promise.all([
+        tx.meridianQuestion.count({
+          where: { templateId: r.assessment.templateId, axis: r.axis },
+        }),
+        tx.meridianResponse.count({ where: { respondentId: r.id } }),
+      ]);
+      const missing = Math.max(0, total - answered);
+      if (missing > 0) {
+        return { missing };
+      }
+
+      await tx.meridianRespondent.update({
+        where: { id: r.id },
+        data: { status: "DONE", completedAt: new Date() },
+      });
+      await logRespondentAudit(tx, {
+        tenantId: r.tenantId,
+        respondentId: r.id,
+        respondentName: r.name,
+        action: "meridian.respondent.submit",
+        entityType: "meridian.response",
+        entityId: r.id,
+        target: `${r.assessment.code} · ${AXES[r.axis].label}`,
+        diff: [["Status", r.status, "DONE"]],
+      });
+      return { missing: 0 };
     });
-    await logRespondentAudit(database, {
-      tenantId: r.tenantId,
-      respondentId: r.id,
-      respondentName: r.name,
-      action: "meridian.respondent.submit",
-      entityType: "meridian.response",
-      entityId: r.id,
-      target: `${r.assessment.code} · ${AXES[r.axis].label}`,
-      diff: [["Status", r.status, "DONE"]],
-    });
-    return { missing: 0 };
   });
 }
 
@@ -458,33 +485,56 @@ export async function attachEvidence(
       throw new Error(`Falha ao anexar evidência: ${error.message}`);
     }
 
-    const evidence = await database.meridianEvidence.create({
-      data: {
-        tenantId: r.tenantId,
-        assessmentId: r.assessment.id,
-        responseId: response?.id ?? null,
-        storagePath,
-        fileName: file.name,
-        mimeType: file.type || "application/octet-stream",
-        sizeBytes: file.size,
-        uploadedByRespondentId: r.id,
-      },
-      select: { id: true, fileName: true },
-    });
+    // O arquivo já está no bucket. Se a coleta fechou no meio do caminho, o
+    // metadado não entra e o objeto, sem linha que o aponte, sai junto — senão
+    // ficaria fora da retenção e da eliminação, que partem do banco.
+    try {
+      return await database.$transaction(async (tx) => {
+        await requireCollectingInTx(tx, r.assessment.id);
 
-    await logRespondentAudit(database, {
-      tenantId: r.tenantId,
-      respondentId: r.id,
-      respondentName: r.name,
-      action: "meridian.evidence.attach",
-      entityType: "meridian.evidence",
-      entityId: evidence.id,
-      // Alvo pelo id, não por file.name: nome original do arquivo pode
-      // carregar dado pessoal, e o audit é log de vida longa (mesmo achado
-      // da Morgana sobre requestEvidenceUrl, report.ts).
-      target: `${r.assessment.code} · ${evidence.id}`,
-    });
+        const evidence = await tx.meridianEvidence.create({
+          data: {
+            tenantId: r.tenantId,
+            assessmentId: r.assessment.id,
+            responseId: response?.id ?? null,
+            storagePath,
+            fileName: file.name,
+            mimeType: file.type || "application/octet-stream",
+            sizeBytes: file.size,
+            uploadedByRespondentId: r.id,
+          },
+          select: { id: true, fileName: true },
+        });
 
-    return evidence;
+        await logRespondentAudit(tx, {
+          tenantId: r.tenantId,
+          respondentId: r.id,
+          respondentName: r.name,
+          action: "meridian.evidence.attach",
+          entityType: "meridian.evidence",
+          entityId: evidence.id,
+          // Alvo pelo id, não por file.name: nome original do arquivo pode
+          // carregar dado pessoal, e o audit é log de vida longa (mesmo achado
+          // da Morgana sobre requestEvidenceUrl, report.ts).
+          target: `${r.assessment.code} · ${evidence.id}`,
+        });
+
+        return evidence;
+      });
+    } catch (erro) {
+      const { error: removeError } = await storageClient.storage
+        .from(MERIDIAN_EVIDENCE_BUCKET)
+        .remove([storagePath]);
+      if (removeError) {
+        log.error(
+          "[meridian] objeto de evidência órfão após falha na gravação",
+          {
+            storagePath,
+            error: removeError.message,
+          }
+        );
+      }
+      throw erro;
+    }
   });
 }
