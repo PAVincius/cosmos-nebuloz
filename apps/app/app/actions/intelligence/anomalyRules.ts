@@ -5,6 +5,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { AnomalyRuleError } from "@/lib/anomaly/errors";
 import { ANOMALY_RULES, validateThresholdInBounds } from "@/lib/anomaly/rules";
 import { type Result, safeAction } from "../_base";
 
@@ -25,12 +26,18 @@ export async function setRuleThreshold(
 
     const rule = ANOMALY_RULES[input.ruleId];
     if (!rule) {
-      throw new Error(`UNKNOWN_RULE: ${input.ruleId}`);
+      throw new AnomalyRuleError(
+        `UNKNOWN_RULE: ${input.ruleId}`,
+        "anomaly.unknown-rule"
+      );
     }
 
     // AC-006: CRITICAL rules non-disablable — also non-configurable threshold
     if (rule.critical) {
-      throw new Error(`CRITICAL_RULE_NON_DISABLABLE: ruleId=${input.ruleId}`);
+      throw new AnomalyRuleError(
+        `CRITICAL_RULE_NON_DISABLABLE: ruleId=${input.ruleId}`,
+        "anomaly.critical-non-disablable"
+      );
     }
 
     // AC-005: validate within platform bounds
@@ -83,12 +90,18 @@ export async function disableRule(
 
     const rule = ANOMALY_RULES[input.ruleId];
     if (!rule) {
-      throw new Error(`UNKNOWN_RULE: ${input.ruleId}`);
+      throw new AnomalyRuleError(
+        `UNKNOWN_RULE: ${input.ruleId}`,
+        "anomaly.unknown-rule"
+      );
     }
 
     // AC-006: CRITICAL rules non-disablable
     if (rule.critical) {
-      throw new Error(`CRITICAL_RULE_NON_DISABLABLE: ruleId=${input.ruleId}`);
+      throw new AnomalyRuleError(
+        `CRITICAL_RULE_NON_DISABLABLE: ruleId=${input.ruleId}`,
+        "anomaly.critical-non-disablable"
+      );
     }
 
     const config = await database.anomalyRuleConfig.upsert({
