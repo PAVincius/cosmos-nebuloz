@@ -42,9 +42,10 @@ describe.each([
     expect(text).not.toContain("@nebuloz.com");
   });
 
-  it("o encarregado provisório é o CEO; só o nome fica como marcador visível", () => {
+  it("o encarregado provisório é o co-CEO Willian Magalhães Marchi, sem marcador", () => {
     const quem = sections[0]?.body.join("\n") ?? "";
-    expect(quem).toMatch(/CEO/);
-    expect(quem).toMatch(/DADO NECESSÁRIO: nome completo do CEO/);
+    expect(quem).toContain("Willian Magalhães Marchi");
+    expect(quem).toMatch(/co-CEO/);
+    expect(quem).not.toMatch(/DADO NECESSÁRIO: nome completo do CEO/);
   });
 });
