@@ -132,3 +132,22 @@ Leitura: o app não erra sob 50 respondentes concorrentes (4.424 checks, 100 %),
 | A5 | Info | Ciclo de dependência entre gaps e o botão de ajuste de severidade/esforço não foram exercitados pela tela | Gap register | QA (próxima rodada) |
 
 Limpeza: servidor derrubado, `.next` apagado, `load/k6/.tokens.json` fora do git. Estado local deixado: AS-110, AS-K6-001 (50 respondentes), G-10/G-11 promovidos, TR-910, override no AS-104.
+
+## 2026-10-02 · Dogfood M2–M11 em produção (deploy READY 38c16f57) · QA
+
+Condição 7 do parecer `docs/qualidade/prontidao/meridian.md`. Sessão `meridian-prod` (agent-browser), CEO como consultor. Vai do CEO **por passo** (M1, M2, M3, M4a isolado, M5, M9); M4b e M10 só locais; M6, M7, M8 e M11 são leitura.
+
+**Decisão do CEO (2026-10-02):** o envio dos convites por e-mail (Resend, aliases do respondente externo) **ficou fora desta rodada**. No M2 os dez links saem pelo consultor, com "copiar link" na aba Coleta; a regra de não copiar link cai nesta rodada. Pendência: provar o envio por e-mail com um respondente externo, para cliente externo. Isso significa que o M2 não prova o FR-008 (convite por e-mail), só a geração dos dez links.
+
+Pré-condição: o reset de 29/09 zerou o Meridian em produção; o AS-NBZ-002 provavelmente não existe e o M1 volta como passo com vai. Antes de cada vai, confirmar a URL e o tenant ativo (lição de 27/09: o Meridian não mostra a organização ativa).
+
+| Quando | Passo | "Vai" | Quem operou | Resultado | Evidência |
+|---|---|---|---|---|---|
+| 2026-10-02 | **M1 (produção)** — leitura da carteira antes: só o AS-001 "teste" (Saúde · 299, Finalizado, do CEO; não tocado). Tenant ativo **Nebuloz** (botão do topo; URL `app.nebuloz.ai/meridian`). Sem AS-NBZ-002, então Novo assessment: org "Nebuloz", setor "Software B2B", porte "1–50" (como o gabarito), template "Bateria de prontidão para IA · v3.2", prazo digitado 01/11/2026. Um clique em "Criar assessment" | CEO, via Morgana (por passo) | QA (agent-browser `meridian-prod`, sessão do CEO como consultor) | OK — criou **AS-002** (código gerado pelo sistema, não `AS-NBZ-002`), estado **Rascunho**, template v3.2 imutável, aberto 02/10/2026, prazo mostrado **31/10/2026** (digitei 01/11; atrito A1 abaixo). Toast "AS-002 criado — segue pra atribuição de coleta". Carteira depois: 2 linhas (AS-002, AS-001), sem duplicata; Coleta (0) | `evidencias/prod-2026-10-02/m1-carteira-antes.png`, `m1-detalhe-as002.png`, `m1-carteira-depois.png`; id `cmurewrzx000104l4iuestd3y` |
+
+Atritos desta rodada:
+
+| # | Sev. | Atrito | Causa provável | Dono |
+|---|---|---|---|---|
+| A1 | Média | Prazo digitado 01/11/2026 aparece como 31/10/2026 no detalhe (um dia a menos) | Data gravada como meia-noite UTC e exibida no fuso de Brasília; não confirmado no código | Bussola |
+| A2 | Info | O login do consultor em produção não pôde ser feito pela aba Produção do Portal (não repassa clique); precisou de janela headed na máquina do CEO | Desenho do portal (README: produção só leitura) | QA / Morgana |
