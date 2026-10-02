@@ -89,6 +89,7 @@ describe("bootstrapCharter", () => {
     });
 
     expect(result.created).toBe(true);
+    expect(result.clausesCreated).toBe(8);
     const { data } = db.charterPolicySection.createMany.mock.calls[0][0];
     expect(data).toHaveLength(9);
     expect(data.every((s: { status: string }) => s.status === "DRAFT")).toBe(
@@ -142,6 +143,7 @@ describe("bootstrapCharter", () => {
     });
 
     expect(result.created).toBe(false);
+    expect(result.clausesCreated).toBe(8);
     expect(db.charterPolicy.create).not.toHaveBeenCalled();
     expect(db.charterPolicySection.createMany).not.toHaveBeenCalled();
     // O papel continua sendo garantido — upsert, não create.
@@ -163,33 +165,37 @@ describe("bootstrapCharter", () => {
     expect(args.data).toHaveLength(8);
   });
 
-  it("grava clauses_bootstrapped com o count real quando cria cláusulas", async () => {
+  it("grava clauses_bootstrapped com o count real e target explícito quando cria cláusulas", async () => {
     const db = makeDb({ policyExists: false });
     db.charterClause.createMany = vi.fn().mockResolvedValue({ count: 8 });
 
-    await bootstrapCharter(depsFor(db) as never, {
+    const result = await bootstrapCharter(depsFor(db) as never, {
       tenantId: "tenant-abc",
       complianceEmail: "ana@vanta.exemplo",
       actorUserId: "user-staff",
     });
 
+    expect(result.clausesCreated).toBe(8);
     const clauseAuditCall = db.auditLog.create.mock.calls.find(
       (call) => call[0].data.action === "charter.clauses_bootstrapped"
     );
     expect(clauseAuditCall).toBeDefined();
-    expect(clauseAuditCall?.[0].data.metadata.target).toContain("8");
+    expect(clauseAuditCall?.[0].data.metadata.target).toBe(
+      "vanta-saude · 8 cláusulas criadas"
+    );
   });
 
-  it("não grava clauses_bootstrapped quando nenhuma cláusula nova foi criada (re-provisionamento)", async () => {
+  it("não grava clauses_bootstrapped e devolve clausesCreated 0 quando nenhuma cláusula nova foi criada (re-provisionamento)", async () => {
     const db = makeDb({ policyExists: true });
     db.charterClause.createMany = vi.fn().mockResolvedValue({ count: 0 });
 
-    await bootstrapCharter(depsFor(db) as never, {
+    const result = await bootstrapCharter(depsFor(db) as never, {
       tenantId: "tenant-abc",
       complianceEmail: "ana@vanta.exemplo",
       actorUserId: "user-staff",
     });
 
+    expect(result.clausesCreated).toBe(0);
     const clauseAuditCall = db.auditLog.create.mock.calls.find(
       (call) => call[0].data.action === "charter.clauses_bootstrapped"
     );

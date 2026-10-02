@@ -181,7 +181,7 @@ describe("Bootstraps — somente leitura e sucesso", () => {
 
   it("CharterBootstrap: sucesso é um status vivo (Confirmacao)", async () => {
     mocks.bootstrapCharterAction.mockResolvedValue({
-      data: { created: true },
+      data: { clausesCreated: 8, created: true },
       ok: true,
     });
     render(<CharterBootstrap canWrite slug="acme" />);
@@ -197,6 +197,49 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     const status = await screen.findByRole("status");
     expect(status.getAttribute("aria-live")).toBe("polite");
     expect(status.textContent).toMatch(/Política criada/);
+    expect(status.textContent).toMatch(/8 cláusulas criadas na biblioteca/);
+  });
+
+  it("CharterBootstrap: re-provisionar com cláusulas já completas não afirma que só o papel foi garantido", async () => {
+    mocks.bootstrapCharterAction.mockResolvedValue({
+      data: { clausesCreated: 0, created: false },
+      ok: true,
+    });
+    render(<CharterBootstrap canWrite slug="acme" />);
+
+    fireEvent.change(
+      screen.getByLabelText("E-mail do responsável pelo Compliance"),
+      { target: { value: "c@acme.com" } }
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Preparar o Charter deste cliente" })
+    );
+
+    const status = await screen.findByRole("status");
+    expect(status.textContent).toMatch(/Política já existia/);
+    expect(status.textContent).toMatch(
+      /biblioteca de cláusulas já estava completa/i
+    );
+  });
+
+  it("CharterBootstrap: re-provisionar com cláusulas faltando mostra quantas foram criadas agora", async () => {
+    mocks.bootstrapCharterAction.mockResolvedValue({
+      data: { clausesCreated: 3, created: false },
+      ok: true,
+    });
+    render(<CharterBootstrap canWrite slug="acme" />);
+
+    fireEvent.change(
+      screen.getByLabelText("E-mail do responsável pelo Compliance"),
+      { target: { value: "c@acme.com" } }
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Preparar o Charter deste cliente" })
+    );
+
+    const status = await screen.findByRole("status");
+    expect(status.textContent).toMatch(/Política já existia/);
+    expect(status.textContent).toMatch(/3 cláusulas criadas na biblioteca/);
   });
 
   it("MeridianBootstrap: sucesso é um status vivo (Confirmacao)", async () => {
