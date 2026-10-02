@@ -552,6 +552,17 @@ describe("resolveConflict revalida o overlay", () => {
     });
   });
 
+  it("sem a versão de referência não há como validar: recusa em vez de pular a validação", async () => {
+    h.versionFindUnique.mockResolvedValue(null);
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "ADMIN" });
+    h.conflictFindFirst.mockResolvedValue(conflito(REMOVE_OBRIGATORIO));
+    expect(await resolver("keep_overlay")).toMatchObject({
+      ok: false,
+      code: "TEMPLATE_HAS_NO_PUBLISHED_VERSION",
+    });
+    expect(h.conflictUpdate).not.toHaveBeenCalled();
+  });
+
   it("take_upstream e drop_operation validam o que sobra: se o resto é válido, passam", async () => {
     h.versionFindUnique.mockImplementation(versionLookup(true));
     h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "ADMIN" });

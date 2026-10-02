@@ -509,19 +509,22 @@ export async function resolveConflict(
           ? conflict.overlay.baseVersionId
           : conflict.againstVersionId
       );
-      if (reference) {
-        const { blocking } = validateOverlay(
-          reference.shape,
-          remaining,
-          { role: ctx.scaffoldRole },
-          { ignoreCriterionOps: true }
+      // Falha fechado: sem a versão de referência não há como validar, e pular
+      // a validação devolveria justamente o caminho que o #331 fechou.
+      if (!reference) {
+        throw new ScaffoldRuleError("TEMPLATE_HAS_NO_PUBLISHED_VERSION");
+      }
+      const { blocking } = validateOverlay(
+        reference.shape,
+        remaining,
+        { role: ctx.scaffoldRole },
+        { ignoreCriterionOps: true }
+      );
+      if (blocking.length > 0) {
+        throw new ScaffoldRuleError(
+          "OVERLAY_VIOLATES_GATE_RULES",
+          blocking.map((v) => v.note)
         );
-        if (blocking.length > 0) {
-          throw new ScaffoldRuleError(
-            "OVERLAY_VIOLATES_GATE_RULES",
-            blocking.map((v) => v.note)
-          );
-        }
       }
 
       if (input.resolution !== "keep_overlay") {

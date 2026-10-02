@@ -384,8 +384,16 @@ async function writeClose({
     select: { id: true },
   });
 
-  await db.scaffoldPhaseInstance.update({
-    where: { id: phase.id },
+  // `state` no where: a fase foi lida fora desta escrita, e fechar por cima de
+  // um estado que outra transação já mudou grava um fechamento sobre o que não
+  // era mais o que se avaliou. Nenhuma linha atingida = recusa; a transação
+  // desfaz o resultado criado acima.
+  const closed = await db.scaffoldPhaseInstance.updateMany({
+    where: {
+      id: phase.id,
+      track: { tenantId: ctx.tenantId },
+      state: phase.state,
+    },
     data: {
       state: to,
       closedAt: now,
@@ -401,6 +409,9 @@ async function writeClose({
         : {}),
     },
   });
+  if (closed.count !== 1) {
+    throw new ScaffoldRuleError("PHASE_NOT_CLOSABLE");
+  }
 
   // Fase fechada avança a trilha. Sem isto, fechar a ASSESS deixa a trilha em
   // ASSESS com a PILOT em IDLE — o gate registra a decisão e o produto não anda.
@@ -505,10 +516,20 @@ export async function closePhase(
         // #286 — o BLOCKED nunca chegava ao banco, e o override (que só age em
         // BLOCKED) ficava inalcançável. O erro sai depois do commit, abaixo.
         if (phase.state === "GATE_READY" || phase.state === "OPEN") {
-          await db.scaffoldPhaseInstance.update({
-            where: { id: phase.id },
+          // `state` no where: só bloqueia a fase que continua aberta. Um
+          // update por id reabriria como BLOCKED uma fase que outra transação
+          // fechou depois da leitura.
+          const blocked = await db.scaffoldPhaseInstance.updateMany({
+            where: {
+              id: phase.id,
+              track: { tenantId: ctx.tenantId },
+              state: { in: ["GATE_READY", "OPEN"] },
+            },
             data: { state: "BLOCKED" },
           });
+          if (blocked.count !== 1) {
+            throw new ScaffoldRuleError("PHASE_NOT_CLOSABLE");
+          }
           // A transição de estado é fato auditável: quem tentou fechar, e o que
           // faltava. Só quando a fase de fato mudou de estado.
           await logScaffoldAudit(db, ctx, {
