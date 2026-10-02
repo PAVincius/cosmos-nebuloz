@@ -143,6 +143,19 @@ export async function createTrackFromGap(
         throw new ScaffoldRuleError("GAP_ALREADY_PROMOTED");
       }
 
+      // A trilha que nasce de um gap parte do assessment em que ele foi achado
+      // (Vigia, #331). O gap é lido pelo tenant da sessão: gap de outro tenant,
+      // ou que não existe, não vale.
+      if (input.sourceAssessmentId) {
+        const gap = await db.meridianGap.findFirst({
+          where: { id: input.gapId, tenantId: ctx.tenantId },
+          select: { assessmentId: true },
+        });
+        if (gap?.assessmentId !== input.sourceAssessmentId) {
+          throw new ScaffoldRuleError("ASSESSMENT_GAP_MISMATCH");
+        }
+      }
+
       const created = await seedTrack(db, {
         tenantId: ctx.tenantId,
         processName: input.processName,
@@ -152,6 +165,7 @@ export async function createTrackFromGap(
         archetype: input.archetype,
         templateId: input.templateId,
         overlayId: input.overlayId,
+        actorRole: ctx.scaffoldRole,
         sourceAssessmentId: input.sourceAssessmentId,
         sourceGapId: input.gapId,
         sourcePromotionId: promotion.id,
@@ -210,6 +224,7 @@ export async function createTrack(
         archetype: input.archetype,
         templateId: input.templateId,
         overlayId: input.overlayId,
+        actorRole: ctx.scaffoldRole,
         sourceAssessmentId: input.sourceAssessmentId,
       });
       await logScaffoldAudit(db, ctx, {

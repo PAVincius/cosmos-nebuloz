@@ -41,6 +41,11 @@ const ModalCtx = createContext<ModalApi>({
 
 export const useModal = () => useContext(ModalCtx);
 
+/** Verdadeiro dentro do `ModalHost`, que já trata Esc, trap de Tab e devolução do
+ *  foco (com a confirmação de descarte). Fora dele — as telas do Scaffold
+ *  renderizam o `ModalShell` direto — a própria casca cuida disso. */
+const HostedCtx = createContext(false);
+
 /** `scopeClassName`: classe de escopo de tokens do módulo (ex.: `meridian-root`).
  *  O modal é portado para <body>, fora da raiz do módulo, e sem a classe os
  *  tokens do módulo (`--accent`, foco, `.btn`) não chegam ao diálogo. */
@@ -86,6 +91,10 @@ const BODY_FOCUSABLE_SELECTOR =
 // Focáveis para o trap de Tab — mesmo critério do foco inicial do ModalShell.
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+// Controles que o Tab alcança de fato: habilitados e não ocultos.
+const TAB_STOPS_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 function ModalHost({
   content,
@@ -191,7 +200,7 @@ function ModalHost({
           tabIndex={-1}
           type="button"
         />
-        {content}
+        <HostedCtx.Provider value={true}>{content}</HostedCtx.Provider>
         {confirming && (
           <div
             style={{
@@ -324,6 +333,17 @@ export function ModalShell({
 }) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const hosted = useContext(HostedCtx);
+  // Quem tinha o foco antes de o modal abrir. Lido na renderização, antes do
+  // commit: o `autoFocus` de um campo do corpo já move o foco no commit, e um
+  // efeito leria o campo, não o botão que abriu o modal (FR-013).
+  const openerRef = useRef<HTMLElement | null | undefined>(undefined);
+  if (openerRef.current === undefined) {
+    openerRef.current =
+      typeof document === "undefined"
+        ? null
+        : (document.activeElement as HTMLElement | null);
+  }
 
   useEffect(() => {
     // Foco no primeiro controle habilitado do corpo; sem controle (modal só de
@@ -336,7 +356,53 @@ export function ModalShell({
     if (!dialogRef.current?.contains(document.activeElement)) {
       dialogRef.current?.focus();
     }
-  }, []);
+    const opener = openerRef.current;
+    return () => {
+      // Sem host, é a casca que devolve o foco ao fechar.
+      if (!hosted) {
+        opener?.focus?.();
+      }
+    };
+  }, [hosted]);
+
+  // Sem `ModalHost`, Esc fecha e o Tab não escapa do diálogo (FR-012, FR-013).
+  // Com host, quem trata é ele — e ele pergunta antes de descartar um formulário
+  // sujo, o que este atalho atropelaria.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (hosted || !dialog) {
+      return;
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") {
+        return;
+      }
+      const todos = Array.from(
+        dialog.querySelectorAll<HTMLElement>(TAB_STOPS_SELECTOR)
+      ).filter((el) => el.tabIndex >= 0);
+      const primeiro = todos[0];
+      const ultimo = todos.at(-1);
+      if (!(primeiro && ultimo)) {
+        e.preventDefault();
+        return;
+      }
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primeiro.focus();
+      }
+    };
+    dialog.addEventListener("keydown", onKey);
+    return () => dialog.removeEventListener("keydown", onKey);
+  }, [hosted, onClose]);
 
   return (
     <div

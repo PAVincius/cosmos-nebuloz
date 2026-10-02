@@ -32,6 +32,8 @@ const h = vi.hoisted(() => ({
   settingsFindUnique: vi.fn(),
   userFindMany: vi.fn(),
   gateResultGroupBy: vi.fn(),
+  gapFindFirst: vi.fn(),
+  assessmentFindFirst: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -53,6 +55,8 @@ vi.mock("@repo/database", () => ({
         findMany: vi.fn().mockResolvedValue([]),
         update: h.promotionUpdate,
       },
+      meridianGap: { findFirst: h.gapFindFirst },
+      meridianAssessment: { findFirst: h.assessmentFindFirst },
       scaffoldTemplateVersion: { findFirst: h.versionFindFirst },
       scaffoldSequence: { upsert: h.sequenceUpsert },
       scaffoldTrack: {
@@ -856,5 +860,62 @@ describe("listTracks — progresso de entregáveis", () => {
     h.trackFindMany.mockResolvedValue([]);
     await listTracks({});
     expect(h.delFindMany).not.toHaveBeenCalled();
+  });
+});
+
+// Vigia (#331): `sourceAssessmentId` podia divergir do assessment do gap de
+// origem, e a trilha ficaria ligada a um diagnóstico e a uma lacuna que não são
+// do mesmo assessment.
+describe("createTrackFromGap: o assessment é o do gap de origem", () => {
+  const AS_GAP = "clx000000000000000assess01";
+  const AS_OUTRO = "clx000000000000000assess02";
+
+  beforeEach(() => {
+    h.gapFindFirst.mockResolvedValue({ assessmentId: AS_GAP });
+    h.assessmentFindFirst.mockResolvedValue({
+      id: AS_GAP,
+      code: "AS-104",
+      status: "REVIEW",
+      scores: [],
+    });
+  });
+
+  it("divergente é recusado, e nada é criado", async () => {
+    const res = await createTrackFromGap({
+      ...INPUT,
+      sourceAssessmentId: AS_OUTRO,
+    });
+    expect(res).toMatchObject({ ok: false, code: "ASSESSMENT_GAP_MISMATCH" });
+    expect(h.trackCreate).not.toHaveBeenCalled();
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+  });
+
+  it("igual cria, ligada ao assessment do gap", async () => {
+    const res = await createTrackFromGap({
+      ...INPUT,
+      sourceAssessmentId: AS_GAP,
+    });
+    expect(res.ok).toBe(true);
+    expect(h.trackCreate.mock.calls[0][0].data.sourceAssessmentId).toBe(AS_GAP);
+  });
+
+  it("o gap é lido pelo tenant da sessão: gap de outro tenant não vale", async () => {
+    h.gapFindFirst.mockResolvedValue(null);
+    const res = await createTrackFromGap({
+      ...INPUT,
+      sourceAssessmentId: AS_GAP,
+    });
+    expect(res).toMatchObject({ ok: false, code: "ASSESSMENT_GAP_MISMATCH" });
+    expect(h.gapFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ id: GAP, tenantId: "t1" }),
+      })
+    );
+  });
+
+  it("sem sourceAssessmentId nada muda: não consulta o gap", async () => {
+    const res = await createTrackFromGap(INPUT);
+    expect(res.ok).toBe(true);
+    expect(h.gapFindFirst).not.toHaveBeenCalled();
   });
 });

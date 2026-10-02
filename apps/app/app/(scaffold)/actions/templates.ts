@@ -478,18 +478,54 @@ export async function resolveConflict(
       const conflict = await db.scaffoldOverlayConflict.findFirst({
         where: { id: input.conflictId, tenantId: ctx.tenantId },
         include: {
-          overlay: { select: { id: true, name: true, ops: true } },
+          overlay: {
+            select: { id: true, name: true, ops: true, baseVersionId: true },
+          },
         },
       });
       if (!conflict) {
         throw new ScaffoldRuleError("OVERLAY_HAS_UNRESOLVED_CONFLICT");
       }
 
-      if (input.resolution !== "keep_overlay") {
-        const ops = (conflict.overlay.ops as unknown as OverlayOp[]).filter(
-          (o) =>
-            !(o.key === conflict.targetKey && o.target === conflict.targetType)
+      // O que sobra do overlay precisa passar na mesma validação do saveOverlay
+      // (Vigia, #331). Sem isso, `keep_overlay` mantinha um REMOVE de entregável
+      // que a versão nova tornou obrigatório, nas mãos de quem tem
+      // `template.publish` e não é consultor. O papel é o de quem resolve; a
+      // versão de referência é a que o overlay vai ter depois da resolução
+      // (a nova, salvo em `drop_operation`, que não rebaseia).
+      const remaining =
+        input.resolution === "keep_overlay"
+          ? (conflict.overlay.ops as unknown as OverlayOp[])
+          : (conflict.overlay.ops as unknown as OverlayOp[]).filter(
+              (o) =>
+                !(
+                  o.key === conflict.targetKey &&
+                  o.target === conflict.targetType
+                )
+            );
+      const reference = await loadShape(
+        db,
+        input.resolution === "drop_operation"
+          ? conflict.overlay.baseVersionId
+          : conflict.againstVersionId
+      );
+      if (reference) {
+        const { blocking } = validateOverlay(
+          reference.shape,
+          remaining,
+          { role: ctx.scaffoldRole },
+          { ignoreCriterionOps: true }
         );
+        if (blocking.length > 0) {
+          throw new ScaffoldRuleError(
+            "OVERLAY_VIOLATES_GATE_RULES",
+            blocking.map((v) => v.note)
+          );
+        }
+      }
+
+      if (input.resolution !== "keep_overlay") {
+        const ops = remaining;
         await db.scaffoldTemplateOverlay.update({
           where: { id: conflict.overlayId },
           data: {

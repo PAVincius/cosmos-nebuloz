@@ -46,7 +46,19 @@ describe("listScaffoldAssessments", () => {
     h.findMany.mockResolvedValue([]);
     await listScaffoldAssessments();
     expect(h.requirePerm).toHaveBeenCalledWith("track.manage");
-    expect(h.findMany.mock.calls[0]?.[0].where).toEqual({ tenantId: "t1" });
+    expect(h.findMany.mock.calls[0]?.[0].where).toMatchObject({
+      tenantId: "t1",
+    });
+  });
+
+  it("só aceita assessment com coleta fechada e score calculado: REVIEW ou FINALISED (Vigia, #331)", async () => {
+    h.findMany.mockResolvedValue([]);
+    await listScaffoldAssessments();
+    // Nenhum caminho do produto grava FINALISED hoje (só o seed): exigir só ele
+    // travaria toda trilha real. DRAFT e COLLECTING não têm score fechado.
+    expect(h.findMany.mock.calls[0]?.[0].where.status).toEqual({
+      in: ["REVIEW", "FINALISED"],
+    });
   });
 
   it("só devolve assessment com os cinco eixos pontuados, e a data é a de fechamento", async () => {

@@ -233,6 +233,119 @@ describe("GatePanel — fechar", () => {
   });
 });
 
+describe("GatePanel — evidência por critério (FR-006)", () => {
+  it("cada critério tem um campo de evidência, e a nota vai junto com o veredito", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(await screen.findByLabelText("Piloto vence o baseline"));
+    fireEvent.change(
+      screen.getByLabelText("Evidência: Piloto vence o baseline"),
+      { target: { value: "Comparativo anexado, 12% melhor que o baseline." } }
+    );
+    fireEvent.click(screen.getByRole("button", { name: /revisar e assinar/i }));
+
+    await waitFor(() => expect(h.closePhase).toHaveBeenCalledTimes(1));
+    expect(h.closePhase.mock.calls[0][0].criteriaFacts).toMatchObject({
+      "beats-baseline": {
+        met: true,
+        note: "Comparativo anexado, 12% melhor que o baseline.",
+      },
+    });
+  });
+
+  it("a nota digitada sobrevive a marcar e desmarcar o critério", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    render(<TrackDetailScreen param="trk1" />);
+    const caixa = await screen.findByLabelText("Piloto vence o baseline");
+    const evidencia = screen.getByLabelText(
+      "Evidência: Piloto vence o baseline"
+    ) as HTMLInputElement;
+    fireEvent.change(evidencia, { target: { value: "ver planilha" } });
+    fireEvent.click(caixa);
+    fireEvent.click(caixa);
+    expect(evidencia.value).toBe("ver planilha");
+  });
+
+  it("fase decidida mostra a evidência registrada, não um campo", async () => {
+    h.getTrack.mockResolvedValue({
+      ok: true,
+      data: trackWith("CLOSED", {
+        outcome: "PASSED",
+        decidedAt: new Date("2026-09-10"),
+        cycle: 0,
+        criteriaSnapshot: [
+          {
+            key: "beats-baseline",
+            statement: "Piloto vence o baseline",
+            met: true,
+            note: "Comparativo anexado",
+          },
+        ],
+        override: null,
+      }),
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    expect(await screen.findByText("Comparativo anexado")).toBeDefined();
+    expect(screen.queryByLabelText(/^evidência:/i)).toBeNull();
+  });
+});
+
+describe("GatePanel — override sem a permissão fica desabilitado, com o motivo (FR-009 + DESIGN.md)", () => {
+  const recusar = () =>
+    h.closePhase.mockResolvedValueOnce({
+      ok: false,
+      error: "Há critério de gate não atendido.",
+      code: "CRITERIA_UNMET",
+      blockers: ["no-new-risk"],
+    });
+
+  it("sem gate.override, depois da recusa o botão aparece DESABILITADO com o motivo escrito", async () => {
+    h.getAccess.mockResolvedValue(accessWithout(["gate.override"]));
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    recusar();
+    render(<TrackDetailScreen param="trk1" />);
+
+    fireEvent.click(await screen.findByLabelText("Piloto vence o baseline"));
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("BLOCKED") });
+    await waitFor(() => expect(h.getAccess).toHaveBeenCalled());
+    fireEvent.click(
+      await screen.findByRole("button", { name: /revisar e assinar/i })
+    );
+
+    const alerta = await screen.findByRole("alert");
+    expect(alerta.textContent).toContain("Nenhum risco novo");
+    const override = await screen.findByRole("button", {
+      name: /registrar override/i,
+    });
+    expect(override).toHaveProperty("disabled", true);
+    expect(
+      screen.getByText(/Requer papel Consultor — gate\.override/)
+    ).toBeDefined();
+    // Desabilitado de verdade: o clique não abre o diálogo de override.
+    fireEvent.click(override);
+    expect(
+      screen.queryByRole("button", { name: /registrar override e fechar/i })
+    ).toBeNull();
+    expect(h.overridePhase).not.toHaveBeenCalled();
+  });
+
+  it("com gate.override, o botão fica habilitado depois da recusa", async () => {
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
+    recusar();
+    render(<TrackDetailScreen param="trk1" />);
+    fireEvent.click(await screen.findByLabelText("Piloto vence o baseline"));
+    h.getTrack.mockResolvedValue({ ok: true, data: trackWith("BLOCKED") });
+    fireEvent.click(
+      await screen.findByRole("button", { name: /revisar e assinar/i })
+    );
+    const override = await screen.findByRole("button", {
+      name: /registrar override/i,
+    });
+    expect(override).toHaveProperty("disabled", false);
+  });
+});
+
 describe("GatePanel — recusa SG-02 vira override", () => {
   it("mostra a recusa no painel, recarrega, e o override leva as chaves", async () => {
     h.getTrack.mockResolvedValue({ ok: true, data: trackWith("GATE_READY") });
@@ -877,7 +990,7 @@ describe("papel só-leitura na trilha", () => {
     ).toBeDefined();
   });
 
-  it("fase fechada: Reabrir fase desabilitado sem gate.close", async () => {
+  it("fase fechada: sem gate.close, Reabrir fase fica DESABILITADO com o motivo escrito (DESIGN.md)", async () => {
     h.getAccess.mockResolvedValue(accessWithout(["gate.close"]));
     h.getTrack.mockResolvedValue({
       ok: true,
@@ -892,6 +1005,30 @@ describe("papel só-leitura na trilha", () => {
     render(<TrackDetailScreen param="trk1" />);
     const reopen = await screen.findByRole("button", { name: /reabrir fase/i });
     await waitFor(() => expect(reopen).toHaveProperty("disabled", true));
+    // O motivo está na tela, não só no title: quem não pode precisa saber a
+    // quem pedir.
+    expect(
+      screen.getByText(/Requer papel Consultor — gate\.close/)
+    ).toBeDefined();
+    fireEvent.click(reopen);
+    expect(h.reopenPhase).not.toHaveBeenCalled();
+  });
+
+  it("fase fechada: com gate.close, Reabrir fase fica habilitado", async () => {
+    h.getTrack.mockResolvedValue({
+      ok: true,
+      data: trackWith("CLOSED", {
+        outcome: "PASSED",
+        decidedAt: new Date("2026-09-10"),
+        cycle: 0,
+        criteriaSnapshot: [],
+        override: null,
+      }),
+    });
+    render(<TrackDetailScreen param="trk1" />);
+    expect(
+      await screen.findByRole("button", { name: /reabrir fase/i })
+    ).toBeDefined();
   });
 
   it("quem pode, continua podendo", async () => {

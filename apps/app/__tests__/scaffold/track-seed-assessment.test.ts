@@ -63,7 +63,12 @@ const versao = (archetype: string | null) => ({
 beforeEach(() => {
   vi.clearAllMocks();
   h.versionFindFirst.mockResolvedValue(versao(null));
-  h.assessmentFindFirst.mockResolvedValue({ id: ASSESSMENT });
+  h.assessmentFindFirst.mockResolvedValue({
+    id: ASSESSMENT,
+    code: "AS-001",
+    status: "FINALISED",
+    scores: [],
+  });
   h.conflictCount.mockResolvedValue(0);
   h.sequenceUpsert.mockResolvedValue({ next: 2 });
   h.trackCreate.mockResolvedValue({ id: "trk1", code: "TR-001" });
@@ -104,6 +109,38 @@ describe("trilha de prontidão (template sem forma de trabalho)", () => {
       })
     );
     expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+});
+
+describe("o assessment de origem precisa de coleta fechada (Vigia, #331)", () => {
+  it.each([
+    "DRAFT",
+    "COLLECTING",
+  ])("%s é recusado, em trilha de prontidão ou de forma de trabalho", async (status) => {
+    for (const archetype of [null, "TRIAGE"]) {
+      h.versionFindFirst.mockResolvedValue(versao(archetype));
+      h.assessmentFindFirst.mockResolvedValue({
+        id: ASSESSMENT,
+        code: "AS-001",
+        status,
+        scores: [],
+      });
+      await expect(
+        seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT })
+      ).rejects.toMatchObject({ code: "ASSESSMENT_NOT_READY" });
+    }
+    expect(h.trackCreate).not.toHaveBeenCalled();
+  });
+
+  it.each(["REVIEW", "FINALISED"])("%s é aceito", async (status) => {
+    h.assessmentFindFirst.mockResolvedValue({
+      id: ASSESSMENT,
+      code: "AS-001",
+      status,
+      scores: [],
+    });
+    await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
+    expect(h.trackCreate).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -174,6 +211,7 @@ describe("A2.1 conforme a confiança do assessment de origem", () => {
     h.assessmentFindFirst.mockResolvedValue({
       id: ASSESSMENT,
       code: "AS-104",
+      status: "FINALISED",
       scores: TODOS_CONFIAVEIS,
     });
     await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
@@ -192,6 +230,7 @@ describe("A2.1 conforme a confiança do assessment de origem", () => {
     h.assessmentFindFirst.mockResolvedValue({
       id: ASSESSMENT,
       code: "AS-120",
+      status: "FINALISED",
       scores: ATLAS,
     });
     await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
@@ -206,6 +245,7 @@ describe("A2.1 conforme a confiança do assessment de origem", () => {
       h.assessmentFindFirst.mockResolvedValue({
         id: ASSESSMENT,
         code: "AS-001",
+        status: "FINALISED",
         scores: lidos,
       });
       await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });
@@ -220,6 +260,7 @@ describe("A2.1 conforme a confiança do assessment de origem", () => {
     h.assessmentFindFirst.mockResolvedValue({
       id: ASSESSMENT,
       code: "AS-104",
+      status: "FINALISED",
       scores: TODOS_CONFIAVEIS,
     });
     await seedTrack(db, { ...INPUT, sourceAssessmentId: ASSESSMENT });

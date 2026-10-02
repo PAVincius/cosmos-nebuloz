@@ -2,7 +2,11 @@ import "server-only";
 
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
 import type { WorkFormCode } from "@/lib/scaffold/forms";
-import { applyOverlay, type OverlayOp } from "@/lib/scaffold/overlay-merge";
+import {
+  applyOverlay,
+  type OverlayOp,
+  validateOverlay,
+} from "@/lib/scaffold/overlay-merge";
 import { PHASE_ORDER } from "@/lib/scaffold/phases";
 import {
   LOW_CONFIDENCE_WORKSHOP_CODE,
@@ -65,6 +69,9 @@ export type SeedInput = {
   overlayId?: string;
   sourceGapId?: string;
   sourcePromotionId?: string;
+  /** Papel de quem cria a trilha, para revalidar o overlay (REMOVE de entregável
+   *  obrigatório é ato do consultor). Ausente vale como o mais restrito. */
+  actorRole?: string;
   /** Diagnóstico do Meridian de que a trilha nasce (D-27). Obrigatório em trilha
    *  de prontidão; opcional em trilha por forma de trabalho. */
   sourceAssessmentId?: string;
@@ -122,16 +129,72 @@ async function assertSourceAssessment(
     select: {
       id: true,
       code: true,
+      status: true,
       scores: { select: { confidence: true } },
     },
   });
   if (!assessment) {
     throw new ScaffoldRuleError("ASSESSMENT_NOT_FOUND");
   }
+  // Coleta fechada e score calculado. Não só FINALISED: nenhum caminho do
+  // produto grava FINALISED hoje, e exigir isso travaria toda trilha real.
+  if (assessment.status !== "REVIEW" && assessment.status !== "FINALISED") {
+    throw new ScaffoldRuleError("ASSESSMENT_NOT_READY");
+  }
   return {
     code: assessment.code,
     confidences: (assessment.scores ?? []).map((x) => Number(x.confidence)),
   };
+}
+
+/**
+ * O overlay precisa continuar válido contra a versão que a trilha vai pinar.
+ *
+ * Só o `saveOverlay` validava: um overlay salvo antes de uma versão nova pode ter
+ * ficado inválido (um REMOVE de entregável que virou obrigatório) e entrava na
+ * trilha sem passar pela regra. Aqui vale a mesma validação, com o papel de quem
+ * cria a trilha: REMOVE de obrigatório é ato do consultor. Operação de critério
+ * de um overlay antigo não é recusada — segue valendo, sem efeito no gate.
+ */
+function assertOverlayStillValid(
+  steps: VersionStep[],
+  deliverables: {
+    code: string;
+    title: string;
+    stepCode: string;
+    required: boolean;
+  }[],
+  ops: readonly OverlayOp[],
+  actorRole: string | undefined
+): void {
+  if (ops.length === 0) {
+    return;
+  }
+  const { blocking } = validateOverlay(
+    {
+      steps: steps.map((s) => ({
+        key: s.key,
+        statement: s.statement,
+        required: s.required,
+      })),
+      criteria: [],
+      deliverables: deliverables.map((d) => ({
+        key: d.code,
+        statement: d.title,
+        stepCode: d.stepCode,
+        required: d.required,
+      })),
+    },
+    ops,
+    { role: actorRole ?? "" },
+    { ignoreCriterionOps: true }
+  );
+  if (blocking.length > 0) {
+    throw new ScaffoldRuleError(
+      "OVERLAY_VIOLATES_GATE_RULES",
+      blocking.map((v) => v.note)
+    );
+  }
 }
 
 /**
@@ -266,6 +329,16 @@ export async function seedTrack(db: Db, input: SeedInput) {
     input.sourceAssessmentId
   );
   const overlayOps = await loadOverlayOps(db, input.tenantId, input.overlayId);
+  const deliverableTemplates = await db.scaffoldDeliverableTemplate.findMany({
+    where: { versionId: version.id },
+    orderBy: [{ phase: "asc" }, { seq: "asc" }],
+  });
+  assertOverlayStillValid(
+    version.steps,
+    deliverableTemplates,
+    overlayOps,
+    input.actorRole
+  );
   const steps = resolveSteps(version.steps, overlayOps);
   const code = await nextCode({
     db,
@@ -314,7 +387,7 @@ export async function seedTrack(db: Db, input: SeedInput) {
   await instantiateDeliverables(db, {
     tenantId: input.tenantId,
     trackId: track.id,
-    versionId: version.id,
+    templates: deliverableTemplates,
     overlayOps,
     // A2.1 condicional: só na trilha de prontidão (o A2.1 das formas de trabalho
     // é outro entregável, o mapa da fonte).
@@ -364,14 +437,17 @@ async function instantiateDeliverables(
   {
     tenantId,
     trackId,
-    versionId,
+    templates,
     overlayOps,
     autoDispense,
     people,
   }: {
     tenantId: string;
     trackId: string;
-    versionId: string;
+    /** Entregáveis do molde, já lidos (e já usados para validar o overlay). */
+    templates: Awaited<
+      ReturnType<Db["scaffoldDeliverableTemplate"]["findMany"]>
+    >;
     overlayOps: readonly OverlayOp[];
     /** Entregáveis que nascem dispensados pelo sistema por regra do molde,
      *  com o motivo. Motivo nulo = nasce como o molde manda. */
@@ -379,10 +455,6 @@ async function instantiateDeliverables(
     people: TrackPeople;
   }
 ): Promise<void> {
-  const templates = await db.scaffoldDeliverableTemplate.findMany({
-    where: { versionId },
-    orderBy: [{ phase: "asc" }, { seq: "asc" }],
-  });
   if (templates.length === 0) {
     return;
   }

@@ -562,6 +562,7 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
         >
           <GatePanel
             busy={busy}
+            canOverride={can("gate.override").allowed}
             canReopen={can("gate.close").allowed}
             closeBlockedReason={
               can("gate.close").allowed
@@ -574,11 +575,12 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
                   "Sem permissão para fechar o gate.")
             }
             key={activePhase.id}
-            // Trocar de fase zera o que foi marcado: os critérios são outros.
             notice={gateNotice}
             onClose={closeGate}
+            // Trocar de fase zera o que foi marcado: os critérios são outros.
             onOverride={(unmet) => openModal({ kind: "override", unmet })}
             onReopen={() => openModal({ kind: "reopen" })}
+            overrideReason={can("gate.override").reason}
             phase={activePhase}
             reopenReason={can("gate.close").reason}
           />

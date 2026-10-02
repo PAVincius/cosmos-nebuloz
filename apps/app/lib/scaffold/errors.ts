@@ -15,6 +15,8 @@ export const SCAFFOLD_ERROR = {
   OVERLAY_HAS_UNRESOLVED_CONFLICT: "OVERLAY_HAS_UNRESOLVED_CONFLICT",
   ASSESSMENT_REQUIRED: "ASSESSMENT_REQUIRED",
   ASSESSMENT_NOT_FOUND: "ASSESSMENT_NOT_FOUND",
+  ASSESSMENT_NOT_READY: "ASSESSMENT_NOT_READY",
+  ASSESSMENT_GAP_MISMATCH: "ASSESSMENT_GAP_MISMATCH",
   OVERLAY_NOT_FOUND: "OVERLAY_NOT_FOUND",
   OVERLAY_VIOLATES_GATE_RULES: "OVERLAY_VIOLATES_GATE_RULES",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
@@ -34,6 +36,7 @@ export const SCAFFOLD_ERROR = {
   DELIVERABLE_SELF_REVIEW: "DELIVERABLE_SELF_REVIEW",
   DELIVERABLE_FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
   DELIVERABLE_PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
+  DELIVERABLE_DISPENSED: "DELIVERABLE_DISPENSED",
   DELIVERABLE_NO_FILE: "DELIVERABLE_NO_FILE",
   DELIVERABLE_FILE_TYPE_NOT_ALLOWED: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
   DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE: "DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE",
@@ -77,6 +80,10 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Trilha de prontidão nasce de um diagnóstico do Meridian. Escolha o assessment de origem — sem ele, a trilha não tem o relatório, o baseline nem a reavaliação que o gate lê.",
   ASSESSMENT_NOT_FOUND:
     "O assessment escolhido não existe nesta organização. Escolha um assessment do Meridian desta organização para ligar à trilha.",
+  ASSESSMENT_NOT_READY:
+    "Este assessment ainda está em coleta. A trilha nasce de um diagnóstico com a coleta fechada e o score calculado: espere o assessment chegar a revisão ou finalize-o no Meridian.",
+  ASSESSMENT_GAP_MISMATCH:
+    "O assessment escolhido não é o do gap de origem. Uma trilha que nasce de um gap parte do diagnóstico em que ele foi encontrado: escolha o assessment desse gap.",
   OVERLAY_NOT_FOUND:
     "O overlay escolhido não existe nesta organização. Escolha outro, ou crie a trilha sem overlay — trilha criada sem a customização que o cliente pediu seria uma surpresa.",
   OVERLAY_VIOLATES_GATE_RULES:
@@ -106,6 +113,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Anexe o arquivo do entregável antes de enviar para revisão.",
   DELIVERABLE_PHASE_NOT_OPEN:
     "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.",
+  DELIVERABLE_DISPENSED:
+    "Este entregável está dispensado e não tem ação: o motivo da dispensa está na linha dele.",
   DELIVERABLE_NO_FILE: "Este entregável não tem arquivo nessa versão.",
   DELIVERABLE_ASSIGNEE_NOT_ELIGIBLE:
     "Esta pessoa não pode ser designada. O responsável precisa de papel no Scaffold que trabalhe no entregável, e o aprovador, de um que revise; quem só lê não produz nem aprova.",

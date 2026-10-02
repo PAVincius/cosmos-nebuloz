@@ -17,12 +17,17 @@ const STATUS_LABEL: Record<string, string> = {
   FINALISED: "Finalizado",
 };
 
-/** dd/mm/aaaa em UTC: o rótulo não muda com o fuso de quem renderiza. */
-function formatDate(d: Date): string {
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}/${d.getUTCFullYear()}`;
-}
+/** dd/mm/aaaa em America/Sao_Paulo, o mesmo fuso do relatório do assessment: em
+ *  UTC, um assessment fechado às 23h de Brasília sairia com o dia seguinte. Fixo,
+ *  e não o fuso de quem renderiza, para o rótulo ser o mesmo em todo lugar. */
+const DATE_BR = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
+
+const formatDate = (d: Date) => DATE_BR.format(d);
 
 export type AssessmentOption = {
   id: string;

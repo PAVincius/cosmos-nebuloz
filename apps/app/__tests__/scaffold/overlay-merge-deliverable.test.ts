@@ -228,6 +228,64 @@ describe("validateOverlay", () => {
     }
   });
 
+  it("overlay antigo com operação de critério segue valendo sem efeito: ignoreCriterionOps só afrouxa isso", () => {
+    const antigo: OverlayOp = {
+      op: "REPLACE",
+      target: "criterion",
+      key: "beats-baseline",
+      patch: { statement: "Afrouxado" },
+    };
+    // Salvar continua recusando (padrão).
+    expect(codes(validateOverlay(BASE, [antigo], consultant))).toEqual([
+      "CRITERION_OVERLAY_NOT_EFFECTIVE",
+    ]);
+    // Criar trilha e resolver conflito não quebram overlay que já existe.
+    const tolerante = { ignoreCriterionOps: true };
+    expect(
+      validateOverlay(BASE, [antigo], consultant, tolerante).blocking
+    ).toEqual([]);
+    // O resto da validação segue valendo, na mesma passada.
+    expect(
+      codes(
+        validateOverlay(
+          BASE,
+          [antigo, remove("B1.1", "Já temos catálogo no DataHub")],
+          owner,
+          tolerante
+        )
+      )
+    ).toEqual(["REQUIRED_DELIVERABLE_REMOVAL_NOT_CONSULTANT"]);
+  });
+
+  it("overlay antigo com operação de critério segue valendo sem efeito: ignoreCriterionOps só afrouxa isso", () => {
+    const antigo: OverlayOp = {
+      op: "REPLACE",
+      target: "criterion",
+      key: "beats-baseline",
+      patch: { statement: "Afrouxado" },
+    };
+    // Salvar continua recusando (padrão).
+    expect(codes(validateOverlay(BASE, [antigo], consultant))).toEqual([
+      "CRITERION_OVERLAY_NOT_EFFECTIVE",
+    ]);
+    // Criar trilha e resolver conflito não quebram overlay que já existe.
+    const tolerante = { ignoreCriterionOps: true };
+    expect(
+      validateOverlay(BASE, [antigo], consultant, tolerante).blocking
+    ).toEqual([]);
+    // O resto da validação segue valendo, na mesma passada.
+    expect(
+      codes(
+        validateOverlay(
+          BASE,
+          [antigo, remove("B1.1", "Já temos catálogo no DataHub")],
+          owner,
+          tolerante
+        )
+      )
+    ).toEqual(["REQUIRED_DELIVERABLE_REMOVAL_NOT_CONSULTANT"]);
+  });
+
   it("remover passo sem entregável obrigatório é livre", () => {
     const shape: TemplateShape = {
       ...BASE,

@@ -138,6 +138,15 @@ function shape(withRollback: boolean) {
         seq: 1,
       },
     ],
+    deliverables: [
+      {
+        code: "B1.1",
+        title: "Catálogo inicial",
+        stepCode: "run-pilot",
+        required: true,
+        seq: 1,
+      },
+    ],
     criteria: [
       {
         key: "beats-baseline",
@@ -485,6 +494,90 @@ describe("listTemplates — overlay com operação de critério", () => {
         criterionOpCount: 1,
       });
     }
+  });
+});
+
+// Vigia (#331): resolver conflito com keep_overlay mantém as operações, e a
+// versão nova pode ter tornado obrigatório o que o overlay remove. Quem tem
+// template.publish e não é consultor não pode manter esse REMOVE.
+describe("resolveConflict revalida o overlay", () => {
+  const REMOVE_OBRIGATORIO = [
+    {
+      op: "REMOVE" as const,
+      target: "deliverable" as const,
+      key: "B1.1",
+      reason: "O cliente já mantém o catálogo no DataHub",
+    },
+  ];
+  const conflito = (ops: unknown) => ({
+    id: "cf1",
+    overlayId: OVL,
+    againstVersionId: V4,
+    targetType: "deliverable",
+    targetKey: "B1.1",
+    overlay: { id: OVL, name: "Overlay Atlas", ops, baseVersionId: V3 },
+  });
+  const resolver = (
+    resolution: "keep_overlay" | "take_upstream" | "drop_operation"
+  ) => resolveConflict({ conflictId: "clx00000000000000000cf01", resolution });
+
+  it("keep_overlay com REMOVE de obrigatório por quem não é consultor é recusado", async () => {
+    h.versionFindUnique.mockImplementation(versionLookup(true));
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "ADMIN" });
+    h.conflictFindFirst.mockResolvedValue(conflito(REMOVE_OBRIGATORIO));
+    expect(await resolver("keep_overlay")).toMatchObject({
+      ok: false,
+      code: "OVERLAY_VIOLATES_GATE_RULES",
+    });
+    expect(h.conflictUpdate).not.toHaveBeenCalled();
+  });
+
+  it("o consultor mantém o REMOVE, com o motivo que já está na operação", async () => {
+    h.versionFindUnique.mockImplementation(versionLookup(true));
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "CONSULTANT" });
+    h.conflictFindFirst.mockResolvedValue(conflito(REMOVE_OBRIGATORIO));
+    expect((await resolver("keep_overlay")).ok).toBe(true);
+    expect(h.conflictUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it("keep_overlay de REMOVE sem motivo é recusado até para o consultor", async () => {
+    h.versionFindUnique.mockImplementation(versionLookup(true));
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "CONSULTANT" });
+    h.conflictFindFirst.mockResolvedValue(
+      conflito([{ op: "REMOVE", target: "deliverable", key: "B1.1" }])
+    );
+    expect(await resolver("keep_overlay")).toMatchObject({
+      ok: false,
+      code: "OVERLAY_VIOLATES_GATE_RULES",
+    });
+  });
+
+  it("take_upstream e drop_operation validam o que sobra: se o resto é válido, passam", async () => {
+    h.versionFindUnique.mockImplementation(versionLookup(true));
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "ADMIN" });
+    // O conflito é do critério; o REMOVE de obrigatório continua no overlay e
+    // quem não é consultor não pode deixá-lo ali.
+    h.conflictFindFirst.mockResolvedValue({
+      ...conflito([...REMOVE_OBRIGATORIO, ...VANTA_OPS]),
+      targetType: "criterion",
+      targetKey: "rollback-tested-prod",
+    });
+    expect(await resolver("take_upstream")).toMatchObject({
+      ok: false,
+      code: "OVERLAY_VIOLATES_GATE_RULES",
+    });
+    expect(h.overlayUpdate).not.toHaveBeenCalled();
+  });
+
+  it("overlay antigo só com operação de critério resolve como sempre", async () => {
+    h.versionFindUnique.mockImplementation(versionLookup(true));
+    h.requirePerm.mockResolvedValue({ ...CTX, scaffoldRole: "ADMIN" });
+    h.conflictFindFirst.mockResolvedValue({
+      ...conflito(VANTA_OPS),
+      targetType: "criterion",
+      targetKey: "rollback-tested-prod",
+    });
+    expect((await resolver("keep_overlay")).ok).toBe(true);
   });
 });
 

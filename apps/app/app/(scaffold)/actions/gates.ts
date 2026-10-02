@@ -499,13 +499,28 @@ export async function closePhase(
       if (!evaluation.canClose) {
         // SG-02. A fase vai para BLOCKED e NENHUM resultado é gravado:
         // resultado só nasce ao fechar, e gate que não passa não é resultado.
+        //
+        // A recusa é DEVOLVIDA, não lançada daqui: `withTenantDb` é uma transação
+        // interativa, e um throw dentro dela desfaz o update. Era o defeito do
+        // #286 — o BLOCKED nunca chegava ao banco, e o override (que só age em
+        // BLOCKED) ficava inalcançável. O erro sai depois do commit, abaixo.
         if (phase.state === "GATE_READY" || phase.state === "OPEN") {
           await db.scaffoldPhaseInstance.update({
             where: { id: phase.id },
             data: { state: "BLOCKED" },
           });
+          // A transição de estado é fato auditável: quem tentou fechar, e o que
+          // faltava. Só quando a fase de fato mudou de estado.
+          await logScaffoldAudit(db, ctx, {
+            action: "scaffold.gate.close-refused",
+            entityType: "scaffold.phase",
+            entityId: phase.id,
+            target: `${phase.track.code} · ${phase.phase}`,
+            diff: [["Estado", phase.state, "BLOCKED"]],
+            note: `Critérios não atendidos: ${evaluation.blockers.join(", ")}.`,
+          });
         }
-        throw new ScaffoldRuleError("CRITERIA_UNMET", evaluation.blockers);
+        return { refusedBlockers: evaluation.blockers };
       }
 
       const write = await writeClose({
@@ -529,6 +544,12 @@ export async function closePhase(
 
       return { gateResultId: resultId };
     });
+
+    // Recusa do SG-02: a transação já commitou o BLOCKED e a auditoria; só agora
+    // o erro sobe, para a tela mostrar o motivo e oferecer o override.
+    if ("refusedBlockers" in out) {
+      throw new ScaffoldRuleError("CRITERIA_UNMET", out.refusedBlockers);
+    }
 
     // Depois da transação: o Cosmos cria o épico e as features a partir disto.
     for (const event of closedEvents) {

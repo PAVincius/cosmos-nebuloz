@@ -26,6 +26,7 @@ import {
   type DeliverableActor,
   type DeliverableSubject,
   type DeliverableTransition,
+  decideAssign,
   decideAttach,
   decideEdit,
   decideLink,
@@ -85,6 +86,7 @@ function refuse(code: TransitionDenial, message: string): never {
     FILE_REQUIRED: "DELIVERABLE_FILE_REQUIRED",
     PHASE_NOT_OPEN: "DELIVERABLE_PHASE_NOT_OPEN",
     INVALID_TRANSITION: "DELIVERABLE_TRANSITION_INVALID",
+    DISPENSED: "DELIVERABLE_DISPENSED",
   } as const;
   throw new ScaffoldRuleError(domain[code]);
 }
@@ -103,6 +105,8 @@ async function loadSubject(db: Db, tenantId: string, deliverableId: string) {
       version: true,
       fileKey: true,
       fileName: true,
+      // A máquina recusa toda ação em entregável dispensado.
+      dispensedReason: true,
       track: { select: { code: true } },
       phaseInstance: { select: { id: true, phase: true, state: true } },
     },
@@ -119,6 +123,7 @@ function toSubject(d: {
   ownerId: string | null;
   approverId: string | null;
   fileKey: string | null;
+  dispensedReason?: string | null;
   phaseInstance: { state: string };
 }): DeliverableSubject {
   return {
@@ -127,6 +132,7 @@ function toSubject(d: {
     approverId: d.approverId,
     phaseState: d.phaseInstance.state as DeliverableSubject["phaseState"],
     hasFile: d.fileKey !== null,
+    dispensed: Boolean(d.dispensedReason),
   };
 }
 
@@ -372,6 +378,10 @@ export async function assignDeliverable(
 
     await withTenantDb(ctx.tenantId, async (db) => {
       const d = await loadSubject(db, ctx.tenantId, input.deliverableId);
+      const assignable = decideAssign(toSubject(d));
+      if (!assignable.ok) {
+        refuse(assignable.code, assignable.message);
+      }
       const ownerId = input.ownerId ?? d.ownerId;
       const approverId = input.approverId ?? d.approverId;
       if (ownerId && approverId && ownerId === approverId) {

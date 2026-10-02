@@ -234,18 +234,27 @@ export function NewTrackModal({
 
   return (
     <ModalShell
-      actions={
+      // As ações vão no rodapé, depois do corpo, e não no cabeçalho: com o
+      // `actions` do ModalShell elas vinham antes dos campos na ordem do DOM, e
+      // quem navega por teclado chegava a "Criar trilha" antes de qualquer
+      // campo (FR-011).
+      footer={
         <>
-          <Button disabled={busy} onClick={onClose} variant="secondary">
-            Cancelar
-          </Button>
-          <Button
-            disabled={busy || !canSubmit || !templates}
-            icon="layers"
-            onClick={submit}
-          >
-            Criar trilha
-          </Button>
+          <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+            Tab percorre os campos · Esc fecha
+          </span>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button disabled={busy} onClick={onClose} variant="secondary">
+              Cancelar
+            </Button>
+            <Button
+              disabled={busy || !canSubmit || !templates}
+              icon="layers"
+              onClick={submit}
+            >
+              Criar trilha
+            </Button>
+          </div>
         </>
       }
       icon="layers"

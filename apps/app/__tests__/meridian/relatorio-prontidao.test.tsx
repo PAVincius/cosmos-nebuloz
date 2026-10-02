@@ -70,7 +70,7 @@ beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
 describe("RelatorioTab — faixas e arquétipo", () => {
-  it("cada eixo mostra a faixa por extenso; confiança baixa vira 'Não confiável'", async () => {
+  it("cada eixo mostra a faixa por extenso; confiança baixa ACRESCENTA a marca, não troca a faixa", async () => {
     h.getReport.mockResolvedValue({ ok: true, data: reportFor(ATLAS) });
     render(<RelatorioTab a={A} />);
     await screen.findByText(/Arquétipo de prontidão/);
@@ -81,9 +81,15 @@ describe("RelatorioTab — faixas e arquétipo", () => {
         .closest("div") as HTMLElement;
     expect(within(linha("Data")).getByText("Inicial")).toBeTruthy();
     expect(within(linha("Process")).getByText("Em formação")).toBeTruthy();
-    expect(within(linha("People")).getByText("Não confiável")).toBeTruthy();
     expect(within(linha("Governance")).getByText("Em formação")).toBeTruthy();
     expect(within(linha("Infrastructure")).getByText("Inicial")).toBeTruthy();
+    // Pessoas: as duas coisas, faixa e marca (spec, US1 cenário 2).
+    expect(within(linha("People")).getByText("Em formação")).toBeTruthy();
+    expect(within(linha("People")).getByText("Não confiável")).toBeTruthy();
+    // Os demais eixos não levam a marca.
+    for (const eixo of ["Data", "Process", "Governance", "Infrastructure"]) {
+      expect(within(linha(eixo)).queryByText("Não confiável")).toBeNull();
+    }
   });
 
   it("o card do arquétipo mostra o dominante e o traço secundário (Atlas)", async () => {

@@ -105,6 +105,9 @@ export type DeliverableSubject = {
   phaseState: PhaseState;
   /** Há arquivo anexado na versão atual. Enviar para revisão exige. */
   hasFile: boolean;
+  /** Dispensado (por módulo, por regra do molde ou por overlay): não vale para
+   *  esta trilha e não tem ação nenhuma. Ausente = não dispensado. */
+  dispensed?: boolean;
 };
 
 /** Fases em que se trabalha num entregável. A que ainda não abriu (IDLE) é só
@@ -121,6 +124,9 @@ const REOPENABLE_PHASES: readonly PhaseState[] = [
   "OBSERVING",
 ];
 
+const DISPENSED_MESSAGE =
+  "Este entregável está dispensado e não tem ação: o motivo da dispensa está na linha dele.";
+
 const PHASE_NOT_OPEN_MESSAGE =
   "A fase deste entregável ainda não abriu: ele é só leitura até o gate da fase anterior fechar.";
 
@@ -132,7 +138,8 @@ export type TransitionDenial =
   | "SELF_REVIEW"
   | "COMMENT_REQUIRED"
   | "FILE_REQUIRED"
-  | "PHASE_NOT_OPEN";
+  | "PHASE_NOT_OPEN"
+  | "DISPENSED";
 
 export type TransitionResult =
   | { ok: true; to: DeliverableStatus }
@@ -158,6 +165,9 @@ export function decideTransition(
   comment?: string
 ): TransitionResult {
   const rule = TRANSITIONS[transition];
+  if (subject.dispensed) {
+    return deny("DISPENSED", DISPENSED_MESSAGE);
+  }
   if (!rule.from.includes(subject.status)) {
     return deny(
       "INVALID_TRANSITION",
@@ -250,6 +260,9 @@ function decideWorkOn(
   allowed: readonly DeliverableStatus[],
   stateMessage: string
 ): WorkDecision {
+  if (subject.dispensed) {
+    return { ok: false, code: "DISPENSED", message: DISPENSED_MESSAGE };
+  }
   if (!WORKABLE_PHASES.includes(subject.phaseState)) {
     return {
       ok: false,
@@ -304,6 +317,15 @@ export function decideAttach(
     ATTACHABLE,
     "Só se anexa arquivo a entregável em elaboração, com ajuste pedido ou reaberto. Inicie antes, ou reabra."
   );
+}
+
+/** Designar responsável ou aprovador. Dispensado não recebe ninguém: precisa ser
+ *  reativado antes (Vigia, #331). Quem pode designar é regra de papel, na action. */
+export function decideAssign(subject: DeliverableSubject): WorkDecision {
+  if (subject.dispensed) {
+    return { ok: false, code: "DISPENSED", message: DISPENSED_MESSAGE };
+  }
+  return { ok: true };
 }
 
 /** Vínculo com item externo (S6): referência, vale em qualquer estado do
