@@ -26,6 +26,7 @@ import {
 import { getBenchmarkEnablement } from "@/app/(meridian)/actions/benchmark";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
 import { finalOf, scoreTone } from "@/lib/meridian/composite";
+import { FUSO_BRASILIA } from "@/lib/meridian/prazo";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Field,
@@ -61,6 +62,7 @@ const dateBR = (iso: string) =>
     day: "2-digit",
     month: "short",
     year: "numeric",
+    timeZone: FUSO_BRASILIA,
   });
 
 export function NewAssessmentModal({

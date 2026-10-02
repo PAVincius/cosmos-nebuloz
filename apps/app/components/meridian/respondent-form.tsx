@@ -21,6 +21,7 @@ import {
   saveDraft,
   submitBattery,
 } from "@/app/(meridian)/actions/respondent";
+import { formatarPrazo } from "@/lib/meridian/prazo";
 import { useActionToast as runWithToast } from "../cosmos/use-action-toast";
 
 const LIKERT = [
@@ -139,7 +140,7 @@ export function RespondentForm({
           <>
             <Badge dot tone="accent">
               {answered} de {total} · prazo{" "}
-              {new Date(battery.context.deadline).toLocaleDateString("pt-BR")}
+              {formatarPrazo(battery.context.deadline)}
             </Badge>
             <Badge tone="neutral">só o seu eixo é visível</Badge>
           </>

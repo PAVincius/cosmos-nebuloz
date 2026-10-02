@@ -321,6 +321,50 @@ describe("createAssessment", () => {
     expect(h.assessmentCreate).not.toHaveBeenCalled();
   });
 
+  // Atrito A1: o prazo é um dia de calendário de Brasília. Gravar "2026-11-01"
+  // como meia-noite UTC o exibia como 31/10 e vencia o token 21h antes.
+  it("prazo digitado como data vira o fim desse dia em Brasília", async () => {
+    h.templateFindFirst.mockResolvedValue({
+      id: TPL_ID,
+      version: "v3.2",
+      lockedAt: null,
+    });
+    const res = await createAssessment({ ...input, deadline: "2099-11-01" });
+    expect(res.ok).toBe(true);
+    const created = h.assessmentCreate.mock.calls[0]?.[0] as {
+      data: { deadline: Date };
+    };
+    expect(created.data.deadline.toISOString()).toBe(
+      "2099-11-02T02:59:59.999Z"
+    );
+  });
+
+  it("aceita o dia de hoje de Brasília: o prazo só vence no fim dele", async () => {
+    h.templateFindFirst.mockResolvedValue({
+      id: TPL_ID,
+      version: "v3.2",
+      lockedAt: null,
+    });
+    const hoje = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo",
+    }).format(new Date());
+    const res = await createAssessment({ ...input, deadline: hoje });
+    expect(res.ok).toBe(true);
+  });
+
+  it("recusa ontem de Brasília", async () => {
+    h.templateFindFirst.mockResolvedValue({
+      id: TPL_ID,
+      version: "v3.2",
+      lockedAt: null,
+    });
+    const ontem = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo",
+    }).format(new Date(Date.now() - 86_400_000));
+    const res = await createAssessment({ ...input, deadline: ontem });
+    expect(res.ok).toBe(false);
+  });
+
   it("recusa prazo no passado — nasceria com o token do respondente já expirado", async () => {
     h.templateFindFirst.mockResolvedValue({
       id: TPL_ID,

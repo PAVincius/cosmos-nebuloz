@@ -14,6 +14,7 @@ import {
   getAssessment,
 } from "@/app/(meridian)/actions/assessments";
 import { scoreTone } from "@/lib/meridian/composite";
+import { formatarPrazo } from "@/lib/meridian/prazo";
 import {
   BackLink,
   ModalProvider,
@@ -40,8 +41,7 @@ const STATUS_LABEL: Record<
   FINALISED: ["Finalizado", "green"],
 };
 
-const dateBR = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
+const dateBR = (iso: string | null) => (iso ? formatarPrazo(iso) : "—");
 
 export default function AssessmentDetailScreen({ param }: ScreenProps) {
   const router = useRouter();
