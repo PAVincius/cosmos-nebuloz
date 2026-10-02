@@ -71,6 +71,28 @@ export async function confirmComputed(
         );
       }
 
+      // A leitura acima não segura nada: duas confirmações, ou uma confirmação
+      // e um override, leem CONTESTED ao mesmo tempo. O estado vai no where da
+      // escrita — o banco deixa uma só mudar a linha, e quem perde a corrida
+      // sai antes de gravar código, confirmação ou trilha. A trava de
+      // FINALISED entra pelo mesmo where. Só o status muda: `final` e
+      // `computed` não são tocados.
+      const claimed = await db.meridianAxisScore.updateMany({
+        where: {
+          id: score.id,
+          tenantId: ctx.tenantId,
+          status: "CONTESTED",
+          assessment: { status: { not: "FINALISED" } },
+        },
+        data: { status: "COMPUTED" },
+      });
+      if (claimed.count !== 1) {
+        throw new StateConflictError(
+          "confirm.state-changed",
+          "O eixo mudou de estado enquanto você decidia — recarregue a tela antes de confirmar."
+        );
+      }
+
       const value = score.final ?? score.computed;
       const code = await nextCode({
         db,
@@ -91,12 +113,6 @@ export async function confirmComputed(
           reviewerId: ctx.userId,
         },
         select: { id: true, code: true },
-      });
-
-      // Só o status muda: `final` e `computed` não são tocados.
-      await db.meridianAxisScore.update({
-        where: { id: score.id },
-        data: { status: "COMPUTED" },
       });
 
       await logMeridianAudit(db, ctx, {

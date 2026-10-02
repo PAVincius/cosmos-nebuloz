@@ -11,7 +11,7 @@ const h = vi.hoisted(() => ({
   requirePerm: vi.fn(),
   assessmentFindFirst: vi.fn(),
   scoreFindFirst: vi.fn(),
-  scoreUpdate: vi.fn(),
+  scoreUpdateMany: vi.fn(),
   overrideCreate: vi.fn(),
   sequenceUpsert: vi.fn(),
   auditCreate: vi.fn(),
@@ -41,7 +41,10 @@ vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
       meridianAssessment: { findFirst: h.assessmentFindFirst },
-      meridianAxisScore: { findFirst: h.scoreFindFirst, update: h.scoreUpdate },
+      meridianAxisScore: {
+        findFirst: h.scoreFindFirst,
+        updateMany: h.scoreUpdateMany,
+      },
       meridianOverride: { create: h.overrideCreate },
       meridianSequence: { upsert: h.sequenceUpsert },
       auditLog: { create: h.auditCreate },
@@ -81,7 +84,7 @@ beforeEach(() => {
   h.scoreFindFirst.mockResolvedValue(SCORE);
   h.sequenceUpsert.mockResolvedValue({ next: 12 });
   h.overrideCreate.mockResolvedValue({ id: "ov1", code: "OV-11" });
-  h.scoreUpdate.mockResolvedValue({});
+  h.scoreUpdateMany.mockResolvedValue({ count: 1 });
   h.auditCreate.mockResolvedValue({});
 });
 
@@ -104,7 +107,7 @@ describe("confirmComputed", () => {
 
   it("tira o eixo da fila sem mudar o score: status vira COMPUTED, final e computed intactos", async () => {
     await confirmComputed(input());
-    const update = h.scoreUpdate.mock.calls[0][0];
+    const update = h.scoreUpdateMany.mock.calls[0][0];
     expect(update.data).toEqual({ status: "COMPUTED" });
     expect(update.data).not.toHaveProperty("final");
     expect(update.data).not.toHaveProperty("computed");
@@ -148,7 +151,7 @@ describe("confirmComputed", () => {
       expect(!res.ok && res.code).toBe("confirm.not-contested");
     }
     expect(h.overrideCreate).not.toHaveBeenCalled();
-    expect(h.scoreUpdate).not.toHaveBeenCalled();
+    expect(h.scoreUpdateMany).not.toHaveBeenCalled();
     expect(h.auditCreate).not.toHaveBeenCalled();
   });
 
@@ -165,7 +168,7 @@ describe("confirmComputed", () => {
     expect(res.ok).toBe(false);
     expect(!res.ok && res.code).toBe("assessment.finalised");
     expect(h.overrideCreate).not.toHaveBeenCalled();
-    expect(h.scoreUpdate).not.toHaveBeenCalled();
+    expect(h.scoreUpdateMany).not.toHaveBeenCalled();
   });
 
   it("audita a confirmação com o código, o eixo e a justificativa", async () => {
@@ -190,5 +193,50 @@ describe("confirmComputed", () => {
       assessmentId: AS_ID,
       axis: "DATA",
     });
+  });
+});
+
+// Concorrência: a leitura de `status` acima não segura nada até a escrita. A
+// trava vive no where do updateMany; quem perde a corrida não grava.
+describe("confirmComputed — estado travado na escrita", () => {
+  it("o updateMany só casa eixo ainda CONTESTADO de assessment não finalizado", async () => {
+    await confirmComputed(input());
+    expect(h.scoreUpdateMany.mock.calls[0][0].where).toEqual({
+      id: "sc1",
+      tenantId: "t1",
+      status: "CONTESTED",
+      assessment: { status: { not: "FINALISED" } },
+    });
+  });
+
+  it("count diferente de 1 lança confirm.state-changed e não deixa confirmação nem trilha", async () => {
+    h.scoreUpdateMany.mockResolvedValue({ count: 0 });
+    const res = await confirmComputed(input());
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("confirm.state-changed");
+    expect(h.overrideCreate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("duas confirmações concorrentes: uma passa, a outra recebe confirm.state-changed", async () => {
+    // As duas leem CONTESTED; o banco só deixa uma mudar a linha.
+    let contested = true;
+    h.scoreUpdateMany.mockImplementation(async () => {
+      await Promise.resolve();
+      const count = contested ? 1 : 0;
+      contested = false;
+      return { count };
+    });
+
+    const [a, b] = await Promise.all([
+      confirmComputed(input()),
+      confirmComputed(input()),
+    ]);
+
+    expect([a.ok, b.ok].sort()).toEqual([false, true]);
+    const perdedora = a.ok ? b : a;
+    expect(!perdedora.ok && perdedora.code).toBe("confirm.state-changed");
+    expect(h.overrideCreate).toHaveBeenCalledTimes(1);
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
   });
 });

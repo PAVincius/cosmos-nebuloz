@@ -22,6 +22,8 @@ const h = vi.hoisted(() => ({
   rateLimiterLimit: vi.fn(),
   rateLimiterPeek: vi.fn(),
   ensureBucket: vi.fn(),
+  statusRaw: vi.fn(),
+  storageRemove: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -58,12 +60,15 @@ vi.mock("@repo/storage", () => ({
   MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
   storageClient: {
     storage: {
-      from: () => ({ upload: vi.fn().mockResolvedValue({ error: null }) }),
+      from: () => ({
+        upload: vi.fn().mockResolvedValue({ error: null }),
+        remove: h.storageRemove,
+      }),
     },
   },
 }));
-vi.mock("@repo/database", () => ({
-  database: {
+vi.mock("@repo/database", () => {
+  const database: Record<string, unknown> = {
     meridianRespondent: {
       findUnique: h.respondentFindUnique,
       update: h.respondentUpdate,
@@ -81,8 +86,13 @@ vi.mock("@repo/database", () => ({
     },
     meridianEvidence: { create: h.evidenceCreate },
     auditLog: { create: h.auditCreate },
-  },
-}));
+    $queryRaw: h.statusRaw,
+  };
+  // A transação interativa entrega o mesmo cliente: o que importa aqui é que
+  // leitura de estado e escrita passem por ele.
+  database.$transaction = (fn: (tx: unknown) => unknown) => fn(database);
+  return { database };
+});
 
 import {
   attachEvidence,
@@ -129,6 +139,8 @@ beforeEach(() => {
     reset: 0,
   });
   h.ensureBucket.mockResolvedValue(undefined);
+  h.statusRaw.mockResolvedValue([{ status: "COLLECTING" }]);
+  h.storageRemove.mockResolvedValue({ error: null });
   h.respondentFindUnique.mockResolvedValue(respondent());
   h.questionFindMany.mockResolvedValue([
     {
@@ -505,5 +517,52 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
     h.respondentFindUnique.mockResolvedValue(fechado("REVIEW"));
     const res = await getBattery(TOKEN);
     expect(res.ok).toBe(true);
+  });
+});
+
+// A leitura do token acontece antes; entre ela e a escrita o consultor pode
+// fechar a coleta. A conferência final lê o estado na mesma transação da
+// escrita (com trava de linha), então quem perde a corrida não grava.
+describe("coleta fechada entre o token e a escrita", () => {
+  const file = {
+    size: 3,
+    type: "text/plain",
+    name: "ev.txt",
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+  } as unknown as File;
+
+  beforeEach(() => {
+    // O token ainda mostra COLLECTING; o banco, na transação, já diz REVIEW.
+    h.statusRaw.mockResolvedValue([{ status: "REVIEW" }]);
+  });
+
+  it("saveDraft recusa e não grava resposta", async () => {
+    const res = await saveDraft({
+      token: TOKEN,
+      answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
+    });
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.statusRaw).toHaveBeenCalledTimes(1);
+    expect(h.responseUpsert).not.toHaveBeenCalled();
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+  });
+
+  it("submitBattery recusa e não conclui nem audita", async () => {
+    h.questionCount.mockResolvedValue(1);
+    h.responseCount.mockResolvedValue(1);
+    const res = await submitBattery(TOKEN);
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.respondentUpdate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("attachEvidence recusa, não grava metadado e remove o arquivo já enviado", async () => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    const res = await attachEvidence(TOKEN, "q1", file);
+    expect(!res.ok && res.code).toBe("collection.closed");
+    expect(h.evidenceCreate).not.toHaveBeenCalled();
+    expect(h.auditCreate).not.toHaveBeenCalled();
+    expect(h.storageRemove).toHaveBeenCalledTimes(1);
   });
 });

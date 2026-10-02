@@ -143,21 +143,26 @@ export async function runScoringInTx(
       select: { id: true, computed: true, final: true, status: true },
     });
     if (existing) {
-      // Um eixo cujo computado o revisor confirmou (kind = CONFIRMATION) também
-      // não volta à fila: a dispersão é a mesma e a decisão já foi tomada
-      // (D-29, FR-029a). Olha-se o `kind`, não "antes == depois".
+      // Um eixo cujo computado o revisor confirmou (kind = CONFIRMATION) não
+      // volta à fila enquanto o número for o que ele viu: a dispersão é a mesma
+      // e a decisão já foi tomada (D-29, FR-029a). Se as respostas mudaram e o
+      // computado novo é outro, a confirmação não cobre mais o eixo e ele volta
+      // a CONTESTED. Olha-se o `kind`, não "antes == depois".
+      const lastConfirmation =
+        existing.status !== "OVERRIDDEN" && result.status === "CONTESTED"
+          ? await db.meridianOverride.findFirst({
+              where: {
+                tenantId: ctx.tenantId,
+                assessmentId: a.id,
+                axis,
+                kind: "CONFIRMATION",
+              },
+              orderBy: { createdAt: "desc" },
+              select: { toScore: true },
+            })
+          : null;
       const confirmed =
-        existing.status !== "OVERRIDDEN" &&
-        result.status === "CONTESTED" &&
-        (await db.meridianOverride.findFirst({
-          where: {
-            tenantId: ctx.tenantId,
-            assessmentId: a.id,
-            axis,
-            kind: "CONFIRMATION",
-          },
-          select: { id: true },
-        })) !== null;
+        lastConfirmation !== null && lastConfirmation.toScore === result.score;
       await db.meridianAxisScore.update({
         where: { id: existing.id },
         data: {

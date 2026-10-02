@@ -9,7 +9,12 @@ import {
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
 import { cuid, type Result, safeAction } from "../../actions/_base";
-import { logMeridianAudit, nextCode, requireDecisionsOpen } from "./_shared";
+import {
+  finalisedError,
+  logMeridianAudit,
+  nextCode,
+  requireDecisionsOpen,
+} from "./_shared";
 
 // Override de score — US3.
 //
@@ -75,6 +80,24 @@ export async function registerOverride(
         prefix: "OV",
       });
 
+      // A trava de FINALISED vai no where da escrita: `requireDecisionsOpen`
+      // lê antes e não segura nada, e finalizar entre a leitura e aqui deixaria
+      // um override gravado sobre assessment travado. Fica antes do `create`
+      // para a linha e a trilha nem nascerem quando a corrida é perdida.
+      const claimed = await db.meridianAxisScore.updateMany({
+        where: {
+          id: score.id,
+          tenantId: ctx.tenantId,
+          assessment: { status: { not: "FINALISED" } },
+        },
+        // `computed` não é tocado. `final` reflete sempre o override mais
+        // recente, e o histórico continua sendo a lista de linhas.
+        data: { final: input.toScore, status: "OVERRIDDEN" },
+      });
+      if (claimed.count !== 1) {
+        throw finalisedError();
+      }
+
       const override = await db.meridianOverride.create({
         data: {
           tenantId: ctx.tenantId,
@@ -88,13 +111,6 @@ export async function registerOverride(
           reviewerId: ctx.userId,
         },
         select: { id: true, code: true },
-      });
-
-      // `computed` não é tocado. `final` reflete sempre o override mais
-      // recente, e o histórico continua sendo a lista de linhas.
-      await db.meridianAxisScore.update({
-        where: { id: score.id },
-        data: { final: input.toScore, status: "OVERRIDDEN" },
       });
 
       await logMeridianAudit(db, ctx, {
