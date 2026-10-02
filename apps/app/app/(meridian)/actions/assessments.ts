@@ -16,6 +16,7 @@ import {
   requireMeridianContext,
   requireMeridianPermissionContext,
 } from "@/lib/meridian/guards";
+import { prazoDeEntrada } from "@/lib/meridian/prazo";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
 import { logMeridianAudit, nextCode } from "./_shared";
 
@@ -395,8 +396,12 @@ const CreateSchema = z.object({
   templateId: cuid,
   // Prazo no passado nasceria com o token do respondente já expirado —
   // `tokenExpiresAt` copia `deadline` em `assignRespondent` (collection.ts).
-  deadline: z.coerce
-    .date()
+  // "AAAA-MM-DD" do formulário é o fim desse dia em Brasília (ver `prazo.ts`);
+  // gravar como meia-noite UTC mostrava um dia a menos e vencia o token antes.
+  deadline: z
+    .union([z.string(), z.date()])
+    .transform(prazoDeEntrada)
+    .refine((d) => !Number.isNaN(d.getTime()), "Prazo inválido.")
     .refine((d) => d.getTime() > Date.now(), "Prazo precisa ser no futuro."),
   benchmarkOptIn: z.boolean().default(false),
   reassessmentOfId: cuid.optional(),

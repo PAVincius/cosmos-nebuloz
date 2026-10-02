@@ -85,3 +85,30 @@ describe("RespondentForm — aviso ao titular", () => {
     ).toBeTruthy();
   });
 });
+
+// Atrito A1: o prazo mostrado ao respondente é o dia de Brasília, não o do
+// navegador. 02/11 02:59Z é 01/11 23:59 em Brasília; num navegador em UTC o
+// `toLocaleDateString` puro mostrava 02/11.
+describe("prazo na bateria do respondente", () => {
+  it("mostra o dia de Brasília mesmo com o navegador em outro fuso", () => {
+    const original = process.env.TZ;
+    process.env.TZ = "UTC";
+    try {
+      render(
+        <RespondentForm
+          battery={{
+            ...BATTERY,
+            context: {
+              ...BATTERY.context,
+              deadline: "2026-11-02T02:59:59.999Z",
+            },
+          }}
+          token="t"
+        />
+      );
+      expect(screen.getByText(/prazo 01\/11\/2026/)).toBeDefined();
+    } finally {
+      process.env.TZ = original;
+    }
+  });
+});
