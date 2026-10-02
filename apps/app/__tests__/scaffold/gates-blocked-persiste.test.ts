@@ -19,6 +19,8 @@ const store = vi.hoisted(() => ({
   committedState: "GATE_READY",
   /** Escritas da transação em curso, descartadas se ela rejeitar. */
   pendingState: null as string | null,
+  /** Estado que outra transação grava entre a leitura da fase e a escrita. */
+  raceTo: null as string | null,
   audits: [] as Record<string, unknown>[],
   pendingAudits: [] as Record<string, unknown>[],
 }));
@@ -45,14 +47,35 @@ vi.mock("@repo/database", () => ({
     store.pendingAudits = [];
     const db = {
       scaffoldPhaseInstance: {
-        findFirst: h.phaseFindFirst,
+        findFirst: async (...args: unknown[]) => {
+          const snapshot = await h.phaseFindFirst(...args);
+          if (store.raceTo) {
+            store.committedState = store.raceTo;
+          }
+          return snapshot;
+        },
         update: async ({ data }: { data: { state?: string } }) => {
           if (data.state) {
             store.pendingState = data.state;
           }
           return {};
         },
-        updateMany: async ({ data }: { data: { state?: string } }) => {
+        // Honra o `state` do where quando o alvo é a fase sob teste: é o que
+        // prova que a escrita não passa por cima de um estado que mudou.
+        updateMany: async ({
+          where,
+          data,
+        }: {
+          where: { id?: string; state?: string | { in: string[] } };
+          data: { state?: string };
+        }) => {
+          if (where.id === "clx00000000000000000pi001" && where.state) {
+            const allowed =
+              typeof where.state === "string" ? [where.state] : where.state.in;
+            if (!allowed.includes(store.committedState)) {
+              return { count: 0 };
+            }
+          }
           if (data.state) {
             store.pendingState = data.state;
           }
@@ -138,6 +161,7 @@ const fase = () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   store.committedState = "GATE_READY";
+  store.raceTo = null;
   store.audits = [];
   h.requirePerm.mockResolvedValue(CTX);
   h.phaseFindFirst.mockImplementation(async () => fase());
@@ -211,6 +235,35 @@ describe("closePhase com critério não atendido", () => {
     });
     expect(res).toMatchObject({ ok: false, code: "CRITERIA_UNMET" });
     expect(store.committedState).toBe("BLOCKED");
+    expect(store.audits).toHaveLength(0);
+  });
+
+  it("estado mudou entre a leitura e a escrita: não grava BLOCKED por cima e recusa com PHASE_NOT_CLOSABLE", async () => {
+    // Outra transação fechou a fase depois da leitura. O BLOCKED por id
+    // reabriria uma fase CLOSED como se fosse bloqueada.
+    store.raceTo = "CLOSED";
+    const res = await closePhase({
+      phaseInstanceId: PI,
+      approverId: APPROVER,
+      criteriaFacts: FALHA,
+    });
+    expect(res).toMatchObject({ ok: false, code: "PHASE_NOT_CLOSABLE" });
+    expect(store.committedState).toBe("CLOSED");
+    expect(store.audits).toHaveLength(0);
+  });
+
+  it("fechamento com o estado mudado entre a leitura e a escrita: não fecha por cima nem grava resultado", async () => {
+    store.raceTo = "CLOSED";
+    const res = await closePhase({
+      phaseInstanceId: PI,
+      approverId: APPROVER,
+      criteriaFacts: {
+        "beats-baseline": { met: true },
+        "no-new-risk": { met: true },
+      },
+    });
+    expect(res).toMatchObject({ ok: false, code: "PHASE_NOT_CLOSABLE" });
+    expect(store.committedState).toBe("CLOSED");
     expect(store.audits).toHaveLength(0);
   });
 

@@ -40,7 +40,16 @@ vi.mock("@repo/database", () => ({
       scaffoldPhaseInstance: {
         findFirst: h.phaseFindFirst,
         update: h.phaseUpdate,
-        updateMany: h.phaseUpdateMany,
+        // A escrita da própria fase (por id, com `state` no where) é registrada
+        // em `phaseUpdate`; o avanço da fase seguinte (por trilha) em
+        // `phaseUpdateMany`.
+        updateMany: async (args: { where: { id?: string } }) => {
+          if (args.where.id) {
+            await h.phaseUpdate(args);
+            return { count: 1 };
+          }
+          return h.phaseUpdateMany(args);
+        },
       },
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       scaffoldGateResult: {
