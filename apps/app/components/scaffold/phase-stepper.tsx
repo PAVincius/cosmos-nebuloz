@@ -13,16 +13,16 @@ import type {
 import { PHASE, PHASE_ORDER, PHASE_STATE } from "@/lib/scaffold/phases";
 import { StatusDot } from "./base";
 
-const GATE_VIS = {
+export const GATE_VIS = {
   passed: { tone: "green", icon: "check", label: "Gate fechado" },
   ready: { tone: "amber", icon: "shield", label: "Gate pronto para decisão" },
   blocked: { tone: "red", icon: "x", label: "Gate bloqueado" },
   locked: { tone: "neutral", icon: "shield", label: "Gate futuro" },
 } as const;
 
-type GateVisual = keyof typeof GATE_VIS;
+export type GateVisual = keyof typeof GATE_VIS;
 
-function gateVisualFor(phase: TrackDetailPhase): GateVisual {
+export function gateVisualFor(phase: TrackDetailPhase): GateVisual {
   if (phase.state === "CLOSED" || phase.state === "OBSERVING") {
     return "passed";
   }
