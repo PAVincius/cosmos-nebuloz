@@ -204,10 +204,10 @@ export const InviteTemplate = ({
             <Text className="mt-2 mb-0 text-[#a1a1aa] text-[11px]">
               © {new Date().getFullYear()} Nebuloz · Cosmos Platform ·{" "}
               <Link
-                href="https://nebuloz.com"
+                href="https://nebuloz.ai"
                 style={{ color: "#8a8f98", textDecoration: "none" }}
               >
-                nebuloz.com
+                nebuloz.ai
               </Link>
             </Text>
           </Section>

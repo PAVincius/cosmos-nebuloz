@@ -26,7 +26,7 @@
  *   DATABASE_URL="postgresql://..." \
  *   ADMIN_EMAIL="voce@nebuloz.ai" \
  *   INVITE_EMAIL="convidado@exemplo.com" \
- *   APP_URL="https://app.nebuloz.com" \
+ *   APP_URL="https://app.nebuloz.ai" \
  *   npx tsx scripts/seed-nebuloz.ts
  *
  * Variáveis opcionais: TENANT_NAME, TENANT_SLUG, INVITE_ROLE (default ADMIN),
