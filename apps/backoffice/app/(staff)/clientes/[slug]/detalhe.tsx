@@ -159,6 +159,7 @@ export function DetalheDoTenant({
   acoesDeModulo,
   charter,
   meridian,
+  scaffold,
   contratados,
 }: {
   slug: string;
@@ -174,6 +175,7 @@ export function DetalheDoTenant({
   acoesDeModulo: ReactNode;
   charter: ReactNode;
   meridian: ReactNode;
+  scaffold?: ReactNode;
   /** Módulos contratados — decide quais abas de módulo existem, como no
    *  handoff (`...(t.modules.CHARTER ? [tab] : [])`). Aba de módulo que o
    *  cliente não comprou é rota morta no meio da navegação. */
@@ -243,6 +245,9 @@ export function DetalheDoTenant({
       : []),
     ...(contratados.has("MERIDIAN")
       ? [{ id: "meridian", label: "Meridian", conteudo: meridian }]
+      : []),
+    ...(contratados.has("SCAFFOLD")
+      ? [{ id: "scaffold", label: "Scaffold", conteudo: scaffold }]
       : []),
     {
       id: "audit",

@@ -21,6 +21,7 @@ import { MeridianBenchmark } from "./meridian-benchmark";
 import { MeridianBootstrap } from "./meridian-bootstrap";
 import { ModuleForm } from "./module-form";
 import { faltaPreparar, ProntidaoDoModulo } from "./prontidao";
+import { ScaffoldBootstrap } from "./scaffold-bootstrap";
 
 export const dynamic = "force-dynamic";
 
@@ -238,6 +239,19 @@ export default async function ClientDetailPage({
           />
         }
         modulos={client.modules}
+        scaffold={
+          // Sem selos de papel: `getClient` não lê o papel do Scaffold, e a
+          // action é idempotente — o cartão vale sempre que o módulo existe.
+          <ProntidaoDoModulo
+            acao={
+              <ScaffoldBootstrap canWrite={staff.canWrite} slug={client.slug} />
+            }
+            icone="layers"
+            selos={[{ rotulo: "Módulo contratado", ok: true }]}
+            subtitulo="quem administra o acesso ao módulo de contratação"
+            titulo="Scaffold"
+          />
+        }
         slug={client.slug}
       />
     </div>

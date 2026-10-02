@@ -148,7 +148,7 @@ export async function bootstrapMeridianAction(input: {
 export async function bootstrapScaffoldAction(input: {
   slug: string;
   adminEmail: string;
-}): Promise<Result<{ created: boolean }>> {
+}): Promise<Result<{ created: boolean; role: string }>> {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
@@ -169,7 +169,7 @@ export async function bootstrapScaffoldAction(input: {
     );
 
     revalidatePath(`/clientes/${input.slug}`);
-    return { created: result.created };
+    return { created: result.created, role: result.role };
   });
 }
 

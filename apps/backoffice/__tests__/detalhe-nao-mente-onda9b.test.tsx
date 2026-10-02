@@ -25,6 +25,7 @@ vi.mock("@/app/actions/clients", () => ({ getClient: mocks.getClient }));
 vi.mock("@/app/actions/provisioning", () => ({
   bootstrapCharterAction: vi.fn(),
   bootstrapMeridianAction: vi.fn(),
+  bootstrapScaffoldAction: vi.fn(),
   contractModuleAction: vi.fn(),
 }));
 vi.mock("@/app/actions/meridian-benchmark", () => ({
@@ -185,5 +186,23 @@ describe("plano com o enum real e rótulo humano", () => {
     await renderizarPagina("GALAXY");
     expect(screen.getByText("Plataforma · cliente")).toBeTruthy();
     expect(screen.getByText(/vanta-saude · cliente desde/)).toBeTruthy();
+  });
+});
+
+describe("aba Scaffold só existe com o módulo contratado", () => {
+  it("sem SCAFFOLD contratado não há aba", () => {
+    montar({ contratados: new Set(["CHARTER"]) });
+
+    expect(screen.queryByRole("tab", { name: "Scaffold" })).toBeNull();
+  });
+
+  it("com SCAFFOLD contratado a aba abre o conteúdo do Scaffold", () => {
+    montar({
+      contratados: new Set(["SCAFFOLD"]),
+      scaffold: <div>cartão do scaffold</div>,
+    });
+
+    fireEvent.click(screen.getByRole("tab", { name: "Scaffold" }));
+    expect(screen.getByText("cartão do scaffold")).toBeTruthy();
   });
 });

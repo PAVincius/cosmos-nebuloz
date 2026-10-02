@@ -154,6 +154,7 @@ vi.mock("@/app/actions/proposta-escopo", () => ({
 vi.mock("@/app/actions/provisioning", () => ({
   bootstrapCharterAction: vi.fn(),
   bootstrapMeridianAction: vi.fn(),
+  bootstrapScaffoldAction: vi.fn(),
   contractModuleAction: vi.fn(),
 }));
 vi.mock("@/app/actions/scaffold-dispensas", () => ({
