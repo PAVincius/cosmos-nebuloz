@@ -3,9 +3,10 @@
 // Bateria do respondente — US2. Port de `meridian-screens-1.jsx`.
 //
 // É a única superfície do produto usada por quem não tem conta. Duas
-// consequências no desenho: nada aqui depende de sessão, e o componente recebe
-// o token do servidor em vez de descobri-lo — a página é que resolve o token e
-// decide se existe algo a renderizar.
+// consequências no desenho: nada aqui depende de sessão, e o componente nem
+// conhece o token — ele vive num cookie httpOnly (ver `respondent-session.ts`),
+// que a página e as actions leem no servidor. É a página que decide se existe
+// algo a renderizar.
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import {
@@ -32,13 +33,7 @@ const LIKERT = [
   "Concordo forte",
 ];
 
-export function RespondentForm({
-  battery,
-  token,
-}: {
-  battery: Battery;
-  token: string;
-}) {
+export function RespondentForm({ battery }: { battery: Battery }) {
   const [answers, setAnswers] = useState<Record<string, number>>(
     Object.fromEntries(
       battery.questions
@@ -74,7 +69,6 @@ export function RespondentForm({
     const res = await runWithToast(
       () =>
         saveDraft({
-          token,
           answers: Object.entries(answers).map(([questionId, rawValue]) => ({
             questionId,
             rawValue,
@@ -95,7 +89,7 @@ export function RespondentForm({
       return;
     }
     setBusy(true);
-    await runWithToast(() => submitBattery(token), {
+    await runWithToast(() => submitBattery(), {
       loading: "Enviando respostas…",
       success: (d) =>
         d.missing > 0
@@ -107,13 +101,10 @@ export function RespondentForm({
 
   const upload = async (questionId: string, file: File) => {
     setBusy(true);
-    const res = await runWithToast(
-      () => attachEvidence(token, questionId, file),
-      {
-        loading: "Anexando evidência…",
-        success: (e) => `${e.fileName} anexado.`,
-      }
-    );
+    const res = await runWithToast(() => attachEvidence(questionId, file), {
+      loading: "Anexando evidência…",
+      success: (e) => `${e.fileName} anexado.`,
+    });
     setBusy(false);
     if (res.ok) {
       setFiles((s) => ({

@@ -8,17 +8,15 @@ import {
   MERIDIAN_EVIDENCE_BUCKET,
   storageClient,
 } from "@repo/storage";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
 import { MeridianRuleError } from "@/lib/meridian/guards";
 import {
-  COLLECTION_CLOSED_MESSAGE,
-  hashToken,
-  isTokenUsable,
-  TOKEN_INVALID_MESSAGE,
-  TOKEN_RATE_LIMITED_MESSAGE,
-} from "@/lib/meridian/respondent-token";
+  findRespondentByTokenOrThrow,
+  TOKEN_ERROR,
+} from "@/lib/meridian/respondent-lookup";
+import { readRespondentToken } from "@/lib/meridian/respondent-session";
+import { COLLECTION_CLOSED_MESSAGE } from "@/lib/meridian/respondent-token";
 import { normalizeAnswer } from "@/lib/meridian/scoring";
 import { type Result, safeAction } from "../../actions/_base";
 import { logRespondentAudit } from "./_shared";
@@ -33,16 +31,6 @@ import { logRespondentAudit } from "./_shared";
 //   • token inexistente, expirado e revogado devolvem o mesmo erro. Diferenciar
 //     confirmaria a um estranho que aquele assessment existe.
 
-const TOKEN_ERROR = new MeridianRuleError(
-  "respondent.invalid-token",
-  TOKEN_INVALID_MESSAGE
-);
-
-const RATE_LIMIT_ERROR = new MeridianRuleError(
-  "respondent.rate-limited",
-  TOKEN_RATE_LIMITED_MESSAGE
-);
-
 export type RespondentContext = {
   respondentId: string;
   tenantId: string;
@@ -56,111 +44,6 @@ export type RespondentContext = {
   status: string;
 };
 
-// Rate limit do lookup de token — condição 5 do parecer de compliance
-// (docs/compliance/2026-09-24-parecer-meridian-respondente.md) e P2 do Vigia
-// (docs/qualidade/dogfood/meridian/atrito.md:48): sem isso, nada impedia
-// tentativa repetida de adivinhar um hash de token válido. Sem sessão, IP é o
-// único identificador disponível — prefere `x-real-ip` (posto pelo proxy,
-// não editável pelo cliente) e só cai para o primeiro `x-forwarded-for`
-// quando aquele não vem.
-//
-// Duas etapas, não uma (revisão da Morgana sobre a primeira versão): checar
-// o teto ANTES de consultar o banco, e só INCREMENTAR depois de um miss.
-// Checar só depois do miss (a v1) deixava um IP já acima do teto continuar
-// acertando token válido — sucesso nunca chamava o limitador, então o teto só
-// mudava a mensagem de erro, não freava a força bruta de verdade. E
-// incrementar em todo request (a v0, antes da v1) contava sucesso e falha
-// igual — um escritório inteiro atrás do mesmo IP, respondendo de verdade,
-// estourava o teto e via "link inválido" no próprio link certo.
-async function lookupIdentifierIp(): Promise<string> {
-  const headerStore = await headers();
-  return (
-    headerStore.get("x-real-ip")?.trim() ||
-    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    "anonymous"
-  );
-}
-
-async function tokenLookupLimiter() {
-  const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
-  return createRateLimiter({
-    limiter: fixedWindow(30, "1 m"),
-    prefix: "meridian-token-lookup",
-  });
-}
-
-/** Só leitura, ANTES da consulta por hash — recusa sem gastar a consulta
- *  quando o IP já está no teto. Fecha em produção se o contador estiver fora
- *  do ar, mesmo raciocínio do copiloto
- *  (app/actions/safe-copilot/rate-limit-gate.ts): se abrisse, derrubar o
- *  contador viraria a forma de remover o freio. */
-async function rejectIfAlreadyRateLimited(ip: string): Promise<void> {
-  let dentroDoLimite: boolean;
-  try {
-    const limiter = await tokenLookupLimiter();
-    dentroDoLimite = (await limiter.peek(ip)).success;
-  } catch (erro) {
-    if (process.env.NODE_ENV === "production") {
-      log.error(
-        "[meridian] rate limit de lookup de token indisponível (peek)",
-        { error: String(erro) }
-      );
-      dentroDoLimite = false;
-    } else {
-      dentroDoLimite = true;
-    }
-  }
-
-  if (!dentroDoLimite) {
-    throw RATE_LIMIT_ERROR;
-  }
-}
-
-/** Chamado só depois que o lookup por hash JÁ falhou — um respondente
- *  legítimo nunca erra o próprio link, então nunca soma contra o teto; só
- *  tentativa de adivinhação gera falha atrás de falha. O gate real é o
- *  `rejectIfAlreadyRateLimited` acima; se o incremento aqui falhar, o
- *  TOKEN_ERROR do chamador ainda vale — só perde-se esta contagem. */
-async function recordTokenLookupFailure(ip: string): Promise<void> {
-  try {
-    const limiter = await tokenLookupLimiter();
-    await limiter.limit(ip);
-  } catch (erro) {
-    log.error("[meridian] rate limit de lookup de token indisponível (limit)", {
-      error: String(erro),
-    });
-  }
-}
-
-/** Consulta única por `tokenHash`, usada por toda a superfície do respondente
- *  (`resolveRespondentToken` e `loadRespondent`) — as duas precisam do mesmo
- *  freio contra adivinhação, então compartilham a mesma implementação em vez
- *  de cada uma reimplementar a checagem. */
-async function findRespondentByTokenOrThrow(token: string) {
-  const ip = await lookupIdentifierIp();
-  await rejectIfAlreadyRateLimited(ip);
-
-  const r = await database.meridianRespondent.findUnique({
-    where: { tokenHash: hashToken(token) },
-    include: {
-      assessment: {
-        select: {
-          id: true,
-          code: true,
-          orgName: true,
-          templateId: true,
-          status: true,
-        },
-      },
-    },
-  });
-  if (r && isTokenUsable(r, new Date())) {
-    return r;
-  }
-  await recordTokenLookupFailure(ip);
-  throw TOKEN_ERROR;
-}
-
 /**
  * Resolve o token para um respondente.
  *
@@ -168,11 +51,11 @@ async function findRespondentByTokenOrThrow(token: string) {
  * descobrindo. A consulta é por `tokenHash`, que é `@unique` — não há como
  * enumerar, e a leitura devolve um único registro ou nada.
  */
-export async function resolveRespondentToken(
-  token: string
-): Promise<Result<RespondentContext>> {
+export async function resolveRespondentToken(): Promise<
+  Result<RespondentContext>
+> {
   return safeAction(async () => {
-    const r = await findRespondentByTokenOrThrow(token);
+    const r = await findRespondentByTokenOrThrow(await readRespondentToken());
     return {
       respondentId: r.id,
       tenantId: r.tenantId,
@@ -203,16 +86,16 @@ export type Battery = {
   questions: BatteryQuestion[];
 };
 
-async function loadRespondent(token: string) {
-  return findRespondentByTokenOrThrow(token);
+async function loadRespondent() {
+  return findRespondentByTokenOrThrow(await readRespondentToken());
 }
 
 /** Para as três escritas do respondente. Só COLLECTING aceita: a partir do
  *  fechamento da coleta (REVIEW) o link é só leitura, mesmo com token válido
  *  (D-29, FR-029c) — antes a resposta mudava depois do fechamento e o
  *  computado, não. */
-async function loadRespondentForWrite(token: string) {
-  const r = await findRespondentByTokenOrThrow(token);
+async function loadRespondentForWrite() {
+  const r = await findRespondentByTokenOrThrow(await readRespondentToken());
   if (r.assessment.status !== "COLLECTING") {
     throw new MeridianRuleError("collection.closed", COLLECTION_CLOSED_MESSAGE);
   }
@@ -240,9 +123,9 @@ async function requireCollectingInTx(
 
 /** Só as perguntas do eixo daquele respondente, daquele assessment. Ele nunca
  *  vê a bateria dos outros eixos nem as respostas de ninguém. */
-export async function getBattery(token: string): Promise<Result<Battery>> {
+export async function getBattery(): Promise<Result<Battery>> {
   return safeAction(async () => {
-    const r = await loadRespondent(token);
+    const r = await loadRespondent();
 
     const questions = await database.meridianQuestion.findMany({
       where: { templateId: r.assessment.templateId, axis: r.axis },
@@ -294,7 +177,6 @@ export async function getBattery(token: string): Promise<Result<Battery>> {
 }
 
 const DraftSchema = z.object({
-  token: z.string().min(1),
   answers: z.array(
     z.object({
       questionId: z.string().cuid(),
@@ -310,7 +192,7 @@ export async function saveDraft(
 ): Promise<Result<void>> {
   return safeAction(async () => {
     const input = DraftSchema.parse(raw);
-    const r = await loadRespondentForWrite(input.token);
+    const r = await loadRespondentForWrite();
 
     await database.$transaction(async (tx) => {
       await requireCollectingInTx(tx, r.assessment.id);
@@ -372,11 +254,9 @@ export async function saveDraft(
 /** Conclui a bateria. Com pergunta em branco, devolve a contagem e **não**
  *  conclui — bateria parcial marcada como concluída derruba a confidence do
  *  eixo sem ninguém entender por quê. */
-export async function submitBattery(
-  token: string
-): Promise<Result<{ missing: number }>> {
+export async function submitBattery(): Promise<Result<{ missing: number }>> {
   return safeAction(async () => {
-    const r = await loadRespondentForWrite(token);
+    const r = await loadRespondentForWrite();
 
     return database.$transaction(async (tx) => {
       await requireCollectingInTx(tx, r.assessment.id);
@@ -436,12 +316,11 @@ function ensureEvidenceBucketOnce(): Promise<void> {
 /** Anexa evidência a uma resposta. O arquivo vai para o bucket privado, com o
  *  caminho prefixado pelo tenant; o banco guarda só o metadado. */
 export async function attachEvidence(
-  token: string,
   questionId: string,
   file: File
 ): Promise<Result<{ id: string; fileName: string }>> {
   return safeAction(async () => {
-    const r = await loadRespondentForWrite(token);
+    const r = await loadRespondentForWrite();
 
     if (file.size > MAX_EVIDENCE_BYTES) {
       throw new MeridianRuleError(

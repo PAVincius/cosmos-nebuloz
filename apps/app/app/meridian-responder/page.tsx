@@ -12,7 +12,8 @@ import "@/components/meridian/meridian.css";
 // que está sob ele, então bastaria estar lá dentro para o guard de sessão
 // disparar — e afrouxar o guard para deixá-la passar abriria o módulo inteiro.
 //
-// Pelo mesmo motivo a URL é /meridian-responder/<token> e não
+// Pelo mesmo motivo a URL é /meridian-responder (o link emitido,
+// /meridian-responder/<token>, é trocado por cookie na primeira carga) e não
 // /meridian/responder/<token>: `/meridian` é prefixo protegido no proxy.
 //
 // Token inválido, expirado e revogado caem no mesmo texto. Diferenciar
@@ -27,13 +28,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function RespondentPage({
-  params,
-}: {
-  params: Promise<{ token: string }>;
-}) {
-  const { token } = await params;
-  const res = await getBattery(token);
+export default async function RespondentPage() {
+  // O token vem do cookie de sessão que `[token]/route.ts` grava na primeira
+  // carga; esta página nunca o recebe pela URL.
+  const res = await getBattery();
 
   if (!res.ok) {
     const copy = respondentErrorCopy(res.error);
@@ -89,7 +87,7 @@ export default async function RespondentPage({
       className="meridian-root grain"
       style={{ minHeight: "100dvh", padding: "32px 24px 64px" }}
     >
-      <RespondentForm battery={res.data} token={token} />
+      <RespondentForm battery={res.data} />
     </div>
   );
 }

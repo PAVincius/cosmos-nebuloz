@@ -44,7 +44,7 @@ const BATTERY: Battery = {
 
 describe("RespondentForm — aviso ao titular", () => {
   it("mostra o aviso da Compliance já no primeiro render, antes de qualquer resposta", () => {
-    render(<RespondentForm battery={BATTERY} token="tok-abc" />);
+    render(<RespondentForm battery={BATTERY} />);
 
     expect(
       screen.getByText("Se seus dados chegaram até nós por uma organização")
@@ -72,13 +72,13 @@ describe("RespondentForm — aviso ao titular", () => {
   });
 
   it("mantém o endereço de contato da política interna atual (privacy@nebuloz.ai)", () => {
-    render(<RespondentForm battery={BATTERY} token="tok-abc" />);
+    render(<RespondentForm battery={BATTERY} />);
     const link = screen.getByText("privacy@nebuloz.ai");
     expect(link.getAttribute("href")).toBe("mailto:privacy@nebuloz.ai");
   });
 
   it("avisa que evidência anexada some em 90 dias, prazo fixo da Nebuloz — não da organização cliente (parecer 2026-09-28)", () => {
-    render(<RespondentForm battery={BATTERY} token="tok-abc" />);
+    render(<RespondentForm battery={BATTERY} />);
     expect(screen.getByText(/90 dias/)).toBeTruthy();
     expect(
       screen.getByText(/organização que convidou você não escolhe/)
@@ -103,7 +103,6 @@ describe("prazo na bateria do respondente", () => {
               deadline: "2026-11-02T02:59:59.999Z",
             },
           }}
-          token="t"
         />
       );
       expect(screen.getByText(/prazo 01\/11\/2026/)).toBeDefined();
