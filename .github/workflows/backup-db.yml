@@ -1,0 +1,103 @@
+# Backup lógico diário do banco de produção, fora do Supabase.
+#
+# O plano FREE não tem backup gerenciado nem PITR. Este workflow gera um
+# pg_dump do schema `public`, criptografa com a chave pública `age` do repo
+# e guarda o resultado como artifact por 14 dias. A chave privada nunca entra
+# aqui: só o CEO abre o dump (docs/runbooks/backup-db.md).
+#
+# Configuração (GitHub Environment `backup-prod`, restrito à branch main,
+# sem revisor — um revisor obrigatório travaria o cron toda noite):
+#   secrets   BACKUP_DATABASE_URL  role SOMENTE LEITURA, pooler em modo sessão
+#             (porta 5432; a conexão direta do Supabase é IPv6 e o runner é IPv4)
+name: Backup DB
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup-db
+  cancel-in-progress: false
+
+jobs:
+  dump:
+    name: Dump criptografado
+    runs-on: ubuntu-latest
+    environment: backup-prod
+    timeout-minutes: 20
+    env:
+      BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir chave pública e segredo
+        run: |
+          set -euo pipefail
+          if ! grep -qE '^age1[a-z0-9]+$' docs/runbooks/backup-age.pub; then
+            echo "::error::docs/runbooks/backup-age.pub não tem uma chave pública age1… — o CEO precisa gerá-la (runbook backup-db.md, passo 1)."
+            exit 1
+          fi
+          if [ -z "${BACKUP_DATABASE_URL}" ]; then
+            echo "::error::BACKUP_DATABASE_URL não está definido no environment backup-prod."
+            exit 1
+          fi
+
+      # O cliente tem de ter a mesma versão major do servidor: pg_dump recusa
+      # servidor mais novo. Descobre a versão e instala o cliente do PGDG.
+      - name: Instalar age e o cliente PostgreSQL da versão do servidor
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq age curl ca-certificates postgresql-common
+          major="$(psql "${BACKUP_DATABASE_URL}" -Atc 'show server_version_num' | cut -c1-2)"
+          echo "Servidor PostgreSQL major: ${major}"
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y >/dev/null
+          sudo apt-get install -y -qq "postgresql-client-${major}"
+          echo "PG_BIN=/usr/lib/postgresql/${major}/bin" >> "$GITHUB_ENV"
+
+      - name: Dump (schema public) criptografado com age
+        run: |
+          set -euo pipefail
+          stamp="$(date -u +%Y%m%d-%H%M)"
+          mkdir out
+          "${PG_BIN}/pg_dump" "${BACKUP_DATABASE_URL}" \
+            --schema=public --format=custom --no-owner --no-privileges \
+            | age -R docs/runbooks/backup-age.pub > "out/backup-${stamp}.dump.age"
+          size="$(stat -c %s "out/backup-${stamp}.dump.age")"
+          echo "Dump criptografado: ${size} bytes"
+          # Banco real tem dezenas de MB; abaixo disso o dump saiu vazio.
+          if [ "${size}" -lt 100000 ]; then
+            echo "::error::Dump menor que 100 KB — provável role sem acesso às linhas (RLS) ou banco errado."
+            exit 1
+          fi
+          echo "stamp=${stamp}" >> "$GITHUB_ENV"
+
+      # Contagem exata das tabelas Meridian no momento do dump: o restore de
+      # teste compara com isto. Só números, nenhum dado de cliente.
+      - name: Manifesto de contagens (tabelas Meridian)
+        run: |
+          set -euo pipefail
+          {
+            echo "dump_utc=${stamp}"
+            echo "tabela|linhas"
+            psql "${BACKUP_DATABASE_URL}" -At -F '|' -c "
+              select table_name,
+                (xpath('/row/c/text()', query_to_xml(
+                  format('select count(*) as c from %I.%I', table_schema, table_name),
+                  false, true, '')))[1]::text
+              from information_schema.tables
+              where table_schema = 'public' and table_name like 'Meridian%'
+              order by 1"
+          } > "out/manifest-${stamp}.txt"
+          cat "out/manifest-${stamp}.txt"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backup-${{ env.stamp }}
+          path: out/
+          retention-days: 14
+          if-no-files-found: error
