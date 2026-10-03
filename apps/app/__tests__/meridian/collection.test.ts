@@ -477,6 +477,15 @@ describe("reissuePendingLinks", () => {
   });
 });
 
+const PENDING_RUI = {
+  id: R_ID,
+  name: "Rui",
+  status: "PENDING",
+  axis: "DATA",
+  lastRemindedAt: null,
+  assessment: { code: "AS-104", orgName: "Vanta Saúde" },
+};
+
 describe("sendReminder", () => {
   it("recusa lembrete a quem já concluiu", async () => {
     h.respondentFindFirst.mockResolvedValue({
@@ -501,14 +510,72 @@ describe("sendReminder", () => {
   });
 
   it("registra o lembrete para quem está pendente", async () => {
-    h.respondentFindFirst.mockResolvedValue({
-      id: R_ID,
-      name: "Rui",
-      status: "PENDING",
-    });
+    h.respondentFindFirst.mockResolvedValue(PENDING_RUI);
     const res = await sendReminder({ respondentId: R_ID });
     expect(res.ok).toBe(true);
     expect(h.respondentUpdate).toHaveBeenCalled();
+  });
+
+  // Achado 29c do Lacre: o lembrete escrevia `lastRemindedAt` sem deixar rastro.
+  // A trilha diz quem lembrou quem (a entidade), sem o nome nem o e-mail do
+  // respondente: AuditLog tem vida longa e sobrevive ao DSAR.
+  describe("trilha de auditoria", () => {
+    it("grava meridian.respondent.remind na mesma transação, com o assessment e o eixo no alvo", async () => {
+      h.respondentFindFirst.mockResolvedValue(PENDING_RUI);
+      await sendReminder({ respondentId: R_ID });
+      expect(h.auditCreate).toHaveBeenCalledTimes(1);
+      const audit = h.auditCreate.mock.calls[0]?.[0] as {
+        data: {
+          action: string;
+          entityType: string;
+          entityId: string;
+          diff: [string, string, string][];
+          metadata: { target: string };
+        };
+      };
+      expect(audit.data.action).toBe("meridian.respondent.remind");
+      expect(audit.data.entityType).toBe("meridian.respondent");
+      expect(audit.data.entityId).toBe(R_ID);
+      expect(audit.data.metadata.target).toBe("AS-104 · Data");
+      expect(audit.data.diff).toEqual([
+        ["Último lembrete", "—", expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/)],
+      ]);
+    });
+
+    it("sem PII: nem o nome nem o e-mail do respondente entram na trilha", async () => {
+      h.respondentFindFirst.mockResolvedValue({
+        ...PENDING_RUI,
+        email: "rui@cliente.com",
+      });
+      await sendReminder({ respondentId: R_ID });
+      const written = JSON.stringify(h.auditCreate.mock.calls);
+      expect(written).not.toContain("Rui");
+      expect(written).not.toContain("rui@cliente.com");
+    });
+
+    it("o diff mostra o lembrete anterior quando há", async () => {
+      h.respondentFindFirst.mockResolvedValue({
+        ...PENDING_RUI,
+        lastRemindedAt: new Date("2026-09-20T12:00:00.000Z"),
+      });
+      await sendReminder({ respondentId: R_ID });
+      const audit = h.auditCreate.mock.calls[0]?.[0] as {
+        data: { diff: [string, string, string][] };
+      };
+      expect(audit.data.diff[0]?.[1]).toBe("2026-09-20T12:00:00.000Z");
+    });
+
+    it("recusa (concluído, revogado, não encontrado) não grava trilha", async () => {
+      for (const found of [
+        { ...PENDING_RUI, status: "DONE" },
+        { ...PENDING_RUI, status: "REVOKED" },
+        null,
+      ]) {
+        h.respondentFindFirst.mockResolvedValue(found);
+        await sendReminder({ respondentId: R_ID });
+      }
+      expect(h.auditCreate).not.toHaveBeenCalled();
+    });
   });
 });
 

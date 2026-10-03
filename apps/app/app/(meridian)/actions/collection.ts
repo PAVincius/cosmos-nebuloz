@@ -347,7 +347,14 @@ export async function sendReminder(
     await withTenantDb(ctx.tenantId, async (db) => {
       const r = await db.meridianRespondent.findFirst({
         where: { id: input.respondentId, tenantId: ctx.tenantId },
-        select: { id: true, name: true, status: true },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          axis: true,
+          lastRemindedAt: true,
+          assessment: { select: { code: true } },
+        },
       });
       if (!r) {
         throw new MeridianRuleError(
@@ -369,9 +376,25 @@ export async function sendReminder(
           "Respondente revogado não recebe lembrete."
         );
       }
+      const now = new Date();
       await db.meridianRespondent.update({
         where: { id: r.id },
-        data: { lastRemindedAt: new Date() },
+        data: { lastRemindedAt: now },
+      });
+      // Trilha sem PII: o alvo é o assessment e o eixo, não o nome nem o e-mail
+      // de quem foi lembrado (AuditLog tem vida longa e sobrevive ao DSAR).
+      await logMeridianAudit(db, ctx, {
+        action: "meridian.respondent.remind",
+        entityType: "meridian.respondent",
+        entityId: r.id,
+        target: `${r.assessment.code} · ${AXES[r.axis].label}`,
+        diff: [
+          [
+            "Último lembrete",
+            r.lastRemindedAt?.toISOString() ?? "—",
+            now.toISOString(),
+          ],
+        ],
       });
     });
   });

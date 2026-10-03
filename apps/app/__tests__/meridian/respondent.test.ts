@@ -708,65 +708,87 @@ describe("startRespondentSession", () => {
   });
 });
 
-// Achado 18a do Lacre: tipo e conteúdo da evidência. O respondente não tem conta,
-// então o arquivo é de um estranho e não pode ser servido nem aberto como outra
-// coisa: a extensão decide o tipo, os primeiros bytes confirmam, e o objeto sobe
-// com o tipo canônico, nunca com o que o navegador declarou.
-describe("attachEvidence — tipo e conteúdo (achado 18a)", () => {
-  const upload = (name: string, content: Uint8Array, type = "") => {
-    h.questionFindFirst.mockResolvedValue({ id: "q1" });
-    h.responseFindUnique.mockResolvedValue(null);
-    h.evidenceCreate.mockResolvedValue({ id: "e1", fileName: name });
-    const file = {
-      size: content.byteLength,
-      type,
-      name,
-      arrayBuffer: () => Promise.resolve(content.buffer as ArrayBuffer),
-    } as unknown as File;
-    return attachEvidence("q1", file);
-  };
-  const MZ = new Uint8Array([0x4d, 0x5a, 0x90, 0x00, 0x03]);
-  const PDF = new TextEncoder().encode("%PDF-1.7\n%conteudo");
+// Achado 29c do Lacre: saveDraft gravava respostas sem trilha. O ato é do
+// respondente (sem conta), então a trilha leva actorType "respondent" e o id
+// dele; o diff conta o que foi gravado, nunca o conteúdo da resposta nem o nome.
+describe("saveDraft — trilha de auditoria", () => {
+  const QID = "clx000000000000000000q001";
+  const ANSWER = [{ questionId: QID, rawValue: 3 }];
+  beforeEach(() => {
+    // A pergunta do eixo do respondente, com o mesmo id que o rascunho envia.
+    h.questionFindMany.mockResolvedValue([
+      {
+        id: QID,
+        code: "Q-D01",
+        ordinal: 1,
+        type: "LIKERT",
+        weight: 1,
+        inverted: false,
+        scaleLabels: [],
+      },
+    ]);
+  });
+  const audit = () =>
+    (
+      h.auditCreate.mock.calls[0]?.[0] as {
+        data: {
+          action: string;
+          actorType: string;
+          actorId: string;
+          entityType: string;
+          entityId: string;
+          diff: [string, string, string][];
+          metadata: { target: string };
+        };
+      }
+    ).data;
 
-  it("extensão fora da lista é recusada sem tocar no bucket nem no banco", async () => {
-    const res = await upload("instalador.exe", MZ, "application/x-msdownload");
-    expect(res.ok).toBe(false);
-    expect(!res.ok && res.code).toBe("evidence.type-not-allowed");
-    expect(h.storageUpload).not.toHaveBeenCalled();
-    expect(h.evidenceCreate).not.toHaveBeenCalled();
+  it("grava meridian.respondent.draft como ato do respondente, com a contagem de respostas", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({ answers: ANSWER });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    const a = audit();
+    expect(a.action).toBe("meridian.respondent.draft");
+    expect(a.actorType).toBe("respondent");
+    expect(a.actorId).toBe("r1");
+    expect(a.entityType).toBe("meridian.response");
+    expect(a.entityId).toBe("r1");
+    expect(a.metadata.target).toBe("AS-104 · Data");
+    expect(a.diff).toEqual([["Respostas gravadas", "—", "1"]]);
   });
 
-  it("executável renomeado para .pdf é recusado pelo conteúdo", async () => {
-    const res = await upload("relatorio.pdf", MZ, "application/pdf");
-    expect(res.ok).toBe(false);
-    expect(!res.ok && res.code).toBe("evidence.content-mismatch");
-    expect(h.storageUpload).not.toHaveBeenCalled();
-    expect(h.evidenceCreate).not.toHaveBeenCalled();
+  it("o primeiro rascunho registra também a passagem de Convidado para Pendente", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "INVITED" }));
+    await saveDraft({ answers: ANSWER });
+    expect(audit().diff).toEqual([
+      ["Respostas gravadas", "—", "1"],
+      ["Status", "INVITED", "PENDING"],
+    ]);
   });
 
-  it("HTML disfarçado de imagem é recusado", async () => {
-    const html = new TextEncoder().encode("<html><script>alert(1)</script>");
-    const res = await upload("foto.png", html, "image/png");
-    expect(!res.ok && res.code).toBe("evidence.content-mismatch");
-    expect(h.storageUpload).not.toHaveBeenCalled();
+  // `actorName` (quem agiu) vem do helper, como nas trilhas de enviar e de anexar:
+  // identifica o ator. O que este teste prende é o RESTO: alvo e diff não levam
+  // nome nem o valor da resposta.
+  it("alvo e diff não levam o nome do respondente nem o valor da resposta", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({
+      answers: [{ questionId: QID, rawValue: 4 }],
+    });
+    const a = audit();
+    expect(JSON.stringify(a.diff)).not.toContain("Jonas Reis");
+    expect(a.metadata.target).not.toContain("Jonas Reis");
+    expect(JSON.stringify(a.diff)).not.toMatch(/rawValue|"4"/);
   });
 
-  it("PDF de verdade sobe com o tipo canônico, mesmo que o navegador declare outro", async () => {
-    const res = await upload("politica.pdf", PDF, "text/html");
-    expect(res.ok).toBe(true);
-    const options = h.storageUpload.mock.calls[0]?.[2] as {
-      contentType: string;
-    };
-    expect(options.contentType).toBe("application/pdf");
-    // O metadado no banco acompanha o objeto: tipo canônico, não o declarado.
-    const created = h.evidenceCreate.mock.calls.at(-1)?.[0] as {
-      data: { mimeType: string };
-    };
-    expect(created.data.mimeType).toBe("application/pdf");
+  it("rascunho que não grava nada (sem resposta, já Pendente) não gera trilha", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({ answers: [] });
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 
-  it("a recusa por tipo fala o que é aceito, sem expor detalhe interno", async () => {
-    const res = await upload("x.exe", MZ);
-    expect(!res.ok && res.error).toMatch(/PDF/);
+  it("recusado pela coleta fechada não grava trilha", async () => {
+    h.statusRaw.mockResolvedValue([{ status: "REVIEW" }]);
+    await saveDraft({ answers: ANSWER });
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 });

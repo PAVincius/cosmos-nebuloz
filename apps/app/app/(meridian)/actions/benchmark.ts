@@ -13,9 +13,12 @@ import {
 import { isBenchmarkEnabled } from "@/lib/meridian/benchmark-enablement";
 import { requireBenchmarkEnabled } from "@/lib/meridian/benchmark-guard";
 import { finalOf } from "@/lib/meridian/composite";
-import { requireMeridianContext } from "@/lib/meridian/guards";
+import {
+  type MeridianContext,
+  requireMeridianContext,
+} from "@/lib/meridian/guards";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
-import type { Db } from "./_shared";
+import { type Db, FIELD_LABELS, logMeridianAudit } from "./_shared";
 
 // Benchmark pool — US6.
 //
@@ -60,12 +63,15 @@ async function recalculate(cohortKey: string): Promise<void> {
  */
 export async function contributeInTx(
   db: Db,
+  ctx: MeridianContext,
   assessmentId: string
 ): Promise<void> {
   const a = await db.meridianAssessment.findUnique({
     where: { id: assessmentId },
     select: {
       id: true,
+      code: true,
+      orgName: true,
       sector: true,
       sizeBand: true,
       tenantId: true,
@@ -97,6 +103,19 @@ export async function contributeInTx(
     });
   }
   await recalculate(cohortKey);
+
+  // Entrar no pool é escrita de consentimento (opt-in): deixa trilha. A coorte e
+  // a contagem de eixos não identificam organização, e os scores não vão junto.
+  await logMeridianAudit(db, ctx, {
+    action: "meridian.benchmark.contribute",
+    entityType: "meridian.benchmark",
+    entityId: a.id,
+    target: `${a.code} · ${a.orgName}`,
+    diff: [
+      ["Coorte", "—", cohortKey],
+      ["Eixos contribuídos", "—", String(a.scores.length)],
+    ],
+  });
 }
 
 const OptOutSchema = z.object({ assessmentId: cuid });
@@ -114,7 +133,14 @@ export async function withdrawContribution(
     const cohortKey = await withTenantDb(ctx.tenantId, async (db) => {
       const a = await db.meridianAssessment.findFirst({
         where: { id: input.assessmentId, tenantId: ctx.tenantId },
-        select: { id: true, sector: true, sizeBand: true },
+        select: {
+          id: true,
+          code: true,
+          orgName: true,
+          sector: true,
+          sizeBand: true,
+          benchmarkOptIn: true,
+        },
       });
       if (!a) {
         return null;
@@ -122,6 +148,20 @@ export async function withdrawContribution(
       await db.meridianAssessment.update({
         where: { id: a.id },
         data: { benchmarkOptIn: false },
+      });
+      // Retirar o consentimento é decisão registrada, com o estado de antes.
+      await logMeridianAudit(db, ctx, {
+        action: "meridian.benchmark.withdraw",
+        entityType: "meridian.benchmark",
+        entityId: a.id,
+        target: `${a.code} · ${a.orgName}`,
+        diff: [
+          [
+            FIELD_LABELS.benchmarkOptIn,
+            a.benchmarkOptIn ? "Ativo" : "Inativo",
+            "Retirado",
+          ],
+        ],
       });
       return cohortKeyOf(a.sector, a.sizeBand);
     });

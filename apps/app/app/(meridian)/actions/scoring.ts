@@ -227,7 +227,7 @@ export async function runScoringInTx(
   });
 
   if (a.benchmarkOptIn) {
-    await contributeInTx(db, a.id);
+    await contributeInTx(db, ctx, a.id);
   }
 
   return out;

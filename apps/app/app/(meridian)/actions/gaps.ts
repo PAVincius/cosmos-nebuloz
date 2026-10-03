@@ -369,20 +369,33 @@ export async function unlinkGapDependency(
     const ctx = await requireMeridianPermissionContext("gap.write");
     const input = LinkSchema.parse(raw);
     await withTenantDb(ctx.tenantId, async (db) => {
-      const gap = await db.meridianGap.findFirst({
-        where: { id: input.gapId, tenantId: ctx.tenantId },
-        select: { assessmentId: true },
+      const gaps = await db.meridianGap.findMany({
+        where: { tenantId: ctx.tenantId },
+        select: { id: true, code: true, assessmentId: true },
       });
-      if (gap) {
-        await requireDecisionsOpen(db, ctx.tenantId, gap.assessmentId);
+      const from = gaps.find((g) => g.id === input.gapId);
+      const to = gaps.find((g) => g.id === input.dependsOnGapId);
+      if (from) {
+        await requireDecisionsOpen(db, ctx.tenantId, from.assessmentId);
       }
-      await db.meridianGapDependency.deleteMany({
+      const removed = await db.meridianGapDependency.deleteMany({
         where: {
           tenantId: ctx.tenantId,
           gapId: input.gapId,
           dependsOnGapId: input.dependsOnGapId,
         },
       });
+      // Desfazer um vínculo muda a ordem do plano: deixa trilha, como o vínculo
+      // deixa. Sem vínculo apagado, nada foi escrito e não há o que registrar.
+      if (removed.count > 0 && from && to) {
+        await logMeridianAudit(db, ctx, {
+          action: "meridian.gap.unlink",
+          entityType: "meridian.gapdependency",
+          entityId: input.gapId,
+          target: `${from.code} deixa de depender de ${to.code}`,
+          diff: [["Dependência", `${from.code} → ${to.code}`, "removida"]],
+        });
+      }
     });
     revalidatePath("/meridian");
   });
