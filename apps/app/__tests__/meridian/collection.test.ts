@@ -41,7 +41,7 @@ vi.mock("@/lib/meridian/guards", () => ({
     }
   },
 }));
-vi.mock("@/app/(meridian)/actions/scoring", () => ({
+vi.mock("@/app/(meridian)/actions/_scoring-core", () => ({
   runScoringInTx: h.runScoringInTx,
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));

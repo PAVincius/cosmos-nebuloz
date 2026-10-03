@@ -68,8 +68,8 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
+import { contributeInTx } from "@/app/(meridian)/actions/_benchmark-core";
 import {
-  contributeInTx,
   getBenchmarkEnablement,
   listCohorts,
   readCohortAction,
