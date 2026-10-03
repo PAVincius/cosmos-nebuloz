@@ -638,7 +638,7 @@ async function main() {
         },
       });
       if (r.status === "PENDING" || r.status === "OVERDUE") {
-        tokens.push(`${r.name} (${r.axis}): /meridian-responder/${token}`);
+        tokens.push(`${r.name} (${r.axis}): /meridian-responder#t=${token}`);
       }
 
       for (const [code, rawValue] of Object.entries(r.answers)) {
@@ -777,7 +777,7 @@ async function main() {
     },
   });
   console.log(
-    `  ✓ AS-200 Solaris Digital (dogfood E2E) · token do respondente: /meridian-responder/${DOGFOOD_RESPONDENT_TOKEN}`
+    `  ✓ AS-200 Solaris Digital (dogfood E2E) · token do respondente: /meridian-responder#t=${DOGFOOD_RESPONDENT_TOKEN}`
   );
 
   // Scores do AS-104 pelo motor real, a partir das respostas acima.

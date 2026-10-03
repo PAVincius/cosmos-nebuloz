@@ -127,7 +127,7 @@ describe("ColetaTab — atribuir respondente", () => {
     // não em texto — getByDisplayValue, não getByText.
     await waitFor(() => {
       expect(
-        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+        screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
       ).toBeTruthy();
     });
     expect(screen.queryByText("tela recarregando")).toBeNull();
@@ -173,7 +173,7 @@ describe("ColetaTab — atribuir respondente", () => {
     fireEvent.click(screen.getByText("Atribuir e gerar link"));
     await waitFor(() => {
       expect(
-        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+        screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
       ).toBeTruthy();
     });
 
@@ -217,7 +217,7 @@ describe("ColetaTab — atribuir respondente", () => {
     fireEvent.click(screen.getByText("Atribuir e gerar link"));
     await waitFor(() => {
       expect(
-        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+        screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
       ).toBeTruthy();
     });
 
@@ -233,14 +233,14 @@ describe("ColetaTab — atribuir respondente", () => {
     expect(screen.queryByText("tela recarregando")).toBeNull();
     expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
     expect(
-      screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+      screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
     ).toBeTruthy();
 
     // "Voltar e copiar" cancela a confirmação, link continua na tela.
     fireEvent.click(screen.getByText("Voltar e copiar"));
     expect(screen.queryByText("Fechar sem copiar o link?")).toBeNull();
     expect(
-      screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+      screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
     ).toBeTruthy();
   });
 
@@ -264,7 +264,7 @@ describe("ColetaTab — atribuir respondente", () => {
     fireEvent.click(screen.getByText("Atribuir e gerar link"));
     await waitFor(() => {
       expect(
-        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+        screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
       ).toBeTruthy();
     });
 
@@ -300,7 +300,7 @@ describe("ColetaTab — atribuir respondente", () => {
     });
     fireEvent.click(screen.getByText("Atribuir e gerar link"));
     const input = await screen.findByDisplayValue(
-      /meridian-responder\/tok-abc123/
+      /meridian-responder#t=tok-abc123/
     );
 
     fireEvent.click(screen.getByText("Copiar"));
@@ -354,7 +354,7 @@ describe("ColetaTab — atribuir respondente", () => {
     fireEvent.click(screen.getByText("Atribuir e gerar link"));
     await waitFor(() => {
       expect(
-        screen.getByDisplayValue(/meridian-responder\/tok-abc123/)
+        screen.getByDisplayValue(/meridian-responder#t=tok-abc123/)
       ).toBeTruthy();
     });
 
@@ -500,7 +500,7 @@ describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
       });
     });
     expect(
-      await screen.findByDisplayValue(/meridian-responder\/tok-reemitido/)
+      await screen.findByDisplayValue(/meridian-responder#t=tok-reemitido/)
     ).toBeTruthy();
     expect(screen.getByText("Link reemitido")).toBeTruthy();
   });
@@ -517,7 +517,7 @@ describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
     );
 
     fireEvent.click(screen.getByText("Reemitir link"));
-    await screen.findByDisplayValue(/meridian-responder\/tok-reemitido/);
+    await screen.findByDisplayValue(/meridian-responder#t=tok-reemitido/);
 
     // O Esc de verdade tem como alvo o elemento focado (o modal foca o
     // primeiro controle ao abrir) — disparar em `document` não passaria
@@ -528,7 +528,7 @@ describe("ColetaTab — reemitir link individual (spec 006 US1)", () => {
     fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
     expect(screen.getByText("Fechar sem copiar o link?")).toBeTruthy();
     expect(
-      screen.getByDisplayValue(/meridian-responder\/tok-reemitido/)
+      screen.getByDisplayValue(/meridian-responder#t=tok-reemitido/)
     ).toBeTruthy();
   });
 });
@@ -539,21 +539,21 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
       respondentId: "r1",
       name: "Ana Kim",
       axis: "DATA" as const,
-      link: "https://app.nebuloz.ai/meridian-responder/tok1",
+      link: "https://app.nebuloz.ai/meridian-responder#t=tok1",
     },
     {
       respondentId: "r2",
       name: "Bia Reis",
       axis: "PROCESS" as const,
-      link: "https://app.nebuloz.ai/meridian-responder/tok2",
+      link: "https://app.nebuloz.ai/meridian-responder#t=tok2",
     },
   ];
 
   it("texto: nome · eixo · link, um por linha", () => {
     const text = buildReissuedListText(ITEMS);
     expect(text).toBe(
-      "Ana Kim · Data · https://app.nebuloz.ai/meridian-responder/tok1\n" +
-        "Bia Reis · Process · https://app.nebuloz.ai/meridian-responder/tok2"
+      "Ana Kim · Data · https://app.nebuloz.ai/meridian-responder#t=tok1\n" +
+        "Bia Reis · Process · https://app.nebuloz.ai/meridian-responder#t=tok2"
     );
   });
 
@@ -562,7 +562,7 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
     const lines = csv.split("\n");
     expect(lines[0]).toBe("nome,eixo,link");
     expect(lines[1]).toBe(
-      '"Ana Kim","Data","https://app.nebuloz.ai/meridian-responder/tok1"'
+      '"Ana Kim","Data","https://app.nebuloz.ai/meridian-responder#t=tok1"'
     );
     expect(lines).toHaveLength(3);
   });
@@ -573,25 +573,25 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
         respondentId: "r1",
         name: '=HYPERLINK("https://evil.example","clique")',
         axis: "DATA" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok1",
       },
       {
         respondentId: "r2",
         name: "+1",
         axis: "PROCESS" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok2",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok2",
       },
       {
         respondentId: "r3",
         name: "-1",
         axis: "PEOPLE" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok3",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok3",
       },
       {
         respondentId: "r4",
         name: "@SUM(1+1)",
         axis: "DATA" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok4",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok4",
       },
     ];
     const lines = buildReissuedListCsv(malicious).split("\n");
@@ -608,7 +608,7 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
         respondentId: "r1",
         name: "Ana Kim\nfake,row,injected",
         axis: "DATA" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok1",
       },
     ];
     const csv = buildReissuedListCsv(injected);
@@ -621,7 +621,7 @@ describe("buildReissuedListText / buildReissuedListCsv (spec 006 US2)", () => {
         respondentId: "r1",
         name: "Ana Kim\r\nfake · line",
         axis: "DATA" as const,
-        link: "https://app.nebuloz.ai/meridian-responder/tok1",
+        link: "https://app.nebuloz.ai/meridian-responder#t=tok1",
       },
     ];
     const text = buildReissuedListText(injected);
@@ -687,7 +687,7 @@ describe("ColetaTab — reemitir e copiar todos os pendentes (spec 006 US2)", ()
     expect(await screen.findByText("Links reemitidos")).toBeTruthy();
     const dialog = screen.getByRole("dialog", { name: "Links reemitidos" });
     expect(
-      within(dialog).getByDisplayValue(/meridian-responder\/tokA/)
+      within(dialog).getByDisplayValue(/meridian-responder#t=tokA/)
     ).toBeTruthy();
     expect(within(dialog).getByText(/Ana Kim/)).toBeTruthy();
 

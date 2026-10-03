@@ -87,6 +87,7 @@ vi.mock("@/app/actions/empresa/cac", () => ({ lerCac: vi.fn() }));
 vi.mock("@/app/actions/provisioning", () => ({
   bootstrapCharterAction: vi.fn(),
   bootstrapMeridianAction: vi.fn(),
+  bootstrapScaffoldAction: vi.fn(),
   contractModuleAction: vi.fn(),
 }));
 vi.mock("@/app/(staff)/propostas/[id]/gerador", () => ({

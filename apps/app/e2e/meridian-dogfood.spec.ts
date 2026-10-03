@@ -241,7 +241,7 @@ test.describe("Meridian dogfood · M1/M2, CEO cria assessment e convida responde
           });
           await expect(linkDialog).toBeVisible();
           await expect(linkDialog.getByRole("textbox")).toHaveValue(
-            /\/meridian-responder\//
+            /\/meridian-responder#t=/
           );
           await linkDialog.getByRole("button", { name: "Copiar" }).click();
           await linkDialog.getByRole("button", { name: "Concluir" }).click();
@@ -262,7 +262,7 @@ test.describe("Meridian dogfood · respondente completa a bateria @meridian", ()
   test("responde Infraestrutura, anexa evidência e envia (SC-006)", async ({
     page,
   }) => {
-    await page.goto(`/meridian-responder/${DOGFOOD_RESPONDENT_TOKEN}`);
+    await page.goto(`/meridian-responder#t=${DOGFOOD_RESPONDENT_TOKEN}`);
 
     // AXES["infrastructure"].label (apps/app/lib/meridian/axes.ts) é
     // "Infrastructure" em inglês — a UI não traduz o rótulo do eixo.

@@ -194,7 +194,7 @@ test.describe("Meridian · link do respondente", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test("token inválido devolve a mesma mensagem genérica", async ({ page }) => {
-    await page.goto(`/meridian-responder/${"f".repeat(64)}`);
+    await page.goto(`/meridian-responder#t=${"f".repeat(64)}`);
 
     await expect(
       page.getByRole("heading", { name: "Link inválido ou expirado" })

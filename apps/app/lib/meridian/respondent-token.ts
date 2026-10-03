@@ -11,20 +11,6 @@ import type { MeridianRespondentStatus } from "@repo/database";
 //   2. Token inexistente, expirado e revogado são indistinguíveis na resposta.
 //      Diferenciar diria a um estranho que aquele assessment existe.
 
-// Mensagens dos dois erros que a superfície do respondente devolve —
-// definidas aqui, não em respondent.ts ("use server" só permite exportar
-// função async), pra `page.tsx` traduzir `res.error` em copy de tela sem
-// duplicar o texto exato e arriscar os dois lados descolarem.
-export const TOKEN_INVALID_MESSAGE = "Link inválido ou expirado.";
-
-/** A coleta fechou (assessment em revisão ou finalizado): o link vira só
- *  leitura, mesmo com o token ainda válido (FR-029c). Texto seguro para a
- *  superfície sem sessão: não diz nada interno. */
-export const COLLECTION_CLOSED_MESSAGE =
-  "A coleta deste diagnóstico já foi encerrada.";
-export const TOKEN_RATE_LIMITED_MESSAGE =
-  "Muitas tentativas. Aguarde um minuto.";
-
 /** 32 bytes de entropia, em hex. Opaco de propósito: nada no token diz de qual
  *  assessment ou de qual eixo ele é. */
 export function issueToken(): string {

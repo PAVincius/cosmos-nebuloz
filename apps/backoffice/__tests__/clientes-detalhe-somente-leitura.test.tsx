@@ -10,17 +10,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CharterBootstrap } from "@/app/(staff)/clientes/[slug]/charter-bootstrap";
 import { MeridianBootstrap } from "@/app/(staff)/clientes/[slug]/meridian-bootstrap";
 import { ModuleForm } from "@/app/(staff)/clientes/[slug]/module-form";
+import { ScaffoldBootstrap } from "@/app/(staff)/clientes/[slug]/scaffold-bootstrap";
 import { MOTIVO_SOMENTE_LEITURA } from "@/components/write-button";
 
 const mocks = vi.hoisted(() => ({
   bootstrapCharterAction: vi.fn(),
   bootstrapMeridianAction: vi.fn(),
+  bootstrapScaffoldAction: vi.fn(),
   contractModuleAction: vi.fn(),
 }));
 
 vi.mock("@/app/actions/provisioning", () => ({
   bootstrapCharterAction: mocks.bootstrapCharterAction,
   bootstrapMeridianAction: mocks.bootstrapMeridianAction,
+  bootstrapScaffoldAction: mocks.bootstrapScaffoldAction,
   contractModuleAction: mocks.contractModuleAction,
 }));
 
@@ -260,5 +263,100 @@ describe("Bootstraps — somente leitura e sucesso", () => {
     const status = await screen.findByRole("status");
     expect(status.getAttribute("aria-live")).toBe("polite");
     expect(status.textContent).toMatch(/Template já existia/);
+  });
+});
+
+describe("ScaffoldBootstrap", () => {
+  const digitar = (email: string) =>
+    fireEvent.change(
+      screen.getByLabelText("E-mail do administrador do Scaffold"),
+      { target: { value: email } }
+    );
+  const atribuir = () =>
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Dar acesso ao Scaffold a este e-mail",
+      })
+    );
+
+  it("com canWrite=false: Atribuir desabilitado e motivo escrito", () => {
+    render(<ScaffoldBootstrap canWrite={false} slug="acme" />);
+
+    expect(
+      estaDesabilitado(
+        screen.getByRole("button", {
+          name: "Dar acesso ao Scaffold a este e-mail",
+        })
+      )
+    ).toBe(true);
+    expect(screen.getByText(MOTIVO_SOMENTE_LEITURA)).toBeTruthy();
+  });
+
+  it("papel criado: chama a action com slug e e-mail e confirma como status vivo", async () => {
+    mocks.bootstrapScaffoldAction.mockResolvedValue({
+      data: { created: true, role: "ADMIN" },
+      ok: true,
+    });
+    render(<ScaffoldBootstrap canWrite slug="acme" />);
+
+    digitar("ceo@acme.com");
+    atribuir();
+
+    const status = await screen.findByRole("status");
+    expect(status.getAttribute("aria-live")).toBe("polite");
+    expect(status.textContent).toMatch(/Administrador do Scaffold atribuído/);
+    expect(mocks.bootstrapScaffoldAction).toHaveBeenCalledWith({
+      adminEmail: "ceo@acme.com",
+      slug: "acme",
+    });
+  });
+
+  it("quem já tinha papel: diz qual é, sem afirmar que virou Administrador", async () => {
+    mocks.bootstrapScaffoldAction.mockResolvedValue({
+      data: { created: false, role: "CONSULTANT" },
+      ok: true,
+    });
+    render(<ScaffoldBootstrap canWrite slug="acme" />);
+
+    digitar("ceo@acme.com");
+    atribuir();
+
+    const status = await screen.findByRole("status");
+    expect(status.textContent).toMatch(/já tinha o papel CONSULTANT/);
+    expect(status.textContent).not.toMatch(/atribuído/);
+  });
+
+  it.each([
+    [
+      "USER_NOT_FOUND",
+      "Nenhuma conta com o e-mail x@acme.com. A pessoa precisa entrar ao menos uma vez antes de receber o papel.",
+    ],
+    [
+      "USER_NOT_MEMBER",
+      "x@acme.com tem conta, mas não é membro desta organização. Convide a pessoa para o tenant antes de dar o papel.",
+    ],
+  ])("%s: mostra o motivo legível e nenhuma confirmação", async (code, error) => {
+    mocks.bootstrapScaffoldAction.mockResolvedValue({ code, error, ok: false });
+    render(<ScaffoldBootstrap canWrite slug="acme" />);
+
+    digitar("x@acme.com");
+    atribuir();
+
+    expect((await screen.findByRole("alert")).textContent).toBe(error);
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("e-mail sem @ mantém o botão desabilitado", () => {
+    render(<ScaffoldBootstrap canWrite slug="acme" />);
+
+    digitar("ceo");
+
+    expect(
+      estaDesabilitado(
+        screen.getByRole("button", {
+          name: "Dar acesso ao Scaffold a este e-mail",
+        })
+      )
+    ).toBe(true);
   });
 });

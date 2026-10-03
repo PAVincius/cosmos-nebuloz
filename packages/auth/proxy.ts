@@ -24,7 +24,8 @@ const PROTECTED_PREFIXES = [
   // mas o redirect antecipado evita renderizar RSC para quem nem tem sessão.
   "/charter",
   // Meridian — idem. A bateria do respondente NÃO entra aqui: ela vive em
-  // /meridian-responder/<token>, fora do prefixo, porque quem responde não tem
+  // /meridian-responder (o link é /meridian-responder/<token>, trocado por
+  // cookie na primeira carga), fora do prefixo, porque quem responde não tem
   // conta na plataforma e o tenant sai do próprio token.
   "/meridian",
 ];
