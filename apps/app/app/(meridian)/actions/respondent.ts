@@ -249,6 +249,7 @@ export async function saveDraft(
       });
       const byId = new Map(questions.map((q) => [q.id, q]));
 
+      let written = 0;
       for (const a of input.answers) {
         const q = byId.get(a.questionId);
         // Pergunta de outro eixo é descartada em silêncio: um cliente adulterado
@@ -273,12 +274,37 @@ export async function saveDraft(
           },
           update: { rawValue: a.rawValue, normalized },
         });
+        written += 1;
       }
 
-      if (r.status === "INVITED") {
+      const firstDraft = r.status === "INVITED";
+      if (firstDraft) {
         await tx.meridianRespondent.update({
           where: { id: r.id },
           data: { status: "PENDING" },
+        });
+      }
+
+      // Trilha do ato do respondente (sem conta): conta o que foi gravado, nunca
+      // o conteúdo da resposta nem o nome. Rascunho que não escreveu nada não
+      // gera linha.
+      if (written > 0 || firstDraft) {
+        const diff: [string, string, string][] = [];
+        if (written > 0) {
+          diff.push(["Respostas gravadas", "—", String(written)]);
+        }
+        if (firstDraft) {
+          diff.push(["Status", "INVITED", "PENDING"]);
+        }
+        await logRespondentAudit(tx, {
+          tenantId: r.tenantId,
+          respondentId: r.id,
+          respondentName: r.name,
+          action: "meridian.respondent.draft",
+          entityType: "meridian.response",
+          entityId: r.id,
+          target: `${r.assessment.code} · ${AXES[r.axis].label}`,
+          diff,
         });
       }
     });

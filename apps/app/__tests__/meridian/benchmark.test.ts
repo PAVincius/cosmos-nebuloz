@@ -19,6 +19,7 @@ const h = vi.hoisted(() => ({
   assessmentFindFirst: vi.fn(),
   assessmentUpdate: vi.fn(),
   enablementFindUnique: vi.fn(),
+  auditCreate: vi.fn(),
 }));
 
 vi.mock("@/lib/meridian/guards", () => ({
@@ -50,6 +51,7 @@ vi.mock("@repo/database", () => ({
         findUnique: h.assessmentFindUnique,
       },
       meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
+      auditLog: { create: h.auditCreate },
     }),
   database: {
     meridianBenchmarkCohort: {
@@ -184,6 +186,7 @@ describe("contributeInTx", () => {
   const db = {
     meridianAssessment: { findUnique: h.assessmentFindUnique },
     meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
+    auditLog: { create: h.auditCreate },
   } as never;
 
   // Benchmark travado por tenant (specs/012, FR-007/FR-008): a habilitação é
@@ -198,7 +201,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [{ axis: "DATA", computed: 46, final: null }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     expect(h.contributionUpsert).not.toHaveBeenCalled();
     expect(h.cohortUpsert).not.toHaveBeenCalled();
     expect(h.cohortUpdate).not.toHaveBeenCalled();
@@ -214,7 +217,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [{ axis: "DATA", computed: 46, final: null }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     expect(h.contributionUpsert).not.toHaveBeenCalled();
   });
 
@@ -227,7 +230,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [{ axis: "DATA", computed: 46, final: null }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     expect(h.contributionUpsert).toHaveBeenCalledTimes(1);
     expect(h.enablementFindUnique.mock.calls[0][0].where).toEqual({
       tenantId: "t1",
@@ -243,7 +246,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: false,
       scores: [{ axis: "DATA", computed: 46, final: null }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     expect(h.contributionUpsert).not.toHaveBeenCalled();
   });
 
@@ -256,7 +259,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     expect(h.contributionUpsert).not.toHaveBeenCalled();
   });
 
@@ -269,7 +272,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [{ axis: "GOVERNANCE", computed: 74, final: 66 }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     const call = h.contributionUpsert.mock.calls[0]?.[0] as {
       create: { score: number; cohortKey: string };
     };
@@ -286,7 +289,7 @@ describe("contributeInTx", () => {
       benchmarkOptIn: true,
       scores: [{ axis: "DATA", computed: 46, final: null }],
     });
-    await contributeInTx(db, "a1");
+    await contributeInTx(db, CTX as never, "a1");
     const call = h.contributionUpsert.mock.calls[0]?.[0] as {
       create: Record<string, unknown>;
     };
@@ -300,13 +303,18 @@ describe("contributeInTx", () => {
   });
 });
 
+const OPTED_IN = {
+  id: "a1",
+  code: "AS-104",
+  orgName: "Vanta Saúde",
+  sector: "Saúde",
+  sizeBand: "200–1.000",
+  benchmarkOptIn: true,
+};
+
 describe("withdrawContribution", () => {
   it("apaga as contribuições e recalcula ao retirar o opt-in", async () => {
-    h.assessmentFindFirst.mockResolvedValue({
-      id: "a1",
-      sector: "Saúde",
-      sizeBand: "200–1.000",
-    });
+    h.assessmentFindFirst.mockResolvedValue(OPTED_IN);
     h.assessmentUpdate.mockResolvedValue({});
     const res = await withdrawContribution({
       assessmentId: "clx0000000000000000000as1",
@@ -334,5 +342,102 @@ describe("getBenchmarkEnablement", () => {
     h.enablementFindUnique.mockResolvedValue(null);
     const res = await getBenchmarkEnablement();
     expect(res.ok && res.data).toEqual({ enabled: false });
+  });
+});
+
+// Achado 29c do Lacre: contribuir ao pool e retirar a contribuição são escritas
+// de consentimento (opt-in, LGPD) e não deixavam trilha. A trilha diz o que
+// mudou; coorte e contagem não identificam organização, então nada de PII.
+describe("trilha de auditoria do benchmark", () => {
+  const withScores = (over: Record<string, unknown> = {}) => ({
+    id: "a1",
+    code: "AS-104",
+    orgName: "Vanta Saúde",
+    tenantId: "t1",
+    sector: "Saúde",
+    sizeBand: "200–1.000",
+    benchmarkOptIn: true,
+    scores: [
+      { axis: "DATA", computed: 46, final: null },
+      { axis: "PROCESS", computed: 60, final: 62 },
+    ],
+    ...over,
+  });
+  const db = {
+    meridianAssessment: { findUnique: h.assessmentFindUnique },
+    meridianBenchmarkEnablement: { findUnique: h.enablementFindUnique },
+    auditLog: { create: h.auditCreate },
+  } as never;
+
+  const auditData = () =>
+    (
+      h.auditCreate.mock.calls[0]?.[0] as {
+        data: {
+          action: string;
+          entityType: string;
+          entityId: string;
+          tenantId: string;
+          userId: string;
+          diff: [string, string, string][];
+          metadata: { target: string };
+        };
+      }
+    ).data;
+
+  it("contribuir grava meridian.benchmark.contribute, com a coorte e a contagem de eixos", async () => {
+    h.assessmentFindUnique.mockResolvedValue(withScores());
+    await contributeInTx(db, CTX as never, "a1");
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    const a = auditData();
+    expect(a.action).toBe("meridian.benchmark.contribute");
+    expect(a.entityType).toBe("meridian.benchmark");
+    expect(a.entityId).toBe("a1");
+    expect(a.tenantId).toBe("t1");
+    expect(a.userId).toBe("u1");
+    expect(a.metadata.target).toBe("AS-104 · Vanta Saúde");
+    expect(a.diff).toEqual([
+      ["Coorte", "—", "saude · 200–1.000"],
+      ["Eixos contribuídos", "—", "2"],
+    ]);
+  });
+
+  it("os scores não vão para a trilha", async () => {
+    h.assessmentFindUnique.mockResolvedValue(withScores());
+    await contributeInTx(db, CTX as never, "a1");
+    const written = JSON.stringify(h.auditCreate.mock.calls);
+    expect(written).not.toContain("62");
+    expect(written).not.toContain("46");
+  });
+
+  it("sem contribuição (sem opt-in, sem score, habilitação desligada) não grava trilha", async () => {
+    h.assessmentFindUnique.mockResolvedValue(
+      withScores({ benchmarkOptIn: false })
+    );
+    await contributeInTx(db, CTX as never, "a1");
+    h.assessmentFindUnique.mockResolvedValue(withScores({ scores: [] }));
+    await contributeInTx(db, CTX as never, "a1");
+    h.enablementFindUnique.mockResolvedValue({ enabled: false });
+    h.assessmentFindUnique.mockResolvedValue(withScores());
+    await contributeInTx(db, CTX as never, "a1");
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("retirar o opt-in grava meridian.benchmark.withdraw na mesma transação", async () => {
+    h.assessmentFindFirst.mockResolvedValue(OPTED_IN);
+    h.assessmentUpdate.mockResolvedValue({});
+    await withdrawContribution({ assessmentId: "clx0000000000000000000as1" });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    const a = auditData();
+    expect(a.action).toBe("meridian.benchmark.withdraw");
+    expect(a.entityType).toBe("meridian.benchmark");
+    expect(a.entityId).toBe("a1");
+    expect(a.metadata.target).toBe("AS-104 · Vanta Saúde");
+    expect(a.diff).toEqual([["Opt-in de benchmark", "Ativo", "Retirado"]]);
+  });
+
+  it("assessment de outro tenant (não encontrado) não grava trilha", async () => {
+    h.assessmentFindFirst.mockResolvedValue(null);
+    await withdrawContribution({ assessmentId: "clx0000000000000000000as1" });
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 });

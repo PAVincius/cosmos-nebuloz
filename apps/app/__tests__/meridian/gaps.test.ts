@@ -82,6 +82,7 @@ import {
   linkGapDependency,
   promoteGap,
   revokePromotion,
+  unlinkGapDependency,
 } from "@/app/(meridian)/actions/gaps";
 
 const CTX = {
@@ -107,6 +108,7 @@ beforeEach(() => {
   ]);
   h.depFindMany.mockResolvedValue([]);
   h.depCreate.mockResolvedValue({});
+  h.depDeleteMany.mockResolvedValue({ count: 1 });
   h.auditCreate.mockResolvedValue({});
   h.promotionFindFirst.mockResolvedValue(null);
   h.promotionCreate.mockResolvedValue({ id: P1 });
@@ -323,5 +325,38 @@ describe("revokePromotion", () => {
 
     expect(res.ok).toBe(true);
     expect(h.promotionUpdate).toHaveBeenCalled();
+  });
+});
+
+// Achado 29c do Lacre: `unlinkGapDependency` apagava a dependência sem trilha,
+// enquanto `linkGapDependency` já gravava. Desfazer um vínculo muda a ordem do
+// plano; precisa deixar rastro igual ao de criá-lo.
+describe("unlinkGapDependency — trilha de auditoria", () => {
+  it("grava meridian.gap.unlink com os códigos dos dois gaps", async () => {
+    const res = await unlinkGapDependency({ gapId: G1, dependsOnGapId: G2 });
+    expect(res.ok).toBe(true);
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    const audit = h.auditCreate.mock.calls[0]?.[0] as {
+      data: {
+        action: string;
+        entityType: string;
+        entityId: string;
+        diff: [string, string, string][];
+        metadata: { target: string };
+      };
+    };
+    expect(audit.data.action).toBe("meridian.gap.unlink");
+    expect(audit.data.entityType).toBe("meridian.gapdependency");
+    expect(audit.data.entityId).toBe(G1);
+    expect(audit.data.metadata.target).toBe("G-01 deixa de depender de G-02");
+    expect(audit.data.diff).toEqual([
+      ["Dependência", "G-01 → G-02", "removida"],
+    ]);
+  });
+
+  it("vínculo que não existia não grava trilha: nada foi escrito", async () => {
+    h.depDeleteMany.mockResolvedValue({ count: 0 });
+    await unlinkGapDependency({ gapId: G1, dependsOnGapId: G2 });
+    expect(h.auditCreate).not.toHaveBeenCalled();
   });
 });

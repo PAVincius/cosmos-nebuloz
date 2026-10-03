@@ -701,3 +701,88 @@ describe("startRespondentSession", () => {
     expect(h.cookieSet).not.toHaveBeenCalled();
   });
 });
+
+// Achado 29c do Lacre: saveDraft gravava respostas sem trilha. O ato é do
+// respondente (sem conta), então a trilha leva actorType "respondent" e o id
+// dele; o diff conta o que foi gravado, nunca o conteúdo da resposta nem o nome.
+describe("saveDraft — trilha de auditoria", () => {
+  const QID = "clx000000000000000000q001";
+  const ANSWER = [{ questionId: QID, rawValue: 3 }];
+  beforeEach(() => {
+    // A pergunta do eixo do respondente, com o mesmo id que o rascunho envia.
+    h.questionFindMany.mockResolvedValue([
+      {
+        id: QID,
+        code: "Q-D01",
+        ordinal: 1,
+        type: "LIKERT",
+        weight: 1,
+        inverted: false,
+        scaleLabels: [],
+      },
+    ]);
+  });
+  const audit = () =>
+    (
+      h.auditCreate.mock.calls[0]?.[0] as {
+        data: {
+          action: string;
+          actorType: string;
+          actorId: string;
+          entityType: string;
+          entityId: string;
+          diff: [string, string, string][];
+          metadata: { target: string };
+        };
+      }
+    ).data;
+
+  it("grava meridian.respondent.draft como ato do respondente, com a contagem de respostas", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({ answers: ANSWER });
+    expect(h.auditCreate).toHaveBeenCalledTimes(1);
+    const a = audit();
+    expect(a.action).toBe("meridian.respondent.draft");
+    expect(a.actorType).toBe("respondent");
+    expect(a.actorId).toBe("r1");
+    expect(a.entityType).toBe("meridian.response");
+    expect(a.entityId).toBe("r1");
+    expect(a.metadata.target).toBe("AS-104 · Data");
+    expect(a.diff).toEqual([["Respostas gravadas", "—", "1"]]);
+  });
+
+  it("o primeiro rascunho registra também a passagem de Convidado para Pendente", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "INVITED" }));
+    await saveDraft({ answers: ANSWER });
+    expect(audit().diff).toEqual([
+      ["Respostas gravadas", "—", "1"],
+      ["Status", "INVITED", "PENDING"],
+    ]);
+  });
+
+  // `actorName` (quem agiu) vem do helper, como nas trilhas de enviar e de anexar:
+  // identifica o ator. O que este teste prende é o RESTO: alvo e diff não levam
+  // nome nem o valor da resposta.
+  it("alvo e diff não levam o nome do respondente nem o valor da resposta", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({
+      answers: [{ questionId: QID, rawValue: 4 }],
+    });
+    const a = audit();
+    expect(JSON.stringify(a.diff)).not.toContain("Jonas Reis");
+    expect(a.metadata.target).not.toContain("Jonas Reis");
+    expect(JSON.stringify(a.diff)).not.toMatch(/rawValue|"4"/);
+  });
+
+  it("rascunho que não grava nada (sem resposta, já Pendente) não gera trilha", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent({ status: "PENDING" }));
+    await saveDraft({ answers: [] });
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusado pela coleta fechada não grava trilha", async () => {
+    h.statusRaw.mockResolvedValue([{ status: "REVIEW" }]);
+    await saveDraft({ answers: ANSWER });
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+});
