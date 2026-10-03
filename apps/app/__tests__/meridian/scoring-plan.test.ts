@@ -43,7 +43,7 @@ vi.mock("@/lib/meridian/guards", () => ({
     }
   },
 }));
-vi.mock("@/app/(meridian)/actions/benchmark", () => ({
+vi.mock("@/app/(meridian)/actions/_benchmark-core", () => ({
   contributeInTx: h.contributeInTx,
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));

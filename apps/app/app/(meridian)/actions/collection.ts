@@ -16,8 +16,8 @@ import {
   issueToken,
 } from "@/lib/meridian/respondent-token";
 import { cuid, nnStr, type Result, safeAction } from "../../actions/_base";
+import { runScoringInTx } from "./_scoring-core";
 import { logMeridianAudit } from "./_shared";
-import { runScoringInTx } from "./scoring";
 
 // Coleta multi-respondente — US2.
 
