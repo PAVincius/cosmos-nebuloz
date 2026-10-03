@@ -111,3 +111,19 @@ describe("prazo na bateria do respondente", () => {
     }
   });
 });
+
+// Achado 18a do Lacre: o seletor de arquivo já oferece só o que a action aceita
+// (a barreira de verdade é o servidor; isto só evita o erro evitável).
+describe("seletor de evidência", () => {
+  it("oferece só documentos e imagens, nunca HTML, SVG ou executável", () => {
+    render(<RespondentForm battery={BATTERY} />);
+    const accept =
+      document.querySelector<HTMLInputElement>('input[type="file"]')?.accept ??
+      "";
+    expect(accept).toContain(".pdf");
+    expect(accept).toContain(".png");
+    for (const bad of [".html", ".svg", ".exe", ".js"]) {
+      expect(accept).not.toContain(bad);
+    }
+  });
+});

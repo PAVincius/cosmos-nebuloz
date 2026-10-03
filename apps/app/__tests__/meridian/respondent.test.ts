@@ -26,6 +26,7 @@ const h = vi.hoisted(() => ({
   storageRemove: vi.fn(),
   cookieGet: vi.fn(),
   cookieSet: vi.fn(),
+  storageUpload: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -60,13 +61,15 @@ vi.mock("@/lib/meridian/guards", () => ({
     }
   },
 }));
-vi.mock("@repo/storage", () => ({
+vi.mock("@repo/storage", async (importOriginal) => ({
+  // A lista de tipos de evidência é a real: é ela que a action consulta.
+  ...(await importOriginal<typeof import("@repo/storage")>()),
   ensureBucket: h.ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
   storageClient: {
     storage: {
       from: () => ({
-        upload: vi.fn().mockResolvedValue({ error: null }),
+        upload: h.storageUpload,
         remove: h.storageRemove,
       }),
     },
@@ -108,6 +111,8 @@ import {
   submitBattery,
 } from "@/app/(meridian)/actions/respondent";
 
+/** Conteúdo de texto de verdade: a action confere os primeiros bytes. */
+const TEXTO = new TextEncoder().encode("abc");
 const TOKEN = "a".repeat(64);
 const FUTURE = new Date(Date.now() + 30 * 86_400_000);
 const PAST = new Date(Date.now() - 86_400_000);
@@ -145,6 +150,7 @@ beforeEach(() => {
     reset: 0,
   });
   h.ensureBucket.mockResolvedValue(undefined);
+  h.storageUpload.mockResolvedValue({ error: null });
   h.statusRaw.mockResolvedValue([{ status: "COLLECTING" }]);
   h.cookieGet.mockReturnValue({ name: "meridian_resp", value: TOKEN });
   h.storageRemove.mockResolvedValue({ error: null });
@@ -414,7 +420,7 @@ describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
       size: 3,
       type: "text/plain",
       name: "ev.txt",
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+      arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
     } as unknown as File;
 
     await attachEvidence("q1", file);
@@ -433,7 +439,7 @@ describe("attachEvidence — target do audit (achado da Morgana sobre report.ts,
       size: 3,
       type: "text/plain",
       name: "ev.txt",
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+      arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
     } as unknown as File;
 
     await attachEvidence("q1", file);
@@ -454,7 +460,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
     size: 3,
     type: "text/plain",
     name: "ev.txt",
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
   } as unknown as File;
 
   const fechado = (status: string) =>
@@ -542,7 +548,7 @@ describe("coleta fechada entre o token e a escrita", () => {
     size: 3,
     type: "text/plain",
     name: "ev.txt",
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
   } as unknown as File;
 
   beforeEach(() => {
@@ -699,5 +705,68 @@ describe("startRespondentSession", () => {
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
     expect(h.respondentFindUnique).not.toHaveBeenCalled();
     expect(h.cookieSet).not.toHaveBeenCalled();
+  });
+});
+
+// Achado 18a do Lacre: tipo e conteúdo da evidência. O respondente não tem conta,
+// então o arquivo é de um estranho e não pode ser servido nem aberto como outra
+// coisa: a extensão decide o tipo, os primeiros bytes confirmam, e o objeto sobe
+// com o tipo canônico, nunca com o que o navegador declarou.
+describe("attachEvidence — tipo e conteúdo (achado 18a)", () => {
+  const upload = (name: string, content: Uint8Array, type = "") => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    h.evidenceCreate.mockResolvedValue({ id: "e1", fileName: name });
+    const file = {
+      size: content.byteLength,
+      type,
+      name,
+      arrayBuffer: () => Promise.resolve(content.buffer as ArrayBuffer),
+    } as unknown as File;
+    return attachEvidence("q1", file);
+  };
+  const MZ = new Uint8Array([0x4d, 0x5a, 0x90, 0x00, 0x03]);
+  const PDF = new TextEncoder().encode("%PDF-1.7\n%conteudo");
+
+  it("extensão fora da lista é recusada sem tocar no bucket nem no banco", async () => {
+    const res = await upload("instalador.exe", MZ, "application/x-msdownload");
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("evidence.type-not-allowed");
+    expect(h.storageUpload).not.toHaveBeenCalled();
+    expect(h.evidenceCreate).not.toHaveBeenCalled();
+  });
+
+  it("executável renomeado para .pdf é recusado pelo conteúdo", async () => {
+    const res = await upload("relatorio.pdf", MZ, "application/pdf");
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("evidence.content-mismatch");
+    expect(h.storageUpload).not.toHaveBeenCalled();
+    expect(h.evidenceCreate).not.toHaveBeenCalled();
+  });
+
+  it("HTML disfarçado de imagem é recusado", async () => {
+    const html = new TextEncoder().encode("<html><script>alert(1)</script>");
+    const res = await upload("foto.png", html, "image/png");
+    expect(!res.ok && res.code).toBe("evidence.content-mismatch");
+    expect(h.storageUpload).not.toHaveBeenCalled();
+  });
+
+  it("PDF de verdade sobe com o tipo canônico, mesmo que o navegador declare outro", async () => {
+    const res = await upload("politica.pdf", PDF, "text/html");
+    expect(res.ok).toBe(true);
+    const options = h.storageUpload.mock.calls[0]?.[2] as {
+      contentType: string;
+    };
+    expect(options.contentType).toBe("application/pdf");
+    // O metadado no banco acompanha o objeto: tipo canônico, não o declarado.
+    const created = h.evidenceCreate.mock.calls.at(-1)?.[0] as {
+      data: { mimeType: string };
+    };
+    expect(created.data.mimeType).toBe("application/pdf");
+  });
+
+  it("a recusa por tipo fala o que é aceito, sem expor detalhe interno", async () => {
+    const res = await upload("x.exe", MZ);
+    expect(!res.ok && res.error).toMatch(/PDF/);
   });
 });
