@@ -60,6 +60,40 @@ export const SCAFFOLD_FILE_TYPES: Record<string, string> = {
   txt: "text/plain",
 };
 
+/** Tipos de arquivo que a evidência do Meridian aceita, por extensão. Quem anexa
+ *  é o respondente, que não tem conta: o arquivo é de um estranho. Só documento
+ *  e imagem; nada que o navegador renderize ou execute (HTML, SVG, JS). A
+ *  extensão decide o tipo e a action confere os primeiros bytes
+ *  (`lib/meridian/evidence-file.ts`). Lista própria, não a do Scaffold: os dois
+ *  produtos decidem o seu. */
+export const MERIDIAN_EVIDENCE_FILE_TYPES: Record<string, string> = {
+  pdf: "application/pdf",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  csv: "text/csv",
+  txt: "text/plain",
+};
+
+export const MERIDIAN_EVIDENCE_MIME_TYPES: string[] = [
+  ...new Set(Object.values(MERIDIAN_EVIDENCE_FILE_TYPES)),
+];
+
+/** Tipo canônico da evidência pela extensão do nome, ou nulo se a extensão não
+ *  está na lista. Só vale a ÚLTIMA extensão: "a.pdf.exe" é exe. */
+export function meridianEvidenceMimeType(filename: string): string | null {
+  const dot = filename.lastIndexOf(".");
+  if (dot < 0 || dot === filename.length - 1) {
+    return null;
+  }
+  return (
+    MERIDIAN_EVIDENCE_FILE_TYPES[filename.slice(dot + 1).toLowerCase()] ?? null
+  );
+}
+
 export const SCAFFOLD_ALLOWED_MIME_TYPES: string[] = [
   ...new Set(Object.values(SCAFFOLD_FILE_TYPES)),
 ];
@@ -97,6 +131,10 @@ export function bucketOptionsFor(bucket: string) {
     fileSizeLimit: TEN_MB,
     ...(bucket === SCAFFOLD_ARTEFACT_BUCKET
       ? { allowedMimeTypes: SCAFFOLD_BUCKET_MIME_TYPES }
+      : {}),
+    // Segunda linha da evidência do Meridian: o filtro fino é da action.
+    ...(bucket === MERIDIAN_EVIDENCE_BUCKET
+      ? { allowedMimeTypes: MERIDIAN_EVIDENCE_MIME_TYPES }
       : {}),
   };
 }
@@ -160,8 +198,12 @@ export async function ensureBucketWith(
     }
     return;
   }
-  // O bucket do Scaffold pode ter nascido sem limite de tipo: reaplica.
-  if (bucket === SCAFFOLD_ARTEFACT_BUCKET) {
+  // Os buckets do Scaffold e da evidência do Meridian podem ter nascido sem
+  // limite de tipo: reaplica.
+  if (
+    bucket === SCAFFOLD_ARTEFACT_BUCKET ||
+    bucket === MERIDIAN_EVIDENCE_BUCKET
+  ) {
     const { error } = await client.storage.updateBucket(bucket, options);
     if (error) {
       throw new Error(

@@ -80,15 +80,14 @@ describe("opções do bucket (o que ensureBucket manda ao Supabase)", () => {
     });
   });
 
-  it("os outros buckets seguem como eram: sem lista de tipos", async () => {
-    const { bucketOptionsFor, MERIDIAN_EVIDENCE_BUCKET, AI_PLAYGROUND_BUCKET } =
-      await import("@repo/storage");
-    for (const b of [MERIDIAN_EVIDENCE_BUCKET, AI_PLAYGROUND_BUCKET]) {
-      expect(bucketOptionsFor(b)).toEqual({
-        public: false,
-        fileSizeLimit: 10 * 1024 * 1024,
-      });
-    }
+  it("o bucket do playground segue como era: sem lista de tipos", async () => {
+    const { bucketOptionsFor, AI_PLAYGROUND_BUCKET } = await import(
+      "@repo/storage"
+    );
+    expect(bucketOptionsFor(AI_PLAYGROUND_BUCKET)).toEqual({
+      public: false,
+      fileSizeLimit: 10 * 1024 * 1024,
+    });
   });
 
   it("nunca é público", async () => {

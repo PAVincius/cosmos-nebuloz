@@ -476,6 +476,18 @@ describe("requestEvidenceUrl", () => {
     expect(order).toEqual(["audit", "url"]);
   });
 
+  // Achado 18a do Lacre: a evidência era servida inline. A URL assinada força
+  // download, com o nome do arquivo, para o navegador nunca abrir o que o
+  // respondente (sem conta) subiu.
+  it("a URL assinada força download, não abre inline", async () => {
+    await requestEvidenceUrl({ evidenceId: EV_ID });
+    expect(h.createSignedUrl).toHaveBeenCalledWith(
+      "t1/a1/ev01",
+      expect.any(Number),
+      { download: "catalogo.xlsx" }
+    );
+  });
+
   it("registra a leitura como meridian.evidence.read", async () => {
     await requestEvidenceUrl({ evidenceId: EV_ID });
     const audit = h.auditCreate.mock.calls[0]?.[0] as {
