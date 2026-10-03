@@ -6,11 +6,13 @@ import { log } from "@repo/observability/log";
 import {
   ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET,
+  meridianEvidenceMimeType,
   storageClient,
 } from "@repo/storage";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
+import { sniffEvidence } from "@/lib/meridian/evidence-file";
 import { MeridianRuleError } from "@/lib/meridian/guards";
 import { isTokenShape } from "@/lib/meridian/respondent-link";
 import {
@@ -359,6 +361,9 @@ export async function submitBattery(): Promise<Result<{ missing: number }>> {
 
 const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
 
+const EVIDENCE_TYPE_MESSAGE =
+  "Tipo de arquivo não aceito. Anexe PDF, Word, Excel, PowerPoint, imagem (PNG ou JPG), CSV ou texto.";
+
 let evidenceBucketReady: Promise<void> | null = null;
 
 /** `ensureBucket` é idempotente mas faz `listBuckets` a cada chamada — sem
@@ -417,15 +422,30 @@ export async function attachEvidence(
       select: { id: true },
     });
 
+    // Tipo e conteúdo (achado 18a do Lacre): a extensão decide o tipo, os
+    // primeiros bytes confirmam, e o objeto sobe com o tipo canônico, nunca com o
+    // que o navegador declarou. Antes de gastar bucket ou banco.
+    if (!meridianEvidenceMimeType(file.name)) {
+      throw new MeridianRuleError(
+        "evidence.type-not-allowed",
+        EVIDENCE_TYPE_MESSAGE
+      );
+    }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const contentType = sniffEvidence(file.name, bytes);
+    if (!contentType) {
+      throw new MeridianRuleError(
+        "evidence.content-mismatch",
+        "O conteúdo do arquivo não confere com o tipo dele. Anexe o documento original, sem trocar a extensão."
+      );
+    }
+
     await ensureEvidenceBucketOnce();
     const id = crypto.randomUUID();
     const storagePath = `${r.tenantId}/${r.assessment.id}/${id}`;
     const { error } = await storageClient.storage
       .from(MERIDIAN_EVIDENCE_BUCKET)
-      .upload(storagePath, await file.arrayBuffer(), {
-        contentType: file.type || "application/octet-stream",
-        upsert: false,
-      });
+      .upload(storagePath, bytes, { contentType, upsert: false });
     if (error) {
       throw new Error(`Falha ao anexar evidência: ${error.message}`);
     }
@@ -444,7 +464,9 @@ export async function attachEvidence(
             responseId: response?.id ?? null,
             storagePath,
             fileName: file.name,
-            mimeType: file.type || "application/octet-stream",
+            // O tipo canônico, o mesmo do objeto no bucket: nunca o declarado pelo
+            // navegador.
+            mimeType: contentType,
             sizeBytes: file.size,
             uploadedByRespondentId: r.id,
           },

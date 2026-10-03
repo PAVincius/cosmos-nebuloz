@@ -416,7 +416,11 @@ export async function requestEvidenceUrl(
 
     const { data, error } = await storageClient.storage
       .from(MERIDIAN_EVIDENCE_BUCKET)
-      .createSignedUrl(evidence.storagePath, EVIDENCE_URL_TTL_SECONDS);
+      // `download`: o navegador baixa com o nome do arquivo, nunca abre inline o
+      // que o respondente (sem conta) subiu (achado 18a do Lacre).
+      .createSignedUrl(evidence.storagePath, EVIDENCE_URL_TTL_SECONDS, {
+        download: evidence.fileName,
+      });
     if (error || !data) {
       throw new Error(
         `Falha ao emitir URL de evidência: ${error?.message ?? "sem resposta"}`

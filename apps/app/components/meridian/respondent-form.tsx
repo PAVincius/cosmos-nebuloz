@@ -398,6 +398,7 @@ export function RespondentForm({ battery }: { battery: Battery }) {
                   </span>
                 ))}
                 <input
+                  accept=".pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.csv,.txt"
                   hidden
                   onChange={(e) => {
                     const file = e.target.files?.[0];

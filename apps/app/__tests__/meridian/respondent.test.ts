@@ -26,6 +26,7 @@ const h = vi.hoisted(() => ({
   storageRemove: vi.fn(),
   cookieGet: vi.fn(),
   cookieSet: vi.fn(),
+  storageUpload: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -60,13 +61,15 @@ vi.mock("@/lib/meridian/guards", () => ({
     }
   },
 }));
-vi.mock("@repo/storage", () => ({
+vi.mock("@repo/storage", async (importOriginal) => ({
+  // A lista de tipos de evidência é a real: é ela que a action consulta.
+  ...(await importOriginal<typeof import("@repo/storage")>()),
   ensureBucket: h.ensureBucket,
   MERIDIAN_EVIDENCE_BUCKET: "meridian-evidence",
   storageClient: {
     storage: {
       from: () => ({
-        upload: vi.fn().mockResolvedValue({ error: null }),
+        upload: h.storageUpload,
         remove: h.storageRemove,
       }),
     },
@@ -108,6 +111,8 @@ import {
   submitBattery,
 } from "@/app/(meridian)/actions/respondent";
 
+/** Conteúdo de texto de verdade: a action confere os primeiros bytes. */
+const TEXTO = new TextEncoder().encode("abc");
 const TOKEN = "a".repeat(64);
 const FUTURE = new Date(Date.now() + 30 * 86_400_000);
 const PAST = new Date(Date.now() - 86_400_000);
@@ -145,6 +150,7 @@ beforeEach(() => {
     reset: 0,
   });
   h.ensureBucket.mockResolvedValue(undefined);
+  h.storageUpload.mockResolvedValue({ error: null });
   h.statusRaw.mockResolvedValue([{ status: "COLLECTING" }]);
   h.cookieGet.mockReturnValue({ name: "meridian_resp", value: TOKEN });
   h.storageRemove.mockResolvedValue({ error: null });
@@ -414,7 +420,7 @@ describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
       size: 3,
       type: "text/plain",
       name: "ev.txt",
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+      arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
     } as unknown as File;
 
     await attachEvidence("q1", file);
@@ -433,7 +439,7 @@ describe("attachEvidence — target do audit (achado da Morgana sobre report.ts,
       size: 3,
       type: "text/plain",
       name: "ev.txt",
-      arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+      arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
     } as unknown as File;
 
     await attachEvidence("q1", file);
@@ -454,7 +460,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
     size: 3,
     type: "text/plain",
     name: "ev.txt",
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
   } as unknown as File;
 
   const fechado = (status: string) =>
@@ -542,7 +548,7 @@ describe("coleta fechada entre o token e a escrita", () => {
     size: 3,
     type: "text/plain",
     name: "ev.txt",
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
+    arrayBuffer: () => Promise.resolve(TEXTO.buffer as ArrayBuffer),
   } as unknown as File;
 
   beforeEach(() => {
