@@ -34,7 +34,6 @@ const battery = (
 ): Battery => ({
   context: {
     respondentId: "r1",
-    tenantId: "t1",
     assessmentId: "a1",
     assessmentCode: "AS-002",
     orgName: "Vanta Saúde",

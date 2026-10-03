@@ -19,7 +19,6 @@ import { RespondentForm } from "@/components/meridian/respondent-form";
 const BATTERY: Battery = {
   context: {
     respondentId: "r1",
-    tenantId: "t1",
     assessmentId: "a1",
     assessmentCode: "AS-104",
     orgName: "Vanta Saúde",

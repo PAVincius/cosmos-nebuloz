@@ -25,6 +25,7 @@ const h = vi.hoisted(() => ({
   statusRaw: vi.fn(),
   storageRemove: vi.fn(),
   cookieGet: vi.fn(),
+  logError: vi.fn(),
   cookieSet: vi.fn(),
   storageUpload: vi.fn(),
 }));
@@ -34,6 +35,9 @@ vi.mock("next/headers", () => ({
   // O token do respondente vem do cookie httpOnly da sessão curta, não da URL
   // nem de argumento da action (achado 28a do Lacre).
   cookies: vi.fn().mockResolvedValue({ get: h.cookieGet, set: h.cookieSet }),
+}));
+vi.mock("@repo/observability/log", () => ({
+  log: { error: h.logError, warn: vi.fn(), info: vi.fn() },
 }));
 vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: vi.fn(() => ({
@@ -177,7 +181,9 @@ describe("resolveRespondentToken", () => {
   it("resolve token válido e devolve o tenant a partir do respondente", async () => {
     const res = await resolveRespondentToken();
     expect(res.ok).toBe(true);
-    expect(res.ok && res.data.tenantId).toBe("t1");
+    // O tenant sai do token no servidor e NUNCA volta ao respondente anônimo
+    // (achado 27 do Vigia): nada na tela usa, e é identificador interno.
+    expect(res.ok && res.data).not.toHaveProperty("tenantId");
     expect(res.ok && res.data.axisLabel).toBe("Data");
   });
 
@@ -789,6 +795,85 @@ describe("saveDraft — trilha de auditoria", () => {
   it("recusado pela coleta fechada não grava trilha", async () => {
     h.statusRaw.mockResolvedValue([{ status: "REVIEW" }]);
     await saveDraft({ answers: ANSWER });
+    expect(h.auditCreate).not.toHaveBeenCalled();
+  });
+});
+
+// Achados 13 e 27 do Vigia: a superfície do respondente é anônima, então cada
+// entrada tem teto e cada saída é escolhida.
+describe("getBattery — contexto sem identificador interno (achado 27)", () => {
+  it("o contexto devolvido ao respondente não traz o tenantId", async () => {
+    const res = await getBattery();
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.context).not.toHaveProperty("tenantId");
+  });
+});
+
+describe("saveDraft — teto de respostas (achado 13)", () => {
+  const answers = (n: number) =>
+    Array.from({ length: n }, (_, i) => ({
+      questionId: `c${String(i).padStart(24, "0")}`,
+      rawValue: 1,
+    }));
+
+  it("até 200 respostas passa", async () => {
+    const res = await saveDraft({ answers: answers(200) });
+    expect(res.ok).toBe(true);
+  });
+
+  it("201 respostas é recusado antes de qualquer consulta ou gravação", async () => {
+    const res = await saveDraft({ answers: answers(201) });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/answers/);
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(h.responseUpsert).not.toHaveBeenCalled();
+  });
+});
+
+describe("attachEvidence — falha do storage não vaza ao respondente (achado 27)", () => {
+  const SUPABASE_ERROR =
+    "Bucket not found: meridian-evidence (project xyz, service_role key rejected)";
+
+  beforeEach(() => {
+    h.questionFindFirst.mockResolvedValue({ id: "q1" });
+    h.responseFindUnique.mockResolvedValue(null);
+    h.storageUpload.mockResolvedValue({ error: { message: SUPABASE_ERROR } });
+  });
+
+  const file = {
+    size: 3,
+    type: "text/plain",
+    name: "ev.txt",
+    arrayBuffer: () => Promise.resolve(new TextEncoder().encode("abc").buffer),
+  } as unknown as File;
+
+  it("devolve mensagem fixa, sem o texto do Supabase", async () => {
+    const res = await attachEvidence("q1", file);
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.code).toBe("evidence.upload-failed");
+    expect(!res.ok && res.error).toMatch(/tente de novo/i);
+    expect(JSON.stringify(res)).not.toContain("Bucket");
+    expect(JSON.stringify(res)).not.toContain("service_role");
+    expect(JSON.stringify(res)).not.toContain("meridian-evidence");
+  });
+
+  it("o detalhe vai para o log do servidor, com ids internos e sem nome de arquivo nem do respondente", async () => {
+    await attachEvidence("q1", file);
+    // `safeAction` também registra a falha; a linha que importa é a desta action.
+    const call = h.logError.mock.calls.find(([message]) =>
+      String(message).includes("evidência no bucket")
+    );
+    expect(call).toBeDefined();
+    const context = (call as [string, Record<string, unknown>])[1];
+    expect(context.error).toBe(SUPABASE_ERROR);
+    expect(context.respondentId).toBe("r1");
+    expect(JSON.stringify(context)).not.toContain("ev.txt");
+    expect(JSON.stringify(context)).not.toContain("Jonas Reis");
+  });
+
+  it("não grava metadado nem trilha quando o upload falha", async () => {
+    await attachEvidence("q1", file);
+    expect(h.evidenceCreate).not.toHaveBeenCalled();
     expect(h.auditCreate).not.toHaveBeenCalled();
   });
 });
