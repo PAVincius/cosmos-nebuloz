@@ -26,7 +26,7 @@
   "apps/app/components/cosmos/screens/value.tsx": 949,
   "apps/app/components/cosmos/screens/wsjf-client.tsx": 1284,
   "apps/app/components/cosmos/shell.tsx": 844,
-  "apps/app/components/meridian/screens/tab-coleta.tsx": 1116,
+  "apps/app/components/meridian/screens/tab-coleta.tsx": 1117,
   "apps/app/components/meridian/screens/tab-scoring.tsx": 802,
   "apps/app/components/signal/plan-modals.tsx": 820,
   "apps/app/lib/cosmos-data.ts": 1009,
