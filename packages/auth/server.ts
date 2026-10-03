@@ -14,6 +14,7 @@ import { twoFactor } from "better-auth/plugins";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 import { MIN_PASSWORD_LENGTH } from "./password-policy";
+import { createAuthRateLimitStorage } from "./rate-limit-storage";
 
 const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 /** Janela em que uma sessão encerrada ainda é servida pelo cookie assinado.
@@ -101,17 +102,33 @@ export const auth = betterAuth({
       otpOptions: { digits: 6 },
     }),
   ],
-  // O better-auth já tem uma regra especial embutida pra
-  // `/request-password-reset` (janela de 60s, max 3) — a mesma altura de
-  // `/sign-in`. Achado do Vigia: quem enumera e-mail atrás de conta
-  // existente via "esqueci a senha" merece uma janela maior, não a de
-  // login. `customRules` só adiciona esta regra; não liga rate limit fora
-  // de produção (`enabled` continua no padrão do better-auth,
-  // produção-only) — ligar globalmente em dev/e2e derrubaria as suítes
-  // que logam repetidas vezes num ambiente sem IP confiável (bucket único
-  // compartilhado por todas as requisições).
+  // Contador no Postgres de @repo/rate-limit (`customStorage`), não na memória
+  // da instância: em serverless cada instância contava sozinha e o teto de
+  // login, 2FA e cadastro não freava ninguém (achado 12 do Vigia, ALTO).
+  //
+  // As regras embutidas do better-auth são rajadas curtas (3 por 10 s em
+  // /sign-in e /sign-up): protegem de martelada, não de quem tenta devagar o
+  // dia inteiro. Estas somam o teto de janela longa, por IP e por rota. IP
+  // compartilhado (escritório atrás de NAT) é o motivo de os números do login
+  // e do cadastro não serem menores. O 2FA é o mais apertado: o código tem 6
+  // dígitos, 1 milhão de combinações.
+  //
+  // `customRules` só adiciona regra; não liga rate limit fora de produção
+  // (`enabled` continua no padrão do better-auth, produção-only) — ligar
+  // globalmente em dev/e2e derrubaria as suítes que logam repetidas vezes num
+  // ambiente sem IP confiável (bucket único compartilhado por todas as
+  // requisições).
+  //
+  // `/request-password-reset` tinha só a regra embutida (janela de 60 s, max
+  // 3), a mesma altura de `/sign-in`; quem enumera e-mail atrás de conta
+  // existente via "esqueci a senha" merece janela maior.
   rateLimit: {
+    customStorage: createAuthRateLimitStorage(),
     customRules: {
+      "/sign-in/email": { window: 300, max: 15 }, // 5min / 15 por IP
+      "/two-factor/*": { window: 300, max: 8 }, // 5min / 8 por IP (TOTP, OTP, backup)
+      "/sign-up/email": { window: 3600, max: 10 }, // 1h / 10 por IP
+      "/reset-password*": { window: 900, max: 10 }, // 15min / 10 por IP (POST e link)
       "/request-password-reset": { window: 900, max: 3 }, // 15min / 3 por IP
     },
   },
