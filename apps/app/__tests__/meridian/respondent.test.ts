@@ -25,13 +25,14 @@ const h = vi.hoisted(() => ({
   statusRaw: vi.fn(),
   storageRemove: vi.fn(),
   cookieGet: vi.fn(),
+  cookieSet: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue({ get: h.headersGet }),
   // O token do respondente vem do cookie httpOnly da sessão curta, não da URL
   // nem de argumento da action (achado 28a do Lacre).
-  cookies: vi.fn().mockResolvedValue({ get: h.cookieGet }),
+  cookies: vi.fn().mockResolvedValue({ get: h.cookieGet, set: h.cookieSet }),
 }));
 vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: vi.fn(() => ({
@@ -103,6 +104,7 @@ import {
   getBattery,
   resolveRespondentToken,
   saveDraft,
+  startRespondentSession,
   submitBattery,
 } from "@/app/(meridian)/actions/respondent";
 
@@ -610,5 +612,81 @@ describe("token da sessão do respondente vem do cookie", () => {
     const res = await getBattery();
     expect(res.ok).toBe(false);
     expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+});
+
+// Achado 28a, 2ª parte: o token chega à server action no CORPO do POST (argumento),
+// vindo do fragmento da URL, que o servidor nunca vê. A action o valida e grava o
+// cookie de sessão; nada disso passa pelo endereço da requisição.
+describe("startRespondentSession", () => {
+  const EXPIRES = new Date("2026-10-16T12:00:00.000Z");
+
+  it("token válido: grava o cookie httpOnly, SameSite=Lax, no path da bateria, expirando com o token", async () => {
+    h.respondentFindUnique.mockResolvedValue(
+      respondent({ tokenExpiresAt: EXPIRES })
+    );
+    const res = await startRespondentSession(TOKEN);
+    expect(res.ok).toBe(true);
+    expect(h.cookieSet).toHaveBeenCalledTimes(1);
+    const [name, value, options] = h.cookieSet.mock.calls[0] as [
+      string,
+      string,
+      Record<string, unknown>,
+    ];
+    expect(name).toBe("meridian_resp");
+    expect(value).toBe(TOKEN);
+    expect(options).toMatchObject({
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/meridian-responder",
+      expires: EXPIRES,
+    });
+  });
+
+  it("consulta pelo hash do token recebido, nunca por ele em claro", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent());
+    await startRespondentSession(TOKEN);
+    const args = h.respondentFindUnique.mock.calls[0]?.[0] as {
+      where: { tokenHash: string };
+    };
+    expect(args.where.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(args.where.tokenHash).not.toBe(TOKEN);
+  });
+
+  it("inexistente, expirado e revogado: mesmo erro, sem cookie", async () => {
+    const errors: (string | undefined)[] = [];
+    for (const found of [
+      null,
+      respondent({ tokenExpiresAt: PAST }),
+      respondent({ status: "REVOKED" }),
+    ]) {
+      h.respondentFindUnique.mockResolvedValue(found);
+      const res = await startRespondentSession(TOKEN);
+      expect(res.ok).toBe(false);
+      errors.push(res.ok ? undefined : res.error);
+    }
+    expect(new Set(errors).size).toBe(1);
+    expect(errors[0]).toBe("Link inválido ou expirado.");
+    expect(h.cookieSet).not.toHaveBeenCalled();
+  });
+
+  it("texto que não tem forma de token nem chega ao banco", async () => {
+    const res = await startRespondentSession("curto");
+    expect(res.ok).toBe(false);
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(h.cookieSet).not.toHaveBeenCalled();
+  });
+
+  it("acima do teto de consultas por IP: recusa sem consultar o banco", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await startRespondentSession(TOKEN);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(h.cookieSet).not.toHaveBeenCalled();
   });
 });

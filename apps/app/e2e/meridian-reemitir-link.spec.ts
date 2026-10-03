@@ -112,11 +112,11 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
     await test.step("rascunho: responde 1 pergunta no link original e salva pra continuar depois", async () => {
       oldToken = (
         await page.evaluate(() => navigator.clipboard.readText())
-      ).split("/meridian-responder/")[1];
+      ).split("#t=")[1];
       expect(oldToken).toBeTruthy();
 
       const respondentPage = await context.newPage();
-      await respondentPage.goto(`/meridian-responder/${oldToken}`);
+      await respondentPage.goto(`/meridian-responder#t=${oldToken}`);
       await respondentPage
         .getByRole("button", { name: "Discordo forte", exact: true })
         .first()
@@ -168,7 +168,7 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
       const newValue = await linkDialog("Link reemitido")
         .getByRole("textbox")
         .inputValue();
-      const newToken = newValue.split("/meridian-responder/")[1];
+      const newToken = newValue.split("#t=")[1];
       expect(newToken).toBeTruthy();
       expect(newToken).not.toBe(oldToken);
 
@@ -180,14 +180,14 @@ test.describe("Meridian Coleta · reemitir link individual (spec 006 US1) @merid
         .click();
 
       const oldTokenPage = await context.newPage();
-      await oldTokenPage.goto(`/meridian-responder/${oldToken}`);
+      await oldTokenPage.goto(`/meridian-responder#t=${oldToken}`);
       await expect(
         oldTokenPage.getByText("Link inválido ou expirado")
       ).toBeVisible();
       await oldTokenPage.close();
 
       const newTokenPage = await context.newPage();
-      await newTokenPage.goto(`/meridian-responder/${newToken}`);
+      await newTokenPage.goto(`/meridian-responder#t=${newToken}`);
       await expect(
         newTokenPage.getByText("Link inválido ou expirado")
       ).toHaveCount(0);

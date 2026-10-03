@@ -18,3 +18,28 @@ Branch `fix/meridian-token-em-cookie`, a partir de github/main. O token (64 hex)
 - Um cookie por navegador: abrir o link de outro respondente no mesmo navegador troca a sessão do primeiro.
 - Os scripts k6 (`load/k6/meridian-*.js`) e os E2E não foram atualizados nem rodados: o k6 posta as server actions na URL com token e passa a precisar da URL sem token com o cookie da primeira carga. Os E2E que fazem `goto(/meridian-responder/<token>)` seguem o redirecionamento e deveriam funcionar, mas não rodei.
 - Esta branch muda `respondent-form.tsx` e `respondent.ts`, os mesmos arquivos de `fix/meridian-enviar-bateria` (e68af4c7) e de `fix/meridian-concorrencia-estado`: conflito esperado na ordem de merge, simples de resolver.
+
+---
+
+# 2ª parte: o token sai também da primeira requisição (link com fragmento)
+
+A 1ª parte (cookie + redirect) ainda deixava o token no caminho da PRIMEIRA requisição (`GET /meridian-responder/<token>`), que a Vercel loga. Agora o link novo leva o token no fragmento, que o navegador nunca envia ao servidor.
+
+## Como funciona
+- Link novo: `https://app.nebuloz.ai/meridian-responder#t=<token>` (`lib/meridian/respondent-link.ts`: `respondentLink`, `tokenFromHash`, `isTokenShape`). A geração e a reemissão (as três telas de `tab-coleta.tsx`: atribuir, reemitir um, reemitir em lote) passam a emitir só esse formato.
+- `app/meridian-responder/page.tsx` renderiza `RespondentSessionGate`. O servidor só vê o cookie; quem chega pelo link novo não tem cookie na primeira requisição, e a página mostra "Abrindo seu link…" (não pisca "link inválido").
+- `RespondentSessionGate` (cliente) lê `location.hash`, **tira o hash do endereço com `history.replaceState` antes de qualquer chamada**, e manda o token à server action `startRespondentSession(token)`: POST com o token no CORPO, na URL `/meridian-responder`. A action valida (mesma consulta e mesmo teto de 30 consultas por minuto por IP; erro único para inexistente, expirado, revogado e fora de formato) e grava o cookie httpOnly. Com a sessão gravada, recarrega a página. Recusa mostra o texto de link inválido (ou o do teto de tentativas).
+- Com cookie de outro respondente e link novo, a troca acontece em vez de mostrar a sessão antiga.
+- Compatibilidade: links antigos `/meridian-responder/<token>` continuam funcionando pelo Route Handler (`[token]/route.ts`) até 16/10/2026, quando expiram; o arquivo tem o aviso de remoção. Esse caminho ainda deixa o token na URL daquela requisição, por isso nenhum link novo o usa.
+- As mensagens de erro do respondente foram para `lib/meridian/respondent-messages.ts` (sem `node:crypto`), reexportadas de `respondent-token.ts`, para o componente do cliente poder traduzi-las.
+
+## Testes
+- Novos: `respondent-link.test.ts` (formato novo; o que o navegador envia, caminho e query, não contém o token; leitura estrita do hash), `respondent-session-gate.test.tsx` (10: token vai à action e recarrega; o endereço perde o hash antes da chamada e nenhuma URL do navegador contém o token; "abrindo" sem piscar inválido; recusa, teto e rejeição; troca de sessão; sem hash), 5 em `respondent.test.ts` para `startRespondentSession` (cookie com httpOnly/SameSite/path/expiração do token, lookup por hash, mesmo erro para todo token que não vale, formato, teto).
+- "Reemitir gera o formato novo": os testes de `meridian-tab-coleta.test.tsx` (atribuir, reemitir um e em lote) passaram a exigir `#t=`.
+- `vitest` de meridian, screens, lib e components: 1143 passando; biome limpo; `tsc` sem erro nos arquivos tocados.
+
+## Não verificado
+- Fluxo em navegador real (fragmento, server action, cookie, recarga): sem banco local (Docker parado), só em teste de componente com a action e o recarregamento mockados.
+- E2E (`e2e/meridian-*.spec.ts`) atualizados para o formato novo (extração do token por `#t=`, `goto` com `#t=`) e k6 ajustado (POST em `/meridian-responder`, sem token nos argumentos), mas **nenhum rodou**.
+- Links antigos já impressos ou enviados continuam deixando o token na URL da primeira requisição até 16/10; o token também já está nos logs anteriores.
+

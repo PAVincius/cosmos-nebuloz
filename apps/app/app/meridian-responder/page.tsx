@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getBattery } from "@/app/(meridian)/actions/respondent";
 import { RespondentForm } from "@/components/meridian/respondent-form";
-import { respondentErrorCopy } from "@/lib/meridian/respondent-error-copy";
+import { RespondentSessionGate } from "@/components/meridian/respondent-session-gate";
 import "@/components/meridian/meridian.css";
 
 // Visão do respondente — a única rota do Meridian fora do guard de sessão.
@@ -12,9 +12,14 @@ import "@/components/meridian/meridian.css";
 // que está sob ele, então bastaria estar lá dentro para o guard de sessão
 // disparar — e afrouxar o guard para deixá-la passar abriria o módulo inteiro.
 //
-// Pelo mesmo motivo a URL é /meridian-responder (o link emitido,
-// /meridian-responder/<token>, é trocado por cookie na primeira carga) e não
-// /meridian/responder/<token>: `/meridian` é prefixo protegido no proxy.
+// Pelo mesmo motivo a URL é /meridian-responder e não /meridian/responder:
+// `/meridian` é prefixo protegido no proxy.
+//
+// O token NUNCA chega por esta URL (achado 28a do Lacre). O link emitido é
+// `/meridian-responder#t=<token>`: o fragmento não vai ao servidor, e o
+// `RespondentSessionGate` o lê no cliente e o troca por um cookie httpOnly numa
+// server action. Aqui o servidor só vê o cookie. (O formato antigo,
+// `/meridian-responder/<token>`, é tratado por `[token]/route.ts` até 16/10/2026.)
 //
 // Token inválido, expirado e revogado caem no mesmo texto. Diferenciar
 // confirmaria a um estranho que aquele assessment existe. O limite de
@@ -29,65 +34,19 @@ export const metadata: Metadata = {
 };
 
 export default async function RespondentPage() {
-  // O token vem do cookie de sessão que `[token]/route.ts` grava na primeira
-  // carga; esta página nunca o recebe pela URL.
   const res = await getBattery();
 
-  if (!res.ok) {
-    const copy = respondentErrorCopy(res.error);
-    return (
-      <div className="meridian-root" style={{ minHeight: "100dvh" }}>
-        <main
-          style={{
-            maxWidth: 520,
-            margin: "16vh auto",
-            padding: 28,
-            borderRadius: 18,
-            border: "1px solid var(--hairline)",
-            background: "var(--surface)",
-            color: "var(--ink)",
-          }}
-        >
-          <div
-            className="mono"
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: ".12em",
-              textTransform: "uppercase",
-              color: "var(--ink-faint)",
-              marginBottom: 10,
-            }}
-          >
-            Meridian · Bateria de prontidão
-          </div>
-          <h1
-            className="display"
-            style={{ fontSize: 22, fontWeight: 700, margin: "0 0 12px" }}
-          >
-            {copy.title}
-          </h1>
-          <p
-            style={{
-              fontSize: 14,
-              lineHeight: 1.65,
-              color: "var(--ink-muted)",
-              margin: 0,
-            }}
-          >
-            {copy.body}
-          </p>
-        </main>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="meridian-root grain"
-      style={{ minHeight: "100dvh", padding: "32px 24px 64px" }}
+    <RespondentSessionGate
+      hasSession={res.ok}
+      initialError={res.ok ? null : res.error}
     >
-      <RespondentForm battery={res.data} />
-    </div>
+      <div
+        className="meridian-root grain"
+        style={{ minHeight: "100dvh", padding: "32px 24px 64px" }}
+      >
+        {res.ok ? <RespondentForm battery={res.data} /> : null}
+      </div>
+    </RespondentSessionGate>
   );
 }

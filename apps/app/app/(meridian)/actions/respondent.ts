@@ -8,15 +8,21 @@ import {
   MERIDIAN_EVIDENCE_BUCKET,
   storageClient,
 } from "@repo/storage";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { AXES } from "@/lib/meridian/axes";
 import { MeridianRuleError } from "@/lib/meridian/guards";
+import { isTokenShape } from "@/lib/meridian/respondent-link";
 import {
   findRespondentByTokenOrThrow,
   TOKEN_ERROR,
 } from "@/lib/meridian/respondent-lookup";
-import { readRespondentToken } from "@/lib/meridian/respondent-session";
-import { COLLECTION_CLOSED_MESSAGE } from "@/lib/meridian/respondent-token";
+import { COLLECTION_CLOSED_MESSAGE } from "@/lib/meridian/respondent-messages";
+import {
+  RESPONDENT_COOKIE,
+  readRespondentToken,
+  respondentCookieOptions,
+} from "@/lib/meridian/respondent-session";
 import { normalizeAnswer } from "@/lib/meridian/scoring";
 import { type Result, safeAction } from "../../actions/_base";
 import { logRespondentAudit } from "./_shared";
@@ -43,6 +49,34 @@ export type RespondentContext = {
   deadline: string;
   status: string;
 };
+
+/**
+ * Troca o token do fragmento da URL por sessão (achado 28a do Lacre).
+ *
+ * O link novo é `/meridian-responder#t=<token>`; o navegador não envia o
+ * fragmento ao servidor. O cliente lê o token e o manda para cá como argumento
+ * da server action, isto é, no CORPO do POST e não na URL, que fica sem token.
+ * Aqui o token é validado (mesma consulta e mesmo teto de tentativas por IP) e
+ * vira o cookie httpOnly que a página e as demais actions leem.
+ *
+ * Recusa de qualquer motivo devolve o mesmo erro: diferenciar confirmaria a um
+ * estranho que aquele assessment existe.
+ */
+export async function startRespondentSession(
+  token: string
+): Promise<Result<void>> {
+  return safeAction(async () => {
+    if (!isTokenShape(token)) {
+      throw TOKEN_ERROR;
+    }
+    const r = await findRespondentByTokenOrThrow(token);
+    (await cookies()).set(
+      RESPONDENT_COOKIE,
+      token,
+      respondentCookieOptions(r.tokenExpiresAt)
+    );
+  });
+}
 
 /**
  * Resolve o token para um respondente.

@@ -1,25 +1,24 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { isTokenShape, RESPONDENT_PATH } from "./respondent-link";
 import { TOKEN_ERROR } from "./respondent-lookup";
 
 // Sessão curta do respondente (achado 28a do Lacre).
 //
-// O link emitido continua `/meridian-responder/<token>`, e é por isso que os
-// já emitidos seguem valendo. Mas o token só viaja na PRIMEIRA carga: o Route
-// Handler daquela URL o valida, guarda num cookie e redireciona para
-// `/meridian-responder`, sem token. Dali em diante, página e server actions
-// leem o cookie — o token deixa de aparecer no caminho de cada requisição, e
-// portanto nos runtime logs da Vercel.
+// O link novo leva o token no fragmento (`/meridian-responder#t=<token>`, ver
+// `respondent-link.ts`), que o navegador não envia ao servidor. A página o lê no
+// cliente e o troca por sessão numa server action (`startRespondentSession`,
+// POST): o servidor valida e grava o cookie abaixo. Dali em diante página e
+// server actions leem o cookie, e o token não aparece em nenhuma URL.
+//
+// O formato antigo, `/meridian-responder/<token>`, segue valendo até os links já
+// emitidos expirarem (16/10/2026): `app/meridian-responder/[token]/route.ts` faz
+// a troca no servidor. Esse caminho ainda deixa o token na URL daquela única
+// requisição; por isso os links novos não o usam.
 
 export const RESPONDENT_COOKIE = "meridian_resp";
-export const RESPONDENT_COOKIE_PATH = "/meridian-responder";
-
-/** Forma que um token aceita antes de qualquer consulta: seguro para cookie e
- *  com tamanho limitado. O emitido é hex de 64; a fixture de E2E não é. */
-const TOKEN_SHAPE = /^[A-Za-z0-9_-]{16,128}$/;
-
-export const isTokenShape = (value: string): boolean => TOKEN_SHAPE.test(value);
+export const RESPONDENT_COOKIE_PATH = RESPONDENT_PATH;
 
 /** httpOnly (o JavaScript da página nunca lê o token), Secure em produção,
  *  SameSite=Lax, só no caminho da bateria, e expira junto com o token. */

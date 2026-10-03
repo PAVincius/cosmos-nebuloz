@@ -155,10 +155,14 @@ export function consultores(data) {
 // b) Onda de respondentes: abre a bateria (GET, sem sessão, o tenant sai do
 // token) e salva respostas em duas rodadas (autosave progressivo), pela server
 // action `saveDraft` chamada por HTTP puro com Next-Action.
-function salvar(url, token, answers, name) {
+//
+// O token não vai nos argumentos nem na URL do POST: o GET do link antigo grava o
+// cookie de sessão (o k6 guarda o cookie por VU) e a action lê dele. O link
+// antigo, `/meridian-responder/<token>`, deixa de existir depois de 16/10/2026.
+function salvar(answers, name) {
   const res = http.post(
-    url,
-    JSON.stringify([{ token, answers }]),
+    `${target.baseUrl}/meridian-responder`,
+    JSON.stringify([{ answers }]),
     requestParams(target, __ENV, {
       headers: {
         Accept: "text/x-component",
@@ -192,14 +196,10 @@ export function respondentes(data) {
 
   // Rodada 1: primeira pergunta respondida. Rodada 2: o restante do eixo.
   salvar(
-    url,
-    r.token,
     [{ questionId: questionIds[0], rawValue: 2 }],
     "POST saveDraft (parcial)"
   );
   salvar(
-    url,
-    r.token,
     questionIds.slice(1).map((id) => ({ questionId: id, rawValue: 2 })),
     "POST saveDraft (resto)"
   );

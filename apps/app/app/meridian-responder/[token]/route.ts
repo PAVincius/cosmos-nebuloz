@@ -1,16 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isTokenShape } from "@/lib/meridian/respondent-link";
 import { findRespondentByTokenOrThrow } from "@/lib/meridian/respondent-lookup";
 import {
-  isTokenShape,
   RESPONDENT_COOKIE,
   RESPONDENT_COOKIE_PATH,
   respondentCookieOptions,
 } from "@/lib/meridian/respondent-session";
 
-// Primeira carga do link do respondente (achado 28a do Lacre).
+// COMPATIBILIDADE com o link antigo (achado 28a do Lacre). Remover depois de
+// 16/10/2026, quando os últimos links emitidos nesse formato tiverem expirado.
 //
-// O link que a consultoria emite é `/meridian-responder/<token>`, e os já
-// emitidos precisam continuar valendo. Esta rota valida o token, o guarda num
+// O link novo é `/meridian-responder#t=<token>`: o token vai no fragmento, que o
+// servidor nunca recebe (ver `respondent-link.ts`). O formato antigo,
+// `/meridian-responder/<token>`, ainda deixa o token na URL desta requisição, e
+// só por isso existe: links já emitidos precisam continuar valendo. Esta rota valida o token, o guarda num
 // cookie de sessão curta (httpOnly, Secure, SameSite=Lax, expirando com o
 // token) e redireciona para `/meridian-responder`, sem token. A página e as
 // server actions leem o cookie, então o token só aparece na URL desta única

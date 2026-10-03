@@ -5,11 +5,10 @@ import { log } from "@repo/observability/log";
 import { headers } from "next/headers";
 import { MeridianRuleError } from "@/lib/meridian/guards";
 import {
-  hashToken,
-  isTokenUsable,
   TOKEN_INVALID_MESSAGE,
   TOKEN_RATE_LIMITED_MESSAGE,
-} from "@/lib/meridian/respondent-token";
+} from "@/lib/meridian/respondent-messages";
+import { hashToken, isTokenUsable } from "@/lib/meridian/respondent-token";
 
 // Consulta do respondente pelo token, com o teto de tentativas por IP.
 //
