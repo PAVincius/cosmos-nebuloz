@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { EMAIL_NAO_VERIFICADO } from "@repo/auth/sign-in-error";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
@@ -34,7 +35,11 @@ export function SignInForm() {
     });
 
     if (result.error) {
-      setError("E-mail ou senha incorretos.");
+      setError(
+        result.error.code === "EMAIL_NOT_VERIFIED"
+          ? EMAIL_NAO_VERIFICADO
+          : "E-mail ou senha incorretos."
+      );
       setPending(false);
       return;
     }

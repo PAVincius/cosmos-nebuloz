@@ -9,6 +9,7 @@ import {
   logMfaVerified,
 } from "../auth-events";
 import { authClient } from "../client";
+import { signInErrorMessage } from "../sign-in-error";
 
 const inputClass =
   "h-11 w-full rounded-lg border border-border bg-background px-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-4 focus:ring-[#5e6ad2]/15 focus:border-[#5e6ad2] transition-colors";
@@ -43,7 +44,7 @@ export const SignIn = () => {
     });
 
     if (result?.error) {
-      setError("Email ou senha incorretos.");
+      setError(signInErrorMessage(result.error));
       await logLoginFailure(email.trim().toLowerCase());
       setLoading(false);
       return;

@@ -6,7 +6,12 @@ export type { MemberRole } from "@repo/database";
 
 import type { MemberRole } from "@repo/database";
 
-import { keys, renderResetPasswordEmail, resend } from "@repo/email";
+import {
+  keys,
+  renderResetPasswordEmail,
+  renderVerificationEmail,
+  resend,
+} from "@repo/email";
 import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -47,6 +52,13 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: MIN_PASSWORD_LENGTH, // SOC2 CC6
+    // O sign-up é aberto e criava sessão sem provar a posse do e-mail: quem
+    // cadastrasse o endereço de outra pessoa primeiro ficava dono da conta, e o
+    // aceite de convite confia no e-mail da sessão. Agora não há sessão antes
+    // do clique no link (achado 9 do Vigia). O better-auth só acusa
+    // EMAIL_NOT_VERIFIED depois de conferir a senha, então o login não revela
+    // se um e-mail existe.
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       const fromAddress = keys().RESEND_FROM;
       try {
@@ -62,6 +74,35 @@ export const auth = betterAuth({
         });
       } catch (emailError: unknown) {
         log.error("sendResetPassword: falha ao enviar email", {
+          user_id: user.id,
+          error: emailError,
+        });
+      }
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    // Conta que já existia sem verificação (cadastro anterior à exigência)
+    // recebe o link na primeira tentativa de entrar, em vez de ficar presa.
+    sendOnSignIn: true,
+    // O link verifica e já abre a sessão no `callbackURL` do cadastro
+    // (/onboarding, ou /invite/<token>/complete no convite).
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      const fromAddress = keys().RESEND_FROM;
+      try {
+        const html = await renderVerificationEmail({
+          userName: user.name || undefined,
+          verifyUrl: url,
+        });
+        await resend.emails.send({
+          from: `Nebuloz <${fromAddress}>`,
+          to: user.email,
+          subject: "Confirme seu e-mail no Nebuloz",
+          html,
+        });
+      } catch (emailError: unknown) {
+        log.error("sendVerificationEmail: falha ao enviar email", {
           user_id: user.id,
           error: emailError,
         });
