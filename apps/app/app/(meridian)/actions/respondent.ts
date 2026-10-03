@@ -41,7 +41,6 @@ import { logRespondentAudit } from "./_shared";
 
 export type RespondentContext = {
   respondentId: string;
-  tenantId: string;
   assessmentId: string;
   assessmentCode: string;
   orgName: string;
@@ -94,7 +93,6 @@ export async function resolveRespondentToken(): Promise<
     const r = await findRespondentByTokenOrThrow(await readRespondentToken());
     return {
       respondentId: r.id,
-      tenantId: r.tenantId,
       assessmentId: r.assessment.id,
       assessmentCode: r.assessment.code,
       orgName: r.assessment.orgName,
@@ -187,7 +185,6 @@ export async function getBattery(): Promise<Result<Battery>> {
     return {
       context: {
         respondentId: r.id,
-        tenantId: r.tenantId,
         assessmentId: r.assessment.id,
         assessmentCode: r.assessment.code,
         orgName: r.assessment.orgName,
@@ -212,13 +209,20 @@ export async function getBattery(): Promise<Result<Battery>> {
   });
 }
 
+/** Teto de respostas por rascunho. Uma bateria tem poucas perguntas por eixo; sem
+ *  teto, um cliente anônimo adulterado manda milhares de upserts numa transação
+ *  (achado 13 do Vigia). */
+const MAX_DRAFT_ANSWERS = 200;
+
 const DraftSchema = z.object({
-  answers: z.array(
-    z.object({
-      questionId: z.string().cuid(),
-      rawValue: z.number().int().min(0),
-    })
-  ),
+  answers: z
+    .array(
+      z.object({
+        questionId: z.string().cuid(),
+        rawValue: z.number().int().min(0),
+      })
+    )
+    .max(MAX_DRAFT_ANSWERS),
 });
 
 /** Salva respostas parciais. O lembrete continua até a conclusão — rascunho não
@@ -361,6 +365,9 @@ export async function submitBattery(): Promise<Result<{ missing: number }>> {
 
 const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
 
+const EVIDENCE_UPLOAD_FAILED_MESSAGE =
+  "Não foi possível anexar o arquivo agora. Tente de novo em instantes.";
+
 const EVIDENCE_TYPE_MESSAGE =
   "Tipo de arquivo não aceito. Anexe PDF, Word, Excel, PowerPoint, imagem (PNG ou JPG), CSV ou texto.";
 
@@ -447,7 +454,18 @@ export async function attachEvidence(
       .from(MERIDIAN_EVIDENCE_BUCKET)
       .upload(storagePath, bytes, { contentType, upsert: false });
     if (error) {
-      throw new Error(`Falha ao anexar evidência: ${error.message}`);
+      // O texto do storage fica no log do servidor: devolvê-lo ao respondente
+      // anônimo vazaria nome de bucket e detalhe de infraestrutura (achado 27 do
+      // Vigia). Só ids internos, nunca o nome do arquivo nem o do respondente.
+      log.error("[meridian] falha ao gravar evidência no bucket", {
+        respondentId: r.id,
+        assessmentId: r.assessment.id,
+        error: error.message,
+      });
+      throw new MeridianRuleError(
+        "evidence.upload-failed",
+        EVIDENCE_UPLOAD_FAILED_MESSAGE
+      );
     }
 
     // O arquivo já está no bucket. Se a coleta fechou no meio do caminho, o
