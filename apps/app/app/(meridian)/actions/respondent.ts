@@ -292,6 +292,12 @@ export async function submitBattery(): Promise<Result<{ missing: number }>> {
   return safeAction(async () => {
     const r = await loadRespondentForWrite();
 
+    // Bateria já concluída: reenviar não grava de novo nem repete a trilha.
+    // Quem clica de novo (ou refaz o fluxo) vê o mesmo resultado.
+    if (r.status === "DONE") {
+      return { missing: 0 };
+    }
+
     return database.$transaction(async (tx) => {
       await requireCollectingInTx(tx, r.assessment.id);
 

@@ -46,8 +46,18 @@ export function RespondentForm({ battery }: { battery: Battery }) {
       battery.questions.map((q) => [q.id, q.evidence.map((e) => e.fileName)])
     )
   );
-  const [busy, setBusy] = useState(false);
+  // `saving`: salvar ou enviar em andamento. `uploading`: anexos em andamento.
+  // Antes era um `busy` só, e "Enviar" ficava desabilitado durante o upload: o
+  // clique logo depois de anexar caía num botão morto, sem aviso (atrito A5).
+  const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(0);
+  const [concluded, setConcluded] = useState(battery.context.status === "DONE");
+  const [showMissing, setShowMissing] = useState(false);
+  const [notice, setNotice] = useState<Notice | null>(null);
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
+  // Anexos em voo: o envio espera por eles em vez de perder o clique.
+  const inflight = useRef<Set<Promise<unknown>>>(new Set());
 
   const answered = Object.keys(answers).length;
   const total = battery.questions.length;
@@ -64,8 +74,8 @@ export function RespondentForm({ battery }: { battery: Battery }) {
     return q.scaleLabels;
   };
 
+  /** Salva o rascunho. Recusa e falha ficam na tela, não só num toast que some. */
   const persist = async () => {
-    setBusy(true);
     const res = await runWithToast(
       () =>
         saveDraft({
@@ -80,12 +90,27 @@ export function RespondentForm({ battery }: { battery: Battery }) {
           "Rascunho salvo — os lembretes continuam até você concluir a bateria.",
       }
     );
-    setBusy(false);
+    if (!res.ok) {
+      setNotice({
+        tone: "error",
+        text: `Não foi possível salvar suas respostas: ${res.error} Nada foi enviado.`,
+      });
+    }
     return res.ok;
   };
 
+  const save = async () => {
+    setSaving(true);
+    setNotice(null);
+    try {
+      await persist();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const submit = async () => {
-    if (!(await persist())) {
+    if (saving || concluded) {
       return;
     }
     setBusy(true);
@@ -112,6 +137,33 @@ export function RespondentForm({ battery }: { battery: Battery }) {
         [questionId]: [...(s[questionId] ?? []), res.data.fileName],
       }));
     }
+    setNotice(null);
+    setUploading((n) => n + 1);
+    const run = (async () => {
+      const res = await runWithToast(
+        () => attachEvidence(token, questionId, file),
+        {
+          loading: "Anexando evidência…",
+          success: (e) => `${e.fileName} anexado.`,
+        }
+      );
+      if (res.ok) {
+        setFiles((s) => ({
+          ...s,
+          [questionId]: [...(s[questionId] ?? []), res.data.fileName],
+        }));
+      } else {
+        setNotice({
+          tone: "error",
+          text: `Não foi possível anexar a evidência ${file.name}: ${res.error}`,
+        });
+      }
+    })();
+    inflight.current.add(run);
+    run.finally(() => {
+      inflight.current.delete(run);
+      setUploading((n) => n - 1);
+    });
   };
 
   return (
@@ -140,6 +192,23 @@ export function RespondentForm({ battery }: { battery: Battery }) {
         title={`Bateria de prontidão — ${battery.context.axisLabel}`}
         tone="accent"
       />
+
+      {concluded ? (
+        <output
+          style={{
+            display: "block",
+            padding: "12px 16px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            color: "var(--green-text)",
+            fontSize: 13,
+            fontWeight: 600,
+            lineHeight: 1.5,
+          }}
+        >
+          Bateria concluída. Obrigado — os lembretes param agora.
+        </output>
+      ) : null}
 
       {/* Aviso ao titular — texto da Compliance, verbatim, de
           docs/compliance/operadora-controladora.md §4. Condição única do
@@ -237,7 +306,9 @@ export function RespondentForm({ battery }: { battery: Battery }) {
               icon={chosen !== undefined ? "check" : undefined}
               key={q.id}
               title={`${qi + 1}. ${q.text}`}
-              tone={chosen !== undefined ? "green" : undefined}
+              tone={
+                chosen !== undefined ? "green" : showMissing ? "red" : undefined
+              }
             >
               <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
                 {options.map((label, i) => (
@@ -313,7 +384,7 @@ export function RespondentForm({ battery }: { battery: Battery }) {
                   type="file"
                 />
                 <Button
-                  disabled={busy}
+                  disabled={saving || uploading > 0}
                   icon="paperclip"
                   onClick={() => fileInputs.current[q.id]?.click()}
                   size="sm"
@@ -327,14 +398,45 @@ export function RespondentForm({ battery }: { battery: Battery }) {
         })}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-        <Button disabled={busy} onClick={persist} variant="secondary">
-          Salvar e continuar depois
-        </Button>
-        <Button disabled={busy} icon="check" onClick={submit}>
-          Enviar respostas
-        </Button>
-      </div>
+      {concluded ? null : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {uploading > 0 ? (
+            <output
+              style={{
+                display: "block",
+                fontSize: 12.5,
+                color: "var(--ink-muted)",
+                textAlign: "right",
+              }}
+            >
+              Anexando evidência — o envio segue assim que o anexo terminar.
+            </output>
+          ) : null}
+          {notice ? (
+            <div
+              role="alert"
+              style={{
+                padding: "10px 14px",
+                borderRadius: "var(--r-sm)",
+                background: `var(--${notice.tone === "error" ? "red" : "amber"}-soft)`,
+                color: `var(--${notice.tone === "error" ? "red" : "amber"}-text)`,
+                fontSize: 13,
+                lineHeight: 1.5,
+              }}
+            >
+              {notice.text}
+            </div>
+          ) : null}
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+            <Button disabled={saving} onClick={save} variant="secondary">
+              Salvar e continuar depois
+            </Button>
+            <Button disabled={saving} icon="check" onClick={submit}>
+              {sending ? "Enviando…" : "Enviar respostas"}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
