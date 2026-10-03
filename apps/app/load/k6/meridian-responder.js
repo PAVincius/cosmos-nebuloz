@@ -36,15 +36,19 @@ export const options = buildOptions({
 export const handleSummary = makeSummary("meridian-responder", NAMES, __ENV);
 
 // A action é chamada como o navegador chama: POST na própria página, com o id
-// da action no cabeçalho Next-Action e os argumentos em JSON.
-function gravar(url, token) {
+// da action no cabeçalho Next-Action e os argumentos em JSON. O token não vai
+// mais nos argumentos nem na URL: o GET do link antigo grava o cookie de sessão
+// (o k6 guarda o cookie por VU), e a action lê dele. O link antigo,
+// `/meridian-responder/<token>`, deixa de existir depois de 16/10/2026; a carga
+// passa então a chamar `startRespondentSession(token)` para abrir a sessão.
+function gravar() {
   const answers = data.questions.map((q) => ({
     questionId: q.id,
     rawValue: Math.floor(Math.random() * (q.max + 1)),
   }));
   return http.post(
-    url,
-    JSON.stringify([{ token, answers }]),
+    `${target.baseUrl}/meridian-responder`,
+    JSON.stringify([{ answers }]),
     requestParams(target, __ENV, {
       headers: {
         "Content-Type": "text/plain;charset=UTF-8",
@@ -71,7 +75,7 @@ export default function () {
 
   sleep(1 + Math.random() * 2); // lê a pergunta antes de responder
 
-  const save = gravar(url, token);
+  const save = gravar();
   check(save, {
     "gravar responde 200": (r) => r.status === 200,
     "gravar devolve ok": (r) => r.body.includes('"ok":true'),

@@ -3,9 +3,10 @@
 // Bateria do respondente — US2. Port de `meridian-screens-1.jsx`.
 //
 // É a única superfície do produto usada por quem não tem conta. Duas
-// consequências no desenho: nada aqui depende de sessão, e o componente recebe
-// o token do servidor em vez de descobri-lo — a página é que resolve o token e
-// decide se existe algo a renderizar.
+// consequências no desenho: nada aqui depende de sessão, e o componente nem
+// conhece o token — ele vive num cookie httpOnly (ver `respondent-session.ts`),
+// que a página e as actions leem no servidor. É a página que decide se existe
+// algo a renderizar.
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import {
@@ -32,18 +33,7 @@ const LIKERT = [
   "Concordo forte",
 ];
 
-type Notice = { tone: "error" | "warning"; text: string };
-
-const plural = (n: number) =>
-  n === 1 ? "1 pergunta sem resposta" : `${n} perguntas sem resposta`;
-
-export function RespondentForm({
-  battery,
-  token,
-}: {
-  battery: Battery;
-  token: string;
-}) {
+export function RespondentForm({ battery }: { battery: Battery }) {
   const [answers, setAnswers] = useState<Record<string, number>>(
     Object.fromEntries(
       battery.questions
@@ -89,7 +79,6 @@ export function RespondentForm({
     const res = await runWithToast(
       () =>
         saveDraft({
-          token,
           answers: Object.entries(answers).map(([questionId, rawValue]) => ({
             questionId,
             rawValue,
@@ -124,55 +113,29 @@ export function RespondentForm({
     if (saving || concluded) {
       return;
     }
-    setSaving(true);
-    setSending(true);
-    setNotice(null);
-    try {
-      // Anexo em andamento termina antes do envio: o respondente que clica em
-      // Enviar logo depois de anexar não perde o clique.
-      await Promise.allSettled([...inflight.current]);
-      if (!(await persist())) {
-        return;
-      }
-      const res = await runWithToast(() => submitBattery(token), {
-        loading: "Enviando respostas…",
-        success: (d) =>
-          d.missing > 0
-            ? `${plural(d.missing)} — a bateria não foi concluída.`
-            : "Bateria concluída. Obrigado — os lembretes param agora.",
-      });
-      if (!res.ok) {
-        setNotice({
-          tone: "error",
-          text: `Não foi possível enviar: ${res.error} Suas respostas continuam na tela.`,
-        });
-        return;
-      }
-      if (res.data.missing > 0) {
-        setShowMissing(true);
-        setNotice({
-          tone: "warning",
-          text: `${plural(res.data.missing)}. Responda as marcadas e envie de novo — a bateria ainda não foi concluída.`,
-        });
-        return;
-      }
-      setShowMissing(false);
-      setConcluded(true);
-    } finally {
-      setSaving(false);
-      setSending(false);
-    }
+    setBusy(true);
+    await runWithToast(() => submitBattery(), {
+      loading: "Enviando respostas…",
+      success: (d) =>
+        d.missing > 0
+          ? `${d.missing} pergunta(s) sem resposta — a bateria não foi concluída.`
+          : "Bateria concluída. Obrigado — os lembretes param agora.",
+    });
+    setBusy(false);
   };
 
-  const upload = (questionId: string, file: File) => {
-    // O mesmo arquivo na mesma pergunta não anexa de novo (reenvio de quem
-    // refez o fluxo): avisa em vez de duplicar a evidência em silêncio.
-    if ((files[questionId] ?? []).includes(file.name)) {
-      setNotice({
-        tone: "warning",
-        text: `${file.name} já está anexado a esta pergunta. Para anexar outro arquivo, use um nome diferente.`,
-      });
-      return;
+  const upload = async (questionId: string, file: File) => {
+    setBusy(true);
+    const res = await runWithToast(() => attachEvidence(questionId, file), {
+      loading: "Anexando evidência…",
+      success: (e) => `${e.fileName} anexado.`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      setFiles((s) => ({
+        ...s,
+        [questionId]: [...(s[questionId] ?? []), res.data.fileName],
+      }));
     }
     setNotice(null);
     setUploading((n) => n + 1);

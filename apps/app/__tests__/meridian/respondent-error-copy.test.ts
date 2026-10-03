@@ -4,7 +4,7 @@ import {
   COLLECTION_CLOSED_MESSAGE,
   TOKEN_INVALID_MESSAGE,
   TOKEN_RATE_LIMITED_MESSAGE,
-} from "@/lib/meridian/respondent-token";
+} from "@/lib/meridian/respondent-messages";
 
 // page.tsx ignorava `res.error` no primeiro carregamento e sempre mostrava
 // "Link inválido ou expirado" — um respondente barrado pelo rate limit nunca

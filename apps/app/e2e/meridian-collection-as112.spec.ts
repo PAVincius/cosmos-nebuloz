@@ -61,7 +61,7 @@ test.describe("Meridian Coleta · atrito AS-112 (X/Esc/backdrop, revogar, closeC
     /** Copia o link visível e fecha via "Concluir". Devolve o token. */
     const copyAndFinish = async () => {
       const value = await linkDialog().getByRole("textbox").inputValue();
-      const token = value.split("/meridian-responder/")[1];
+      const token = value.split("#t=")[1];
       expect(token).toBeTruthy();
       await linkDialog().getByRole("button", { name: "Copiar" }).click();
       await linkDialog().getByRole("button", { name: "Concluir" }).click();
@@ -120,7 +120,7 @@ test.describe("Meridian Coleta · atrito AS-112 (X/Esc/backdrop, revogar, closeC
     await test.step("2 — copiar libera Concluir; clipboard tem o mesmo link do input", async () => {
       await context.grantPermissions(["clipboard-read", "clipboard-write"]);
       const value = await linkDialog().getByRole("textbox").inputValue();
-      dataToken = value.split("/meridian-responder/")[1];
+      dataToken = value.split("#t=")[1];
       expect(dataToken).toBeTruthy();
 
       const concluirButton = linkDialog().getByRole("button", {
@@ -132,7 +132,7 @@ test.describe("Meridian Coleta · atrito AS-112 (X/Esc/backdrop, revogar, closeC
       const clipboard = await page.evaluate(() =>
         navigator.clipboard.readText()
       );
-      expect(clipboard).toContain(`/meridian-responder/${dataToken}`);
+      expect(clipboard).toContain(`/meridian-responder#t=${dataToken}`);
       await concluirButton.click();
       await expect(
         page.getByText("Regressão AS-112 · titular", { exact: true })
@@ -209,7 +209,7 @@ test.describe("Meridian Coleta · atrito AS-112 (X/Esc/backdrop, revogar, closeC
       await expect(page.getByText("sem dono")).toHaveCount(0);
 
       const oldTokenPage = await context.newPage();
-      await oldTokenPage.goto(`/meridian-responder/${dataToken}`);
+      await oldTokenPage.goto(`/meridian-responder#t=${dataToken}`);
       await expect(
         oldTokenPage.getByText("Link inválido ou expirado")
       ).toBeVisible();

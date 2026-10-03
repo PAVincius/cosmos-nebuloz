@@ -21,6 +21,7 @@ import {
   sendReminder,
 } from "@/app/(meridian)/actions/collection";
 import { AXES, AXIS_IDS } from "@/lib/meridian/axes";
+import { respondentLink } from "@/lib/meridian/respondent-link";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Eyebrow,
@@ -365,7 +366,7 @@ function AssignRespondentModal({
       <RespondentLinkModal
         discardMessage={`Você não copiou o link de ${name}. Ele não aparece de novo — o único jeito de recuperar depois é revogar esse respondente e emitir outro.`}
         fieldLabel={`Link para ${name} · ${AXES[axis].label}`}
-        link={`${window.location.origin}/meridian-responder/${res.data.token}`}
+        link={respondentLink(window.location.origin, res.data.token)}
         onClose={modal.close}
         onDone={onAssigned}
         title="Link de coleta gerado"
@@ -749,7 +750,7 @@ export default function ColetaTab({
       <RespondentLinkModal
         discardMessage={`Você não copiou o link reemitido de ${name}. Ele não aparece de novo — o único jeito de recuperar depois é reemitir de novo.`}
         fieldLabel={`Link para ${name} · ${AXES[axis].label}`}
-        link={`${window.location.origin}/meridian-responder/${res.data.token}`}
+        link={respondentLink(window.location.origin, res.data.token)}
         onClose={modal.close}
         onDone={onChanged}
         title="Link reemitido"
@@ -782,7 +783,7 @@ export default function ColetaTab({
           respondentId: r.respondentId,
           name: r.name,
           axis: r.axis,
-          link: `${window.location.origin}/meridian-responder/${r.token}`,
+          link: respondentLink(window.location.origin, r.token),
         }))}
         onClose={modal.close}
         onDone={onChanged}

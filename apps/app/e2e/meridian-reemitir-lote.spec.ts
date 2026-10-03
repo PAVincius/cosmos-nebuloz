@@ -64,7 +64,7 @@ test.describe("Meridian Coleta · reemitir em lote (spec 006 US2) @meridian", ()
         // respondente depois que os dois modais já fecharam.
         oldTokenByLabel[label] = (
           await page.evaluate(() => navigator.clipboard.readText())
-        ).split("/meridian-responder/")[1];
+        ).split("#t=")[1];
         await dialog.getByRole("button", { name: "Concluir" }).click();
         await expect(
           page.getByText(`Lote · ${label}`, { exact: true })
@@ -107,7 +107,7 @@ test.describe("Meridian Coleta · reemitir em lote (spec 006 US2) @meridian", ()
     await test.step("token antigo de Data cai em 'Link inválido ou expirado' após a reemissão em lote", async () => {
       expect(oldTokenByLabel.Data).toBeTruthy();
       const oldTokenPage = await context.newPage();
-      await oldTokenPage.goto(`/meridian-responder/${oldTokenByLabel.Data}`);
+      await oldTokenPage.goto(`/meridian-responder#t=${oldTokenByLabel.Data}`);
       await expect(
         oldTokenPage.getByText("Link inválido ou expirado")
       ).toBeVisible();

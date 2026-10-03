@@ -2,7 +2,7 @@ import {
   COLLECTION_CLOSED_MESSAGE,
   TOKEN_INVALID_MESSAGE,
   TOKEN_RATE_LIMITED_MESSAGE,
-} from "./respondent-token";
+} from "./respondent-messages";
 
 export type RespondentErrorCopy = { title: string; body: string };
 

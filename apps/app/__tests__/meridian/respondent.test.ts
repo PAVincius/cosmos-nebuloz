@@ -24,10 +24,15 @@ const h = vi.hoisted(() => ({
   ensureBucket: vi.fn(),
   statusRaw: vi.fn(),
   storageRemove: vi.fn(),
+  cookieGet: vi.fn(),
+  cookieSet: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue({ get: h.headersGet }),
+  // O token do respondente vem do cookie httpOnly da sessão curta, não da URL
+  // nem de argumento da action (achado 28a do Lacre).
+  cookies: vi.fn().mockResolvedValue({ get: h.cookieGet, set: h.cookieSet }),
 }));
 vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: vi.fn(() => ({
@@ -99,6 +104,7 @@ import {
   getBattery,
   resolveRespondentToken,
   saveDraft,
+  startRespondentSession,
   submitBattery,
 } from "@/app/(meridian)/actions/respondent";
 
@@ -140,6 +146,7 @@ beforeEach(() => {
   });
   h.ensureBucket.mockResolvedValue(undefined);
   h.statusRaw.mockResolvedValue([{ status: "COLLECTING" }]);
+  h.cookieGet.mockReturnValue({ name: "meridian_resp", value: TOKEN });
   h.storageRemove.mockResolvedValue({ error: null });
   h.respondentFindUnique.mockResolvedValue(respondent());
   h.questionFindMany.mockResolvedValue([
@@ -162,14 +169,14 @@ beforeEach(() => {
 
 describe("resolveRespondentToken", () => {
   it("resolve token válido e devolve o tenant a partir do respondente", async () => {
-    const res = await resolveRespondentToken(TOKEN);
+    const res = await resolveRespondentToken();
     expect(res.ok).toBe(true);
     expect(res.ok && res.data.tenantId).toBe("t1");
     expect(res.ok && res.data.axisLabel).toBe("Data");
   });
 
   it("consulta por hash, nunca pelo token em claro", async () => {
-    await resolveRespondentToken(TOKEN);
+    await resolveRespondentToken();
     const args = h.respondentFindUnique.mock.calls[0]?.[0] as {
       where: { tokenHash: string };
     };
@@ -179,15 +186,15 @@ describe("resolveRespondentToken", () => {
 
   it("devolve o mesmo erro para token inexistente, expirado e revogado", async () => {
     h.respondentFindUnique.mockResolvedValue(null);
-    const inexistente = await resolveRespondentToken(TOKEN);
+    const inexistente = await resolveRespondentToken();
 
     h.respondentFindUnique.mockResolvedValue(
       respondent({ tokenExpiresAt: PAST })
     );
-    const expirado = await resolveRespondentToken(TOKEN);
+    const expirado = await resolveRespondentToken();
 
     h.respondentFindUnique.mockResolvedValue(respondent({ status: "REVOKED" }));
-    const revogado = await resolveRespondentToken(TOKEN);
+    const revogado = await resolveRespondentToken();
 
     expect(inexistente.ok).toBe(false);
     expect(expirado.ok).toBe(false);
@@ -200,7 +207,7 @@ describe("resolveRespondentToken", () => {
 
 describe("getBattery", () => {
   it("pede só as perguntas do eixo daquele respondente", async () => {
-    await getBattery(TOKEN);
+    await getBattery();
     const args = h.questionFindMany.mock.calls[0]?.[0] as {
       where: { templateId: string; axis: string };
     };
@@ -209,7 +216,7 @@ describe("getBattery", () => {
   });
 
   it("carrega só as respostas do próprio respondente", async () => {
-    await getBattery(TOKEN);
+    await getBattery();
     const args = h.responseFindMany.mock.calls[0]?.[0] as {
       where: { respondentId: string };
     };
@@ -223,7 +230,6 @@ describe("saveDraft", () => {
     // upsert para ela. Um cliente adulterado não escreve fora da própria fatia.
     h.questionFindMany.mockResolvedValue([]);
     const res = await saveDraft({
-      token: TOKEN,
       answers: [{ questionId: "clx000000000000000000q999", rawValue: 2 }],
     });
     expect(res.ok).toBe(true);
@@ -243,7 +249,6 @@ describe("saveDraft", () => {
       },
     ]);
     await saveDraft({
-      token: TOKEN,
       answers: [{ questionId: "clx000000000000000000q001", rawValue: 4 }],
     });
     const call = h.responseUpsert.mock.calls[0]?.[0] as {
@@ -256,7 +261,7 @@ describe("saveDraft", () => {
   it("move de INVITED para PENDING no primeiro rascunho", async () => {
     h.respondentFindUnique.mockResolvedValue(respondent({ status: "INVITED" }));
     h.questionFindMany.mockResolvedValue([]);
-    await saveDraft({ token: TOKEN, answers: [] });
+    await saveDraft({ answers: [] });
     expect(h.respondentUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ data: { status: "PENDING" } })
     );
@@ -267,7 +272,7 @@ describe("submitBattery", () => {
   it("não conclui com pergunta em branco e devolve quantas faltam", async () => {
     h.questionCount.mockResolvedValue(5);
     h.responseCount.mockResolvedValue(3);
-    const res = await submitBattery(TOKEN);
+    const res = await submitBattery();
     expect(res.ok && res.data.missing).toBe(2);
     expect(h.respondentUpdate).not.toHaveBeenCalled();
   });
@@ -275,7 +280,7 @@ describe("submitBattery", () => {
   it("conclui quando a bateria está completa e registra a trilha", async () => {
     h.questionCount.mockResolvedValue(5);
     h.responseCount.mockResolvedValue(5);
-    const res = await submitBattery(TOKEN);
+    const res = await submitBattery();
     expect(res.ok && res.data.missing).toBe(0);
     expect(h.respondentUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -305,14 +310,14 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     });
     // respondentFindUnique segue mockado com um respondente válido —
     // mesmo assim tem que barrar, porque o peek roda antes da consulta.
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
     expect(h.respondentFindUnique).not.toHaveBeenCalled();
   });
 
   it("(b) sucesso não incrementa — só o peek (só leitura) é consultado", async () => {
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     expect(res.ok).toBe(true);
     expect(h.rateLimiterPeek).toHaveBeenCalledTimes(1);
     expect(h.rateLimiterLimit).not.toHaveBeenCalled();
@@ -320,7 +325,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
 
   it("(c) miss incrementa — dentro do teto, consulta o banco e grava a falha", async () => {
     h.respondentFindUnique.mockResolvedValue(null);
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
     expect(h.rateLimiterLimit).toHaveBeenCalledTimes(1);
@@ -333,7 +338,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
       remaining: 0,
       reset: 0,
     });
-    const res = await resolveRespondentToken(TOKEN);
+    const res = await resolveRespondentToken();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
     expect(h.respondentFindUnique).not.toHaveBeenCalled();
@@ -343,7 +348,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     h.headersGet.mockImplementation((name: string) =>
       name === "x-real-ip" ? "8.8.8.8" : "9.9.9.9, 1.1.1.1"
     );
-    await getBattery(TOKEN);
+    await getBattery();
     expect(h.rateLimiterPeek).toHaveBeenCalledWith("8.8.8.8");
   });
 
@@ -351,13 +356,13 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
     h.headersGet.mockImplementation((name: string) =>
       name === "x-forwarded-for" ? "9.9.9.9, 1.1.1.1" : null
     );
-    await getBattery(TOKEN);
+    await getBattery();
     expect(h.rateLimiterPeek).toHaveBeenCalledWith("9.9.9.9");
   });
 
   it("usa 'anonymous' quando não há x-real-ip nem x-forwarded-for", async () => {
     h.headersGet.mockReturnValue(null);
-    await getBattery(TOKEN);
+    await getBattery();
     expect(h.rateLimiterPeek).toHaveBeenCalledWith("anonymous");
   });
 
@@ -368,7 +373,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
       remaining: 0,
       reset: 0,
     });
-    const res = await saveDraft({ token: TOKEN, answers: [] });
+    const res = await saveDraft({ answers: [] });
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
   });
@@ -376,7 +381,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
   it("em produção, trata peek indisponível como limite excedido (fail-closed)", async () => {
     vi.stubEnv("NODE_ENV", "production");
     h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     vi.unstubAllEnvs();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
@@ -386,7 +391,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
   it("fora de produção, peek indisponível não bloqueia — segue pro banco normalmente", async () => {
     vi.stubEnv("NODE_ENV", "test");
     h.rateLimiterPeek.mockRejectedValue(new Error("connection refused"));
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     vi.unstubAllEnvs();
     expect(res.ok).toBe(true);
   });
@@ -394,7 +399,7 @@ describe("rate limit do lookup de token (atrito.md:48 / parecer cond. 5)", () =>
   it("falha ao gravar o miss (limit indisponível) não muda o erro devolvido", async () => {
     h.respondentFindUnique.mockResolvedValue(null);
     h.rateLimiterLimit.mockRejectedValue(new Error("connection refused"));
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
   });
@@ -412,8 +417,8 @@ describe("ensureBucket cacheado no processo (atrito.md:54)", () => {
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
     } as unknown as File;
 
-    await attachEvidence(TOKEN, "q1", file);
-    await attachEvidence(TOKEN, "q1", file);
+    await attachEvidence("q1", file);
+    await attachEvidence("q1", file);
 
     expect(h.ensureBucket).toHaveBeenCalledTimes(1);
   });
@@ -431,7 +436,7 @@ describe("attachEvidence — target do audit (achado da Morgana sobre report.ts,
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(3)),
     } as unknown as File;
 
-    await attachEvidence(TOKEN, "q1", file);
+    await attachEvidence("q1", file);
 
     const audit = h.auditCreate.mock.calls[0]?.[0] as {
       data: { metadata: { target: string } };
@@ -470,7 +475,6 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
   ])("saveDraft recusa com o assessment em %s, sem gravar nada", async (status) => {
     h.respondentFindUnique.mockResolvedValue(fechado(status));
     const res = await saveDraft({
-      token: TOKEN,
       answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
     });
     expect(res.ok).toBe(false);
@@ -485,7 +489,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
     "DRAFT",
   ])("submitBattery recusa com o assessment em %s, sem concluir nem auditar", async (status) => {
     h.respondentFindUnique.mockResolvedValue(fechado(status));
-    const res = await submitBattery(TOKEN);
+    const res = await submitBattery();
     expect(res.ok).toBe(false);
     expect(!res.ok && res.code).toBe("collection.closed");
     expect(h.respondentUpdate).not.toHaveBeenCalled();
@@ -498,7 +502,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
     "DRAFT",
   ])("attachEvidence recusa com o assessment em %s, sem tocar no bucket nem no banco", async (status) => {
     h.respondentFindUnique.mockResolvedValue(fechado(status));
-    const res = await attachEvidence(TOKEN, "q1", file);
+    const res = await attachEvidence("q1", file);
     expect(res.ok).toBe(false);
     expect(!res.ok && res.code).toBe("collection.closed");
     expect(h.ensureBucket).not.toHaveBeenCalled();
@@ -507,7 +511,6 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
 
   it("em COLLECTING a escrita segue normal", async () => {
     const res = await saveDraft({
-      token: TOKEN,
       answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
     });
     expect(res.ok).toBe(true);
@@ -515,7 +518,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
 
   it("ler a bateria continua permitido depois do fechamento (só leitura)", async () => {
     h.respondentFindUnique.mockResolvedValue(fechado("REVIEW"));
-    const res = await getBattery(TOKEN);
+    const res = await getBattery();
     expect(res.ok).toBe(true);
   });
 });
@@ -549,7 +552,6 @@ describe("coleta fechada entre o token e a escrita", () => {
 
   it("saveDraft recusa e não grava resposta", async () => {
     const res = await saveDraft({
-      token: TOKEN,
       answers: [{ questionId: "clx000000000000000000q001", rawValue: 3 }],
     });
     expect(!res.ok && res.code).toBe("collection.closed");
@@ -561,7 +563,7 @@ describe("coleta fechada entre o token e a escrita", () => {
   it("submitBattery recusa e não conclui nem audita", async () => {
     h.questionCount.mockResolvedValue(1);
     h.responseCount.mockResolvedValue(1);
-    const res = await submitBattery(TOKEN);
+    const res = await submitBattery();
     expect(!res.ok && res.code).toBe("collection.closed");
     expect(h.respondentUpdate).not.toHaveBeenCalled();
     expect(h.auditCreate).not.toHaveBeenCalled();
@@ -570,10 +572,132 @@ describe("coleta fechada entre o token e a escrita", () => {
   it("attachEvidence recusa, não grava metadado e remove o arquivo já enviado", async () => {
     h.questionFindFirst.mockResolvedValue({ id: "q1" });
     h.responseFindUnique.mockResolvedValue(null);
-    const res = await attachEvidence(TOKEN, "q1", file);
+    const res = await attachEvidence("q1", file);
     expect(!res.ok && res.code).toBe("collection.closed");
     expect(h.evidenceCreate).not.toHaveBeenCalled();
     expect(h.auditCreate).not.toHaveBeenCalled();
     expect(h.storageRemove).toHaveBeenCalledTimes(1);
+  });
+});
+
+// Achado 28a do Lacre: o token do respondente ia no caminho da URL e aparecia em
+// claro nos logs de runtime. Agora a primeira carga o troca por um cookie
+// httpOnly e as actions leem o cookie: nada de token em argumento nem em URL.
+describe("token da sessão do respondente vem do cookie", () => {
+  it("consulta pelo hash do valor do cookie", async () => {
+    await getBattery();
+    const args = h.respondentFindUnique.mock.calls[0]?.[0] as {
+      where: { tokenHash: string };
+    };
+    expect(args.where.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(args.where.tokenHash).not.toBe(TOKEN);
+  });
+
+  it("sem cookie, toda action devolve o mesmo erro de link inválido, sem tocar no banco", async () => {
+    h.cookieGet.mockReturnValue(undefined);
+    const file = {
+      size: 1,
+      type: "text/plain",
+      name: "a.txt",
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(1)),
+    } as unknown as File;
+    const results = [
+      await getBattery(),
+      await resolveRespondentToken(),
+      await saveDraft({ answers: [] }),
+      await submitBattery(),
+      await attachEvidence("q1", file),
+    ];
+    for (const res of results) {
+      expect(res.ok).toBe(false);
+      expect(!res.ok && res.error).toBe("Link inválido ou expirado.");
+    }
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("cookie com lixo (não é hex de 64) é recusado antes de consultar o banco", async () => {
+    h.cookieGet.mockReturnValue({
+      name: "meridian_resp",
+      value: "nao-e-token",
+    });
+    const res = await getBattery();
+    expect(res.ok).toBe(false);
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+  });
+});
+
+// Achado 28a, 2ª parte: o token chega à server action no CORPO do POST (argumento),
+// vindo do fragmento da URL, que o servidor nunca vê. A action o valida e grava o
+// cookie de sessão; nada disso passa pelo endereço da requisição.
+describe("startRespondentSession", () => {
+  const EXPIRES = new Date("2026-10-16T12:00:00.000Z");
+
+  it("token válido: grava o cookie httpOnly, SameSite=Lax, no path da bateria, expirando com o token", async () => {
+    h.respondentFindUnique.mockResolvedValue(
+      respondent({ tokenExpiresAt: EXPIRES })
+    );
+    const res = await startRespondentSession(TOKEN);
+    expect(res.ok).toBe(true);
+    expect(h.cookieSet).toHaveBeenCalledTimes(1);
+    const [name, value, options] = h.cookieSet.mock.calls[0] as [
+      string,
+      string,
+      Record<string, unknown>,
+    ];
+    expect(name).toBe("meridian_resp");
+    expect(value).toBe(TOKEN);
+    expect(options).toMatchObject({
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/meridian-responder",
+      expires: EXPIRES,
+    });
+  });
+
+  it("consulta pelo hash do token recebido, nunca por ele em claro", async () => {
+    h.respondentFindUnique.mockResolvedValue(respondent());
+    await startRespondentSession(TOKEN);
+    const args = h.respondentFindUnique.mock.calls[0]?.[0] as {
+      where: { tokenHash: string };
+    };
+    expect(args.where.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(args.where.tokenHash).not.toBe(TOKEN);
+  });
+
+  it("inexistente, expirado e revogado: mesmo erro, sem cookie", async () => {
+    const errors: (string | undefined)[] = [];
+    for (const found of [
+      null,
+      respondent({ tokenExpiresAt: PAST }),
+      respondent({ status: "REVOKED" }),
+    ]) {
+      h.respondentFindUnique.mockResolvedValue(found);
+      const res = await startRespondentSession(TOKEN);
+      expect(res.ok).toBe(false);
+      errors.push(res.ok ? undefined : res.error);
+    }
+    expect(new Set(errors).size).toBe(1);
+    expect(errors[0]).toBe("Link inválido ou expirado.");
+    expect(h.cookieSet).not.toHaveBeenCalled();
+  });
+
+  it("texto que não tem forma de token nem chega ao banco", async () => {
+    const res = await startRespondentSession("curto");
+    expect(res.ok).toBe(false);
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(h.cookieSet).not.toHaveBeenCalled();
+  });
+
+  it("acima do teto de consultas por IP: recusa sem consultar o banco", async () => {
+    h.rateLimiterPeek.mockResolvedValue({
+      success: false,
+      limit: 30,
+      remaining: 0,
+      reset: 0,
+    });
+    const res = await startRespondentSession(TOKEN);
+    expect(!res.ok && res.error).toBe("Muitas tentativas. Aguarde um minuto.");
+    expect(h.respondentFindUnique).not.toHaveBeenCalled();
+    expect(h.cookieSet).not.toHaveBeenCalled();
   });
 });
