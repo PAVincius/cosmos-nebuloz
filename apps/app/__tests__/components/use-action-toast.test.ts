@@ -82,4 +82,22 @@ describe("useActionToast", () => {
 
     expect(h.error).toHaveBeenCalledWith("Erro: raw", { id: "toast-id-1" });
   });
+
+  // Server action que lança (rede caiu, deploy trocou o id da action) não
+  // devolve Result: antes o toast de loading ficava para sempre e a chamada
+  // rejeitava sem ninguém tratar — "sem erro visível" (atrito A5 do dogfood).
+  it("troca o loading por erro, no mesmo id, quando a action lança, e devolve Result de falha", async () => {
+    const action = vi.fn().mockRejectedValue(new Error("Failed to fetch"));
+
+    const res = await useActionToast(action, {
+      loading: "Enviando...",
+      success: "Enviado.",
+    });
+
+    expect(h.error).toHaveBeenCalledTimes(1);
+    expect(h.error.mock.calls[0]?.[1]).toEqual({ id: "toast-id-1" });
+    expect(h.success).not.toHaveBeenCalled();
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toMatch(/tente de novo/i);
+  });
 });
