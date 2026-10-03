@@ -1,0 +1,3 @@
+# Chave PÚBLICA age do backup diário (workflow backup-db.yml).
+# Ainda não gerada: o CEO gera o par e substitui esta linha por `age1…`
+# (docs/runbooks/backup-db.md, passo 1). A chave privada nunca entra no repo.
