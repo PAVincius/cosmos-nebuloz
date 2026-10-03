@@ -100,7 +100,7 @@ describe("Enviar logo depois de anexar", () => {
       data: { id: string; fileName: string };
     }>();
     h.attachEvidence.mockReturnValue(upload.promise);
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     answer();
     attach(file());
     send();
@@ -127,7 +127,7 @@ describe("Enviar logo depois de anexar", () => {
 describe("falha que antes sumia", () => {
   it("anexo que lança (rede, deploy) não trava o formulário: erro na tela e botões de volta", async () => {
     h.attachEvidence.mockRejectedValue(new Error("Failed to fetch"));
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     attach(file());
 
     const alert = await screen.findByRole("alert");
@@ -140,7 +140,7 @@ describe("falha que antes sumia", () => {
 
   it("envio que lança mostra erro na tela e permite tentar de novo", async () => {
     h.submitBattery.mockRejectedValueOnce(new Error("Failed to fetch"));
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     answer();
     send();
 
@@ -157,7 +157,7 @@ describe("falha que antes sumia", () => {
       ok: false,
       error: "A coleta foi encerrada.",
     });
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     answer();
     send();
 
@@ -170,7 +170,7 @@ describe("falha que antes sumia", () => {
 describe("resultado do envio fica na tela", () => {
   it("pergunta em branco: aviso permanente e a bateria NÃO aparece como concluída", async () => {
     h.submitBattery.mockResolvedValue({ ok: true, data: { missing: 1 } });
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     send();
 
     const alert = await screen.findByRole("alert");
@@ -179,7 +179,7 @@ describe("resultado do envio fica na tela", () => {
   });
 
   it("concluída: o estado permanece e o envio não se repete", async () => {
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     answer();
     send();
 
@@ -191,9 +191,7 @@ describe("resultado do envio fica na tela", () => {
   });
 
   it("quem volta ao link depois de concluir vê que já concluiu", () => {
-    render(
-      <RespondentForm battery={battery({ status: "DONE" })} token="tok" />
-    );
+    render(<RespondentForm battery={battery({ status: "DONE" })} />);
     expect(screen.getByText(/Bateria concluída/)).toBeDefined();
     expect(
       screen.queryByRole("button", { name: "Enviar respostas" })
@@ -206,7 +204,6 @@ describe("anexo repetido", () => {
     render(
       <RespondentForm
         battery={battery({}, [{ id: "e0", fileName: "politica.pdf" }] as never)}
-        token="tok"
       />
     );
     attach(file("politica.pdf"));
@@ -217,7 +214,7 @@ describe("anexo repetido", () => {
   });
 
   it("arquivo com outro nome anexa normalmente", async () => {
-    render(<RespondentForm battery={battery()} token="tok" />);
+    render(<RespondentForm battery={battery()} />);
     attach(file("ata.pdf"));
     await waitFor(() => expect(h.attachEvidence).toHaveBeenCalledTimes(1));
   });
