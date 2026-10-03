@@ -529,7 +529,7 @@ describe("coleta fechada trava a escrita do respondente (FR-029c)", () => {
 describe("submitBattery de bateria já concluída", () => {
   it("é idempotente: devolve concluído sem gravar nem auditar de novo", async () => {
     h.respondentFindUnique.mockResolvedValue(respondent({ status: "DONE" }));
-    const res = await submitBattery(TOKEN);
+    const res = await submitBattery();
     expect(res.ok && res.data.missing).toBe(0);
     expect(h.respondentUpdate).not.toHaveBeenCalled();
     expect(h.auditCreate).not.toHaveBeenCalled();

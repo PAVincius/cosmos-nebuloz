@@ -33,6 +33,11 @@ const LIKERT = [
   "Concordo forte",
 ];
 
+type Notice = { tone: "error" | "warning"; text: string };
+
+const plural = (n: number) =>
+  n === 1 ? "1 pergunta sem resposta" : `${n} perguntas sem resposta`;
+
 export function RespondentForm({ battery }: { battery: Battery }) {
   const [answers, setAnswers] = useState<Record<string, number>>(
     Object.fromEntries(
@@ -113,40 +118,63 @@ export function RespondentForm({ battery }: { battery: Battery }) {
     if (saving || concluded) {
       return;
     }
-    setBusy(true);
-    await runWithToast(() => submitBattery(), {
-      loading: "Enviando respostas…",
-      success: (d) =>
-        d.missing > 0
-          ? `${d.missing} pergunta(s) sem resposta — a bateria não foi concluída.`
-          : "Bateria concluída. Obrigado — os lembretes param agora.",
-    });
-    setBusy(false);
+    setSaving(true);
+    setSending(true);
+    setNotice(null);
+    try {
+      // Anexo em andamento termina antes do envio: o respondente que clica em
+      // Enviar logo depois de anexar não perde o clique.
+      await Promise.allSettled([...inflight.current]);
+      if (!(await persist())) {
+        return;
+      }
+      const res = await runWithToast(() => submitBattery(), {
+        loading: "Enviando respostas…",
+        success: (d) =>
+          d.missing > 0
+            ? `${plural(d.missing)} — a bateria não foi concluída.`
+            : "Bateria concluída. Obrigado — os lembretes param agora.",
+      });
+      if (!res.ok) {
+        setNotice({
+          tone: "error",
+          text: `Não foi possível enviar: ${res.error} Suas respostas continuam na tela.`,
+        });
+        return;
+      }
+      if (res.data.missing > 0) {
+        setShowMissing(true);
+        setNotice({
+          tone: "warning",
+          text: `${plural(res.data.missing)}. Responda as marcadas e envie de novo — a bateria ainda não foi concluída.`,
+        });
+        return;
+      }
+      setShowMissing(false);
+      setConcluded(true);
+    } finally {
+      setSaving(false);
+      setSending(false);
+    }
   };
 
-  const upload = async (questionId: string, file: File) => {
-    setBusy(true);
-    const res = await runWithToast(() => attachEvidence(questionId, file), {
-      loading: "Anexando evidência…",
-      success: (e) => `${e.fileName} anexado.`,
-    });
-    setBusy(false);
-    if (res.ok) {
-      setFiles((s) => ({
-        ...s,
-        [questionId]: [...(s[questionId] ?? []), res.data.fileName],
-      }));
+  const upload = (questionId: string, file: File) => {
+    // O mesmo arquivo na mesma pergunta não anexa de novo (reenvio de quem
+    // refez o fluxo): avisa em vez de duplicar a evidência em silêncio.
+    if ((files[questionId] ?? []).includes(file.name)) {
+      setNotice({
+        tone: "warning",
+        text: `${file.name} já está anexado a esta pergunta. Para anexar outro arquivo, use um nome diferente.`,
+      });
+      return;
     }
     setNotice(null);
     setUploading((n) => n + 1);
     const run = (async () => {
-      const res = await runWithToast(
-        () => attachEvidence(token, questionId, file),
-        {
-          loading: "Anexando evidência…",
-          success: (e) => `${e.fileName} anexado.`,
-        }
-      );
+      const res = await runWithToast(() => attachEvidence(questionId, file), {
+        loading: "Anexando evidência…",
+        success: (e) => `${e.fileName} anexado.`,
+      });
       if (res.ok) {
         setFiles((s) => ({
           ...s,
