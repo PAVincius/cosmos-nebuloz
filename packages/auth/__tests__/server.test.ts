@@ -335,6 +335,50 @@ describe("configuração do better-auth", () => {
     expect(regra?.window).toBeGreaterThanOrEqual(300);
   });
 
+  // Achado do Vigia (12, ALTO): sem `storage`, o contador do better-auth vive
+  // na memória de cada instância serverless — o teto de login valia por
+  // instância e zerava a cada cold start.
+  it("guarda o contador de rate-limit fora da memória da instância (Postgres)", () => {
+    const rateLimitCfg = mocks.authConfig?.rateLimit as {
+      customStorage?: { consume?: unknown };
+      storage?: string;
+    };
+    expect(rateLimitCfg.customStorage).toBeDefined();
+    expect(typeof rateLimitCfg.customStorage?.consume).toBe("function");
+    expect(rateLimitCfg.storage).not.toBe("memory");
+  });
+
+  it.each([
+    ["/sign-in/email", 60 * 60],
+    ["/two-factor/*", 60 * 60],
+    ["/sign-up/email", 24 * 60 * 60],
+    ["/reset-password*", 60 * 60],
+    ["/request-password-reset", 60 * 60],
+  ])("tem regra própria de rate-limit para %s", (rota, janelaMaxima) => {
+    const rateLimitCfg = mocks.authConfig?.rateLimit as {
+      customRules?: Record<string, { window: number; max: number }>;
+    };
+    const regra = rateLimitCfg?.customRules?.[rota];
+    expect(regra).toBeDefined();
+    expect(regra?.max).toBeGreaterThan(0);
+    expect(regra?.max).toBeLessThanOrEqual(15);
+    expect(regra?.window).toBeGreaterThanOrEqual(60);
+    expect(regra?.window).toBeLessThanOrEqual(janelaMaxima);
+  });
+
+  it("2FA é mais restrito que o login (6 dígitos tem só 1 milhão de combinações)", () => {
+    const rules = (
+      mocks.authConfig?.rateLimit as {
+        customRules: Record<string, { window: number; max: number }>;
+      }
+    ).customRules;
+    const porMinuto = (r: { window: number; max: number }) =>
+      r.max / (r.window / 60);
+    expect(porMinuto(rules["/two-factor/*"])).toBeLessThan(
+      porMinuto(rules["/sign-in/email"])
+    );
+  });
+
   // Curinga em trustedOrigins abriria o fluxo de auth para qualquer página
   // hospedada no domínio.
   it("não aceita curinga em trustedOrigins", () => {

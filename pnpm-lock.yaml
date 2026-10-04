@@ -1041,12 +1041,18 @@ importers:
       '@repo/audit':
         specifier: workspace:*
         version: link:../audit
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../database
       '@repo/email':
         specifier: workspace:*
         version: link:../email
       '@repo/observability':
         specifier: workspace:*
         version: link:../observability
+      '@repo/rate-limit':
+        specifier: workspace:*
+        version: link:../rate-limit
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(arktype@2.1.20)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.1.13)
