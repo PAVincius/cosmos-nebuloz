@@ -202,6 +202,27 @@ export async function listMembers(): Promise<SignalResult<MemberRow[]>> {
   });
 }
 
+/**
+ * Depois do commit: o papel vem de cache (5 min), e sem invalidar quem ganhou
+ * acesso continua vendo "indisponível" e quem foi rebaixado continua com o
+ * papel antigo até ele expirar.
+ * Melhor-esforço: a linha já foi gravada e confirmada. Redis fora do ar não
+ * pode fazer a tela dizer que a troca falhou; o cache expira sozinho.
+ */
+async function invalidateRoleCache(
+  tenantId: string,
+  userId: string,
+  action: string
+): Promise<void> {
+  try {
+    await invalidateSignalRoleCache(tenantId, userId);
+  } catch (error) {
+    log.error(`[${action}] cache de papel não invalidado`, {
+      error: String(error),
+    });
+  }
+}
+
 export async function setMemberRole(
   raw: z.input<typeof MemberSchema>
 ): Promise<SignalResult<{ role: string }>> {
@@ -251,6 +272,8 @@ export async function setMemberRole(
         ],
       });
     });
+
+    await invalidateRoleCache(ctx.tenantId, input.userId, "setMemberRole");
 
     revalidatePath("/signal/settings");
     return { role: input.role };
@@ -364,17 +387,7 @@ export async function addSignalMember(
       });
     });
 
-    // Depois do commit: o papel vem de cache, e quem acabou de ganhar acesso
-    // continuaria vendo "indisponível" até ele expirar.
-    // Melhor-esforço: a linha já foi gravada e confirmada. Redis fora do ar não
-    // pode fazer a tela dizer que a adição falhou; o cache expira sozinho.
-    try {
-      await invalidateSignalRoleCache(ctx.tenantId, input.userId);
-    } catch (error) {
-      log.error("[addSignalMember] cache de papel não invalidado", {
-        error: String(error),
-      });
-    }
+    await invalidateRoleCache(ctx.tenantId, input.userId, "addSignalMember");
 
     revalidatePath("/signal/settings");
     return { role: input.role };

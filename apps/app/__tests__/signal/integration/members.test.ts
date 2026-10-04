@@ -48,6 +48,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
 import {
   addSignalMember,
   listAddableMembers,
+  setMemberRole,
 } from "@/app/(signal)/actions/settings";
 import { canAssignSignalRole } from "@/lib/signal/members";
 
@@ -171,6 +172,52 @@ describe("cache de papel é melhor-esforço", () => {
   it("falha ao invalidar não desfaz a adição: registra e segue", async () => {
     h.invalidate.mockRejectedValue(new Error("redis fora"));
     const res = await addSignalMember({ userId: "usr_2", role: "ANALYST" });
+    expect(res).toMatchObject({ ok: true });
+    expect(h.logError).toHaveBeenCalled();
+  });
+});
+
+describe("setMemberRole — o papel novo vale na hora", () => {
+  beforeEach(() => {
+    (db.signalMember as Record<string, Fn>).findUnique.mockResolvedValue({
+      id: "sm_2",
+      role: "ADMIN",
+      user: { name: "Caio", email: "c@x.test" },
+    });
+    (db.signalMember as Record<string, Fn>).update = vi
+      .fn()
+      .mockResolvedValue({ id: "sm_2" });
+  });
+
+  it("invalida o cache de papel de quem foi rebaixado, depois do commit", async () => {
+    const res = await setMemberRole({ userId: "usr_2", role: "VIEWER" });
+
+    expect(res).toMatchObject({ ok: true });
+    expect(h.invalidate).toHaveBeenCalledTimes(1);
+    expect(h.invalidate).toHaveBeenCalledWith("tnt_1", "usr_2");
+    // Depois do commit: a invalidação não pode rodar antes de a linha gravar,
+    // senão a leitura seguinte recoloca o papel antigo no cache.
+    const updateOrder = (db.signalMember as Record<string, Fn>).update.mock
+      .invocationCallOrder[0];
+    expect(h.invalidate.mock.invocationCallOrder[0]).toBeGreaterThan(
+      updateOrder
+    );
+  });
+
+  it("não invalida quando a troca é recusada", async () => {
+    (db.signalMember as Record<string, Fn>).findUnique.mockResolvedValue(null);
+
+    const res = await setMemberRole({ userId: "usr_2", role: "VIEWER" });
+
+    expect(res).toMatchObject({ ok: false, rule: "member.not-found" });
+    expect(h.invalidate).not.toHaveBeenCalled();
+  });
+
+  it("falha ao invalidar não desfaz a troca: registra e segue", async () => {
+    h.invalidate.mockRejectedValue(new Error("redis fora"));
+
+    const res = await setMemberRole({ userId: "usr_2", role: "VIEWER" });
+
     expect(res).toMatchObject({ ok: true });
     expect(h.logError).toHaveBeenCalled();
   });
