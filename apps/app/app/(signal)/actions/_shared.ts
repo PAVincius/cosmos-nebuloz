@@ -61,6 +61,31 @@ export type Db = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
+/**
+ * Dono (de iniciativa, de conexão) precisa ser membro do Signal DESTE tenant.
+ *
+ * O `ownerId` é FK para `User` global: sem esta checagem, quem grava o id de um
+ * usuário de outro tenant faz o nome e o e-mail dele aparecerem nas leituras
+ * (`owner` das listas). "Não é membro" não diz se o usuário existe em outro
+ * lugar.
+ */
+export async function requireSignalMember(
+  db: Db,
+  tenantId: string,
+  userId: string
+): Promise<void> {
+  const member = await db.signalMember.findFirst({
+    where: { tenantId, userId },
+    select: { id: true },
+  });
+  if (!member) {
+    throw new SignalRuleError(
+      "owner.not-member",
+      "O dono precisa ser membro desta organização com papel no Signal."
+    );
+  }
+}
+
 /** Diff campo-a-campo, no formato normativo da trilha: [campo, antes, depois]. */
 export type AuditDiff = [string, string, string][];
 

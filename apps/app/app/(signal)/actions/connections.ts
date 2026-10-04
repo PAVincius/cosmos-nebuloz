@@ -19,6 +19,7 @@ import {
   logSignalAudit,
   logSignalSystemAudit,
   nextCode,
+  requireSignalMember,
   type SignalResult,
   signalAction,
 } from "./_shared";
@@ -121,6 +122,9 @@ export async function upsertConnection(
     const input = UpsertSchema.parse(raw);
 
     const saved = await withTenantDb(ctx.tenantId, async (db) => {
+      if (input.ownerId) {
+        await requireSignalMember(db, ctx.tenantId, input.ownerId);
+      }
       if (input.code) {
         const before = await db.signalConnection.findUnique({
           where: {

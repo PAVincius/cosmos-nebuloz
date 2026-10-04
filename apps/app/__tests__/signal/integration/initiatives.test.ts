@@ -83,6 +83,7 @@ beforeEach(() => {
 
   db = {
     signalSettings: { findUnique: vi.fn().mockResolvedValue(null) },
+    signalMember: { findFirst: vi.fn().mockResolvedValue({ id: "sm_1" }) },
     signalInitiative: {
       findMany: vi.fn().mockResolvedValue([]),
       findUnique: vi.fn().mockResolvedValue(initiativeRow()),
@@ -157,6 +158,64 @@ describe("criação", () => {
     expect(h.requireSignalPermissionContext).toHaveBeenCalledWith(
       "signal.initiative.write"
     );
+  });
+});
+
+describe("dono da iniciativa só é membro do tenant", () => {
+  const CREATE = {
+    name: "Triagem",
+    businessUnit: "Ops",
+    category: "PRODUCTIVITY" as const,
+    hypothesis: "Se a triagem priorizar por critério econômico, o tempo cai.",
+  };
+
+  it("criação recusa dono que não é membro do Signal neste tenant", async () => {
+    db.signalMember!.findFirst = vi.fn().mockResolvedValue(null);
+    const res = await createInitiative({ ...CREATE, ownerId: OWNER_ID });
+
+    expect(res).toMatchObject({ ok: false, rule: "owner.not-member" });
+    expect(db.signalInitiative?.create).not.toHaveBeenCalled();
+    expect(h.logSignalAudit).not.toHaveBeenCalled();
+  });
+
+  it("a checagem filtra pelo tenant do contexto", async () => {
+    await createInitiative({ ...CREATE, ownerId: OWNER_ID });
+
+    expect(db.signalMember?.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tnt_1", userId: OWNER_ID },
+      })
+    );
+  });
+
+  it("sem ownerId o dono é quem cria e não há consulta extra", async () => {
+    const res = await createInitiative(CREATE);
+
+    expect(res.ok).toBe(true);
+    expect(db.signalMember?.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("edição recusa trocar o dono para quem não é membro", async () => {
+    db.signalMember!.findFirst = vi.fn().mockResolvedValue(null);
+    const res = await updateInitiative({
+      code: "IN-014",
+      ownerId: "cl00000000000000000000001",
+    });
+
+    expect(res).toMatchObject({ ok: false, rule: "owner.not-member" });
+    expect(db.signalInitiative?.update).not.toHaveBeenCalled();
+  });
+
+  it("edição que reenvia o mesmo dono não consulta nem recusa", async () => {
+    db.signalMember!.findFirst = vi.fn().mockResolvedValue(null);
+    const res = await updateInitiative({
+      code: "IN-014",
+      name: "Novo nome",
+      ownerId: OWNER_ID,
+    });
+
+    expect(res.ok).toBe(true);
+    expect(db.signalMember?.findFirst).not.toHaveBeenCalled();
   });
 });
 
