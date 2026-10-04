@@ -199,3 +199,63 @@ describe("manifesto do pacote", () => {
     expect(pack.indexHtml).toContain("TR-104");
   });
 });
+
+// O pacote sai do nosso controle e é extraído na máquina de quem o recebe. O
+// nome do arquivo vem do navegador de quem anexou: "../../x" no caminho do zip
+// grava fora da pasta de extração (zip-slip).
+describe("caminho dentro do ZIP — zip-slip", () => {
+  const withNames = (...names: string[]): HandoverInput => ({
+    ...INPUT,
+    phases: [
+      {
+        ...(INPUT.phases[0] as HandoverInput["phases"][number]),
+        steps: [
+          {
+            statement: "Passo",
+            expectedArtefact: "Artefato",
+            artefacts: names.map((filename) => ({ filename, sizeBytes: 10 })),
+          },
+        ],
+      },
+    ],
+  });
+  const paths = (...names: string[]) =>
+    buildHandoverPack(withNames(...names)).files.map((f) => f.path);
+
+  it("'../' no nome não sai da pasta da fase", () => {
+    expect(paths("../../etc/passwd.txt")).toEqual([
+      "artefatos/ASSESS/passwd.txt",
+    ]);
+  });
+
+  it("caminho absoluto e barra invertida do Windows também viram só o nome", () => {
+    expect(paths("/etc/cron.d/x.csv", "..\\..\\startup\\y.docx")).toEqual([
+      "artefatos/ASSESS/x.csv",
+      "artefatos/ASSESS/y.docx",
+    ]);
+  });
+
+  it("nome vazio ou só '..' não vira caminho perigoso", () => {
+    // Uma chamada por nome: os três caem em "arquivo", e juntos se renomeariam.
+    for (const name of ["..", ".", ""]) {
+      expect(paths(name)).toEqual(["artefatos/ASSESS/arquivo"]);
+    }
+  });
+
+  it("nenhum caminho do pacote tem '..' nem começa por '/', e todos têm três segmentos", () => {
+    const all = paths("../a.pdf", "/b.pdf", "c/../../d.pdf", "e.pdf");
+    for (const p of all) {
+      expect(p.split("/")).toHaveLength(3);
+      expect(p).not.toContain("..");
+      expect(p.startsWith("/")).toBe(false);
+    }
+  });
+
+  it("dois anexos com o mesmo nome não se sobrescrevem no ZIP", () => {
+    expect(paths("plano.pdf", "outra/pasta/plano.pdf", "PLANO.pdf")).toEqual([
+      "artefatos/ASSESS/plano.pdf",
+      "artefatos/ASSESS/plano (2).pdf",
+      "artefatos/ASSESS/PLANO (3).pdf",
+    ]);
+  });
+});

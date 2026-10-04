@@ -296,12 +296,21 @@ export async function exportHandoverPack(
 
     // Artefatos EMBUTIDOS, não linkados: uma URL assinada expira em cinco
     // minutos, e o pacote precisa abrir daqui a um ano.
-    for (const a of prepared.objectKeys) {
+    //
+    // O destino de cada um é o caminho do manifesto (`pack.files`), na mesma
+    // ordem dos objetos: o nome gravado vem do navegador, e usá-lo cru como
+    // caminho de entrada deixaria "../" gravar fora da pasta de quem extrai.
+    if (pack.files.length !== prepared.objectKeys.length) {
+      throw new Error(
+        "Manifesto do handover fora de sincronia com os artefatos"
+      );
+    }
+    for (const [i, a] of prepared.objectKeys.entries()) {
       const { data } = await storageClient.storage
         .from(SCAFFOLD_ARTEFACT_BUCKET)
         .download(a.objectKey);
       if (data) {
-        entries[`artefatos/${a.phase}/${a.filename}`] = new Uint8Array(
+        entries[(pack.files[i] as { path: string }).path] = new Uint8Array(
           await data.arrayBuffer()
         );
       }

@@ -1,3 +1,5 @@
+import { safeFileName } from "./file-name";
+
 // S-10 / SN-09 — o handover pack.
 //
 // "Exporta como arquivo auto-contido, legível sem acesso Nebuloz." É o último
@@ -191,16 +193,42 @@ td.n{font-variant-numeric:tabular-nums;font-weight:700}
 footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7ec;font-size:12.5px;color:#636c7b}
 `;
 
+/** Caminho do artefato dentro do ZIP: `artefatos/<fase>/<nome>`. O nome é o último
+ *  segmento do que o navegador mandou (`safeFileName`), então "../" e caminho
+ *  absoluto não saem da pasta; nome repetido na fase ganha " (n)" antes da
+ *  extensão. `taken` guarda os caminhos já usados, sem diferenciar caixa
+ *  (extrair no Windows ou no macOS juntaria "A.pdf" e "a.pdf"). */
+function zipEntryPath(
+  phase: string,
+  filename: string,
+  taken: Set<string>
+): string {
+  const name = safeFileName(filename);
+  const dot = name.lastIndexOf(".");
+  const stem = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : "";
+  let candidate = `artefatos/${phase}/${name}`;
+  for (let n = 2; taken.has(candidate.toLowerCase()); n += 1) {
+    candidate = `artefatos/${phase}/${stem} (${n})${ext}`;
+  }
+  taken.add(candidate.toLowerCase());
+  return candidate;
+}
+
 export function buildHandoverPack(input: HandoverInput): HandoverPack {
   const t = input.track;
 
+  // Mesma ordem de fase, passo e artefato com que a action baixa os objetos: o
+  // i-ésimo arquivo do storage vai para o i-ésimo caminho.
+  const taken = new Set<string>();
   const files = input.phases.flatMap((p) =>
     p.steps.flatMap((s) =>
       s.artefacts.map((a) => ({
         filename: a.filename,
         // Agrupado por fase: quem abre o pacote procura pela fase, não pelo id
-        // do passo.
-        path: `artefatos/${p.phase}/${a.filename}`,
+        // do passo. O nome vem do navegador de quem anexou: só o último
+        // segmento, e sem repetir nome na mesma fase (zip-slip e sobrescrita).
+        path: zipEntryPath(p.phase, a.filename, taken),
       }))
     )
   );
