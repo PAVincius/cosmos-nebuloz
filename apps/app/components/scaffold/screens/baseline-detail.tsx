@@ -139,12 +139,10 @@ export default function BaselineDetailScreen({ param }: { param?: string }) {
       modal === "sign"
         ? await signBusinessCase({
             businessCaseId: bc.id,
-            versionId: bc.currentVersionId,
             signedByLabel: form.signer,
           })
         : await contestBusinessCase({
             businessCaseId: bc.id,
-            versionId: bc.currentVersionId,
             byLabel: form.by,
             roleLabel: form.role,
             objection: form.objection,

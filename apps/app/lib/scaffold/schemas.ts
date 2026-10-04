@@ -205,15 +205,16 @@ export const signerName = z
   .trim()
   .min(4, "Digite o nome completo de quem assina");
 
+/** Sem `versionId`: a versão assinada é a vigente do caso, derivada no servidor.
+ *  Um id de versão vindo do cliente, separado do caso, deixava assinar a versão
+ *  de OUTRO caso e gravá-la como a assinada deste. */
 export const SignBusinessCaseSchema = z.object({
   businessCaseId: cuid,
-  versionId: cuid,
   signedByLabel: signerName,
 });
 
 export const ContestBusinessCaseSchema = z.object({
   businessCaseId: cuid,
-  versionId: cuid,
   byLabel: nnStr,
   roleLabel: nnStr,
   /** Objeção precisa dizer o quê. Devolver sem explicar não é objeção — é

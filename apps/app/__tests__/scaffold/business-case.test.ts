@@ -236,7 +236,6 @@ describe("signBusinessCase", () => {
     h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
     const res = await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     expect(res.ok).toBe(true);
@@ -250,7 +249,6 @@ describe("signBusinessCase", () => {
     h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
     await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     expect(h.bcUpdate.mock.calls[0][0].data).toMatchObject({
@@ -266,7 +264,6 @@ describe("signBusinessCase", () => {
     );
     await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     expect(h.versionUpdateMany).toHaveBeenCalled();
@@ -282,7 +279,6 @@ describe("signBusinessCase", () => {
     });
     const res = await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     expect(res.ok).toBe(false);
@@ -299,7 +295,6 @@ describe("signBusinessCase", () => {
     });
     const res = await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     expect(res.ok).toBe(false);
@@ -309,7 +304,6 @@ describe("signBusinessCase", () => {
     AWAITING();
     const res = await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "ok",
     });
     expect(res.ok).toBe(false);
@@ -321,7 +315,6 @@ describe("signBusinessCase", () => {
     h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
     await signBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       signedByLabel: "Otto Braga",
     });
     const entry = h.auditCreate.mock.calls.at(-1)?.[0].data;
@@ -341,7 +334,6 @@ describe("contestBusinessCase", () => {
     });
     const res = await contestBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       byLabel: "Dra. Lívia Prado",
       roleLabel: "Process owner",
       objection:
@@ -356,7 +348,6 @@ describe("contestBusinessCase", () => {
   it("não contesta o que não foi enviado", async () => {
     const res = await contestBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       byLabel: "Dra. Lívia Prado",
       roleLabel: "Process owner",
       objection: "Objeção longa o suficiente para valer como registro escrito.",
@@ -375,7 +366,6 @@ describe("contestBusinessCase", () => {
     });
     const res = await contestBusinessCase({
       businessCaseId: BC,
-      versionId: V1,
       byLabel: "Lívia",
       roleLabel: "Process owner",
       objection: "não",
@@ -464,5 +454,86 @@ describe("newVersionFromSigned — a assinada permanece intacta", () => {
       note: "Janela estendida a 18 meses por exigência regulatória.",
     });
     expect(h.versionCreate.mock.calls[0][0].data.label).toBe("v4");
+  });
+});
+
+// Sign e contest recebiam `versionId` do cliente, separado de `businessCaseId`:
+// assinava-se a versão AWAITING de OUTRO caso e gravava-se essa versão como
+// `signedVersionId` deste. A versão agora é derivada do caso (a vigente), e o
+// cliente só aponta o caso.
+describe("a versão assinada ou contestada é a vigente do caso, nunca a que o cliente aponta", () => {
+  const OUTRA = "clx000000000000000000vxx9";
+  const AWAITING_V1 = {
+    id: V1,
+    label: "v1",
+    state: "AWAITING",
+    businessCaseId: BC,
+    metrics: METRICS,
+  };
+
+  it("assinar usa bc.currentVersionId e ignora um versionId de fora", async () => {
+    h.versionFindFirst.mockResolvedValue(AWAITING_V1);
+    h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
+    const res = await signBusinessCase({
+      businessCaseId: BC,
+      versionId: OUTRA,
+      signedByLabel: "Otto Braga",
+    } as never);
+    expect(res.ok).toBe(true);
+    expect(h.versionFindFirst.mock.calls[0][0].where.id).toBe(V1);
+    expect(h.bcUpdate.mock.calls[0][0].data.signedVersionId).toBe(V1);
+    expect(h.versionUpdate.mock.calls[0][0].where.id).toBe(V1);
+  });
+
+  it("contestar usa bc.currentVersionId e ignora um versionId de fora", async () => {
+    h.versionFindFirst.mockResolvedValue(AWAITING_V1);
+    h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
+    const res = await contestBusinessCase({
+      businessCaseId: BC,
+      versionId: OUTRA,
+      byLabel: "Dra. Lívia Prado",
+      roleLabel: "Process owner",
+      objection: "Objeção longa o suficiente para valer como registro escrito.",
+      asks: "Separar em duas métricas.",
+    } as never);
+    expect(res.ok).toBe(true);
+    expect(h.versionFindFirst.mock.calls[0][0].where.id).toBe(V1);
+    expect(h.contestCreate.mock.calls[0][0].data.versionId).toBe(V1);
+  });
+
+  it("versão que não é deste caso é recusada e nada é gravado (defesa em profundidade)", async () => {
+    h.versionFindFirst.mockResolvedValue({
+      ...AWAITING_V1,
+      businessCaseId: "clx00000000000000000bcxx9",
+    });
+    h.bcFindFirst.mockResolvedValue(bc({ state: "AWAITING" }));
+    const res = await signBusinessCase({
+      businessCaseId: BC,
+      versionId: V1,
+      signedByLabel: "Otto Braga",
+    } as never);
+    expect(res.ok).toBe(false);
+    expect(h.bcUpdate).not.toHaveBeenCalled();
+    expect(h.versionUpdate).not.toHaveBeenCalled();
+  });
+
+  it("caso sem versão vigente não assina nem contesta", async () => {
+    h.bcFindFirst.mockResolvedValue(bc({ currentVersionId: null }));
+    const sign = await signBusinessCase({
+      businessCaseId: BC,
+      versionId: V1,
+      signedByLabel: "Otto Braga",
+    } as never);
+    const contest = await contestBusinessCase({
+      businessCaseId: BC,
+      versionId: V1,
+      byLabel: "Dra. Lívia Prado",
+      roleLabel: "Process owner",
+      objection: "Objeção longa o suficiente para valer como registro escrito.",
+      asks: "Separar em duas métricas.",
+    } as never);
+    expect(sign.ok).toBe(false);
+    expect(contest.ok).toBe(false);
+    expect(h.bcUpdate).not.toHaveBeenCalled();
   });
 });

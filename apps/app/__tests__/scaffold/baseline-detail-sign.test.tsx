@@ -101,7 +101,6 @@ describe("caso de negócio — assinar", () => {
     await waitFor(() => expect(h.signBusinessCase).toHaveBeenCalledTimes(1));
     expect(h.signBusinessCase.mock.calls[0][0]).toEqual({
       businessCaseId: BC_ID,
-      versionId: VER_ID,
       signedByLabel: "Marina Costa",
     });
   });
@@ -139,7 +138,6 @@ describe("caso de negócio — contestar", () => {
     await waitFor(() => expect(h.contestBusinessCase).toHaveBeenCalledTimes(1));
     expect(h.contestBusinessCase.mock.calls[0][0]).toMatchObject({
       businessCaseId: BC_ID,
-      versionId: VER_ID,
       byLabel: "Dr. Paulo",
       roleLabel: "Diretor médico",
       asks: "Separar erro clínico de erro de transcrição.",

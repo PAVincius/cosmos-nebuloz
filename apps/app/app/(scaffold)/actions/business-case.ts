@@ -76,6 +76,28 @@ async function loadVersion(db: Db, tenantId: string, versionId: string) {
   return v;
 }
 
+/**
+ * A versão vigente do caso, e só ela. Assinar e contestar partem do CASO que o
+ * cliente aponta; a versão sai de `currentVersionId`, e uma versão que não seja
+ * deste caso é recusada mesmo assim (defesa em profundidade). O id de versão não
+ * viaja no payload: com ele separado do caso, dava para assinar a versão de
+ * outro caso e gravá-la como a assinada deste.
+ */
+async function loadCurrentVersion(
+  db: Db,
+  tenantId: string,
+  bc: { id: string; currentVersionId: string | null }
+) {
+  if (!bc.currentVersionId) {
+    throw new ScaffoldRuleError("VERSION_IMMUTABLE");
+  }
+  const version = await loadVersion(db, tenantId, bc.currentVersionId);
+  if (version.businessCaseId !== bc.id) {
+    throw new ScaffoldRuleError("VERSION_IMMUTABLE");
+  }
+  return version;
+}
+
 /** Próximo rótulo a partir do anterior: v3 → v4. Rótulo é do artefato, não do
  *  banco — o patrocinador assina "a v4", e um cuid não serve para conversar. */
 function nextLabel(previous: string): string {
@@ -223,13 +245,13 @@ export async function signBusinessCase(
     const input = SignBusinessCaseSchema.parse(raw);
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
-      const version = await loadVersion(db, ctx.tenantId, input.versionId);
+      const bc = await loadCase(db, ctx.tenantId, input.businessCaseId);
+      const version = await loadCurrentVersion(db, ctx.tenantId, bc);
       if (version.state !== "AWAITING") {
         // Rascunho não foi enviado; contestada tem objeção aberta. Nos dois
         // casos, assinar pularia a conversa que a assinatura deveria encerrar.
         throw new ScaffoldRuleError("VERSION_IMMUTABLE");
       }
-      const bc = await loadCase(db, ctx.tenantId, input.businessCaseId);
 
       const payload: SignablePayload = {
         businessCaseCode: bc.code,
@@ -322,11 +344,11 @@ export async function contestBusinessCase(
     const input = ContestBusinessCaseSchema.parse(raw);
 
     await withTenantDb(ctx.tenantId, async (db) => {
-      const version = await loadVersion(db, ctx.tenantId, input.versionId);
+      const bc = await loadCase(db, ctx.tenantId, input.businessCaseId);
+      const version = await loadCurrentVersion(db, ctx.tenantId, bc);
       if (version.state !== "AWAITING") {
         throw new ScaffoldRuleError("VERSION_IMMUTABLE");
       }
-      const bc = await loadCase(db, ctx.tenantId, input.businessCaseId);
 
       await db.scaffoldBusinessCaseContest.create({
         data: {
