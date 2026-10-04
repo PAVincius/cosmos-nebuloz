@@ -83,6 +83,14 @@ const DRAFT_INPUT = {
   dimensions: FULL_DIMS,
 };
 
+const OPEN_DRAFT = {
+  id: "b_1",
+  version: 1,
+  signedAt: null,
+  windowLabel: "4 semanas · mai/2026",
+  dimensions: FULL_DIMS,
+};
+
 type Db = Record<string, Record<string, ReturnType<typeof vi.fn>>>;
 let db: Db;
 
@@ -104,8 +112,12 @@ beforeEach(() => {
       findUnique: vi.fn().mockResolvedValue(null),
       create: vi.fn().mockResolvedValue({ id: "b_1", version: 1 }),
       update: vi.fn().mockResolvedValue({ id: "b_1" }),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
     },
-    signalBaselineDimension: { deleteMany: vi.fn().mockResolvedValue({}) },
+    signalBaselineDimension: {
+      deleteMany: vi.fn().mockResolvedValue({}),
+      createMany: vi.fn().mockResolvedValue({ count: 5 }),
+    },
   };
   h.withTenantDb.mockImplementation((_t: string, fn: (d: unknown) => unknown) =>
     fn(db)
@@ -126,13 +138,57 @@ describe("rascunho", () => {
   it("sobrescreve o rascunho aberto em vez de abrir versão nova", async () => {
     // Corrigir digitação não deveria virar versão. A lista de versões é a prova
     // de que a régua não mudou no meio do jogo — encher de ruído a inutiliza.
-    db.signalBaseline!.findFirst = vi
-      .fn()
-      .mockResolvedValue({ id: "b_1", version: 1, signedAt: null });
+    db.signalBaseline!.findFirst = vi.fn().mockResolvedValue(OPEN_DRAFT);
     const res = await draftBaseline(DRAFT_INPUT);
     expect(res.ok).toBe(true);
-    expect(db.signalBaseline?.update).toHaveBeenCalled();
+    expect(db.signalBaseline?.updateMany).toHaveBeenCalled();
     expect(db.signalBaseline?.create).not.toHaveBeenCalled();
+  });
+
+  it("o overwrite só vale para rascunho: o filtro leva signedAt:null", async () => {
+    db.signalBaseline!.findFirst = vi.fn().mockResolvedValue(OPEN_DRAFT);
+    await draftBaseline(DRAFT_INPUT);
+    expect(db.signalBaseline?.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "b_1", tenantId: "tnt_1", signedAt: null },
+      })
+    );
+  });
+
+  it("assinado no meio da edição: 409 e as dimensões do assinado ficam intactas", async () => {
+    // signBaseline confirmou entre a leitura e a escrita: o rascunho já não
+    // existe. Sem a guarda, o deleteMany apagaria a base de um baseline assinado.
+    db.signalBaseline!.findFirst = vi.fn().mockResolvedValue(OPEN_DRAFT);
+    db.signalBaseline!.updateMany = vi.fn().mockResolvedValue({ count: 0 });
+    const res = await draftBaseline(DRAFT_INPUT);
+    expect(res).toMatchObject({ ok: false, rule: "baseline.concurrent" });
+    expect(db.signalBaselineDimension?.deleteMany).not.toHaveBeenCalled();
+    expect(db.signalBaselineDimension?.createMany).not.toHaveBeenCalled();
+    expect(h.logSignalAudit).not.toHaveBeenCalled();
+  });
+
+  it("audita o overwrite do rascunho com o de → para", async () => {
+    db.signalBaseline!.findFirst = vi.fn().mockResolvedValue(OPEN_DRAFT);
+    await draftBaseline({
+      ...DRAFT_INPUT,
+      windowLabel: "6 semanas · mai/2026",
+      dimensions: FULL_DIMS.map((d) =>
+        d.key === "TIME" ? { ...d, value: "40 min" } : d
+      ),
+    });
+    expect(h.logSignalAudit).toHaveBeenCalledTimes(1);
+    const entry = h.logSignalAudit.mock.calls[0][2];
+    expect(entry).toMatchObject({
+      action: "Baseline rascunho atualizado",
+      entityType: "signal.baseline",
+      entityId: "b_1",
+    });
+    expect(entry.diff).toEqual(
+      expect.arrayContaining([
+        ["Janela", "4 semanas · mai/2026", "6 semanas · mai/2026"],
+        ["Tempo por caso", "46 min", "40 min"],
+      ])
+    );
   });
 
   it("abre versão nova quando a anterior já está assinada", async () => {
@@ -144,7 +200,7 @@ describe("rascunho", () => {
       .mockResolvedValue({ id: "b_2", version: 2 });
     const res = await draftBaseline(DRAFT_INPUT);
     expect(res.ok && res.data.version).toBe(2);
-    expect(db.signalBaseline?.update).not.toHaveBeenCalled();
+    expect(db.signalBaseline?.updateMany).not.toHaveBeenCalled();
   });
 
   it("recusa janela que termina antes de começar", async () => {
@@ -195,8 +251,9 @@ describe("assinatura", () => {
     withDims(FULL_DIMS);
     const res = await signBaseline({ initiativeCode: "IN-014", version: 1 });
     expect(res.ok).toBe(true);
-    expect(db.signalBaseline?.update).toHaveBeenCalledWith(
+    expect(db.signalBaseline?.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
+        where: { id: "b_1", tenantId: "tnt_1", signedAt: null },
         data: expect.objectContaining({
           signedById: "usr_1",
           signedAt: expect.any(Date),
@@ -254,7 +311,16 @@ describe("assinatura", () => {
       expect(res.error).toContain("Custo");
       expect(res.error).toContain("Qualidade");
     }
-    expect(db.signalBaseline?.update).not.toHaveBeenCalled();
+    expect(db.signalBaseline?.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("assinatura concorrente: quem chega depois recebe recusa, sem evento nem trilha", async () => {
+    withDims(FULL_DIMS);
+    db.signalBaseline!.updateMany = vi.fn().mockResolvedValue({ count: 0 });
+    const res = await signBaseline({ initiativeCode: "IN-014", version: 1 });
+    expect(res).toMatchObject({ ok: false, rule: "baseline.already-signed" });
+    expect(h.logSignalAudit).not.toHaveBeenCalled();
+    expect(h.emit).not.toHaveBeenCalled();
   });
 
   it("recusa dimensão com fonte em branco", async () => {
@@ -283,7 +349,7 @@ describe("assinatura", () => {
       expect(res.rule).toBe("baseline.already-signed");
       expect(res.error).toContain("versão nova");
     }
-    expect(db.signalBaseline?.update).not.toHaveBeenCalled();
+    expect(db.signalBaseline?.updateMany).not.toHaveBeenCalled();
   });
 
   it("versão inexistente é recusada com a mensagem certa", async () => {

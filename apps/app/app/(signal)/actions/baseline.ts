@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { emitProductEvent } from "@/lib/inngest/emit-product-event";
 import type { ProductEventData } from "@/lib/inngest/product-events";
-import { SignalRuleError } from "@/lib/signal/errors";
+import { SignalRuleError, SignalStateConflictError } from "@/lib/signal/errors";
 import {
   requireInitiativeOwnership,
   requireSignalPermissionContext,
@@ -16,6 +16,7 @@ import {
 } from "@/lib/signal/lifecycle";
 import { isoDate, nnStr } from "../../actions/_base";
 import {
+  type AuditDiff,
   FIELD_LABELS,
   logSignalAudit,
   type SignalResult,
@@ -70,6 +71,65 @@ async function loadInitiative(
     );
   }
   return row;
+}
+
+/** O de → para do rascunho sobrescrito: janela e valor de cada dimensão. */
+function draftDiff(
+  before: {
+    windowLabel: string;
+    dimensions: { key: string; label: string; value: string }[];
+  },
+  input: z.output<typeof DraftSchema>
+): AuditDiff {
+  const diff: AuditDiff = [];
+  if (before.windowLabel !== input.windowLabel) {
+    diff.push([
+      FIELD_LABELS.windowLabel,
+      before.windowLabel,
+      input.windowLabel,
+    ]);
+  }
+  const was = new Map(before.dimensions.map((d) => [d.key, d]));
+  for (const d of input.dimensions) {
+    const old = was.get(d.key);
+    if (!old) {
+      diff.push([d.label, "—", d.value]);
+    } else if (old.value !== d.value) {
+      diff.push([d.label, old.value, d.value]);
+    }
+    was.delete(d.key);
+  }
+  for (const gone of was.values()) {
+    diff.push([gone.label, gone.value, "—"]);
+  }
+  return diff;
+}
+
+type Tx = Parameters<Parameters<typeof withTenantDb>[1]>[0];
+
+/**
+ * Carimba a assinatura. `signedAt: null` no filtro: duas assinaturas ao mesmo
+ * tempo passam as duas pela leitura, e a segunda sobrescreveria quem assinou e
+ * quando.
+ */
+async function markSigned(
+  db: Tx,
+  ctx: { tenantId: string; userId: string },
+  baselineId: string,
+  version: number
+): Promise<Date> {
+  const at = new Date();
+  const signedNow = await db.signalBaseline.updateMany({
+    where: { id: baselineId, tenantId: ctx.tenantId, signedAt: null },
+    data: { signedById: ctx.userId, signedAt: at },
+  });
+  if (signedNow.count !== 1) {
+    throw new SignalRuleError(
+      "baseline.already-signed",
+      `O baseline v${version} já foi assinado e é imutável. Para mudar a linha de base, rascunhe uma versão nova.`
+    );
+  }
+  return at;
 }
 
 export async function getBaselines(raw: {
@@ -134,32 +194,51 @@ export async function draftBaseline(
       const latest = await db.signalBaseline.findFirst({
         where: { tenantId: ctx.tenantId, initiativeId: initiative.id },
         orderBy: { version: "desc" },
+        include: { dimensions: { orderBy: { order: "asc" } } },
       });
 
       // Rascunho aberto continua editável: sobrescreve em vez de abrir versão.
       if (latest && latest.signedAt === null) {
-        await db.signalBaselineDimension.deleteMany({
-          where: { baselineId: latest.id },
-        });
-        await db.signalBaseline.update({
-          where: { id: latest.id },
+        // `signedAt: null` no filtro: se o signBaseline confirmou entre a
+        // leitura e esta escrita, o baseline já é imutável e o rascunho não
+        // pode mais apagar as dimensões dele.
+        const moved = await db.signalBaseline.updateMany({
+          where: { id: latest.id, tenantId: ctx.tenantId, signedAt: null },
           data: {
             windowLabel: input.windowLabel,
             windowStart: input.windowStart,
             windowEnd: input.windowEnd,
-            dimensions: {
-              create: input.dimensions.map((d, order) => ({
-                tenantId: ctx.tenantId,
-                key: d.key,
-                label: d.label,
-                value: d.value,
-                numericValue: d.numericValue,
-                unit: d.unit,
-                sourceLabel: d.sourceLabel,
-                order,
-              })),
-            },
           },
+        });
+        if (moved.count !== 1) {
+          throw new SignalStateConflictError(
+            "baseline.concurrent",
+            `O baseline v${latest.version} foi assinado enquanto você editava o rascunho. Para mudar a linha de base, rascunhe uma versão nova.`
+          );
+        }
+        await db.signalBaselineDimension.deleteMany({
+          where: { baselineId: latest.id },
+        });
+        await db.signalBaselineDimension.createMany({
+          data: input.dimensions.map((d, order) => ({
+            baselineId: latest.id,
+            tenantId: ctx.tenantId,
+            key: d.key,
+            label: d.label,
+            value: d.value,
+            numericValue: d.numericValue,
+            unit: d.unit,
+            sourceLabel: d.sourceLabel,
+            order,
+          })),
+        });
+        await logSignalAudit(db, ctx, {
+          action: "Baseline rascunho atualizado",
+          entityType: "signal.baseline",
+          entityId: latest.id,
+          target: `${initiative.code} · baseline v${latest.version}`,
+          note: input.windowLabel,
+          diff: draftDiff(latest, input),
         });
         return { version: latest.version, created: false };
       }
@@ -266,11 +345,7 @@ export async function signBaseline(
         );
       }
 
-      const at = new Date();
-      await db.signalBaseline.update({
-        where: { id: baseline.id },
-        data: { signedById: ctx.userId, signedAt: at },
-      });
+      const at = await markSigned(db, ctx, baseline.id, input.version);
       await logSignalAudit(db, ctx, {
         action: "Baseline assinado",
         entityType: "signal.baseline",
