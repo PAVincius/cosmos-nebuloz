@@ -255,7 +255,6 @@ export function ObservationForm({
       windowStart,
       windowEnd,
       transform,
-      source: "MANUAL",
     });
     setBusy(false);
     if (res.ok) {

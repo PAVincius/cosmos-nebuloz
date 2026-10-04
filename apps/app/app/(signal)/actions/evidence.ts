@@ -41,7 +41,9 @@ const RecordSchema = z
     rowCount: z.coerce.number().int().nonnegative().optional(),
     /** Como o número foi calculado. Obrigatória na entrada manual. */
     transform: optStr,
-    source: z.enum(["SYNC", "MANUAL", "IMPORT"]).default("MANUAL"),
+    // Sem `source` de propósito: esta action é a entrada de PESSOA, então a
+    // origem é sempre MANUAL e o autor é quem está na sessão. SYNC e IMPORT
+    // são de job/sistema, nunca de um formulário.
     observedAt: isoDate.optional(),
   })
   .refine((v) => Boolean(v.mappingCode) || Boolean(v.transform?.trim()), {
@@ -142,7 +144,8 @@ type Origin = {
 async function resolveOrigin(
   db: Parameters<Parameters<typeof withTenantDb>[1]>[0],
   tenantId: string,
-  input: { mappingCode?: string; transform?: string }
+  input: { mappingCode?: string; transform?: string },
+  initiativeId: string
 ): Promise<Origin> {
   if (input.mappingCode) {
     const mapping = await db.signalMetricMapping.findFirst({
@@ -154,6 +157,14 @@ async function resolveOrigin(
       throw new SignalRuleError(
         "evidence.mapping.not-found",
         `Mapeamento ${input.mappingCode} não encontrado nesta organização.`
+      );
+    }
+    // Mapeamento global (sem iniciativa) serve a qualquer uma; o de outra
+    // iniciativa não pode atribuir origem de fonte a esta.
+    if (mapping.initiativeId && mapping.initiativeId !== initiativeId) {
+      throw new SignalRuleError(
+        "evidence.mapping.foreign",
+        `O mapeamento ${input.mappingCode} é de outra iniciativa e não pode servir de origem para esta observação.`
       );
     }
     return {
@@ -204,10 +215,12 @@ export async function recordObservation(
       }
       requireInitiativeOwnership(ctx, initiative);
 
-      const origin = await resolveOrigin(db, ctx.tenantId, {
-        mappingCode: input.mappingCode,
-        transform: input.transform,
-      });
+      const origin = await resolveOrigin(
+        db,
+        ctx.tenantId,
+        { mappingCode: input.mappingCode, transform: input.transform },
+        initiative.id
+      );
       const { mappingId, connectionLabel, transform } = origin;
 
       const code = await nextCode({
@@ -231,10 +244,11 @@ export async function recordObservation(
           windowEnd: input.windowEnd,
           rowCount: input.rowCount,
           transform,
-          source: input.source,
+          source: "MANUAL",
           observedAt: input.observedAt ?? new Date(),
-          // Entrada manual carrega o autor; sync não tem autor humano.
-          recordedById: input.source === "SYNC" ? null : ctx.userId,
+          // Quem registrou é sempre a pessoa da sessão: o autor não vem do
+          // cliente e a linha nunca nasce sem ele.
+          recordedById: ctx.userId,
         },
       });
 
