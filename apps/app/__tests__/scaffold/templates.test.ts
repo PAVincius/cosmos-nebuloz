@@ -50,6 +50,8 @@ vi.mock("@/lib/scaffold/guards", () => ({
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
+      // Publicar é da organização interna (versão global).
+      tenant: { findFirst: async () => ({ isInternalTenant: true }) },
       scaffoldTemplate: {
         findUnique: h.templateFindUnique,
         findMany: h.templateFindMany,

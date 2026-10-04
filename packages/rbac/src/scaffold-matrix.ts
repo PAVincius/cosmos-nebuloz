@@ -32,6 +32,7 @@ export type ScaffoldPermission =
   | "businesscase.write"
   | "businesscase.sign"
   | "template.publish"
+  | "overlay.manage"
   | "membership.manage"
   | "product.metrics"
   | "portfolio.read"
@@ -50,6 +51,7 @@ export const SCAFFOLD_PERMISSIONS: readonly ScaffoldPermission[] = [
   "businesscase.write",
   "businesscase.sign",
   "template.publish",
+  "overlay.manage",
   "membership.manage",
   "product.metrics",
   "portfolio.read",
@@ -70,7 +72,9 @@ export const SCAFFOLD_PERMISSION_LABEL: Record<ScaffoldPermission, string> = {
   "gate.override": "Fechar gate por override, com justificativa",
   "businesscase.write": "Redigir e editar o caso de negócio",
   "businesscase.sign": "Assinar ou contestar o caso de negócio",
-  "template.publish": "Publicar versão de template e resolver overlay",
+  "template.publish":
+    "Publicar versão do método (global; só a organização interna)",
+  "overlay.manage": "Salvar overlay e resolver conflito da organização",
   "membership.manage": "Atribuir papel de adoção às pessoas da organização",
   "product.metrics": "Ler as métricas de produto do Scaffold",
   "portfolio.read": "Ler o portfólio de trilhas",
@@ -160,6 +164,7 @@ export const SCAFFOLD_MATRIX: Record<
     "gate.override",
     "businesscase.write",
     "template.publish",
+    "overlay.manage",
     "membership.manage",
     "product.metrics",
     "portfolio.read",
@@ -174,7 +179,7 @@ export const SCAFFOLD_MATRIX: Record<
   ADMIN: [
     "track.manage",
     "artefact.read",
-    "template.publish",
+    "overlay.manage",
     "membership.manage",
     "product.metrics",
     "portfolio.read",

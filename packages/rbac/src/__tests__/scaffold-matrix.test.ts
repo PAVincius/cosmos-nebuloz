@@ -259,3 +259,27 @@ describe("product.metrics", () => {
     expect(scaffoldDenialReason("product.metrics")).toContain("Consultor");
   });
 });
+
+describe("publicar o método é da Nebuloz; overlay é do tenant", () => {
+  // `template.publish` grava numa versão de template GLOBAL, sem tenantId: a
+  // versão mais recente vira a base de toda trilha nova de TODAS as
+  // organizações. Quem a tem altera o método do vizinho, então o admin de um
+  // cliente não pode tê-la.
+  it("só o consultor tem template.publish; o ADMIN do cliente não", () => {
+    expect(scaffoldRolesGranting("template.publish")).toEqual(["CONSULTANT"]);
+    expect(hasScaffoldPermission("ADMIN", "template.publish")).toBe(false);
+  });
+
+  // O overlay é a customização de UMA organização (tem tenantId). Salvar e
+  // resolver conflito continuam com quem administra o tenant.
+  it("overlay.manage é do ADMIN e do consultor, e de mais ninguém", () => {
+    expect([...scaffoldRolesGranting("overlay.manage")].sort()).toEqual([
+      "ADMIN",
+      "CONSULTANT",
+    ]);
+  });
+
+  it("overlay.manage tem rótulo", () => {
+    expect(SCAFFOLD_PERMISSION_LABEL["overlay.manage"]).toBeTruthy();
+  });
+});

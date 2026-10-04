@@ -232,6 +232,18 @@ export async function publishVersion(
     const input = PublishVersionSchema.parse(raw);
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
+      // A versão é GLOBAL (sem tenantId): a mais recente vira a base das trilhas
+      // novas de todas as organizações. Ter o papel de consultor num tenant de
+      // cliente não basta, porque o admin do cliente consegue atribuí-lo; a
+      // marca de organização interna só a plataforma grava.
+      const tenant = await db.tenant.findFirst({
+        where: { id: ctx.tenantId },
+        select: { isInternalTenant: true },
+      });
+      if (!tenant?.isInternalTenant) {
+        throw new ScaffoldRuleError("TEMPLATE_PUBLISH_INTERNAL_ONLY");
+      }
+
       const template = await db.scaffoldTemplate.findUnique({
         where: { id: input.templateId },
         include: { versions: { orderBy: { publishedAt: "desc" }, take: 1 } },
@@ -358,7 +370,7 @@ export async function saveOverlay(
   raw: z.input<typeof SaveOverlaySchema>
 ): Promise<ScaffoldResult<SaveOverlayResult>> {
   return scaffoldAction(async () => {
-    const ctx = await requireScaffoldPermissionContext("template.publish");
+    const ctx = await requireScaffoldPermissionContext("overlay.manage");
     const input = SaveOverlaySchema.parse(raw);
 
     const out = await withTenantDb(ctx.tenantId, async (db) => {
@@ -471,7 +483,7 @@ export async function resolveConflict(
   raw: z.input<typeof ResolveConflictSchema>
 ): Promise<ScaffoldResult<void>> {
   return scaffoldAction(async () => {
-    const ctx = await requireScaffoldPermissionContext("template.publish");
+    const ctx = await requireScaffoldPermissionContext("overlay.manage");
     const input = ResolveConflictSchema.parse(raw);
 
     await withTenantDb(ctx.tenantId, async (db) => {
@@ -490,7 +502,7 @@ export async function resolveConflict(
       // O que sobra do overlay precisa passar na mesma validação do saveOverlay
       // (Vigia, #331). Sem isso, `keep_overlay` mantinha um REMOVE de entregável
       // que a versão nova tornou obrigatório, nas mãos de quem tem
-      // `template.publish` e não é consultor. O papel é o de quem resolve; a
+      // `overlay.manage` e não é consultor. O papel é o de quem resolve; a
       // versão de referência é a que o overlay vai ter depois da resolução
       // (a nova, salvo em `drop_operation`, que não rebaseia).
       const remaining =

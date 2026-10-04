@@ -17,6 +17,7 @@ export const SCAFFOLD_ERROR = {
   ASSESSMENT_NOT_FOUND: "ASSESSMENT_NOT_FOUND",
   ASSESSMENT_NOT_READY: "ASSESSMENT_NOT_READY",
   ASSESSMENT_GAP_MISMATCH: "ASSESSMENT_GAP_MISMATCH",
+  TEMPLATE_PUBLISH_INTERNAL_ONLY: "TEMPLATE_PUBLISH_INTERNAL_ONLY",
   OVERLAY_NOT_FOUND: "OVERLAY_NOT_FOUND",
   OVERLAY_VIOLATES_GATE_RULES: "OVERLAY_VIOLATES_GATE_RULES",
   TRACK_HAS_SIGNED_BUSINESS_CASE: "TRACK_HAS_SIGNED_BUSINESS_CASE",
@@ -84,6 +85,8 @@ export const SCAFFOLD_ERROR_MESSAGE: Record<ScaffoldErrorCode, string> = {
     "Este assessment ainda está em coleta. A trilha nasce de um diagnóstico com a coleta fechada e o score calculado: espere o assessment chegar a revisão ou finalize-o no Meridian.",
   ASSESSMENT_GAP_MISMATCH:
     "O assessment escolhido não é o do gap de origem. Uma trilha que nasce de um gap parte do diagnóstico em que ele foi encontrado: escolha o assessment desse gap.",
+  TEMPLATE_PUBLISH_INTERNAL_ONLY:
+    "Publicar versão do método é da Nebuloz. A versão é global: ela vira a base das trilhas novas de todas as organizações, então só a organização interna publica. Para ajustar o método a esta organização, use um overlay.",
   OVERLAY_NOT_FOUND:
     "O overlay escolhido não existe nesta organização. Escolha outro, ou crie a trilha sem overlay — trilha criada sem a customização que o cliente pediu seria uma surpresa.",
   OVERLAY_VIOLATES_GATE_RULES:
