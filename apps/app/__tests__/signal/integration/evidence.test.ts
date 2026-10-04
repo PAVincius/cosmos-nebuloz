@@ -52,7 +52,6 @@ const MANUAL = {
   windowStart: "2026-06-01",
   windowEnd: "2026-07-09",
   transform: "sum(time_in_status) ÷ 60",
-  source: "MANUAL" as const,
 };
 
 type Db = Record<string, Record<string, ReturnType<typeof vi.fn>>>;
@@ -123,7 +122,6 @@ describe("origem rastreável — a invariante", () => {
       ...MANUAL,
       transform: undefined,
       mappingCode: "MP-02",
-      source: "SYNC",
     });
     expect(res.ok).toBe(true);
     expect(db.signalMetricObservation?.create).toHaveBeenCalledWith(
@@ -177,9 +175,9 @@ describe("autoria", () => {
     ).toBe("usr_1");
   });
 
-  it("sync NÃO é atribuído a pessoa nenhuma", async () => {
-    // Observação automática com autor humano daria resposta errada à primeira
-    // pergunta do auditor.
+  it("o servidor fixa a origem: source do cliente é ignorado", async () => {
+    // Quem tem permissão de evidência é gente, não a fonte. Aceitar SYNC do
+    // cliente deixaria um OWNER forjar "veio da fonte X" sem autor na linha.
     db.signalMetricMapping!.findFirst = vi.fn().mockResolvedValue({
       id: "map_1",
       transform: "t",
@@ -189,10 +187,54 @@ describe("autoria", () => {
       ...MANUAL,
       mappingCode: "MP-01",
       source: "SYNC",
+      recordedById: "usr_outro",
+    } as never);
+    const data = db.signalMetricObservation?.create.mock.calls[0]?.[0]?.data;
+    expect(data.source).toBe("MANUAL");
+    expect(data.recordedById).toBe("usr_1");
+  });
+
+  it("IMPORT do cliente também vira MANUAL, com o autor da sessão", async () => {
+    await recordObservation({ ...MANUAL, source: "IMPORT" } as never);
+    const data = db.signalMetricObservation?.create.mock.calls[0]?.[0]?.data;
+    expect(data.source).toBe("MANUAL");
+    expect(data.recordedById).toBe("usr_1");
+  });
+});
+
+describe("mapeamento da mesma iniciativa", () => {
+  it("recusa mapeamento que pertence a OUTRA iniciativa", async () => {
+    db.signalMetricMapping!.findFirst = vi.fn().mockResolvedValue({
+      id: "map_9",
+      initiativeId: "ini_outra",
+      transform: "t",
+      connection: { name: "Jira" },
     });
-    expect(
-      db.signalMetricObservation?.create.mock.calls[0]?.[0]?.data.recordedById
-    ).toBeNull();
+    const res = await recordObservation({ ...MANUAL, mappingCode: "MP-09" });
+    expect(res).toMatchObject({ ok: false, rule: "evidence.mapping.foreign" });
+    expect(db.signalMetricObservation?.create).not.toHaveBeenCalled();
+  });
+
+  it("aceita mapeamento da própria iniciativa", async () => {
+    db.signalMetricMapping!.findFirst = vi.fn().mockResolvedValue({
+      id: "map_1",
+      initiativeId: "ini_1",
+      transform: "t",
+      connection: { name: "Jira" },
+    });
+    const res = await recordObservation({ ...MANUAL, mappingCode: "MP-01" });
+    expect(res.ok).toBe(true);
+  });
+
+  it("aceita mapeamento global (sem iniciativa)", async () => {
+    db.signalMetricMapping!.findFirst = vi.fn().mockResolvedValue({
+      id: "map_g",
+      initiativeId: null,
+      transform: "t",
+      connection: { name: "Jira" },
+    });
+    const res = await recordObservation({ ...MANUAL, mappingCode: "MP-07" });
+    expect(res.ok).toBe(true);
   });
 });
 
