@@ -51,6 +51,10 @@ vi.mock("@repo/database", () => ({
           return h.phaseUpdateMany(args);
         },
       },
+      // O aprovador informado só vale se for do tenant com gate.close.
+      scaffoldMembership: {
+        findFirst: async () => ({ role: "PROCESS_OWNER" }),
+      },
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       scaffoldGateResult: {
         create: h.gateResultCreate,

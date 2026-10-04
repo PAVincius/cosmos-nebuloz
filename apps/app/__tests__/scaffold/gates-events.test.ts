@@ -35,6 +35,10 @@ vi.mock("@repo/database", () => ({
         update: h.phaseUpdate,
         updateMany: h.phaseUpdateMany,
       },
+      // O aprovador informado só vale se for do tenant com gate.close.
+      scaffoldMembership: {
+        findFirst: async () => ({ role: "PROCESS_OWNER" }),
+      },
       scaffoldGateCriterion: { findMany: h.criterionFindMany },
       // Trilha sem entregável: só a regra de passos (merge com o Andaime, SC-DEV-06).
       scaffoldDeliverableInstance: { findMany: vi.fn().mockResolvedValue([]) },

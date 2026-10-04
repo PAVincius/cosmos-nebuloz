@@ -82,7 +82,9 @@ vi.mock("@repo/database", () => ({
         findFirst: h.versionFindFirst,
         findUnique: h.versionFindUnique,
       },
-      scaffoldMembership: { findFirst: async () => ({ userId: "x" }) },
+      scaffoldMembership: {
+        findFirst: async () => ({ userId: "x", role: "PROCESS_OWNER" }),
+      },
       scaffoldSequence: { upsert: h.sequenceUpsert },
       // Trilha legada, sem entregável: a regra de passos vale sozinha.
       scaffoldDeliverableInstance: { findMany: async () => [] },

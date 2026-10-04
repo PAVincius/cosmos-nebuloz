@@ -1,6 +1,7 @@
 "use server";
 
 import { withTenantDb } from "@repo/database";
+import { hasScaffoldPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { caseDecisionBlockers } from "@/lib/charter/case-controls";
@@ -466,6 +467,31 @@ function gateClosedEvent(
 }
 
 /**
+ * Quem consta como aprovador do fechamento. O aprovador é distinto do ator (quem
+ * opera a tela registra o aceite de quem decidiu), mas o id vem do cliente: só
+ * vale se for gente DESTE tenant com `gate.close`. Qualquer outro id (de outro
+ * tenant, de quem só lê, que não existe) viraria "quem assinou" num registro
+ * append-only; nesse caso consta o ator da sessão, e a auditoria diz.
+ */
+async function resolveApprover(
+  db: Db,
+  ctx: ScaffoldContext,
+  requested: string
+): Promise<{ id: string; substituted: boolean }> {
+  if (requested === ctx.userId) {
+    return { id: ctx.userId, substituted: false };
+  }
+  const member = await db.scaffoldMembership.findFirst({
+    where: { tenantId: ctx.tenantId, userId: requested },
+    select: { role: true },
+  });
+  if (member && hasScaffoldPermission(member.role, "gate.close")) {
+    return { id: requested, substituted: false };
+  }
+  return { id: ctx.userId, substituted: true };
+}
+
+/**
  * Fecha a fase com os critérios atendidos.
  *
  * ÚNICA função no repositório que escreve `state: "CLOSED"` numa fase.
@@ -544,11 +570,12 @@ export async function closePhase(
         return { refusedBlockers: evaluation.blockers };
       }
 
+      const approver = await resolveApprover(db, ctx, input.approverId);
       const write = await writeClose({
         db,
         ctx,
         phase,
-        approverId: input.approverId,
+        approverId: approver.id,
         criteria: evaluation.criteria,
         outcome: "PASSED",
       });
@@ -561,6 +588,11 @@ export async function closePhase(
         entityId: resultId,
         target: `${phase.track.code} · ${phase.phase}`,
         diff: [["Estado", phase.state, to]],
+        ...(approver.substituted
+          ? {
+              note: "O aprovador informado não é do tenant com permissão de fechar gate; foi registrado o ator da sessão.",
+            }
+          : {}),
       });
 
       return { gateResultId: resultId };
