@@ -320,6 +320,16 @@ describe("configuração do better-auth", () => {
     expect(emailCfg.minPasswordLength).toBe(12);
   });
 
+  // Achado do Vigia (10, MÉDIO): quem redefine a senha porque a conta foi
+  // comprometida precisa expulsar a sessão do atacante. Sem a opção, o reset
+  // trocava a senha e deixava toda sessão aberta de pé.
+  it("redefinir a senha encerra as outras sessões da conta", () => {
+    const emailCfg = mocks.authConfig?.emailAndPassword as {
+      revokeSessionsOnPasswordReset?: boolean;
+    };
+    expect(emailCfg.revokeSessionsOnPasswordReset).toBe(true);
+  });
+
   // Achado do Vigia (BAIXO, revisão de segurança da spec 004):
   // /request-password-reset só tinha a regra especial embutida do
   // better-auth (janela de 60s), a mesma altura de proteção pensada pra

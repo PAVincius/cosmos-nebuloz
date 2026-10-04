@@ -47,6 +47,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: MIN_PASSWORD_LENGTH, // SOC2 CC6
+    // Reset de senha costuma ser a resposta a uma conta comprometida: sem isto
+    // a senha mudava e a sessão de quem entrou antes continuava de pé. Apaga
+    // todas as `Session` do usuário; o cookie que o atacante já tem some do
+    // servidor em até SESSION_REVALIDATE_SECONDS (o cache do cookie).
+    revokeSessionsOnPasswordReset: true,
     sendResetPassword: async ({ user, url }) => {
       const fromAddress = keys().RESEND_FROM;
       try {
