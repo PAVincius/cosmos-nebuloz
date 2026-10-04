@@ -32,6 +32,7 @@ import {
   FIELD_LABELS,
   logSignalAudit,
   nextCode,
+  requireSignalMember,
   type SignalResult,
   signalAction,
 } from "./_shared";
@@ -494,6 +495,9 @@ export async function createInitiative(
     const input = CreateSchema.parse(raw);
 
     const created = await withTenantDb(ctx.tenantId, async (db) => {
+      if (input.ownerId && input.ownerId !== ctx.userId) {
+        await requireSignalMember(db, ctx.tenantId, input.ownerId);
+      }
       const code = await nextCode({
         db,
         tenantId: ctx.tenantId,
@@ -546,6 +550,9 @@ export async function updateInitiative(
       }
       // O quinto portão: a permissão passou, a posse ainda não foi checada.
       requireInitiativeOwnership(ctx, before);
+      if (input.ownerId && input.ownerId !== before.ownerId) {
+        await requireSignalMember(db, ctx.tenantId, input.ownerId);
+      }
 
       const { code: _code, ...fields } = input;
       const after = await db.signalInitiative.update({

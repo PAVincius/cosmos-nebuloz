@@ -43,6 +43,7 @@ vi.mock("@/app/(signal)/actions/_shared", async () => {
 import {
   recomputeHealth,
   recordSync,
+  upsertConnection,
 } from "@/app/(signal)/actions/connections";
 
 const CTX = {
@@ -92,6 +93,7 @@ beforeEach(() => {
     signalSettings: {
       findUnique: vi.fn().mockResolvedValue({ staleHours: 48 }),
     },
+    signalMember: { findFirst: vi.fn().mockResolvedValue({ id: "sm_1" }) },
     signalMetricMapping: {
       findMany: vi.fn().mockResolvedValue([mapping()]),
       update: vi.fn().mockResolvedValue({}),
@@ -105,6 +107,50 @@ beforeEach(() => {
   h.withTenantDb.mockImplementation((_t: string, fn: (d: unknown) => unknown) =>
     fn(db)
   );
+});
+
+describe("dono da conexão só é membro do tenant", () => {
+  const NEW = { name: "Zendesk", kind: "Suporte", ownerId: "usr_2" };
+
+  it("criação recusa dono que não é membro do Signal neste tenant", async () => {
+    db.signalMember!.findFirst = vi.fn().mockResolvedValue(null);
+    db.signalConnection!.create = vi.fn();
+    const res = await upsertConnection(NEW);
+
+    expect(res).toMatchObject({ ok: false, rule: "owner.not-member" });
+    expect(db.signalConnection?.create).not.toHaveBeenCalled();
+  });
+
+  it("edição recusa dono de fora e não escreve nem audita", async () => {
+    db.signalMember!.findFirst = vi.fn().mockResolvedValue(null);
+    const res = await upsertConnection({ ...NEW, code: "CN-02" });
+
+    expect(res).toMatchObject({ ok: false, rule: "owner.not-member" });
+    expect(db.signalConnection?.update).not.toHaveBeenCalled();
+    expect(h.logSignalAudit).not.toHaveBeenCalled();
+  });
+
+  it("aceita membro e filtra a consulta pelo tenant do contexto", async () => {
+    const res = await upsertConnection({ ...NEW, code: "CN-02" });
+
+    expect(res.ok).toBe(true);
+    expect(db.signalMember?.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tnt_1", userId: "usr_2" },
+      })
+    );
+  });
+
+  it("sem ownerId não consulta nada", async () => {
+    const res = await upsertConnection({
+      name: "Zendesk",
+      kind: "Suporte",
+      code: "CN-02",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(db.signalMember?.findFirst).not.toHaveBeenCalled();
+  });
 });
 
 describe("sync com falha", () => {
