@@ -64,21 +64,23 @@ export type Db = Omit<
 /** Diff campo-a-campo, no formato normativo da trilha: [campo, antes, depois]. */
 export type AuditDiff = [string, string, string][];
 
-export type SignalEntity =
-  | "signal.initiative"
-  | "signal.baseline"
-  | "signal.baselinedimension"
-  | "signal.planmetric"
-  | "signal.connection"
-  | "signal.mapping"
-  | "signal.planmetric"
-  | "signal.observation"
-  | "signal.roiformula"
-  | "signal.confidence"
-  | "signal.alert"
-  | "signal.report"
-  | "signal.settings"
-  | "signal.member";
+export const SIGNAL_ENTITIES = [
+  "signal.initiative",
+  "signal.baseline",
+  "signal.baselinedimension",
+  "signal.planmetric",
+  "signal.connection",
+  "signal.mapping",
+  "signal.observation",
+  "signal.roiformula",
+  "signal.confidence",
+  "signal.alert",
+  "signal.report",
+  "signal.settings",
+  "signal.member",
+] as const;
+
+export type SignalEntity = (typeof SIGNAL_ENTITIES)[number];
 
 /**
  * Grava entrada de auditoria do Signal.

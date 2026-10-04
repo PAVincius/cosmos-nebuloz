@@ -113,14 +113,40 @@ describe("listAudit", () => {
     await listAudit();
 
     const where = db.auditLog.findMany.mock.calls[0][0].where;
-    expect(where.entityType).toEqual({ startsWith: "signal." });
+    expect(where.AND).toEqual([{ entityType: { startsWith: "signal." } }]);
+  });
+
+  it("recusa entityType de outro módulo — o leitor do Signal não lê a trilha do Meridian", async () => {
+    for (const entityType of [
+      "meridian.assessment",
+      "charter.policy",
+      "scaffold.track",
+      "signal",
+    ]) {
+      const res = await listAudit({ entityType: entityType as never });
+
+      expect(res.ok).toBe(false);
+    }
+    expect(db.auditLog.findMany).not.toHaveBeenCalled();
+  });
+
+  it("mesmo com entityType do Signal, o prefixo continua no filtro", async () => {
+    await listAudit({ entityType: "signal.initiative" });
+
+    const where = db.auditLog.findMany.mock.calls[0][0].where;
+    expect(where.AND).toEqual(
+      expect.arrayContaining([{ entityType: { startsWith: "signal." } }])
+    );
   });
 
   it("filtra por entidade quando pedido", async () => {
     await listAudit({ entityType: "signal.initiative", entityId: "in_1" });
 
     const where = db.auditLog.findMany.mock.calls[0][0].where;
-    expect(where.entityType).toBe("signal.initiative");
+    expect(where.AND).toEqual([
+      { entityType: { startsWith: "signal." } },
+      { entityType: "signal.initiative" },
+    ]);
     expect(where.entityId).toBe("in_1");
   });
 

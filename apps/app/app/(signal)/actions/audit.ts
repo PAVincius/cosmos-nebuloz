@@ -4,7 +4,12 @@ import { withTenantDb } from "@repo/database";
 import { z } from "zod";
 import { requireSignalPermissionContext } from "@/lib/signal/guards";
 import { nnStr } from "../../actions/_base";
-import { type AuditDiff, type SignalResult, signalAction } from "./_shared";
+import {
+  type AuditDiff,
+  SIGNAL_ENTITIES,
+  type SignalResult,
+  signalAction,
+} from "./_shared";
 
 // Trilha — US7. Somente leitura, e é assim de propósito.
 //
@@ -18,7 +23,9 @@ import { type AuditDiff, type SignalResult, signalAction } from "./_shared";
 // número de quem lê o número inverte a razão de existir da tabela.
 
 const FilterSchema = z.object({
-  entityType: nnStr.optional(),
+  // Enum, não texto livre: a tabela é compartilhada com os outros módulos e
+  // o leitor do Signal não pode pedir a trilha deles.
+  entityType: z.enum(SIGNAL_ENTITIES).optional(),
   entityId: nnStr.optional(),
   actorId: nnStr.optional(),
   from: z.coerce.date().optional(),
@@ -74,9 +81,12 @@ function whereOf(
   };
   return {
     tenantId,
-    // Sem filtro explícito, só o que é do Signal: a tabela é compartilhada
-    // com os outros módulos da plataforma.
-    entityType: input.entityType ?? { startsWith: SIGNAL_ENTITY_PREFIX },
+    // O prefixo vale sempre, mesmo com `entityType` informado: a tabela é
+    // compartilhada com os outros módulos da plataforma.
+    AND: [
+      { entityType: { startsWith: SIGNAL_ENTITY_PREFIX } },
+      ...(input.entityType ? [{ entityType: input.entityType }] : []),
+    ],
     ...(input.entityId ? { entityId: input.entityId } : {}),
     ...(input.actorId ? { actorId: input.actorId } : {}),
     ...(Object.keys(createdAt).length > 0 ? { createdAt } : {}),
