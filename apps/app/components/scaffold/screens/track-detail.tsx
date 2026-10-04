@@ -315,7 +315,9 @@ export default function TrackDetailScreen({ param }: { param?: string }) {
       const put = await fetch(res.data.uploadUrl, {
         method: "PUT",
         body: file,
-        headers: { "Content-Type": file.type || "application/octet-stream" },
+        // O tipo que o servidor validou (o da extensão): o bucket só aceita os da
+        // lista, e o navegador nem sempre sabe o de um .md.
+        headers: { "Content-Type": res.data.contentType },
       });
       setBusy(false);
       if (!put.ok) {

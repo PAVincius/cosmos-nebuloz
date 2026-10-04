@@ -12,7 +12,6 @@ import { withTenantDb } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { hasScaffoldPermission, scaffoldDenialReason } from "@repo/rbac";
 import {
-  ensureBucket,
   SCAFFOLD_ALLOWED_MIME_TYPES,
   SCAFFOLD_ARTEFACT_BUCKET,
   scaffoldFileMimeType,
@@ -59,6 +58,7 @@ import {
   RemoveDeliverableLinkSchema,
   TrackIdSchema,
 } from "@/lib/scaffold/schemas";
+import { ensureScaffoldBucket } from "@/lib/scaffold/storage-bucket";
 import { reopenPhaseForDeliverable } from "./_phase-reopen";
 import { type Db, logScaffoldAudit, nextCode } from "./_shared";
 
@@ -742,18 +742,6 @@ export async function getDeliverable(raw: z.input<typeof DeliverableIdSchema>) {
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-// O bucket nasce (ou é atualizado) com o limite de tamanho e de tipo. Uma vez
-// por processo, como o do Meridian: listar buckets a cada anexo seria custo à
-// toa. Falha não impede o anexo (a action já filtra por extensão e tamanho) e
-// a próxima tentativa refaz.
-let bucketReady: Promise<void> | null = null;
-function ensureScaffoldBucket(): Promise<void> {
-  bucketReady ??= ensureBucket(SCAFFOLD_ARTEFACT_BUCKET).catch((e) => {
-    bucketReady = null;
-    log.error("[scaffold] bucket não configurado", { error: String(e) });
-  });
-  return bucketReady;
-}
 const FILE_URL_TTL_SECONDS = 300;
 
 /**

@@ -5,7 +5,12 @@ import { SCAFFOLD_ARTEFACT_BUCKET, storageClient } from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { type ScaffoldResult, scaffoldAction } from "@/lib/scaffold/action";
+import {
+  declaredTypeAgrees,
+  stepArtefactMimeType,
+} from "@/lib/scaffold/artefact-type";
 import { ScaffoldRuleError } from "@/lib/scaffold/errors";
+import { safeFileName } from "@/lib/scaffold/file-name";
 import { canEnterGateReady } from "@/lib/scaffold/gate-machine";
 import { requireScaffoldPermissionContext } from "@/lib/scaffold/guards";
 import {
@@ -13,6 +18,7 @@ import {
   ReadArtefactSchema,
   SetStepStateSchema,
 } from "@/lib/scaffold/schemas";
+import { ensureScaffoldBucket } from "@/lib/scaffold/storage-bucket";
 import { type Db, logScaffoldAudit } from "./_shared";
 
 // Passos e artefatos (S-04, SN-02).
@@ -137,7 +143,12 @@ export async function setStepState(
 export async function attachArtefact(
   raw: z.input<typeof AttachArtefactSchema>
 ): Promise<
-  ScaffoldResult<{ uploadUrl: string; artefactId: string; objectKey: string }>
+  ScaffoldResult<{
+    uploadUrl: string;
+    artefactId: string;
+    objectKey: string;
+    contentType: string;
+  }>
 > {
   return scaffoldAction(async () => {
     const ctx = await requireScaffoldPermissionContext("step.complete");
@@ -146,6 +157,17 @@ export async function attachArtefact(
     if (input.sizeBytes > MAX_ARTEFACT_BYTES) {
       throw new ScaffoldRuleError("ARTEFACT_TOO_LARGE");
     }
+    // O cliente escolhe o arquivo: a extensão é a lista de permissão e o tipo que
+    // vale é o dela. O declarado só não pode contradizê-la (um .pdf que se diz
+    // text/html), e o PUT usa o canônico.
+    const contentType = stepArtefactMimeType(input.filename);
+    if (!(contentType && declaredTypeAgrees(contentType, input.contentType))) {
+      throw new ScaffoldRuleError("DELIVERABLE_FILE_TYPE_NOT_ALLOWED");
+    }
+    // O nome vem do navegador: só o último segmento, sem controle nem símbolos de
+    // URL. Sem isto, "../../outro-tenant/x.pdf" sai do prefixo do tenant na
+    // chave do objeto, e o nome cru ainda iria para dentro do zip do handover.
+    const fileName = safeFileName(input.filename);
 
     const prepared = await withTenantDb(ctx.tenantId, async (db) => {
       const step = await loadStep(db, ctx.tenantId, input.stepInstanceId);
@@ -154,13 +176,13 @@ export async function attachArtefact(
       }
       // Caminho sempre prefixado por tenantId: o bucket é privado, e o prefixo
       // é a segunda linha de defesa se alguma policy do storage afrouxar.
-      const objectKey = `${ctx.tenantId}/${step.phaseInstance.track.id}/${step.id}/${input.filename}`;
+      const objectKey = `${ctx.tenantId}/${step.phaseInstance.track.id}/${step.id}/${fileName}`;
       const artefact = await db.scaffoldArtefact.create({
         data: {
           stepInstanceId: step.id,
           objectKey,
-          kind: input.contentType,
-          filename: input.filename,
+          kind: contentType,
+          filename: fileName,
           sizeBytes: input.sizeBytes,
           uploadedById: ctx.userId,
         },
@@ -170,11 +192,12 @@ export async function attachArtefact(
         action: "scaffold.artefact.attach",
         entityType: "scaffold.artefact",
         entityId: artefact.id,
-        target: `${step.phaseInstance.track.code} · ${input.filename}`,
+        target: `${step.phaseInstance.track.code} · ${fileName}`,
       });
       return { artefactId: artefact.id, objectKey };
     });
 
+    await ensureScaffoldBucket();
     const { data, error } = await storageClient.storage
       .from(SCAFFOLD_ARTEFACT_BUCKET)
       .createSignedUploadUrl(prepared.objectKey);
@@ -189,6 +212,7 @@ export async function attachArtefact(
       uploadUrl: data.signedUrl,
       artefactId: prepared.artefactId,
       objectKey: prepared.objectKey,
+      contentType,
     };
   });
 }
@@ -243,7 +267,11 @@ export async function readArtefact(
 
     const { data, error } = await storageClient.storage
       .from(SCAFFOLD_ARTEFACT_BUCKET)
-      .createSignedUrl(artefact.objectKey, ARTEFACT_URL_TTL_SECONDS);
+      // `download`: o navegador baixa com o nome do arquivo, em vez de abrir o
+      // conteúdo do cliente na origem do storage.
+      .createSignedUrl(artefact.objectKey, ARTEFACT_URL_TTL_SECONDS, {
+        download: artefact.filename,
+      });
     if (error || !data) {
       throw new Error(
         `Falha ao emitir URL de artefato: ${error?.message ?? "sem resposta"}`

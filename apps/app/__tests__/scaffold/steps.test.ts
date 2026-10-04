@@ -22,6 +22,9 @@ const h = vi.hoisted(() => ({
   artefactCreate: vi.fn(),
   artefactFindFirst: vi.fn(),
   auditCreate: vi.fn(),
+  ensureBucket: vi.fn(),
+  createSignedUrl: vi.fn(),
+  createSignedUploadUrl: vi.fn(),
   /** Ordem das escritas, para provar que o log precede a URL. */
   order: [] as string[],
 }));
@@ -32,29 +35,34 @@ vi.mock("@/lib/scaffold/guards", () => ({
   requireScaffoldPermissionContext: h.requirePerm,
   requireScaffoldContext: h.requirePerm,
 }));
-vi.mock("@repo/storage", () => ({
-  SCAFFOLD_ARTEFACT_BUCKET: "scaffold-artefacts",
-  storageClient: {
-    storage: {
-      from: () => ({
-        createSignedUrl: async () => {
-          h.order.push("url");
-          return {
-            data: { signedUrl: "https://blob.example/read?sig=x" },
-            error: null,
-          };
-        },
-        createSignedUploadUrl: async () => ({
-          data: {
-            signedUrl: "https://blob.example/upload",
-            path: "t1/trk1/artefato.pdf",
-          },
-          error: null,
-        }),
-      }),
+vi.mock("@repo/storage", async () => {
+  // Tipos e lista de permissão são os de verdade: o teste prova a regra, não uma
+  // cópia dela.
+  const real =
+    await vi.importActual<typeof import("@repo/storage")>("@repo/storage");
+  return {
+    ...real,
+    SCAFFOLD_ARTEFACT_BUCKET: "scaffold-artefacts",
+    ensureBucket: (...args: unknown[]) => {
+      h.order.push("bucket");
+      return h.ensureBucket(...args);
     },
-  },
-}));
+    storageClient: {
+      storage: {
+        from: () => ({
+          createSignedUrl: async (...args: unknown[]) => {
+            h.order.push("url");
+            return h.createSignedUrl(...args);
+          },
+          createSignedUploadUrl: async (...args: unknown[]) => {
+            h.order.push("upload");
+            return h.createSignedUploadUrl(...args);
+          },
+        }),
+      },
+    },
+  };
+});
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
@@ -120,6 +128,15 @@ beforeEach(() => {
   h.stepCount.mockResolvedValue(0);
   h.phaseUpdate.mockResolvedValue({});
   h.artefactCreate.mockResolvedValue({ id: "art1" });
+  h.ensureBucket.mockResolvedValue(undefined);
+  h.createSignedUrl.mockResolvedValue({
+    data: { signedUrl: "https://blob.example/read?sig=x" },
+    error: null,
+  });
+  h.createSignedUploadUrl.mockResolvedValue({
+    data: { signedUrl: "https://blob.example/upload", path: "x" },
+    error: null,
+  });
   h.artefactFindFirst.mockResolvedValue({
     id: "art1",
     objectKey: "scaffold/trk1/artefato.pdf",
@@ -229,6 +246,74 @@ describe("attachArtefact", () => {
   });
 });
 
+// O anexo de passo passa pelo mesmo endurecimento do arquivo do entregável: o
+// nome vem do navegador, o tipo vem do navegador, e a chave do objeto é o que
+// separa um tenant do outro no bucket.
+describe("attachArtefact — endurecimento do upload", () => {
+  const attach = (filename: string, contentType: string, sizeBytes = 2048) =>
+    attachArtefact({
+      stepInstanceId: STEP,
+      filename,
+      contentType,
+      sizeBytes,
+    });
+
+  it("o nome vira o último segmento: '../' não escapa do prefixo do tenant, no registro nem na chave", async () => {
+    const res = await attach("../../t2/outro/plano.pdf", "application/pdf");
+    expect(res.ok).toBe(true);
+    const data = h.artefactCreate.mock.calls[0][0].data;
+    expect(data.filename).toBe("plano.pdf");
+    expect(data.objectKey).toBe(`t1/trk1/${STEP}/plano.pdf`);
+    expect(data.objectKey).not.toContain("..");
+    expect(h.createSignedUploadUrl.mock.calls[0][0]).toBe(data.objectKey);
+  });
+
+  it("só entra extensão da lista: .html é recusado antes de qualquer escrita", async () => {
+    const res = await attach("pagina.html", "text/html");
+    expect(res).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
+    });
+    expect(h.artefactCreate).not.toHaveBeenCalled();
+    expect(h.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it("o tipo declarado não pode contradizer a extensão: .pdf que se diz text/html", async () => {
+    const res = await attach("relatorio.pdf", "text/html");
+    expect(res).toMatchObject({
+      ok: false,
+      code: "DELIVERABLE_FILE_TYPE_NOT_ALLOWED",
+    });
+    expect(h.artefactCreate).not.toHaveBeenCalled();
+  });
+
+  it("markdown e json continuam valendo (o bucket os aceita para artefato de passo), e o navegador que não sabe o tipo não trava", async () => {
+    expect((await attach("plano.md", "text/markdown")).ok).toBe(true);
+    expect((await attach("dados.json", "application/octet-stream")).ok).toBe(
+      true
+    );
+  });
+
+  it("devolve o tipo canônico da extensão, que é o que o PUT precisa usar", async () => {
+    const res = await attach("plano.md", "application/octet-stream");
+    expect(res.ok && res.data.contentType).toBe("text/markdown");
+  });
+
+  it("garante o bucket (limite de tamanho e de tipo) antes de emitir a URL de upload", async () => {
+    // O bucket é garantido uma vez por processo: módulo novo, estado novo.
+    vi.resetModules();
+    const fresh = await import("@/app/(scaffold)/actions/steps");
+    await fresh.attachArtefact({
+      stepInstanceId: STEP,
+      filename: "plano.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 2048,
+    });
+    expect(h.ensureBucket).toHaveBeenCalledWith("scaffold-artefacts");
+    expect(h.order.indexOf("bucket")).toBeLessThan(h.order.indexOf("upload"));
+  });
+});
+
 describe("readArtefact — SN-02", () => {
   it("grava a trilha de auditoria ANTES de emitir a URL assinada", async () => {
     await readArtefact({ artefactId: "clx00000000000000000art1" });
@@ -241,6 +326,13 @@ describe("readArtefact — SN-02", () => {
     if (res.ok) {
       expect(res.data.expiresIn).toBeGreaterThan(0);
     }
+  });
+
+  it("a URL força download com o nome do arquivo: o navegador não abre o conteúdo do cliente inline", async () => {
+    await readArtefact({ artefactId: "clx00000000000000000art1" });
+    expect(h.createSignedUrl.mock.calls[0][2]).toEqual({
+      download: "artefato.pdf",
+    });
   });
 
   it("resolve o artefato dentro do tenant da sessão", async () => {
