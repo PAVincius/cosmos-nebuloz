@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { keys } from "./keys";
 import { InviteTemplate } from "./templates/invite";
 import { ResetPasswordTemplate } from "./templates/reset-password";
+import { VerifyEmailTemplate } from "./templates/verify-email";
 
 /**
  * Cliente do Resend construído na primeira utilização, não no import.
@@ -64,6 +65,7 @@ export { keys } from "./keys";
 export { ContactTemplate } from "./templates/contact";
 export { InviteTemplate } from "./templates/invite";
 export { ResetPasswordTemplate } from "./templates/reset-password";
+export { VerifyEmailTemplate } from "./templates/verify-email";
 
 type RenderInviteOptions = {
   inviteeName?: string;
@@ -99,6 +101,24 @@ export async function renderResetPasswordEmail(
   return render(
     ResetPasswordTemplate({
       resetUrl: options.resetUrl,
+      userName: options.userName,
+      expiresInMinutes: options.expiresInMinutes ?? 60,
+    })
+  );
+}
+
+type RenderVerificationOptions = {
+  verifyUrl: string;
+  userName?: string;
+  expiresInMinutes?: number;
+};
+
+export async function renderVerificationEmail(
+  options: RenderVerificationOptions
+): Promise<string> {
+  return render(
+    VerifyEmailTemplate({
+      verifyUrl: options.verifyUrl,
       userName: options.userName,
       expiresInMinutes: options.expiresInMinutes ?? 60,
     })

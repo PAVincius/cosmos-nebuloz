@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "../client";
+import { VerifyEmailNotice } from "./verify-email-notice";
 
 function getPasswordStrength(password: string): {
   score: number;
@@ -51,6 +52,7 @@ export const SignUp = () => {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const strength = getPasswordStrength(password);
   const passwordsMatch = password === confirm;
@@ -69,9 +71,10 @@ export const SignUp = () => {
     setLoading(true);
     setError(null);
 
+    const normalizedEmail = email.trim().toLowerCase();
     const result = await authClient.signUp.email({
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       password,
       callbackURL: "/onboarding",
     });
@@ -79,8 +82,17 @@ export const SignUp = () => {
     if (result?.error) {
       setError(result.error.message ?? "Erro ao criar conta. Tente novamente.");
       setLoading(false);
+      return;
     }
+
+    // Sem sessão até o clique no link: não há redirecionamento a esperar.
+    setSentTo(normalizedEmail);
+    setLoading(false);
   };
+
+  if (sentTo) {
+    return <VerifyEmailNotice email={sentTo} />;
+  }
 
   return (
     <div className="space-y-6">

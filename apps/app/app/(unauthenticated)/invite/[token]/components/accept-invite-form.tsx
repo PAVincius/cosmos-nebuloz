@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { VerifyEmailNotice } from "@repo/auth/components/verify-email-notice";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -64,6 +65,7 @@ export function AcceptInviteForm({
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   const strength = getPasswordStrength(password);
   const passwordsMatch = password === confirm;
@@ -102,8 +104,18 @@ export function AcceptInviteForm({
         setError(msg || "Erro ao criar conta. Tente novamente.");
       }
       setLoading(false);
+      return;
     }
+
+    // Sem sessão até o clique no link: o aceite do convite termina quando a
+    // verificação devolve a pessoa para /invite/<token>/complete.
+    setSent(true);
+    setLoading(false);
   };
+
+  if (sent) {
+    return <VerifyEmailNotice email={email} workspaceName={workspaceName} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -154,7 +166,7 @@ export function AcceptInviteForm({
               type="email"
               value={email}
             />
-            <span className="-translate-y-1/2 absolute top-1/2 right-3 rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-[10px] text-primary">
+            <span className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-[10px] text-primary">
               CONVITE
             </span>
           </div>
